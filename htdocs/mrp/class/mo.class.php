@@ -809,7 +809,8 @@ class Mo extends CommonObject
 		}
 		else
 		{
-
+			// If origin BOM line is not a product, but another BOM
+			// TODO
 		}
 
 		$this->tpl['qty'] = $line->qty;
