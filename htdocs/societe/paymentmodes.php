@@ -1342,7 +1342,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($currencybalance as $cpt)
 			{
-                print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['pending'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available']+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+                print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available']+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
