@@ -2738,7 +2738,7 @@ div.colorback
     border-left: 1px solid #ccc;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
-	width: 100%;
+	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears dur to overflow-x: auto; of div-tableèresponsive
 
 	border-collapse: separate !important;
 	border-spacing: 0px;

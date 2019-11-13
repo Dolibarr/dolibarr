@@ -3059,9 +3059,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		}
 		elseif ($result > 0)
 		{
-			$translationof = $sourcepage->id;
+			$translationof = 0;
+			//$translationof = $sourcepage->id;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', $sourcepage->id, 1, $action);
+			print $formwebsite->selectContainer($website, 'pageidfortranslation', $translationof, 1, $action, 'minwidth300');
 		}
 	}
 	print '</td></tr>';

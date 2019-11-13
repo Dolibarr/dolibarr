@@ -5030,7 +5030,7 @@ function migrate_users_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationUsersSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Users')."</b><br>\n";
     print '</td></tr>';
 }
 
@@ -5121,7 +5121,7 @@ function migrate_members_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationMembersSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Members')."</b><br>\n";
     print '</td></tr>';
 }
 
@@ -5216,7 +5216,7 @@ function migrate_contacts_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationContactsSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Contacts')."</b><br>\n";
     print '</td></tr>';
 }
 
@@ -5306,6 +5306,6 @@ function migrate_thirdparties_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationThirdpartiesSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Thirdparties')."</b><br>\n";
     print '</td></tr>';
 }
