@@ -232,9 +232,7 @@ if ($action == "change")	// Change customer for TakePOS
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
 
     // Check if draft invoice already exists, if not create it
-	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'facture
-			where ref=\'(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')\'
-			AND entity IN ('.getEntity('invoice').')';
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
 	$result = $db->query($sql);
 	$num_lines = $db->num_rows($result);
 	if ($num_lines==0)
