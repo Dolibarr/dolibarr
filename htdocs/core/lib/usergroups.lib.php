@@ -420,6 +420,18 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	print '</td></tr>';
 
+	// Set variables of theme
+	$colorbackhmenu1 = '';
+	$colorbackvmenu1 = '';
+	$colortexttitlenotab = '';
+	$colorbacktitle1 = '';
+	$colortexttitle = '';
+	$colorbacklineimpair1 = '';
+	$colorbacklinepair1 = '';
+	$colortextlink = '';
+	$colorbacklinepairhover = '';
+	$colorbacklinepairhover = '';
+	$colorbacklinepairchecked = '';
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
