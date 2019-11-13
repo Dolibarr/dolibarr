@@ -27,7 +27,7 @@
  *       into the dirins directory.
  */
 
-if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');			// Do not check anti SQL+XSS injection attack test
+if (!defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti SQL+XSS injection attack test
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -40,54 +40,54 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron", "errors"));
 
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm', 'alpha');
-$cancel=GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
-$module=GETPOST('module', 'alpha');
-$tab=GETPOST('tab', 'aZ09');
-$tabobj=GETPOST('tabobj', 'alpha');
-$propertykey=GETPOST('propertykey', 'alpha');
-if (empty($module)) $module='initmodule';
-if (empty($tab)) $tab='description';
-if (empty($tabobj)) $tabobj='newobjectifnoobj';
-$file=GETPOST('file', 'alpha');
+$module = GETPOST('module', 'alpha');
+$tab = GETPOST('tab', 'aZ09');
+$tabobj = GETPOST('tabobj', 'alpha');
+$propertykey = GETPOST('propertykey', 'alpha');
+if (empty($module)) $module = 'initmodule';
+if (empty($tab)) $tab = 'description';
+if (empty($tabobj)) $tabobj = 'newobjectifnoobj';
+$file = GETPOST('file', 'alpha');
 
-$modulename=dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
-$objectname=dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
+$modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
+$objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 
 // Security check
 if (empty($conf->modulebuilder->enabled)) accessforbidden('ModuleBuilderNotAllowed');
-if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
+if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
 
 
 // Dir for custom dirs
-$tmp=explode(',', $dolibarr_main_document_root_alt);
+$tmp = explode(',', $dolibarr_main_document_root_alt);
 $dirins = $tmp[0];
 $dirread = $dirins;
 $forceddirread = 0;
 
 $tmpdir = explode('@', $module);
-if (! empty($tmpdir[1]))
+if (!empty($tmpdir[1]))
 {
-	$module=$tmpdir[0];
-	$dirread=$tmpdir[1];
-	$forceddirread=1;
+	$module = $tmpdir[0];
+	$dirread = $tmpdir[1];
+	$forceddirread = 1;
 }
 if (GETPOST('dirins', 'alpha'))
 {
 	$dirread = $dirins = GETPOST('dirins', 'alpha');
-	$forceddirread=1;
+	$forceddirread = 1;
 }
 
-$FILEFLAG='modulebuilder.txt';
+$FILEFLAG = 'modulebuilder.txt';
 
-$now=dol_now();
+$now = dol_now();
 $newmask = 0;
-if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
 if (empty($newmask))	// This should no happen
 {
-	$newmask='0664';
+	$newmask = '0664';
 }
 
 
@@ -97,7 +97,7 @@ if (empty($newmask))	// This should no happen
 
 if ($dirins && $action == 'initmodule' && $modulename)
 {
-    $modulename = ucfirst($modulename);     // Force first letter in uppercase
+    $modulename = ucfirst($modulename); // Force first letter in uppercase
 
 	if (preg_match('/[^a-z0-9_]/i', $modulename))
 	{
@@ -105,12 +105,12 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 		$destdir = $dirins.'/'.strtolower($modulename);
 
-		$arrayreplacement=array(
+		$arrayreplacement = array(
             'mymodule'=>strtolower($modulename),
             'MyModule'=>$modulename
 		);
@@ -131,7 +131,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
-		if (! empty($conf->global->MODULEBUILDER_USE_ABOUT))
+		if (!empty($conf->global->MODULEBUILDER_USE_ABOUT))
 		{
 			dol_delete_file($destdir.'/admin/about.php');
 		}
@@ -182,13 +182,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 	}
 
 	// Edit PHP files
-	if (! $error)
+	if (!$error)
 	{
 		$listofphpfilestoedit = dol_dir_list($destdir, 'files', 1, '\.(php|MD|js|sql|txt|xml|lang)$', '', 'fullname', SORT_ASC, 0, 1);
-		foreach($listofphpfilestoedit as $phpfileval)
+		foreach ($listofphpfilestoedit as $phpfileval)
 		{
 			//var_dump($phpfileval['fullname']);
-			$arrayreplacement=array(
+			$arrayreplacement = array(
     			'mymodule'=>strtolower($modulename),
     			'MyModule'=>$modulename,
     			'MYMODULE'=>strtoupper($modulename),
@@ -225,10 +225,10 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		setEventMessages('ModuleInitialized', null);
-		$module=$modulename;
+		$module = $modulename;
 		$modulename = '';
 	}
 }
@@ -366,10 +366,10 @@ if ($dirins && $action == 'inithook' && !empty($module))
 
     if ($result > 0)
     {
-        $modulename = ucfirst($module);     // Force first letter in uppercase
+        $modulename = ucfirst($module); // Force first letter in uppercase
 
         //var_dump($phpfileval['fullname']);
-        $arrayreplacement=array(
+        $arrayreplacement = array(
             'mymodule'=>strtolower($modulename),
             'MyModule'=>$modulename,
             'MYMODULE'=>strtoupper($modulename),
@@ -378,7 +378,7 @@ if ($dirins && $action == 'inithook' && !empty($module))
             'Mon module'=>$modulename,
             'mon module'=>$modulename,
             'htdocs/modulebuilder/template'=>strtolower($modulename),
-            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
@@ -400,10 +400,10 @@ if ($dirins && $action == 'inittrigger' && !empty($module))
 
     if ($result > 0)
     {
-        $modulename = ucfirst($module);     // Force first letter in uppercase
+        $modulename = ucfirst($module); // Force first letter in uppercase
 
         //var_dump($phpfileval['fullname']);
-        $arrayreplacement=array(
+        $arrayreplacement = array(
             'mymodule'=>strtolower($modulename),
             'MyModule'=>$modulename,
             'MYMODULE'=>strtoupper($modulename),
@@ -412,7 +412,7 @@ if ($dirins && $action == 'inittrigger' && !empty($module))
             'Mon module'=>$modulename,
             'mon module'=>$modulename,
             'htdocs/modulebuilder/template'=>strtolower($modulename),
-            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
@@ -434,10 +434,10 @@ if ($dirins && $action == 'initwidget' && !empty($module))
 
     if ($result > 0)
     {
-        $modulename = ucfirst($module);     // Force first letter in uppercase
+        $modulename = ucfirst($module); // Force first letter in uppercase
 
         //var_dump($phpfileval['fullname']);
-        $arrayreplacement=array(
+        $arrayreplacement = array(
             'mymodule'=>strtolower($modulename),
             'MyModule'=>$modulename,
             'MYMODULE'=>strtoupper($modulename),
@@ -563,7 +563,7 @@ if ($dirins && $action == 'initcli' && !empty($module))
             '__USER_FULLNAME__'=>$user->getFullName($langs),
             '__USER_EMAIL__'=>$user->email,
             '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
-            '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
@@ -585,11 +585,11 @@ if ($dirins && $action == 'initdoc' && !empty($module))
 
     if ($result > 0)
     {
-        $modulename = ucfirst($module);     // Force first letter in uppercase
+        $modulename = ucfirst($module); // Force first letter in uppercase
         $modulelowercase = strtolower($module);
 
         //var_dump($phpfileval['fullname']);
-        $arrayreplacement=array(
+        $arrayreplacement = array(
             'mymodule'=>strtolower($modulename),
             'MyModule'=>$modulename,
             'MYMODULE'=>strtoupper($modulename),
@@ -603,14 +603,14 @@ if ($dirins && $action == 'initdoc' && !empty($module))
             '__USER_FULLNAME__'=>$user->getFullName($langs),
             '__USER_EMAIL__'=>$user->email,
             '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
-            '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
 
         // Delete old documentation files
-        $FILENAMEDOC=$modulelowercase.'.html';
-        $FILENAMEDOCPDF=$modulelowercase.'.pdf';
+        $FILENAMEDOC = $modulelowercase.'.html';
+        $FILENAMEDOCPDF = $modulelowercase.'.pdf';
         $outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
         $outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
         $outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
@@ -628,7 +628,7 @@ if ($dirins && $action == 'initdoc' && !empty($module))
 
 if ($dirins && $action == 'addlanguage' && !empty($module))
 {
-	$newlangcode=GETPOST('newlangcode', 'aZ09');
+	$newlangcode = GETPOST('newlangcode', 'aZ09');
 	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
 	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
 	$result = dolCopyDir($srcfile, $destfile, 0, 0);
@@ -636,7 +636,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module))
 
 if ($dirins && $action == 'confirm_removefile' && !empty($module))
 {
-    $relativefilename=dol_sanitizePathName(GETPOST('file', 'none'));
+    $relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
     if ($relativefilename)
     {
         $dirnametodelete = dirname($relativefilename);
@@ -758,7 +758,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
-		$tabobj='newobject';
+		$tabobj = 'newobject';
 	}
 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -772,16 +772,16 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	dol_mkdir($destdir.'/sql');
 
 	// Scan dir class to find if an object with same name already exists.
-	if (! $error)
+	if (!$error)
 	{
-		$dirlist=dol_dir_list($destdir.'/class', 'files', 0, '\.txt$');
-		$alreadyfound=false;
-		foreach($dirlist as $key => $val)
+		$dirlist = dol_dir_list($destdir.'/class', 'files', 0, '\.txt$');
+		$alreadyfound = false;
+		foreach ($dirlist as $key => $val)
 		{
-			$filefound=preg_replace('/\.txt$/', '', $val['name']);
+			$filefound = preg_replace('/\.txt$/', '', $val['name']);
 			if (strtolower($objectname) == strtolower($filefound) && $objectname != $filefound)
 			{
-				$alreadyfound=true;
+				$alreadyfound = true;
 				$error++;
 				setEventMessages($langs->trans("AnObjectAlreadyExistWithThisNameAndDiffCase"), null, 'errors');
 				break;
@@ -789,7 +789,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		// Copy some files
 		$filetogenerate = array(
@@ -830,7 +830,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			);
 		}
 
-		foreach($filetogenerate as $srcfile => $destfile)
+		foreach ($filetogenerate as $srcfile => $destfile)
 		{
 			$result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile, $newmask, 0);
 			if ($result <= 0)
@@ -960,7 +960,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
                 'MYOBJECT'=>strtoupper($objectname)
 			);
 
-			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
 			//var_dump($result);
 			if ($result < 0)
 			{
@@ -1023,7 +1023,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 		}
 		if ($nb == 0)
 		{
-			$resql=$db->DDLDropTable($tabletodrop);
+			$resql = $db->DDLDropTable($tabletodrop);
 			//var_dump($resql);
 			setEventMessages($langs->trans("TableDropped", $tabletodrop), null, 'mesgs');
 		}
@@ -1034,7 +1034,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
-if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
+if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj))
 {
 	$error = 0;
 
@@ -1128,20 +1128,20 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 	dol_mkdir($destdir);
 
 	// Edit the class file to write properties
-	if (! $error)
+	if (!$error)
 	{
-		$object=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
+		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
 		if (is_numeric($object) && $object <= 0) $error++;
 	}
 
 	// Edit sql with new properties
-	if (! $error)
+	if (!$error)
 	{
-		$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
+		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
 		if ($result <= 0) $error++;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
@@ -1162,9 +1162,9 @@ if ($dirins && $action == 'confirm_deletemodule')
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$modulelowercase=strtolower($module);
+		$modulelowercase = strtolower($module);
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
@@ -1193,10 +1193,10 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$modulelowercase=strtolower($module);
-		$objectlowercase=strtolower($objectname);
+		$modulelowercase = strtolower($module);
+		$objectlowercase = strtolower($objectname);
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
@@ -1248,23 +1248,23 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 
 if ($dirins && $action == 'generatepackage')
 {
-	$modulelowercase=strtolower($module);
+	$modulelowercase = strtolower($module);
 
 	// Dir for module
 	$dir = $dirins.'/'.$modulelowercase;
 	// Zip file to build
-	$FILENAMEZIP='';
+	$FILENAMEZIP = '';
 
 	// Load module
 	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
-	$class='mod'.$module;
+	$class = 'mod'.$module;
 
 	if (class_exists($class))
 	{
 		try {
 			$moduleobj = new $class($db);
 		}
-		catch(Exception $e)
+		catch (Exception $e)
 		{
 			$error++;
 			dol_print_error($e->getMessage());
@@ -1278,16 +1278,16 @@ if ($dirins && $action == 'generatepackage')
 		exit;
 	}
 
-	$arrayversion=explode('.', $moduleobj->version, 3);
+	$arrayversion = explode('.', $moduleobj->version, 3);
 	if (count($arrayversion))
 	{
-		$FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
+		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
 		if ($dirofmodule)
 		{
-			if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
+			if (!dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
 			$result = dol_compress_dir($dir, $outputfilezip, 'zip');
 		}
 		else
@@ -1316,7 +1316,7 @@ if ($dirins && $action == 'generatepackage')
 
 if ($dirins && $action == 'generatedoc')
 {
-	$FILENAMEDOC=strtolower($module).'.html';
+	$FILENAMEDOC = strtolower($module).'.html';
 	$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
 
 	$util = new Utils($db);
@@ -1341,10 +1341,10 @@ if ($action == 'savefile' && empty($cancel))
 	if ($relofcustom)
 	{
 		// Check that relative path ($file) start with name 'custom'
-		if (! preg_match('/^'.$relofcustom.'/', $file)) $file=$relofcustom.'/'.$file;
+		if (!preg_match('/^'.$relofcustom.'/', $file)) $file = $relofcustom.'/'.$file;
 
-		$pathoffile=dol_buildpath($file, 0);
-		$pathoffilebackup=dol_buildpath($file.'.back', 0);
+		$pathoffile = dol_buildpath($file, 0);
+		$pathoffilebackup = dol_buildpath($file.'.back', 0);
 
 		// Save old version
 		if (dol_is_file($pathoffile))
@@ -1439,11 +1439,11 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 // Set dir where external modules are installed
-if (! dol_is_dir($dirins))
+if (!dol_is_dir($dirins))
 {
 	dol_mkdir($dirins);
 }
-$dirins_ok=(dol_is_dir($dirins));
+$dirins_ok = (dol_is_dir($dirins));
 
 llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
 	array(
@@ -1566,24 +1566,24 @@ $infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto(
 
 
 // Load module descriptor
-$error=0;
+$error = 0;
 $moduleobj = null;
 
-if (! empty($module) && $module != 'initmodule' && $module != 'deletemodule')
+if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 {
-	$modulelowercase=strtolower($module);
+	$modulelowercase = strtolower($module);
 
 	// Load module
 	$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($fullpathdirtodescriptor);
-	$class='mod'.$module;
+	$class = 'mod'.$module;
 
 	if (class_exists($class))
 	{
 		try {
 			$moduleobj = new $class($db);
 		}
-		catch(Exception $e)
+		catch (Exception $e)
 		{
 			$error++;
 			print $e->getMessage();
@@ -1602,16 +1602,16 @@ print '<br>';
 
 // Tabs for all modules
 $head = array();
-$h=0;
+$h = 0;
 
 $head[$h][0] = $_SERVER["PHP_SELF"].'?module=initmodule';
 $head[$h][1] = '<span class="valignmiddle text-plus-circle">'.$langs->trans("NewModule").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 $head[$h][2] = 'initmodule';
 $h++;
 
-foreach($listofmodules as $tmpmodule => $tmpmodulearray)
+foreach ($listofmodules as $tmpmodule => $tmpmodulearray)
 {
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread?'@'.$dirread:'');
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread ? '@'.$dirread : '');
 	$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
 	$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
 	$h++;
@@ -1623,7 +1623,7 @@ $head[$h][2] = 'deletemodule';
 $h++;
 
 
-dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic', 0, $infomodulesfound);	// Modules
+dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic', 0, $infomodulesfound); // Modules
 
 if ($module == 'initmodule')
 {
@@ -1786,7 +1786,7 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-				dol_fiche_head($head2, $tab, '', -1, '');	// Description - level 2
+				dol_fiche_head($head2, $tab, '', -1, ''); // Description - level 2
 
 				print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc".$tab).'</span>';
 				$infoonmodulepath = '';
@@ -1817,7 +1817,7 @@ elseif (! empty($module))
 
 				print load_fiche_titre($langs->trans("DescriptorFile"), '', '');
 
-				if (! empty($moduleobj))
+				if (!empty($moduleobj))
 				{
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
@@ -1906,7 +1906,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0, 1);	// Description - level 2
+				$fullpathoffile = dol_buildpath($file, 0, 1); // Description - level 2
 
 				if ($fullpathoffile)
 				{
@@ -1923,8 +1923,8 @@ elseif (! empty($module))
 
 				dol_fiche_head($head2, $tab, '', -1, '');
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 
 				dol_fiche_end();
 
@@ -1939,7 +1939,7 @@ elseif (! empty($module))
 		}
 		else
 		{
-			dol_fiche_head($head2, $tab, '', -1, '');	// Level 2
+			dol_fiche_head($head2, $tab, '', -1, ''); // Level 2
 		}
 
 		if ($tab == 'languages')
@@ -1963,7 +1963,7 @@ elseif (! empty($module))
 				print '<br>';
 				print '<br>';
 
-				$langfiles=dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
+				$langfiles = dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
 
 				print '<table class="none">';
 				foreach ($langfiles as $langfile)
@@ -1982,7 +1982,7 @@ elseif (! empty($module))
 
 				//print $langs->trans("UseAsciiDocFormat").'<br>';
 
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -1994,8 +1994,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'text'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'text'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -2159,27 +2159,27 @@ elseif (! empty($module))
 			// Scan for object class files
 			$listofobject = dol_dir_list($dir, 'files', 0, '\.class\.php$');
 
-			$firstobjectname='';
-			foreach($listofobject as $fileobj)
+			$firstobjectname = '';
+			foreach ($listofobject as $fileobj)
 			{
 				if (preg_match('/^api_/', $fileobj['name'])) continue;
 				if (preg_match('/^actions_/', $fileobj['name'])) continue;
 
-				$tmpcontent=file_get_contents($fileobj['fullname']);
+				$tmpcontent = file_get_contents($fileobj['fullname']);
 				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg))
 				{
 					//$objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
 					$objectname = $reg[1];
 					if (empty($firstobjectname)) $firstobjectname = $objectname;
 
-					$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj='.$objectname;
+					$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname;
 					$head3[$h][1] = $objectname;
 					$head3[$h][2] = $objectname;
 					$h++;
 				}
 			}
 
-			$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj=deleteobject';
+			$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj=deleteobject';
 			$head3[$h][1] = $langs->trans("DangerZone");
 			$head3[$h][2] = 'deleteobject';
 			$h++;
@@ -2187,11 +2187,11 @@ elseif (! empty($module))
 			// If tabobj was not defined, then we check if there is one obj. If yes, we force on it, if no, we will show tab to create new objects.
 			if ($tabobj == 'newobjectifnoobj')
 			{
-				if ($firstobjectname) $tabobj=$firstobjectname;
+				if ($firstobjectname) $tabobj = $firstobjectname;
 				else $tabobj = 'newobject';
 			}
 
-			dol_fiche_head($head3, $tabobj, '', -1, '');	// Level 3
+			dol_fiche_head($head3, $tabobj, '', -1, ''); // Level 3
 
 			if ($tabobj == 'newobject')
 			{
@@ -2217,7 +2217,7 @@ elseif (! empty($module))
 				//print '<input type="checkbox" name="initfromtablecheck"> ';
 				print $langs->trans("InitStructureFromExistingTable");
 				print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
-				print '<input type="submit" class="button" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<input type="submit" class="button" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
 
 				print '</form>';
@@ -2234,7 +2234,7 @@ elseif (! empty($module))
 				print $langs->trans("EnterNameOfObjectToDeleteDesc").'<br><br>';
 
 				print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
-				print '<input type="submit" class="buttonDelete" name="delete" value="'.dol_escape_htmltag($langs->trans("Delete")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<input type="submit" class="buttonDelete" name="delete" value="'.dol_escape_htmltag($langs->trans("Delete")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '</form>';
 			}
 			else
@@ -2434,7 +2434,7 @@ elseif (! empty($module))
 
 						print '<br><br><br>';
 
-						if(function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
+						if (function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
 
 						if (empty($forceddirread))
 						{
@@ -2449,17 +2449,17 @@ elseif (! empty($module))
 							try {
 								$tmpobjet = @new $tabobj($db);
 							}
-							catch(Exception $e)
+							catch (Exception $e)
 							{
 								dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
 							}
 						}
 
-						if (! empty($tmpobjet))
+						if (!empty($tmpobjet))
 						{
 							$reflector = new ReflectionClass($tabobj);
-							$reflectorproperties = $reflector->getProperties();          // Can also use get_object_vars
-							$reflectorpropdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+							$reflectorproperties = $reflector->getProperties(); // Can also use get_object_vars
+							$reflectorpropdefault = $reflector->getDefaultProperties(); // Can also use get_object_vars
 							//$propstat = $reflector->getStaticProperties();
 							//var_dump($reflectorpropdefault);
 
@@ -2467,7 +2467,7 @@ elseif (! empty($module))
 							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';
-							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread?'@'.$dirread:'')).'">';
+							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread ? '@'.$dirread : '')).'">';
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 							print '<input class="button" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
@@ -2511,7 +2511,7 @@ elseif (! empty($module))
 							//$properties = dol_sort_array($tmpobjet->fields, 'position');
 							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
 
-							if (! empty($properties))
+							if (!empty($properties))
 							{
 								// Line to add a property
 								print '<tr>';
@@ -2538,7 +2538,7 @@ elseif (! empty($module))
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
-								foreach($properties as $propkey => $propval)
+								foreach ($properties as $propkey => $propval)
 								{
 									/* If from Reflection
 									 if ($propval->class == $tabobj)
@@ -2654,13 +2654,13 @@ elseif (! empty($module))
 							            print '<span class="opacitymedium">'.$langs->trans("SpecDefDesc").'</span><br>';
 							            print '<br>';
 
-							            $specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
+							            $specs = dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
 
 							            foreach ($specs as $spec)
 							            {
 							                $pathtofile = $modulelowercase.'/doc/'.$spec['relativename'];
-							                $format='asciidoc';
-							                if (preg_match('/\.md$/i', $spec['name'])) $format='markdown';
+							                $format = 'asciidoc';
+							                if (preg_match('/\.md$/i', $spec['name'])) $format = 'markdown';
 							                print '<span class="fa fa-file-o"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
 							                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format='.$format.'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 							                print '<br>';
@@ -2672,7 +2672,7 @@ elseif (! empty($module))
 
 							            //print $langs->trans("UseAsciiDocFormat").'<br>';
 
-							            $fullpathoffile=dol_buildpath($file, 0);
+							            $fullpathoffile = dol_buildpath($file, 0);
 
 							            $content = file_get_contents($fullpathoffile);
 
@@ -2684,8 +2684,8 @@ elseif (! empty($module))
 							            print '<input type="hidden" name="tab" value="'.$tab.'">';
 							            print '<input type="hidden" name="module" value="'.$module.'">';
 
-							            $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-							            print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+							            $doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+							            print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 							            print '<br>';
 							            print '<center>';
 							            print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -2708,7 +2708,7 @@ elseif (! empty($module))
 							print '<tr><td><span class="warning">'.$langs->trans('Failed to init the object with the new.').'</warning></td></tr>';
 						}
 					}
-					catch(Exception $e)
+					catch (Exception $e)
 					{
 						print $e->getMessage();
 					}
@@ -2717,11 +2717,11 @@ elseif (! empty($module))
 				{
 					if (empty($forceddirread))
 					{
-						$fullpathoffile=dol_buildpath($file, 0);
+						$fullpathoffile = dol_buildpath($file, 0);
 					}
 					else
 					{
-						$fullpathoffile=$dirread.'/'.$file;
+						$fullpathoffile = $dirread.'/'.$file;
 					}
 
 					$content = file_get_contents($fullpathoffile);
@@ -2733,10 +2733,10 @@ elseif (! empty($module))
 					print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 					print '<input type="hidden" name="tab" value="'.$tab.'">';
 					print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
-					print '<input type="hidden" name="module" value="'.$module.($forceddirread?'@'.$dirread:'').'">';
+					print '<input type="hidden" name="module" value="'.$module.($forceddirread ? '@'.$dirread : '').'">';
 
-					$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-					print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+					$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+					print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 					print '<br>';
 					print '<center>';
 					print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -2748,7 +2748,7 @@ elseif (! empty($module))
 				}
 			}
 
-			dol_fiche_end();	// Level 3
+			dol_fiche_end(); // Level 3
 		}
 
 		if ($tab == 'menus')
@@ -2866,7 +2866,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -2878,8 +2878,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -2966,7 +2966,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -2978,8 +2978,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3024,7 +3024,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -3036,8 +3036,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3062,7 +3062,7 @@ elseif (! empty($module))
 				print '<br>';
 
 				print '<table>';
-				if (! empty($triggers))
+				if (!empty($triggers))
 				{
 					foreach ($triggers as $trigger)
 					{
@@ -3086,7 +3086,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -3098,8 +3098,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3227,7 +3227,7 @@ elseif (! empty($module))
 			    print '<br>';
 
 			    print '<table>';
-			    if (! empty($widgets))
+			    if (!empty($widgets))
 				{
 					foreach ($widgets as $widget)
 					{
@@ -3249,7 +3249,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -3261,8 +3261,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3279,20 +3279,20 @@ elseif (! empty($module))
 		    $clifiles = array();
             $i = 0;
 
-		    $dircli=array('/'.strtolower($module).'/scripts');
+		    $dircli = array('/'.strtolower($module).'/scripts');
 
-		    foreach($dircli as $reldir)
+		    foreach ($dircli as $reldir)
 		    {
-		        $dir=dol_buildpath($reldir, 0);
-		        $newdir=dol_osencode($dir);
+		        $dir = dol_buildpath($reldir, 0);
+		        $newdir = dol_osencode($dir);
 
 		        // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
-		        if (! is_dir($newdir)) continue;
+		        if (!is_dir($newdir)) continue;
 
-		        $handle=opendir($newdir);
+		        $handle = opendir($newdir);
 		        if (is_resource($handle))
 		        {
-		            while (($tmpfile = readdir($handle))!==false)
+		            while (($tmpfile = readdir($handle)) !== false)
 		            {
 		                if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $tmpfile, $reg))
 		                {
@@ -3313,7 +3313,7 @@ elseif (! empty($module))
 		        print '<br>';
 
 		        print '<table>';
-		        if (! empty($clifiles))
+		        if (!empty($clifiles))
 		        {
 		            foreach ($clifiles as $clifile)
 		            {
@@ -3335,7 +3335,7 @@ elseif (! empty($module))
 		    }
 		    else
 		    {
-		        $fullpathoffile=dol_buildpath($file, 0);
+		        $fullpathoffile = dol_buildpath($file, 0);
 
 		        $content = file_get_contents($fullpathoffile);
 
@@ -3347,8 +3347,8 @@ elseif (! empty($module))
 		        print '<input type="hidden" name="tab" value="'.$tab.'">';
 		        print '<input type="hidden" name="module" value="'.$module.'">';
 
-		        $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-		        print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+		        $doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+		        print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 		        print '<br>';
 		        print '<center>';
 		        print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3407,31 +3407,31 @@ elseif (! empty($module))
 						print '</td>';
 
 						print '<td>';
-						if ($cron['jobtype']=='method')
+						if ($cron['jobtype'] == 'method')
 						{
-							$text=$langs->trans("CronClass");
-							$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
-							$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
-							$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
-							$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
-							$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-							$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+							$text = $langs->trans("CronClass");
+							$texttoshow = $langs->trans('CronModule').': '.$module.'<br>';
+							$texttoshow .= $langs->trans('CronClass').': '.$cron['class'].'<br>';
+							$texttoshow .= $langs->trans('CronObject').': '.$cron['objectname'].'<br>';
+							$texttoshow .= $langs->trans('CronMethod').': '.$cron['method'];
+							$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$cron['parameters'];
+							$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($cron['comment']);
 						}
-						elseif ($cron['jobtype']=='command')
+						elseif ($cron['jobtype'] == 'command')
 						{
-							$text=$langs->trans('CronCommand');
-							$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
-							$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-							$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+							$text = $langs->trans('CronCommand');
+							$texttoshow = $langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+							$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$cron['parameters'];
+							$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($cron['comment']);
 						}
 						print $form->textwithpicto($text, $texttoshow, 1);
 						print '</td>';
 
 						print '<td>';
-						if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
-						if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
-						if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
-						if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+						if ($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+						if ($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+						if ($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+						if ($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
 						print '</td>';
 
 						print '<td>';
@@ -3439,7 +3439,7 @@ elseif (! empty($module))
 						print '</td>';
 
 						print '<td>';
-						if (!empty($cron['comment'])) {print $cron['comment'];}
+						if (!empty($cron['comment'])) {print $cron['comment']; }
 						print '</td>';
 
 						print '</tr>';
@@ -3457,7 +3457,7 @@ elseif (! empty($module))
 			}
 			else
 			{
-				$fullpathoffile=dol_buildpath($file, 0);
+				$fullpathoffile = dol_buildpath($file, 0);
 
 				$content = file_get_contents($fullpathoffile);
 
@@ -3469,8 +3469,8 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3484,7 +3484,7 @@ elseif (! empty($module))
 
 		if ($tab == 'specifications')
 		{
-		    $specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
+		    $specs = dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
 
 		    if ($action != 'editfile' || empty($file))
 		    {
@@ -3492,13 +3492,13 @@ elseif (! empty($module))
 		        print '<br>';
 
 		        print '<table>';
-		        if (is_array($specs) && ! empty($specs))
+		        if (is_array($specs) && !empty($specs))
 		        {
     		        foreach ($specs as $spec)
     		        {
     		            $pathtofile = $modulelowercase.'/doc/'.$spec['relativename'];
-    		            $format='asciidoc';
-    		            if (preg_match('/\.md$/i', $spec['name'])) $format='markdown';
+    		            $format = 'asciidoc';
+    		            if (preg_match('/\.md$/i', $spec['name'])) $format = 'markdown';
     		            print '<tr><td>';
     		            print '<span class="fa fa-file-o"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
     		            print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format='.$format.'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a></td>';
@@ -3521,7 +3521,7 @@ elseif (! empty($module))
 
 		        //print $langs->trans("UseAsciiDocFormat").'<br>';
 
-		        $fullpathoffile=dol_buildpath($file, 0);
+		        $fullpathoffile = dol_buildpath($file, 0);
 
 		        $content = file_get_contents($fullpathoffile);
 
@@ -3533,8 +3533,8 @@ elseif (! empty($module))
 		        print '<input type="hidden" name="tab" value="'.$tab.'">';
 		        print '<input type="hidden" name="module" value="'.$module.'">';
 
-		        $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-		        print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
+		        $doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+		        print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 		        print '<br>';
 		        print '<center>';
 		        print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3547,16 +3547,16 @@ elseif (! empty($module))
 
 		    print '<br><br><br>';
 
-		    $FILENAMEDOC=$modulelowercase.'.html';
-		    $FILENAMEDOCPDF=$modulelowercase.'.pdf';
+		    $FILENAMEDOC = $modulelowercase.'.html';
+		    $FILENAMEDOCPDF = $modulelowercase.'.pdf';
 		    $outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
 		    $outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
 		    $outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
 		    $outputfiledocurlpdf = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOCPDF;
 
 		    // HTML
-		    print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "HTML") . ' : ';
-		    if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+		    print '<span class="fa fa-file-o"></span> '.$langs->trans("PathToModuleDocumentation", "HTML").' : ';
+		    if (!dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
 		    else {
 		        print '<strong>';
 		        print '<a href="'.$outputfiledocurl.'" target="_blank">';
@@ -3568,8 +3568,8 @@ elseif (! empty($module))
 		    print '</strong><br>';
 
 		    // PDF
-		    print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "PDF") . ' : ';
-		    if (! dol_is_file($outputfiledocpdf)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+		    print '<span class="fa fa-file-o"></span> '.$langs->trans("PathToModuleDocumentation", "PDF").' : ';
+		    if (!dol_is_file($outputfiledocpdf)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
 		    else {
 		        print '<strong>';
 		        print '<a href="'.$outputfiledocurlpdf.'" target="_blank">';
@@ -3633,17 +3633,17 @@ elseif (! empty($module))
 				exit;
 			}
 
-			$arrayversion=explode('.', $moduleobj->version, 3);
+			$arrayversion = explode('.', $moduleobj->version, 3);
 			if (count($arrayversion))
 			{
-				$FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
+				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
 				$outputfilezip = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
 			}
 
 			print '<br>';
 
-			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModulePackage") . ' : ';
-			if (! dol_is_file($outputfilezip)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+			print '<span class="fa fa-file-o"></span> '.$langs->trans("PathToModulePackage").' : ';
+			if (!dol_is_file($outputfilezip)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
 			else {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;
 				print '<strong><a href="'.DOL_URL_ROOT.'/document.php?modulepart=packages&file='.urlencode($relativepath).'">'.$outputfilezip.'</a></strong>';

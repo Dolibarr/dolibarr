@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("resource","companies","other"));
+$langs->loadLangs(array("resource", "companies", "other"));
 
 // Get parameters
 $id             = GETPOST('id', 'int');
@@ -130,19 +130,19 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Do we click on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_label="";
-	$search_type="";
-	$search_array_options=array();
-	$filter=array();
+	$search_ref = "";
+	$search_label = "";
+	$search_type = "";
+	$search_array_options = array();
+	$filter = array();
 }
 
 /*
  * Action
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -150,9 +150,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$pagetitle=$langs->trans('ResourcePageIndex');
+$pagetitle = $langs->trans('ResourcePageIndex');
 llxHeader('', $pagetitle, '');
 
 // Confirmation suppression resource line
@@ -161,8 +161,8 @@ if ($action == 'delete_resource')
 	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_resource", '', '', 1);
 }
 
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -242,20 +242,20 @@ if ($ret)
     {
         print '<tr class="oddeven">';
 
-        if (! empty($arrayfields['t.ref']['checked']))
+        if (!empty($arrayfields['t.ref']['checked']))
         {
         	print '<td>';
         	print $resource->getNomUrl(5);
         	print '</td>';
-	        if (! $i) $totalarray['nbfield']++;
+	        if (!$i) $totalarray['nbfield']++;
         }
 
-        if (! empty($arrayfields['ty.label']['checked']))
+        if (!empty($arrayfields['ty.label']['checked']))
         {
         	print '<td>';
         	print $resource->type_label;
         	print '</td>';
-	        if (! $i) $totalarray['nbfield']++;
+	        if (!$i) $totalarray['nbfield']++;
         }
         // Extra fields
         $obj = (Object) $resource->array_options;
@@ -270,15 +270,15 @@ if ($ret)
         print img_delete();
         print '</a>';
         print '</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
 
         print '</tr>';
     }
 }
 else
 {
-    $colspan=1;
-    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    $colspan = 1;
+    foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
     print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

@@ -50,7 +50,7 @@ if ($user->socid > 0) {
 $mode = GETPOST("mode", 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -58,11 +58,11 @@ if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="u.login";
-if (! $sortorder) $sortorder="ASC";
+if (!$sortfield) $sortfield = "u.login";
+if (!$sortorder) $sortorder = "ASC";
 
 // Define value to know what current user can do on users
-$canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
+$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
@@ -150,11 +150,11 @@ if ($mode == 'employee' && ! GETPOSTISSET('search_employee')) $search_employee=1
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction = ''; }
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -270,7 +270,7 @@ if (! $result)
 
 $num = $db->num_rows($result);
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -336,25 +336,25 @@ if (! empty($catid))
 
 if ($sall)
 {
-	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
 }
 
-$moreforfilter='';
+$moreforfilter = '';
 
 // Filter on categories
-if (! empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled))
 {
-    $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.=$langs->trans('Categories'). ': ';
-    $moreforfilter.=$htmlother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
-    $moreforfilter.='</div>';
+    $moreforfilter .= '<div class="divsearchfield">';
+    $moreforfilter .= $langs->trans('Categories').': ';
+    $moreforfilter .= $htmlother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+    $moreforfilter .= '</div>';
 }
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
-if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
-else $moreforfilter=$hookmanager->resPrint;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+else $moreforfilter = $hookmanager->resPrint;
 
 if ($moreforfilter)
 {
@@ -588,15 +588,15 @@ while ($i < min($num, $limit))
 			print $langs->trans("InternalUser");
 		}
 		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 	}
 	// Multicompany enabled
-	if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+	if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 	{
-		if (! empty($arrayfields['u.entity']['checked']))
+		if (!empty($arrayfields['u.entity']['checked']))
 		{
 			print '<td>';
-			if (! $obj->entity)
+			if (!$obj->entity)
 			{
 				print $langs->trans("AllEntities");
 			}
@@ -606,27 +606,27 @@ while ($i < min($num, $limit))
 				print $mc->label;
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 	}
 	// Supervisor
-	if (! empty($arrayfields['u.fk_user']['checked']))
+	if (!empty($arrayfields['u.fk_user']['checked']))
 	{
 		// Resp
 		print '<td class="nowrap">';
 		if ($obj->login2)
 		{
-			$user2->id=$obj->id2;
-			$user2->login=$obj->login2;
-			$user2->lastname=$obj->lastname2;
-			$user2->firstname=$obj->firstname2;
-			$user2->gender=$obj->gender2;
-			$user2->photo=$obj->photo2;
-			$user2->admin=$obj->admin2;
-			$user2->email=$obj->email2;
-			$user2->socid=$obj->fk_soc2;
+			$user2->id = $obj->id2;
+			$user2->login = $obj->login2;
+			$user2->lastname = $obj->lastname2;
+			$user2->firstname = $obj->firstname2;
+			$user2->gender = $obj->gender2;
+			$user2->photo = $obj->photo2;
+			$user2->admin = $obj->admin2;
+			$user2->email = $obj->email2;
+			$user2->socid = $obj->fk_soc2;
 			print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
-			if (! empty($conf->multicompany->enabled) && $obj->admin2 && ! $obj->entity2)
+			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
 			{
 			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			}

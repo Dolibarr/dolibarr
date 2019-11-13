@@ -34,13 +34,13 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
+	if (!empty($conf->expedition->enabled)) $langs->load("sendings");
 	$langs->load("orders");
 
 	$h = 0;
 	$head = array();
 
-	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderCard");

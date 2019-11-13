@@ -52,7 +52,7 @@ $html = new Form($db);
 $formother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
-$listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
@@ -62,10 +62,10 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 // Selection filter
 print '<div class="tabBar">';
 
-print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-$search_month = GETPOST("remonth", 'int')?GETPOST("remonth", 'int'):date("m", time());
-$search_year = GETPOST("reyear", 'int')?GETPOST("reyear", 'int'):date("Y", time());
+$search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m", time());
+$search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());
 
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
@@ -83,7 +83,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
-$sql .= " AND cp.statut = 3";		// Approved
+$sql .= " AND cp.statut = 3"; // Approved
 $sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
 $sql .= " ORDER BY u.lastname, cp.date_debut";
 
@@ -105,16 +105,16 @@ print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans('Ref') . '</td>';
-print '<td>' . $langs->trans('Employee') . '</td>';
-print '<td>' . $langs->trans('Type') . '</td>';
-print '<td class="center">' . $langs->trans('DateDebCP') . '</td>';
-print '<td class="center">' . $langs->trans('DateFinCP') . '</td>';
-print '<td class="right">' . $langs->trans('NbUseDaysCPShort') . '</td>';
-print '<td class="center">' . $langs->trans('DateStartInMonth') . '</td>';
-print '<td class="center">' . $langs->trans('DateEndInMonth') . '</td>';
-print '<td class="right">' . $langs->trans('NbUseDaysCPShortInMonth') . '</td>';
-print '<td class="maxwidth300">' . $langs->trans('DescCP') . '</td>';
+print '<td>'.$langs->trans('Ref').'</td>';
+print '<td>'.$langs->trans('Employee').'</td>';
+print '<td>'.$langs->trans('Type').'</td>';
+print '<td class="center">'.$langs->trans('DateDebCP').'</td>';
+print '<td class="center">'.$langs->trans('DateFinCP').'</td>';
+print '<td class="right">'.$langs->trans('NbUseDaysCPShort').'</td>';
+print '<td class="center">'.$langs->trans('DateStartInMonth').'</td>';
+print '<td class="center">'.$langs->trans('DateEndInMonth').'</td>';
+print '<td class="right">'.$langs->trans('NbUseDaysCPShortInMonth').'</td>';
+print '<td class="maxwidth300">'.$langs->trans('DescCP').'</td>';
 print '</tr>';
 
 if ($num == 0)

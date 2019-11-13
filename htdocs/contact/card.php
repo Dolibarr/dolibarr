@@ -120,30 +120,30 @@ if (empty($reshook))
 
             // Creation user
             $nuser = new User($db);
-            $result=$nuser->create_from_contact($object, GETPOST("login"));	// Do not use GETPOST(alpha)
+            $result = $nuser->create_from_contact($object, GETPOST("login")); // Do not use GETPOST(alpha)
 
             if ($result > 0)
             {
-                $result2=$nuser->setPassword($user, GETPOST("password"), 0, 0, 1);	// Do not use GETPOST(alpha)
+                $result2 = $nuser->setPassword($user, GETPOST("password"), 0, 0, 1); // Do not use GETPOST(alpha)
                 if ($result2)
                 {
                     $db->commit();
                 }
                 else
                 {
-                    $error=$nuser->error; $errors=$nuser->errors;
+                    $error = $nuser->error; $errors = $nuser->errors;
                     $db->rollback();
                 }
             }
             else
             {
-                $error=$nuser->error; $errors=$nuser->errors;
+                $error = $nuser->error; $errors = $nuser->errors;
                 $db->rollback();
             }
         }
         else
         {
-            $error=$object->error; $errors=$object->errors;
+            $error = $object->error; $errors = $object->errors;
         }
     }
 
@@ -152,7 +152,7 @@ if (empty($reshook))
 	if ($action == 'disable')
 	{
 		$object->fetch($id);
-		if ($object->setstatus(0)<0)
+		if ($object->setstatus(0) < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -167,7 +167,7 @@ if (empty($reshook))
 	if ($action == 'enable')
 	{
 		$object->fetch($id);
-		if ($object->setstatus(1)<0)
+		if ($object->setstatus(1) < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -232,18 +232,18 @@ if (empty($reshook))
 			$action = 'create';
 		}
 
-        if (! GETPOST("lastname"))
+        if (!GETPOST("lastname"))
         {
-            $error++; $errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
+            $error++; $errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
             $action = 'create';
         }
 
-        if (! $error)
+        if (!$error)
         {
-            $id =  $object->create($user);
+            $id = $object->create($user);
             if ($id <= 0)
             {
-                $error++; $errors=array_merge($errors, ($object->error?array($object->error):$object->errors));
+                $error++; $errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
                 $action = 'create';
 			} else {
 				// Categories association
@@ -268,11 +268,11 @@ if (empty($reshook))
 			}
         }
 
-        if (! $error && $id > 0)
+        if (!$error && $id > 0)
         {
             $db->commit();
-            if (! empty($backtopage)) $url=$backtopage;
-            else $url='card.php?id='.$id;
+            if (!empty($backtopage)) $url = $backtopage;
+            else $url = 'card.php?id='.$id;
             header("Location: ".$url);
             exit;
         }
@@ -310,17 +310,17 @@ if (empty($reshook))
         }
     }
 
-    if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
+    if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact->creer)
     {
         if (empty($_POST["lastname"]))
         {
-            $error++; $errors=array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+            $error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
             $action = 'edit';
         }
 
-		if (! $error)
+		if (!$error)
 		{
-			$contactid=GETPOST("contactid", 'int');
+			$contactid = GETPOST("contactid", 'int');
 			$object->fetch($contactid);
 
 			// Photo save
@@ -328,8 +328,8 @@ if (empty($reshook))
             $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
             if (GETPOST('deletephoto') && $object->photo)
             {
-                $fileimg=$dir.'/'.$object->photo;
-                $dirthumbs=$dir.'/thumbs';
+                $fileimg = $dir.'/'.$object->photo;
+                $dirthumbs = $dir.'/thumbs';
                 dol_delete_file($fileimg);
                 dol_delete_dir_recursive($dirthumbs);
                 $object->photo = '';
@@ -342,10 +342,10 @@ if (empty($reshook))
 
                     if (@is_dir($dir))
                     {
-                        $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                        $newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
                         $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-                        if (! $result > 0)
+                        if (!$result > 0)
                         {
                             $errors[] = "ErrorFailedToSaveFile";
                         }
@@ -365,7 +365,7 @@ if (empty($reshook))
             }
             else
             {
-                switch($_FILES['photo']['error'])
+                switch ($_FILES['photo']['error'])
                 {
                     case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
                     case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
@@ -471,9 +471,9 @@ if (empty($reshook))
 			}
         }
 
-        if (! $error && empty($errors))
+        if (!$error && empty($errors))
         {
-       		if (! empty($backtopage))
+       		if (!empty($backtopage))
        		{
        			header("Location: ".$backtopage);
        			exit;
@@ -482,9 +482,9 @@ if (empty($reshook))
     }
 
     // Actions to send emails
-	$trigger_name='CONTACT_SENTBYMAIL';
-	$paramname='id';
-	$mode='emailfromcontact';
+	$trigger_name = 'CONTACT_SENTBYMAIL';
+	$paramname = 'id';
+	$mode = 'emailfromcontact';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
@@ -494,15 +494,15 @@ if (empty($reshook))
  */
 
 
-$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title = $object->lastname;
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 if ($socid > 0)
 {
@@ -518,11 +518,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     if (empty($object->error) && $id)
  	{
  		$object = new Contact($db);
- 		$result=$object->fetch($id);
+ 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error('', $object->error);
  	}
-   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
+   	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
+    $objcanvas->display_canvas($action); // Show template
 }
 else
 {
@@ -612,7 +612,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			if (! empty($objsoc)) {
+			if (!empty($objsoc)) {
 				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
             }
 
@@ -622,9 +622,9 @@ else
 
             // Name
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-            print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha')?GETPOST("lastname", 'alpha'):$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
             print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-            print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha')?GETPOST("firstname", 'alpha'):$object->firstname).'"></td></tr>';
+            print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -673,23 +673,23 @@ else
             print '</tr>';
 
             // Zip / Town
-            if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
-            if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
+            if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip; // Predefined with third party
+            if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town; // Predefined with third party
             print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((GETPOST("zipcode", 'alpha')?GETPOST("zipcode", 'alpha'):$object->zip), 'zipcode', array('town','selectcountry_id','state_id'), 6).'&nbsp;';
-            print $formcompany->select_ziptown((GETPOST("town", 'alpha')?GETPOST("town", 'alpha'):$object->town), 'town', array('zipcode','selectcountry_id','state_id'));
+            print $formcompany->select_ziptown((GETPOST("zipcode", 'alpha') ?GETPOST("zipcode", 'alpha') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
+            print $formcompany->select_ziptown((GETPOST("town", 'alpha') ?GETPOST("town", 'alpha') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $form->select_country((GETPOST("country_id", 'alpha')?GETPOST("country_id", 'alpha'):$object->country_id), 'country_id');
+            print $form->select_country((GETPOST("country_id", 'alpha') ?GETPOST("country_id", 'alpha') : $object->country_id), 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';
 
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
                 }
@@ -700,7 +700,7 @@ else
 
                 if ($object->country_id)
                 {
-                    print $formcompany->select_state(GETPOST("state_id", 'alpha')?GETPOST("state_id", 'alpha'):$object->state_id, $object->country_code, 'state_id');
+                    print $formcompany->select_state(GETPOST("state_id", 'alpha') ?GETPOST("state_id", 'alpha') : $object->state_id, $object->country_code, 'state_id');
                 }
                 else
                 {
@@ -843,7 +843,7 @@ else
 
             // Date To Birth
             print '<tr><td width="20%"><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td width="30%">';
-            $form=new Form($db);
+            $form = new Form($db);
             if ($object->birthday)
             {
                 print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
@@ -871,7 +871,7 @@ else
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-            if (! empty($backtopage))
+            if (!empty($backtopage))
             {
                 print ' &nbsp; &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -879,13 +879,13 @@ else
             else
             {
                 print ' &nbsp; &nbsp; ';
-                print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+                print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
             }
             print '</div>';
 
             print "</form>";
         }
-        elseif ($action == 'edit' && ! empty($id))
+        elseif ($action == 'edit' && !empty($id))
         {
             /*
              * Fiche en mode edition
@@ -894,9 +894,9 @@ else
             // We set country_id, and country_code label of the chosen country
             if (isset($_POST["country_id"]) || $object->country_id)
             {
-	            $tmparray=getCountry($object->country_id, 'all');
-	            $object->country_code =	$tmparray['code'];
-	            $object->country      =	$tmparray['label'];
+	            $tmparray = getCountry($object->country_id, 'all');
+	            $object->country_code = $tmparray['code'];
+	            $object->country      = $tmparray['label'];
             }
 
 			$objsoc = new Societe($db);
@@ -951,12 +951,12 @@ else
 
             // Lastname
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-            print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["lastname"])?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["lastname"]) ?GETPOST("lastname") : $object->lastname).'" autofocus="autofocus"></td>';
             print '</tr>';
             print '<tr>';
             // Firstname
             print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-	        print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["firstname"])?GETPOST("firstname"):$object->firstname).'"></td>';
+	        print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["firstname"]) ?GETPOST("firstname") : $object->firstname).'"></td>';
 	        print '</tr>';
 
             // Company
@@ -989,20 +989,20 @@ else
 
             // Zip / Town
             print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((isset($_POST["zipcode"])?GETPOST("zipcode"):$object->zip), 'zipcode', array('town','selectcountry_id','state_id'), 6).'&nbsp;';
-            print $formcompany->select_ziptown((isset($_POST["town"])?GETPOST("town"):$object->town), 'town', array('zipcode','selectcountry_id','state_id'));
+            print $formcompany->select_ziptown((isset($_POST["zipcode"]) ?GETPOST("zipcode") : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
+            print $formcompany->select_ziptown((isset($_POST["town"]) ?GETPOST("town") : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-            print $form->select_country(isset($_POST["country_id"])?GETPOST("country_id"):$object->country_id, 'country_id');
+            print $form->select_country(isset($_POST["country_id"]) ?GETPOST("country_id") : $object->country_id, 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';
 
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
@@ -1043,23 +1043,23 @@ else
 
             // Unsubscribe
             print '<tr>';
-            if (! empty($conf->mailing->enabled))
+            if (!empty($conf->mailing->enabled))
             {
             	$noemail = '';
-            	if (empty($noemail) && ! empty($object->email))
+            	if (empty($noemail) && !empty($object->email))
             	{
-            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
             		//print $sql;
-            		$resql=$db->query($sql);
+            		$resql = $db->query($sql);
             		if ($resql)
             		{
-            			$obj=$db->fetch_object($resql);
+            			$obj = $db->fetch_object($resql);
             			$noemail = $obj->nb;
             		}
             	}
 
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email")?GETPOST("no_email", 'alpha'):$noemail), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
             }
             else
 			{
@@ -1141,7 +1141,7 @@ else
 
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
-				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td>';
+				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, null, null, null, 1);
 				$c = new Categorie($db);
@@ -1162,8 +1162,8 @@ else
 	        }
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
-            $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            $parameters = array('colspan' => ' colspan="3"', 'cols'=>3);
+            $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             if (empty($reshook))
             {
@@ -1172,31 +1172,31 @@ else
 
             $object->load_ref_elements();
 
-            if (! empty($conf->commande->enabled))
+            if (!empty($conf->commande->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
-                print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
+                print $object->ref_commande ? $object->ref_commande : $langs->trans("NoContactForAnyOrder");
                 print '</td></tr>';
             }
 
-            if (! empty($conf->propal->enabled))
+            if (!empty($conf->propal->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
-                print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
+                print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
                 print '</td></tr>';
             }
 
-            if (! empty($conf->contrat->enabled))
+            if (!empty($conf->contrat->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
-                print $object->ref_contrat?$object->ref_contrat:$langs->trans("NoContactForAnyContract");
+                print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
                 print '</td></tr>';
             }
 
-            if (! empty($conf->facture->enabled))
+            if (!empty($conf->facture->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
-                print $object->ref_facturation?$object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+                print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
                 print '</td></tr>';
             }
 
@@ -1204,8 +1204,8 @@ else
             print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
             if ($object->user_id)
             {
-                $dolibarr_user=new User($db);
-                $result=$dolibarr_user->fetch($object->user_id);
+                $dolibarr_user = new User($db);
+                $result = $dolibarr_user->fetch($object->user_id);
                 print $dolibarr_user->getLoginUrl(1);
             }
             else print $langs->trans("NoDolibarrAccess");
@@ -1242,7 +1242,7 @@ else
         }
     }
 
-    if (! empty($id) && $action != 'edit' && $action != 'create')
+    if (!empty($id) && $action != 'edit' && $action != 'create')
     {
         $objsoc = new Societe($db);
 
@@ -1257,15 +1257,15 @@ else
         {
             // Full firstname and lastname separated with a dot : firstname.lastname
             include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            $login=dol_buildlogin($object->lastname, $object->firstname);
+            $login = dol_buildlogin($object->lastname, $object->firstname);
 
-            $generated_password='';
-            if (! $ldap_sid) // TODO ldap_sid ?
+            $generated_password = '';
+            if (!$ldap_sid) // TODO ldap_sid ?
             {
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-                $generated_password=getRandomPassword(false);
+                $generated_password = getRandomPassword(false);
             }
-            $password=$generated_password;
+            $password = $generated_password;
 
             // Create a form array
             $formquestion = array(
@@ -1273,27 +1273,27 @@ else
                 array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
                 //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
-            $text=$langs->trans("ConfirmCreateContact").'<br>';
-            if (! empty($conf->societe->enabled))
+            $text = $langs->trans("ConfirmCreateContact").'<br>';
+            if (!empty($conf->societe->enabled))
             {
-                if ($object->socid > 0) $text.=$langs->trans("UserWillBeExternalUser");
-                else $text.=$langs->trans("UserWillBeInternalUser");
+                if ($object->socid > 0) $text .= $langs->trans("UserWillBeExternalUser");
+                else $text .= $langs->trans("UserWillBeInternalUser");
             }
             print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
         }
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $morehtmlref='<div class="refidno">';
+        $morehtmlref = '<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
             $objsoc->fetch($object->socid);
             // Thirdparty
-            $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1, 'contact');
-            else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+            $morehtmlref .= $langs->trans('ThirdParty').' : ';
+            if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1, 'contact');
+            else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
         }
-        $morehtmlref.='</div>';
+        $morehtmlref .= '</div>';
 
         dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
@@ -1313,7 +1313,7 @@ else
         print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
         // Email
-        if (! empty($conf->mailing->enabled))
+        if (!empty($conf->mailing->enabled))
         {
             $langs->load("mails");
             print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
@@ -1325,14 +1325,14 @@ else
         {
         	//print 'eee'.$object->email;
         	$noemail = $object->no_email;
-        	if (empty($noemail) && ! empty($object->email))
+        	if (empty($noemail) && !empty($object->email))
         	{
-        		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+        		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
         		//print $sql;
-        		$resql=$db->query($sql);
+        		$resql = $db->query($sql);
         		if ($resql)
         		{
-        			$obj=$db->fetch_object($resql);
+        			$obj = $db->fetch_object($resql);
         			$noemail = $obj->nb;
         		}
         	}
@@ -1352,8 +1352,8 @@ else
         print '<table class="border tableforfield" width="100%">';
 
 		// Categories
-		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
-			print '<tr><td class="titlefield">' . $langs->trans("Categories") . '</td>';
+		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 			print '<td colspan="3">';
 			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
@@ -1368,49 +1368,49 @@ else
 
     	// Other attributes
     	$cols = 3;
-    	$parameters=array('socid'=>$socid);
-    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    	$parameters = array('socid'=>$socid);
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
         $object->load_ref_elements();
 
-        if (! empty($conf->propal->enabled))
+        if (!empty($conf->propal->enabled))
         {
             print '<tr><td class="titlefield">'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
-            print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
+            print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
             print '</td></tr>';
         }
 
-        if (! empty($conf->commande->enabled) || ! empty($conf->expedition->enabled))
+        if (!empty($conf->commande->enabled) || !empty($conf->expedition->enabled))
         {
             print '<tr><td>';
-            if (! empty($conf->expedition->enabled)) { print $langs->trans("ContactForOrdersOrShipments"); }
+            if (!empty($conf->expedition->enabled)) { print $langs->trans("ContactForOrdersOrShipments"); }
             else print $langs->trans("ContactForOrders");
             print '</td><td colspan="3">';
-            $none=$langs->trans("NoContactForAnyOrder");
-            if  (! empty($conf->expedition->enabled)) { $none=$langs->trans("NoContactForAnyOrderOrShipments"); }
-            print $object->ref_commande?$object->ref_commande:$none;
+            $none = $langs->trans("NoContactForAnyOrder");
+            if (!empty($conf->expedition->enabled)) { $none = $langs->trans("NoContactForAnyOrderOrShipments"); }
+            print $object->ref_commande ? $object->ref_commande : $none;
             print '</td></tr>';
         }
 
-        if (! empty($conf->contrat->enabled))
+        if (!empty($conf->contrat->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
-            print $object->ref_contrat?$object->ref_contrat:$langs->trans("NoContactForAnyContract");
+            print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
             print '</td></tr>';
         }
 
-        if (! empty($conf->facture->enabled))
+        if (!empty($conf->facture->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
-            print $object->ref_facturation?$object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+            print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
             print '</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
         if ($object->user_id)
         {
-            $dolibarr_user=new User($db);
-            $result=$dolibarr_user->fetch($object->user_id);
+            $dolibarr_user = new User($db);
+            $result = $dolibarr_user->fetch($object->user_id);
             print $dolibarr_user->getLoginUrl(1);
         }
         else print $langs->trans("NoDolibarrAccess");
@@ -1434,11 +1434,11 @@ else
         // Barre d'actions
         print '<div class="tabsAction">';
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && $action!='presend')
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && $action != 'presend')
 		{
-			if (! empty($object->email))
+			if (!empty($object->email))
 			{
 				$langs->load("mails");
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
@@ -1454,7 +1454,7 @@ else
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
 
-            if (! $object->user_id && $user->rights->user->user->creer)
+            if (!$object->user_id && $user->rights->user->user->creer)
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
             }
@@ -1473,15 +1473,15 @@ else
 		    // Delete
 		    if ($user->rights->societe->contact->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete'.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
             }
         }
 
         print "</div>";
 
 	    // Presend form
-	    $modelmail='contact';
-	    $defaulttopic='Information';
+	    $modelmail = 'contact';
+	    $defaulttopic = 'Information';
 	    $diroutput = $conf->contact->dir_output;
 	    $trackid = 'con'.$object->id;
 

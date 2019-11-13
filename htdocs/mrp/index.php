@@ -36,10 +36,10 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('mrpindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","mrp"));
+$langs->loadLangs(array("companies", "mrp"));
 
 // Security check
-$result=restrictedArea($user, 'bom|mrp');
+$result = restrictedArea($user, 'bom|mrp');
 
 
 /*
