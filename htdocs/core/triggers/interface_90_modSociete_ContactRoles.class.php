@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php
+ *	\file       htdocs/core/triggers/interface_90_modSociete_ContactRoles.class.php
  *  \ingroup    agenda
- *  \brief      Trigger file for agenda module
+ *  \brief      Trigger file for company - contactroles
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceContactRoles extends DolibarrTriggers
 {
 	public $family = 'agenda';
-	public $description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
+	public $description = "Triggers of this module auto link contact to company.";
 
 	/**
 	 * Version of the trigger
@@ -73,7 +73,6 @@ class InterfaceContactRoles extends DolibarrTriggers
 			$socid=(property_exists($object, 'socid')?$object->socid:$object->fk_soc);
 
 			if (! empty($socid) && $socid > 0) {
-				global $db, $langs;
 				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactdefault = new Contact($this->db);
 				$contactdefault->socid=$socid;
@@ -83,7 +82,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 				if ($object->id > 0)
 				{
 					$class = get_class($object);
-					$cloneFrom = new $class($db);
+					$cloneFrom = new $class($this->db);
 					$r = $cloneFrom->fetch($object->id);
 
 					if (!empty($cloneFrom->id))	$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
