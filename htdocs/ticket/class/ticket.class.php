@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ class Ticket extends CommonObject
     public $progress;
 
     /**
-     * @var int Duration for ticket
+     * @var string Duration for ticket
      */
     public $timing;
 
@@ -250,11 +251,11 @@ class Ticket extends CommonObject
         }
 
         if (isset($this->fk_soc)) {
-            $this->fk_soc = trim($this->fk_soc);
+            $this->fk_soc = (int) $this->fk_soc;
         }
 
         if (isset($this->fk_project)) {
-            $this->fk_project = trim($this->fk_project);
+            $this->fk_project = (int) $this->fk_project;
         }
 
         if (isset($this->origin_email)) {
@@ -262,11 +263,11 @@ class Ticket extends CommonObject
         }
 
         if (isset($this->fk_user_create)) {
-            $this->fk_user_create = trim($this->fk_user_create);
+            $this->fk_user_create = (int) $this->fk_user_create;
         }
 
         if (isset($this->fk_user_assign)) {
-            $this->fk_user_assign = trim($this->fk_user_assign);
+            $this->fk_user_assign = (int) $this->fk_user_assign;
         }
 
         if (isset($this->subject)) {
@@ -278,7 +279,7 @@ class Ticket extends CommonObject
         }
 
         if (isset($this->fk_statut)) {
-            $this->fk_statut = trim($this->fk_statut);
+            $this->fk_statut = (int) $this->fk_statut;
         }
 
         if (isset($this->resolution)) {
@@ -746,11 +747,11 @@ class Ticket extends CommonObject
         }
 
         if (isset($this->fk_soc)) {
-            $this->fk_soc = trim($this->fk_soc);
+            $this->fk_soc = (int) $this->fk_soc;
         }
 
         if (isset($this->fk_project)) {
-            $this->fk_project = trim($this->fk_project);
+            $this->fk_project = (int) $this->fk_project;
         }
 
         if (isset($this->origin_email)) {
@@ -758,11 +759,11 @@ class Ticket extends CommonObject
         }
 
         if (isset($this->fk_user_create)) {
-            $this->fk_user_create = trim($this->fk_user_create);
+            $this->fk_user_create = (int) $this->fk_user_create;
         }
 
         if (isset($this->fk_user_assign)) {
-            $this->fk_user_assign = trim($this->fk_user_assign);
+            $this->fk_user_assign = (int) $this->fk_user_assign;
         }
 
         if (isset($this->subject)) {
@@ -774,7 +775,7 @@ class Ticket extends CommonObject
         }
 
         if (isset($this->fk_statut)) {
-            $this->fk_statut = trim($this->fk_statut);
+            $this->fk_statut = (int) $this->fk_statut;
         }
 
         if (isset($this->resolution)) {
@@ -1002,12 +1003,12 @@ class Ticket extends CommonObject
         $this->ref = 'TI0501-001';
         $this->track_id = 'XXXXaaaa';
         $this->origin_email = 'email@email.com';
-        $this->fk_project = '1';
-        $this->fk_user_create = '1';
-        $this->fk_user_assign = '1';
+        $this->fk_project = 1;
+        $this->fk_user_create = 1;
+        $this->fk_user_assign = 1;
         $this->subject = 'Subject of ticket';
         $this->message = 'Message of ticket';
-        $this->fk_statut = '0';
+        $this->fk_statut = 0;
         $this->resolution = '1';
         $this->progress = '10';
         $this->timing = '30';
