@@ -380,7 +380,7 @@ if (! empty($user->rights->produit->lire) || ! empty($user->rights->service->lir
     print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
     print '<br>';
     print '<div class="showforproductselector">';
-    $form->select_produits(GETPOST('productid'), 'productid', '');
+    $form->select_produits(GETPOST('productid'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
     print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
     print '</div>';
 }
