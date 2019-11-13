@@ -588,7 +588,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be inc
 
 // Actions to build doc
 $upload_dir = $conf->ticket->dir_output;
-$permissioncreate = $user->rights->ticket->write;
+$permissiontoadd = $user->rights->ticket->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 // Actions to send emails
@@ -689,7 +689,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
                 /*
                  *   Projet synthese pour rappel
                  */
-                print '<table class="border" width="100%">';
+                print '<table class="border centpercent">';
 
                 $linkback = '<a href="' . DOL_URL_ROOT . '/projet/list.php">' . $langs->trans("BackToList") . '</a>';
 

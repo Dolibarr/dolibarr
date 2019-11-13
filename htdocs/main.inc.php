@@ -553,7 +553,7 @@ if (! defined('NOLOGIN'))
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		if ($test && $goontestloop)
+		if ($test && $goontestloop && GETPOST('action', 'aZ09') == 'login')
 		{
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login)
@@ -612,7 +612,7 @@ if (! defined('NOLOGIN'))
 		if (! $login || (in_array('ldap', $authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
 		{
 			// No data to test login, so we show the login page
-			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." showing the login form and exit");
+			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09').", showing the login form and exit");
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) return 'ERROR_NOT_LOGGED';
 			else dol_loginfunction($langs, $conf, (! empty($mysoc)?$mysoc:''));
 			exit;
@@ -2428,7 +2428,7 @@ if (! function_exists("llxFooter"))
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
-		global $conf, $db, $langs, $user, $object;
+		global $conf, $db, $langs, $user, $mysoc, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
 
@@ -2567,15 +2567,25 @@ if (! function_exists("llxFooter"))
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
 					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 					?>
 		    			<script>
 		    			jQuery(document).ready(function (tmp) {
 		    				$.ajax({
 		    					  method: "POST",
-		    					  url: "https://ping.dolibarr.org/",
+		    					  url: "<?php echo $url_for_ping ?>",
 		    					  timeout: 500,     // timeout milliseconds
 		    					  cache: false,
-		    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+		    					  data: {
+			    					  hash_algo: "md5",
+			    					  hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>",
+			    					  action: "dolibarrping",
+			    					  version: "<?php echo (float) DOL_VERSION; ?>",
+			    					  entity: "<?php echo (int) $conf->entity; ?>",
+			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
+			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
+			    					  php_version: "<?php echo phpversion(); ?>"
+			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");
 		        	    				$.ajax({
@@ -2583,17 +2593,17 @@ if (! function_exists("llxFooter"))
 		      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
 		      	    					  timeout: 500,     // timeout milliseconds
 		      	    					  cache: false,
-		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingok" },
+		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingok" },	// to update
 		    					  		});
 		    					  },
-		    					  error: function (data,status,xhr) {   // success callback function
+		    					  error: function (data,status,xhr) {   // error callback function
 		        					    console.log("Ping ko: " + data);
 		        	    				$.ajax({
 		        	    					  method: "GET",
 		        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
 		        	    					  timeout: 500,     // timeout milliseconds
 		        	    					  cache: false,
-		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
+		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingko" },
 		      					  		});
 		    					  }
 		    				});

@@ -123,7 +123,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -146,7 +146,7 @@ $title=$langs->trans("ListOfNotificationsPerUser");
 if (! empty($conf->societe->enabled)) $title=$langs->trans("ListOfNotificationsPerUserOrContact");
 print load_fiche_titre($title, '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Label").'</td>';
 /*print '<td>'.$langs->trans("Code").'</td>';
@@ -192,7 +192,7 @@ print '<br><br>';
 
 print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("Code").'</td>';

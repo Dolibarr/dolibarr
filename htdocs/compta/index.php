@@ -168,7 +168,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$num = $db->num_rows($resql);
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
@@ -255,7 +255,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
@@ -358,7 +358,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$i = 0;
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -480,7 +480,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -570,7 +570,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
         print '<th></th>';
@@ -644,7 +644,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$num = $db->num_rows($resql);
 
             print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
 			print '<th align="center">'.$langs->trans("DateDue").'</th>';
@@ -739,7 +739,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			$i = 0;
 
             print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
 			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -855,7 +855,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$i = 0;
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
 		print '<th class="right">'.$langs->trans("DateDue").'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -989,7 +989,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
 		print '<th class="right">'.$langs->trans("DateDue").'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -1067,7 +1067,7 @@ $resql = 0;
 if ($resql)
 {
     print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
 	$i = 0;

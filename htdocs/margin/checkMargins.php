@@ -120,8 +120,8 @@ if (empty($reshook))
     if ((string) $type == '1') { $objectlabel='Services'; }
     if ((string) $type == '0') { $objectlabel='Products'; }
 
-    $permtoread = $user->rights->produit->lire;
-    $permtodelete = $user->rights->produit->supprimer;
+    $permissiontoread = $user->rights->produit->lire;
+    $permissiontodelete = $user->rights->produit->supprimer;
     $uploaddir = $conf->product->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */
@@ -161,7 +161,7 @@ print '<form method="post" name="sel" action="' . $_SERVER['PHP_SELF'] . '">';
 
 dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';

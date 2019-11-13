@@ -133,7 +133,7 @@ dol_fiche_head($head, 'members', $langs->trans("LDAPSetup"), -1);
 print $langs->trans("LDAPDescMembers").'<br>';
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembers").'</td>';
@@ -162,7 +162,7 @@ print '</tr>';
 
 print '</table>';
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';

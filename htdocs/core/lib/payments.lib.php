@@ -97,22 +97,28 @@ function payment_supplier_prepare_head(Paiement $object)
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
-	global $conf;
+	global $conf, $langs;
 
 	$validpaymentmethod=array();
 
 	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 	{
+		$langs->load("paypal");
 		$validpaymentmethod['paypal']='valid';
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 	{
+		$langs->load("paybox");
 		$validpaymentmethod['paybox']='valid';
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 	{
+		$langs->load("stripe");
 		$validpaymentmethod['stripe']='valid';
 	}
+	// TODO Add trigger
+
+
 	return $validpaymentmethod;
 }
 
@@ -173,6 +179,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else $out.='&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
+		//if ($mode) $out.='&noidempotency=1';
 	}
 	elseif ($type == 'order')
 	{

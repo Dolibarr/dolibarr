@@ -166,7 +166,7 @@ if ($id > 0 || ! empty($ref))
                 $i = 0;
 
                 print '<div class="div-table-responsive">';
-                print '<table class="noborder" width="100%">';
+                print '<table class="noborder centpercent">';
 
                 print '<tr class="liste_titre">';
                 print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);

@@ -99,7 +99,7 @@ if ($result)
 else dol_print_error($db);
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder nohover" width="100%">'."\n";
+print '<table class="noborder nohover centpercent">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2))
 {
@@ -157,7 +157,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover" width="100%">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
@@ -263,7 +263,7 @@ if ($result)
 
         print "\n<!-- last thirdparties modified -->\n";
         print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
         print '<th>&nbsp;</th>';

@@ -53,7 +53,7 @@ function commande_prepare_head(Commande $object)
 	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -67,7 +67,7 @@ function commande_prepare_head(Commande $object)
 		if ($conf->expedition_bon->enabled) $text.=$langs->trans("Shipments");
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
-		if ($nbShipments > 0 || $nbReceiption > 0) $text.= ' <span class="badge">'.($nbShipments?$nbShipments:0);
+		if ($nbShipments > 0 || $nbReceiption > 0) $text.= '<span class="badge marginleftonlyshort">'.($nbShipments?$nbShipments:0);
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text.='/';
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text.= ($nbReceiption?$nbReceiption:0);
 		if ($nbShipments > 0 || $nbReceiption > 0) $text.= '</span>';
@@ -89,7 +89,7 @@ function commande_prepare_head(Commande $object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -101,7 +101,7 @@ function commande_prepare_head(Commande $object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 

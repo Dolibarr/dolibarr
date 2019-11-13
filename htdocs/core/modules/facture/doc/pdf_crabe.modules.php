@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to manage PDF invoice template Crabe
+ *	Class to generate the customer invoice PDF with template Crabe
  */
 class pdf_crabe extends ModelePDFFactures
 {
@@ -235,7 +235,7 @@ class pdf_crabe extends ModelePDFFactures
     public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
-		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblines;
+		global $user,$langs,$conf,$mysoc,$hookmanager,$nblines;
 
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
@@ -243,7 +243,7 @@ class pdf_crabe extends ModelePDFFactures
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files required by page
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		$nblines = count($object->lines);
@@ -769,7 +769,7 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *  Show payments table
 	 *
-     *  @param	PDF			$pdf           Object PDF
+     *  @param	PDF			$pdf            Object PDF
      *  @param  Object		$object         Object invoice
      *  @param  int			$posy           Position y in PDF
      *  @param  Translate	$outputlangs    Object langs for output
@@ -1116,9 +1116,9 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf           Object PDF
+	 *	@param	PDF			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
@@ -1402,7 +1402,7 @@ class pdf_crabe extends ModelePDFFactures
 		$depositsamount=$object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
 		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
-		if ($object->paye) $resteapayer=0;
+		if (! empty($object->paye)) $resteapayer=0;
 
 		if (($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
 		{

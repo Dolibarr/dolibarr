@@ -193,7 +193,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="4">';

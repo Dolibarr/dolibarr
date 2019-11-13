@@ -97,7 +97,7 @@ if (GETPOST('search_actioncode', 'array'))
 }
 else
 {
-    $actioncode=GETPOST("search_actioncode", "alpha", 3)?GETPOST("search_actioncode", "alpha", 3):(GETPOST("search_actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode=GETPOST("search_actioncode", "alpha", 3)?GETPOST("search_actioncode", "alpha", 3):(GETPOST("search_actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
@@ -1476,16 +1476,23 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     //var_dump($event->userassigned);
                     //var_dump($event->transparency);
-                    print '<table class="centpercent cal_event'.(empty($event->transparency)?' cal_event_notbusy':' cal_event_busy').'" style="'.$h;
+                    print '<table class="centpercent cal_event';
+                    print (empty($event->transparency)?' cal_event_notbusy':' cal_event_busy');
+                    //if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
+                    print '" style="'.$h;
+                    $colortouse = $color;
+                    // If colortouse is similar than background, we force to change it.
                     if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY))
                     {
-                    	print 'border: 2px solid #'.$color.';';
+                    	print 'border: 2px solid #'.$colortouse.';';
                     }
                     else
                     {
-                    	print 'background: #'.$color.';';
-                    	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
+                    	print 'background: #'.$colortouse.';';
+                    	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($colortouse, -3).'), to(#'.dol_color_minus($colortouse, -1).'));';
                     }
+                   	//print 'background: #'.$colortouse.';';
+                   	//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     //print ' -moz-border-radius:4px;"';
@@ -1653,9 +1660,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 {
                 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
-                    print ($filtert?'&filtert='.$filtert:'');
-                    print ($usergroup?'&usergroup='.$usergroup:'');
-                    print ($actioncode!=''?'&actioncode='.$actioncode:'');
+                    print ($filtert?'&search_filtert='.$filtert:'');
+                    print ($usergroup?'&search_usergroup='.$usergroup:'');
+                    print ($actioncode!=''?'&search_actioncode='.$actioncode:'');
                     print '">'.img_picto("all", "1downarrow_selected.png").' ...';
                     print ' +'.(count($eventarray[$daykey])-$maxprint);
                     print '</a>';
@@ -1719,7 +1726,6 @@ function dol_color_minus($color, $minus, $minusunit = 16)
 	return $newcolor;
 }
 
-
 /**
  * Sort events by date
  *
@@ -1729,24 +1735,52 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  */
 function sort_events_by_date($a, $b)
 {
-    if($a->datep != $b->datep)
+    // datep => Event start time
+    // datef => Event end time
+
+    // Events have different start time
+    if ($a->datep !== $b->datep)
     {
         return $a->datep - $b->datep;
     }
 
-    // If both events have the same start time, longest first
-
-    if(! is_numeric($b->datef))
+    // Events have same start time and no end time
+    if ((! is_numeric($b->datef)) || (! is_numeric($a->datef)))
     {
-        // when event B have no end timestamp, event B should sort be before event A (All day events on top)
-        return 1;
+        return sort_events_by_percentage($a, $b);
     }
 
-    if(! is_numeric($a->datef))
+    // Events have the same start time and same end time
+    if ($b->datef === $a->datef)
     {
-        // when event A have no end timestamp , event A should sort be before event B (All day events on top)
+        return sort_events_by_percentage($a, $b);
+    }
+
+    // Events have the same start time, but have different end time -> longest event first
+    return $b->datef - $a->datef;
+}
+
+/**
+ * Sort events by percentage
+ *
+ * @param   object  $a      Event A
+ * @param   object  $b      Event B
+ * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
+ */
+function sort_events_by_percentage($a, $b)
+{
+    // Sort events with no percentage before each other
+    // (usefull to sort holidays, sick days or similar on the top)
+
+    if ($a->percentage < 0)
+    {
         return -1;
     }
 
-    return $b->datef - $a->datef;
+    if ($b->percentage < 0)
+    {
+        return 1;
+    }
+
+    return $b->percentage - $a->percentage;
 }

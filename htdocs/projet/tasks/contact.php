@@ -369,7 +369,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Add a new contact line
 		 */
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		if ($action != 'editline' && $user->rights->projet->creer)
 		{

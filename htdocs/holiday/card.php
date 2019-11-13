@@ -879,7 +879,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->holiday->dir_output;
-	$permissioncreate = $user->rights->holiday->creer;
+	$permissiontoadd = $user->rights->holiday->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	*/
 }
@@ -1007,7 +1007,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
         print '<tbody>';
 
         // User for leave request

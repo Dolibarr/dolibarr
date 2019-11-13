@@ -177,7 +177,7 @@ print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update')
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Price expression selector
 print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';

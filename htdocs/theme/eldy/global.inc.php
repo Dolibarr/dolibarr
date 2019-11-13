@@ -58,7 +58,8 @@ input.select2-input {
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
-select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
+input[name=duration_value]
 {
 	margin-right: 4px;
 }
@@ -676,6 +677,12 @@ select.flat.selectlimit {
 }
 .divintdwithtwolinesmax {
     width: 75px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+.twolinesmax {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -2068,7 +2075,7 @@ div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	line-height: <?php echo $disableimages?'25':'50'; ?>px;
+	line-height: <?php echo $disableimages?'25':'48'; ?>px;
 	height: <?php echo $disableimages?'25':'50'; ?>px;
 }
 .atoplogin, .atoplogin:hover {
@@ -2113,9 +2120,9 @@ img.login, img.printer, img.entity {
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
-	border-radius: 0.75em;
-	width: 1.5em;
-    height: 1.5em;
+	border-radius: 0.725em;
+	width: 1.45em;
+    height: 1.45em;
     background-size: contain;
     vertical-align: middle;
 }
@@ -3907,7 +3914,7 @@ tr.visible {
 .bordertransp {
     background-color: transparent;
     background-image: none;
-    border: 1px solid #aaa;
+    border: none;
 	font-weight: normal;
 }
 .websitebar {
@@ -4807,7 +4814,7 @@ div.dataTables_length select {
 }
 .select2-dropdown {
 	border: 1px solid #ccc;
-	box-shadow: 5px 5px 15px #ddd;
+	box-shadow: 1px 2px 10px #ddd;
 }
 .select2-dropdown-open {
 	background-color: #fff;

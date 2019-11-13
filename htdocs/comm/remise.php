@@ -229,7 +229,7 @@ if ($socid > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
@@ -288,7 +288,7 @@ if ($socid > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';

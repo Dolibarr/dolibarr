@@ -426,8 +426,14 @@ abstract class CommonObject
      */
 	public $date_creation;
 
-
+	/**
+	 * @var integer|string $date_validation;
+	 */
 	public $date_validation;		// Date validation
+
+	/**
+	 * @var integer|string $date_modification;
+	 */
 	public $date_modification;		// Date last change (tms field)
 
 	public $next_prev_filter;
@@ -692,16 +698,23 @@ abstract class CommonObject
 		$out.='<div style="clear: both;">';
 		if (! empty($conf->socialnetworks->enabled))
 		{
-			if ($this->skype) $out.=dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-			$outdone++;
-			if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-			$outdone++;
-			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-			$outdone++;
-			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-			$outdone++;
-			if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-			$outdone++;
+			if (is_array($this->socialnetworks) && count($this->socialnetworks)>0) {
+				foreach ($this->socialnetworks as $key => $value) {
+					$out.=dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					$outdone++;
+				}
+			} else {
+				if ($this->skype) $out.=dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
+				$outdone++;
+				if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
+				$outdone++;
+				if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
+				$outdone++;
+				if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
+				$outdone++;
+				if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+				$outdone++;
+			}
 		}
 		$out.='</div>';
 
@@ -4005,7 +4018,7 @@ abstract class CommonObject
 	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$user,$langs,$object,$hookmanager,$extrafields;
-		global $form,$bcnd,$var;
+		global $form;
 
 		// Line extrafield
 		if (! is_object($extrafields))
@@ -4103,7 +4116,6 @@ abstract class CommonObject
 			}
 		}
 
-		$var = true;
 		$i	 = 0;
 
 		print "<tbody>\n";
@@ -4117,18 +4129,18 @@ abstract class CommonObject
 			{
 				if (empty($line->fk_parent_line))
 				{
-					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'table_element_line'=>$line->table_element);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
 					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 				else
 				{
-					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			if (empty($reshook))
 			{
-				$this->printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+				$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 			}
 
 			$i++;
@@ -4140,23 +4152,23 @@ abstract class CommonObject
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
-	 *	@param	string      $action				GET/POST action
-	 *	@param  CommonObjectLine $line		       	Selected object line to output
-	 *	@param  string	    $var               	Is it a an odd line (true)
-	 *	@param  int		    $num               	Number of line (0)
-	 *	@param  int		    $i					I
-	 *	@param  int		    $dateSelector      	1=Show also date range input fields
-	 *	@param  string	    $seller            	Object of seller third party
-	 *	@param  string	    $buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	Object line selected
-	 *  @param  Extrafields	$extrafields		Object of extrafields
-	 *  @param	string		$defaulttpldir		Directory where to find the template
+	 *	@param	string      		$action				GET/POST action
+	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  int		    		$num               	Number of line (0)
+	 *	@param  int		    		$i					I
+	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
+	 *	@param  string	    		$seller            	Object of seller third party
+	 *	@param  string	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	Object line selected
+	 *  @param  Extrafields			$extrafields		Object of extrafields
+	 *  @param	string				$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form;
 		global $object_rights, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
@@ -4306,7 +4318,6 @@ abstract class CommonObject
 		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
         print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
         print '</tr>';
-		$var = true;
 		$i	 = 0;
 
 		if (! empty($this->lines))
@@ -4317,14 +4328,14 @@ abstract class CommonObject
 				{
 					if (empty($line->fk_parent_line))
 					{
-						$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+						$parameters=array('line'=>$line, 'i'=>$i);
 						$action='';
 						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 					}
 				}
 				else
 				{
-					$this->printOriginLine($line, $var, $restrictlist, '/core/tpl', $selectedLines);
+					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
 				$i++;
@@ -4953,6 +4964,11 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs,$conf;
+
+		if (! is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
+			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+			$langs = new Translate('', $conf);
+		}
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		$interface=new Interfaces($this->db);
@@ -7137,7 +7153,7 @@ abstract class CommonObject
 	 */
 	protected function isArray($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['type']) && $info['type']=='array') return true;
 			else return false;
@@ -7153,7 +7169,7 @@ abstract class CommonObject
 	 */
 	public function isDate($info)
 	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
+		if (isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
 		return false;
 	}
 
@@ -7167,7 +7183,7 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']) ) ) return true;
+			if (isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;
@@ -7181,7 +7197,7 @@ abstract class CommonObject
 	 */
 	public function isFloat($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
@@ -7197,7 +7213,7 @@ abstract class CommonObject
 	 */
 	public function isText($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['type']) && $info['type']=='text') return true;
 			else return false;
@@ -7213,7 +7229,7 @@ abstract class CommonObject
 	 */
 	protected function canBeNull($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['notnull']) && $info['notnull']!='1') return true;
 			else return false;
@@ -7229,7 +7245,7 @@ abstract class CommonObject
 	 */
 	protected function isForcedToNullIfZero($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['notnull']) && $info['notnull']=='-1') return true;
 			else return false;
@@ -7245,7 +7261,7 @@ abstract class CommonObject
 	 */
 	protected function isIndex($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['index']) && $info['index']==true) return true;
 			else return false;
@@ -7253,9 +7269,11 @@ abstract class CommonObject
 		return false;
 	}
 
+
 	/**
-	 * Function to prepare the values to insert.
+	 * Function to prepare a part of the query for insert.
 	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
+	 * $this->${field} should be a clean value. The page can run
 	 *
 	 * @return array
 	 */
@@ -7294,13 +7312,13 @@ abstract class CommonObject
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
 				else
 				{
-					$queryarray[$field] = (int) price2num($this->{$field});
+					$queryarray[$field] = (int) $this->{$field};
 					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
 				}
 			}
 			elseif($this->isFloat($info))
 			{
-				$queryarray[$field] = (double) price2num($this->{$field});
+				$queryarray[$field] = (double) $this->{$field};
 				if (empty($queryarray[$field])) $queryarray[$field]=0;
 			}
 			else
@@ -7425,7 +7443,7 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
 
-		$keys=array();
+		$keys = array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
@@ -7656,8 +7674,9 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_modif', $fieldvalues) && ! ($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 
-		$keys=array();
+		$keys = array();
 		$values = array();
+		$tmp = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
@@ -8027,7 +8046,8 @@ abstract class CommonObject
 
 		if (! $this->db->query($sql))
 		{
-			$this->db->rollback();die($sql);
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 

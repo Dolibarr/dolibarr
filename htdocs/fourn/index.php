@@ -70,7 +70,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td class="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
 
@@ -119,9 +119,9 @@ if (! empty($conf->fournisseur->enabled))
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 
 			$i = 0;
 			while ($i < $num)
@@ -174,9 +174,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftBills").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
 
@@ -246,7 +246,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers", min($max, $num))."</td>\n";
 	print '<td class="right">'.$langs->trans("DateModification")."</td>\n";
@@ -281,7 +281,7 @@ if (count($companystatic->SupplierCategories))
 {
 	print '<br>';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre"><td colspan="2">';
 	print $langs->trans("Category");
 	print "</td></tr>\n";

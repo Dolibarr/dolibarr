@@ -343,7 +343,7 @@ if ($action == 'create')
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
@@ -449,7 +449,7 @@ if ($rowid > 0)
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr>';
 		print '<td class="nowrap">';
@@ -553,7 +553,7 @@ if ($rowid > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("AssetsType"), -1, 'setup');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
@@ -614,7 +614,7 @@ if ($rowid > 0)
 		// Extra field
 		if (empty($reshook))
 		{
-			print '<br><br><table class="border" width="100%">';
+			print '<br><br><table class="border centpercent">';
 			foreach($extrafields->attributes[$object->element]['label'] as $key=>$label)
 			{
 				if (isset($_POST["options_" . $key])) {

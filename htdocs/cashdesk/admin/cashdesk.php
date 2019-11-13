@@ -97,7 +97,7 @@ print '<input type="hidden" name="action" value="set">';
 
 if (! empty($conf->service->enabled))
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
@@ -114,7 +114,7 @@ if (! empty($conf->service->enabled))
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Terminal").' 0</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";

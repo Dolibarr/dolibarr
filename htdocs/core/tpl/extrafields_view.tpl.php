@@ -171,7 +171,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
-				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id, $object->table_element);
 
 				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 

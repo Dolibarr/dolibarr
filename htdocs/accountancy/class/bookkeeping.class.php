@@ -1981,6 +1981,13 @@ class BookKeepingLine
      */
 	public $date_creation;
 
+	/**
+	 * @var integer|string $date_modification;
+	 */
     public $date_modification;
+
+    /**
+     * @var integer|string $date_export;
+     */
     public $date_export;
 }

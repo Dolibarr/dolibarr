@@ -68,12 +68,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
+    print '<div class="div-table-responsive-no-min">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("Proposal").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 
@@ -118,7 +119,8 @@ if ($resql)
     }
     $db->free($resql);
 
-    print '<table class="noborder nohover" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td></tr>'."\n";
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
@@ -151,7 +153,7 @@ if ($resql)
     //if ($totalinprocess != $total)
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table><br>";
+    print "</table></div><br>";
 }
 else
 {
@@ -181,7 +183,7 @@ if (! empty($conf->propal->enabled))
 		if ($num)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			$langs->load("propal");
 			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
@@ -248,7 +250,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">'.$langs->trans("LastModifiedProposals", $max).'</td></tr>';
 
@@ -332,7 +334,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		if ($num > 0)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -419,7 +421,7 @@ if (! empty($conf->propal->enabled))
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
@@ -492,7 +494,7 @@ if (! empty($conf->propal->enabled))
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
 

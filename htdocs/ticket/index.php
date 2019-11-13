@@ -211,7 +211,7 @@ $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"') . '</th></tr>';
 
 print '<tr><td class="center">';
@@ -261,7 +261,7 @@ print '</table>';
 print '</div>';
 
 // Build graphic number of object
-$data = $stats->getNbByMonth($endyear, $startyear);
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
@@ -309,7 +309,7 @@ if ($result) {
     $transRecordedType = $langs->trans("LatestNewTickets", $max);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="5">' . $transRecordedType . '</th>';
     print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
     print '</tr>';

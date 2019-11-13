@@ -346,7 +346,7 @@ if ($action == 'create')
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -450,7 +450,7 @@ if ($action == 'create')
 
 	print '<br>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Sold
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("InitialBankBalance").'</td>';
@@ -472,7 +472,7 @@ if ($action == 'create')
 
 	if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT)
 	{
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// If bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
@@ -532,7 +532,7 @@ if ($action == 'create')
 		print '<br>';
 	}
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	// Accountancy code
 	$fieldrequired='';
 	if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) $fieldrequired='fieldrequired ';
@@ -833,7 +833,7 @@ else
 
 		//print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -920,8 +920,11 @@ else
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-			foreach($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			if (is_array($cats))
+			{
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
@@ -951,7 +954,7 @@ else
 
 		//print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Accountancy code
 		$tdextra = ' class="titlefieldcreate"';
@@ -986,7 +989,7 @@ else
 
 			//print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// If bank account
 			print '<tr class="liste_titre_add"><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';

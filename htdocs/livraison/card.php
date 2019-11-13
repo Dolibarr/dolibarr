@@ -244,7 +244,7 @@ if ($action == 'update_extras_line')
 
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
-$permissioncreate = $user->rights->expedition->creer;
+$permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -586,7 +586,7 @@ else
 			$num_prod = count($object->lines);
 			$i = 0; $total = 0;
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			if ($num_prod)
 			{

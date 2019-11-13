@@ -12,7 +12,7 @@ BOMsSetup=Setup of module BOM
 ListOfBOMs=List of bills of material - BOM
 ListOfManufacturingOrders=List of Manufacturing Orders
 NewBOM=New bill of material
-ProductBOMHelp=Product to create with this BOM
+ProductBOMHelp=Product to create with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
 BOMsNumberingModules=BOM numbering templates
 BOMsModelModule=BOM document templates
 MOsNumberingModules=MO numbering templates
@@ -49,3 +49,4 @@ DisableStockChangeHelp=When this flag is set, there is no stock change on this p
 BomAndBomLines=Bills Of Material and lines
 BOMLine=Line of BOM
 WarehouseForProduction=Warehouse for production
+CreateMO=Create MO

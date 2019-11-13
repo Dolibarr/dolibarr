@@ -1565,7 +1565,7 @@ class Commande extends CommonOrder
 				if ($result > 0)
 				{
 					$this->db->commit();
-					return $this->line->rowid;
+					return $this->line->id;
 				}
 				else
 				{
@@ -3104,7 +3104,7 @@ class Commande extends CommonOrder
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->rowid=$rowid;
+			$this->line->id=$rowid;
 			$this->line->label=$label;
 			$this->line->desc=$desc;
 			$this->line->qty=$qty;
@@ -4267,11 +4267,11 @@ class OrderLine extends CommonOrderLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
+			$this->rowid = $this->id;
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->rowid;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{

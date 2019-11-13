@@ -378,7 +378,7 @@ class PaymentVarious extends CommonObject
 		$sql.= "'".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", '".$this->db->escape($this->sens)."'";
-		$sql.= ", ".$this->amount;
+		$sql.= ", ".price2num($this->amount);
 		$sql.= ", '".$this->db->escape($this->type_payment)."'";
 		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";

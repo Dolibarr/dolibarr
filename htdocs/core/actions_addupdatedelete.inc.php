@@ -30,6 +30,8 @@
 // $backtopage may be defined
 // $triggermodname may be defined
 
+if (! empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit;	// For backward compatibility
+
 if ($cancel)
 {
 	/*var_dump($cancel);
@@ -53,11 +55,11 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'none');
 		} elseif ($object->fields[$key]['type']=='date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
-			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
-			$value = price2num(GETPOST($key));
+			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
+			$value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
@@ -234,7 +236,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && ! empty($permissiont
 }
 
 // Action validate object
-if ($action == 'confirm_validate' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->validate($user);
 	if ($result >= 0)
@@ -263,7 +265,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissionedit)
 }
 
 // Action close object
-if ($action == 'confirm_close' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->cancel($user);
 	if ($result >= 0)
@@ -292,7 +294,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissionedit)
 }
 
 // Action setdraft object
-if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->setDraft($user);
 	if ($result >= 0)
@@ -306,7 +308,7 @@ if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissionedit)
 }
 
 // Action reopen object
-if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->reopen($user);
 	if ($result >= 0)

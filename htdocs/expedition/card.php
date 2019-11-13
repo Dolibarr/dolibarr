@@ -124,7 +124,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->expedition->dir_output.'/sending';
-	$permissioncreate = $user->rights->expedition->creer;
+	$permissiontoadd = $user->rights->expedition->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Reopen
@@ -1090,7 +1090,7 @@ if ($action == 'create')
 
             print '<br>';
 
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
 
             // Load shipments already done for same order
             $object->loadExpeditions();

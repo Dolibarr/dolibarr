@@ -148,7 +148,7 @@ if ($id > 0 || ! empty($ref))
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Usage
             print '<tr><td class="tdtop">';
@@ -234,7 +234,7 @@ if ($id > 0 || ! empty($ref))
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Description
             print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -306,7 +306,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Nb comments
 		print '<td class="titlefield">'.$langs->trans("NbComments").'</td><td>';

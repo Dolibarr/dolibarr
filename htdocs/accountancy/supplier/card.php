@@ -125,7 +125,7 @@ if (! empty($id)) {
 
 			dol_fiche_head();
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// ref invoice
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';

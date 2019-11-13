@@ -124,13 +124,13 @@ class box_members extends ModeleBoxes
 					}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $memberstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $memberstatic->company,
                         'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
                     );

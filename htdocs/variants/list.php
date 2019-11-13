@@ -110,7 +110,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 		});
 	</script>
 
-	<table class="liste" id="tablelines">
+	<table class="liste nobottom" id="tablelines">
 		<tr class="liste_titre nodrag nodrop">
 			<th class="liste_titre"><?php print $langs->trans('Ref') ?></th>
 			<th class="liste_titre"><?php print $langs->trans('Label') ?></th>
