@@ -390,7 +390,7 @@ if ($action == 'confirm_generateinvoice')
 
 				// Define qty per hour
 				$qtyhour = round($value['timespent'] / 3600, 2);
-				$qtyhourtext = convertSecondToTime($value['timespent']);
+				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 				// If no unit price known
 				if (empty($pu_ht))
