@@ -498,3 +498,17 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
+
+CREATE TABLE llx_categorie_actioncomm
+(
+  fk_categorie integer NOT NULL,
+  fk_actioncomm integer NOT NULL,
+  import_key varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_actioncomm ADD PRIMARY KEY pk_categorie_actioncomm (fk_categorie, fk_actioncomm);
+ALTER TABLE llx_categorie_actioncomm ADD INDEX idx_categorie_actioncomm_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_actioncomm ADD INDEX idx_categorie_actioncomm_fk_actioncomm (fk_actioncomm);
+
+ALTER TABLE llx_categorie_actioncomm ADD CONSTRAINT fk_categorie_actioncomm_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_actioncomm ADD CONSTRAINT fk_categorie_actioncomm_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm (id);
