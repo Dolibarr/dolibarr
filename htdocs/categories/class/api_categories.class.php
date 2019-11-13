@@ -277,7 +277,7 @@ class Categories extends DolibarrApi
      *
      * @url POST {id}/objects/{type}/{object_id}
      */
-    public function link_object_by_id($id, $type, $object_id)
+    public function linkObjectById($id, $type, $object_id)
     {
         if (empty($type) || empty($object_id)) {
             throw new RestException(401);
@@ -338,7 +338,7 @@ class Categories extends DolibarrApi
      *
      * @url POST {id}/objects/{type}/ref/{object_ref}
      */
-    public function link_object_by_ref($id, $type, $object_ref)
+    public function linkObjectByRef($id, $type, $object_ref)
     {
         if (empty($type) || empty($object_ref)) {
             throw new RestException(401);
@@ -399,7 +399,7 @@ class Categories extends DolibarrApi
      *
      * @url DELETE {id}/objects/{type}/{object_id}
      */
-    public function unlink_object_by_id($id, $type, $object_id)
+    public function unlinkObjectById($id, $type, $object_id)
     {
         if (empty($type) || empty($object_id)) {
             throw new RestException(401);
@@ -458,7 +458,7 @@ class Categories extends DolibarrApi
      *
      * @url DELETE {id}/objects/{type}/ref/{object_ref}
      */
-    public function unlink_object_by_ref($id, $type, $object_ref)
+    public function unlinkObjectByRef($id, $type, $object_ref)
     {
         if (empty($type) || empty($object_ref)) {
             throw new RestException(401);
