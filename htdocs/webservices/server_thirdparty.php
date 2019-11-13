@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,7 +20,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -40,7 +40,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -50,7 +50,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrThirdParty',$ns);
+$server->configureWSDL('WebServicesDolibarrThirdParty', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -120,25 +120,30 @@ $thirdparty_fields= array(
     	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
     	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string'));
 
+$elementtype = 'societe';
+
 // Retrieve all extrafields for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	//$value=$object->array_options["options_".$key];
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		//$value=$object->array_options["options_".$key];
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 
-if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
+if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -283,7 +288,7 @@ $server->register(
  * @param	string		$ref_ext	   		external reference
  * @return	array							Array result
  */
-function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
+function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -295,7 +300,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -310,10 +315,9 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->societe->lire)
 		{
 			$thirdparty=new Societe($db);
-			$result=$thirdparty->fetch($id,$ref,$ref_ext);
+			$result=$thirdparty->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
-
 				$thirdparty_result_fields=array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
@@ -326,8 +330,8 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				        'customer_code_accountancy' => $thirdparty->code_compta,
 			            'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
 			            'fk_user_author' => $thirdparty->fk_user_author,
-			    		'date_creation' => dol_print_date($thirdparty->date_creation,'dayhourrfc'),
-			    		'date_modification' => dol_print_date($thirdparty->date_modification,'dayhourrfc'),
+			    		'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
+			    		'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
 			            'address' => $thirdparty->address,
 				        'zip' => $thirdparty->zip,
 				        'town' => $thirdparty->town,
@@ -352,16 +356,21 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 						'note_private' => $thirdparty->note_private,
 						'note_public' => $thirdparty->note_public);
 
+				$elementtype = 'societe';
+
 				// Retrieve all extrafields for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
-				$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+				$extrafields->fetch_name_optionals_label($elementtype, true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
-				foreach($extrafields->attribute_label as $key=>$label)
+				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					$thirdparty_result_fields=array_merge($thirdparty_result_fields,array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+					foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					{
+						$thirdparty_result_fields=array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+					}
 				}
 
 			    // Create
@@ -399,7 +408,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
  * @param	Societe		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
-function createThirdParty($authentication,$thirdparty)
+function createThirdParty($authentication, $thirdparty)
 {
     global $db,$conf,$langs;
 
@@ -413,7 +422,7 @@ function createThirdParty($authentication,$thirdparty)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if (empty($thirdparty['ref']))
     {
@@ -444,7 +453,7 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->town=$thirdparty['town'];
 
         $newobject->country_id=$thirdparty['country_id'];
-        if ($thirdparty['country_code']) $newobject->country_id=getCountry($thirdparty['country_code'],3);
+        if ($thirdparty['country_code']) $newobject->country_id=getCountry($thirdparty['country_code'], 3);
         $newobject->province_id=$thirdparty['province_id'];
         //if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
@@ -468,14 +477,19 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->canvas=$thirdparty['canvas'];
         $newobject->particulier=$thirdparty['individual'];
 
+        $elementtype = 'societe';
+
         // Retrieve all extrafields for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
-        foreach($extrafields->attribute_label as $key=>$label)
+        $extrafields->fetch_name_optionals_label($elementtype, true);
+        if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
         {
-        	$key='options_'.$key;
-        	$newobject->array_options[$key]=$thirdparty[$key];
+        	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	        {
+	        	$key='options_'.$key;
+	        	$newobject->array_options[$key]=$thirdparty[$key];
+	        }
         }
 
         $db->begin();
@@ -525,7 +539,7 @@ function createThirdParty($authentication,$thirdparty)
  * @param	Societe		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
-function updateThirdParty($authentication,$thirdparty)
+function updateThirdParty($authentication, $thirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -539,7 +553,7 @@ function updateThirdParty($authentication,$thirdparty)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($thirdparty['id']))	{
 		$error++; $errorcode='KO'; $errorlabel="Thirdparty id is mandatory.";
@@ -555,7 +569,6 @@ function updateThirdParty($authentication,$thirdparty)
 		$result=$object->fetch($thirdparty['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->ref=$thirdparty['ref'];
@@ -576,7 +589,7 @@ function updateThirdParty($authentication,$thirdparty)
 			$object->town=$thirdparty['town'];
 
 			$object->country_id=$thirdparty['country_id'];
-			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'],3);
+			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'], 3);
 			$object->province_id=$thirdparty['province_id'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
@@ -599,19 +612,24 @@ function updateThirdParty($authentication,$thirdparty)
 
 			$object->canvas=$thirdparty['canvas'];
 
+			$elementtype = 'societe';
+
 			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			$extrafields->fetch_name_optionals_label($elementtype, true);
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$thirdparty[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$object->array_options[$key]=$thirdparty[$key];
+				}
 			}
 
 			$db->begin();
 
-			$result=$object->update($thirdparty['id'],$fuser);
+			$result=$object->update($thirdparty['id'], $fuser);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -655,7 +673,7 @@ function updateThirdParty($authentication,$thirdparty)
  * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
  * @return	array							Array result
  */
-function getListOfThirdParties($authentication,$filterthirdparty)
+function getListOfThirdParties($authentication, $filterthirdparty)
 {
     global $db,$conf,$langs;
 
@@ -671,7 +689,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
 
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 
     if (! $error)
@@ -691,8 +709,10 @@ function getListOfThirdParties($authentication,$filterthirdparty)
         }
         dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 
+        $elementtype = 'societe';
+
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
 
 
         $resql=$db->query($sql);
@@ -705,10 +725,15 @@ function getListOfThirdParties($authentication,$filterthirdparty)
             {
                 $extrafieldsOptions=array();
                 $obj=$db->fetch_object($resql);
-                foreach($extrafields->attribute_label as $key=>$label)
+
+                if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
                 {
-                    $extrafieldsOptions['options_'.$key] = $obj->{$key};
+                	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	                {
+	                    $extrafieldsOptions['options_'.$key] = $obj->{$key};
+	                }
                 }
+
                 $arraythirdparties[]=array('id'=>$obj->socRowid,
                     'ref'=>$obj->ref,
                     'ref_ext'=>$obj->ref_ext,
@@ -720,7 +745,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
                     'fax'=>$obj->fax,
                     'url'=>$obj->url
                 );
-                $arraythirdparties[$i] = array_merge($arraythirdparties[$i],$extrafieldsOptions);
+                $arraythirdparties[$i] = array_merge($arraythirdparties[$i], $extrafieldsOptions);
 
                 $i++;
             }
@@ -760,7 +785,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
  * @param	string		$ref_ext	   		external reference
  * @return	array							Array result
  */
-function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
+function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -772,7 +797,7 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -789,7 +814,7 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer)
 		{
 			$thirdparty=new Societe($db);
-			$result=$thirdparty->fetch($id,$ref,$ref_ext);
+			$result=$thirdparty->fetch($id, $ref, $ref_ext);
 
 			if ($result > 0)
 			{

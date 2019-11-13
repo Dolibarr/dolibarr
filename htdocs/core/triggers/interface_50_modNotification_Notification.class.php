@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -96,7 +96,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 *
 	 * @return      array       Array of events managed by notification module
 	 */
-	function getListOfManagedEvents()
+	public function getListOfManagedEvents()
 	{
 		global $conf;
 
@@ -130,7 +130,7 @@ class InterfaceNotification extends DolibarrTriggers
 					elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) $qualified=0;
 					elseif ($element == 'shipping' && empty($conf->expedition->enabled)) $qualified=0;
 					elseif ($element == 'member' && empty($conf->adherent->enabled)) $qualified=0;
-					elseif (! in_array($element,array('order_supplier','invoice_supplier','withdraw','shipping','member','expensereport')) && empty($conf->$element->enabled)) $qualified=0;
+					elseif (! in_array($element, array('order_supplier','invoice_supplier','withdraw','shipping','member','expensereport')) && empty($conf->$element->enabled)) $qualified=0;
 				}
 
 				if ($qualified)

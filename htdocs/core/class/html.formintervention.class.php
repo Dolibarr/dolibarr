@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -49,7 +49,7 @@ class FormIntervention
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -60,7 +60,7 @@ class FormIntervention
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbre of project if OK, <0 if KO
 	 */
-	function select_interventions($socid=-1, $selected='', $htmlname='interventionid', $maxlength=16, $showempty=1)
+	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1)
 	{
         // phpcs:enable
 		global $db,$user,$conf,$langs;
@@ -99,7 +99,7 @@ class FormIntervention
 					}
 					else
 					{
-						$labeltoshow=dol_trunc($obj->ref,18);
+						$labeltoshow=dol_trunc($obj->ref, 18);
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
 							$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';

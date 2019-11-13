@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
@@ -53,6 +53,6 @@ try {
     // Here we are dealing with errors
     $trace = $e->getTrace();
     if ($trace[0]['args'][0] == 404) die('Bad ID');
-    else if ($trace[0]['args'][0] == 401) die('Bad auth key');
+    elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
     else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
 }

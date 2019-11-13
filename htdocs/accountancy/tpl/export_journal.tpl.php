@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2015-2018  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template

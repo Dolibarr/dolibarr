@@ -46,16 +46,16 @@ DateDeliveryPlanned=Planerat leveransdatum
 RefDeliveryReceipt=Ref leverans kvitto
 StatusReceipt=Status leverans kvitto
 DateReceived=Datum leverans fick
-SendShippingByEMail=Skicka leverans via e-post
+SendShippingByEMail=Send shipment by email
 SendShippingRef=Inlämning av leveransen %s
 ActionsOnShipping=Evenemang på leverans
 LinkToTrackYourPackage=Länk till spåra ditt paket
-ShipmentCreationIsDoneFromOrder=För närvarande är skapandet av en ny leverans sker från ordern kortet.
+ShipmentCreationIsDoneFromOrder=För närvarande skapas nya leveranser från orderkortet.
 ShipmentLine=Transport linje
-ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInCustomersOrdersRunning=Product quantity into open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
-ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase order already received
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Vikt / vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
@@ -69,4 +69,4 @@ SumOfProductWeights=Summan av produktvikter
 
 # warehouse details
 DetailWarehouseNumber= Lagerinformation
-DetailWarehouseFormat= W:%s (Antal : %d)
+DetailWarehouseFormat= W:%s (Qty: %d)

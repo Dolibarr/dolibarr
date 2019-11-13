@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -27,13 +27,15 @@ Permission56003=Delete tickets
 Permission56004=Manage tickets
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 
-TicketDictType=Tickets type
-TicketDictCategory=Tickets categories
-TicketDictSeverity=Tickets severity
+TicketDictType=Ticket - Types
+TicketDictCategory=Ticket - Groupes
+TicketDictSeverity=Ticket - Severities
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Request for assistance
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Other
 
@@ -53,21 +55,22 @@ TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
 OriginEmail=Email source
-Notify_TICKETMESSAGE_SENTBYMAIL=Send ticket answer by email
+Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
 NotRead=Not read
 Read=Read
-Answered=Answered
 Assigned=Assigned
 InProgress=In progress
+NeedMoreInformation=Waiting for information
+Answered=Answered
 Waiting=Waiting
 Closed=Closed
 Deleted=Deleted
 
 # Dict
 Type=Type
-Category=Category
+Category=Analytic code
 Severity=Severity
 
 # Email templates
@@ -80,21 +83,21 @@ TicketSetup=Ticket module setup
 TicketSettings=Settings
 TicketSetupPage=
 TicketPublicAccess=A public interface requiring no identification is available at the following url
-TicketSetupDictionaries=The type of application categories and severity level are configurable from dictionaries
+TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
 TicketEmailNotificationFrom=Notification email from
 TicketEmailNotificationFromHelp=Used into ticket message answer by example
 TicketEmailNotificationTo=Notifications email to
 TicketEmailNotificationToHelp=Send email notifications to this address.
-TicketNewEmailBodyLabel=Text message sent after creating a ticket (public interface)
+TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
 TicketsEmailMustExist=Require an existing email address to create a ticket
 TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
 PublicInterface=Public interface
-TicketUrlPublicInterfaceLabelAdmin=Public interface URL
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface to another IP address.
+TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
 TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
@@ -123,17 +126,23 @@ TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
-
+TicketGroup=Group
+TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 #
 # Index & list page
 #
 TicketsIndex=Ticket - home
 TicketList=List of tickets
-TicketAssignedToMeInfos=This page display ticket list which are assigned to current user
+TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
+NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -147,18 +156,17 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Category
+TicketCategory=Analytic code
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
-TicketCloseOn=Clotured on
+TicketCloseOn=Closing date
 MarkAsRead=Mark ticket as read
-TicketMarkedAsReadButLogActionNotSaved=Ticket marked as closed but no action saved
 TicketHistory=Ticket history
 AssignUser=Assign to user
 TicketAssigned=Ticket is now assigned
 TicketChangeType=Change type
-TicketChangeCategory=Change category
+TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity
 TicketAddMessage=Add a message
 AddMessage=Add a message
@@ -178,7 +186,6 @@ ConfirmCloseAticket=Confirm ticket closing
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed
-TicketMarkedAsClosedButLogActionNotSaved=Ticket marked as closed but no log saved !
 TicketDurationAuto=Calculated duration
 TicketDurationAutoInfos=Duration calculated automatically from intervention related
 TicketUpdated=Ticket updated
@@ -221,18 +228,19 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
 #
-TicketLogMesgReadBy=Ticket read by %s
+TicketLogMesgReadBy=Ticket %s read by %s
 NoLogForThisTicket=No log for this ticket yet
-TicketLogAssignedTo=Ticket assigned to %s
-TicketAssignedButLogActionNotSaved=Ticket assigned but no log saved !
-TicketLogPropertyChanged=Change classification: from %s to %s
-TicketLogClosedBy=Ticket closed by %s
-TicketLogProgressSetTo=Progress change to %s percent
-TicketLogReopen=Ticket re-opened
+TicketLogAssignedTo=Ticket %s assigned to %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Ticket %s closed by %s
+TicketLogReopen=Ticket %s re-opened
 
 #
 # Public pages
@@ -256,8 +264,8 @@ TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this emai
 TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe the problem. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=Please enter ticket tracking ID
-TicketTrackId=Tracking ID
-OneOfTicketTrackId=One of yours tracking ID
+TicketTrackId=Public Tracking ID
+OneOfTicketTrackId=One of your tracking ID
 ErrorTicketNotFound=Ticket with tracking ID %s not found!
 Subject=Subject
 ViewTicket=View ticket
@@ -266,8 +274,12 @@ ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
 TicketNewEmailSubjectAdmin=New ticket created
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
-TicketPublicInterfaceForbidden=Access for this area: forbidden
-
+TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
+ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
+OldUser=Old user
+NewUser=New user
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated

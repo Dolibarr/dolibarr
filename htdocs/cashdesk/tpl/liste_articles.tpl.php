@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -57,21 +57,19 @@ else
         echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
 
         if ( $tab[$i]['remise_percent'] > 0 ) {
-
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
         } else {
-
             $remise_percent = '';
         }
 
         $remise = $tab[$i]['remise'];
 
-        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price(price2num($tab[$i]['total_ht'], 'MT'),0,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT").' ('.price(price2num($tab[$i]['total_ttc'], 'MT'),0,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC").')</p>'."\n");
+        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT").' ('.price(price2num($tab[$i]['total_ttc'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC").')</p>'."\n");
         echo ('</div>'."\n");
     }
 }
 
-echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price(price2num($total_ttc, 'MT'),0,$langs,0,0,-1,$conf->currency).'<br></p>'."\n");
+echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price(price2num($total_ttc, 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'<br></p>'."\n");
 
 ?></div>
 </div>

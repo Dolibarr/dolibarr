@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,9 +33,9 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha');
-$value = GETPOST('value','alpha');
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+$value = GETPOST('value', 'alpha');
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
@@ -61,7 +61,7 @@ if ($action == 'setconst' && $user->admin)
     $db->begin();
     foreach ($_POST['setupdriver'] as $setupconst) {
         //print '<pre>'.print_r($setupconst, true).'</pre>';
-        $result=dolibarr_set_const($db, $setupconst['varname'],$setupconst['value'],'chaine',0,'',$conf->entity);
+        $result=dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
         if (! $result > 0) $error++;
     }
 
@@ -82,7 +82,7 @@ if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
 
-    $result=dolibarr_set_const($db, $varname, $value,'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
 
     if (! $error)
@@ -104,25 +104,24 @@ if ($action == 'setvalue' && $user->admin)
  */
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("PrintingSetup"));
+llxHeader('', $langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ConfigOAuth'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
-$head=oauthadmin_prepare_head($mode);
+$head = oauthadmin_prepare_head();
 
 dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 
 
 if ($mode == 'setup' && $user->admin)
 {
-
     print $langs->trans("OAuthSetupForLogin")."<br><br>\n";
 
     foreach($list as $key)
@@ -151,6 +150,13 @@ if ($mode == 'setup' && $user->admin)
         {
         	$OAUTH_SERVICENAME='StripeTest';
         	$urltorenew=$urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+        	$urltodelete='';
+        	$urltocheckperms='';
+        }
+        elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
+        {
+        	$OAUTH_SERVICENAME='StripeLive';
+        	$urltorenew=$urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
         	$urltodelete='';
         	$urltocheckperms='';
         }
@@ -215,7 +221,7 @@ if ($mode == 'setup' && $user->admin)
         print '<input type="hidden" name="action" value="setconst">';
 
 
-        print '<table class="noborder" width="100%">'."\n";
+        print '<table class="noborder centpercent">'."\n";
 
         print '<tr class="liste_titre">';
         print '<th class="titlefieldcreate">'.$langs->trans($key[0]).'</th>';
@@ -333,7 +339,7 @@ if ($mode == 'test' && $user->admin)
 {
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     if (! empty($driver))
     {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
@@ -360,7 +366,7 @@ if ($mode == 'userconf' && $user->admin)
 {
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';
@@ -374,7 +380,6 @@ if ($mode == 'userconf' && $user->admin)
     $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
-
         print '<tr class="oddeven">';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';

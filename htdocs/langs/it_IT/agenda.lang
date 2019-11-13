@@ -31,14 +31,16 @@ ViewWeek=Vista settimanale
 ViewPerUser=Visualizzazione per utente
 ViewPerType=Visualizza per tipo
 AutoActions= Riempimento automatico
-AgendaAutoActionDesc= Definire qui gli eventi per i quali si desidera che Dolibarr crei automaticamente un evento nell'agenda. Se nulla è selezionato, solo azioni manuali saranno incluse nel registro e saranno visibili nell'agenda. La tracciabilità automatica delle azioni sugli oggetti (validazione, cambiamento di stato) non verrà salvata.
-AgendaSetupOtherDesc= Questa pagina consente di configurare gli altri parametri del modulo calendario.
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Questa pagina consente di configurare i calendari esterni da includere nell'agenda di dolibarr.
 ActionsEvents=Eventi per i quali creare un'azione
-EventRemindersByEmailNotEnabled=I promemoria degli eventi via e-mail non sono stati abilitati nell'impostazione del modulo Agenda.
+EventRemindersByEmailNotEnabled=I promemoria degli eventi via e-mail non sono stati abilitati nell'impostazione del modulo %s. 
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Soggetto terzo %s creato
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contratto %s convalidato
+CONTRACT_DELETEInDolibarr=Contratto %s cancellato
 PropalClosedSignedInDolibarr=Proposta %s firmata
 PropalClosedRefusedInDolibarr=Proposta %s rifiutata
 PropalValidatedInDolibarr=Proposta convalidata
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Adesione %s per membro %s eliminata
 ShipmentValidatedInDolibarr=Spedizione %s convalidata
 ShipmentClassifyClosedInDolibarr=Spedizione %s classificata come fatturata
 ShipmentUnClassifyCloseddInDolibarr=Spedizione %s classificata come riaperta
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Spedizione %s eliminata
 OrderCreatedInDolibarr=Ordine %s creato
 OrderValidatedInDolibarr=Ordine convalidato
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=Ordine %s classificato fatturato
 OrderApprovedInDolibarr=Ordine %s approvato
 OrderRefusedInDolibarr=Ordine %s rifiutato
 OrderBackToDraftInDolibarr=Ordine %s riportato allo stato di bozza
-ProposalSentByEMail=Proposta commerciale %s inviata per email
-ContractSentByEMail=Contratto %s mandato per email
-OrderSentByEMail=Ordine cliente %s inviato per email
-InvoiceSentByEMail=Fattura attiva %s inviata per email
-SupplierOrderSentByEMail=Ordine fornitore %s inviato per email
-SupplierInvoiceSentByEMail=Fornitore %s fattura inviata per email
-ShippingSentByEMail=Spedizione %s inviata per Email
+ProposalSentByEMail=Proposta commerciale %s inviata via email
+ContractSentByEMail=Contratto %s inviato via email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Fattura cliente %s inviata via email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Spedizione %s convalidata
-InterventionSentByEMail=Intervento %s inviato via Email
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Proposta cancellata
 OrderDeleted=Ordine cancellato
 InvoiceDeleted=Fattura cancellata
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Nota spese %s rifiutata
 PROJECT_CREATEInDolibarr=Progetto %s creato
 PROJECT_MODIFYInDolibarr=Progetto %s modificato
 PROJECT_DELETEInDolibarr=Progetto %s cancellato
+TICKET_CREATEInDolibarr=Ticket %s creato
+TICKET_MODIFYInDolibarr=Ticket %s modificato
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s chiuso
+TICKET_DELETEInDolibarr=Ticket %s eliminato
 ##### End agenda events #####
 AgendaModelModule=Modelli di documento per eventi
 DateActionStart=Data di inizio
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>logina = %s</b> per limitare l'output alle azioni amministr
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> per limitare l'output alle azioni non di proprietà dell'utente <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> per limitare l'output alle azioni assegnate all'utente <b>%s</b> (proprietario e altri).
 AgendaUrlOptionsProject=<b>project= __PROJECT_ID__</b> per limitare l'output alle azioni collegate al progetto <b>__PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per escludere l'evento automatico.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per escludere gli eventi automatici.
 AgendaShowBirthdayEvents=Visualizza i compleanni dei contatti
 AgendaHideBirthdayEvents=Nascondi i compleanni dei contatti
 Busy=Occupato
@@ -121,7 +129,6 @@ AddEvent=Crea evento
 MyAvailability=Mie disponibilità
 ActionType=Tipo di evento
 DateActionBegin=Data di inizio evento
-CloneAction=Clona evento
 ConfirmCloneEvent=Sei sicuro che vuoi clonare l'evento <b>%s</b>?
 RepeatEvent=Ripeti evento
 EveryWeek=Ogni settimana

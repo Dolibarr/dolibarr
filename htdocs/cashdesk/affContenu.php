@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -59,7 +59,7 @@ exit;*/
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
-$page=GETPOST('menutpl','alpha');
+$page=GETPOST('menutpl', 'alpha');
 if (empty($page)) $page='facturation';
 
 if (in_array(
@@ -75,7 +75,7 @@ if (in_array(
 }
 else
 {
-	dol_print_error('','menu param '.$page.' is not inside allowed list');
+	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
 }
 
 print '</div>';

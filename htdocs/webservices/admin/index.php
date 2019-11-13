@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ if ($actionsave)
 
     $db->begin();
 
-    $i+=dolibarr_set_const($db,'WEBSERVICES_KEY',trim(GETPOST("WEBSERVICES_KEY")),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db, 'WEBSERVICES_KEY', trim(GETPOST("WEBSERVICES_KEY")), 'chaine', 0, '', $conf->entity);
 
     if ($i >= 1)
     {
@@ -63,14 +63,14 @@ if ($actionsave)
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("WebServicesSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WebServicesSetup"), $linkback, 'title_setup');
 
 print $langs->trans("WebServicesDesc")."<br>\n";
 print "<br>\n";
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
@@ -120,7 +120,7 @@ foreach($webservices as $name => $right)
 {
 	if (!empty($right) && !verifCond($right)) continue;
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -131,7 +131,7 @@ foreach($webservices as $name => $right)
 {
 	if (!empty($right) && !verifCond($right)) continue;
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 

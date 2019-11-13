@@ -19,22 +19,21 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+NoRecordFound=Kein Eintrag gefunden
+NoRecordDeleted=Kein Eintrag gelöscht
 NoError=Kein Fehler
 ErrorLogoFileNotFound=Logo-Datei '%s' kann nicht gefunden werden
 ErrorFailedToSendMail=Fehler beim Senden des Mails (Absender=%s, Empfänger=%s)
 ErrorDuplicateField=Dieser Wert muß einzigartig sein
 LevelOfFeature=Funktions-Level
-PreviousConnexion=Vorherige Verbindung
 NotePublic=Notiz (öffentlich)
-Closed=geschlossen
 Closed2=geschlossen
 ToClone=Klonen
-ConfirmClone=Klonen/Duplizieren - Optionen:
 Of=Von
 Search=Suche
 SearchOf=Suche
-Upload=Upload
 PasswordRetype=Geben Sie das Passwort erneut ein
+Title=Titel
 DateStart=Start-Datum
 DateEnd=End-Datum
 DateDue=Zahlungsziel
@@ -42,7 +41,6 @@ DateRequest=Verlange Datum
 DurationDays=Tag
 days=Tag
 UnitPrice=Bruttopreis (Stk.)
-UnitPriceHT=Nettopreis (Stk.)
 UnitPriceTTC=Bruttopreis (Stk.)
 PriceU=Stückpreis
 PriceUHT=Stückpreis (net)
@@ -61,7 +59,6 @@ Month01=Jänner
 ReportName=Berichtname
 AmountInCurrency=Beträge in 1%s
 RefCustomer=Kunden Nr.
-SendByMail=Per E-Mail senden
 MailSentBy=E-Mail-Absender
 TextUsedInTheMessageBody=E-Mail-Text
 NoEMail=Keine E-Mails
@@ -71,14 +68,10 @@ Documents=Verknüpfte Dateien
 ThisLimitIsDefinedInSetup=Gesetzte System-Limits (Menü Home-Einstellungen-Sicherheit): %s Kb, PHP Limit: %s Kb
 UnHidePassword=Passwort-Zeichen anzeigen
 CloneMainAttributes=Duplikat mit den Haupteigenschaften
-AttributeCode=Attribut-Code
 LinkTo=Verknüpfen mit...
 LinkToProposal==> Angebot
 LinkToOrder==> Bestellung
 LinkToInvoice==> Rechnung
-LinkToSupplierOrder==> Lieferantenbestellung
-LinkToSupplierProposal==> Lieferantenangebot
-LinkToSupplierInvoice==> Lieferantenrechnung
 LinkToContract==> Vertrag
 CreateDraft=Erstelle Entwurf
 NoPhotoYet=Es wurde noch kein Bild hochgeladen
@@ -87,5 +80,6 @@ ShowIntervention=Zeige Intervention
 ViewList=Liste anzeigen
 RelatedObjects=Ähnliche Dokumente
 Calendar=Kalender
+Events=Termine
 SearchIntoInterventions=Eingriffe
 AssignedTo=zugewisen an

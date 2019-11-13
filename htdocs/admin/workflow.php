@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,10 +34,12 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
+
 /*
  * Actions
  */
-if (preg_match('/set(.*)/',$action,$reg))
+
+if (preg_match('/set(.*)/', $action, $reg))
 {
     if (! dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0)
     {
@@ -45,9 +47,9 @@ if (preg_match('/set(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del(.*)/',$action,$reg))
+if (preg_match('/del(.*)/', $action, $reg))
 {
-    if (! dolibarr_del_const($db, $reg[1], $conf->entity) > 0)
+    if (! dolibarr_set_const($db, $reg[1], '0', 'chaine', 0, '', $conf->entity) > 0)
     {
         dol_print_error($db);
     }
@@ -58,12 +60,12 @@ if (preg_match('/del(.*)/',$action,$reg))
  * 	View
  */
 
-llxHeader('',$langs->trans("WorkflowSetup"),'');
+llxHeader('', $langs->trans("WorkflowSetup"), '');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
 
-print $langs->trans("WorkflowDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("WorkflowDesc").'</span><br>';
 print "<br>";
 
 // List of workflow we can enable
@@ -87,7 +89,7 @@ $workflowcodes=array(
 	// Automatic classification supplier order
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order','warning'=>''),
 	//Automatic classification reception
-	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>30, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
+	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>64, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
@@ -104,7 +106,7 @@ $workflowcodes = dol_sort_array($workflowcodes, 'position');
 $nbqualified=0;
 $oldfamily='';
 
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 
 foreach($workflowcodes as $key => $params)
 {
@@ -115,7 +117,7 @@ foreach($workflowcodes as $key => $params)
 	if ($family == 'separator')
 	{
 		print '</table><br>';
-		print '<table class="noborder" width="100%">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		continue;
 	}
@@ -169,14 +171,14 @@ foreach($workflowcodes as $key => $params)
    	{
    		if (! empty($conf->global->$key))
    		{
-   			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
-  			print img_picto($langs->trans("Activated"),'switch_on');
+   			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
+  			print img_picto($langs->trans("Activated"), 'switch_on');
    			print '</a>';
    		}
    		else
    		{
-   			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'">';
-  			print img_picto($langs->trans("Disabled"),'switch_off');
+   			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'">';
+  			print img_picto($langs->trans("Disabled"), 'switch_off');
    			print '</a>';
    		}
    	}

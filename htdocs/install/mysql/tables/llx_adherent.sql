@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 --
@@ -48,9 +48,11 @@ create table llx_adherent
   country          integer,
   email            varchar(255),
 
+  socialnetworks   text DEFAULT NULL,       -- json with socialnetworks
   skype            varchar(255),
   twitter          varchar(255),                        		--
   facebook         varchar(255),                        		--
+  linkedin         varchar(255),                        		--
   instagram        varchar(255),                        		--
   snapchat         varchar(255),                        		--
   googleplus       varchar(255),                        		--

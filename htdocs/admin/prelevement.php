@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin","withdrawals"));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $type = 'paymentorder';
 
 
@@ -48,11 +48,11 @@ if ($action == "set")
 {
     $db->begin();
 
-    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
+    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
     $account = new Account($db);
     if($account->fetch($id)>0)
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         /*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
@@ -73,32 +73,30 @@ if ($action == "set")
     }
     else $error++;
 
-    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
     if (! $res > 0) $error++;
 
     if (GETPOST("PRELEVEMENT_USER") > 0)
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
     if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
     if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
 
     if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
-    } else
-
-    if (! $error)
+    } elseif (! $error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -113,7 +111,7 @@ if ($action == "set")
 if ($action == "addnotif")
 {
     $bon = new BonPrelevement($db);
-    $bon->AddNotification($db,GETPOST('user','int'),$action);
+    $bon->AddNotification($db, GETPOST('user', 'int'), $action);
 
     header("Location: prelevement.php");
     exit;
@@ -122,7 +120,7 @@ if ($action == "addnotif")
 if ($action == "deletenotif")
 {
     $bon = new BonPrelevement($db);
-    $bon->DeleteNotificationById(GETPOST('notif','int'));
+    $bon->DeleteNotificationById(GETPOST('notif', 'int'));
 
     header("Location: prelevement.php");
     exit;
@@ -175,7 +173,7 @@ if ($action == 'specimen')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
     if (dolibarr_set_const($db, "PAYMENTORDER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
     {
@@ -200,19 +198,19 @@ else if ($action == 'setdoc')
 
 $form=new Form($db);
 
-$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('',$langs->trans("WithdrawalsSetup"));
+llxHeader('', $langs->trans("WithdrawalsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
@@ -222,7 +220,7 @@ print "</tr>";
 // Bank account (from Banks module)
 print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td class="left">';
-$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
+$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1);
 print '</td></tr>';
 
 // ICS
@@ -491,11 +489,11 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("User").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';
-    print '<td align="right">'.$langs->trans("Action").'</td>';
+    print '<td class="right">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
     print '<tr class="impair"><td class="left">';
@@ -506,7 +504,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
     print '</td>';
 
-    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+    print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
 	// List of current notifications for objet_type='withdraw'
 	$sql = "SELECT u.lastname, u.firstname,";
@@ -532,7 +530,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';
-	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	        $i++;
 	    }

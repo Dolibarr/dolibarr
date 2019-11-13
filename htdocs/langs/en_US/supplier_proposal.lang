@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Accepted
 SupplierProposalStatusNotSignedShort=Refused
 CopyAskFrom=Create price request by copying existing a request
 CreateEmptyAsk=Create blank request
-CloneAsk=Clone price request
 ConfirmCloneAsk=Are you sure you want to clone the price request <b>%s</b>?
 ConfirmReOpenAsk=Are you sure you want to open back the price request <b>%s</b>?
 SendAskByMail=Send price request by mail

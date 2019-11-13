@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,6 +41,9 @@ class Loan extends CommonObject
 	 */
 	public $table_element='loan';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'bill';
 
 	/**
@@ -63,10 +66,22 @@ class Loan extends CommonObject
 	public $account_capital;
 	public $account_insurance;
 	public $account_interest;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+	/**
+	 * @var integer|string date_modification
+	 */
 	public $date_modification;
+
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $date_validation;
-	
+
 	public $insurance_amount;
 
 	/**
@@ -95,7 +110,7 @@ class Loan extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -106,7 +121,7 @@ class Loan extends CommonObject
 	 *  @param	int		$id		 id object
 	 *  @return int				 <0 error , >=0 no error
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
@@ -162,7 +177,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	User making creation
 	 *  @return int				<0 if KO, id if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -171,7 +186,7 @@ class Loan extends CommonObject
 		$now=dol_now();
 
 		// clean parameters
-		$newcapital=price2num($this->capital,'MT');
+		$newcapital=price2num($this->capital, 'MT');
 		if (empty($this->insurance_amount)) $this->insurance_amount = 0;
 		$newinsuranceamount=price2num($this->insurance_amount, 'MT');
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
@@ -255,7 +270,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	Object user making delete
 	 *  @return int 			<0 if KO, >0 if OK
 	 */
-	function delete($user)
+	public function delete($user)
 	{
 		$error=0;
 
@@ -264,7 +279,7 @@ class Loan extends CommonObject
 		// Get bank transaction lines for this loan
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account=new Account($this->db);
-		$lines_url=$account->get_url('',$this->id,'loan');
+		$lines_url=$account->get_url('', $this->id, 'loan');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url)
@@ -325,7 +340,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	User who modified
 	 *  @return int				<0 if error, >0 if ok
 	 */
-	function update($user)
+	public function update($user)
 	{
 		$this->db->begin();
 
@@ -364,14 +379,14 @@ class Loan extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag loan as payed completely
 	 *
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
-	function set_paid($user)
+	public function set_paid($user)
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
@@ -393,21 +408,21 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function getLibStatut($mode=0,$alreadypaid=-1)
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paid,$mode,$alreadypaid);
+		return $this->LibStatut($this->paid, $mode, $alreadypaid);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return label for given status
 	 *
-	 *  @param  int		$statut			Id statut
+	 *  @param  int		$status			Id status
 	 *  @param  int		$mode			0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function LibStatut($statut,$mode=0,$alreadypaid=-1)
+	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
 	{
         // phpcs:enable
 		global $langs;
@@ -415,38 +430,38 @@ class Loan extends CommonObject
 
 		if ($mode == 0 || $mode == 1)
 		{
-			if ($statut ==  0) return $langs->trans("Unpaid");
-			elseif ($statut ==  1) return $langs->trans("Paid");
+			if ($status ==  0) return $langs->trans("Unpaid");
+			elseif ($status ==  1) return $langs->trans("Paid");
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-			elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+			if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+			elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+			elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-			elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
+			if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
+			elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-			elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+			if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+			elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+			elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+			if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+			elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+			if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+			elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
 
 		else return "Error, mode/status not found";
@@ -460,7 +475,7 @@ class Loan extends CommonObject
 	 *  @param	int		$maxlen			Label max length
 	 *  @return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -477,7 +492,7 @@ class Loan extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref, $maxlen):$this->ref);
 		$result .= $linkend;
 
 		return $result;
@@ -490,7 +505,7 @@ class Loan extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 	    global $user, $langs, $conf;
 
@@ -518,7 +533,7 @@ class Loan extends CommonObject
 	 *
 	 *  @return		int		Amount of payment already done, <0 if KO
 	 */
-	function getSumPayment()
+	public function getSumPayment()
 	{
 		$table='payment_loan';
 		$field='fk_loan';
@@ -552,7 +567,7 @@ class Loan extends CommonObject
 	 *  @param	int			$id		Id of record
 	 *  @return	integer|null
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
 		$sql.= ' l.tms';
@@ -597,5 +612,5 @@ class Loan extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-	}
+    }
 }

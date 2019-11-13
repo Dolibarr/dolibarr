@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/accountancy/admin/fiscalyear.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *  \brief      Setup page to configure fiscal year
  */
 
@@ -25,13 +25,13 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -43,9 +43,9 @@ if (! $sortorder) $sortorder="ASC";
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we should be able to see fiscal year.
+if (! $user->rights->accounting->fiscalyear->write)              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 
 $error = 0;
@@ -58,7 +58,7 @@ static $tmpstatut2label = array (
 $statut2label = array (
 		''
 );
-foreach ( $tmpstatut2label as $key => $val )
+foreach ($tmpstatut2label as $key => $val)
 	$statut2label[$key] = $langs->trans($val);
 
 $errors = array ();
@@ -87,7 +87,7 @@ llxHeader('', $title, $helpurl);
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_fiscalyear as f";
 $sql .= " WHERE f.entity = " . $conf->entity;
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -111,28 +111,23 @@ if ($result)
 
 	$i = 0;
 
-	if (! empty($user->rights->accounting->fiscalyear))
-	{
-		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
-		$addbutton = '<a class="butActionRefused classfortooltip" href="#"><span class="valignmiddle" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+
+    $addbutton.= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear->write);
+
 
 	$title = $langs->trans('AccountingPeriods');
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
 
 	// Load attribute_label
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste" width="100%">';
+	print '<table class="tagtable liste centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans("Ref") . '</td>';
 	print '<td>' . $langs->trans("Label") . '</td>';
 	print '<td>' . $langs->trans("DateStart") . '</td>';
 	print '<td>' . $langs->trans("DateEnd") . '</td>';
-	print '<td align="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
-	print '<td align="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
+	print '<td class="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
+	print '<td class="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
 	print '<td class="right">' . $langs->trans("Statut") . '</td>';
 	print '</tr>';
 
@@ -147,14 +142,14 @@ if ($result)
 			print '<td class="left">' . $obj->label . '</td>';
 			print '<td class="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
 			print '<td class="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
-			print '<td align="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
-			print '<td align="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
+			print '<td class="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
+			print '<td class="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
 			print '<td class="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
 			print '</tr>';
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	print '</table>';
 	print '</div>';

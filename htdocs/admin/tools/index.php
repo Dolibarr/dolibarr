@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ $title=$langs->trans("AdminTools");
 
 llxHeader('', $title);
 
-print load_fiche_titre($title,'','title_setup');
+print load_fiche_titre($title, '', 'title_setup');
 
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";

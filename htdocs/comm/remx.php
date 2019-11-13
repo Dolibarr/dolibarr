@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2019      Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,16 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills', 'companies'));
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 
-$action=GETPOST('action','alpha');
-$backtopage=GETPOST('backtopage','alpha');
+$action=GETPOST('action', 'alpha');
+$backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
-$socid = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
-if ($user->societe_id > 0)
+$socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -49,7 +50,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if (GETPOST('cancel','alpha') && ! empty($backtopage))
+if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
@@ -120,13 +121,15 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->tva_tx=$discount->tva_tx;
 		$newdiscount1->amount_ttc=$_POST["amount_ttc_1"];
 		$newdiscount2->amount_ttc=price2num($discount->amount_ttc-$newdiscount1->amount_ttc);
-		$newdiscount1->amount_ht=price2num($newdiscount1->amount_ttc/(1+$newdiscount1->tva_tx/100),'MT');
-		$newdiscount2->amount_ht=price2num($newdiscount2->amount_ttc/(1+$newdiscount2->tva_tx/100),'MT');
+		$newdiscount1->amount_ht=price2num($newdiscount1->amount_ttc/(1+$newdiscount1->tva_tx/100), 'MT');
+		$newdiscount2->amount_ht=price2num($newdiscount2->amount_ttc/(1+$newdiscount2->tva_tx/100), 'MT');
 		$newdiscount1->amount_tva=price2num($newdiscount1->amount_ttc-$newdiscount1->amount_ht);
 		$newdiscount2->amount_tva=price2num($newdiscount2->amount_ttc-$newdiscount2->amount_ht);
 
 		$db->begin();
 		$discount->fk_facture_source=0;	// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
+        // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
+        $discount->fk_invoice_supplier_source=0;
 		$res=$discount->delete($user);
 		$newid1=$newdiscount1->create($user);
 		$newid2=$newdiscount2->create($user);
@@ -149,16 +152,16 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
 	$amount_ht=GETPOST('amount_ht');
-	$desc=GETPOST('desc','alpha');
-	$tva_tx=GETPOST('tva_tx','alpha');
-	$discount_type=! empty($_POST['discount_type'])?GETPOST('discount_type','alpha'):0;
+	$desc=GETPOST('desc', 'alpha');
+	$tva_tx=GETPOST('tva_tx', 'alpha');
+	$discount_type=! empty($_POST['discount_type'])?GETPOST('discount_type', 'alpha'):0;
 
 	if (price2num($amount_ht) > 0)
 	{
 		$error=0;
 		if (empty($desc))
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ReasonDiscount")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReasonDiscount")), null, 'errors');
 			$error++;
 		}
 
@@ -166,7 +169,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 		{
 			$soc = new Societe($db);
 			$soc->fetch($id);
-			$discountid=$soc->set_remise_except($amount_ht,$user,$desc,$tva_tx,$discount_type);
+			$discountid=$soc->set_remise_except($amount_ht, $user, $desc, $tva_tx, $discount_type);
 
 			if ($discountid > 0)
 			{
@@ -190,11 +193,11 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	}
 	else
 	{
-		setEventMessages($langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldFormat", $langs->transnoentitiesnoconv("NewGlobalDiscount")), null, 'errors');
 	}
 }
 
-if (GETPOST('action','aZ09') == 'confirm_remove' && GETPOST("confirm")=='yes')
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm")=='yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -226,7 +229,7 @@ $form=new Form($db);
 $facturestatic=new Facture($db);
 $facturefournstatic=new FactureFournisseur($db);
 
-llxHeader('',$langs->trans("GlobalDiscount"));
+llxHeader('', $langs->trans("GlobalDiscount"));
 
 if ($socid > 0)
 {
@@ -249,7 +252,7 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), 0, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -341,7 +344,7 @@ if ($socid > 0)
 	{
     	print '<br>';
 
-    	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+    	print load_fiche_titre($langs->trans("NewGlobalDiscount"), '', '');
 
     	print '<div class="underbanner clearboth"></div>';
 
@@ -353,7 +356,7 @@ if ($socid > 0)
     		print '<input type="hidden" name="discount_type" value="1" />';
     	}
 
-    	print '<table class="border" width="100%">';
+    	print '<table class="border centpercent">';
 		if($isCustomer && $isSupplier) {
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
 			print '<td><input type="radio" name="discount_type" id="discount_type_0" checked="checked" value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
@@ -365,10 +368,10 @@ if ($socid > 0)
     	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
     	print '<tr><td>'.$langs->trans("VAT").'</td>';
     	print '<td>';
-    	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
+    	print $form->load_tva('tva_tx', GETPOST('tva_tx'), $mysoc, $object);
     	print '</td></tr>';
     	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc','none').'"></td></tr>';
+    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'none').'"></td></tr>';
 
     	print "</table>";
 	}
@@ -411,7 +414,7 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description,";
 		$sql.= " rc.fk_facture_source,";
 		$sql.= " u.login, u.rowid as user_id,";
@@ -433,11 +436,19 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
+			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
+			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+                print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			}
+			print '<td class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			}
+			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
@@ -452,52 +463,60 @@ if ($socid > 0)
 	    			$obj = $db->fetch_object($resql);
 
 	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-	    			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
+	    			print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+	    			if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
 	    			{
-	    				print '<td class="nowrap">';
+	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
 	    				$facturestatic->ref=$obj->ref;
 	    				$facturestatic->type=$obj->type;
-	    				print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturestatic->getNomURl(1);
+	    				print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
-	    			elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
+	    			elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
 	    			{
-	    				print '<td class="nowrap">';
+	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
 	    				$facturestatic->ref=$obj->ref;
 	    				$facturestatic->type=$obj->type;
-	    				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
+	    				print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
-	    			elseif (preg_match('/\(EXCESS RECEIVED\)/',$obj->description))
+	    			elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description))
 	    			{
-	    				print '<td class="nowrap">';
+	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
 	    				$facturestatic->ref=$obj->ref;
 	    				$facturestatic->type=$obj->type;
-	    				print preg_replace('/\(EXCESS RECEIVED\)/',$langs->trans("ExcessReceived"),$obj->description).' '.$facturestatic->getNomURl(1);
+	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
 	    			else
 	    			{
-	    				print '<td>';
+	    				print '<td class="minwidth100">';
 	    				print $obj->description;
 	    				print '</td>';
 	    			}
 	    			print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-	    			print '<td align="right">'.price($obj->amount_ht).'</td>';
-	    			print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-	    			print '<td align="right">'.price($obj->amount_ttc).'</td>';
+	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
+	    			if (! empty($conf->multicurrency->enabled))
+	    			{
+	    			    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+	    			}
+	    			print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
+	    			if (! empty($conf->multicurrency->enabled))
+	    			{
+	    			    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+	    			}
 	    			print '<td align="center">';
-	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
+	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 	    			print '</td>';
 	    			if ($user->rights->societe->creer || $user->rights->facture->creer)
 	    			{
 	    				print '<td class="nowrap">';
 	    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
-	    				print ' &nbsp; ';
+	    				//print ' &nbsp; ';
 	    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 	    				print '</td>';
 	    			}
@@ -522,7 +541,7 @@ if ($socid > 0)
 
 			if (count($showconfirminfo))
 			{
-				$amount1=price2num($showconfirminfo['amount_ttc']/2,'MT');
+				$amount1=price2num($showconfirminfo['amount_ttc']/2, 'MT');
 				$amount2=($showconfirminfo['amount_ttc']-$amount1);
 				$formquestion=array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
@@ -530,7 +549,7 @@ if ($socid > 0)
 					array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 				);
 				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage?'&backtopage='.urlencode($backtopage):''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage?'&backtopage='.urlencode($backtopage):''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 			}
 		}
 		else
@@ -550,7 +569,7 @@ if ($socid > 0)
 		/*
 		 * Liste remises fixes fournisseur restant en cours (= liees a aucune facture ni ligne de facture)
 		 */
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description,";
 		$sql.= " rc.fk_invoice_supplier_source,";
 		$sql.= " u.login, u.rowid as user_id,";
@@ -572,11 +591,19 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
+			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
+			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			}
+			print '<td class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			}
+			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
@@ -591,52 +618,60 @@ if ($socid > 0)
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-					if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
 					{
-						print '<td class="nowrap">';
+						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
-					elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
+					elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
 					{
-						print '<td class="nowrap">';
+						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
-					elseif (preg_match('/\(EXCESS PAID\)/',$obj->description))
+					elseif (preg_match('/\(EXCESS PAID\)/', $obj->description))
 					{
-						print '<td class="nowrap">';
+						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(EXCESS PAID\)/',$langs->trans("ExcessPaid"),$obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
 					else
 					{
-						print '<td>';
+						print '<td class="minwidth100">';
 						print $obj->description;
 						print '</td>';
 					}
 					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td align="right">'.price($obj->amount_ht).'</td>';
-					print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-					print '<td align="right">'.price($obj->amount_ttc).'</td>';
-					print '<td align="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
+					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					if (! empty($conf->multicurrency->enabled))
+					{
+					    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+					}
+					print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					if (! empty($conf->multicurrency->enabled))
+					{
+					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+					}
+					print '<td class="center">';
+					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 					print '</td>';
 					if ($user->rights->societe->creer || $user->rights->facture->creer)
 					{
-						print '<td class="nowrap">';
+						print '<td class="center nowrap">';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
-						print ' &nbsp; ';
+						//print ' &nbsp; ';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
 					}
@@ -661,7 +696,7 @@ if ($socid > 0)
 
 			if (count($showconfirminfo))
 			{
-				$amount1=price2num($showconfirminfo['amount_ttc']/2,'MT');
+				$amount1=price2num($showconfirminfo['amount_ttc']/2, 'MT');
 				$amount2=($showconfirminfo['amount_ttc']-$amount1);
 				$formquestion=array(
 						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
@@ -669,7 +704,7 @@ if ($socid > 0)
 						array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 				);
 				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage?'&backtopage='.urlencode($backtopage):''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage?'&backtopage='.urlencode($backtopage):''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 			}
 		}
 		else
@@ -699,8 +734,8 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
-		// Remises liees a lignes de factures
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+		// Discount linked to invoice lines
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
 		$sql.= " rc.fk_facture_source,";
 		$sql.= " u.login, u.rowid as user_id,";
@@ -741,15 +776,23 @@ if ($socid > 0)
 		if ($resql2)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
+			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
+			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			}
+			print '<td class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			}
+			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
@@ -775,7 +818,7 @@ if ($socid > 0)
 				$tab_sqlobjOrder[]= $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
+			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0)
@@ -785,46 +828,54 @@ if ($socid > 0)
 	    		{
 	    			$obj = array_shift($tab_sqlobj);
 	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-	    			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
+	    			print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+	    			if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
 	    			{
-	    				print '<td class="nowrap">';
+	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
 	    				$facturestatic->ref=$obj->ref;
 	    				$facturestatic->type=$obj->type;
-	    				print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturestatic->getNomURl(1);
+	    				print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
-	    			elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
+	    			elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
 	    			{
-	    				print '<td class="nowrap">';
+	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
 	    				$facturestatic->ref=$obj->ref;
 	    				$facturestatic->type=$obj->type;
-	    				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
+	    				print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
-	    			elseif (preg_match('/\(EXCESS RECEIVED\)/',$obj->description))
+	    			elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description))
 	    			{
-	    				print '<td class="nowrap">';
+	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
 	    				$facturestatic->ref=$obj->ref;
 	    				$facturestatic->type=$obj->type;
-	    				print preg_replace('/\(EXCESS RECEIVED\)/',$langs->trans("Invoice"),$obj->description).' '.$facturestatic->getNomURl(1);
+	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
 	    			else
 	    			{
-	    				print '<td>';
+	    				print '<td class="minwidth100">';
 	    				print $obj->description;
 	    				print '</td>';
 	    			}
-	    			print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->ref.'</a></td>';
-	    			print '<td align="right">'.price($obj->amount_ht).'</td>';
-	    			print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-	    			print '<td align="right">'.price($obj->amount_ttc).'</td>';
-	    			print '<td align="center">';
-	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
+	    			print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a></td>';
+	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
+	    			if (! empty($conf->multicurrency->enabled))
+	    			{
+	    			    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+	    			}
+	    			print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
+	    			if (! empty($conf->multicurrency->enabled))
+	    			{
+	    			    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+	    			}
+	    			print '<td class="center">';
+	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 	    			print '</td>';
 	    			print '<td>&nbsp;</td>';
 	    			print '</tr>';
@@ -853,8 +904,8 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
-		// Remises liees a lignes de factures
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+		// Discount linked to invoice lines
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql.= " rc.fk_invoice_supplier_source,";
 		$sql.= " u.login, u.rowid as user_id,";
@@ -895,15 +946,23 @@ if ($socid > 0)
 		if ($resql2)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
+			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
+			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			}
+			print '<td class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+			if (! empty($conf->multicurrency->enabled))
+			{
+			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			}
+			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
@@ -929,7 +988,7 @@ if ($socid > 0)
 				$tab_sqlobjOrder[]= $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
+			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0)
@@ -939,46 +998,54 @@ if ($socid > 0)
 				{
 					$obj = array_shift($tab_sqlobj);
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-					if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
 					{
-						print '<td class="nowrap">';
+						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
-					elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
+					elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
 					{
-						print '<td class="nowrap">';
+						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
-					elseif (preg_match('/\(EXCESS PAID\)/',$obj->description))
+					elseif (preg_match('/\(EXCESS PAID\)/', $obj->description))
 					{
-						print '<td class="nowrap">';
+						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(EXCESS PAID\)/',$langs->trans("Invoice"),$obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
 					else
 					{
-						print '<td>';
+						print '<td class="minwidth100">';
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->ref.'</a></td>';
-					print '<td align="right">'.price($obj->amount_ht).'</td>';
-					print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-					print '<td align="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a></td>';
+					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					if (! empty($conf->multicurrency->enabled))
+					{
+					    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+					}
+					print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					if (! empty($conf->multicurrency->enabled))
+					{
+					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+					}
 					print '<td align="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
+					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 					print '</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';

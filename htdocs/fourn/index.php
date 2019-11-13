@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,8 +32,8 @@ $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'');
+if ($user->socid) $socid=$user->socid;
+$result = restrictedArea($user, 'societe', $socid, '');
 
 
 /*
@@ -44,7 +44,7 @@ $commandestatic=new CommandeFournisseur($db);
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
 
-llxHeader("",$langs->trans("SuppliersArea"));
+llxHeader("", $langs->trans("SuppliersArea"));
 
 print load_fiche_titre($langs->trans("SuppliersArea"));
 
@@ -70,8 +70,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td class="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -80,8 +80,8 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
-		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1],3).'</a></td>';
+		print '<td class="center">'.$row[0].'</td>';
+		print '<td class="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1], 3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -119,9 +119,9 @@ if (! empty($conf->fournisseur->enabled))
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 
 			$i = 0;
 			while ($i < $num)
@@ -131,22 +131,21 @@ if (! empty($conf->fournisseur->enabled))
 				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
-				print $commandestatic->getNomUrl(1,'',16);
+				print $commandestatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td  class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=0;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				print '<td class="right nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($total>0)
 			{
-
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";
 			print "<br>\n";
@@ -175,9 +174,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftBills").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
 
@@ -189,22 +188,22 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
-				print $facturestatic->getNomUrl(1,'');
+				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=0;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
 
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
-			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
+			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 
 			print "</table>";
@@ -247,19 +246,19 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers",min($max,$num))."</td>\n";
-	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
+	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers", min($max, $num))."</td>\n";
+	print '<td class="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
 	while ($obj = $db->fetch_object($resql) )
 	{
 		print '<tr class="oddeven">';
-		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"), "company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td class="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 		print "</tr>\n";
 	}
 	print "</table>\n";
@@ -282,7 +281,7 @@ if (count($companystatic->SupplierCategories))
 {
 	print '<br>';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre"><td colspan="2">';
 	print $langs->trans("Category");
 	print "</td></tr>\n";
@@ -298,7 +297,7 @@ if (count($companystatic->SupplierCategories))
 		print '</td>'."\n";
 		// TODO this page not exist
 		/*
-		print '<td align="right">';
+		print '<td class="right">';
 		print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
 		print "</tr>\n";
 		*/

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Upgrade2 scripts can be ran from command line with syntax:
  *
@@ -64,14 +64,17 @@ $error = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(300);
+if (! empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
+	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
+else
+	@set_time_limit(600);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
+$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
-$enablemodules=GETPOST("enablemodules",'alpha',3)?GETPOST("enablemodules",'alpha',3):(empty($argv[3])?'':$argv[3]);
+$versionfrom=GETPOST("versionfrom", 'alpha', 3)?GETPOST("versionfrom", 'alpha', 3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto", 'alpha', 3)?GETPOST("versionto", 'alpha', 3):(empty($argv[2])?'':$argv[2]);
+$enablemodules=GETPOST("enablemodules", 'alpha', 3)?GETPOST("enablemodules", 'alpha', 3):(empty($argv[3])?'':$argv[3]);
 
 $langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
@@ -96,7 +99,7 @@ if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto |
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
-	$path=dirname(__FILE__).'/';
+	$path=__DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli')
 	{
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
@@ -104,20 +107,20 @@ if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto |
 	exit;
 }
 
-pHeader('','step5',GETPOST('action','aZ09')?GETPOST('action','aZ09'):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('', 'step5', GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
-if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
+if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09')))
 {
     print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
     // If password is encoded, we decode it
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+    if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
     {
         require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-        if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+        if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
             $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
@@ -134,7 +137,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     $conf->db->user = $dolibarr_main_db_user;
     $conf->db->pass = $dolibarr_main_db_pass;
 
-    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
     // Create the global $hookmanager object
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -143,7 +146,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
     if (!$db->connected)
     {
-        print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
+        print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
         dolibarr_install_syslog('upgrade2: failed to connect to database :' . $conf->db->name . ' on ' . $conf->db->host . ' for user ' . $conf->db->user, LOG_ERR);
         $error++;
     }
@@ -186,14 +189,14 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     {
         // Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
         // Version to install is DOL_VERSION
-        $dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
+        $dolibarrlastupgradeversionarray=preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:(isset($conf->global->MAIN_VERSION_LAST_INSTALL)?$conf->global->MAIN_VERSION_LAST_INSTALL:''));
 
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
         // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
-        $versiontoarray=explode('.',$versionto);
-        $versionranarray=explode('.',DOL_VERSION);
+        $versiontoarray=explode('.', $versionto);
+        $versionranarray=explode('.', DOL_VERSION);
 
 
         // Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
@@ -221,190 +224,190 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $db->query($sql, 1);
 
 
-        $afterversionarray=explode('.','2.0.0');
-        $beforeversionarray=explode('.','2.7.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '2.0.0');
+        $beforeversionarray=explode('.', '2.7.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
             // Script pour V2 -> V2.1
-            migrate_paiements($db,$langs,$conf);
+            migrate_paiements($db, $langs, $conf);
 
-            migrate_contracts_det($db,$langs,$conf);
+            migrate_contracts_det($db, $langs, $conf);
 
-            migrate_contracts_date1($db,$langs,$conf);
+            migrate_contracts_date1($db, $langs, $conf);
 
-            migrate_contracts_date2($db,$langs,$conf);
+            migrate_contracts_date2($db, $langs, $conf);
 
-            migrate_contracts_date3($db,$langs,$conf);
+            migrate_contracts_date3($db, $langs, $conf);
 
-            migrate_contracts_open($db,$langs,$conf);
+            migrate_contracts_open($db, $langs, $conf);
 
-            migrate_modeles($db,$langs,$conf);
+            migrate_modeles($db, $langs, $conf);
 
-            migrate_price_propal($db,$langs,$conf);
+            migrate_price_propal($db, $langs, $conf);
 
-            migrate_price_commande($db,$langs,$conf);
+            migrate_price_commande($db, $langs, $conf);
 
-            migrate_price_commande_fournisseur($db,$langs,$conf);
+            migrate_price_commande_fournisseur($db, $langs, $conf);
 
-            migrate_price_contrat($db,$langs,$conf);
+            migrate_price_contrat($db, $langs, $conf);
 
-            migrate_paiementfourn_facturefourn($db,$langs,$conf);
+            migrate_paiementfourn_facturefourn($db, $langs, $conf);
 
 
             // Script pour V2.1 -> V2.2
-            migrate_paiements_orphelins_1($db,$langs,$conf);
+            migrate_paiements_orphelins_1($db, $langs, $conf);
 
-            migrate_paiements_orphelins_2($db,$langs,$conf);
+            migrate_paiements_orphelins_2($db, $langs, $conf);
 
-            migrate_links_transfert($db,$langs,$conf);
+            migrate_links_transfert($db, $langs, $conf);
 
 
             // Script pour V2.2 -> V2.4
-            migrate_commande_expedition($db,$langs,$conf);
+            migrate_commande_expedition($db, $langs, $conf);
 
-            migrate_commande_livraison($db,$langs,$conf);
+            migrate_commande_livraison($db, $langs, $conf);
 
-            migrate_detail_livraison($db,$langs,$conf);
+            migrate_detail_livraison($db, $langs, $conf);
 
 
             // Script pour V2.5 -> V2.6
-            migrate_stocks($db,$langs,$conf);
+            migrate_stocks($db, $langs, $conf);
 
 
             // Script pour V2.6 -> V2.7
-            migrate_menus($db,$langs,$conf);
+            migrate_menus($db, $langs, $conf);
 
-            migrate_commande_deliveryaddress($db,$langs,$conf);
+            migrate_commande_deliveryaddress($db, $langs, $conf);
 
-            migrate_restore_missing_links($db,$langs,$conf);
+            migrate_restore_missing_links($db, $langs, $conf);
 
-            migrate_rename_directories($db,$langs,$conf,'/compta','/banque');
+            migrate_rename_directories($db, $langs, $conf, '/compta', '/banque');
 
-            migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
+            migrate_rename_directories($db, $langs, $conf, '/societe', '/mycompany');
         }
 
         // Script for 2.8
-        $afterversionarray=explode('.','2.7.9');
-        $beforeversionarray=explode('.','2.8.9');
+        $afterversionarray=explode('.', '2.7.9');
+        $beforeversionarray=explode('.', '2.8.9');
         //print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-            migrate_price_facture($db,$langs,$conf);     // Code of this function works for 2.8+ because need a field tva_tx
+            migrate_price_facture($db, $langs, $conf);     // Code of this function works for 2.8+ because need a field tva_tx
 
-            migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
+            migrate_relationship_tables($db, $langs, $conf, 'co_exp', 'fk_commande', 'commande', 'fk_expedition', 'shipping');
 
-            migrate_relationship_tables($db,$langs,$conf,'pr_exp','fk_propal','propal','fk_expedition','shipping');
+            migrate_relationship_tables($db, $langs, $conf, 'pr_exp', 'fk_propal', 'propal', 'fk_expedition', 'shipping');
 
-            migrate_relationship_tables($db,$langs,$conf,'pr_liv','fk_propal','propal','fk_livraison','delivery');
+            migrate_relationship_tables($db, $langs, $conf, 'pr_liv', 'fk_propal', 'propal', 'fk_livraison', 'delivery');
 
-            migrate_relationship_tables($db,$langs,$conf,'co_liv','fk_commande','commande','fk_livraison','delivery');
+            migrate_relationship_tables($db, $langs, $conf, 'co_liv', 'fk_commande', 'commande', 'fk_livraison', 'delivery');
 
-            migrate_relationship_tables($db,$langs,$conf,'co_pr','fk_propale','propal','fk_commande','commande');
+            migrate_relationship_tables($db, $langs, $conf, 'co_pr', 'fk_propale', 'propal', 'fk_commande', 'commande');
 
-            migrate_relationship_tables($db,$langs,$conf,'fa_pr','fk_propal','propal','fk_facture','facture');
+            migrate_relationship_tables($db, $langs, $conf, 'fa_pr', 'fk_propal', 'propal', 'fk_facture', 'facture');
 
-            migrate_relationship_tables($db,$langs,$conf,'co_fa','fk_commande','commande','fk_facture','facture');
+            migrate_relationship_tables($db, $langs, $conf, 'co_fa', 'fk_commande', 'commande', 'fk_facture', 'facture');
 
-            migrate_project_user_resp($db,$langs,$conf);
+            migrate_project_user_resp($db, $langs, $conf);
 
-            migrate_project_task_actors($db,$langs,$conf);
+            migrate_project_task_actors($db, $langs, $conf);
         }
 
         // Script for 2.9
-        $afterversionarray=explode('.','2.8.9');
-        $beforeversionarray=explode('.','2.9.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '2.8.9');
+        $beforeversionarray=explode('.', '2.9.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-            migrate_project_task_time($db,$langs,$conf);
+            migrate_project_task_time($db, $langs, $conf);
 
-            migrate_customerorder_shipping($db,$langs,$conf);
+            migrate_customerorder_shipping($db, $langs, $conf);
 
-            migrate_shipping_delivery($db,$langs,$conf);
+            migrate_shipping_delivery($db, $langs, $conf);
 
-            migrate_shipping_delivery2($db,$langs,$conf);
+            migrate_shipping_delivery2($db, $langs, $conf);
         }
 
         // Script for 3.0
-        $afterversionarray=explode('.','2.9.9');
-        $beforeversionarray=explode('.','3.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '2.9.9');
+        $beforeversionarray=explode('.', '3.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
             // No particular code
         }
 
         // Script for 3.1
-        $afterversionarray=explode('.','3.0.9');
-        $beforeversionarray=explode('.','3.1.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '3.0.9');
+        $beforeversionarray=explode('.', '3.1.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-            migrate_rename_directories($db,$langs,$conf,'/rss','/externalrss');
+            migrate_rename_directories($db, $langs, $conf, '/rss', '/externalrss');
 
-            migrate_actioncomm_element($db,$langs,$conf);
+            migrate_actioncomm_element($db, $langs, $conf);
         }
 
         // Script for 3.2
-        $afterversionarray=explode('.','3.1.9');
-        $beforeversionarray=explode('.','3.2.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '3.1.9');
+        $beforeversionarray=explode('.', '3.2.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-            migrate_price_contrat($db,$langs,$conf);
+            migrate_price_contrat($db, $langs, $conf);
 
-        	migrate_mode_reglement($db,$langs,$conf);
+        	migrate_mode_reglement($db, $langs, $conf);
 
-        	migrate_clean_association($db,$langs,$conf);
+        	migrate_clean_association($db, $langs, $conf);
         }
 
         // Script for 3.3
-        $afterversionarray=explode('.','3.2.9');
-        $beforeversionarray=explode('.','3.3.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '3.2.9');
+        $beforeversionarray=explode('.', '3.3.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-        	migrate_categorie_association($db,$langs,$conf);
+        	migrate_categorie_association($db, $langs, $conf);
         }
 
 		// Script for 3.4
 		// No specific scripts
 
         // Tasks to do always and only into last targeted version
-        $afterversionarray=explode('.','3.6.9');	// target is after this
-        $beforeversionarray=explode('.','3.7.9');	// target is before this
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '3.6.9');	// target is after this
+        $beforeversionarray=explode('.', '3.7.9');	// target is before this
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-       	    migrate_event_assignement($db,$langs,$conf);
+       	    migrate_event_assignement($db, $langs, $conf);
         }
 
         // Scripts for 3.9
-        $afterversionarray=explode('.','3.7.9');
-        $beforeversionarray=explode('.','3.8.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '3.7.9');
+        $beforeversionarray=explode('.', '3.8.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
         	// No particular code
         }
 
         // Scripts for 4.0
-        $afterversionarray=explode('.','3.9.9');
-        $beforeversionarray=explode('.','4.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '3.9.9');
+        $beforeversionarray=explode('.', '4.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-            migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
+            migrate_rename_directories($db, $langs, $conf, '/fckeditor', '/medias');
         }
 
         // Scripts for 5.0
-        $afterversionarray=explode('.','4.0.9');
-        $beforeversionarray=explode('.','5.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '4.0.9');
+        $beforeversionarray=explode('.', '5.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
             // Migrate to add entity value into llx_societe_remise
-            migrate_remise_entity($db,$langs,$conf);
+            migrate_remise_entity($db, $langs, $conf);
 
             // Migrate to add entity value into llx_societe_remise_except
-            migrate_remise_except_entity($db,$langs,$conf);
+            migrate_remise_except_entity($db, $langs, $conf);
         }
 
         // Scripts for 6.0
-        $afterversionarray=explode('.','5.0.9');
-        $beforeversionarray=explode('.','6.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '5.0.9');
+        $beforeversionarray=explode('.', '6.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
         	if (! empty($conf->multicompany->enabled))
         	{
@@ -423,35 +426,45 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         }
 
         // Scripts for 7.0
-        $afterversionarray=explode('.','6.0.9');
-        $beforeversionarray=explode('.','7.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '6.0.9');
+        $beforeversionarray=explode('.', '7.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
             // Migrate contact association
-        	migrate_event_assignement_contact($db,$langs,$conf);
+        	migrate_event_assignement_contact($db, $langs, $conf);
 
-        	migrate_reset_blocked_log($db,$langs,$conf);
+        	migrate_reset_blocked_log($db, $langs, $conf);
         }
 
         // Scripts for 8.0
-        $afterversionarray=explode('.','7.0.9');
-        $beforeversionarray=explode('.','8.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '7.0.9');
+        $beforeversionarray=explode('.', '8.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
-        	migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        	migrate_rename_directories($db, $langs, $conf, '/contracts', '/contract');
         }
 
         // Scripts for 9.0
-        $afterversionarray=explode('.','8.0.9');
-        $beforeversionarray=explode('.','9.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        $afterversionarray=explode('.', '8.0.9');
+        $beforeversionarray=explode('.', '9.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0)
         {
         	migrate_user_photospath();
+        }
+
+        // Scripts for 11.0
+        $afterversionarray=explode('.', '10.0.9');
+        $beforeversionarray=explode('.', '11.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+            migrate_users_socialnetworks();
+            migrate_members_socialnetworks();
+            migrate_contacts_socialnetworks();
+            migrate_thirdparties_socialnetworks();
         }
     }
 
 	// Code executed only if migration is LAST ONE. Must always be done.
-	if (versioncompare($versiontoarray,$versionranarray) >= 0 || versioncompare($versiontoarray,$versionranarray) <= -3)
+	if (versioncompare($versiontoarray, $versionranarray) >= 0 || versioncompare($versiontoarray, $versionranarray) <= -3)
 	{
 		// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
 		$listofmodule=array(
@@ -479,10 +492,10 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
 			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
 		);
-		migrate_reload_modules($db,$langs,$conf,$listofmodule);
+		migrate_reload_modules($db, $langs, $conf, $listofmodule);
 
 		// Reload menus (this must be always and only into last targeted version)
-		migrate_reload_menu($db,$langs,$conf,$versionto);
+		migrate_reload_menu($db, $langs, $conf, $versionto);
 	}
 
     // Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
@@ -491,13 +504,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     {
         // Reload modules (this must be always done and only into last targeted version)
         $listofmodules=array();
-        $enablemodules=preg_replace('/enablemodules=/','',$enablemodules);
+        $enablemodules=preg_replace('/enablemodules=/', '', $enablemodules);
         $tmplistofmodules=explode(',', $enablemodules);
         foreach($tmplistofmodules as $value)
         {
             $listofmodules[$value]='forceactivate';
         }
-        migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
+        migrate_reload_modules($db, $langs, $conf, $listofmodules, 1);
     }
 
 
@@ -507,7 +520,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $parameters=array('versionfrom'=>$versionfrom, 'versionto='.$versionto);
         $object=new stdClass();
         $action="upgrade";
-        $reshook=$hookmanager->executeHooks('doUpgrade2',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('doUpgrade2', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
         if ($hookmanager->resNbOfHooks > 0)
         {
             if ($reshook < 0)
@@ -573,7 +586,7 @@ if ($error && isset($argv[1])) $ret=1;
 dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("--- upgrade2: end");
-pFooter($error?2:0,$setuplang);
+pFooter($error?2:0, $setuplang);
 
 if ($db->connected) $db->close();
 
@@ -590,14 +603,14 @@ if ($ret) exit($ret);
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiements($db,$langs,$conf)
+function migrate_paiements($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
     print '<b>'.$langs->trans('MigrationPaymentsUpdate')."</b><br>\n";
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement","fk_facture");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -684,14 +697,14 @@ function migrate_paiements($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiements_orphelins_1($db,$langs,$conf)
+function migrate_paiements_orphelins_1($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
     print '<b>'.$langs->trans('MigrationPaymentsUpdate')."</b><br>\n";
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement","fk_facture");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -699,8 +712,8 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
         $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
-        $sql.= " LEFT JOIN llx_paiement_facture as pf ON pf.fk_paiement = p.rowid";
-        $sql.= " LEFT JOIN llx_bank_url as bu2 ON (bu.fk_bank=bu2.fk_bank AND bu2.type = 'company')";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON (bu.fk_bank=bu2.fk_bank AND bu2.type = 'company')";
         $sql.= " WHERE pf.rowid IS NULL AND (p.rowid=bu.url_id AND bu.type='payment') AND bu.fk_bank = b.rowid";
         $sql.= " AND b.rappro = 1";
         $sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
@@ -811,14 +824,14 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiements_orphelins_2($db,$langs,$conf)
+function migrate_paiements_orphelins_2($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
     print '<b>'.$langs->trans('MigrationPaymentsUpdate')."</b><br>\n";
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement","fk_facture");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -826,8 +839,8 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
         $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
-        $sql.= " LEFT JOIN llx_paiement_facture as pf ON pf.fk_paiement = p.rowid";
-        $sql.= " LEFT JOIN llx_bank_url as bu2 ON (bu.fk_bank = bu2.fk_bank AND bu2.type = 'company')";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON (bu.fk_bank = bu2.fk_bank AND bu2.type = 'company')";
         $sql.= " WHERE pf.rowid IS NULL AND (p.fk_bank = bu.fk_bank AND bu.type = 'payment') AND bu.fk_bank = b.rowid";
         $sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
 
@@ -954,7 +967,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_det($db,$langs,$conf)
+function migrate_contracts_det($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1052,7 +1065,7 @@ function migrate_contracts_det($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_links_transfert($db,$langs,$conf)
+function migrate_links_transfert($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1089,7 +1102,7 @@ function migrate_links_transfert($db,$langs,$conf)
                 $sql.= "fk_bank, url_id, url, label, type";
                 $sql.= ")";
                 $sql.= " VALUES (";
-                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert'";
+                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
                 $sql.= ")";
 
                 print $sql.'<br>';
@@ -1136,14 +1149,14 @@ function migrate_links_transfert($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_date1($db,$langs,$conf)
+function migrate_contracts_date1($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
 
-    $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
+    $sql="update ".MAIN_DB_PREFIX."contrat set date_contrat=tms where date_contrat is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1152,7 +1165,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     else
     print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
-    $sql="update llx_contrat set datec=tms where datec is null";
+    $sql="update ".MAIN_DB_PREFIX."contrat set datec=tms where datec is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1167,7 +1180,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 /*
  * Mise a jour date contrat avec date min effective mise en service si inferieur
  */
-function migrate_contracts_date2($db,$langs,$conf)
+function migrate_contracts_date2($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1236,14 +1249,14 @@ function migrate_contracts_date2($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_date3($db,$langs,$conf)
+function migrate_contracts_date3($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
 
-    $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
+    $sql="update ".MAIN_DB_PREFIX."contrat set datec=date_contrat where datec is null or datec > date_contrat";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date3");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1263,14 +1276,14 @@ function migrate_contracts_date3($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_open($db,$langs,$conf)
+function migrate_contracts_open($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
     print '<b>'.$langs->trans('MigrationReopeningContracts')."</b><br>\n";
 
-    $sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
+    $sql = "SELECT c.rowid as cref FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
     $sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
     dolibarr_install_syslog("upgrade2::migrate_contracts_open");
     $resql = $db->query($sql);
@@ -1322,7 +1335,7 @@ function migrate_contracts_open($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiementfourn_facturefourn($db,$langs,$conf)
+function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 {
     global $bc;
 
@@ -1331,7 +1344,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
     print '<b>'.$langs->trans('SuppliersInvoices')."</b><br>\n";
     print '</td></tr>';
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiementfourn","fk_facture_fourn");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiementfourn", "fk_facture_fourn");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -1432,14 +1445,14 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 }
 
 /**
- * Mise a jour des totaux lignes de facture
+ * Update total of invoice lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_facture($db,$langs,$conf)
+function migrate_price_facture($db, $langs, $conf)
 {
     $err=0;
 
@@ -1453,7 +1466,7 @@ function migrate_price_facture($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
-    // Liste des lignes facture non a jour
+    // List of invoice lines not up to date
     $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as vatrate, fd.total_ttc, fd.info_bits,";
     $sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
     $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
@@ -1486,7 +1499,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $facligne= new FactureLigne($db);
                 $facligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate, 0, 0,$remise_percent_global,'HT',$info_bits,$facligne->product_type,$tmpmysoc);
+                $result=calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $facligne->product_type, $tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1551,14 +1564,14 @@ function migrate_price_facture($db,$langs,$conf)
 }
 
 /**
- * Mise a jour des totaux lignes de propal
+ * Update total of proposal lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_propal($db,$langs,$conf)
+function migrate_price_propal($db, $langs, $conf)
 {
    	$tmpmysoc=new Societe($db);
 	$tmpmysoc->setMysoc($conf);
@@ -1570,7 +1583,7 @@ function migrate_price_propal($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
-    // Liste des lignes propal non a jour
+    // List of proposal lines not up to date
     $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as vatrate, pd.info_bits,";
     $sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
@@ -1601,7 +1614,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $propalligne= new PropaleLigne($db);
                 $propalligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$propalligne->product_type,$tmpmysoc);
+                $result=calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $propalligne->product_type, $tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1666,7 +1679,7 @@ function migrate_price_propal($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_contrat($db,$langs,$conf)
+function migrate_price_contrat($db, $langs, $conf)
 {
     $db->begin();
 
@@ -1679,7 +1692,7 @@ function migrate_price_contrat($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
 
-    // Liste des lignes contrat non a jour
+    // List of contract lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as contratid";
     $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
@@ -1710,7 +1723,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
                 $contratligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,0,'HT',$info_bits,$contratligne->product_type,$tmpmysoc);
+                $result=calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, 0, 'HT', $info_bits, $contratligne->product_type, $tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1748,14 +1761,14 @@ function migrate_price_contrat($db,$langs,$conf)
 }
 
 /**
- * Mise a jour des totaux lignes de commande
+ * Update total of sales order lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_commande($db,$langs,$conf)
+function migrate_price_commande($db, $langs, $conf)
 {
     $db->begin();
 
@@ -1767,7 +1780,7 @@ function migrate_price_commande($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
-    // Liste des lignes commande non a jour
+    // List of sales orders lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
@@ -1798,7 +1811,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $commandeligne= new OrderLine($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$commandeligne->product_type,$tmpmysoc);
+                $result=calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1865,14 +1878,14 @@ function migrate_price_commande($db,$langs,$conf)
 }
 
 /**
- * Mise a jour des totaux lignes de commande fournisseur
+ * Update total of purchase order lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_commande_fournisseur($db,$langs,$conf)
+function migrate_price_commande_fournisseur($db, $langs, $conf)
 {
     $db->begin();
 
@@ -1884,7 +1897,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationSupplierOrder')."</b><br>\n";
 
-    // Liste des lignes commande non a jour
+    // List of purchase order lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -1915,7 +1928,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $commandeligne= new CommandeFournisseurLigne($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$commandeligne->product_type,$tmpsoc);
+                $result=calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpsoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1989,7 +2002,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_modeles($db,$langs,$conf)
+function migrate_modeles($db, $langs, $conf)
 {
     //print '<br>';
     //print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
@@ -2003,7 +2016,7 @@ function migrate_modeles($db,$langs,$conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('crabe','invoice')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2016,7 +2029,7 @@ function migrate_modeles($db,$langs,$conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('einstein','order')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('einstein','order')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2029,7 +2042,7 @@ function migrate_modeles($db,$langs,$conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2047,7 +2060,7 @@ function migrate_modeles($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_commande_expedition($db,$langs,$conf)
+function migrate_commande_expedition($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_commande_expedition");
 
@@ -2056,7 +2069,7 @@ function migrate_commande_expedition($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationShipmentOrderMatching')."</b><br>\n";
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."expedition","fk_commande");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."expedition", "fk_commande");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -2124,7 +2137,7 @@ function migrate_commande_expedition($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_commande_livraison($db,$langs,$conf)
+function migrate_commande_livraison($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_commande_livraison");
 
@@ -2133,7 +2146,7 @@ function migrate_commande_livraison($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationDeliveryOrderMatching')."</b><br>\n";
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","fk_commande");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison", "fk_commande");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -2217,7 +2230,7 @@ function migrate_commande_livraison($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_detail_livraison($db,$langs,$conf)
+function migrate_detail_livraison($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_detail_livraison");
 
@@ -2228,7 +2241,7 @@ function migrate_detail_livraison($db,$langs,$conf)
 
     // This is done if field fk_commande_ligne exists.
     // If not this means migration was already done.
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet","fk_commande_ligne");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet", "fk_commande_ligne");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -2318,7 +2331,7 @@ function migrate_detail_livraison($db,$langs,$conf)
     }
     else
     {
-        $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet","fk_origin_line");
+        $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet", "fk_origin_line");
         $obj = $db->fetch_object($result);
         if (!$obj)
         {
@@ -2338,7 +2351,7 @@ function migrate_detail_livraison($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_stocks($db,$langs,$conf)
+function migrate_stocks($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_stocks");
 
@@ -2373,7 +2386,6 @@ function migrate_stocks($db,$langs,$conf)
                 $resql2=$db->query($sql);
                 if ($resql2)
                 {
-
                 }
                 else
                 {
@@ -2412,7 +2424,7 @@ function migrate_stocks($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_menus($db,$langs,$conf)
+function migrate_menus($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_menus");
 
@@ -2450,7 +2462,6 @@ function migrate_menus($db,$langs,$conf)
                     $resql2=$db->query($sql);
                     if ($resql2)
                     {
-
                     }
                     else
                     {
@@ -2494,7 +2505,7 @@ function migrate_menus($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_commande_deliveryaddress($db,$langs,$conf)
+function migrate_commande_deliveryaddress($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_commande_deliveryaddress");
 
@@ -2578,13 +2589,13 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	integer|null
  */
-function migrate_restore_missing_links($db,$langs,$conf)
+function migrate_restore_missing_links($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_restore_missing_links");
 
     if (($db->type == 'mysql' || $db->type == 'mysqli'))
     {
-        if (versioncompare($db->getVersionArray(),array(4,0)) < 0)
+        if (versioncompare($db->getVersionArray(), array(4,0)) < 0)
         {
             dolibarr_install_syslog("upgrade2::migrate_restore_missing_links Version of database too old to make this migrate action");
             return 0;
@@ -2734,7 +2745,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_project_user_resp($db,$langs,$conf)
+function migrate_project_user_resp($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_project_user_resp");
 
@@ -2743,7 +2754,7 @@ function migrate_project_user_resp($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationProjectUserResp')."</b><br>\n";
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."projet","fk_user_resp");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."projet", "fk_user_resp");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -2831,7 +2842,7 @@ function migrate_project_user_resp($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_project_task_actors($db,$langs,$conf)
+function migrate_project_task_actors($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_project_task_actors");
 
@@ -2846,7 +2857,7 @@ function migrate_project_task_actors($db,$langs,$conf)
 
         $db->begin();
 
-        $sql = "SELECT fk_projet_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
+        $sql = "SELECT fk_projet_task as fk_project_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -2868,7 +2879,7 @@ function migrate_project_task_actors($db,$langs,$conf)
                     $sql2.= ") VALUES (";
                     $sql2.= "'".$db->idate(dol_now())."'";
                     $sql2.= ", '4'";
-                    $sql2.= ", ".$obj->fk_projet_task;
+                    $sql2.= ", ".$obj->fk_project_task;
                     $sql2.= ", '180'";
                     $sql2.= ", ".$obj->fk_user;
                     $sql2.= ")";
@@ -2928,12 +2939,12 @@ function migrate_project_task_actors($db,$langs,$conf)
  * @param	string		$targettype		Type of element target
  * @return	void
  */
-function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)
+function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $sourcetype, $fk_target, $targettype)
 {
     print '<tr><td colspan="4">';
 
     print '<br>';
-    print '<b>'.$langs->trans('MigrationRelationshipTables',MAIN_DB_PREFIX.$table)."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationRelationshipTables', MAIN_DB_PREFIX.$table)."</b><br>\n";
 
     $error = 0;
 
@@ -3024,7 +3035,7 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_project_task_time($db,$langs,$conf)
+function migrate_project_task_time($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_project_task_time");
 
@@ -3058,7 +3069,7 @@ function migrate_project_task_time($db,$langs,$conf)
                 {
                     // convert to second
                     // only for int time and float time ex: 1,75 for 1h45
-                    list($hour,$min) = explode('.',$obj->task_duration);
+                    list($hour,$min) = explode('.', $obj->task_duration);
                     $hour = $hour*60*60;
                     $min = ($min/100)*60*60;
                     $newtime = $hour+$min;
@@ -3145,7 +3156,7 @@ function migrate_project_task_time($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_customerorder_shipping($db,$langs,$conf)
+function migrate_customerorder_shipping($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -3154,8 +3165,8 @@ function migrate_customerorder_shipping($db,$langs,$conf)
 
     $error = 0;
 
-    $result1 = $db->DDLDescTable(MAIN_DB_PREFIX."expedition","ref_customer");
-    $result2 = $db->DDLDescTable(MAIN_DB_PREFIX."expedition","date_delivery");
+    $result1 = $db->DDLDescTable(MAIN_DB_PREFIX."expedition", "ref_customer");
+    $result2 = $db->DDLDescTable(MAIN_DB_PREFIX."expedition", "date_delivery");
     $obj1 = $db->fetch_object($result1);
     $obj2 = $db->fetch_object($result2);
     if (!$obj1 && !$obj2)
@@ -3246,7 +3257,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_shipping_delivery($db,$langs,$conf)
+function migrate_shipping_delivery($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -3255,7 +3266,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
 
     $error = 0;
 
-    $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","fk_expedition");
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison", "fk_expedition");
     $obj = $db->fetch_object($result);
     if ($obj)
     {
@@ -3358,7 +3369,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_shipping_delivery2($db,$langs,$conf)
+function migrate_shipping_delivery2($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -3442,7 +3453,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_actioncomm_element($db,$langs,$conf)
+function migrate_actioncomm_element($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3460,7 +3471,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
 
 	foreach($elements as $type => $field)
 	{
-		$result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm",$field);
+		$result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm", $field);
 		$obj = $db->fetch_object($result);
 		if ($obj)
 		{
@@ -3508,7 +3519,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_mode_reglement($db,$langs,$conf)
+function migrate_mode_reglement($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3608,7 +3619,7 @@ function migrate_mode_reglement($db,$langs,$conf)
  * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_clean_association($db,$langs,$conf,$versionto)
+function migrate_clean_association($db, $langs, $conf, $versionto)
 {
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
     if ($result)	// result defined for version 3.2 or -
@@ -3666,13 +3677,13 @@ function migrate_clean_association($db,$langs,$conf,$versionto)
                     if (! $error)
                     {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
-                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
+                        print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
                         $db->commit();
                     }
                     else
                     {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
-                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
+                        print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
                         $db->rollback();
                     }
                 }
@@ -3680,7 +3691,7 @@ function migrate_clean_association($db,$langs,$conf,$versionto)
             else
             {
                 print '<tr><td>'.$langs->trans("Error").'</td>';
-                print '<td align="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
+                print '<td class="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
             }
         }
     }
@@ -3695,7 +3706,7 @@ function migrate_clean_association($db,$langs,$conf,$versionto)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_categorie_association($db,$langs,$conf)
+function migrate_categorie_association($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3788,7 +3799,7 @@ function migrate_categorie_association($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_event_assignement($db,$langs,$conf)
+function migrate_event_assignement($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3865,7 +3876,7 @@ function migrate_event_assignement($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_event_assignement_contact($db,$langs,$conf)
+function migrate_event_assignement_contact($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3943,7 +3954,7 @@ function migrate_event_assignement_contact($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_reset_blocked_log($db,$langs,$conf)
+function migrate_reset_blocked_log($db, $langs, $conf)
 {
 	global $user;
 
@@ -4061,7 +4072,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_remise_entity($db,$langs,$conf)
+function migrate_remise_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4138,7 +4149,7 @@ function migrate_remise_entity($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_remise_except_entity($db,$langs,$conf)
+function migrate_remise_except_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4175,7 +4186,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
 					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f";
 					$sqlSelect2.= " WHERE f.rowid = " . $fk_facture;
 				}
-				else if (!empty($obj->fk_facture_line))
+				elseif (!empty($obj->fk_facture_line))
 				{
 					$sqlSelect2 = "SELECT f.entity";
 					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
@@ -4250,7 +4261,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_user_rights_entity($db,$langs,$conf)
+function migrate_user_rights_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4326,7 +4337,7 @@ function migrate_user_rights_entity($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_usergroup_rights_entity($db,$langs,$conf)
+function migrate_usergroup_rights_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4411,7 +4422,7 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
     if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
     {
         dolibarr_install_syslog("upgrade2::migrate_rename_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
-        @rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
+        @rename(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname);
     }
 }
 
@@ -4470,6 +4481,14 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/societe/class/api_contact.class.php',
         '/societe/class/api_thirdparty.class.php',
         '/support/online.php',
+        '/takepos/class/actions_takepos.class.php',
+
+    	'/install/mysql/tables/llx_c_ticketsup_category.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_category.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_severity.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_severity.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_type.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_type.sql'
     );
 
     foreach ($filetodeletearray as $filetodelete) {
@@ -4516,7 +4535,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
         }
         if (! $result) {
             $langs->load("errors");
-            print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir",$filetodelete);
+            print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir", $filetodelete);
             print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
         }
     }
@@ -4536,7 +4555,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param   int         $force          1=Reload module even if not already loaded
  * @return	void
  */
-function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $force=0)
+function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
 	if (count($listofmodule) == 0) return;
 
@@ -4786,7 +4805,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $forc
  * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_reload_menu($db,$langs,$conf,$versionto)
+function migrate_reload_menu($db, $langs, $conf, $versionto)
 {
     global $conf;
     dolibarr_install_syslog("upgrade2::migrate_reload_menu");
@@ -4812,7 +4831,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         $file='init_menu_'.$key.'.sql';
         if (file_exists($dir.$file))
         {
-            $result=run_sql($dir.$file,1,'',1,$key);
+            $result=run_sql($dir.$file, 1, '', 1, $key);
         }
 
         print '</td></tr>';
@@ -4855,7 +4874,7 @@ function migrate_user_photospath()
 			if ($dir)
 			{
 				//print "Process user id ".$fuser->id."<br>\n";
-				$origin = $dir .'/'. get_exdir($fuser->id,2,0,1,$fuser,'user');	// Use old behaviour to get x/y path
+				$origin = $dir .'/'. get_exdir($fuser->id, 2, 0, 1, $fuser, 'user');	// Use old behaviour to get x/y path
 				$destin = $dir .'/'. $fuser->id;
 
 				$origin_osencoded=dol_osencode($origin);
@@ -4925,3 +4944,368 @@ update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */
 
+/**
+ * Migrate users fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_users_socialnetworks()
+{
+    global $db, $langs;
+    // skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
+    $error = 0;
+    $db->begin();
+    print '<tr><td colspan="4">';
+    $sql = 'SELECT rowid, socialnetworks';
+    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'user WHERE ';
+    $sql .= ' skype IS NOT NULL OR skype !=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
+    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
+    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
+    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
+    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
+    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
+    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
+    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    //print $sql;
+    $resql = $db->query($sql);
+    if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $arraysocialnetworks = array();
+            if (!empty($obj->skype)) {
+                $arraysocialnetworks['skype'] = $obj->skype;
+            }
+            if (!empty($obj->twitter)) {
+                $arraysocialnetworks['twitter'] = $obj->twitter;
+            }
+            if (!empty($obj->facebook)) {
+                $arraysocialnetworks['facebook'] = $obj->facebook;
+            }
+            if (!empty($obj->linkedin)) {
+                $arraysocialnetworks['linkedin'] = $obj->linkedin;
+            }
+            if (!empty($obj->instagram)) {
+                $arraysocialnetworks['instagram'] = $obj->instagram;
+            }
+            if (!empty($obj->snapchat)) {
+                $arraysocialnetworks['snapchat'] = $obj->snapchat;
+            }
+            if (!empty($obj->googleplus)) {
+                $arraysocialnetworks['googleplus'] = $obj->googleplus;
+            }
+            if (!empty($obj->youtube)) {
+                $arraysocialnetworks['youtube'] = $obj->youtube;
+            }
+            if (!empty($obj->whatsapp)) {
+                $arraysocialnetworks['whatsapp'] = $obj->whatsapp;
+            }
+            if ($obj->socialnetworks == '' || is_null($obj->socialnetworks)) {
+                $obj->socialnetworks = '[]';
+            }
+            $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'user SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd.= ', skype=null';
+            $sqlupd.= ', twitter=null';
+            $sqlupd.= ', facebook=null';
+            $sqlupd.= ', linkedin=null';
+            $sqlupd.= ', instagram=null';
+            $sqlupd.= ', snapchat=null';
+            $sqlupd.= ', googleplus=null';
+            $sqlupd.= ', youtube=null';
+            $sqlupd.= ', whatsapp=null';
+            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            //print $sqlupd."<br>";
+            $resqlupd = $db->query($sqlupd);
+            if (! $resqlupd) {
+                dol_print_error($db);
+                $error++;
+            }
+        }
+    } else {
+        $error++;
+    }
+    if (! $error) {
+        $db->commit();
+    } else {
+        dol_print_error($db);
+        $db->rollback();
+    }
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Users')."</b><br>\n";
+    print '</td></tr>';
+}
+
+/**
+ * Migrate members fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_members_socialnetworks()
+{
+    global $db, $langs;
+
+    print '<tr><td colspan="4">';
+    $error = 0;
+    $db->begin();
+    print '<tr><td colspan="4">';
+    $sql = 'SELECT rowid, socialnetworks';
+    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'adherent WHERE ';
+    $sql .= ' skype IS NOT NULL OR skype!=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
+    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
+    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
+    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
+    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
+    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
+    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
+    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    //print $sql;
+    $resql = $db->query($sql);
+    if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $arraysocialnetworks = array();
+            if (!empty($obj->skype)) {
+                $arraysocialnetworks['skype'] = $obj->skype;
+            }
+            if (!empty($obj->twitter)) {
+                $arraysocialnetworks['twitter'] = $obj->twitter;
+            }
+            if (!empty($obj->facebook)) {
+                $arraysocialnetworks['facebook'] = $obj->facebook;
+            }
+            if (!empty($obj->linkedin)) {
+                $arraysocialnetworks['linkedin'] = $obj->linkedin;
+            }
+            if (!empty($obj->instagram)) {
+                $arraysocialnetworks['instagram'] = $obj->instagram;
+            }
+            if (!empty($obj->snapchat)) {
+                $arraysocialnetworks['snapchat'] = $obj->snapchat;
+            }
+            if (!empty($obj->googleplus)) {
+                $arraysocialnetworks['googleplus'] = $obj->googleplus;
+            }
+            if (!empty($obj->youtube)) {
+                $arraysocialnetworks['youtube'] = $obj->youtube;
+            }
+            if (!empty($obj->whatsapp)) {
+                $arraysocialnetworks['whatsapp'] = $obj->whatsapp;
+            }
+            if ($obj->socialnetworks == '' || is_null($obj->socialnetworks)) {
+                $obj->socialnetworks = '[]';
+            }
+            $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'adherent SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd.= ', skype=null';
+            $sqlupd.= ', twitter=null';
+            $sqlupd.= ', facebook=null';
+            $sqlupd.= ', linkedin=null';
+            $sqlupd.= ', instagram=null';
+            $sqlupd.= ', snapchat=null';
+            $sqlupd.= ', googleplus=null';
+            $sqlupd.= ', youtube=null';
+            $sqlupd.= ', whatsapp=null';
+            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            //print $sqlupd."<br>";
+            $resqlupd = $db->query($sqlupd);
+            if (! $resqlupd) {
+                dol_print_error($db);
+                $error++;
+            }
+        }
+    } else {
+        $error++;
+    }
+    if (! $error) {
+        $db->commit();
+    } else {
+        dol_print_error($db);
+        $db->rollback();
+    }
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Members')."</b><br>\n";
+    print '</td></tr>';
+}
+
+/**
+ * Migrate contacts fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_contacts_socialnetworks()
+{
+    global $db, $langs;
+    // jabberid,skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
+    $error = 0;
+    $db->begin();
+    print '<tr><td colspan="4">';
+    $sql = 'SELECT rowid, socialnetworks';
+    $sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE ';
+    $sql .= ' jabberid IS NOT NULL OR jabberid!=""';
+    $sql .= ' OR skype IS NOT NULL OR skype!=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
+    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
+    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
+    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
+    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
+    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
+    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
+    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    //print $sql;
+    $resql = $db->query($sql);
+    if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $arraysocialnetworks = array();
+            if (!empty($obj->jabberid)) {
+                $arraysocialnetworks['jabber'] = $obj->jabberid;
+            }
+            if (!empty($obj->skype)) {
+                $arraysocialnetworks['skype'] = $obj->skype;
+            }
+            if (!empty($obj->twitter)) {
+                $arraysocialnetworks['twitter'] = $obj->twitter;
+            }
+            if (!empty($obj->facebook)) {
+                $arraysocialnetworks['facebook'] = $obj->facebook;
+            }
+            if (!empty($obj->linkedin)) {
+                $arraysocialnetworks['linkedin'] = $obj->linkedin;
+            }
+            if (!empty($obj->instagram)) {
+                $arraysocialnetworks['instagram'] = $obj->instagram;
+            }
+            if (!empty($obj->snapchat)) {
+                $arraysocialnetworks['snapchat'] = $obj->snapchat;
+            }
+            if (!empty($obj->googleplus)) {
+                $arraysocialnetworks['googleplus'] = $obj->googleplus;
+            }
+            if (!empty($obj->youtube)) {
+                $arraysocialnetworks['youtube'] = $obj->youtube;
+            }
+            if (!empty($obj->whatsapp)) {
+                $arraysocialnetworks['whatsapp'] = $obj->whatsapp;
+            }
+            if ($obj->socialnetworks == '' || is_null($obj->socialnetworks)) {
+                $obj->socialnetworks = '[]';
+            }
+            $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd.= ', jabberid=null';
+            $sqlupd.= ', skype=null';
+            $sqlupd.= ', twitter=null';
+            $sqlupd.= ', facebook=null';
+            $sqlupd.= ', linkedin=null';
+            $sqlupd.= ', instagram=null';
+            $sqlupd.= ', snapchat=null';
+            $sqlupd.= ', googleplus=null';
+            $sqlupd.= ', youtube=null';
+            $sqlupd.= ', whatsapp=null';
+            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            //print $sqlupd."<br>";
+            $resqlupd = $db->query($sqlupd);
+            if (! $resqlupd) {
+                dol_print_error($db);
+                $error++;
+            }
+        }
+    } else {
+        $error++;
+    }
+    if (! $error) {
+        $db->commit();
+    } else {
+        dol_print_error($db);
+        $db->rollback();
+    }
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Contacts')."</b><br>\n";
+    print '</td></tr>';
+}
+
+/**
+ * Migrate thirdparties fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_thirdparties_socialnetworks()
+{
+    global $db, $langs;
+    // skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
+    $error = 0;
+    $db->begin();
+    print '<tr><td colspan="4">';
+    $sql = 'SELECT rowid, socialnetworks';
+    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'societe WHERE ';
+    $sql .= ' skype IS NOT NULL OR skype!=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
+    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
+    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
+    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
+    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
+    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
+    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
+    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    //print $sql;
+    $resql = $db->query($sql);
+    if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $arraysocialnetworks = array();
+            if (!empty($obj->skype)) {
+                $arraysocialnetworks['skype'] = $obj->skype;
+            }
+            if (!empty($obj->twitter)) {
+                $arraysocialnetworks['twitter'] = $obj->twitter;
+            }
+            if (!empty($obj->facebook)) {
+                $arraysocialnetworks['facebook'] = $obj->facebook;
+            }
+            if (!empty($obj->linkedin)) {
+                $arraysocialnetworks['linkedin'] = $obj->linkedin;
+            }
+            if (!empty($obj->instagram)) {
+                $arraysocialnetworks['instagram'] = $obj->instagram;
+            }
+            if (!empty($obj->snapchat)) {
+                $arraysocialnetworks['snapchat'] = $obj->snapchat;
+            }
+            if (!empty($obj->googleplus)) {
+                $arraysocialnetworks['googleplus'] = $obj->googleplus;
+            }
+            if (!empty($obj->youtube)) {
+                $arraysocialnetworks['youtube'] = $obj->youtube;
+            }
+            if (!empty($obj->whatsapp)) {
+                $arraysocialnetworks['whatsapp'] = $obj->whatsapp;
+            }
+            if ($obj->socialnetworks == '' || is_null($obj->socialnetworks)) {
+                $obj->socialnetworks = '[]';
+            }
+            $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd.= ', skype=null';
+            $sqlupd.= ', twitter=null';
+            $sqlupd.= ', facebook=null';
+            $sqlupd.= ', linkedin=null';
+            $sqlupd.= ', instagram=null';
+            $sqlupd.= ', snapchat=null';
+            $sqlupd.= ', googleplus=null';
+            $sqlupd.= ', youtube=null';
+            $sqlupd.= ', whatsapp=null';
+            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            //print $sqlupd."<br>";
+            $resqlupd = $db->query($sqlupd);
+            if (! $resqlupd) {
+                dol_print_error($db);
+                $error++;
+            }
+        }
+    } else {
+        $error++;
+    }
+    if (! $error) {
+        $db->commit();
+    } else {
+        dol_print_error($db);
+        $db->rollback();
+    }
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Thirdparties')."</b><br>\n";
+    print '</td></tr>';
+}

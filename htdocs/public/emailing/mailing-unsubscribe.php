@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -27,9 +27,9 @@
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
-if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check anti CSRF attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);			// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');		// Do not check anti CSRF attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
 
 /**
  * Header empty
@@ -115,7 +115,7 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	*/
 
 	// Update status communication of email (new usage)
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$obj->entity.", '".$obj->email."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."')";
 
 	$resql=$db->query($sql);
 	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
@@ -140,7 +140,7 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	print "</head>\n";
 	print '<body style="margin: 20px;">'."\n";
 	print '<table><tr><td style="text_align:center;">';
-	print $langs->trans("YourMailUnsubcribeOK",$obj->email)."<br>\n";
+	print $langs->trans("YourMailUnsubcribeOK", $obj->email)."<br>\n";
 	print '</td></tr></table>';
 	print "</body>\n";
 	print "</html>\n";

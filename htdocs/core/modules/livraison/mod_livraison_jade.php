@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,7 +36,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -48,7 +48,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Jade';
 
@@ -61,33 +61,33 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
 
 	/**
-	 *   Renvoi la description du modele de numerotation
+	 *   Returns the description of the numbering model
 	 *
 	 *   @return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
 
     /**
-     *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *  de conflits qui empechera cette numerotation de fonctionner.
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
      *
-     *  @return     boolean     false si conflit, true si ok
+     *  @return     boolean     false if conflict, true if ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         global $langs,$conf,$db;
 
@@ -106,12 +106,12 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+            if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
         }
-        if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+        if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
         {
             $langs->load("errors");
-            $this->error=$langs->trans('ErrorNumRefModel',$max);
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
             return false;
         }
 
@@ -125,7 +125,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$object)
+    public function getNextValue($objsoc, $object)
     {
         global $db,$conf;
 
@@ -138,8 +138,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
         $resql=$db->query($sql);
         dol_syslog("mod_livraison_jade::getNextValue", LOG_DEBUG);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $db->fetch_object($resql);
             if ($obj) $max = intval($obj->max);
             else $max=0;
@@ -151,27 +150,27 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
         $date=$object->date_delivery;
         if (empty($date)) $date=dol_now();
-        $yymm = strftime("%y%m",$date);
+        $yymm = strftime("%y%m", $date);
 
         if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-        else $num = sprintf("%04s",$max+1);
+        else $num = sprintf("%04s", $max+1);
 
         dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
         return $this->prefix.$yymm."-".$num;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
-	 *  Return next free ref
-	 *
-     *  @param  Societe		$objsoc      	Object thirdparty
-     *  @param  Object		$object			Object livraison
-     *  @return string      				Texte descriptif
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return next free ref
+     *
+     *  @param  Societe     $objsoc         Object thirdparty
+     *  @param  Object      $object         Object livraison
+     *  @return string                      Texte descriptif
      */
-    function livraison_get_num($objsoc=0,$object='')
+    public function livraison_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
-        return $this->getNextValue($objsoc,$object);
+        return $this->getNextValue($objsoc, $object);
     }
 }

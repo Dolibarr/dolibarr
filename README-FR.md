@@ -15,37 +15,43 @@ Dolibarr est distribué sous les termes de la licence GNU General Public License
 
 ## INSTALLER DOLIBARR
 
-Si vous n'avez pas de connaissances techniques, et que vous recherchez
-un programme d'installation qui installe Dolibarr ERP/CRM en quelques clics,
-vous devez vous ré-orienter vers DoliWamp (la version tout-en-un
-de Dolibarr pour Windows), DoliDeb (la version tout-en-un pour Debian ou
-Ubuntu) ou DoliRpm (la version tout-en-un de Dolibarr pour Fedora, Redhat,
-OpenSuse, Mandriva ou Mageia).
+### Configuration simple
 
-Vous pouvez les télécharger depuis la rubrique *download* du portail officiel: 
-https://www.dolibarr.org/
+Si vous avez peu de compétences techniques et que vous souhaitez installer Dolibarr ERP/CRM en quelques clics, vous pouvez utiliser l'une des versions pré-packagées avec les prérequis:
 
-Si vous avez déjà installé un serveur Web avec PHP et une base de données (MariaDb/MySql/PostgreSql),
-vous pouvez installer Dolibarr avec cette version de la manière suivante:
+- DoliWamp pour Windows
+- DoliDeb pour Debian ou Ubuntu
+- DoliRpm pour Redhat, Fedora, OpenSuse, Mandriva ou Mageia
 
-- Copiez le répertoire "dolibarr" et son contenu dans la racine de votre serveur
-  web, ou bien copiez le répertoire sur le serveur et configurez ce serveur pour
-  utiliser "dolibarr/htdocs" comme racine d'un nouveau virtual host (ce second 
-  choix requiert des compétences et habilitations en administration du serveur
-  web).
-  
-- Créez un fichier vide "htdocs/conf/conf.php" et attribuez les permissions
-  en lecture et écriture pour le user du serveur web (les permissions en 
-  écriture seront supprimées une fois l'installation terminée).
+Les packages peuvent être téléchargés à partir de [site web officiel] (https://www.dolibarr.org/).
 
-- Depuis votre navigateur, appelez la page "install/" de dolibarr. L'url dépend 
-  du choix fait à la première étape:
-   http://localhost/dolibarr/htdocs/install/
-  ou
-   http://yourdolibarrvirtualhost/install/
-   
-- Suivez les instructions fournies par l'installateur...
+### Configuration avancée
 
+Vous pouvez aussi utiliser un serveur Web et une base de données prise en charge (MariaDB, MySQL ou PostgreSQL) pour installer la version standard.
+
+- Décompressez l'archive .zip téléchargée pour copier le répertoire "dolibarr/htdocs" et tous ses fichiers à la racine du serveur Web ou récupérez-les directement à partir de GitHub (recommandé si vous connaissez git):
+
+  git clone https://github.com/dolibarr/dolibarr -b x.y   (où x.y est la version principale comme 3.6, 9.0, ...)
+
+- Configurez votre serveur Web pour qu'il utilise "*dolibarr/htdocs*" en tant que racine si votre serveur Web ne possède pas déjà de répertoire défini vers lequel pointer.
+ 
+- Créez un fichier `htdocs/conf/conf.php` vide et définissez les autorisations d'*écrire* pour l'utilisateur de votre serveur Web (l'autorisation *écrire* sera supprimée une fois l'installation terminée)
+
+- Depuis votre navigateur, allez à la page "install/" de dolibarr
+
+    L’URL dépendra de la façon dont votre configuration Web a été configurée pour pointer vers votre installation de dolibarr. Cela peut ressembler à:
+
+        http://localhost/dolibarr/htdocs/install/
+        
+    ou
+    
+        http://localhost/dolibarr/install/
+        
+    ou
+    
+    http://yourdolibarrvirtualhost/install/
+   
+- Suivez les instructions de l'installateur
 
 
 ## METTRE A JOUR DOLIBARR

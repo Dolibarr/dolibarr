@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,10 +29,10 @@
  */
 abstract class ModelePdfReception extends CommonDocGenerator
 {
-    var $error='';
+    public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *  Return list of active generation modules
 	 *
@@ -40,7 +40,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -49,7 +49,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -61,13 +61,13 @@ abstract class ModelePdfReception extends CommonDocGenerator
  */
 abstract class ModelNumRefReception
 {
-	var $error='';
+    public $error='';
 
 	/** Return if a model can be used or not
 	 *
 	 *  @return		boolean     true if model can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -77,7 +77,7 @@ abstract class ModelNumRefReception
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("reception");
@@ -89,7 +89,7 @@ abstract class ModelNumRefReception
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("reception");
@@ -101,7 +101,7 @@ abstract class ModelNumRefReception
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -113,7 +113,7 @@ abstract class ModelNumRefReception
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return	string					Value
 	 */
-	function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $shipment)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -124,15 +124,15 @@ abstract class ModelNumRefReception
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }

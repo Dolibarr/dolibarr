@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,19 +37,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id=GETPOST('id','int');
-$idcomment=GETPOST('idcomment','int');
-$ref=GETPOST("ref",'alpha',1);          // task ref
-$objectref=GETPOST("taskref",'alpha');    // task ref
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$withproject=GETPOST('withproject','int');
-$project_ref=GETPOST('project_ref','alpha');
-$planned_workload=((GETPOST('planned_workloadhour','int')!='' || GETPOST('planned_workloadmin','int')!='') ? (GETPOST('planned_workloadhour','int')>0?GETPOST('planned_workloadhour','int')*3600:0) + (GETPOST('planned_workloadmin','int')>0?GETPOST('planned_workloadmin','int')*60:0) : '');
+$id=GETPOST('id', 'int');
+$idcomment=GETPOST('idcomment', 'int');
+$ref=GETPOST("ref", 'alpha', 1);          // task ref
+$objectref=GETPOST("taskref", 'alpha');    // task ref
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$withproject=GETPOST('withproject', 'int');
+$project_ref=GETPOST('project_ref', 'alpha');
+$planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('planned_workloadmin', 'int')!='') ? (GETPOST('planned_workloadhour', 'int')>0?GETPOST('planned_workloadhour', 'int')*3600:0) + (GETPOST('planned_workloadmin', 'int')>0?GETPOST('planned_workloadmin', 'int')*60:0) : '');
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -60,7 +60,7 @@ $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // include comment actions
 include DOL_DOCUMENT_ROOT . '/core/actions_comments.inc.php';
@@ -68,7 +68,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_comments.inc.php';
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
-	if ($projectstatic->fetch('',$project_ref) > 0)
+	if ($projectstatic->fetch('', $project_ref) > 0)
 	{
 		$objectsarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($objectsarray) > 0)
@@ -95,13 +95,13 @@ $formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id,$ref) > 0)
+	if ($object->fetch($id, $ref) > 0)
 	{
 		$result=$object->fetch_optionals();
 
 		$result=$object->fetchComments();
 		if ($result<0){
-			setEventMessages($object->error,$object->errors,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		$result=$projectstatic->fetch($object->fk_project);
@@ -110,7 +110,7 @@ if ($id > 0 || ! empty($ref))
 
 		$object->project = clone $projectstatic;
 
-		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
+		$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
 
 		if (! empty($withproject))
 		{
@@ -138,8 +138,8 @@ if ($id > 0 || ! empty($ref))
             // Define a complementary filter for search of next/prev ref.
             if (! $user->rights->projet->all->lire)
             {
-                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
             }
 
             dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -148,7 +148,35 @@ if ($id > 0 || ! empty($ref))
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
+
+            // Usage
+            print '<tr><td class="tdtop">';
+            print $langs->trans("Usage");
+            print '</td>';
+            print '<td>';
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+            {
+            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowOpportunity");
+            	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+            	print '<br>';
+            }
+            if (empty($conf->global->PROJECT_HIDE_TASKS))
+            {
+            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowTasks");
+            	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+            	print '<br>';
+            }
+            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectBillTimeDescription");
+            	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+            	print '<br>';
+            }
+            print '</td></tr>';
 
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -156,11 +184,35 @@ if ($id > 0 || ! empty($ref))
             else print $langs->trans('PrivateProject');
             print '</td></tr>';
 
+            // Usage
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES) && ! empty($object->usage_opportunity))
+            {
+            	// Opportunity status
+            	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+            	$code = dol_getIdFromCode($db, $projectstatic->opp_status, 'c_lead_status', 'rowid', 'code');
+            	if ($code) print $langs->trans("OppStatus".$code);
+            	print '</td></tr>';
+
+            	// Opportunity percent
+            	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+            	if (strcmp($object->opp_percent, '')) print price($projectstatic->opp_percent, 0, $langs, 1, 0).' %';
+            	print '</td></tr>';
+
+            	// Opportunity Amount
+            	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+            	/*if ($object->opp_status)
+            	 {
+            	 print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
+            	 }*/
+            	if (strcmp($projectstatic->opp_amount, '')) print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
+            	print '</td></tr>';
+            }
+
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            $start = dol_print_date($projectstatic->date_start,'day');
+            $start = dol_print_date($projectstatic->date_start, 'day');
             print ($start?$start:'?');
-            $end = dol_print_date($projectstatic->date_end,'day');
+            $end = dol_print_date($projectstatic->date_end, 'day');
             print ' - ';
             print ($end?$end:'?');
             if ($projectstatic->hasDelay()) print img_warning("Late");
@@ -168,7 +220,7 @@ if ($id > 0 || ! empty($ref))
 
             // Budget
             print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-            if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
+            if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
             print '</td></tr>';
 
             // Other attributes
@@ -182,7 +234,7 @@ if ($id > 0 || ! empty($ref))
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Description
             print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -191,8 +243,8 @@ if ($id > 0 || ! empty($ref))
 
             // Categories
             if($conf->categorie->enabled) {
-                print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
-                print $form->showCategories($projectstatic->id,'project',1);
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+                print $form->showCategories($projectstatic->id, 'project', 1);
                 print "</td></tr>";
             }
 
@@ -221,12 +273,12 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action == 'delete')
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
 		}
 
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
@@ -254,7 +306,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Nb comments
 		print '<td class="titlefield">'.$langs->trans("NbComments").'</td><td>';
@@ -263,7 +315,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Other attributes
 		$cols = 3;
-		$parameyers=array('socid'=>$socid);
+		$parameters=array('socid'=>$socid);
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';

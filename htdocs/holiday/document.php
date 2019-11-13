@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,23 +37,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'holidays', 'companies'));
+$langs->loadLangs(array('other', 'holiday', 'companies'));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
 
-$langs->load("holiday");
-
 // Get parameters
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -84,7 +82,7 @@ $form = new Form($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader("","",$langs->trans("InterventionCard"));
+llxHeader("", "", $langs->trans("InterventionCard"));
 
 
 if ($object->id)
@@ -97,11 +95,11 @@ if ($object->id)
 
 	$head=holiday_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1,'holiday');
+	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -118,7 +116,7 @@ if ($object->id)
 	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -130,8 +128,8 @@ if ($object->id)
     print '<tr>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    $typeleaves=$object->getTypes(1,-1);
-    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $typeleaves[$object->fk_type]['label'];
+    $typeleaves=$object->getTypes(1, -1);
+    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $typeleaves[$object->fk_type]['label'];
     print '</td>';
     print '</tr>';
 
@@ -142,9 +140,9 @@ if ($object->id)
     {
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-        print '<td>'.dol_print_date($object->date_debut,'day');
+        print '<td>'.dol_print_date($object->date_debut, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$starthalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -164,9 +162,9 @@ if ($object->id)
     {
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-        print '<td>'.dol_print_date($object->date_fin,'day');
+        print '<td>'.dol_print_date($object->date_fin, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$endhalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -211,11 +209,11 @@ if ($object->id)
     }
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
     print '</tbody>';
     print '</table>'."\n";
-/*
+    /*
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
@@ -223,7 +221,7 @@ if ($object->id)
     print '<div class="underbanner clearboth"></div>';
 
 	// Info workflow
-    print '<table class="border centpercent">'."\n";
+    print '<table class="border tableforfield centpercent">'."\n";
     print '<tbody>';
 
     if (! empty($object->fk_user_create))
@@ -251,7 +249,7 @@ if ($object->id)
     }
 
     print '<tr>';
-    print '<td>'.$langs->trans('DateCreateCP').'</td>';
+    print '<td>'.$langs->trans('DateCreation').'</td>';
     print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
     print '</tr>';
     if ($object->statut == 3) {

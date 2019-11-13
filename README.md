@@ -1,11 +1,10 @@
 # DOLIBARR ERP & CRM
 
-![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
-[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
+![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 
-|6|7|8|9|develop|
+|7|8|9|10|develop|
 |----------|----------|----------|----------|----------|
-|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/6.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/7.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/9.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)|
+|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/7.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/9.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/10.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)|
 
 Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -29,27 +28,6 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ## INSTALLING
 
-### Download
-
-Releases can be downloaded from [official website](https://www.dolibarr.org/).
-
-### Install from composer
-
-If you do not already have Composer installed, you may do so by following the instructions at [getcomposer.org](https://getcomposer.org/). On Linux and macOS, you may run the following commands:
-
-```bash
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
-```
-
-On Windows, you can download and run https://getcomposer.org/Composer-Setup.exe
-
-You can then create a new project
-
-```bash
-composer create-project dolibarr/dolibarr erp
-```
-
 ### Simple setup
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
@@ -58,16 +36,23 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 - DoliDeb for Debian or Ubuntu
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
+Releases can be downloaded from [official website](https://www.dolibarr.org/).
+
 ### Advanced setup
 
 You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-- Uncompress the downloaded archive
-- Copy the "dolibarr" directory and all its files inside your web server root or anywhere you'd like and set up your web server to use "*dolibarr/htdocs*" as root for a new web server virtual host (second choice need to be server administrator)
-- Create an empty `htdocs/conf/conf.php` file and set permissions for your web server user (*write* permissions will be removed once install is finished)
+- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you known git): 
+
+  git clone https://github.com/dolibarr/dolibarr -b x.y     (where x.y is main version like 3.6, 9.0, ...)
+
+- Set up your web server to use "*dolibarr/htdocs*" as root if your web server does not have an already defined directory to point to. 
+ 
+- Create an empty `htdocs/conf/conf.php` file and set *write* permissions for your web server user (*write* permission will be removed once install is finished)
+
 - From your browser, go to the dolibarr "install/" page
 
-    The URL will depends on choices made in the first step:
+    The URL will depends on how you web setup was setup to point to your dolibarr installation. It may looks like:
 
         http://localhost/dolibarr/htdocs/install/
         
@@ -81,9 +66,15 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
    
 - Follow the installer instructions
 
+### Saas/Cloud setup
+
+If you don't have time to install it yourself, you can try some commercial 'ready to use' Cloud offers (See https://saas.dolibarr.org). However, this third solution is not free.
+
+
 
 ## UPGRADING
 
+- At first make a backup of your Dolibarr files & than see https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect your to the "install/" page to follow the upgrade process.
   If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
@@ -100,18 +91,19 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Main application/modules (all optional)
 
-- Customers, Prospects and/or Suppliers directory
+- Customers, Prospects (Leads) and/or Suppliers directory
 - Products and/or Services catalog
 - Commercial proposals management
 - Customer and Supplier Orders management
 - Invoices and payment management
 - Standing orders management (European SEPA)
 - Bank accounts management
+- Accounting management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
 - Opportunities and/or project management
 - Projects management
 - Contracts management
-- Stock management
+- Warehouse/Stock management
 - Shipping management
 - Interventions management
 - Employee's leave requests management
@@ -121,7 +113,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Foundations members management
 - Mass emailing
 - Surveys
-- Point of Sale
+- Point of Sale (POS) 
 - …
 
 ### Other application/modules
@@ -141,15 +133,15 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Other general features
 
-- Localization in most major languages.
-- Multi-Users and groups with finely grained rights.
-- Multi-currency.
-- Multi-company by adding of an external module.
-- Very user friendly and easy to use.
+- Localization in most major languages
+- Multi-Users and groups with finely grained rights
+- Multi-currency
+- Multi-company by adding of an external module
+- Very user friendly and easy to use
+- customizable Dashboard
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-- Works with PHP 5.3+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
-- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
-- APIs.
+
+- APIs
 - An easy to understand, maintain and develop code (PHP with no heavy framework; trigger and hook architecture)
 - Support a lot of country specific features:
     - Spanish Tax RE and ISPF
@@ -162,6 +154,12 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
     - ...
 - PDF or ODT generation for invoice, proposals, orders...
 - …
+
+### System Environment / Requirements
+
+- Works with PHP 5.5+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
+
 
 ### Extending
 

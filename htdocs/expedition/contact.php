@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,13 +37,13 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expedition', $id,'');
+if ($user->socid) $socid=$user->socid;
+$result = restrictedArea($user, 'expedition', $id, '');
 
 $object = new Expedition($db);
 if ($id > 0 || ! empty($ref))
@@ -103,13 +103,13 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->expedition->creer)
+elseif ($action == 'swapstatut' && $user->rights->expedition->creer)
 {
     $result=$objectsrc->swapContactStatus(GETPOST('ligne'));
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->expedition->creer)
+elseif ($action == 'deletecontact' && $user->rights->expedition->creer)
 {
 	$result = $objectsrc->delete_contact(GETPOST("lineid"));
 
@@ -123,7 +123,7 @@ else if ($action == 'deletecontact' && $user->rights->expedition->creer)
 	}
 }
 /*
-else if ($action == 'setaddress' && $user->rights->expedition->creer)
+elseif ($action == 'setaddress' && $user->rights->expedition->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
@@ -135,7 +135,7 @@ else if ($action == 'setaddress' && $user->rights->expedition->creer)
  * View
  */
 
-llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -173,7 +173,7 @@ if ($id > 0 || ! empty($ref))
         $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
         if (0) {    // Do not change on shipment
             if ($action != 'classify') {
-                $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             }
             if ($action == 'classify') {
                 // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 	    $objectsrc->fetch($object->$typeobject->id);
 	    print $langs->trans("RefOrder").'</td>';
 	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1,'commande');
+	    print $objectsrc->getNomUrl(1, 'commande');
 	    print "</td>\n";
 	    print '</tr>';
 	}
@@ -232,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 	    $objectsrc->fetch($object->$typeobject->id);
 	    print $langs->trans("RefProposal").'</td>';
 	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1,'expedition');
+	    print $objectsrc->getNomUrl(1, 'expedition');
 	    print "</td>\n";
 	    print '</tr>';
 	}
@@ -255,11 +255,11 @@ if ($id > 0 || ! empty($ref))
 
 	dol_fiche_end();
 
-	// Lignes de contacts
+	// Lines of contacts
 	echo '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach($dirtpls as $reldir)
 	{
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');

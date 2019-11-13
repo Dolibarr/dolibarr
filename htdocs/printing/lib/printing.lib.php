@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,14 +43,14 @@ function printingAdminPrepareHead($mode)
     $h++;
 
     if ($mode == 'setup') {
-        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver','alpha');
+        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver', 'alpha');
         $head[$h][1] = $langs->trans("SetupDriver");
         $head[$h][2] = 'setup';
         $h++;
     }
 
     if ($mode == 'test') {
-        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver','alpha');
+        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver', 'alpha');
         $head[$h][1] = $langs->trans("TargetedPrinter");
         $head[$h][2] = 'test';
         $h++;

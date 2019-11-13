@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,17 +28,18 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 /**
  * Empty header
  *
+ * @ignore
  * @return	void
  */
 function llxHeader()
@@ -48,9 +49,11 @@ function llxHeader()
     print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
     print '</head>'."\n";
 }
+
 /**
  * Empty footer
  *
+ * @ignore
  * @return	void
  */
 function llxFooter()
@@ -137,12 +140,12 @@ if ($resql)
 }
 else
 {
-	dol_print_error($db,'Error');
+	dol_print_error($db, 'Error');
 	$found = 'Error';
 }
 
 $number=strtolower($called);
-$pos=strpos($number,"local");
+$pos=strpos($number, "local");
 if (! empty($number))
 {
     if ($pos===false)
@@ -156,10 +159,10 @@ if (! empty($number))
             print '<body>'."\n";
             $txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
             print $txt;
-            dol_syslog($txt,LOG_ERR);
+            dol_syslog($txt, LOG_ERR);
             $txt=$errstr." (".$errno.")<br>\n";
             print $txt;
-            dol_syslog($txt,LOG_ERR);
+            dol_syslog($txt, LOG_ERR);
             print '</body>'."\n";
         }
         else

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *       \brief      Page to define emailing targets
  */
 
-if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK', '1');
 
 require '../../main.inc.php';
 
@@ -41,14 +41,14 @@ if (! empty($conf->categorie->enabled)) {
 }
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
+if (! $user->rights->mailing->lire || $user->socid > 0)
 	accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -60,14 +60,14 @@ if (! $sortfield)
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 $search_nom = GETPOST("search_nom");
 $search_prenom = GETPOST("search_prenom");
 $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
@@ -114,14 +114,13 @@ if ($action == 'loadfilter') {
 }
 
 if ($action == 'add') {
-
 	$user_contact_query = false;
 
 	$array_query = array ();
 
 	// Get extra fields
 
-	foreach ( $_POST as $key => $value ) {
+	foreach ($_POST as $key => $value) {
 		// print '$key='.$key.' $value='.$value.'<BR>';
 		if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 			// Special case for start date come with 3 inputs day, month, year
@@ -168,7 +167,6 @@ if ($action == 'add') {
 		}
 
 		if (preg_match("/^contact_/", $key)) {
-
 			$array_query[$key] = GETPOST($key);
 
 			$specials_date_key = array (
@@ -177,7 +175,7 @@ if ($action == 'add') {
 					'contact_create_st_dt',
 					'contact_create_end_dt'
 			);
-			foreach ( $specials_date_key as $date_key ) {
+			foreach ($specials_date_key as $date_key) {
 				if ($key == $date_key) {
 					$dt = GETPOST($date_key);
 					if (! empty($dt)) {
@@ -239,7 +237,7 @@ if ($action == 'add') {
 		if (! empty($template_id)) {
 			$query_temlate_id = '&template_id=' . $template_id;
 		}
-		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
+		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id . $query_temlate_id);
 		exit();
 	}
@@ -262,21 +260,19 @@ if ($action == 'clear') {
 }
 
 if ($action == 'savefilter' || $action == 'createfilter') {
-
 	$template_name = GETPOST('template_name');
 	$error = 0;
 
 	if ($action == 'createfilter' && empty($template_name)) {
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('AdvTgtOrCreateNewFilter')), null, 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AdvTgtOrCreateNewFilter')), null, 'errors');
 		$error ++;
 	}
 
 	if (empty($error)) {
-
 		$array_query = array ();
 
 		// Get extra fields
-		foreach ( $_POST as $key => $value ) {
+		foreach ($_POST as $key => $value) {
 			if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 				// Special case for start date come with 3 inputs day, month, year
 				if (preg_match("/st_dt/", $key)) {
@@ -325,7 +321,6 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 			}
 
 			if (preg_match("/^contact_/", $key)) {
-
 				$array_query[$key] = GETPOST($key);
 
 				$specials_date_key = array (
@@ -334,7 +329,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 						'contact_create_st_dt',
 						'contact_create_end_dt'
 				);
-				foreach ( $specials_date_key as $date_key ) {
+				foreach ($specials_date_key as $date_key) {
 					if ($key == $date_key) {
 						$dt = GETPOST($date_key);
 						if (! empty($dt)) {
@@ -359,7 +354,6 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 			}
 		} elseif ($action == 'savefilter') {
-
 			$result = $advTarget->update($user);
 			if ($result < 0) {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
@@ -421,12 +415,11 @@ $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 if ($object->fetch($id) >= 0) {
-
 	$head = emailing_prepare_head($object);
 
 	dol_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/mailing/liste.php">' . $langs->trans("BackToList") . '</a>';
 
@@ -465,7 +458,6 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->statut == 0 && $user->rights->mailing->creer) {
-
 		include DOL_DOCUMENT_ROOT . '/core/tpl/advtarget.tpl.php';
 	}
 }

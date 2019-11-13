@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,9 +25,9 @@
  * 	\brief      File to show a public card of a member
  */
 
-if (! defined('NOLOGIN'))		define("NOLOGIN",1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-if (! defined('NOIPCHECK'))		define('NOIPCHECK','1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (! defined('NOLOGIN'))		define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		define('NOIPCHECK', '1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -41,12 +41,12 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
-if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->adherent->enabled)) accessforbidden('', 0, 0, 1);
 
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -71,11 +71,12 @@ else $morehead='<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/th
 llxHeaderVierge($langs->trans("MemberCard"), $morehead);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 if ($id > 0)
 {
 	$res=$object->fetch($id);
-	if ($res < 0) { dol_print_error($db,$object->error); exit; }
+	if ($res < 0) { dol_print_error($db, $object->error); exit; }
 	$res=$object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
@@ -98,7 +99,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
+		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		if (isset($object->photo) && $object->photo !='')
 		{
@@ -156,4 +157,3 @@ function llxFooterVierge()
 	print "</body>\n";
 	print "</html>\n";
 }
-

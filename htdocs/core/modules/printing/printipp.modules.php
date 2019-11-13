@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,6 +32,10 @@ class printing_printipp extends PrintingDriver
 {
     public $name = 'printipp';
     public $desc = 'PrintIPPDesc';
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'printer';
     public $active = 'PRINTING_PRINTIPP';
     public $conf = array();
@@ -62,7 +66,7 @@ class printing_printipp extends PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $conf;
 
@@ -87,7 +91,7 @@ class printing_printipp extends PrintingDriver
      *
      * @return  int                     0 if OK, >0 if KO
      */
-    public function printFile($file, $module, $subdir='')
+    public function printFile($file, $module, $subdir = '')
     {
         global $conf, $user;
         $error = 0;
@@ -95,12 +99,12 @@ class printing_printipp extends PrintingDriver
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
 
         $ipp = new CupsPrintIPP();
-        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
-        $ipp->setJobName($file,true);
+        $ipp->setJobName($file, true);
         $ipp->setUserName($this->userid);
-        if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
+        if (! empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
 
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$module."' AND driver = 'printipp' AND userid = ".$user->id;
@@ -152,7 +156,7 @@ class printing_printipp extends PrintingDriver
      *
      *  @return  int                     0 if OK, >0 if KO
      */
-    function listAvailablePrinters()
+    public function listAvailablePrinters()
     {
         global $conf, $langs;
         $error = 0;
@@ -188,9 +192,9 @@ class printing_printipp extends PrintingDriver
             // Defaut
             $html.= '<td align="center">';
             if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
-                $html.= img_picto($langs->trans("Default"),'on');
+                $html.= img_picto($langs->trans("Default"), 'on');
             } else {
-                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             }
             $html.= '</td>';
             $html.= '</tr>'."\n";
@@ -209,7 +213,7 @@ class printing_printipp extends PrintingDriver
         global $conf, $db;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
-        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
@@ -232,7 +236,7 @@ class printing_printipp extends PrintingDriver
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
-        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
@@ -258,12 +262,12 @@ class printing_printipp extends PrintingDriver
         $html = '';
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
-        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
         if (! empty($this->user)) {
-            $ipp->setAuthentication($this->user,$this->password);
+            $ipp->setAuthentication($this->user, $this->password);
         }
         // select printer uri for module order, propal,...
         $sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
@@ -279,7 +283,7 @@ class printing_printipp extends PrintingDriver
         }
         // Getting Jobs
         try {
-            $ipp->getJobs(false,0,'completed',false);
+            $ipp->getJobs(false, 0, 'completed', false);
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
             $error++;
@@ -296,7 +300,7 @@ class printing_printipp extends PrintingDriver
         $jobs = $ipp->jobs_attributes;
 
         //$html .= '<pre>'.print_r($jobs,true).'</pre>';
-        foreach ($jobs as $value ) {
+        foreach ($jobs as $value) {
             $html .= '<tr class="oddeven">';
             $html .= '<td>'.$value->job_id->_value0.'</td>';
             $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';

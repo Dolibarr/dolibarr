@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -35,7 +35,7 @@ $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
 dol_fiche_head($head, 'card', $titre, 0, 'service');
 
-dol_htmloutput_errors($object->error,$object->errors);
+dol_htmloutput_errors($object->error, $object->errors);
 ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
@@ -59,12 +59,12 @@ dol_htmloutput_errors($object->error,$object->errors);
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut', $statutarray, $object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_buy); ?></td>
+<td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>

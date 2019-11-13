@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -38,7 +38,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
-	if (abs($val['visible']) != 1) continue;
+	if (abs($val['visible']) != 1 && abs($val['visible']) != 3) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
 
@@ -49,16 +49,14 @@ foreach($object->fields as $key => $val)
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>';
-	print $langs->trans($val['label']);
-    if(!empty($val['help'])){
-        print $form->textwithpicto('',$langs->trans($val['help']));
-    }
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'none');
 	else $value = GETPOST($key, 'alpha');
-	print $object->showInputField($val, $key, $value, '', '', '', 0);
+	print $object->showInputField($val, $key, $value, '', '', '', 0, $object->table_element);
 	print '</td>';
 	print '</tr>';
 }

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -52,7 +52,9 @@ function takeposAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@takepos:/takepos/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'takepos');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos', 'remove');
 
 	return $head;
 }

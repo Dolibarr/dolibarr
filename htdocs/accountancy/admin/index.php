@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -19,12 +19,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file		htdocs/accountancy/admin/index.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure accounting expert module
  */
 
@@ -82,18 +82,17 @@ if ($action == 'update') {
     }
 }
 
-// TO DO Mutualize code for yes/no constants
 if ($action == 'setlistsorttodo') {
     $setlistsorttodo = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
     if (! $res > 0)
         $error ++;
 
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setlistsortdone') {
@@ -101,11 +100,11 @@ if ($action == 'setlistsortdone') {
     $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
     if (! $res > 0)
         $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setmanagezero') {
@@ -113,11 +112,11 @@ if ($action == 'setmanagezero') {
     $res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
     if (! $res > 0)
         $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setdisabledirectinput') {
@@ -125,11 +124,11 @@ if ($action == 'setdisabledirectinput') {
 	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-		if (! $error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'mesgs');
-		}
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setenabledraftexport') {
@@ -137,23 +136,35 @@ if ($action == 'setenabledraftexport') {
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-		if (! $error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'mesgs');
-		}
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setenablesubsidiarylist') {
+    $setenablesubsidiarylist = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 /*
  * View
  */
 
-llxHeader();
+$title= $langs->trans('ConfigAccountingExpert');
+llxHeader('', $title);
 
-$form = new Form($db);
-
+$linkback='';
 //$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'accountancy');
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -161,7 +172,7 @@ print '<input type="hidden" name="action" value="update">';
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
 /*
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans('OptionMode') . '</td><td>' . $langs->trans('Description') . '</td>';
@@ -191,7 +202,7 @@ print '<br>';
 
 // Others params
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans('OtherOptions') . '</td>';
 print "</tr>\n";
@@ -200,65 +211,78 @@ if (! empty($user->admin))
 {
     // TO DO Mutualize code for yes/no constants
     print '<tr class="oddeven">';
-    print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
+	print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
     print '</tr>';
 
-    print '<tr class="oddeven">';
+    print '<tr>';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
     print '</tr>';
 
-	print '<tr class="oddeven">';
+	print '<tr>';
 	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL") . '</td>';
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</a></td>';
 	} else {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
 	print '</tr>';
 
-	print '<tr class="oddeven">';
+	print '<tr>';
 	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
 	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</a></td>';
 	} else {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
 	print '</tr>';
 
-    print '<tr class="oddeven">';
-    print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
-    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+    print '<tr>';
+    print '<td>' . $langs->trans("ACCOUNTANCY_COMBO_FOR_AUX") . '</td>';
+    if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
+
+    print '<tr>';
+    print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }

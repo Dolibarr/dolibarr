@@ -13,9 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -24,6 +24,7 @@
  * $parameters
  * $cols
  */
+
 // Protection to avoid direct call of template
 if (empty($object) || ! is_object($object))
 {
@@ -48,8 +49,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 //var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
-
 {
+	$lastseparatorkeyfound = '';
+    $extrafields_collapse_num = '';
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
 		// Discard if extrafield is a hidden field on form
@@ -83,19 +85,35 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		else
 		{
 			$value = $object->array_options["options_" . $key];
+			//var_dump($key.' - '.$value);
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
+            $extrafields_collapse_num = '';
+            $extrafield_param = $extrafields->attributes[$object->table_element]['param'][$key];
+            if (!empty($extrafield_param) && is_array($extrafield_param)) {
+                $extrafield_param_list = array_keys($extrafield_param['options']);
+
+                if (count($extrafield_param_list)>0) {
+                    $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+
+                    if ($extrafield_collapse_display_value==1 || $extrafield_collapse_display_value==2) {
+                        $extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$key];
+                    }
+                }
+            }
+
 			print $extrafields->showSeparator($key, $object);
+
+			$lastseparatorkeyfound=$key;
 		}
 		else
 		{
-			print '<tr>';
+            print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.'">';
 			print '<td class="titlefield">';
-			print '<table width="100%" class="nobordernopadding">';
+			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
-			print '<td';
-			print ' class="';
+			print '<td class="';
 			//var_dump($action);exit;
 
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
@@ -122,7 +140,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-				print '<td align="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+			    print '<td class="right"><a class="reposition editfielda" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '&ignorecollapsesetup=1">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -144,7 +162,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $datenotinstring;
 			}
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute','none') == $key)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $key)
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
@@ -153,8 +171,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
-				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
-
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id, $object->table_element);
 
 				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 
@@ -162,7 +179,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 			else
 			{
-				//print $key.'-'.$value.'-'.$object->table_element;
+				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
 

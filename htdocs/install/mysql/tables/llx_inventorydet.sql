@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -28,9 +28,6 @@ fk_product integer DEFAULT 0,
 batch varchar(30) DEFAULT NULL,	 -- Lot or serial number
 qty_view double DEFAULT NULL, 	     -- must be filled once regulation is done
 qty_stock double DEFAULT NULL,   -- can be filled during draft edition
-qty_regulated double DEFAULT NULL,  -- must be filled once regulation is done
-pmp double DEFAULT 0, 
-pa double DEFAULT 0, 
-new_pmp double DEFAULT 0
+qty_regulated double DEFAULT NULL  -- must be filled once regulation is done
 ) 
 ENGINE=InnoDB;

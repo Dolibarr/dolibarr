@@ -12,12 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
 
-//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 /**
  * API class for users
@@ -43,7 +44,7 @@ class Users extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-    function __construct()
+    public function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
@@ -64,18 +65,18 @@ class Users extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
     {
 	    global $db, $conf;
 
 	    $obj_ret = array();
 
 		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
-	       throw new RestException(401, "You are not allowed to read list of users");
+	        throw new RestException(401, "You are not allowed to read list of users");
 	    }
 
 	    // case of external user, $societe param is ignored and replaced by user's socid
-	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
@@ -138,7 +139,7 @@ class Users extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-    function get($id)
+    public function get($id)
     {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
@@ -165,7 +166,7 @@ class Users extends DolibarrApi
 	 * @param array $request_data New user data
 	 * @return int
 	 */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
 	    // check user authorization
 	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
@@ -196,9 +197,11 @@ class Users extends DolibarrApi
 	 *
 	 * @param int   $id             Id of account to update
 	 * @param array $request_data   Datas
-	 * @return int
+	 * @return array
+     *
+     * @throws 	RestException
 	 */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
@@ -217,11 +220,22 @@ class Users extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-            if ($field == 'id') continue;
-		    $this->useraccount->$field = $value;
+			if ($field == 'id') continue;
+			// The status must be updated using setstatus() because it
+			// is not handled by the update() method.
+			if ($field == 'statut') {
+				$result = $this->useraccount->setstatus($value);
+				if ($result < 0) {
+				    throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+				}
+			} else {
+			    $this->useraccount->$field = $value;
+			}
 		}
 
-		if ($this->useraccount->update(DolibarrApiAccess::$user) > 0)
+		// If there is no error, update() returns the number of affected
+		// rows so if the update is a no op, the return value is zezo.
+		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0)
 		{
 			return $this->get($id);
 		}
@@ -230,6 +244,41 @@ class Users extends DolibarrApi
 			throw new RestException(500, $this->useraccount->error);
 		}
     }
+
+
+	/**
+	 * List the groups of a user
+	 *
+	 * @param int $id     Id of user
+	 * @return array      Array of group objects
+	 *
+	 * @throws RestException
+	 *
+	 * @url GET {id}/groups
+	 */
+	public function getGroups($id)
+	{
+		$obj_ret = array();
+
+		if (! DolibarrApiAccess::$user->rights->user->user->lire) {
+			throw new RestException(401);
+		}
+
+		$user = new User($this->db);
+		$result = $user->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'user not found');
+		}
+
+		$usergroup = new UserGroup($this->db);
+		$groups = $usergroup->listGroupsForUser($id, false);
+		$obj_ret = array();
+		foreach ($groups as $group) {
+			$obj_ret[] = $this->_cleanObjectDatas($group);
+		}
+		return $obj_ret;
+	}
+
 
     /**
 	 * Add a user into a group
@@ -241,7 +290,7 @@ class Users extends DolibarrApi
      *
 	 * @url	GET {id}/setGroup/{group}
 	 */
-    function setGroup($id, $group, $entity = 1)
+    public function setGroup($id, $group, $entity = 1)
     {
 
 		global $conf;
@@ -286,7 +335,7 @@ class Users extends DolibarrApi
 	 * @param   int     $id Account ID
 	 * @return  array
 	 */
-    function delete($id)
+    public function delete($id)
     {
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
@@ -301,18 +350,20 @@ class Users extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
-
+        $this->useraccount->oldcopy = clone $this->useraccount;
 		return $this->useraccount->delete(DolibarrApiAccess::$user);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
 	 *
 	 * @param   object  $object    Object to clean
 	 * @return    array    Array of cleaned object properties
 	 */
-	function _cleanObjectDatas($object)
+	protected function _cleanObjectDatas($object)
 	{
+        // phpcs:enable
 		global $conf;
 
 	    $object = parent::_cleanObjectDatas($object);
@@ -327,7 +378,7 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
 
-	    unset($object->libelle_incoterms);
+	    unset($object->label_incoterms);
 	    unset($object->location_incoterms);
 
 	    unset($object->fk_delivery_address);
@@ -369,16 +420,15 @@ class Users extends DolibarrApi
 	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException
-	 */
-    function _validate($data)
+     */
+    private function _validate($data)
     {
-		$account = array();
-		foreach (Users::$FIELDS as $field)
-		{
-			if (!isset($data[$field]))
-				throw new RestException(400, "$field field missing");
-			$account[$field] = $data[$field];
-		}
-		return $account;
-	}
+        $account = array();
+        foreach (Users::$FIELDS as $field) {
+            if (!isset($data[$field]))
+                throw new RestException(400, "$field field missing");
+            $account[$field] = $data[$field];
+        }
+        return $account;
+    }
 }

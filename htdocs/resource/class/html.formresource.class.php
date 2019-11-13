@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -53,13 +54,13 @@ class FormResource
 	*
 	* @param DoliDB $db Database handler
 	*/
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Output html form to select a resource
      *
@@ -75,7 +76,7 @@ class FormResource
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
-    function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
+    public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20)
     {
         // phpcs:enable
     	global $conf,$user,$langs;
@@ -85,15 +86,13 @@ class FormResource
 
     	$resourcestat = new Dolresource($this->db);
 
-    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
+    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, 0, $filter);
 
     	if ($outputmode != 2)
     	{
     	    $out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     	    $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	}
-    	//$out.= '<input type="hidden" name="action" value="search">';
-    	//$out.= '<input type="hidden" name="id" value="'.$theme->id.'">';
 
     	if ($resourcestat)
     	{
@@ -107,13 +106,14 @@ class FormResource
     		$out.= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out.= '<option value="-1">&nbsp;</option>'."\n";
 
-    		$num = count($resourcestat->lines);
+    		$num = 0;
+    		if (is_array($resourcestat->lines)) $num = count($resourcestat->lines);
 
     		//var_dump($resourcestat->lines);
     		$i = 0;
     		if ($num)
     		{
-    			while ( $i < $num)
+    			while ($i < $num)
     			{
     			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
 
@@ -140,7 +140,6 @@ class FormResource
 
     		if ($outputmode != 2)
     		{
-
         		$out.= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';
 
         		$out.= '</form>';
@@ -155,7 +154,7 @@ class FormResource
     	return $out;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return html list of tickets type
      *
@@ -168,18 +167,18 @@ class FormResource
      *  @param  int		$maxlength      Max length of label
      * 	@return	void
      */
-    function select_types_resource($selected='',$htmlname='type_resource',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
+    public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
     {
         // phpcs:enable
     	global $langs,$user;
 
     	$resourcestat = new Dolresource($this->db);
 
-    	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
+    	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
     	$filterarray=array();
 
-    	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
+    	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',', $filtertype);
 
     	$resourcestat->load_cache_code_type_resource();
     	print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
@@ -188,27 +187,26 @@ class FormResource
     	{
     		foreach($resourcestat->cache_code_type_resource as $id => $arraytypes)
     		{
-
     			// We discard empty line if showempty is on because an empty line has already been output.
     			if ($empty && empty($arraytypes['code'])) continue;
 
     			if ($format == 0) print '<option value="'.$id.'"';
-    			if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
-    			if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
-    			if ($format == 3) print '<option value="'.$id.'"';
+    			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+    			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+    			elseif ($format == 3) print '<option value="'.$id.'"';
     			// Si selected est text, on compare avec code, sinon avec id
     			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
     			elseif ($selected == $id) print ' selected';
     			print '>';
-    			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
-    			if ($format == 1) $value=$arraytypes['code'];
-    			if ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
-    			if ($format == 3) $value=$arraytypes['code'];
+    			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+    			elseif ($format == 1) $value=$arraytypes['code'];
+    			elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+    			elseif ($format == 3) $value=$arraytypes['code'];
     			print $value?$value:'&nbsp;';
     			print '</option>';
     		}
     	}
     	print '</select>';
-    	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+    	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
     }
 }

@@ -42,11 +42,13 @@ CountriesInEEC=Land i EEC
 CountriesNotInEEC=Land ikke i EEC
 CountriesInEECExceptMe=Land i EEC unntatt %s
 CountriesExceptMe=Alle land unntatt %s
+AccountantFiles=Eksporter regnskapsdokumenter
 
 MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
 MainAccountForSuppliersNotDefined=Hovedregnskapskonto for leverandører som ikke er definert i oppsettet
 MainAccountForUsersNotDefined=Hoved regnskapskonto for brukere som ikke er definert i oppsettet
 MainAccountForVatPaymentNotDefined=Hoved regnskapskonto for MVA-betaling ikke definert i oppsettet
+MainAccountForSubscriptionPaymentNotDefined=Hovedregnskapskonto for abonnementsbetaling ikke definert i oppsettet
 
 AccountancyArea=Regnskapsområde
 AccountancyAreaDescIntro=Bruk av regnskapsmodulen er gjort i flere skritt:
@@ -62,8 +64,9 @@ AccountancyAreaDescVat=TRINN %s: Definer regnskapskonto for hver MVA-sats. Bruk 
 AccountancyAreaDescDefault=TRINN %s: Definer standard regnskapskontoer. For dette, bruk menyoppføringen %s.
 AccountancyAreaDescExpenseReport=TRINN %s: Definer standard regnskapskontoer for hver type kostnadsrapport. Bruk menyoppføringen %s.
 AccountancyAreaDescSal=TRINN %s: Definer standard regnskapskonto for betaling av lønn. Bruk menyoppføring %s.
-AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
+AccountancyAreaDescContrib=TRINN %s: Definer standard regnskapskonto for spesielle utgifter (diverse skatter). For dette, bruk menyoppføringen %s.
 AccountancyAreaDescDonation=TRINN %s: Definer standard regnskapskonto for donasjoner. Bruk menyoppføringen %s.
+AccountancyAreaDescSubscription=TRINN %s: Definer standard regnskapskonto for medlemsabonnement. Bruk menyoppføringen %s.
 AccountancyAreaDescMisc=TRINN %s: Definer obligatorisk standardkonto og standard regnskapskontoer for diverse transaksjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescLoan=TRINN %s: Definer standard regnskapskonto for lån. Bruk menyoppføringen %s.
 AccountancyAreaDescBank=TRINN %s: Definer regnskapskontoer og journalkode for hver bank- og finansregnskap. For dette, bruk menyoppføringen %s.
@@ -82,6 +85,7 @@ Addanaccount=Legg til regnskapskonto
 AccountAccounting=Regnskapskonto
 AccountAccountingShort=Konto
 SubledgerAccount=Konto i sub-hovedbok
+SubledgerAccountLabel=Kontoetikett i sub-hovedbok
 ShowAccountingAccount=Vis regnskapskonto
 ShowAccountingJournal=Vis regnskapsjournal
 AccountAccountingSuggest=Foreslått regnskapskonto
@@ -92,19 +96,22 @@ MenuTaxAccounts=Skattekontoer
 MenuExpenseReportAccounts=Kontoer for utgiftsrapporter
 MenuLoanAccounts=Lånekontoer
 MenuProductsAccounts=Varekontoer
+MenuClosureAccounts=Lukkingskontoer
 ProductsBinding=Varekontoer
-Ventilation=Binding til kontoer
+TransferInAccounting=Overføring i regnskap
+RegistrationInAccounting=Registrering i regnskap
+Binding=Binding til kontoer
 CustomersVentilation=Binding av kundefakturaer
 SuppliersVentilation=Leverandørfaktura-bindinger
 ExpenseReportsVentilation=Utgiftsrapport-binding
 CreateMvts=Opprett ny transaksjon
 UpdateMvts=Endre en transaksjon
 ValidTransaction=Valider transaksjonen
-WriteBookKeeping=Før transaksjoner inn i hovedboken
+WriteBookKeeping=Registrer transaksjoner i Hovedboken
 Bookkeeping=Hovedbok
 AccountBalance=Kontobalanse
 ObjectsRef=Kildeobjekt ref
-CAHTF=Totalt leverandørkjøp eks. MVA
+CAHTF=Samlet leverandørkjøp før skatt
 TotalExpenseReport=Total utgiftsrapport
 InvoiceLines=Binding av fakturalinjer
 InvoiceLinesDone=Bundne fakturalinjer
@@ -137,6 +144,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Lengden på tredjeparts regnskapskontoer (Hvis du ang
 ACCOUNTING_MANAGE_ZERO=Tillat å administrere forskjellig antall nuller på slutten av en regnskapskonto. Nødvendig for enkelte land (som Sveits). Hvis du holder den av (standard), kan du angi de 2 følgende parametrene for å be om å legge til virtuell null.
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkteregistrering av transaksjoner på bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktiver eksportutkast i journal
+ACCOUNTANCY_COMBO_FOR_AUX=Aktiver kombinasjonsliste for datterkonto (kan være treg hvis du har mange tredjeparter)
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
@@ -145,12 +153,21 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Utgiftsjournal
 ACCOUNTING_SOCIAL_JOURNAL=Sosialjournal
 ACCOUNTING_HAS_NEW_JOURNAL=Har ny journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Regnskapskonto for overførsel
+ACCOUNTING_RESULT_PROFIT=Resultatregnskapskonto (fortjeneste)
+ACCOUNTING_RESULT_LOSS=Resultatregnskapskonto (tap)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Avslutningsjournal
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Regnskapkonto for overgangsbasert overføring
+TransitionalAccount=Overgangsbasert bankoverføringskonto
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto for vent
 DONATION_ACCOUNTINGACCOUNT=Regnskapskonto for registrering av donasjoner
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskapskonto for å registrere abonnementer
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard regnskapskonto for kjøpte varer (brukt hvis ikke definert på varekortet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard regnskapskonto for solgte varer (brukt hvis ikke definert på varekortet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standard regnskapskonto for solgte varer i EU (brukt hvis ikke definert på varekortet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standard regnskapskonto for solgte varer eksportert ut av EU (brukt hvis ikke definert på varekortet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard regnskapskonto for kjøpte tjenester (brukt hvis ikke definert på tjenestekortet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard regnskapskonto for solgte tjenester (brukt hvis ikke definert på tjenestekortet)
 
@@ -160,8 +177,10 @@ Docref=Referanse
 LabelAccount=Kontoetikett
 LabelOperation=Etikettoperasjon
 Sens=som betyr
-LetteringCode=Brevkode
+LetteringCode=Korrespondansekode
+Lettering=Korrespondanse
 Codejournal=Journal
+JournalLabel=Journaletikett
 NumPiece=Del nummer
 TransactionNumShort=Transaksjonsnummer
 AccountingCategory=Personlige grupper
@@ -193,32 +212,34 @@ NumMvts=Transaksjonsnummer
 ListeMvts=Liste over bevegelser
 ErrorDebitCredit=Debet og kredit kan ikke ha en verdi samtidig
 AddCompteFromBK=Legg til regnskapskontoer til gruppen
-ReportThirdParty=List tredjepartskonto
+ReportThirdParty=Liste over tredjepartskontoer
 DescThirdPartyReport=Liste over tredjeparts kunder og leverandører og deres regnskapsregnskap
 ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ikke definert eller tredjepart ukjent. Vi bruker %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
 PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
 
 Pcgtype=Kontogruppe
 Pcgsubtype=Konto-undergruppe
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Gruppe og undergruppe av konto brukes som forhåndsdefinerte "filter"- og "grupperings" -kriterier for enkelte regnskapsrapporter. For eksempel brukes "Inntekt" eller "Utgift som grupper for regnskapskontoer for produkter for å bygge utgifts-/inntektsrapporten.
 
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
 
 DescVentilCustomer=Liste over kunde-fakturalinjer (bundet eller ikke) til en vare-regnskapskonto
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilMore=I de fleste tilfeller, hvis du bruker forhåndsdefinerte varer eller tjenester, og du setter kontonummeret på vare/tjeneste-kortet, vil programmet være i stand til å gjøre alle bindinger mellom fakturalinjer og regnskapskonto i din kontoplan, bare med et enkelt klikk på knappen <strong>"%s"</strong>. Hvis kontoen ikke ble satt på vare-/tjenestekortet eller hvis du fortsatt har noen linjer ikke bundet til noen konto, må du foreta en manuell binding fra menyen "<strong>%s</strong>".
 DescVentilDoneCustomer=Liste over kunde-fakturalinjer og deres vare-regnskapskontoer
 DescVentilTodoCustomer=Bind fakturalinjer som ikke allerede er bundet, til en vare-regnskapskonto
 ChangeAccount=Endre regnskapskonto for valgte vare-/tjenestelinjer til følgende konto:
 Vide=-
 DescVentilSupplier=Liste over leverandør-fakturalinjer som er bundet eller ikke ennå bundet til en vareregnskapskonto
-DescVentilDoneSupplier=Liste over leverandør-fakturalinjer av og deres regnskapskonto
+DescVentilDoneSupplier=Liste over linjene med leverandørfakturaer og deres regnskapskonto
 DescVentilTodoExpenseReport=Bind utgiftsrapport-linjer til en gebyr-regnskapskonto
 DescVentilExpenseReport=Liste over utgiftsrapport-linjer bundet (eller ikke) til en gebyr-regnskapskonto
-DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilExpenseReportMore=Hvis du setter opp regnskapskonto med type utgiftsrapport-linjer, vil programmet være i stand til å gjøre alle bindinger mellom utgiftsrapport-linjer og regnskapskontoer med et klikk på knappen <strong>"%s"</strong>. Hvis du fortsatt har noen linjer som ikke er bundet til en konto, må du foreta en manuell binding fra menyen "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Liste over utgiftsrapport-linjer og tilhørende gebyr-regnskapskonto
 
 ValidateHistory=Bind automatisk
@@ -226,7 +247,7 @@ AutomaticBindingDone=Automatisk binding utført
 
 ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
 MvtNotCorrectlyBalanced=Bevegelse er ikke riktig balansert. Debet = %s | Kreditt = %s
-Balancing=Balancing
+Balancing=Balansering
 FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjoner blir skrevet inn i hovedboken
 GeneralLedgerSomeRecordWasNotRecorded=Noen av transaksjonene kunne ikke journalføres. Hvis det ikke er noen annen feilmelding, er dette trolig fordi de allerede var journalført.
@@ -238,13 +259,13 @@ NotYetAccounted=Ikke regnskapsført i hovedboken enda
 
 ## Admin
 ApplyMassCategories=Masseinnlegging av kategorier
-AddAccountFromBookKeepingWithNoCategories=Available account not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Tilgjengelig konto er ennå ikke i en personlig gruppe
 CategoryDeleted=Kategori for regnskapskontoen er blitt slettet
 AccountingJournals=Regnskapsjournaler
 AccountingJournal=Regnskapsjournal
 NewAccountingJournal=Ny regnskapsjourna
 ShowAccoutingJournal=Vis regnskapsjournal
-Nature=Natur
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Diverse operasjoner
 AccountingJournalType2=Salg
 AccountingJournalType3=Innkjøp
@@ -254,6 +275,8 @@ AccountingJournalType8=Varetelling
 AccountingJournalType9=Har nye
 ErrorAccountingJournalIsAlreadyUse=Denne journalen er allerede i bruk
 AccountingAccountForSalesTaxAreDefinedInto=Merk: Regnskapskonto for MVA er definert i menyen <b>%s</b> - <b>%s </b>
+NumberOfAccountancyEntries=Antall oppføringer
+NumberOfAccountancyMovements=Antall bevegelser
 
 ## Export
 ExportDraftJournal=Eksporter utkastjournal
@@ -265,21 +288,29 @@ Modelcsv_COALA=Eksport til Saga Coala
 Modelcsv_bob50=Eksport til Sage BOB 50
 Modelcsv_ciel=Eksport til Sage Ciel Compta eller Compta Evolution
 Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
-Modelcsv_ebp=Eksporter mot EBP
-Modelcsv_cogilog=Eksport mot Cogilog
-Modelcsv_agiris=Export mot Agiris
-Modelcsv_configurable=Export CSV Configurable
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_ebp=Eksport tilEBP
+Modelcsv_cogilog=Eksport til Cogilog
+Modelcsv_agiris=Eksport til Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Eksport for OpenConcerto (Test)
+Modelcsv_configurable=Eksport CSV Konfigurerbar
+Modelcsv_FEC=Eksporter FEC
+Modelcsv_Sage50_Swiss=Eksport for Sage 50 Switzerland
 ChartofaccountsId=Kontoplan ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap
 InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for produkter og tjenester som ikke har en regnskapskonto definert for salg og kjøp.
 DefaultBindingDesc=Denne siden kan brukes til å sette en standardkonto til bruk for å for å koble transaksjonsposter om lønnsutbetaling, donasjon, skatter og MVA når ingen bestemt regnskapskonto er satt.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Innstillinger
 OptionModeProductSell=Salgsmodus
+OptionModeProductSellIntra=Modussalg eksportert i EU
+OptionModeProductSellExport=Modussalg eksportert i andre land
 OptionModeProductBuy=Innkjøpsmodus
 OptionModeProductSellDesc=Vis alle varer for salg, med regnskapskonto
+OptionModeProductSellIntraDesc=Vis alle varer med regnskapskonto for salg innen EU
+OptionModeProductSellExportDesc=Vis alle varer med regnskapskonto for andre internasjonale salg.
 OptionModeProductBuyDesc=Vis alle varer for kjøp, med regnskapskonto
 CleanFixHistory=Fjern regnskapskode fra linjer som ikke finnes i kontooversikt
 CleanHistory=Nullstill alle bindinger for valgt år
@@ -287,6 +318,10 @@ PredefinedGroups=Forhåndsdefinerte grupper
 WithoutValidAccount=Uten gyldig dedikert konto
 WithValidAccount=Med gyldig dedikert konto
 ValueNotIntoChartOfAccount=Denne verdien av regnskapskonto eksisterer ikke i kontoplanen
+AccountRemovedFromGroup=Kontoen er fjernet fra gruppen
+SaleLocal=Lokalt salg
+SaleExport=Eksportsalg
+SaleEEC=Salg i EU
 
 ## Dictionary
 Range= Oversikt over regnskapskonto
@@ -299,15 +334,15 @@ ErrorNoAccountingCategoryForThisCountry=Ingen regnskapskonto-gruppe tilgjengelig
 ErrorInvoiceContainsLinesNotYetBounded=Du prøver å journalføre noen linjer i fakturaen <strong> %s </strong>, men noen andre linjer er ennå ikke bundet til en regnskapskonto. Journalføring av alle fakturalinjer for denne fakturaen blir avvist.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Noen linjer på fakturaen er ikke bundet til en regnskapskonto.
 ExportNotSupported=Eksportformatet som er satt  opp støttes ikke på denne siden
-BookeppingLineAlreayExists=Lines already existing into bookkeeping
+BookeppingLineAlreayExists=Linjene eksisterer allerede i bokføringen
 NoJournalDefined=Ingen journal definert
 Binded=Bundne linjer
 ToBind=Linjer som skal bindes
-UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
 
 ## Import
 ImportAccountingEntries=Regnskapsposter
-
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+DateExport=Dato eksport
+WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
 ExpenseReportJournal=Utgiftsrapport-journal
 InventoryJournal=Inventar-journal

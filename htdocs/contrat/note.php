@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,18 +34,18 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'contracts'));
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$socid=GETPOST('socid','int');
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$socid=GETPOST('socid', 'int');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'contrat',$id);
+if ($user->socid) $socid=$user->socid;
+$result=restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
-$object->fetch($id,$ref);
+$object->fetch($id, $ref);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -66,7 +66,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader('',$langs->trans("Contract"),"");
+llxHeader('', $langs->trans("Contract"), "");
 
 $form = new Form($db);
 
@@ -96,11 +96,11 @@ if ($id > 0 || ! empty($ref))
     $morehtmlref.='<div class="refidno">';
     // Ref customer
     $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
-    $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
+    $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
     // Ref supplier
     $morehtmlref.='<br>';
     $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-    $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+    $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
     // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
@@ -111,7 +111,7 @@ if ($id > 0 || ! empty($ref))
     	if ($user->rights->contrat->creer)
     	{
     		if ($action != 'classify')
-    			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+    			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
     			$morehtmlref.=' : ';
     		if ($action == 'classify') {
     			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -145,16 +145,16 @@ if ($id > 0 || ! empty($ref))
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
 
     // Ligne info remises tiers
     print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
-    if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
+    if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
     else print $langs->trans("CompanyHasNoRelativeDiscount");
     $absolute_discount=$object->thirdparty->getAvailableDiscounts();
     print '. ';
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print '.';
     print '</td></tr>';
@@ -162,9 +162,9 @@ if ($id > 0 || ! empty($ref))
     // Date
     print '<tr>';
     print '<td class="titlefield">';
-    print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,0);
+    print $form->editfieldkey("Date", 'date_contrat', $object->date_contrat, $object, 0);
     print '</td><td>';
-    print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,0,'datehourpicker');
+    print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, 0, 'datehourpicker');
     print '</td>';
     print '</tr>';
 

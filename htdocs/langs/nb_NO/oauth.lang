@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Konfigurasjon
+ConfigOAuth=OAuth Konfigurasjon
 OAuthServices=OAuth tjenester
 ManualTokenGeneration=Manuell nøkkelgenerering
 TokenManager=Nøkkelhåndterer
@@ -20,11 +20,11 @@ TOKEN_REFRESH=Nøkkeloppfriskning tilstede
 TOKEN_EXPIRED=Nøkkel utgått
 TOKEN_EXPIRE_AT=Nøkkel utgår
 TOKEN_DELETE=Slett lagret nøkkel
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google ID
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Gå til <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">denne siden</a> velg"Credentials" for å opprette Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub ID
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Gå til <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">denne siden</a> velg "Register a new application" for å opprette Oauth credentials
+OAUTH_GOOGLE_NAME=OAuth Google service
+OAUTH_GOOGLE_ID=OAuth Google ID
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Gå til <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">denne siden</a> velg"Credentials" for å opprette OAuth credentials
+OAUTH_GITHUB_NAME=OAuth GitHub service
+OAUTH_GITHUB_ID=OAuth GitHub ID
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Gå til <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">denne siden</a> velg "Register a new application" for å opprette OAuth credentials

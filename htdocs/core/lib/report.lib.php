@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -31,22 +31,22 @@
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
- *	@param 	timestamp|integer	$builddate      Date generation
+ *	@param 	integer	            $builddate      Date generation
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function report_header($reportname,$notused,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function report_header($reportname, $notused, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
 	global $langs;
-
-	if (empty($hselected)) $hselected='report';
 
 	print "\n\n<!-- start banner of report -->\n";
 
 	if(! empty($varlink)) $varlink = '?'.$varlink;
+
+	$head = array();
 
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
@@ -61,7 +61,8 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 	{
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
-	print '<table width="100%" class="border">';
+
+	print '<table class="border tableforfield centpercent">';
 
 	$variante = ($periodlink || $exportlink);
 
@@ -122,4 +123,3 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 
 	print "\n<!-- end banner of report -->\n\n";
 }
-

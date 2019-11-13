@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,15 +28,20 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('suppliersproposalsindex'));
+
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
-$socid=GETPOST('socid','int');
-if (isset($user->societe_id) && $user->societe_id  > 0)
+$socid=GETPOST('socid', 'int');
+if (isset($user->socid) && $user->socid  > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'supplier_proposal');
 
@@ -50,9 +56,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
-llxHeader("",$langs->trans("SupplierProposalArea"),$help_url);
+llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
 
-print load_fiche_titre($langs->trans("SupplierProposalArea"));
+print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -65,12 +71,13 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print '</tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 
@@ -84,7 +91,7 @@ $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
-if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND p.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql.= " GROUP BY p.fk_statut";
@@ -115,23 +122,24 @@ if ($resql)
     }
     $db->free($resql);
 
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array($supplier_proposalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
             print '<tr class="oddeven">';
-            print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
-            print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
+            print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
+            print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr><td align="center" colspan="2">';
+        print '<tr><td class="center" colspan="2">';
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
         $dolgraph = new DolGraph();
@@ -146,8 +154,8 @@ if ($resql)
         print '</td></tr>';
     }
 
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
-    print "</table><br>";
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+    print "</table></div><br>";
 }
 else
 {
@@ -173,7 +181,8 @@ if (! empty($conf->supplier_proposal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
 		$langs->load("supplier_proposal");
@@ -194,13 +203,13 @@ if (! empty($conf->supplier_proposal->enabled))
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
+				print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
 
 				print '</tr>';
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -229,9 +238,10 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -256,7 +266,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" class="right nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -269,15 +279,15 @@ if ($resql)
 			$companystatic->name=$obj->socname;
 			$companystatic->client=$obj->client;
 			$companystatic->canvas=$obj->canvas;
-			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
-			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-			print '<td align="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+			print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
 
@@ -310,7 +320,8 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 		$i = 0;
 		if ($num > 0)
 		{
-			print '<table class="noborder" width="100%">';
+            print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -333,7 +344,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 				print '<td width="18" class="nobordernopadding nowrap">';
 				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
-				print '<td width="16" align="center" class="nobordernopadding">';
+				print '<td width="16" class="center nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->supplier_proposalid;
@@ -346,12 +357,12 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td class="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
+				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
-				print '<td align="right">';
-				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '<td class="right">';
+				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
@@ -360,11 +371,11 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
-			else if ($total>0)
+			elseif ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
 			}
-			print "</table><br>";
+			print "</table></div><br>";
 		}
 	}
 	else
@@ -374,6 +385,9 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 }
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardSupplierProposal', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

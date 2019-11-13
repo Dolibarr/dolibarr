@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,14 +46,12 @@ if (isset($_SESSION['DolMessage'])) {
 }
 
 // Security check
-if ($user->societe_id) {
+if ($user->socid) {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
-if ($user->societe_id)
-    $socid = $user->societe_id;
-$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '',
-        $fieldtype);
+if ($user->socid)
+    $socid = $user->socid;
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -69,8 +67,10 @@ if (!$sortfield)
     $sortfield = "name";
 
 $object = new Account($db);
-if ($id)
-    $object->fetch($id);
+if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
+
+$result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
+
 
 /*
  * Actions
@@ -91,13 +91,12 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
 $helpurl = "";
-llxHeader('',$title,$helpurl);
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
     if ($object->fetch($id, $ref)) {
-
         $upload_dir = $conf->bank->dir_output . '/' . $object->ref;
 
         // Onglets
@@ -106,13 +105,13 @@ if ($id > 0 || !empty($ref)) {
 
 
         // Build file list
-        $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$',
-                $sortfield,
-                (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+        $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
         $totalsize = 0;
         foreach ($filearray as $key => $file) {
             $totalsize+=$file['size'];
         }
+
+        $morehtmlref = '';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -122,9 +121,9 @@ if ($id > 0 || !empty($ref)) {
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield centpercent">';
         print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
-        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' .dol_print_size($totalsize,1,1).'</td></tr>';
+        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' .dol_print_size($totalsize, 1, 1).'</td></tr>';
         print "</table>\n";
 
         print '</div>';

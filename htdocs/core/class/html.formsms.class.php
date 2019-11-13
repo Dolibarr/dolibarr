@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,8 +38,10 @@ class FormSms
      */
     public $db;
 
+    public $fromid;
     public $fromname;
     public $fromsms;
+    public $fromtype;
     public $replytoname;
     public $replytomail;
     public $toname;
@@ -76,7 +78,7 @@ class FormSms
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -92,7 +94,7 @@ class FormSms
         $this->withbodyreadonly=0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Show the form to input an sms.
      *
@@ -100,7 +102,7 @@ class FormSms
      *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
-    function show_form($morecss='titlefield', $showform=1)
+    public function show_form($morecss = 'titlefield', $showform = 1)
     {
      // phpcs:enable
         global $conf, $langs, $user, $form;
@@ -149,7 +151,7 @@ function limitChars(textarea, limit, infodiv)
             {
                 $help.=$key.' -> '.$langs->trans($val).'<br>';
             }
-            print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"),$help);
+            print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"), $help);
             print "</td></tr>\n";
         }
 
@@ -205,12 +207,12 @@ function limitChars(textarea, limit, infodiv)
                     }
                     catch(Exception $e)
                     {
-                        dol_print_error('','Error to get list of senders: '.$e->getMessage());
+                        dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                     }
                 }
-                else if (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+                elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
                 {
-                    $tmp=explode('@',$conf->global->MAIN_SMS_SENDMODE);
+                    $tmp=explode('@', $conf->global->MAIN_SMS_SENDMODE);
                     $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);
                     dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
                     try
@@ -229,7 +231,7 @@ function limitChars(textarea, limit, infodiv)
                     }
                     catch(Exception $e)
                     {
-                        dol_print_error('','Error to get list of senders: '.$e->getMessage());
+                        dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                         exit;
                     }
                 }
@@ -266,7 +268,7 @@ function limitChars(textarea, limit, infodiv)
             print '<tr><td>';
             //$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
             $moretext='';
-            print $form->textwithpicto($langs->trans("SmsTo"),$moretext);
+            print $form->textwithpicto($langs->trans("SmsTo"), $moretext);
             print '</td><td>';
             if ($this->withtoreadonly)
             {
@@ -299,9 +301,9 @@ function limitChars(textarea, limit, infodiv)
             {
                 $defaultmessage=$this->withbody;
             }
-            $defaultmessage=make_substitutions($defaultmessage,$this->substit);
+            $defaultmessage=make_substitutions($defaultmessage, $this->substit);
             if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
-            $defaultmessage=str_replace('\n',"\n",$defaultmessage);
+            $defaultmessage=str_replace('\n', "\n", $defaultmessage);
 
             print "<tr>";
             print '<td class="tdtop">'.$langs->trans("SmsText")."</td>";

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +49,7 @@ $form = new Form($db);
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
 
-top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
+top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 

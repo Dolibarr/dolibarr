@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file	htdocs/accountancy/admin/categories.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief	Page to assign mass categories to accounts
  */
 
@@ -35,11 +35,11 @@ $langs->loadLangs(array("bills","accountancy"));
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel','alpha');
-$action = GETPOST('action','aZ09');
-$cat_id = GETPOST('account_category','int');
+$cancel = GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cat_id = GETPOST('account_category', 'int');
 $selectcpt = GETPOST('cpt_bk', 'array');
-$cpt_id = GETPOST('cptid','int');
+$cpt_id = GETPOST('cptid', 'int');
 
 if ($cat_id == 0) {
 	$cat_id = null;
@@ -60,8 +60,8 @@ $accountingcategory = new AccountancyCategory($db);
 
 // si ajout de comptes
 if (! empty($selectcpt)) {
-	$cpts = array ();
-	foreach ( $selectcpt as $selectedoption ) {
+	$cpts = array();
+	foreach ($selectcpt as $selectedoption) {
 		if (! array_key_exists($selectedoption, $cpts))
 			$cpts[$selectedoption] = "'" . $selectedoption . "'";
 	}
@@ -71,13 +71,13 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
 	}
 }
 if ($action == 'delete') {
 	if ($cpt_id) {
 		if ($accountingcategory->deleteCptCat($cpt_id)) {
-			setEventMessages($langs->trans('CategoryDeleted'), null, 'mesgs');
+			setEventMessages($langs->trans('AccountRemovedFromGroup'), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans('errors'), null, 'errors');
 		}
@@ -104,7 +104,7 @@ print '<input type="hidden" name="action" value="display">';
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Select the category
 print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';
@@ -130,7 +130,6 @@ if (! empty($cat_id))
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-
 		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
 		print '<br>';
 		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
@@ -153,7 +152,6 @@ print '</form>';
 
 
 if ($action == 'display' || $action == 'delete') {
-
     print "<table class='noborder' width='100%'>\n";
     print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
@@ -167,14 +165,15 @@ if ($action == 'display' || $action == 'delete') {
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
-			foreach ( $accountingcategory->lines_display as $cpt ) {
+			foreach ($accountingcategory->lines_display as $cpt) {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print '<td class="right">';
 				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
-				print img_delete($langs->trans("DeleteFromCat")).' ';
-				print $langs->trans("DeleteFromCat")."</a>";
+				print $langs->trans("DeleteFromCat");
+				print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+				print "</a>";
 				print "</td>";
 				print "</tr>\n";
 			}

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,10 @@ class Dolresource extends CommonObject
 	 */
 	public $table_element='resource';
 
-    public $picto = 'resource';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'resource';
 
 	public $resource_id;
 	public $resource_type;
@@ -65,7 +68,7 @@ class Dolresource extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -77,7 +80,7 @@ class Dolresource extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs, $hookmanager;
         $error=0;
@@ -150,7 +153,7 @@ class Dolresource extends CommonObject
     			//// Call triggers
     			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     			$interface=new Interfaces($this->db);
-    			$result=$interface->run_triggers('RESOURCE_CREATE',$this,$user,$langs,$conf);
+    			$result=$interface->run_triggers('RESOURCE_CREATE', $this, $user, $langs, $conf);
     			if ($result < 0) { $error++; $this->errors=$interface->errors; }
     			//// End call triggers
     		}
@@ -181,7 +184,7 @@ class Dolresource extends CommonObject
      *    @param	string	$ref	Ref of object
      *    @return   int         	<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='')
+    public function fetch($id, $ref = '')
     {
     	global $langs;
     	$sql = "SELECT";
@@ -242,7 +245,7 @@ class Dolresource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-	function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		$error=0;
@@ -280,7 +283,7 @@ class Dolresource extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('RESOURCE_MODIFY',$user);
+				$result=$this->call_trigger('RESOURCE_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -299,7 +302,7 @@ class Dolresource extends CommonObject
 					if (! $res)
 					{
 						$langs->load("errors");
-						$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
+						$this->error=$langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 						$error++;
 					}
 				}
@@ -339,14 +342,14 @@ class Dolresource extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Load object in memory from database
      *
      *    @param      int	$id          id object
      *    @return     int         <0 if KO, >0 if OK
      */
-    function fetch_element_resource($id)
+    public function fetch_element_resource($id)
     {
         // phpcs:enable
     	global $langs;
@@ -381,10 +384,10 @@ class Dolresource extends CommonObject
     			$this->fk_user_create	=	$obj->fk_user_create;
 
 				if($obj->resource_id && $obj->resource_type) {
-					$this->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+					$this->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
 				}
 				if($obj->element_id && $obj->element_type) {
-					$this->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
+					$this->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
 				}
     		}
     		$this->db->free($resql);
@@ -405,9 +408,10 @@ class Dolresource extends CommonObject
      *    @param	int		$notrigger		Disable all triggers
      *    @return   int						>0 if OK, <0 if KO
      */
-	function delete($rowid, $notrigger=0)
+    public function delete($rowid, $notrigger = 0)
 	{
 		global $user,$langs,$conf;
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -448,7 +452,7 @@ class Dolresource extends CommonObject
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('RESOURCE_DELETE',$user);
+			$result=$this->call_trigger('RESOURCE_DELETE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -484,7 +488,7 @@ class Dolresource extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load resource objects into $this->lines
      *
@@ -495,10 +499,14 @@ class Dolresource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all($sortorder, $sortfield, $limit, $offset, $filter='')
+    public function fetch_all($sortorder, $sortfield, $limit, $offset, $filter = '')
     {
         // phpcs:enable
     	global $conf;
+
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    	$extrafields=new ExtraFields($this->db);
+
     	$sql="SELECT ";
     	$sql.= " t.rowid,";
     	$sql.= " t.entity,";
@@ -506,37 +514,29 @@ class Dolresource extends CommonObject
     	$sql.= " t.description,";
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.tms,";
-
-    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-    	$extrafields=new ExtraFields($this->db);
-    	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-    	if (is_array($extralabels) && count($extralabels)>0) {
-    		foreach($extralabels as $code=>$label) {
-    			$sql.= " ef.".$code." as extra_".$code.",";
-    		}
-    	}
-
+    	// Add fields from extrafields
+    	if (! empty($extrafields->attributes[$this->table_element]['label']))
+    		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
     	$sql.= " ty.label as type_label";
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
     	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
-
-    	//Manage filter
+    	// Manage filter
     	if (!empty($filter)){
     		foreach($filter as $key => $value) {
-    			if (strpos($key,'date')) {
+    			if (strpos($key, 'date')) {
     				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
-    			elseif (strpos($key,'ef.')!==false){
+    			elseif (strpos($key, 'ef.')!==false){
     				$sql.= $value;
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
-    	$sql.= $this->db->order($sortfield,$sortorder);
+    	$sql.= $this->db->order($sortfield, $sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
@@ -546,13 +546,13 @@ class Dolresource extends CommonObject
     	if ($limit) $sql.= $this->db->plimit($limit, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
+        $this->lines=array();
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$this->lines=array();
     			while ($obj = $this->db->fetch_object($resql))
     			{
     				$line = new Dolresource($this->db);
@@ -563,7 +563,6 @@ class Dolresource extends CommonObject
     				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
     				$line->type_label				=	$obj->type_label;
 
-    				// Retreive all extrafield for thirdparty
     				// fetch optionals attributes and labels
 
     				$line->fetch_optionals();
@@ -581,7 +580,7 @@ class Dolresource extends CommonObject
     	}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
      /**
      *	Load all objects into $this->lines
      *
@@ -592,7 +591,7 @@ class Dolresource extends CommonObject
 	 *  @param	array		$filter    	  filter output
 	 *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all_resources($sortorder, $sortfield, $limit, $offset, $filter='')
+    public function fetch_all_resources($sortorder, $sortfield, $limit, $offset, $filter = '')
     {
         // phpcs:enable
    		global $conf;
@@ -612,7 +611,7 @@ class Dolresource extends CommonObject
    		//Manage filter
    		if (!empty($filter)){
    			foreach($filter as $key => $value) {
-   				if (strpos($key,'date')) {
+   				if (strpos($key, 'date')) {
    					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
@@ -620,8 +619,8 @@ class Dolresource extends CommonObject
    				}
    			}
    		}
-    	$sql.= $this->db->order($sortfield,$sortorder);
-   		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield, $sortorder);
+   		if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
    		$resql=$this->db->query($sql);
@@ -643,9 +642,9 @@ class Dolresource extends CommonObject
    					$line->fk_user_create	=	$obj->fk_user_create;
 
 					if($obj->resource_id && $obj->resource_type)
-						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+						$line->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
 					if($obj->element_id && $obj->element_type)
-						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
+						$line->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
         			$this->lines[] = $line;
    				}
    				$this->db->free($resql);
@@ -659,7 +658,7 @@ class Dolresource extends CommonObject
    		}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load all objects into $this->lines
      *
@@ -670,7 +669,7 @@ class Dolresource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all_used($sortorder, $sortfield, $limit, $offset=1, $filter='')
+    public function fetch_all_used($sortorder, $sortfield, $limit, $offset = 1, $filter = '')
     {
         // phpcs:enable
     	global $conf;
@@ -694,7 +693,7 @@ class Dolresource extends CommonObject
     	//Manage filter
     	if (!empty($filter)){
     		foreach($filter as $key => $value) {
-    			if (strpos($key,'date')) {
+    			if (strpos($key, 'date')) {
     				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
@@ -702,8 +701,8 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= $this->db->order($sortfield,$sortorder);
-    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield, $sortorder);
+    	if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
     	$resql=$this->db->query($sql);
@@ -725,7 +724,7 @@ class Dolresource extends CommonObject
     				$line->mandatory		=	$obj->mandatory;
     				$line->fk_user_create	=	$obj->fk_user_create;
 
-    				$this->lines[] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+    				$this->lines[] = fetchObjectByElement($obj->resource_id, $obj->resource_type);
     			}
     			$this->db->free($resql);
     		}
@@ -738,7 +737,7 @@ class Dolresource extends CommonObject
     	}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Fetch all resources available, declared by modules
      * Load available resource in array $this->available_resources
@@ -747,7 +746,7 @@ class Dolresource extends CommonObject
      * @deprecated, remplaced by hook getElementResources
      * @see getElementResources()
      */
-    function fetch_all_available()
+    public function fetch_all_available()
     {
         // phpcs:enable
     	global $conf;
@@ -761,7 +760,7 @@ class Dolresource extends CommonObject
     	return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update element resource into database
      *
@@ -769,7 +768,7 @@ class Dolresource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_element_resource($user=null, $notrigger=0)
+    public function update_element_resource($user = null, $notrigger = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
@@ -806,7 +805,7 @@ class Dolresource extends CommonObject
 			if (! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('RESOURCE_MODIFY',$user);
+                $result=$this->call_trigger('RESOURCE_MODIFY', $user);
                 if ($result < 0) $error++;
                 // End call triggers
 	    	}
@@ -839,17 +838,21 @@ class Dolresource extends CommonObject
      * @param string    $resource_type  Type
      * @return array                    Aray of resources
      */
-    function getElementResources($element,$element_id,$resource_type='')
+    public function getElementResources($element, $element_id, $resource_type = '')
     {
+	    $resources=array();
+
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
 	    if($resource_type)
-	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
+	    	$sql.=" AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
 	    $sql .= ' ORDER BY resource_type';
 
 	    dol_syslog(get_class($this)."::getElementResources", LOG_DEBUG);
+
+        $resources = array();
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
@@ -878,30 +881,30 @@ class Dolresource extends CommonObject
      *
      *  @return     int
      */
-    function fetchElementResources($element,$element_id)
+    public function fetchElementResources($element, $element_id)
     {
-        $resources = $this->getElementResources($element,$element_id);
+        $resources = $this->getElementResources($element, $element_id);
         $i=0;
         foreach($resources as $nb => $resource) {
-            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+            $this->lines[$i] = fetchObjectByElement($resource['resource_id'], $resource['resource_type']);
             $i++;
         }
         return $i;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *      Load in cache resource type code (setup in dictionary)
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
-    function load_cache_code_type_resource()
+    public function load_cache_code_type_resource()
     {
         // phpcs:enable
     	global $langs;
 
-    	if (count($this->cache_code_type_resource)) return 0;    // Cache deja charge
+    	if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0;    // Cache deja charge
 
     	$sql = "SELECT rowid, code, label, active";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";
@@ -941,7 +944,7 @@ class Dolresource extends CommonObject
      *	@param		int  	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0)
     {
         global $langs;
 
@@ -952,7 +955,7 @@ class Dolresource extends CommonObject
         $linkend = '';
         if ($option == '')
         {
-            $linkstart = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $picto='resource';
             $label=$langs->trans("ShowResource").': '.$this->ref;
             $linkend='</a>';
@@ -973,12 +976,12 @@ class Dolresource extends CommonObject
      *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return	string 			       Label of status
      */
-    function getLibStatut($mode=0)
+    public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->status,$mode);
+        return $this->LibStatut($this->status, $mode);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return the status
      *
@@ -986,7 +989,7 @@ class Dolresource extends CommonObject
      *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
      *  @return string 			       	Label of status
      */
-    static function LibStatut($status,$mode=0)
+    public static function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;

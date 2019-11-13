@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,10 +71,10 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Receptions");
 
-llxHeader('',$langs->trans("ReceptionsSetup"));
+llxHeader('', $langs->trans("ReceptionsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ReceptionsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup');
 print "<br>\n";
 
 $head = reception_admin_prepare_head();

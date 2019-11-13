@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,7 +32,7 @@
  * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
  * @return	array					Array of tabs
  */
-function import_prepare_head($param, $maxstep=0)
+function import_prepare_head($param, $maxstep = 0)
 {
 	global $langs;
 
@@ -52,4 +52,3 @@ function import_prepare_head($param, $maxstep=0)
 
 	return $head;
 }
-

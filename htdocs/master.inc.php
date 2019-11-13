@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,20 +65,20 @@ $conf->file->mailing_limit_sendbycli	= $dolibarr_mailing_limit_sendbycli;
 $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;	// Identification mode
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
-$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
+$conf->file->instance_unique_id     	= empty($dolibarr_main_instance_unique_id)?(empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey):$dolibarr_main_instance_unique_id;	// Unique id of instance
 $conf->file->dol_document_root			= array('main' => (string) DOL_DOCUMENT_ROOT);								// Define array of document root directories ('/home/htdocs')
 $conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT);									// Define array of url root path ('' or '/dolibarr')
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt can contains several directories
-	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+	$values=preg_split('/[;,]/', $dolibarr_main_document_root_alt);
 	$i=0;
 	foreach($values as $value) $conf->file->dol_document_root['alt'.($i++)]=(string) $value;
-	$values=preg_split('/[;,]/',$dolibarr_main_url_root_alt);
+	$values=preg_split('/[;,]/', $dolibarr_main_url_root_alt);
 	$i=0;
 	foreach($values as $value)
 	{
-		if (preg_match('/^http(s)?:/',$value))
+		if (preg_match('/^http(s)?:/', $value))
 		{
 			// Show error message
 			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
@@ -109,7 +109,7 @@ if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs = new Translate('',$conf);	// Must be after reading conf
+	$langs = new Translate('', $conf);	// Must be after reading conf
 }
 
 /*
@@ -117,11 +117,30 @@ if (! defined('NOREQUIRETRAN'))
  */
 if (! defined('NOREQUIREDB'))
 {
-    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 	if ($db->error)
 	{
-		dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+		// If we were into a website context
+		if (! defined('USEDOLIBARREDITOR') && ! defined('USEDOLIBARRSERVER') && ! empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0))
+		{
+			$sapi_type = php_sapi_name();
+			if (substr($sapi_type, 0, 3) != 'cgi') http_response_code(503);				// To tel search engine this is a temporary error
+			print '<div class="center" style="text-align: center; margin: 100px;">';
+			if (is_object($langs))
+			{
+				$langs->setDefaultLang('auto');
+				$langs->load("website");
+				print $langs->trans("SorryWebsiteIsCurrentlyOffLine");
+			}
+			else
+			{
+				print "SorryWebsiteIsCurrentlyOffLine";
+			}
+			print '</div>';
+			exit;
+		}
+		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
 		exit;
 	}
 }
@@ -133,8 +152,7 @@ unset($conf->db->pass);				// This is to avoid password to be shown in memory/sw
 /*
  * Object $user
  */
-if (! defined('NOREQUIREUSER'))
-{
+if (! defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
@@ -148,15 +166,15 @@ if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an open
 {
 	$conf->entity = $_SESSION["dol_entity"];
 }
-else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
+elseif (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
 }
-else if (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
+elseif (isset($_POST["loginfunction"]) && GETPOST("entity", 'int'))	// Just after a login page
 {
-	$conf->entity = GETPOST("entity",'int');
+	$conf->entity = GETPOST("entity", 'int');
 }
-else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
+elseif (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 {
 	$conf->entity = DOLENTITY;
 }
@@ -234,7 +252,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (! defined('NOREQUIRETRAN'))
 {
-    $langcode=(GETPOST('lang','aZ09')?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langcode=(GETPOST('lang', 'aZ09')?GETPOST('lang', 'aZ09', 1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
     if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
     $langs->setDefaultLang($langcode);
 }
@@ -245,5 +263,5 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 
 
-if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
-
+if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR', 'NPR');
+//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

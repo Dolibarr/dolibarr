@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,7 +24,7 @@
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showOnlineSignatureUrl($type,$ref)
+function showOnlineSignatureUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -33,7 +33,7 @@ function showOnlineSignatureUrl($type,$ref)
 
 	$servicename='Online';
 
-	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlineSignature",$servicename).'<br>';
+	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'<br>';
 	$url = getOnlineSignatureUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinesignatureurl", 0);
@@ -49,11 +49,11 @@ function showOnlineSignatureUrl($type,$ref)
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref='')
+function getOnlineSignatureUrl($mode, $type, $ref = '')
 {
 	global $conf, $db, $langs;
 
-	$ref=str_replace(' ','',$ref);
+	$ref=str_replace(' ', '', $ref);
 	$out='';
 
 	if ($type == 'proposal')

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,25 +34,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
-$date_startmonth=GETPOST('date_startmonth','int');
-$date_startday=GETPOST('date_startday','int');
-$date_startyear=GETPOST('date_startyear','int');
-$date_endmonth=GETPOST('date_endmonth','int');
-$date_endday=GETPOST('date_endday','int');
-$date_endyear=GETPOST('date_endyear','int');
+$date_startmonth=GETPOST('date_startmonth', 'int');
+$date_startday=GETPOST('date_startday', 'int');
+$date_startyear=GETPOST('date_startyear', 'int');
+$date_endmonth=GETPOST('date_endmonth', 'int');
+$date_endday=GETPOST('date_endday', 'int');
+$date_endyear=GETPOST('date_endyear', 'int');
 
 $nbofyear=4;
 
 // Date range
-$year=GETPOST('year','int');
+$year=GETPOST('year', 'int');
 if (empty($year))
 {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -79,12 +79,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			else $year_end++;
 		}
 		else $month_end=$month_start;
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
@@ -97,15 +97,15 @@ $nbofyear = ($year_end - $year_start) + 1;
 
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+$socid = GETPOST('socid', 'int');
+if ($user->socid > 0) $socid = $user->socid;
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
 if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
-if (GETPOST("modecompta",'alpha')) $modecompta=GETPOST("modecompta",'alpha');
+if (GETPOST("modecompta", 'alpha')) $modecompta=GETPOST("modecompta", 'alpha');
 
 
 /*
@@ -123,8 +123,8 @@ if ($modecompta == 'CREANCES-DETTES')
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>').')';
+	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
@@ -134,11 +134,11 @@ if ($modecompta == 'CREANCES-DETTES')
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="RECETTES-DEPENSES") {
+elseif ($modecompta=="RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
+	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
@@ -146,12 +146,12 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountOnInOutBookkeepingRecord");
@@ -162,7 +162,7 @@ else if ($modecompta=="BOOKKEEPING")
 
 $hselected='report';
 
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta), $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -191,7 +191,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 	    if (! empty($date_start) && ! empty($date_end))
 	    	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		/*
 		 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -232,7 +232,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -278,12 +278,12 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 			dol_print_error($db);
 		}
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		// Nothing from this table
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -307,7 +307,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		$sql = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
@@ -347,7 +347,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -429,7 +429,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 			dol_print_error($db);
 		}
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		// TVA reellement deja payee
 		$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
@@ -480,10 +480,10 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 					$obj = $db->fetch_object($result);
 
 					if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-					$encaiss[$obj->dm] += $obj->amount;
+					$encaiss[$obj->dm] += -$obj->amount;
 
 					if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
-					$encaiss_ttc[$obj->dm] += $obj->amount;
+					$encaiss_ttc[$obj->dm] += -$obj->amount;
 
 					$i++;
 				}
@@ -493,7 +493,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		}
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -516,7 +516,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -554,7 +554,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -578,7 +578,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -616,7 +616,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -749,17 +749,17 @@ if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
         $sql.= " AND fk_statut in (1,2)";
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
-    }
-     elseif ($modecompta == 'RECETTES-DEPENSES') {
+    } elseif ($modecompta == 'RECETTES-DEPENSES') {
         $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity IN (".getEntity('donation').")";
    	    $sql.= " AND fk_statut >= 2";
-		if (! empty($date_start) && ! empty($date_end))
-			$sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
-     }
+        if (! empty($date_start) && ! empty($date_end)) {
+            $sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
+        }
+    }
 
     $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
 
@@ -864,7 +864,7 @@ $object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
 $parameters["mode"] = $modecompta;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addReportInfo',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addReportInfo', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
 
 
@@ -915,19 +915,19 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 	if($mois>12) {$mois_modulo = $mois-12;}
 
 	print '<tr class="oddeven">';
-	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,$annee),"%B")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $annee), "%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$annee_decalage=$annee;
 		if($mois>12) {$annee_decalage=$annee+1;}
-		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois_modulo,1,$annee_decalage));
+		$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
 
-		print '<td align="right">&nbsp;';
+		print '<td class="right">&nbsp;';
 		if ($modecompta == 'BOOKKEEPING')
 		{
 			if (isset($decaiss[$case]) && $decaiss[$case] != 0)
 			{
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss[$case],'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
 				if (! isset($totsorties[$annee])) $totsorties[$annee]=0;
 				$totsorties[$annee]+=$decaiss[$case];
 			}
@@ -936,19 +936,19 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		{
 			if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 			{
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss_ttc[$case], 'MT')).'</a>';
 				if (! isset($totsorties[$annee])) $totsorties[$annee]=0;
 				$totsorties[$annee]+=$decaiss_ttc[$case];
 			}
 		}
 		print "</td>";
 
-		print '<td align="right" class="borderrightlight">&nbsp;';
+		print '<td class="borderrightlight nowrap right">&nbsp;';
 		if ($modecompta == 'BOOKKEEPING')
 		{
 			if (isset($encaiss[$case]))
 			{
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($encaiss[$case],'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
 				if (! isset($totentrees[$annee])) $totentrees[$annee]=0;
 				$totentrees[$annee]+=$encaiss[$case];
 			}
@@ -957,7 +957,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		{
 			if (isset($encaiss_ttc[$case]))
 			{
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($encaiss_ttc[$case],'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($encaiss_ttc[$case], 'MT')).'</a>';
 				if (! isset($totentrees[$annee])) $totentrees[$annee]=0;
 				$totentrees[$annee]+=$encaiss_ttc[$case];
 			}
@@ -978,8 +978,8 @@ print '</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	$nbcols+=2;
-	print '<td align="right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee],'MT')):'&nbsp;').'</td>';
-	print '<td align="right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee],'MT')):'&nbsp;').'</td>';
+	print '<td class="nowrap right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee], 'MT')):'&nbsp;').'</td>';
+	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee], 'MT')):'&nbsp;').'</td>';
 }
 print "</tr>\n";
 
@@ -993,11 +993,11 @@ print "</tr>\n";
 print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right" colspan="2" class="borderrightlight"> ';
+	print '<td colspan="2" class="borderrightlight right"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
 		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);
-		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee],'MT'):0);
+		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee], 'MT'):0);
 		print price(price2num($in-$out, 'MT')).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}

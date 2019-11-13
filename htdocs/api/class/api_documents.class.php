@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -43,7 +43,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		global $db;
 		$this->db = $db;
@@ -56,7 +56,7 @@ class Documents extends DolibarrApi
 	 * Note that, this API is similar to using the wrapper link "documents.php" to download a file (used for
 	 * internal HTML links of documents into application), but with no need to have a session cookie (the token is used instead).
 	 *
-	 * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
+	 * @param   string  $modulepart     Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
 	 *
@@ -67,11 +67,11 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /download
 	 */
-	public function index($module_part, $original_file='')
+	public function index($modulepart, $original_file = '')
 	{
 		global $conf, $langs;
 
-		if (empty($module_part)) {
+		if (empty($modulepart)) {
 				throw new RestException(400, 'bad value for parameter modulepart');
 		}
 		if (empty($original_file)) {
@@ -81,13 +81,12 @@ class Documents extends DolibarrApi
 		//--- Finds and returns the document
 		$entity=$conf->entity;
 
-		$check_access = dol_check_secure_access_document($module_part, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
-		$accessallowed              = $check_access['accessallowed'];
+		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+		$accessallowed = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-		$original_file              = $check_access['original_file'];
+		$original_file = $check_access['original_file'];
 
-		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
-		{
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 			throw new RestException(401);
 		}
 		if (!$accessallowed) {
@@ -99,6 +98,7 @@ class Documents extends DolibarrApi
 
 		if (! file_exists($original_file_osencoded))
 		{
+			dol_syslog("Try to download not found file ".$original_file_osencoded, LOG_WARNING);
 			throw new RestException(404, 'File not found');
 		}
 
@@ -112,7 +112,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "module_part": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * @param   string  $module_part    Name of module or area concerned by file download ('invoice', 'order', ...).
+	 * @param   string  $modulepart    Name of module or area concerned by file download ('invoice', 'order', ...).
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
@@ -127,11 +127,11 @@ class Documents extends DolibarrApi
 	 *
 	 * @url PUT /builddoc
 	 */
-	public function builddoc($module_part, $original_file='', $doctemplate='', $langcode='')
+	public function builddoc($modulepart, $original_file = '', $doctemplate = '', $langcode = '')
 	{
 		global $conf, $langs;
 
-		if (empty($module_part)) {
+		if (empty($modulepart)) {
 			throw new RestException(400, 'bad value for parameter modulepart');
 		}
 		if (empty($original_file)) {
@@ -148,12 +148,12 @@ class Documents extends DolibarrApi
 		//--- Finds and returns the document
 		$entity=$conf->entity;
 
-		$check_access = dol_check_secure_access_document($module_part, $original_file, $entity, DolibarrApiAccess::$user, '', 'write');
+		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'write');
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
 
-		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file)) {
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 			throw new RestException(401);
 		}
 		if (!$accessallowed) {
@@ -167,7 +167,7 @@ class Documents extends DolibarrApi
 
 		$templateused='';
 
-		if ($module_part == 'facture' || $module_part == 'invoice')
+		if ($modulepart == 'facture' || $modulepart == 'invoice')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$this->invoice = new Facture($this->db);
@@ -182,7 +182,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error generating document');
 			}
 		}
-		elseif ($module_part == 'commande' || $module_part == 'order')
+		elseif ($modulepart == 'commande' || $modulepart == 'order')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$this->order = new Commande($this->db);
@@ -196,7 +196,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error generating document');
 			}
 		}
-		elseif ($module_part == 'propal' || $module_part == 'proposal')
+		elseif ($modulepart == 'propal' || $modulepart == 'proposal')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$this->propal = new Propal($this->db);
@@ -245,7 +245,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /
 	 */
-	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
+	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
 	{
 		global $conf;
 
@@ -275,7 +275,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
 		}
-		else if ($modulepart == 'adherent' || $modulepart == 'member')
+		elseif ($modulepart == 'adherent' || $modulepart == 'member')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -291,7 +291,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 		}
-		else if ($modulepart == 'propal' || $modulepart == 'proposal')
+		elseif ($modulepart == 'propal' || $modulepart == 'proposal')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
@@ -307,7 +307,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
 		}
-		else if ($modulepart == 'commande' || $modulepart == 'order')
+		elseif ($modulepart == 'commande' || $modulepart == 'order')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -323,7 +323,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->commande->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'commande');
 		}
-		else if ($modulepart == 'shipment' || $modulepart == 'expedition')
+		elseif ($modulepart == 'shipment' || $modulepart == 'expedition')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -339,7 +339,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->expedition->dir_output . "/sending/" . get_exdir(0, 0, 0, 1, $object, 'shipment');
 		}
-		else if ($modulepart == 'facture' || $modulepart == 'invoice')
+		elseif ($modulepart == 'facture' || $modulepart == 'invoice')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -355,7 +355,23 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
 		}
-		else if ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
+        elseif ($modulepart == 'produit' || $modulepart == 'product')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->produit->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Product($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Product not found');
+			}
+
+			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+		}
+		elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -376,7 +392,7 @@ class Documents extends DolibarrApi
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
 
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(! empty($object->Ref)?' or Ref '.$object->ref:'').' does not return any document.');
 		}
@@ -410,8 +426,9 @@ class Documents extends DolibarrApi
 	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir       		Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
-	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64) {@example '' or 'base64'}
+	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
+     * @return  string
 	 *
 	 * @throws 200
 	 * @throws 400
@@ -421,7 +438,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url POST /upload
 	 */
-	public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0)
 	{
 		global $db, $conf;
 
@@ -488,6 +505,11 @@ class Documents extends DolibarrApi
 					throw new RestException(500, 'Error while fetching Task '.$ref);
 				}
 			}
+			elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$object = new Product($this->db);
+			}
 			// TODO Implement additional moduleparts
 			else
 			{
@@ -501,7 +523,7 @@ class Documents extends DolibarrApi
 				if($result == 0)
 				{
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");
-			}
+			    }
 				elseif ($result < 0)
 				{
 					throw new RestException(500, 'Error while fetching object.');
@@ -541,6 +563,11 @@ class Documents extends DolibarrApi
 
 		$upload_dir = dol_sanitizePathName($upload_dir);
 
+		if (dol_mkdir($upload_dir) < 0) // needed by products
+		{
+		    throw new RestException(500, 'Error while trying to create directory.');
+		}
+
 		$destfile = $upload_dir . '/' . $original_file;
 		$destfiletmp = DOL_DATA_ROOT.'/admin/temp/' . $original_file;
 		dol_delete_file($destfiletmp);
@@ -577,13 +604,77 @@ class Documents extends DolibarrApi
 	}
 
 	/**
+	 * Delete a document.
+	 *
+	 * @param   string  $modulepart     Name of module or area concerned by file download ('product', ...)
+	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
+	 * @return  array                   List of documents
+	 *
+	 * @throws 400
+	 * @throws 401
+	 * @throws 404
+	 * @throws 200
+	 *
+	 * @url DELETE /
+	 */
+	public function delete($modulepart, $original_file)
+	{
+	    global $conf, $langs;
+
+	    if (empty($modulepart)) {
+	        throw new RestException(400, 'bad value for parameter modulepart');
+	    }
+	    if (empty($original_file)) {
+	        throw new RestException(400, 'bad value for parameter original_file');
+	    }
+
+	    //--- Finds and returns the document
+	    $entity=$conf->entity;
+
+	    $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+	    $accessallowed = $check_access['accessallowed'];
+	    $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+	    $original_file = $check_access['original_file'];
+
+	    if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
+	        throw new RestException(401);
+	    }
+	    if (!$accessallowed) {
+	        throw new RestException(401);
+	    }
+
+	    $filename = basename($original_file);
+	    $original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+
+	    if (! file_exists($original_file_osencoded))
+	    {
+	        dol_syslog("Try to download not found file ".$original_file_osencoded, LOG_WARNING);
+	        throw new RestException(404, 'File not found');
+	    }
+
+	    if (@unlink($original_file_osencoded)) {
+    	    return array(
+    	        'success' => array(
+    	            'code' => 200,
+    	            'message' => 'Document deleted'
+    	        )
+    	    );
+	    }
+
+	    throw new RestException(401);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
+	/**
 	 * Validate fields before create or update object
 	 *
 	 * @param   array           $data   Array with data to verify
 	 * @return  array
 	 * @throws  RestException
 	 */
-	function _validate_file($data) {
+    private function _validate_file($data)
+    {
+        // phpcs:enable
 		$result = array();
 		foreach (Documents::$DOCUMENT_FIELDS as $field) {
 			if (!isset($data[$field]))

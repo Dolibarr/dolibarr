@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Path to WSDL is: http://localhost/dolibarr/webservices/server_actioncomm.php?wsdl
  */
@@ -23,7 +23,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require "../master.inc.php";
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
@@ -41,7 +41,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-    print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -51,7 +51,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrActionComm',$ns);
+$server->configureWSDL('WebServicesDolibarrActionComm', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -111,24 +111,29 @@ $actioncomm_fields= array(
 	'fk_element' => array('name'=>'fk_element','type'=>'xsd:string'),
 	'elementtype' => array('name'=>'elementtype','type'=>'xsd:string'));
 
+
+$elementtype = 'actioncomm';
+
 //Retreive all extrafield for actioncomm
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
-
-if (is_array($extrafield_array)) $actioncomm_fields=array_merge($actioncomm_fields,$extrafield_array);
+if (is_array($extrafield_array)) $actioncomm_fields=array_merge($actioncomm_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -244,7 +249,7 @@ $server->register(
  * @param	int			$id					Id of object
  * @return	mixed
  */
-function getActionComm($authentication,$id)
+function getActionComm($authentication, $id)
 {
     global $db,$conf,$langs;
 
@@ -256,7 +261,7 @@ function getActionComm($authentication,$id)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if ($error || (! $id))
     {
@@ -274,7 +279,6 @@ function getActionComm($authentication,$id)
             $result=$actioncomm->fetch($id);
             if ($result > 0)
             {
-
             	$actioncomm_result_fields=array(
 						'id' => $actioncomm->id,
 						'ref'=> $actioncomm->ref,
@@ -283,11 +287,11 @@ function getActionComm($authentication,$id)
 			        	'type_code'=> $actioncomm->type_code,
 			        	'type'=> $actioncomm->type,
 			        	'label'=> $actioncomm->label,
-			        	'datep'=> dol_print_date($actioncomm->datep,'dayhourrfc'),
-			        	'datef'=> dol_print_date($actioncomm->datef,'dayhourrfc'),
-			        	'datec'=> dol_print_date($actioncomm->datec,'dayhourrfc'),
-			        	'datem'=> dol_print_date($actioncomm->datem,'dayhourrfc'),
-			        	'note'=> $actioncomm->note,
+			        	'datep'=> dol_print_date($actioncomm->datep, 'dayhourrfc'),
+			        	'datef'=> dol_print_date($actioncomm->datef, 'dayhourrfc'),
+			        	'datec'=> dol_print_date($actioncomm->datec, 'dayhourrfc'),
+			        	'datem'=> dol_print_date($actioncomm->datem, 'dayhourrfc'),
+			        	'note'=> $actioncomm->note_private,
 			        	'percentage'=> $actioncomm->percentage,
 			        	'author'=> $actioncomm->authorid,
 			        	'usermod'=> $actioncomm->usermodid,
@@ -299,19 +303,25 @@ function getActionComm($authentication,$id)
 			        	'contactid'=> $actioncomm->contactid,
 			        	'projectid'=> $actioncomm->fk_project,
 			        	'fk_element'=> $actioncomm->fk_element,
-			        	'elementtype'=> $actioncomm->elementtype);
+			        	'elementtype'=> $actioncomm->elementtype
+            	);
 
-			        	//Retreive all extrafield for actioncomm
-			        	// fetch optionals attributes and labels
-			        	$extrafields=new ExtraFields($db);
-			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
-			        	//Get extrafield values
-			        	$actioncomm->fetch_optionals();
+            	$elementtype = 'actioncomm';
 
-			        	foreach($extrafields->attribute_label as $key=>$label)
-			        	{
-			        		$actioncomm_result_fields=array_merge($actioncomm_result_fields,array('options_'.$key => $actioncomm->array_options['options_'.$key]));
-			        	}
+	        	// Retreive all extrafield for actioncomm
+	        	// fetch optionals attributes and labels
+	        	$extrafields=new ExtraFields($db);
+	        	$extrafields->fetch_name_optionals_label($elementtype, true);
+	        	//Get extrafield values
+	        	$actioncomm->fetch_optionals();
+
+	        	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+	        	{
+	        		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+		        	{
+		        		$actioncomm_result_fields=array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
+		        	}
+	        	}
 
                 // Create
                 $objectresp = array(
@@ -358,7 +368,7 @@ function getListActionCommType($authentication)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (! $error)
 	{
@@ -367,7 +377,7 @@ function getListActionCommType($authentication)
 		if ($fuser->rights->agenda->myactions->read)
 		{
 			$cactioncomm=new CActionComm($db);
-			$result=$cactioncomm->liste_array('','code');
+			$result=$cactioncomm->liste_array('', 'code');
 			if ($result > 0)
 			{
 				$resultarray=array();
@@ -408,7 +418,7 @@ function getListActionCommType($authentication)
  * @param	ActionComm	$actioncomm		    $actioncomm
  * @return	array							Array result
  */
-function createActionComm($authentication,$actioncomm)
+function createActionComm($authentication, $actioncomm)
 {
 	global $db,$conf,$langs;
 
@@ -422,7 +432,7 @@ function createActionComm($authentication,$actioncomm)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (! $error)
 	{
@@ -444,14 +454,19 @@ function createActionComm($authentication,$actioncomm)
 		$newobject->fk_element=$actioncomm['fk_element'];
 		$newobject->elementtype=$actioncomm['elementtype'];
 
+		$elementtype = 'actioncomm';
+
 		//Retreive all extrafield for actioncomm
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		$extrafields->fetch_name_optionals_label($elementtype, true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$actioncomm[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$actioncomm[$key];
+			}
 		}
 
 		$db->begin();
@@ -491,7 +506,7 @@ function createActionComm($authentication,$actioncomm)
  * @param	ActionComm	$actioncomm		    $actioncomm
  * @return	array							Array result
  */
-function updateActionComm($authentication,$actioncomm)
+function updateActionComm($authentication, $actioncomm)
 {
 	global $db,$conf,$langs;
 
@@ -505,7 +520,7 @@ function updateActionComm($authentication,$actioncomm)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($actioncomm['id']))	{
 		$error++; $errorcode='KO'; $errorlabel="Actioncomm id is mandatory.";
@@ -519,7 +534,6 @@ function updateActionComm($authentication,$actioncomm)
 		$result=$object->fetch($actioncomm['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->datep=$actioncomm['datep'];
@@ -538,14 +552,19 @@ function updateActionComm($authentication,$actioncomm)
 			$object->fk_element=$actioncomm['fk_element'];
 			$object->elementtype=$actioncomm['elementtype'];
 
+			$elementtype = 'actioncomm';
+
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			$extrafields->fetch_name_optionals_label($elementtype, true);
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$actioncomm[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$object->array_options[$key]=$actioncomm[$key];
+				}
 			}
 
 			$db->begin();

@@ -31,14 +31,16 @@ ViewWeek=Tjedni pregled
 ViewPerUser=Pregled po korisniku
 ViewPerType=Pregled po tipu
 AutoActions= Automasko filtriranje
-AgendaAutoActionDesc= Ovdje definirajte događaje koje želite da Dolibarr kreira automatski u podsjetnik. Ako ništa nije označeno, samo manualne akcije će biti uključene u log i vidljive u podsjetniku. Automatsko pračenje poslovnih akcija napravljene na objektima ( provjera, promjena statusa) neće biti spremljena.
-AgendaSetupOtherDesc= Ova stranica omogućava opcije za izvoz događaja u vanjski kalendar (thunderbird, google calendar, ...)
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Ova stranica omogućuje postavu vanjskih izvora kalendara kako bi se mogli viditi svoje događaje u Dolibarr podsjetnicima
 ActionsEvents=Događaji za koje Dolibarr će kreirat akcije u podsjetnicima automatski
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s validated
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Proposal %s signed
 PropalClosedRefusedInDolibarr=Proposal %s refused
 PropalValidatedInDolibarr=Ponuda %s ovjerena
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Isporuka %s je ovjerena
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Narudžba %s ovjerena
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=Narudžba %s označena kao naplaćena
 OrderApprovedInDolibarr=Narudžba %s odobrena
 OrderRefusedInDolibarr=Narudžba %s je odbijena
 OrderBackToDraftInDolibarr=Narudžba %s vraćena u status skice
-ProposalSentByEMail=Ponuda %s poslana putem e-pošte
-ContractSentByEMail=Contract %s sent by EMail
-OrderSentByEMail=Narudžba kupca %s poslana putem e-pošte
-InvoiceSentByEMail=Račun kupca %s poslan putem e-pošte
-SupplierOrderSentByEMail=Narudžba dobavljača %s poslana putem e-pošte
-SupplierInvoiceSentByEMail=Račun dobavljača %s poslan putem e-pošte
-ShippingSentByEMail=Pošiljka %s poslana e-poštom
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Pošiljka %s je ovjerena
-InterventionSentByEMail=Intervencija %s poslana putem e-pošte
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Ponuda obrisana
 OrderDeleted=Narudžba obrisana
 InvoiceDeleted=Račun obrisan
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
 PROJECT_CREATEInDolibarr=Projekt %s je kreiran
 PROJECT_MODIFYInDolibarr=Project %s modified
 PROJECT_DELETEInDolibarr=Project %s deleted
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Datum početka
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>logina=%s</b> da se ograniči prikaz na akcije u vlasništv
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Prikaži rođendane kontakata
 AgendaHideBirthdayEvents=Sakrij rođendane kontakata
 Busy=Zauzet
@@ -110,18 +118,17 @@ DefaultWorkingHours=Već utvrđeno dnevno radno vrijeme (npr. 9-18)
 # External Sites ical
 ExportCal=Izvezi kalendar
 ExtSites=Uvezi vanjski kalendar
-ExtSitesEnableThisTool=Prikaz vanjskih kalendara ( postavljenih u globalnim postavkama) u podsjetniku. Ne utječe na vanjske kalendare definirane od strane korisnika.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Broj kalendara
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL za pristup .ical datoteki
 ExtSiteNoLabel=Bez opisa
 VisibleTimeRange=Vidljivi vremenski raspon
 VisibleDaysRange=Vidljivi dnevni raspon
-AddEvent=Kreiraj događaj
+AddEvent=Izradi događaj
 MyAvailability=Moja dostupnost
-ActionType=Tip događaja
+ActionType=Vrsta događaja
 DateActionBegin=Datum početka događaja
-CloneAction=Kloniraj događaj
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Ponovi događaj
 EveryWeek=Svaki tjedan

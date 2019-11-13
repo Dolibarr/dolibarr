@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -46,7 +46,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -56,7 +56,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -68,7 +68,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -76,11 +76,12 @@ abstract class ModeleNumRefChequeReceipts
 	}
 
 	/**
-	 *  Test if the existing numbers in the database do not cause conflicts that would prevent this numbering run.
-	 *
-	 *	@return     boolean     false si conflit, true si ok
-	 */
-	function canBeActivated()
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
+     *
+     *	@return     boolean     false if conflict, true if ok
+     */
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -92,7 +93,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	function getNextValue($objsoc,$object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -103,7 +104,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
@@ -127,7 +128,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 */
 	public $error='';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -135,7 +136,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -144,7 +145,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
 
@@ -154,7 +155,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 
 /**
- *	Cree un bordereau remise de cheque
+ *  Cree un bordereau remise de cheque
  *
  * 	@param	DoliDB		$db				Database handler
  *	@param	int			$id				Object invoice (or id of invoice)
@@ -206,13 +207,13 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
 		return -1;
 	}
 }

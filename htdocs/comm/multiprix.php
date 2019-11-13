@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,12 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies'));
 
-$id = GETPOST('id','int');
-$_socid = GETPOST("id",'int');
+$id = GETPOST('id', 'int');
+$_socid = GETPOST("id", 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$_socid = $user->societe_id;
+	$_socid = $user->socid;
 }
 
 
@@ -47,7 +47,7 @@ if ($_POST["action"] == 'setpricelevel')
 {
 	$soc = new Societe($db);
 	$soc->fetch($id);
-	$soc->set_price_level($_POST["price_level"],$user);
+	$soc->set_price_level($_POST["price_level"], $user);
 
 	header("Location: multiprix.php?id=".$id);
 	exit;
@@ -67,7 +67,7 @@ if ($_socid > 0)
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
 	$objsoc->id=$_socid;
-	$objsoc->fetch($_socid,$to);
+	$objsoc->fetch($_socid, $to);
 
 	if ($errmesg)
 	{
@@ -91,15 +91,13 @@ if ($_socid > 0)
 
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
-	print '<table width="100%" border="0">';
-	print '<tr><td class="tdtop">';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
-	print '<tr><td colspan="2" width="25%">';
-	print $langs->trans("PriceLevel").'</td><td colspan="2">'.$objsoc->price_level."</td></tr>";
+	print '<tr><td class="titlefieldcreate">';
+	print $langs->trans("PriceLevel").'</td><td>'.$objsoc->price_level."</td></tr>";
 
-	print '<tr><td colspan="2">';
-	print $langs->trans("NewValue").'</td><td colspan="2">';
+	print '<tr><td>';
+	print $langs->trans("NewValue").'</td><td>';
 	print '<select name="price_level" class="flat">';
 	for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 	{
@@ -114,12 +112,6 @@ if ($_socid > 0)
 	print '</select>';
 	print '</td></tr>';
 
-	print "</table>";
-
-	print "</td>\n";
-
-
-	print "</td></tr>";
 	print "</table>";
 
 	dol_fiche_end();
@@ -144,12 +136,12 @@ if ($_socid > 0)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		$tag = !$tag;
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("PriceLevel").'</td>';
-		print '<td align="right">'.$langs->trans("User").'</td>';
+		print '<td class="right">'.$langs->trans("User").'</td>';
 		print '</tr>';
 		$i = 0 ;
 		$num = $db->num_rows($resql);
@@ -157,13 +149,13 @@ if ($_socid > 0)
 		while ($i < $num )
 		{
 			$obj = $db->fetch_object($resql);
-			$tag = !$tag;
-			print '<tr '.$bc[$tag].'>';
-			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+
+			print '<tr class="oddeven">';
+			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;
 			$userstatic->lastname=$obj->login;
-			print '<td align="right">'.$userstatic->getNomUrl(1).'</td>';
+			print '<td class="right">'.$userstatic->getNomUrl(1).'</td>';
 			print '</tr>';
 			$i++;
 		}

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -31,13 +31,13 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
 
 <?php
-print load_fiche_titre($langs->trans("NewService"),'','title_products.png');
+print load_fiche_titre($langs->trans("NewService"), '', 'products');
 dol_fiche_head('');
 ?>
 
-<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
+<?php dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']); ?>
 
-<?php dol_htmloutput_errors($GLOBALS['mesg'],$GLOBALS['mesgs']); ?>
+<?php dol_htmloutput_errors($GLOBALS['mesg'], $GLOBALS['mesgs']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -60,12 +60,12 @@ dol_fiche_head('');
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut', $statutarray, $object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_buy); ?></td>
+<td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>
@@ -81,12 +81,11 @@ dol_fiche_head('');
 <br>
 
 <?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
-
 <table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $object->price; ?>">
-<?php echo $object->price_base_type; ?>
+	<?php echo $object->price_base_type; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
@@ -94,7 +93,7 @@ dol_fiche_head('');
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $object->tva_tx; ?>
+	<?php echo $object->tva_tx; ?>
 </td></tr>
 
 </table>

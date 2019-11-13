@@ -31,4 +31,4 @@ DONATION_ART200=Afficher article 200 du CGI si vous êtes concernés
 DONATION_ART238=Afficher article 238 du CGI si vous êtes concernés
 DONATION_ART885=Afficher article 885 du CGI si vous êtes concernés
 DonationPayment=Paiement du don
-DonationValidated=Donation %s validated
+DonationValidated=Don %s validé

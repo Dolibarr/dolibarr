@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=1)
+function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotest = 1)
 {
 	global $db,$conf,$langs;
 
@@ -45,7 +45,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 
 	if (! empty($usertotest))
 	{
-		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./','*',$passwordtotest)." entitytotest=".$entitytotest);
+		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
 
 		// If test username/password asked, we define $test=false if ko and $login var to login if ok, set also $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
@@ -56,7 +56,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 		$sql ='SELECT rowid, login, entity, pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE ('.$usernamecol1." = '".$db->escape($usertotest)."'";
-		if (preg_match('/@/',$usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+		if (preg_match('/@/', $usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
 		$sql.=') AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 		$sql.=' AND statut = 1';
 		// Required to first found the user into entity, then the superadmin.
@@ -80,7 +80,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
 
 				// By default, we used MD5
-				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
+				if (! in_array($cryptType, array('md5'))) $cryptType='md5';
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'md5')
 				{
@@ -109,8 +109,8 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				}
 				else
 				{
-					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."'");
-					sleep(2);      // Anti brut force protection
+				    sleep(2);      // Anti brut force protection
+				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."', cryptType=".$cryptType);
 
 					// Load translation files required by the page
                     $langs->loadLangs(array('main', 'errors'));

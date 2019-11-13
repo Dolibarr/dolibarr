@@ -26,3 +26,4 @@ AmountPayment=Montant de paiement
 Discount=Ristourne
 Unknown=Inconnue
 Check=Chèque
+ValidatePayment=Valider paiement

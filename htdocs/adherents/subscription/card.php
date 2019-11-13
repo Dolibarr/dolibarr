@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,10 +39,10 @@ $adht = new AdherentType($db);
 $object = new Subscription($db);
 $errmsg='';
 
-$action=GETPOST("action",'alpha');
-$rowid=GETPOST("rowid","int")?GETPOST("rowid","int"):GETPOST("id","int");
-$typeid=GETPOST("typeid","int");
-$cancel=GETPOST('cancel','alpha');
+$action=GETPOST("action", 'alpha');
+$rowid=GETPOST("rowid", "int")?GETPOST("rowid", "int"):GETPOST("id", "int");
+$typeid=GETPOST("typeid", "int");
+$cancel=GETPOST('cancel', 'alpha');
 $confirm=GETPOST('confirm');
 
 if (! $user->rights->adherent->cotisation->lire)
@@ -68,7 +68,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, 
 
 if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $cancel)
 {
-	// Charge objet actuel
+	// Load current object
 	$result=$object->fetch($rowid);
 	if ($result > 0)
 	{
@@ -101,7 +101,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $canc
 
 		if (! $errmsg)
 		{
-			// Modifie valeures
+			// Modify values
 			$object->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$object->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
 			$object->fk_type=$_POST["typeid"];
@@ -167,7 +167,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
 $form = new Form($db);
 
 
-llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("SubscriptionCard"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 dol_htmloutput_errors($errmsg);
@@ -197,7 +197,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     print "\n";
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
     // Ref
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -205,17 +205,17 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
-    // Type
+	// Member
+	$adh->ref=$adh->getFullName($langs);
+	print '<tr>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '</tr>';
+
+	// Type
 	print '<tr>';
 	print '<td>'.$langs->trans("Type").'</td><td class="valeur" colspan="3">';
 	print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->fk_type));
 	print'</td></tr>';
-
-    // Member
-	$adh->ref=$adh->getFullName($langs);
-    print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
-    print '</tr>';
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
@@ -247,7 +247,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 			{
 				$bankline=new AccountLine($db);
 				$result=$bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1,0,'showall');
+				print $bankline->getNomUrl(1, 0, 'showall');
 			}
 			else
 			{
@@ -293,7 +293,7 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if (! empty($conf->banque->enabled) && ! empty($conf->global->ADHERENT_BANK_USE)) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("DeleteSubscription"), $text, "confirm_delete", $formquestion, 0, 1);
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -307,45 +307,41 @@ if ($rowid && $action != 'edit')
 
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
-    
+    print '<table class="border centpercent">';
+
+    // Member
+    $adh->ref=$adh->getFullName($langs);
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+    print '</tr>';
+
     // Type
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("Type").'</td>';
     print '<td class="valeur">';
-    if (  ! empty($object->fk_type) ) {
-      $adht->fetch($object->fk_type);
-    print $adht->getNomUrl(1);
-      } else {
-    print $langs->trans("NoType");
-      }
+    if ($object->fk_type > 0 || $adh->typeid > 0) {
+    	$typeid = ($object->fk_type > 0 ? $object->fk_type : $adh->typeid);
+    	$adht->fetch($typeid);
+        print $adht->getNomUrl(1);
+    } else {
+        print $langs->trans("NoType");
+    }
     print '</td></tr>';
-
-    // Member
-	$adh->ref=$adh->getFullName($langs);
-    print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1,0,'subscription').'</td>';
-    print '</tr>';
-
-    // Date record
-    /*print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->datec,'dayhour').'</td>';
-    print '</tr>';*/
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->dateh,'day').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->dateh, 'day').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dol_print_date($object->datef,'day').'</td>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dol_print_date($object->datef, 'day').'</td>';
     print '</tr>';
 
     // Amount
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($object->amount).'</td></tr>';
 
-    // Amount
+    // Label
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
 	// Bank line
@@ -358,7 +354,7 @@ if ($rowid && $action != 'edit')
 			{
 				$bankline=new AccountLine($db);
 				$result=$bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1,0,'showall');
+				print $bankline->getNomUrl(1, 0, 'showall');
 			}
 			else
 			{
@@ -393,7 +389,7 @@ if ($rowid && $action != 'edit')
 		}
 	}
 
-    // Supprimer
+    // Delete
     if ($user->rights->adherent->cotisation->creer)
     {
         print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";
