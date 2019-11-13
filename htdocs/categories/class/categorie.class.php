@@ -78,7 +78,7 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 		'warehouse'    => 9,
-        'actioncomm' => 9,
+        'actioncomm' => 10,
 	);
 
     /**
@@ -133,7 +133,7 @@ class Categorie extends CommonObject
         'bank_account'=> 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
-        'actioncomm' => 'warehouse',
+        'actioncomm' => 'actioncomm',
 	);
 
     /**
