@@ -71,7 +71,7 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$object->fetch_thirdparty();
 
@@ -134,7 +134,7 @@ if ($id > 0 || ! empty($ref))
 	print '<div class="underbanner clearboth"></div>';
 
 
-	$cssclass="titlefield";
+	$cssclass = "titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';

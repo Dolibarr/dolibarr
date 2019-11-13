@@ -35,23 +35,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid=GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $origin		= GETPOST('origin', 'alpha');
-$catorigin	= GETPOST('catorigin', 'int');
-$type 		= GETPOST('type', 'alpha');
+$catorigin = GETPOST('catorigin', 'int');
+$type = GETPOST('type', 'alpha');
 $urlfrom	= GETPOST('urlfrom', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid=GETPOST('socid', 'int');
-$label=GETPOST('label');
-$description=GETPOST('description');
-$color=GETPOST('color');
-$visible=GETPOST('visible');
-$parent=GETPOST('parent');
+$socid = GETPOST('socid', 'int');
+$label = GETPOST('label');
+$description = GETPOST('description');
+$color = GETPOST('color');
+$visible = GETPOST('visible');
+$parent = GETPOST('parent');
 
 if ($origin)
 {
@@ -130,17 +130,17 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 	$object->label			= $label;
 	$object->color			= $color;
-	$object->description	= dol_htmlcleanlastbr($description);
+	$object->description = dol_htmlcleanlastbr($description);
 	$object->socid			= ($socid ? $socid : 'null');
-	$object->visible		= $visible;
-	$object->type			= $type;
+	$object->visible = $visible;
+	$object->type = $type;
 
 	if ($parent != "-1") $object->fk_parent = $parent;
 
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
-	if (! $object->label)
+	if (!$object->label)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
@@ -148,7 +148,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	}
 
 	// Create category in database
-	if (! $error)
+	if (!$error)
 	{
 		$result = $object->create($user);
 		if ($result > 0)
@@ -223,7 +223,7 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$helpurl='';
+$helpurl = '';
 llxHeader("", $langs->trans("Categories"), $helpurl);
 
 if ($user->rights->categorie->creer)
@@ -258,7 +258,7 @@ if ($user->rights->categorie->creer)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
+		$doleditor = new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -273,8 +273,8 @@ if ($user->rights->categorie->creer)
 		print ajax_combobox('parent');
 		print '</td></tr>';
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 		if (empty($reshook))
 		{

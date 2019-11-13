@@ -673,18 +673,18 @@ class Products extends DolibarrApi
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
         }
 
-        $id = (empty($id)?0:$id);
+        $id = (empty($id) ? 0 : $id);
 
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(403);
         }
 
         $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -765,18 +765,18 @@ class Products extends DolibarrApi
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
         }
 
-        $id = (empty($id)?0:$id);
+        $id = (empty($id) ? 0 : $id);
 
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(403);
         }
 
         $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

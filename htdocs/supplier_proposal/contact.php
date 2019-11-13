@@ -85,7 +85,7 @@ elseif ($action == 'swapstatut' && $permissiontoedit)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -115,13 +115,13 @@ elseif ($action == 'deletecontact' && $permissiontoedit)
  * View
  */
 
-$help_url='';
+$help_url = '';
 llxHeader('', $langs->trans("SupplierProposals"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 
 /* *************************************************************************** */
@@ -130,7 +130,7 @@ $userstatic=new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$langs->trans("SupplierProposal");
 

@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$servicename='Stripe';
+$servicename = 'Stripe';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
@@ -52,58 +52,58 @@ if ($action == 'setvalue' && $user->admin)
 
 	if (empty($conf->stripeconnect->enabled)) {
 		$result = dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY", GETPOST('STRIPE_TEST_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY", GETPOST('STRIPE_TEST_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_ID", GETPOST('STRIPE_TEST_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_KEY", GETPOST('STRIPE_TEST_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_PUBLISHABLE_KEY", GETPOST('STRIPE_LIVE_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY", GETPOST('STRIPE_LIVE_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_ID", GETPOST('STRIPE_LIVE_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_KEY", GETPOST('STRIPE_LIVE_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (! $result > 0)
-			$error ++;
+		if (!$result > 0)
+			$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
     $result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
-    if (! $result > 0) {
-        $error ++;
+    if (!$result > 0) {
+        $error++;
     }
     $result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	// Stock decrement
 	//$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	//if (! $result > 0)
@@ -111,13 +111,13 @@ if ($action == 'setvalue' && $user->admin)
 
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	if (!$result > 0)
+		$error++;
 
-	if (! $error) {
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -126,7 +126,7 @@ if ($action == 'setvalue' && $user->admin)
 	}
 }
 
-if ($action=="setlive")
+if ($action == "setlive")
 {
 	$liveenable = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable, 'yesno', 0, '', $conf->entity);
@@ -145,15 +145,15 @@ if ($action=="setlive")
  *	View
  */
 
-$form=new Form($db);
-$formproduct=new FormProduct($db);
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("StripeSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' Stripe', $linkback);
 
-$head=stripeadmin_prepare_head();
+$head = stripeadmin_prepare_head();
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -161,7 +161,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'stripeaccount', '', -1);
 
-$stripearrayofwebhookevents=array('payout.created','payout.paid','charge.pending','charge.refunded','charge.succeeded','charge.failed','payment_intent.succeeded','payment_intent.payment_failed','payment_method.attached','payment_method.updated','payment_method.card_automatically_updated','payment_method.detached','source.chargeable','customer.deleted');
+$stripearrayofwebhookevents = array('payout.created', 'payout.paid', 'charge.pending', 'charge.refunded', 'charge.succeeded', 'charge.failed', 'payment_intent.succeeded', 'payment_intent.payment_failed', 'payment_method.attached', 'payment_method.updated', 'payment_method.card_automatically_updated', 'payment_method.detached', 'source.chargeable', 'customer.deleted');
 
 print $langs->trans("StripeDesc")."<br>\n";
 
@@ -209,8 +209,8 @@ if (empty($conf->stripeconnect->enabled))
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 	  $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
-	$out.= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
-	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
+	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
+	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
@@ -221,7 +221,7 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
             $endpoint->enabled_events = $stripearrayofwebhookevents;
             if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
-                if (! GETPOST('status', 'alpha')) {
+                if (!GETPOST('status', 'alpha')) {
                     $endpoint->disabled = true;
                 } else {
                     $endpoint->disabled = false;
@@ -282,8 +282,8 @@ if (empty($conf->stripeconnect->enabled))
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
     $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php', 3);
-	$out.= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
-	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
+	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
+	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
@@ -293,8 +293,8 @@ if (empty($conf->stripeconnect->enabled))
             \Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
             $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
             $endpoint->enabled_events = $stripearrayofwebhookevents;
-            if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID ) {
-                if ( empty(GETPOST('status', 'alpha')) ) {
+            if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID) {
+                if (empty(GETPOST('status', 'alpha'))) {
                     $endpoint->disabled = true;
                 } else {
                     $endpoint->disabled = false;
@@ -408,19 +408,19 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -434,7 +434,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
 
@@ -459,13 +459,13 @@ print '</form>';
 print '<br><br>';
 
 
-$token='';
+$token = '';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000000000003220 (3DSecure2 required)', '4000000000000101', '4000000000000069', '4000000000000341'));
 
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {

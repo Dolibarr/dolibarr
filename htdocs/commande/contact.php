@@ -83,7 +83,7 @@ elseif ($action == 'swapstatut' && $user->rights->commande->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -124,8 +124,8 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 
 /* *************************************************************************** */
@@ -134,7 +134,7 @@ $userstatic=new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$langs->trans("OrderCard");
 
@@ -200,10 +200,10 @@ if ($id > 0 || ! empty($ref))
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach($dirtpls as $reldir)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir)
 		{
-		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		    $res = @include dol_buildpath($reldir.'/contacts.tpl.php');
 		    if ($res) break;
 		}
 	}
