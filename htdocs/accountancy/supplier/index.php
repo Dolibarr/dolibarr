@@ -25,13 +25,13 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","other","main","accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
@@ -39,16 +39,16 @@ if (empty($conf->accounting->enabled)) {
 }
 if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->bind->write)
+if (!$user->rights->accounting->bind->write)
 	accessforbidden();
 
 
-$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
 else
 {
 	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
+	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 }
 $year_end = $year_start + 1;
 $month_end = $month_start - 1;
@@ -75,19 +75,19 @@ if ($action == 'clean' || $action == 'validatehistory')
 {
 	// Clean database
 	$db->begin();
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
+	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as fd";
 	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN';
 	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ' AND accnt.entity = '.$conf->entity.')';
-	$sql1 .= ' AND fd.fk_facture_fourn IN (SELECT rowid FROM ' . MAIN_DB_PREFIX . 'facture_fourn WHERE entity = '.$conf->entity.')';
+	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
+	$sql1 .= ' AND fd.fk_facture_fourn IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE entity = '.$conf->entity.')';
 	$sql1 .= ' AND fk_code_ventilation <> 0';
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
+	if (!$resql1) {
+		$error++;
 		$db->rollback();
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
@@ -118,24 +118,24 @@ if ($action == 'validatehistory') {
 
 	// Supplier Invoice Lines (must be same request than into page list.php for manual binding)
 	$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype,";
-	$sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
-	$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
-	$sql.= " aa.rowid as aarowid,";
-	$sql.= " co.code as country_code, co.label as country_label,";
-	$sql.= " s.tva_intra";
-	$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
-	$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
-	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.active = 1 AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
-	$sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-	$sql.= " AND l.product_type <= 2";
+	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
+	$sql .= " aa.rowid as aarowid,";
+	$sql .= " co.code as country_code, co.label as country_label,";
+	$sql .= " s.tva_intra";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.active = 1 AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
+	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+	$sql .= " AND l.product_type <= 2";
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
 
 	$result = $db->query($sql);
-	if (! $result) {
+	if (!$result) {
 		$error++;
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
@@ -171,12 +171,12 @@ if ($action == 'validatehistory') {
 
 			if ($objp->aarowid_suggest > 0)
 			{
-				$sqlupdate = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
-				$sqlupdate.= " SET fk_code_ventilation = ".$objp->aarowid_suggest;
-				$sqlupdate.= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
+				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
+				$sqlupdate .= " SET fk_code_ventilation = ".$objp->aarowid_suggest;
+				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
 
 				$resqlupdate = $db->query($sqlupdate);
-				if (! $resqlupdate)
+				if (!$resqlupdate)
 				{
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
@@ -205,18 +205,18 @@ if ($action == 'validatehistory') {
 
 llxHeader('', $langs->trans("SuppliersVentilation"));
 
-$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
+$textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';
 
-print load_fiche_titre($langs->trans("SuppliersVentilation") . " " . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear, '', 'title_accountancy');
+print load_fiche_titre($langs->trans("SuppliersVentilation")." ".$textprevyear."&nbsp;".$langs->trans("Year")."&nbsp;".$year_start."&nbsp;".$textnextyear, '', 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DescVentilSupplier") . '<br>';
-print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescVentilSupplier").'<br>';
+print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
 print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?year='.$year_current.'&action=validatehistory">'.$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
@@ -256,7 +256,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	while ( $row = $db->fetch_row($resql)) {
+	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -271,11 +271,11 @@ if ($resql) {
 		}
 		else print $row[1];
 		print '</td>';
-		for($i = 2; $i <= 12; $i ++) {
-			print '<td class="nowrap right">' . price($row[$i]) . '</td>';
+		for ($i = 2; $i <= 12; $i++) {
+			print '<td class="nowrap right">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">' . price($row[13]) . '</td>';
-		print '<td class="nowrap right"><b>' . price($row[14]) . '</b></td>';
+		print '<td class="nowrap right">'.price($row[13]).'</td>';
+		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -326,7 +326,7 @@ $resql = $db->query($sql);
 if ($resql) {
     $num = $db->num_rows($resql);
 
-    while ( $row = $db->fetch_row($resql)) {
+    while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -341,11 +341,11 @@ if ($resql) {
 		}
 		else print $row[1];
 		print '</td>';
-    	for($i = 2; $i <= 12; $i++) {
-            print '<td class="nowrap right">' . price($row[$i]) . '</td>';
+    	for ($i = 2; $i <= 12; $i++) {
+            print '<td class="nowrap right">'.price($row[$i]).'</td>';
         }
-        print '<td class="nowrap right">' . price($row[13]) . '</td>';
-        print '<td class="nowrap right"><b>' . price($row[14]) . '</b></td>';
+        print '<td class="nowrap right">'.price($row[13]).'</td>';
+        print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
         print '</tr>';
     }
     $db->free($resql);
@@ -395,11 +395,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     	$num = $db->num_rows($resql);
 
     	while ($row = $db->fetch_row($resql)) {
-    		print '<tr><td>' . $row[0] . '</td>';
-            for($i = 1; $i <= 12; $i ++) {
-    			print '<td class="nowrap right">' . price($row[$i]) . '</td>';
+    		print '<tr><td>'.$row[0].'</td>';
+            for ($i = 1; $i <= 12; $i++) {
+    			print '<td class="nowrap right">'.price($row[$i]).'</td>';
     		}
-    		print '<td class="nowrap right"><b>' . price($row[13]) . '</b></td>';
+    		print '<td class="nowrap right"><b>'.price($row[13]).'</b></td>';
     		print '</tr>';
     	}
         $db->free($resql);
