@@ -34,12 +34,8 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
                 }
                 elseif (in_array($typeofextrafield, array('datetime','timestamp')))
                 {
-                    // for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
-                    $morecss='';
-                    if ($typeofextrafield == 'sellist') $morecss='maxwidth200';
-                    $keyprefix=$search_options_pattern;
-                    if (substr($search_options_pattern, -8) === 'options_') $keyprefix = substr($search_options_pattern, 0, -8);
-                    echo $extrafields->showInputField($key, $search_array_options[$search_options_pattern.$tmpkey], '', '', $keyprefix, $morecss);
+                	// TODO
+                	// Use showInputField in a particular manner to have input with a comparison operator, not input for a specific value date-hour-minutes
                 }
                 else
                 {
