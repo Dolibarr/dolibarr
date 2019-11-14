@@ -226,7 +226,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut, d.morphy";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -280,7 +280,8 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			$membertype->id = $objp->rowid;
 			$membertype->ref = $objp->rowid;
 			$membertype->label = $objp->rowid;
-
+      $membertype->status = $objp->status;
+      
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $membertype->getNomUrl(1);
@@ -294,13 +295,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
-			print '<td class="center">';
-            if (!empty($objp->statut)) {
-                print img_picto($langs->trans("InActivity"), 'statut4');
-            } else {
-                print img_picto($langs->trans("ActivityCeased"), 'statut5');
-            }
-      		print '</td>';
+			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
@@ -432,15 +427,7 @@ if ($rowid > 0)
 
 		print '<table class="border centpercent">';
 
-   		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
-        if (!empty($object->statut)) {
-            print img_picto($langs->trans('TypeStatusActive'), 'statut4').' '.$langs->trans("InActivity");
-        } else {
-            print img_picto($langs->trans('TypeStatusInactive'), 'statut5').' '.$langs->trans("ActivityCeased");
-        }
-		print '</tr>';
-
-        // Morphy
+    // Morphy
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
