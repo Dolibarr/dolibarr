@@ -295,6 +295,11 @@ class ActionComm extends CommonObject
     public $icalcolor;
 
     /**
+     * @var string Extraparam
+     */
+    public $extraparams;
+
+    /**
      * @var array Actions
      */
     public $actions=array();
