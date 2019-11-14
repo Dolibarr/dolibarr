@@ -264,6 +264,41 @@ class Categories extends DolibarrApi
             )
         );
     }
+    
+    /**
+     * List categories of an object
+     *
+     * Get the list of categories linked to an object
+     *
+     * @param int       $id         Object ID
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @return array                Array of category objects
+     *
+     * @throws RestException
+     * 
+     * @url GET /object/{type}/{id}
+     */
+    public function getListForObject($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    {
+        // TODO add other types
+        if (!in_array($type, ['product'/*, 'member', 'customer', 'supplier', 'contact'*/])) {
+            throw new RestException(401);
+        }
+        
+        if($type == 'product' && ! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
+        
+        if( ! count($categories)) {
+            throw new RestException(404, 'No category found for this object');
+        }
+        return $categories;
+    }
 
     /**
      * Link an object to a category by id
