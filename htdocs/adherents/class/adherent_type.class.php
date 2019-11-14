@@ -671,6 +671,7 @@ class AdherentType extends CommonObject
         return $result;
     }
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return label of status (activity, closed)
 	 *
