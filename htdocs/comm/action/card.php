@@ -1749,7 +1749,7 @@ if ($id > 0)
 		// Categories
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->showCategories($object->id, 'actioncomm', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
 			print "</td></tr>";
 		}
 

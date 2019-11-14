@@ -1753,7 +1753,7 @@ else
 		{
 			print '<tr><td>' . $langs->trans("Categories") . '</td>';
 			print '<td colspan="2">';
-			print $form->showCategories($object->id, 'member', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 			print '</td></tr>';
 		}
 
