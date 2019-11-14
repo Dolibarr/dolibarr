@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
-if (! $user->admin) {
+if (!$user->admin) {
     accessforbidden();
 }
 
@@ -48,8 +48,8 @@ $action = GETPOST('action', 'alpha');
 
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
-	$value=GETPOST($code, 'alpha');
+	$code = $reg[1];
+	$value = GETPOST($code, 'alpha');
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -62,7 +62,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
+	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -75,7 +75,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 
 if ($action == 'add_currency')
 {
-	$error=0;
+	$error = 0;
 
 	$langs->loadCacheCurrencies('');
 
@@ -90,7 +90,7 @@ if ($action == 'add_currency')
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 		$error++;
 	}
-	if (! $error)
+	if (!$error)
 	{
 		if ($currency->create($user) > 0)
 		{
@@ -115,12 +115,12 @@ elseif ($action == 'update_currency')
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 			$error++;
 		}
-		if (! $error)
+		if (!$error)
 		{
 			if ($currency->fetch($fk_multicurrency) > 0)
 			{
-				$result=$currency->updateRate($rate);
-				if ($result<0) {
+				$result = $currency->updateRate($rate);
+				if ($result < 0) {
 					setEventMessages(null, $currency->errors, 'errors');
 				}
 			}
@@ -171,14 +171,14 @@ if ($resql)
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 $page_name = "MultiCurrencySetup";
 
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
@@ -272,7 +272,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	$urlforapilayer='https://currencylayer.com';   //https://apilayer.net
+	$urlforapilayer = 'https://currencylayer.com'; //https://apilayer.net
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";

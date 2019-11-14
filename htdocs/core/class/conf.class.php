@@ -51,8 +51,8 @@ class Conf
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
-	public $theme;        // Contains current theme ("eldy", "auguria", ...)
-	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+	public $theme; // Contains current theme ("eldy", "auguria", ...)
+	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handler
 	public $standard_menu;
     // List of activated modules
@@ -86,15 +86,15 @@ class Conf
     //! To store properties of multi-company
     public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
-	public $entity					= 1;
+	public $entity = 1;
 	//! Used to store list of entities to use for each element
-	public $entities				= array();
+	public $entities = array();
 
-	public $dol_hide_topmenu;			// Set if we force param dol_hide_topmenu into login url
-	public $dol_hide_leftmenu;			// Set if we force param dol_hide_leftmenu into login url
-	public $dol_optimize_smallscreen;	// Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
-	public $dol_no_mouse_hover;			// Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
-	public $dol_use_jmobile;			// Set if we force param dol_use_jmobile into login url
+	public $dol_hide_topmenu; // Set if we force param dol_hide_topmenu into login url
+	public $dol_hide_leftmenu; // Set if we force param dol_hide_leftmenu into login url
+	public $dol_optimize_smallscreen; // Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
+	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
+	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url
 
 
 	/**
@@ -103,39 +103,39 @@ class Conf
 	public function __construct()
 	{
 		// Properly declare multi-modules objects.
-		$this->file				= new stdClass();
-		$this->db				= new stdClass();
-		$this->global			= new stdClass();
-		$this->mycompany		= new stdClass();
+		$this->file = new stdClass();
+		$this->db = new stdClass();
+		$this->global = new stdClass();
+		$this->mycompany = new stdClass();
 		$this->admin			= new stdClass();
 		$this->user				= new stdClass();
 		$this->syslog			= new stdClass();
-		$this->browser			= new stdClass();
+		$this->browser = new stdClass();
 		$this->medias			= new stdClass();
-		$this->multicompany		= new stdClass();
+		$this->multicompany = new stdClass();
 
 		//! Charset for HTML output and for storing data in memory
-		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
+		$this->file->character_set_client = 'UTF-8'; // UTF-8, ISO-8859-1
 
 		// First level object
 		// TODO Remove this part.
-		$this->expedition_bon	= new stdClass();
-		$this->livraison_bon	= new stdClass();
-		$this->fournisseur		= new stdClass();
+		$this->expedition_bon = new stdClass();
+		$this->livraison_bon = new stdClass();
+		$this->fournisseur = new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
-		$this->commande			= new stdClass();
-		$this->propal			= new stdClass();
+  	$this->agenda			= new stdClass();
+		$this->commande = new stdClass();
+		$this->propal = new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
-		$this->bank				= new stdClass();
+		$this->bank = new stdClass();
 		$this->notification		= new stdClass();
-		$this->mailing			= new stdClass();
+		$this->mailing = new stdClass();
 		$this->expensereport	= new stdClass();
 		$this->productbatch		= new stdClass();
 	}
@@ -156,10 +156,10 @@ class Conf
 
 		//Define all global constants into $this->global->key=value
 		$sql = "SELECT ".$db->decrypt('name')." as name,";
-		$sql.= " ".$db->decrypt('value')." as value, entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE entity IN (0,".$this->entity.")";
-		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
+		$sql .= " ".$db->decrypt('value')." as value, entity";
+		$sql .= " FROM ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE entity IN (0,".$this->entity.")";
+		$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -169,12 +169,12 @@ class Conf
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$key=$objp->name;
-				$value=$objp->value;
+				$key = $objp->name;
+				$value = $objp->value;
 				if ($key)
 				{
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
-					$this->global->$key=$value;
+					$this->global->$key = $value;
 
 					if ($value && preg_match('/^MAIN_MODULE_/', $key))
 					{
@@ -183,9 +183,9 @@ class Conf
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
 						{
 							$partname = 'tabs';
-							$params=explode(':', $value, 2);
-							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
+							$params = explode(':', $value, 2);
+							if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
 						}
 						// If this is constant for all generic part activated by a module. It initializes
 						// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
@@ -196,24 +196,24 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
-							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = json_decode($value, true);
-							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							elseif (in_array($partname, array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							elseif (in_array($partname, array('models','theme'))) $value = '/'.$modulename.'/';
+							if (is_array($arrValue) && !empty($arrValue)) $value = $arrValue;
+							elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							elseif (in_array($partname, array('models', 'theme'))) $value = '/'.$modulename.'/';
 							elseif (in_array($partname, array('sms'))) $value = '/'.$modulename.'/';
-							elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
-							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
+							elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
+							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value)); // $value may be a string or an array
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
 						{
-							$modulename=strtolower($reg[1]);
-							if ($modulename == 'propale') $modulename='propal';
-							if ($modulename == 'supplierproposal') $modulename='supplier_proposal';
-							if (! isset($this->$modulename) || ! is_object($this->$modulename)) $this->$modulename=new stdClass();
-							$this->$modulename->enabled=true;
-							$this->modules[]=$modulename;              // Add this module in list of enabled modules
+							$modulename = strtolower($reg[1]);
+							if ($modulename == 'propale') $modulename = 'propal';
+							if ($modulename == 'supplierproposal') $modulename = 'supplier_proposal';
+							if (!isset($this->$modulename) || !is_object($this->$modulename)) $this->$modulename = new stdClass();
+							$this->$modulename->enabled = true;
+							$this->modules[] = $modulename; // Add this module in list of enabled modules
 						}
 					}
 				}
@@ -238,19 +238,19 @@ class Conf
 		// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
 		// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
 		//$this->global->MAIN_SERVER_TZ='Europe/Paris';
-		if (! empty($this->global->MAIN_SERVER_TZ) && $this->global->MAIN_SERVER_TZ != 'auto')
+		if (!empty($this->global->MAIN_SERVER_TZ) && $this->global->MAIN_SERVER_TZ != 'auto')
 		{
 			try {
 				date_default_timezone_set($this->global->MAIN_SERVER_TZ);
 			}
-			catch(Exception $e)
+			catch (Exception $e)
 			{
 				dol_syslog("Error: Bad value for parameter MAIN_SERVER_TZ=".$this->global->MAIN_SERVER_TZ, LOG_ERR);
 			}
 		}
 
 		// Object $mc
-		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled)) {
+		if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 			if ($ret) {
@@ -260,60 +260,60 @@ class Conf
 		}
 
 		// Clean some variables
-		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_menu.php";
-		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD="eldy_menu.php";
-		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
-		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
+		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD = "eldy_menu.php";
+		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD = "eldy_menu.php";
+		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
+		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
 		// Clean var use vat for company
-		if (! isset($this->global->FACTURE_TVAOPTION)) $this->global->FACTURE_TVAOPTION=1;
-		elseif (! empty($this->global->FACTURE_TVAOPTION) && ! is_numeric($this->global->FACTURE_TVAOPTION))
+		if (!isset($this->global->FACTURE_TVAOPTION)) $this->global->FACTURE_TVAOPTION = 1;
+		elseif (!empty($this->global->FACTURE_TVAOPTION) && !is_numeric($this->global->FACTURE_TVAOPTION))
 		{
 			// Old value of option, we clean to use new value (0 or 1)
-			if ($this->global->FACTURE_TVAOPTION != "franchise") $this->global->FACTURE_TVAOPTION=1;
-			else $this->global->FACTURE_TVAOPTION=0;
+			if ($this->global->FACTURE_TVAOPTION != "franchise") $this->global->FACTURE_TVAOPTION = 1;
+			else $this->global->FACTURE_TVAOPTION = 0;
 		}
 
 		// Variable globales LDAP
-		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME='';
-		if (! isset($this->global->LDAP_KEY_USERS)) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! isset($this->global->LDAP_KEY_GROUPS)) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! isset($this->global->LDAP_KEY_MEMBERS_TYPES)) $this->global->LDAP_KEY_MEMBERS_TYPES=$this->global->LDAP_FIELD_FULLNAME;
+		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME = '';
+		if (!isset($this->global->LDAP_KEY_USERS)) $this->global->LDAP_KEY_USERS = $this->global->LDAP_FIELD_FULLNAME;
+		if (!isset($this->global->LDAP_KEY_GROUPS)) $this->global->LDAP_KEY_GROUPS = $this->global->LDAP_FIELD_FULLNAME;
+		if (!isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS = $this->global->LDAP_FIELD_FULLNAME;
+		if (!isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS = $this->global->LDAP_FIELD_FULLNAME;
+		if (!isset($this->global->LDAP_KEY_MEMBERS_TYPES)) $this->global->LDAP_KEY_MEMBERS_TYPES = $this->global->LDAP_FIELD_FULLNAME;
 
 		// Load translation object with current language
-		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
+		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT = "en_US";
 
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($this->multicompany->enabled) && ! empty($this->entity) && $this->entity > 1)
+		if (!empty($this->multicompany->enabled) && !empty($this->entity) && $this->entity > 1)
 		{
-			$rootfordata.='/'.$this->entity;
+			$rootfordata .= '/'.$this->entity;
 		}
 
 		// Define default dir_output and dir_temp for directories of modules
-		foreach($this->modules as $module)
+		foreach ($this->modules as $module)
 		{
 		    //var_dump($module);
 			// For multicompany sharings
-			$this->$module->multidir_output	= array($this->entity => $rootfordata."/".$module);
-			$this->$module->multidir_temp	= array($this->entity => $rootfordata."/".$module."/temp");
+			$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
+			$this->$module->multidir_temp = array($this->entity => $rootfordata."/".$module."/temp");
 			// For backward compatibility
-			$this->$module->dir_output	= $rootfordata."/".$module;
-			$this->$module->dir_temp	= $rootfordata."/".$module."/temp";
+			$this->$module->dir_output = $rootfordata."/".$module;
+			$this->$module->dir_temp = $rootfordata."/".$module."/temp";
 		}
 
 		// External modules storage
-		if (! empty($this->modules_parts['dir']))
+		if (!empty($this->modules_parts['dir']))
 		{
-			foreach($this->modules_parts['dir'] as $module => $dirs)
+			foreach ($this->modules_parts['dir'] as $module => $dirs)
 			{
-				if (! empty($this->$module->enabled))
+				if (!empty($this->$module->enabled))
 				{
-					foreach($dirs as $type => $name)
+					foreach ($dirs as $type => $name)
 					{
-						$subdir=($type=='temp'?'/temp':'');
+						$subdir = ($type == 'temp' ? '/temp' : '');
 						// For multicompany sharings
 						$varname = 'multidir_'.$type;
 						$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
@@ -707,7 +707,7 @@ class Conf
 				$dir = dol_buildpath($reldir, 0);
 				$newdir = dol_osencode($dir);
 				if (is_dir($newdir)) {
-					$file = $newdir . $handler . '.php';
+					$file = $newdir.$handler.'.php';
 					if (file_exists($file)) {
 						$handler_files[] = $file;
 					}
@@ -715,7 +715,7 @@ class Conf
 			}
 
 			if (empty($handler_files)) {
-				throw new Exception('Missing log handler file ' . $handler . '.php');
+				throw new Exception('Missing log handler file '.$handler.'.php');
 			}
 
 			require_once $handler_files[0];

@@ -29,9 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
 
-$id=GETPOST("id", 'int');
+$id = GETPOST("id", 'int');
 
-$socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
+$socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0)
 {
@@ -45,7 +45,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+if (GETPOST('cancel', 'alpha') && !empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
@@ -58,15 +58,15 @@ if (GETPOST('action', 'aZ09') == 'setremise')
 
 	$discount_type = GETPOST('discount_type', 'int');
 
-	if(! empty($discount_type)) {
-		$result=$object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note"), $user);
+	if (!empty($discount_type)) {
+		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note"), $user);
 	} else {
-		$result=$object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note"), $user);
+		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note"), $user);
 	}
 
 	if ($result > 0)
 	{
-	    if (! empty($backtopage))
+	    if (!empty($backtopage))
 	    {
     		header("Location: ".$backtopage);
     		exit;
@@ -88,7 +88,7 @@ if (GETPOST('action', 'aZ09') == 'setremise')
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
@@ -116,13 +116,13 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 
-    if (! $isCustomer && ! $isSupplier) {
+    if (!$isCustomer && !$isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
     	dol_fiche_end();
@@ -176,7 +176,7 @@ if ($socid > 0)
 			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 		}
 		if ($isSupplier) {
-		    print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer?'':' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		    print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer ? '' : ' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 		}
 		print '</td></tr>';
 	}
@@ -197,7 +197,7 @@ if ($socid > 0)
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    if (! empty($backtopage))
+    if (!empty($backtopage))
     {
         print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -208,8 +208,8 @@ if ($socid > 0)
 
 	print '<br>';
 
-	if($isCustomer) {
-		if($isSupplier) {
+	if ($isCustomer) {
+		if ($isSupplier) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
@@ -218,15 +218,15 @@ if ($socid > 0)
 		/*
 		 * List log of all customer percent discounts
 		 */
-		$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
-		$sql.= " u.login, u.rowid as user_id";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE rc.fk_soc = " . $object->id;
-		$sql.= " AND rc.entity = " . $conf->entity;
-		$sql.= " AND u.rowid = rc.fk_user_author";
-		$sql.= " ORDER BY rc.datec DESC";
+		$sql = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
+		$sql .= " u.login, u.rowid as user_id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE rc.fk_soc = ".$object->id;
+		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " AND u.rowid = rc.fk_user_author";
+		$sql .= " ORDER BY rc.datec DESC";
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			print '<table class="noborder centpercent">';
@@ -266,8 +266,8 @@ if ($socid > 0)
 		}
 	}
 
-	if($isSupplier) {
-		if($isCustomer) {
+	if ($isSupplier) {
+		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright">';
 			print '<div class="ficheaddleft">';
@@ -277,15 +277,15 @@ if ($socid > 0)
 		/*
 		 * List log of all supplier percent discounts
 		 */
-		$sql  = "SELECT rc.rowid, rc.remise_supplier as remise_percent, rc.note, rc.datec as dc,";
-		$sql.= " u.login, u.rowid as user_id";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE rc.fk_soc = " . $object->id;
-		$sql.= " AND rc.entity = " . $conf->entity;
-		$sql.= " AND u.rowid = rc.fk_user_author";
-		$sql.= " ORDER BY rc.datec DESC";
+		$sql = "SELECT rc.rowid, rc.remise_supplier as remise_percent, rc.note, rc.datec as dc,";
+		$sql .= " u.login, u.rowid as user_id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE rc.fk_soc = ".$object->id;
+		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " AND u.rowid = rc.fk_user_author";
+		$sql .= " ORDER BY rc.datec DESC";
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			print '<table class="noborder centpercent">';
@@ -324,7 +324,7 @@ if ($socid > 0)
 			dol_print_error($db);
 		}
 
-		if($isCustomer) {
+		if ($isCustomer) {
 			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"

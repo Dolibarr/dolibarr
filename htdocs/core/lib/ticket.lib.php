@@ -77,7 +77,7 @@ function ticket_prepare_head($object)
 
     $h = 0;
     $head = array();
-    $head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?action=view&track_id=' . $object->track_id;
+    $head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?action=view&track_id='.$object->track_id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'tabTicket';
     $h++;
@@ -110,25 +110,25 @@ function ticket_prepare_head($object)
 
     // History
 	$ticketViewType = "messaging";
-	if(empty($_SESSION['ticket-view-type'])){
+	if (empty($_SESSION['ticket-view-type'])) {
 		$_SESSION['ticket-view-type'] = $ticketViewType;
 	}
-	else{
+	else {
 		$ticketViewType = $_SESSION['ticket-view-type'];
 	}
 
-	if($ticketViewType == "messaging"){
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/messaging.php?track_id=' . $object->track_id;
+	if ($ticketViewType == "messaging") {
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
 	}
-	else{
+	else {
 		// $ticketViewType == "list"
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 	}
     $head[$h][1] = $langs->trans('Events');
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
     {
-    	$head[$h][1].= '/';
-    	$head[$h][1].= $langs->trans("Agenda");
+    	$head[$h][1] .= '/';
+    	$head[$h][1] .= $langs->trans("Agenda");
     }
     $head[$h][2] = 'tabTicketLogs';
     $h++;
@@ -158,22 +158,22 @@ function showDirectPublicLink($object)
 		$url = dol_buildpath('/public/ticket/view.php', 3).'?track_id='.$object->track_id.'&email='.$email;
 	}
 
-	$out='';
+	$out = '';
 	if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 	{
-		$out.= '<span class="opacitymedium">'.$langs->trans("PublicInterfaceNotEnabled").'</span>';
+		$out .= '<span class="opacitymedium">'.$langs->trans("PublicInterfaceNotEnabled").'</span>';
 	}
 	else
 	{
-		$out.= img_picto('', 'object_globe.png').' '.$langs->trans("TicketPublicAccess").':<br>';
+		$out .= img_picto('', 'object_globe.png').' '.$langs->trans("TicketPublicAccess").':<br>';
 		if ($url)
 		{
-			$out.= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
-			$out.= ajax_autoselect("directpubliclink", 0);
+			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
+			$out .= ajax_autoselect("directpubliclink", 0);
 		}
 		else
 		{
-			$out.= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
+			$out .= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
 		}
 	}
 
@@ -272,12 +272,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
     dol_include_once('/comm/action/class/actioncomm.class.php');
 
     // Check parameters
-    if (! is_object($filterobj) && ! is_object($objcon)) dol_print_error('', 'BadParameter');
+    if (!is_object($filterobj) && !is_object($objcon)) dol_print_error('', 'BadParameter');
 
-    $out='';
-    $histo=array();
-    $numaction = 0 ;
-    $now=dol_now('tzuser');
+    $out = '';
+    $histo = array();
+    $numaction = 0;
+    $now = dol_now('tzuser');
 
     // Open DSI -- Fix order by -- Begin
     $sortfield_list = explode(',', $sortfield);
@@ -288,7 +288,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
     }
     $sortfield_new = implode(',', $sortfield_new_list);
 
-    if (! empty($conf->agenda->enabled))
+    if (!empty($conf->agenda->enabled))
     {
         // Recherche histo sur actioncomm
         if (is_object($objcon) && $objcon->id > 0) {
@@ -298,142 +298,142 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
         {
             $sql = "SELECT a.id, a.label as label,";
         }
-        $sql.= " a.datep as dp,";
-        $sql.= " a.note as message,";
-        $sql.= " a.datep2 as dp2,";
-        $sql.= " a.percent as percent, 'action' as type,";
-        $sql.= " a.fk_element, a.elementtype,";
-        $sql.= " a.fk_contact,";
-        $sql.= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
-        $sql.= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe')      $sql.= ", sp.lastname, sp.firstname";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql.= ", o.ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql.= ", o.ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql.= ", o.ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql.= ", o.ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql.= ", o.ref";
-        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
+        $sql .= " a.datep as dp,";
+        $sql .= " a.note as message,";
+        $sql .= " a.datep2 as dp2,";
+        $sql .= " a.percent as percent, 'action' as type,";
+        $sql .= " a.fk_element, a.elementtype,";
+        $sql .= " a.fk_contact,";
+        $sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
+        $sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe')      $sql .= ", sp.lastname, sp.firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", m.lastname, m.firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql .= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql .= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql .= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql .= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql .= ", o.ref";
+        $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
         $force_filter_contact = false;
         if (is_object($objcon) && $objcon->id > 0) {
             $force_filter_contact = true;
-            $sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-            $sql.= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . $objcon->id;
+            $sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
+            $sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".$objcon->id;
         }
 
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
-            $sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
-            $sql.= " ON er.resource_type = 'dolresource'";
-            $sql.= " AND er.element_id = a.id";
-            $sql.= " AND er.resource_id = ".$filterobj->id;
+            $sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
+            $sql .= " ON er.resource_type = 'dolresource'";
+            $sql .= " AND er.element_id = a.id";
+            $sql .= " AND er.resource_id = ".$filterobj->id;
         }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') $sql.= ", ".MAIN_DB_PREFIX."bom_bom as o";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') $sql.= ", ".MAIN_DB_PREFIX."contrat as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql .= ", ".MAIN_DB_PREFIX."product as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql .= ", ".MAIN_DB_PREFIX."ticket as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') $sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') $sql .= ", ".MAIN_DB_PREFIX."contrat as o";
 
-        $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
+        $sql .= " WHERE a.entity IN (".getEntity('agenda').")";
         if ($force_filter_contact === false) {
-            if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-            elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+            if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql .= " AND a.fk_soc = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql .= " AND a.fk_project = ".$filterobj->id;
             elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
             {
-                $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+                $sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+                if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
             elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
             {
-                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
-                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+                $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+                if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
             elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
             {
-                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
-                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+                $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
+                if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
             elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
             {
-                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
-                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+                $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
+                if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
             elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')
             {
-                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
-                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+                $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
+                if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
             elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
             {
-                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
-                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+                $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
+                if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
         }
 
         // Condition on actioncode
-        if (! empty($actioncode))
+        if (!empty($actioncode))
         {
             if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
             {
-                if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
-                elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
+                if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
+                elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
                 else
                 {
-                    if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
-                    elseif ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+                    if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
+                    elseif ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
                 }
             }
             else
             {
-                if ($actioncode == 'AC_NON_AUTO') $sql.= " AND c.type != 'systemauto'";
-                elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
-                else $sql.= " AND c.code = '".$db->escape($actioncode)."'";
+                if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
+                elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
+                else $sql .= " AND c.code = '".$db->escape($actioncode)."'";
             }
         }
-        if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-        elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
-        if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
+        if ($donetodo == 'todo') $sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
+        elseif ($donetodo == 'done') $sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+        if (is_array($filters) && $filters['search_agenda_label']) $sql .= natural_search('a.label', $filters['search_agenda_label']);
     }
 
     // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-    if (! empty($conf->mailing->enabled) && ! empty($objcon->email)
+    if (!empty($conf->mailing->enabled) && !empty($objcon->email)
         && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING'))
     {
         $langs->load("mails");
 
         $sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
-        $sql2.= ", '' as fk_element, '' as elementtype, '' as contact_id";
-        $sql2.= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
-        $sql2.= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe')      $sql2.= ", '' as lastname, '' as firstname";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql2.= ", '' as lastname, '' as firstname";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql2.= ", '' as ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql2.= ", '' as ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql2.= ", '' as ref";
-        $sql2.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
-        $sql2.= " WHERE mc.email = '".$db->escape($objcon->email)."'";	// Search is done on email.
-        $sql2.= " AND mc.statut = 1";
-        $sql2.= " AND u.rowid = m.fk_user_valid";
-        $sql2.= " AND mc.fk_mailing=m.rowid";
+        $sql2 .= ", '' as fk_element, '' as elementtype, '' as contact_id";
+        $sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
+        $sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe')      $sql2 .= ", '' as lastname, '' as firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql2 .= ", '' as lastname, '' as firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql2 .= ", '' as ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql2 .= ", '' as ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql2 .= ", '' as ref";
+        $sql2 .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
+        $sql2 .= " WHERE mc.email = '".$db->escape($objcon->email)."'"; // Search is done on email.
+        $sql2 .= " AND mc.statut = 1";
+        $sql2 .= " AND u.rowid = m.fk_user_valid";
+        $sql2 .= " AND mc.fk_mailing=m.rowid";
     }
 
     if (!empty($sql) && !empty($sql2)) {
-        $sql = $sql . " UNION " . $sql2;
+        $sql = $sql." UNION ".$sql2;
     } elseif (empty($sql) && !empty($sql2)) {
         $sql = $sql2;
     }
 
     //TODO Add limit in nb of results
-    $sql.= $db->order($sortfield_new, $sortorder);
+    $sql .= $db->order($sortfield_new, $sortorder);
     dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
     if ($resql)
     {
-        $i = 0 ;
+        $i = 0;
         $num = $db->num_rows($resql);
 
         while ($i < $num)
@@ -442,19 +442,19 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             if ($obj->type == 'action') {
                 $contactaction = new ActionComm($db);
-                $contactaction->id=$obj->id;
+                $contactaction->id = $obj->id;
                 $result = $contactaction->fetchResources();
-                if ($result<0) {
+                if ($result < 0) {
                     dol_print_error($db);
                     setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
                 }
 
                 //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
                 //elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
-                $tododone='';
-                if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone='todo';
+                $tododone = '';
+                if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone = 'todo';
 
-                $histo[$numaction]=array(
+                $histo[$numaction] = array(
                     'type'=>$obj->type,
                     'tododone'=>$tododone,
                     'id'=>$obj->id,
@@ -479,11 +479,11 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
                     // Type of event
                     'acode'=>$obj->acode,
                     'alabel'=>$obj->alabel,
-                    'libelle'=>$obj->alabel,    // deprecated
+                    'libelle'=>$obj->alabel, // deprecated
                     'apicto'=>$obj->apicto
                 );
             } else {
-                $histo[$numaction]=array(
+                $histo[$numaction] = array(
                     'type'=>$obj->type,
                     'tododone'=>'done',
                     'id'=>$obj->id,
@@ -511,85 +511,85 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
         dol_print_error($db);
     }
 
-    if (! empty($conf->agenda->enabled) || (! empty($conf->mailing->enabled) && ! empty($objcon->email)))
+    if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email)))
     {
-        $delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+        $delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-        $formactions=new FormActions($db);
+        $formactions = new FormActions($db);
 
-        $actionstatic=new ActionComm($db);
-        $userstatic=new User($db);
+        $actionstatic = new ActionComm($db);
+        $userstatic = new User($db);
         $contactstatic = new Contact($db);
         $userGetNomUrlCache = array();
 
-		$out.='<div class="filters-container" >';
-		$out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<div class="filters-container" >';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		if ($objcon && get_class($objcon) == 'Contact' &&
 			(is_null($filterobj) || get_class($filterobj) == 'Societe'))
 		{
-			$out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
+			$out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
 		}
 		else
 		{
-			$out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
 		}
-		if ($filterobj && get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
+		if ($filterobj && get_class($filterobj) == 'Societe') $out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
 
-		$out.="\n";
+		$out .= "\n";
 
-		$out.='<div class="div-table-responsive-no-min">';
-		$out.='<table class="noborder borderbottom centpercent">';
+		$out .= '<div class="div-table-responsive-no-min">';
+		$out .= '<table class="noborder borderbottom centpercent">';
 
-		$out.='<tr class="liste_titre">';
+		$out .= '<tr class="liste_titre">';
 
 		//$out.='<td class="liste_titre">';
 		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 		//$out.='</td>';
 
-		$out.='<th class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></th>';
+		$out .= '<th class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></th>';
 		if ($donetodo)
 		{
-			$out.='<th class="liste_titre"></th>';
+			$out .= '<th class="liste_titre"></th>';
 		}
-		$out.='<th class="liste_titre">'.$langs->trans("Type").' ';
-		$out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
-		$out.='</th>';
-		$out.='<th class="liste_titre maxwidth100onsmartphone">';
-		$out.=$langs->trans("Label").' ';
-		$out.='<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'">';
-		$out.='</th>';
+		$out .= '<th class="liste_titre">'.$langs->trans("Type").' ';
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, 0, 1);
+		$out .= '</th>';
+		$out .= '<th class="liste_titre maxwidth100onsmartphone">';
+		$out .= $langs->trans("Label").' ';
+		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'">';
+		$out .= '</th>';
 
-		$out.='<th class="liste_titre width50 middle">';
-		$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-		$out.=$searchpicto;
-		$out.='</th>';
-		$out.='</tr>';
+		$out .= '<th class="liste_titre width50 middle">';
+		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+		$out .= $searchpicto;
+		$out .= '</th>';
+		$out .= '</tr>';
 
 
-		$out.='</table>';
+		$out .= '</table>';
 
-        $out.='</form>';
-		$out.='</div>';
+        $out .= '</form>';
+		$out .= '</div>';
 
-        $out.="\n";
+        $out .= "\n";
 
-        $out.='<ul class="timeline">';
+        $out .= '<ul class="timeline">';
 
         if ($donetodo)
         {
-            $tmp='';
-            if (get_class($filterobj) == 'Societe') $tmp.='<a href="'.DOL_URL_ROOT.'/comm/action/list.php?socid='.$filterobj->id.'&amp;status=done">';
-            $tmp.=($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
-            $tmp.=($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
-            $tmp.=($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
+            $tmp = '';
+            if (get_class($filterobj) == 'Societe') $tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?socid='.$filterobj->id.'&amp;status=done">';
+            $tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
+            $tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
+            $tmp .= ($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
             //$out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
-            if (get_class($filterobj) == 'Societe') $tmp.='</a>';
-            $out.=getTitleFieldOfList($tmp);
+            if (get_class($filterobj) == 'Societe') $tmp .= '</a>';
+            $out .= getTitleFieldOfList($tmp);
         }
 
 
@@ -601,69 +601,69 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
         foreach ($histo as $key=>$value)
         {
-            $actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
+            $actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
-            $actionstatic->type_picto=$histo[$key]['apicto'];
-            $actionstatic->type_code=$histo[$key]['acode'];
+            $actionstatic->type_picto = $histo[$key]['apicto'];
+            $actionstatic->type_code = $histo[$key]['acode'];
 
             $url = DOL_URL_ROOT.'/comm/action/card.php?id='.$histo[$key]['id'];
 
-            $tmpa=dol_getdate($histo[$key]['datestart'], false);
-            if($actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']){
+            $tmpa = dol_getdate($histo[$key]['datestart'], false);
+            if ($actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']) {
                 $actualCycleDate = $tmpa['year'].'-'.$tmpa['yday'];
-                $out.='<!-- timeline time label -->';
-                $out.='<li class="time-label">';
-                $out.='<span class="timeline-badge-date">';
-                $out.= dol_print_date($histo[$key]['datestart'], 'daytext', 'tzserver', $langs);
-                $out.='</span>';
-                $out.='</li>';
-                $out.='<!-- /.timeline-label -->';
+                $out .= '<!-- timeline time label -->';
+                $out .= '<li class="time-label">';
+                $out .= '<span class="timeline-badge-date">';
+                $out .= dol_print_date($histo[$key]['datestart'], 'daytext', 'tzserver', $langs);
+                $out .= '</span>';
+                $out .= '</li>';
+                $out .= '<!-- /.timeline-label -->';
             }
 
 
-            $out.='<!-- timeline item -->'."\n";
-            $out.='<li class="timeline-code-'.strtolower($actionstatic->code).'">';
+            $out .= '<!-- timeline item -->'."\n";
+            $out .= '<li class="timeline-code-'.strtolower($actionstatic->code).'">';
 
 
-            $out.='<!-- timeline icon -->'."\n";
+            $out .= '<!-- timeline icon -->'."\n";
             $iconClass = 'fa fa-comments';
             $img_picto = '';
             $colorClass = '';
             $pictoTitle = '';
 
-            if ($histo[$key]['percent']==-1) {
+            if ($histo[$key]['percent'] == -1) {
                 $colorClass = 'timeline-icon-not-applicble';
                 $pictoTitle = $langs->trans('StatusNotApplicable');
             }
-            elseif ($histo[$key]['percent']==0) {
+            elseif ($histo[$key]['percent'] == 0) {
                 $colorClass = 'timeline-icon-todo';
-                $pictoTitle = $langs->trans('StatusActionToDo') . ' (0%)';
+                $pictoTitle = $langs->trans('StatusActionToDo').' (0%)';
             }
-            elseif ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100){
+            elseif ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100) {
                 $colorClass = 'timeline-icon-in-progress';
                 $pictoTitle = $langs->trans('StatusActionInProcess').' ('.$histo[$key]['percent'].'%)';
             }
-            elseif ($histo[$key]['percent'] >= 100){
+            elseif ($histo[$key]['percent'] >= 100) {
                 $colorClass = 'timeline-icon-done';
-                $pictoTitle =  $langs->trans('StatusActionDone').' (100%)';
+                $pictoTitle = $langs->trans('StatusActionDone').' (100%)';
             }
 
 
-            if($actionstatic->code == 'AC_TICKET_CREATE'){
+            if ($actionstatic->code == 'AC_TICKET_CREATE') {
                 $iconClass = 'fa fa-ticket';
             }
-            elseif($actionstatic->code == 'AC_TICKET_MODIFY'){
+            elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
                 $iconClass = 'fa fa-pencil';
             }
-            elseif($actionstatic->code == 'TICKET_MSG'){
+            elseif ($actionstatic->code == 'TICKET_MSG') {
                 $iconClass = 'fa fa-comments';
             }
-            elseif($actionstatic->code == 'TICKET_MSG_PRIVATE'){
+            elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {
                 $iconClass = 'fa fa-mask';
             }
             elseif (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
             {
-                if ($actionstatic->type_picto) $img_picto =  img_picto('', $actionstatic->type_picto);
+                if ($actionstatic->type_picto) $img_picto = img_picto('', $actionstatic->type_picto);
                 else {
                     if ($actionstatic->type_code == 'AC_RDV')       $iconClass = 'fa fa-handshake';
                     elseif ($actionstatic->type_code == 'AC_TEL')   $iconClass = 'fa fa-phone';
@@ -671,24 +671,24 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
                     elseif ($actionstatic->type_code == 'AC_EMAIL') $iconClass = 'fa fa-envelope';
                     elseif ($actionstatic->type_code == 'AC_INT')   $iconClass = 'fa fa-shipping-fast';
                     elseif ($actionstatic->type_code == 'AC_OTH_AUTO')   $iconClass = 'fa fa-robot';
-                    elseif (! preg_match('/_AUTO/', $actionstatic->type_code)) $iconClass = 'fa fa-robot';
+                    elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) $iconClass = 'fa fa-robot';
                 }
             }
 
 
 
-            $out.='<i class="'.$iconClass .' '.$colorClass.'" title="'.$pictoTitle .'">'.$img_picto.'</i>'."\n";
+            $out .= '<i class="'.$iconClass.' '.$colorClass.'" title="'.$pictoTitle.'">'.$img_picto.'</i>'."\n";
 
-            $out.='<div class="timeline-item">'."\n";
+            $out .= '<div class="timeline-item">'."\n";
 
-            $out.='<span class="timeline-header-action">';
+            $out .= '<span class="timeline-header-action">';
 
-			if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
-				$out.='<a class="timeline-btn" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
-				$out.=$histo[$key]['id'];
-				$out.='</a> ';
+			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
+				$out .= '<a class="timeline-btn" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+				$out .= $histo[$key]['id'];
+				$out .= '</a> ';
 			} else {
-				$out.=$actionstatic->getNomUrl(1, -1).' ';
+				$out .= $actionstatic->getNomUrl(1, -1).' ';
 			}
 
             //if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
@@ -765,16 +765,16 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             $out .= '</span>';
 
-            $out.='</h3>';
+            $out .= '</h3>';
 
-            if (! empty($histo[$key]['message'])
+            if (!empty($histo[$key]['message'])
                 && $actionstatic->code != 'AC_TICKET_CREATE'
                 && $actionstatic->code != 'AC_TICKET_MODIFY'
             )
             {
-                $out.='<div class="timeline-body">';
-                $out.=$histo[$key]['message'];
-                $out.='</div>';
+                $out .= '<div class="timeline-body">';
+                $out .= $histo[$key]['message'];
+                $out .= '</div>';
             }
 
 
@@ -792,11 +792,11 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
                         dol_print_error($db, $contact->error);
 
                     if ($result > 0) {
-                        $contactList.= !empty($contactList)?', ':'';
+                        $contactList .= !empty($contactList) ? ', ' : '';
                         $contactList .= $contact->getNomUrl(1);
                         if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-                            if (! empty($contact->phone_pro))
-                                $contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
+                            if (!empty($contact->phone_pro))
+                                $contactList .= '('.dol_print_phone($contact->phone_pro).')';
                         }
                     }
                 }

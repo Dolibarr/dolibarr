@@ -24,12 +24,12 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","admin","dict"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
 
 // Security check
 if ($user->socid > 0)
@@ -45,12 +45,12 @@ $hookmanager->initHooks(array('accountancyindex'));
 if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-    $zone=GETPOST('areacode', 'aZ09');
-    $userid=GETPOST('userid', 'int');
-    $boxorder=GETPOST('boxorder', 'aZ09');
-    $boxorder.=GETPOST('boxcombo', 'aZ09');
+    $zone = GETPOST('areacode', 'aZ09');
+    $userid = GETPOST('userid', 'int');
+    $boxorder = GETPOST('boxorder', 'aZ09');
+    $boxorder .= GETPOST('boxcombo', 'aZ09');
 
-    $result=InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+    $result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
     if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
 }
 
@@ -64,16 +64,16 @@ if ($conf->accounting->enabled)
 {
     $step = 0;
 
-    $resultboxes=FormOther::getBoxesArea($user, "27");    	// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+    $resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
-	$helpisexpanded = empty($resultboxes['boxactivated']);	// If there is no widget, the tooltip help is expanded by default.
+	$helpisexpanded = empty($resultboxes['boxactivated']); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
-	if (! $helpisexpanded)
+	if (!$helpisexpanded)
 	{
 		$showtutorial  = '<div align="right"><a href="#" id="show_hide">';
 		$showtutorial .= img_picto('', 'chevron-down');
-		$showtutorial .= ' ' . $langs->trans("ShowTutorial");
+		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
 		$showtutorial .= '<script type="text/javascript" language="javascript">
@@ -127,7 +127,7 @@ if ($conf->accounting->enabled)
 	$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=10&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuVatAccounts").'</strong>'.'</a>';
 	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescVat", $step, $textlink);
 	print "<br>\n";
-	if (! empty($conf->tax->enabled))
+	if (!empty($conf->tax->enabled))
 	{
 	     $textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong>'.'</a>';
 	    $step++;
@@ -142,7 +142,7 @@ if ($conf->accounting->enabled)
 	    print "<br>\n";
 	    print "<br>\n";
 	}*/
-	if (! empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
+	if (!empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 	{
 	    $step++;
 	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong>'.'</a>');
@@ -186,26 +186,26 @@ if ($conf->accounting->enabled)
 	$langs->loadLangs(array('bills', 'trips'));
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsCustomers"), '<a href="'.DOL_URL_ROOT.'/accountancy/customer/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>'.'</a>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '<a href="'.DOL_URL_ROOT.'/accountancy/customer/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>'.'</a>')."\n";
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong>'.'</a>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong>'.'</a>')."\n";
 	print "<br>\n";
 
-	if (! empty($conf->expensereport->enabled) || ! empty($conf->deplacement->enabled))
+	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled))
 	{
 		$step++;
-		print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("ExpenseReports"), '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong>'.'</a>')."\n";
+		print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong>'.'</a>')."\n";
 	    print "<br>\n";
 	}
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescWriteRecords", chr(64+$step), $langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("RegistrationInAccounting"), $langs->transnoentitiesnoconv("WriteBookKeeping"))."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescWriteRecords", chr(64 + $step), $langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("RegistrationInAccounting"), $langs->transnoentitiesnoconv("WriteBookKeeping"))."\n";
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescAnalyze", chr(64+$step))."<br>\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescAnalyze", chr(64 + $step))."<br>\n";
 	print "<br>\n";
 
 	print '<br>';
@@ -219,27 +219,27 @@ if ($conf->accounting->enabled)
     /*
      * Show boxes
      */
-    $boxlist.='<div class="twocolumns">';
+    $boxlist .= '<div class="twocolumns">';
 
-    $boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-    if(!empty($nbworkboardcount))
+    $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+    if (!empty($nbworkboardcount))
     {
-        $boxlist.=$boxwork;
+        $boxlist .= $boxwork;
     }
 
-    $boxlist.=$resultboxes['boxlista'];
+    $boxlist .= $resultboxes['boxlista'];
 
-    $boxlist.= '</div>';
+    $boxlist .= '</div>';
 
-    $boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+    $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
-    $boxlist.=$boxstat;
-    $boxlist.=$resultboxes['boxlistb'];
+    $boxlist .= $boxstat;
+    $boxlist .= $resultboxes['boxlistb'];
 
-    $boxlist.= '</div>';
-    $boxlist.= "\n";
+    $boxlist .= '</div>';
+    $boxlist .= "\n";
 
-    $boxlist.='</div>';
+    $boxlist .= '</div>';
 
 
     print $boxlist;

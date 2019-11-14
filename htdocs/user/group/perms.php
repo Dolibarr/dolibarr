@@ -32,43 +32,43 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$module=GETPOST('module', 'alpha');
-$rights=GETPOST('rights', 'int');
-$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'groupperms';   // To manage different context of search
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$module = GETPOST('module', 'alpha');
+$rights = GETPOST('rights', 'int');
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
 
 // Defini si peux lire les permissions
-$canreadperms=($user->admin || $user->rights->user->user->lire);
+$canreadperms = ($user->admin || $user->rights->user->user->lire);
 // Defini si peux modifier les permissions
-$caneditperms=($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || $user->rights->user->user->creer);
 // Advanced permissions
-$advancedpermsactive=false;
-if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+$advancedpermsactive = false;
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-    $advancedpermsactive=true;
-    $canreadperms=($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
-    $caneditperms=($user->admin || $user->rights->user->group_advance->write);
+    $advancedpermsactive = true;
+    $canreadperms = ($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
+    $caneditperms = ($user->admin || $user->rights->user->group_advance->write);
 }
 
-if (! $canreadperms) accessforbidden();
+if (!$canreadperms) accessforbidden();
 
 $object = new Usergroup($db);
 $object->fetch($id);
 
-$entity=$conf->entity;
+$entity = $conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('groupperms','globalcard'));
+$hookmanager->initHooks(array('groupperms', 'globalcard'));
 
 
 /**
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -76,7 +76,7 @@ if (empty($reshook))
 	if ($action == 'addrights' && $caneditperms)
 	{
 		$editgroup = new Usergroup($db);
-		$result=$editgroup->fetch($id);
+		$result = $editgroup->fetch($id);
 		if ($result > 0)
 		{
 			$editgroup->addrights($rights, $module, '', $entity);
@@ -86,7 +86,7 @@ if (empty($reshook))
 	if ($action == 'delrights' && $caneditperms)
 	{
 		$editgroup = new Usergroup($db);
-		$result=$editgroup->fetch($id);
+		$result = $editgroup->fetch($id);
 		if ($result > 0)
 		{
 			$editgroup->delrights($rights, $module, '', $entity);
@@ -108,7 +108,7 @@ if ($object->id > 0)
 	/*
      * Affichage onglets
      */
-	$object->getrights();	// Reload permission
+	$object->getrights(); // Reload permission
 
     $head = group_prepare_head($object);
     $title = $langs->trans("Group");
@@ -124,12 +124,12 @@ if ($object->id > 0)
     {
         // Load modules attributes in arrays (name, numero, orders) from dir directory
         //print $dir."\n<br>";
-        $handle=@opendir(dol_osencode($dir));
+        $handle = @opendir(dol_osencode($dir));
         if (is_resource($handle))
         {
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
-                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
                 {
                     $modName = substr($file, 0, dol_strlen($file) - 10);
 
@@ -140,7 +140,7 @@ if ($object->id > 0)
                         // Load all lang files of module
                         if (isset($objMod->langfiles) && is_array($objMod->langfiles))
                         {
-                            foreach($objMod->langfiles as $domain)
+                            foreach ($objMod->langfiles as $domain)
                             {
                                 $langs->load($domain);
                             }
@@ -148,8 +148,8 @@ if ($object->id > 0)
                         // Load all permissions
                         if ($objMod->rights_class)
                         {
-                            $ret=$objMod->insert_permissions(0, $entity);
-                            $modules[$objMod->rights_class]=$objMod;
+                            $ret = $objMod->insert_permissions(0, $entity);
+                            $modules[$objMod->rights_class] = $objMod;
                         }
                     }
                 }
@@ -163,14 +163,14 @@ if ($object->id > 0)
     $permsgroupbyentity = array();
 
     $sql = "SELECT DISTINCT r.id, r.libelle, r.module, gr.entity";
-    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-    $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr";
-    $sql.= " WHERE gr.fk_id = r.id";
-    $sql.= " AND gr.entity = ".$entity;
-    $sql.= " AND gr.fk_usergroup = ".$object->id;
+    $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
+    $sql .= " ".MAIN_DB_PREFIX."usergroup_rights as gr";
+    $sql .= " WHERE gr.fk_id = r.id";
+    $sql .= " AND gr.entity = ".$entity;
+    $sql .= " AND gr.fk_usergroup = ".$object->id;
 
     dol_syslog("get user perms", LOG_DEBUG);
-    $result=$db->query($sql);
+    $result = $db->query($sql);
     if ($result)
     {
     	$num = $db->num_rows($result);
@@ -178,7 +178,7 @@ if ($object->id > 0)
     	while ($i < $num)
     	{
     		$obj = $db->fetch_object($result);
-    		if (! isset($permsgroupbyentity[$obj->entity]))
+    		if (!isset($permsgroupbyentity[$obj->entity]))
     			$permsgroupbyentity[$obj->entity] = array();
     			array_push($permsgroupbyentity[$obj->entity], $obj->id);
     			$i++;
@@ -204,11 +204,11 @@ if ($object->id > 0)
     print '<table class="border centpercent tableforfield">';
 
     // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-    if (! empty($conf->mutlicompany->enabled))
+    if (!empty($conf->mutlicompany->enabled))
     {
         print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
         print '<td colspan="2">'.$object->name.'';
-        if (! $object->entity)
+        if (!$object->entity)
         {
             print img_picto($langs->trans("GlobalGroup"), 'redstar');
         }
@@ -224,8 +224,8 @@ if ($object->id > 0)
 
     if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     print '<table class="noborder centpercent">';
@@ -275,7 +275,7 @@ if ($object->id > 0)
 
                 // Rupture detectee, on recupere objMod
                 $objMod = $modules[$obj->module];
-                $picto=($objMod->picto?$objMod->picto:'generic');
+                $picto = ($objMod->picto ? $objMod->picto : 'generic');
 
                 print '<tr class="oddeven trforbreak">';
                 print '<td class="nowrap">'.img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
@@ -342,8 +342,8 @@ if ($object->id > 0)
 
     print '</div>';
 
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     dol_fiche_end();

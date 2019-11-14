@@ -30,7 +30,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object)) {
+if (empty($object) || !is_object($object)) {
     print "Error: this template page cannot be called directly as an URL";
     exit;
 }
@@ -38,11 +38,11 @@ if (empty($object) || ! is_object($object)) {
 
 global $forceall, $forcetoshowtitlelines;
 
-if (empty($forceall)) $forceall=0;
+if (empty($forceall)) $forceall = 0;
 
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Columns: total ht + col edit + col delete
+$colspan = 3; // Columns: total ht + col edit + col delete
 //print $object->element;
 
 // Lines for extrafield
@@ -141,7 +141,7 @@ print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
 ?>
 
