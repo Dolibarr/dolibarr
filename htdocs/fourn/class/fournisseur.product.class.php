@@ -499,7 +499,7 @@ class ProductFournisseur extends Product
         $sql.= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
         $sql.="  pfp.barcode, pfp.fk_barcode_type";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-        $sql.= " WHERE pfp.rowid = ".$rowid;
+        $sql.= " WHERE pfp.rowid = ".(int) $rowid;
 
         dol_syslog(get_class($this)."::fetch_product_fournisseur_price", LOG_DEBUG);
         $resql = $this->db->query($sql);
