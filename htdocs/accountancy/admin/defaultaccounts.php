@@ -30,12 +30,12 @@
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","admin","accountancy","salaries","loan"));
+$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "loan"));
 
 // Security check
 if (empty($user->rights->accounting->chartofaccount))
@@ -97,12 +97,12 @@ if (GETPOST('change_chart', 'alpha'))
 {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-    if (! empty($chartofaccounts)) {
-        if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-            $error ++;
+    if (!empty($chartofaccounts)) {
+        if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
+            $error++;
         }
     } else {
-        $error ++;
+        $error++;
     }
 }
 
@@ -153,8 +153,8 @@ print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_a
 print '<span class="opacitymedium">'.$langs->trans("DefaultBindingDesc").'</span><br>';
 print '<br>';
 
-print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 
 
@@ -166,14 +166,14 @@ foreach ($list_account_main as $key) {
     print '<tr class="oddeven value">';
     // Param
     $label = $langs->trans($key);
-    $keydesc=$key.'_Desc';
+    $keydesc = $key.'_Desc';
 
     $htmltext = $langs->trans($keydesc);
     print '<td class="fieldrequired" width="50%">';
     print $form->textwithpicto($label, $htmltext);
     print '</td>';
     // Value
-    print '<td>';  // Do not force class=right, or it align also the content of the select box
+    print '<td>'; // Do not force class=right, or it align also the content of the select box
     print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
     print '</td>';
     print '</tr>';
@@ -211,7 +211,7 @@ foreach ($list_account as $key) {
 print "</table>\n";
 
 
-print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 print '</form>';
 
