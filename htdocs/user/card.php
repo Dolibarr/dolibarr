@@ -788,12 +788,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_lastname))
 	{
-		print '<input type="hidden" id="lastname" name="lastname" value="'.$ldap_lastname.'">';
+		print '<input type="hidden" id="lastname" name="lastname" value="'.dol_escape_htmltag($ldap_lastname).'">';
 		print $ldap_lastname;
 	}
 	else
 	{
-		print '<input class="minwidth100" type="text" id="lastname" name="lastname" value="'.GETPOST('lastname').'">';
+		print '<input class="minwidth100" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -802,12 +802,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_firstname))
 	{
-		print '<input type="hidden" name="firstname" value="'.$ldap_firstname.'">';
+		print '<input type="hidden" name="firstname" value="'.dol_escape_htmltag($ldap_firstname).'">';
 		print $ldap_firstname;
 	}
 	else
 	{
-		print '<input class="minwidth100" type="text" name="firstname" value="'.GETPOST('firstname').'">';
+		print '<input class="minwidth100" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -816,17 +816,17 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_login))
 	{
-		print '<input type="hidden" name="login" value="'.$ldap_login.'">';
+		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_login).'">';
 		print $ldap_login;
 	}
 	elseif (! empty($ldap_loginsmb))
 	{
-		print '<input type="hidden" name="login" value="'.$ldap_loginsmb.'">';
+		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_loginsmb).'">';
 		print $ldap_loginsmb;
 	}
 	else
 	{
-		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alpha')).'">';
+		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -836,7 +836,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$generated_password=getRandomPassword(false);
 	}
-	$password=$generated_password;
+	$password=(GETPOSTISSET('password')?GETPOST('password'):$generated_password);
 
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
@@ -1004,12 +1004,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_phone))
 	{
-		print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
+		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	}
 	else
 	{
-		print '<input size="20" type="text" name="office_phone" value="'.GETPOST('office_phone').'">';
+		print '<input size="20" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1018,12 +1018,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_mobile))
 	{
-		print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
+		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	}
 	else
 	{
-		print '<input size="20" type="text" name="user_mobile" value="'.GETPOST('user_mobile').'">';
+		print '<input size="20" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1032,12 +1032,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_fax))
 	{
-		print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
+		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	}
 	else
 	{
-		print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
+		print '<input size="20" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1114,12 +1114,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (! empty($ldap_mail))
 	{
-		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
+		print '<input type="hidden" name="email" value="'.dol_escape_htmltag($ldap_mail).'">';
 		print $ldap_mail;
 	}
 	else
 	{
-		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
+		print '<input size="40" type="text" name="email" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1128,7 +1128,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
+		print '<input size="30" type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
 		print '</td></tr>';
 	}
 
@@ -1137,7 +1137,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOSTISSET('color')?GETPOST('color', 'alphanohtml'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1183,7 +1183,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $langs->trans("Note");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('note', '', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor=new DolEditor('note', GETPOSTISSET('note')?GETPOST('note', 'none'):'', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 
@@ -1204,7 +1204,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Position/Job
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
+	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
 	// Default warehouse
@@ -1226,7 +1226,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 		print '</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
+		print '<input size="8" type="text" name="thm" value="'.dol_escape_htmltag(GETPOST('thm')).'">';
 		print '</td>';
 		print "</tr>\n";
 
@@ -1236,14 +1236,14 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 		print '</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
+		print '<input size="8" type="text" name="tjm" value="'.dol_escape_htmltag(GETPOST('tjm')).'">';
 		print '</td>';
 		print "</tr>\n";
 
 		// Salary
 		print '<tr><td>'.$langs->trans("Salary").'</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="salary" value="'.GETPOST('salary').'">';
+		print '<input size="8" type="text" name="salary" value="'.dol_escape_htmltag(GETPOST('salary')).'">';
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -1251,7 +1251,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Weeklyhours
 	print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 	print '<td>';
-	print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
+	print '<input size="8" type="text" name="weeklyhours" value="'.dol_escape_htmltag(GETPOST('weeklyhours')).'">';
 	print '</td>';
 	print "</tr>\n";
 
@@ -2446,7 +2446,7 @@ else
 				print '<td>';
 				if ($caneditfield)
 				{
-					print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+					print $formother->selectColor(GETPOSTISSET('color')?GETPOST('color', 'alphanohtml'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				}else{
 					print $formother->showColor($object->color, '');
 				}
