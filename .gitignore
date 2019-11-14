@@ -27,3 +27,13 @@ htdocs/includes/bin/
 htdocs/includes/composer/
 /.pydevproject
 /dolibarr_genesis.mp4
+composer.phar
+htdocs/includes/doctrine/
+htdocs/includes/jakub-onderka/
+htdocs/includes/phpdocumentor/
+htdocs/includes/phpspec/
+htdocs/includes/phpunit/
+htdocs/includes/sebastian/
+htdocs/includes/squizlabs/
+htdocs/includes/symfony/
+htdocs/includes/webmozart/
