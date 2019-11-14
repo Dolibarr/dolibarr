@@ -280,8 +280,8 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			$membertype->id = $objp->rowid;
 			$membertype->ref = $objp->rowid;
 			$membertype->label = $objp->rowid;
-      $membertype->status = $objp->status;
-      
+			$membertype->status = $objp->status;
+
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $membertype->getNomUrl(1);
@@ -427,7 +427,7 @@ if ($rowid > 0)
 
 		print '<table class="border centpercent">';
 
-    // Morphy
+		// Morphy
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
