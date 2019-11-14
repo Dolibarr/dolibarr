@@ -1604,7 +1604,7 @@ class pdf_sponge extends ModelePDFFactures
 		{
 			if ($this->emetteur->logo)
 			{
-				if (empty($conf->global->PDF_USE_LARGE_LOGO))
+				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
 					$logo=$conf->mycompany->dir_output.'/logos/thumbs/'.$this->emetteur->logo_small;
 				}
