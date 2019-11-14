@@ -4481,7 +4481,14 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/societe/class/api_contact.class.php',
         '/societe/class/api_thirdparty.class.php',
         '/support/online.php',
-        '/takepos/class/actions_takepos.class.php'
+        '/takepos/class/actions_takepos.class.php',
+
+    	'/install/mysql/tables/llx_c_ticketsup_category.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_category.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_severity.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_severity.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_type.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_type.sql'
     );
 
     foreach ($filetodeletearray as $filetodelete) {
@@ -5023,7 +5030,7 @@ function migrate_users_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationUsersSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Users')."</b><br>\n";
     print '</td></tr>';
 }
 
@@ -5114,7 +5121,7 @@ function migrate_members_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationMembersSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Members')."</b><br>\n";
     print '</td></tr>';
 }
 
@@ -5209,7 +5216,7 @@ function migrate_contacts_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationContactsSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Contacts')."</b><br>\n";
     print '</td></tr>';
 }
 
@@ -5299,6 +5306,6 @@ function migrate_thirdparties_socialnetworks()
         dol_print_error($db);
         $db->rollback();
     }
-    print '<b>'.$langs->trans('MigrationThirdpartiesSocialNetworks')."</b><br>\n";
+    print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Thirdparties')."</b><br>\n";
     print '</td></tr>';
 }

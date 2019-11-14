@@ -89,6 +89,7 @@ PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
 HOLIDAY_CREATEInDolibarr=Request for leave %s created
 HOLIDAY_MODIFYInDolibarr=Request for leave %s modified
+HOLIDAY_APPROVEInDolibarr=Request for leave %s approved
 HOLIDAY_VALIDATEDInDolibarr=Request for leave %s validated
 HOLIDAY_DELETEInDolibarr=Request for leave %s deleted
 EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created

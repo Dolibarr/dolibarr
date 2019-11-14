@@ -115,12 +115,12 @@ if ($nolinesbefore) {
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 	<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 	<?php } ?>
-	<?php if (! empty($inputalsopricewithtax)) { ?>
+	<?php if (!empty($inputalsopricewithtax)) { ?>
 	<td class="linecoluttc right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
 	<td class="linecolqty right"><?php echo $langs->trans('Qty'); ?></td>
 	<?php
-	if($conf->global->PRODUCT_USE_UNITS)
+	if ($conf->global->PRODUCT_USE_UNITS)
 	{
 		print '<td class="linecoluseunit left">';
 		print '<span id="title_units">';
@@ -466,20 +466,20 @@ $coldisplay+=$colspan;
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
 
-if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
+if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
-	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
-	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1); ?>">
+	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1); ?>">
 	<?php
-	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-	if (! empty($object->element) && $object->element == 'contrat')
+	$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	if (!empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
 		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
@@ -489,9 +489,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	else
 	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
+		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		echo ' '.$langs->trans('to').' ';
-		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
+		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 	};
 	print '<script>';
 	if (!$date_start) {
@@ -649,7 +649,7 @@ jQuery(document).ready(function() {
 	});
 
 	<?php
-	if(!$freelines) { ?>
+	if (!$freelines) { ?>
 		$("#prod_entry_mode_predef").click();
 		<?php
 	}
@@ -676,7 +676,7 @@ jQuery(document).ready(function() {
 			<?php
 		}
 
-		if (! empty($usemargins) && $user->rights->margins->creer)
+		if (!empty($usemargins) && $user->rights->margins->creer)
 		{
 			$langs->load('stocks');
 			?>

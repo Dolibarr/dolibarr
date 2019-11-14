@@ -51,9 +51,9 @@ $object = new Propal($db);
  * Actions
  */
 
-$permissionnote=$user->rights->propale->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->propale->creer; // Used by the include of actions_setnotes.inc.php
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 
@@ -65,11 +65,11 @@ llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	if ($mesg) print $mesg;
 
-	$now=dol_now();
+	$now = dol_now();
 
 	if ($object->fetch($id, $ref) > 0)
 	{

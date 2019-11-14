@@ -51,6 +51,10 @@ ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle
 
 -- For v11
 
+insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
+
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
+
 ALTER TABLE llx_don ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_origin_line (fk_origin_line);
@@ -61,6 +65,7 @@ ALTER TABLE llx_rights_def ADD COLUMN family_position INTEGER NOT NULL DEFAULT 0
 UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND module = 'accounting' AND subperms IS NULL;
 
 ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN fk_warehouse integer;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0;
@@ -483,14 +488,15 @@ create table llx_mrp_mo_extrafields
 ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',401);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',402);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',403);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',404);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',650);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',651);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',652);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',653);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',654);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',410);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',411);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',412);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;

@@ -265,6 +265,246 @@ class Categories extends DolibarrApi
         );
     }
 
+    /**
+     * Link an object to a category by id
+     *
+     * @param int $id  ID of category
+     * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param int      $object_id ID of object
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url POST {id}/objects/{type}/{object_id}
+     */
+    public function linkObjectById($id, $type, $object_id)
+    {
+        if (empty($type) || empty($object_id)) {
+            throw new RestException(401);
+        }
+
+        if(! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->category->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'category not found');
+        }
+
+        // TODO Add all types
+        if ($type === "product") {
+            if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+                throw new RestException(401);
+            }
+            $object = new Product($this->db);
+        } else {
+            throw new RestException(401, "this type is not recognized yet.");
+        }
+
+        if (!empty($object)) {
+            $result = $object->fetch($object_id);
+            if ($result > 0) {
+                $result=$this->category->add_type($object, $type);
+                if ($result < 0) {
+                    if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+                        throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
+                    }
+                }
+            } else {
+                throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
+            }
+
+            return array(
+                'success' => array(
+                    'code' => 200,
+                    'message' => 'Objects succefully linked to the category'
+                )
+            );
+        }
+
+        throw new RestException(401);
+    }
+
+    /**
+     * Link an object to a category by ref
+     *
+     * @param int $id  ID of category
+     * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string   $object_ref Reference of object
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url POST {id}/objects/{type}/ref/{object_ref}
+     */
+    public function linkObjectByRef($id, $type, $object_ref)
+    {
+        if (empty($type) || empty($object_ref)) {
+            throw new RestException(401);
+        }
+
+        if(! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->category->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'category not found');
+        }
+
+        // TODO Add all types
+        if ($type === "product") {
+            if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+                throw new RestException(401);
+            }
+            $object = new Product($this->db);
+        } else {
+            throw new RestException(401, "this type is not recognized yet.");
+        }
+
+        if (!empty($object)) {
+            $result = $object->fetch('', $object_ref);
+            if ($result > 0) {
+                $result=$this->category->add_type($object, $type);
+                if ($result < 0) {
+                    if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+                        throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
+                    }
+                }
+            } else {
+                throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
+            }
+
+            return array(
+                'success' => array(
+                    'code' => 200,
+                    'message' => 'Objects succefully linked to the category'
+                )
+            );
+        }
+
+        throw new RestException(401);
+    }
+
+    /**
+     * Unlink an object from a category by id
+     *
+     * @param int      $id        ID of category
+     * @param string   $type      Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param int      $object_id ID of the object
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url DELETE {id}/objects/{type}/{object_id}
+     */
+    public function unlinkObjectById($id, $type, $object_id)
+    {
+        if (empty($type) || empty($object_id)) {
+            throw new RestException(401);
+        }
+
+        if(! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->category->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'category not found');
+        }
+
+        // TODO Add all types
+        if ($type === "product") {
+            if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+                throw new RestException(401);
+            }
+            $object = new Product($this->db);
+        } else {
+            throw new RestException(401, "this type is not recognized yet.");
+        }
+
+        if (!empty($object)) {
+            $result = $object->fetch((int) $object_id);
+            if ($result > 0) {
+                $result=$this->category->del_type($object, $type);
+                if ($result < 0) {
+                    throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
+                }
+            } else {
+                throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
+            }
+
+            return array(
+                'success' => array(
+                    'code' => 200,
+                    'message' => 'Objects succefully unlinked from the category'
+                )
+            );
+        }
+
+        throw new RestException(401);
+    }
+
+    /**
+     * Unlink an object from a category by ref
+     *
+     * @param int      $id         ID of category
+     * @param string   $type Type  of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string   $object_ref Reference of the object
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url DELETE {id}/objects/{type}/ref/{object_ref}
+     */
+    public function unlinkObjectByRef($id, $type, $object_ref)
+    {
+        if (empty($type) || empty($object_ref)) {
+            throw new RestException(401);
+        }
+
+        if(! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->category->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'category not found');
+        }
+
+        // TODO Add all types
+        if ($type === "product") {
+            if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+                throw new RestException(401);
+            }
+            $object = new Product($this->db);
+        } else {
+            throw new RestException(401, "this type is not recognized yet.");
+        }
+
+        if (!empty($object)) {
+            $result = $object->fetch('', (string) $object_ref);
+            if ($result > 0) {
+                $result=$this->category->del_type($object, $type);
+                if ($result < 0) {
+                    throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
+                }
+            } else {
+                throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
+            }
+
+            return array(
+                'success' => array(
+                    'code' => 200,
+                    'message' => 'Objects succefully unlinked from the category'
+                )
+            );
+        }
+
+        throw new RestException(401);
+    }
+
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**

@@ -127,7 +127,16 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp'); ?>
+			<?php
+			$nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+
+			$newcardbutton = '';
+			if (! empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer)
+			{
+				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+			}
+			print $newcardbutton;
+			?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -156,8 +165,6 @@ if ($permission) {
 	</form>
 
 <?php
-$var = false;
-
 $arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 foreach($arrayofsource as $source) {
 	$tmpobject=$object;
@@ -168,10 +175,9 @@ foreach($arrayofsource as $source) {
 
 	$i = 0;
 	while ($i < $num) {
-	    $var = ! $var;
         ?>
 
-	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
+	<form class="tagtr oddeven">
 		<div class="tagtd left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>

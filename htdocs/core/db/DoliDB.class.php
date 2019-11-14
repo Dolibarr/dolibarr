@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var resource Database handler */
+	/** @var bool|resource Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;

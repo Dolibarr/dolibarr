@@ -1304,13 +1304,6 @@ class SMTPs
         $_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
         */
 
-        $host=$this->getHost();
-        $usetls = preg_match('@tls://@i', $host);
-
-        $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
-
         $host=dol_getprefix('email');
 
         //NOTE: Message-ID should probably contain the username of the user who sent the msg

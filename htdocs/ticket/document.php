@@ -26,15 +26,15 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other","ticket","mails"));
+$langs->loadLangs(array("companies", "other", "ticket", "mails"));
 
 $id       = GETPOST('id', 'int');
 $ref      = GETPOST('ref', 'alpha');
@@ -55,8 +55,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="position_name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "position_name";
 
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
@@ -64,7 +64,7 @@ $result = $object->fetch($id, $ref, $track_id);
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 } else {
-    $upload_dir = $conf->ticket->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->ticket->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
 
@@ -72,7 +72,7 @@ if ($result < 0) {
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 
@@ -83,7 +83,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("TicketDocumentsLinked") . ' - ' . $langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
 
 if ($object->id)
 {
@@ -191,9 +191,9 @@ if ($object->id)
     $modulepart = 'ticket';
   	$permission = $user->rights->ticket->write;
   	$permtoedit = $user->rights->ticket->write;
-  	$param = '&id=' . $object->id;
+  	$param = '&id='.$object->id;
 
-  	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+  	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

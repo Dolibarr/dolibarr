@@ -49,8 +49,8 @@ if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST(
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='position';
-if (! $sortorder) $sortorder='ASC';
+if (!$sortfield) $sortfield = 'position';
+if (!$sortorder) $sortorder = 'ASC';
 
 $id = GETPOST("id", 'int');
 

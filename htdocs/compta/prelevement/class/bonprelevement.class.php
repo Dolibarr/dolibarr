@@ -74,6 +74,10 @@ class BonPrelevement extends CommonObject
 	public $invoice_in_error=array();
 	public $thirdparty_in_error=array();
 
+	const STATUS_DRAFT = 0;
+	const STATUS_TRANSFERED = 1;
+	const STATUS_CREDITED = 2;
+
 
 	/**
 	 *	Constructor
@@ -2001,49 +2005,23 @@ class BonPrelevement extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
-		if (empty($this->labelStatus))
+		// phpcs:enable
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
-			$langs->load("withdrawals");
-			$this->labelStatus[0]=$langs->trans("StatusWaiting");
-			$this->labelStatus[1]=$langs->trans("StatusTrans");
-			$this->labelStatus[2]=$langs->trans("StatusCredited");
+			//$langs->load("mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
+			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
+			$this->labelStatus[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('StatusWaiting');
+			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->trans('StatusTrans');
+			$this->labelStatusShort[self::STATUS_CREDITED] = $langs->trans('StatusCredited');
 		}
 
-		if ($mode == 0 || $mode == 1)
-		{
-			return $this->labelStatus[$status];
-		}
-		elseif ($mode == 2)
-		{
-			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1').' '.$this->labelStatus[$status];
-			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3').' '.$this->labelStatus[$status];
-			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6').' '.$this->labelStatus[$status];
-		}
-		elseif ($mode == 3)
-		{
-			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1');
-			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3');
-			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1').' '.$this->labelStatus[$status];
-			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3').' '.$this->labelStatus[$status];
-			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6').' '.$this->labelStatus[$status];
-		}
-		elseif ($mode == 5)
-		{
-			if ($status==0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut1');
-			elseif ($status==1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut3');
-			elseif ($status==2) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut6');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status==0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut1');
-			elseif ($status==1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut3');
-			elseif ($status==2) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut6');
-		}
+		$statusType = 'status1';
+		if ($status == self::STATUS_TRANSFERED) $statusType = 'status3';
+		if ($status == self::STATUS_CREDITED) $statusType = 'status6';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 }

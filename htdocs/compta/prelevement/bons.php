@@ -44,15 +44,15 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.datec";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "p.datec";
 
 // Get supervariables
 $statut = GETPOST('statut', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$bon=new BonPrelevement($db, "");
+$bon = new BonPrelevement($db, "");
 
 
 /*
@@ -61,8 +61,8 @@ $bon=new BonPrelevement($db, "");
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_ref="";
-    $search_amount="";
+    $search_ref = "";
+    $search_amount = "";
 }
 
 
@@ -73,12 +73,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " WHERE p.entity IN (".getEntity('invoice').")";
-if ($search_ref) $sql.=natural_search("p.ref", $search_ref);
-if ($search_amount) $sql.=natural_search("p.amount", $search_amount, 1);
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
+if ($search_ref) $sql .= natural_search("p.ref", $search_ref);
+if ($search_amount) $sql .= natural_search("p.amount", $search_amount, 1);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -93,7 +93,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)

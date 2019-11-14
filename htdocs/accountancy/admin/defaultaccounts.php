@@ -52,25 +52,40 @@ $list_account_main = array (
     'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
-$list_account = array (
-    'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT',
-    'ACCOUNTING_SERVICE_BUY_ACCOUNT',
-    'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_BUY_ACCOUNT',
-    'ACCOUNTING_VAT_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_PAY_ACCOUNT',
-    'ACCOUNTING_ACCOUNT_SUSPENSE',
-    'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
-    'DONATION_ACCOUNTINGACCOUNT',
-    'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT',
-    'LOAN_ACCOUNTING_ACCOUNT_CAPITAL',
-    'LOAN_ACCOUNTING_ACCOUNT_INTEREST',
-    'LOAN_ACCOUNTING_ACCOUNT_INSURANCE'
-);
-
+$list_account = array ();
+$list_account[] = '---Product---';
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT';
+$list_account[] = '---Service---';
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT';
+$list_account[] = '---Other---';
+$list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
+$list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
+if ($conf->banque->enabled) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
+}
+if ($conf->don->enabled) {
+	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
+}
+if ($conf->adherent->enabled) {
+	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
+}
+if ($conf->loan->enabled) {
+	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
+	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
+	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
+}
 
 /*
  * Actions
@@ -103,7 +118,12 @@ if ($action == 'update') {
 	}
 
 	foreach ($list_account as $constname) {
-	    $constvalue = GETPOST($constname, 'alpha');
+		$reg=array();
+		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
+			continue;
+		}
+
+		$constvalue = GETPOST($constname, 'alpha');
 
 	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 	        $error ++;
@@ -170,15 +190,21 @@ print '<br>';
 print '<table class="noborder centpercent">';
 
 foreach ($list_account as $key) {
-	print '<tr class="oddeven value">';
-	// Param
-	$label = $langs->trans($key);
-	print '<td width="50%">' . $label . '</td>';
-	// Value
-	print '<td>';  // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	print '</td>';
-	print '</tr>';
+	$reg=array();
+	if (preg_match('/---(.*)---/', $key, $reg)) {
+		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
+	}
+	else {
+		print '<tr class="oddeven value">';
+		// Param
+		$label = $langs->trans($key);
+		print '<td width="50%">' . $label . '</td>';
+		// Value
+		print '<td>';  // Do not force class=right, or it align also the content of the select box
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 

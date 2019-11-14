@@ -6,6 +6,10 @@ html,body {
 	width:100%;
 }
 
+.center {
+	text-align: center;	
+}
+
 button.calcbutton {
 	display: inline-block;
 	position: relative;
