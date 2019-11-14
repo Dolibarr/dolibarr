@@ -112,7 +112,7 @@ class Thirdparties extends DolibarrApi
 	 */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $sqlfilters = '')
     {
-		global $db, $conf;
+		global $db;
 
 		$obj_ret = array();
 
@@ -137,7 +137,7 @@ class Thirdparties extends DolibarrApi
 		$sql .= ' AND t.entity IN ('.getEntity('societe').')';
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
-		if ($socid) $sql .= " AND t.rowid IN (".$socids.")";
+		if ($socids) $sql .= " AND t.rowid IN (".$socids.")";
 		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		// Insert sale filter
 		if ($search_sale > 0)
@@ -172,6 +172,7 @@ class Thirdparties extends DolibarrApi
 		{
 			$num = $db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
+            $i = 0;
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
@@ -1722,7 +1723,7 @@ class Thirdparties extends DolibarrApi
      *
      * Return an array with thirdparty informations
      *
-     * @param	   int		$rowid      Id of third party to load
+     * @param    int	$rowid      Id of third party to load
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$ref_int    Internal reference of third party (not used by dolibarr)
@@ -1740,6 +1741,7 @@ class Thirdparties extends DolibarrApi
     */
     private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
     {
+        global $conf;
         if(! DolibarrApiAccess::$user->rights->societe->lire) {
             throw new RestException(401);
         }
