@@ -63,7 +63,7 @@ $result = restrictedArea($user, 'don', $id);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('doncard','globalcard'));
+$hookmanager->initHooks(array('doncard', 'globalcard'));
 
 /*
  * Actions
@@ -311,16 +311,16 @@ if ($action == 'builddoc')
 
 llxHeader('', $langs->trans("Donation"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
-$form=new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
-if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("AddDonation"), '', 'invoicing');
 
-	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -330,27 +330,27 @@ if ($action == 'create')
 	print '<tbody>';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
 	// Company
-	if (! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES))
+	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES))
 	{
 		// Thirdparty
-		print '<td>' . $langs->trans('Customer') . '</td>';
-		if ($soc->id > 0 && ! GETPOST('fac_rec', 'alpha'))
+		print '<td>'.$langs->trans('Customer').'</td>';
+		if ($soc->id > 0 && !GETPOST('fac_rec', 'alpha'))
 		{
 			print '<td colspan="2">';
 			print $soc->getNomUrl(1);
-			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
+			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 			// Outstanding Bill
 			$arrayoutstandingbills = $soc->getOutstandingBills();
 			$outstandingBills = $arrayoutstandingbills['opened'];
-			print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
+			print ' ('.$langs->trans('CurrentOutstandingBill').': ';
 			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '')
 			{
 				if ($outstandingBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
-				print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
+				print ' / '.price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 			}
 			print ')';
 			print '</td>';

@@ -514,7 +514,7 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-	$measuringUnits= new CUnits($db);
+	$measuringUnits = new CUnits($db);
 
 	if ($scale !== '')
 	{
@@ -534,10 +534,10 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 	}
 	$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
 
-	if ($result<0) {
+	if ($result < 0) {
 		return -1;
 	} else {
-		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
+		if (is_array($measuringUnits->records) && count($measuringUnits->records) > 0) {
 			if ($use_short_label) return $measuringUnits->records[key($measuringUnits->records)]->short_label;
 			else return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
 		} else {

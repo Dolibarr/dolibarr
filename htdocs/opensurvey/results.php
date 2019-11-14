@@ -35,14 +35,14 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 
 // Init vars
-$action=GETPOST('action', 'aZ09');
-$numsondage= GETPOST("id");
+$action = GETPOST('action', 'aZ09');
+$numsondage = GETPOST("id");
 
-$object=new Opensurveysondage($db);
-$result=$object->fetch(0, $numsondage);
+$object = new Opensurveysondage($db);
+$result = $object->fetch(0, $numsondage);
 if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
 
-$nblines=$object->fetch_lines();
+$nblines = $object->fetch_lines();
 
 
 /*
@@ -108,19 +108,19 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
-for ($i=0; $i<$nblines; $i++)
+for ($i = 0; $i < $nblines; $i++)
 {
 	if (isset($_POST['modifierligne'.$i]))
 	{
-		$ligneamodifier=$i;
-		$testligneamodifier=true;
+		$ligneamodifier = $i;
+		$testligneamodifier = true;
 	}
 
 	//test pour voir si une ligne est a modifier
 	if (isset($_POST['validermodifier'.$i]))
 	{
-		$modifier=$i;
-		$testmodifier=true;
+		$modifier = $i;
+		$testmodifier = true;
 	}
 }
 if ($testmodifier)
@@ -913,7 +913,7 @@ while ($compteur < $num)
 	}
 
 	//demande de confirmation pour modification de ligne
-	for ($i=0; $i<$nblines; $i++)
+	for ($i = 0; $i < $nblines; $i++)
 	{
 		if (isset($_POST["modifierligne".$i]))
 		{

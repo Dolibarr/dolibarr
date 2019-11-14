@@ -504,20 +504,20 @@ textarea.centpercent {
 }
 
 .text-warning{
-    color : <?php print $textWarning ; ?>
+    color : <?php print $textWarning; ?>
 }
 body[class*="colorblind-"] .text-warning{
-    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+    color : <?php print $colorblind_deuteranopes_textWarning; ?>
 }
 .text-success{
-    color : <?php print $textSuccess ; ?>
+    color : <?php print $textSuccess; ?>
 }
 body[class*="colorblind-"] .text-success{
-    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+    color : <?php print $colorblind_deuteranopes_textSuccess; ?>
 }
 
 .text-danger{
-    color : <?php print $textDanger ; ?>
+    color : <?php print $textDanger; ?>
 }
 
 .editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
@@ -1271,28 +1271,28 @@ div.fichecenterbis {
 	margin-top: 8px;
 }
 div.fichethirdleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
-	<?php if ($conf->browser->layout == 'phone')   { print "padding-bottom: 6px;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
-	<?php if ($conf->browser->layout == 'phone')   { print "padding-bottom: 6px\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichetwothirdright div.ficheaddleft {
     padding-left: 20px;
 }
 div.fichehalfleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
-	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
-	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1720,7 +1720,7 @@ a.tmenuimage:hover{
 /* Do not load menu img for other if hidden to save bandwidth */
 
 <?php if (empty($dol_hide_topmenu)) { ?>
-    <?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
+    <?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
     <?php } else { ?>
         div.mainmenu.home{
@@ -1808,53 +1808,53 @@ a.tmenuimage:hover{
     <?php
     // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-    $moduletomainmenu=array(
-        'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
-        'produit'=>'products','service'=>'products','stock'=>'products',
-        'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-        'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
+    $moduletomainmenu = array(
+        'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
+        'produit'=>'products', 'service'=>'products', 'stock'=>'products',
+        'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
+        'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
         'fournisseur'=>'companies',
-        'barcode'=>'','fckeditor'=>'','categorie'=>'',
+        'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
     );
-    $mainmenuused='home';
-    foreach($conf->modules as $val)
+    $mainmenuused = 'home';
+    foreach ($conf->modules as $val)
     {
-        $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
+        $mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
     }
-    $mainmenuusedarray=array_unique(explode(',', $mainmenuused));
+    $mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-    $generic=1;
+    $generic = 1;
     // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-    $divalreadydefined=array('home','companies','products','mrp','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+    $divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
     // Put here list of menu entries we are sure we don't want
-    $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
-    foreach($mainmenuusedarray as $val)
+    $divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+    foreach ($mainmenuusedarray as $val)
     {
         if (empty($val) || in_array($val, $divalreadydefined)) continue;
         if (in_array($val, $divnotrequired)) continue;
         //print "XXX".$val;
 
         // Search img file in module dir
-        $found=0; $url='';
-        foreach($conf->file->dol_document_root as $dirroot)
+        $found = 0; $url = '';
+        foreach ($conf->file->dol_document_root as $dirroot)
         {
             if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
             {
-                $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-                $found=1;
+                $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
+                $found = 1;
                 break;
             }
     		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
     		{
-    			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-    			$found=1;
+    			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+    			$found = 1;
     			break;
     		}
         }
         // Img file not found
-        if (! $found)
+        if (!$found)
         {
-            if (! defined('DISABLE_FONT_AWSOME')) {
+            if (!defined('DISABLE_FONT_AWSOME')) {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
@@ -2113,8 +2113,8 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: <?php echo $disableimages?'26':'32'; ?>px;
-    height: <?php echo $disableimages?'26':'32'; ?>px;
+	width: <?php echo $disableimages ? '26' : '32'; ?>px;
+    height: <?php echo $disableimages ? '26' : '32'; ?>px;
     border-radius: 50%;
     background-size: contain;
     background-size: contain;
@@ -3319,13 +3319,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
-	    max-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(161, round($_SESSION['dol_screenwidth']/2 - 20)):161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+	    max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
     	/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
     .dashboardlineindicator {

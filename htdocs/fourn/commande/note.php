@@ -70,9 +70,9 @@ $form = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-$now=dol_now();
+$now = dol_now();
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     if ($result >= 0)
     {
@@ -139,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="underbanner clearboth"></div>';
 
 
-		$cssclass="titlefield";
+		$cssclass = "titlefield";
         include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         print '</div>';

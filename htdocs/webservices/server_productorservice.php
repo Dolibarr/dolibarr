@@ -83,51 +83,51 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string')
+        'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label', 'type'=>'xsd:string')
     )
 );
 
 $productorservice_fields = array(
-    'id' => array('name'=>'id','type'=>'xsd:string'),
-    'ref' => array('name'=>'ref','type'=>'xsd:string'),
-    'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-    'type' => array('name'=>'type','type'=>'xsd:string'),
-    'label' => array('name'=>'label','type'=>'xsd:string'),
-    'description' => array('name'=>'description','type'=>'xsd:string'),
-    'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
-    'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
-    'note' => array('name'=>'note','type'=>'xsd:string'),
-    'status_tobuy' => array('name'=>'status_tobuy','type'=>'xsd:string'),
-    'status_tosell' => array('name'=>'status_tosell','type'=>'xsd:string'),
-    'barcode' => array('name'=>'barcode','type'=>'xsd:string'),
-    'barcode_type' => array('name'=>'barcode_type','type'=>'xsd:string'),
-    'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
-    'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
-    'customcode' => array('name'=>'customcode','type'=>'xsd:string'),
+    'id' => array('name'=>'id', 'type'=>'xsd:string'),
+    'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
+    'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
+    'type' => array('name'=>'type', 'type'=>'xsd:string'),
+    'label' => array('name'=>'label', 'type'=>'xsd:string'),
+    'description' => array('name'=>'description', 'type'=>'xsd:string'),
+    'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
+    'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
+    'note' => array('name'=>'note', 'type'=>'xsd:string'),
+    'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
+    'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
+    'barcode' => array('name'=>'barcode', 'type'=>'xsd:string'),
+    'barcode_type' => array('name'=>'barcode_type', 'type'=>'xsd:string'),
+    'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
+    'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
+    'customcode' => array('name'=>'customcode', 'type'=>'xsd:string'),
 
-    'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
-    'price' => array('name'=>'price','type'=>'xsd:string'),
-    'price_min_net' => array('name'=>'price_min_net','type'=>'xsd:string'),
-    'price_min' => array('name'=>'price_min','type'=>'xsd:string'),
+    'price_net' => array('name'=>'price_net', 'type'=>'xsd:string'),
+    'price' => array('name'=>'price', 'type'=>'xsd:string'),
+    'price_min_net' => array('name'=>'price_min_net', 'type'=>'xsd:string'),
+    'price_min' => array('name'=>'price_min', 'type'=>'xsd:string'),
 
-    'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
+    'price_base_type' => array('name'=>'price_base_type', 'type'=>'xsd:string'),
 
-    'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:string'),
-    'vat_npr' => array('name'=>'vat_npr','type'=>'xsd:string'),
-    'localtax1_tx' => array('name'=>'localtax1_tx','type'=>'xsd:string'),
-    'localtax2_tx' => array('name'=>'localtax2_tx','type'=>'xsd:string'),
+    'vat_rate' => array('name'=>'vat_rate', 'type'=>'xsd:string'),
+    'vat_npr' => array('name'=>'vat_npr', 'type'=>'xsd:string'),
+    'localtax1_tx' => array('name'=>'localtax1_tx', 'type'=>'xsd:string'),
+    'localtax2_tx' => array('name'=>'localtax2_tx', 'type'=>'xsd:string'),
 
-    'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
-    'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
-    'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
-    'warehouse_ref' => array('name'=>'warehouse_ref','type'=>'xsd:string'),		// Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
+    'stock_alert' => array('name'=>'stock_alert', 'type'=>'xsd:string'),
+    'stock_real' => array('name'=>'stock_real', 'type'=>'xsd:string'),
+    'stock_pmp' => array('name'=>'stock_pmp', 'type'=>'xsd:string'),
+    'warehouse_ref' => array('name'=>'warehouse_ref', 'type'=>'xsd:string'), // Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
 
-    'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
-    'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
+    'canvas' => array('name'=>'canvas', 'type'=>'xsd:string'),
+    'import_key' => array('name'=>'import_key', 'type'=>'xsd:string'),
 
-    'dir' => array('name'=>'dir','type'=>'xsd:string'),
-    'images' => array('name'=>'images','type'=>'tns:ImagesArray')
+    'dir' => array('name'=>'dir', 'type'=>'xsd:string'),
+    'images' => array('name'=>'images', 'type'=>'tns:ImagesArray')
 );
 
 
@@ -136,25 +136,25 @@ $elementtype = 'product';
 
 //Retreive all extrafield for product
 // fetch optionals attributes and labels
-$extrafields=new ExtraFields($db);
+$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
-$extrafield_array=null;
+$extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
 if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
-		$type =$extrafields->attributes[$elementtype]['type'][$key];
-		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-		else {$type='xsd:string';}
+		$type = $extrafields->attributes[$elementtype]['type'][$key];
+		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
+		else {$type = 'xsd:string'; }
 
-		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
 
-if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields, $extrafield_array);
+if (is_array($extrafield_array)) $productorservice_fields = array_merge($productorservice_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -431,16 +431,16 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
-            	$extrafields=new ExtraFields($db);
+            	$extrafields = new ExtraFields($db);
             	$extrafields->fetch_name_optionals_label($elementtype, true);
             	//Get extrafield values
             	$product->fetch_optionals();
 
             	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+            		foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	            	{
-	            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+	            		$productorservice_result_fields = array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
 	            	}
             	}
 
@@ -563,34 +563,34 @@ function createProductOrService($authentication, $product)
 
         $elementtype = 'product';
 
-        $extrafields=new ExtraFields($db);
+        $extrafields = new ExtraFields($db);
         $extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
-				$key='options_'.$key;
-				$newobject->array_options[$key]=$product[$key];
+				$key = 'options_'.$key;
+				$newobject->array_options[$key] = $product[$key];
 			}
 		}
 
         $db->begin();
 
-        $result=$newobject->create($fuser, 0);
+        $result = $newobject->create($fuser, 0);
         if ($result <= 0)
         {
             $error++;
         }
 
-        if (! $error)
+        if (!$error)
         {
         	// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
-				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
+				$savstockreal = $newobject->stock_reel;
+				$newobject->load_stock('novirtual,nobatch'); // This overwrite ->stock_reel, surely 0 because we have just created product
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)
@@ -736,20 +736,20 @@ function updateProductOrService($authentication, $product)
 
         $elementtype = 'product';
 
-		$extrafields=new ExtraFields($db);
+		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
-				$key='options_'.$key;
-				$newobject->array_options[$key]=$product[$key];
+				$key = 'options_'.$key;
+				$newobject->array_options[$key] = $product[$key];
 			}
 		}
 
         $db->begin();
 
-        $result=$newobject->update($newobject->id, $fuser);
+        $result = $newobject->update($newobject->id, $fuser);
         if ($result <= 0)
         {
             $error++;
@@ -1116,16 +1116,16 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
-							$extrafields=new ExtraFields($db);
+							$extrafields = new ExtraFields($db);
 							$extrafields->fetch_name_optionals_label($elementtype, true);
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 
 							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 								{
-									$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+									$products[$iProduct] = array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
 								}
 							}
 

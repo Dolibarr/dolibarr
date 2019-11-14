@@ -117,7 +117,7 @@ if ($action == "view_ticketlist") {
                 }
             }
             if ($object->fk_user_create > 0) {
-                $tmpuser=new User($db);
+                $tmpuser = new User($db);
                 $tmpuser->fetch($object->fk_user_create);
                 if ($email == $tmpuser->email) {
                     $display_ticket_list = true;
@@ -159,7 +159,7 @@ $user_create = new User($db);
 $formTicket = new FormTicket($db);
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
-	print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
+	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
 	$db->close();
 	exit();
 }
@@ -235,43 +235,43 @@ if ($action == "view_ticketlist")
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
         	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
         		if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-        			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
+        			$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
                 }
             }
         }
         if (!empty($search_subject)) {
             $filter['t.subject'] = $search_subject;
-            $param .= '&search_subject=' .urlencode($search_subject);
+            $param .= '&search_subject='.urlencode($search_subject);
         }
         if (!empty($search_type)) {
             $filter['t.type_code'] = $search_type;
-            $param .= '&search_type=' . urlencode($search_type);
+            $param .= '&search_type='.urlencode($search_type);
         }
         if (!empty($search_category)) {
             $filter['t.category_code'] = $search_category;
-            $param .= '&search_category=' . urlencode($search_category);
+            $param .= '&search_category='.urlencode($search_category);
         }
         if (!empty($search_severity)) {
             $filter['t.severity_code'] = $search_severity;
-            $param .= '&search_severity=' . urlencode($search_severity);
+            $param .= '&search_severity='.urlencode($search_severity);
         }
         if (!empty($search_fk_user_assign)) {
             // -1 value = all so no filter
             if ($search_fk_user_assign > 0) {
                 $filter['t.fk_user_assign'] = $search_fk_user_assign;
-                $param .= '&search_fk_user_assign=' . urlencode($search_fk_user_assign);
+                $param .= '&search_fk_user_assign='.urlencode($search_fk_user_assign);
             }
         }
         if (!empty($search_fk_user_create)) {
             // -1 value = all so no filter
             if ($search_fk_user_create > 0) {
                 $filter['t.fk_user_create'] = $search_fk_user_create;
-                $param .= '&search_fk_user_create=' . urlencode($search_fk_user_create);
+                $param .= '&search_fk_user_create='.urlencode($search_fk_user_create);
             }
         }
         if ((isset($search_fk_status) && $search_fk_status != '') && $search_fk_status != '-1' && $search_fk_status != 'non_closed') {
             $filter['t.fk_statut'] = $search_fk_status;
-            $param .= '&search_fk_status=' . urlencode($search_fk_status);
+            $param .= '&search_fk_status='.urlencode($search_fk_status);
         }
         if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
             $filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
@@ -381,16 +381,16 @@ if ($action == "view_ticketlist")
                 print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
                 // Search bar
-                print '<form method="get" action="' . $url_form . '" id="searchFormList" >' . "\n";
+                print '<form method="get" action="'.$url_form.'" id="searchFormList" >'."\n";
                 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
                 print '<input type="hidden" name="action" value="view_ticketlist">';
-                print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-                print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+                print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+                print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
                 $varpage = empty($contextpage) ? $url_page_current : $contextpage;
                 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-                print '<table class="liste ' . ($moreforfilter ? "listwithfilterbefore" : "") . '">';
+                print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
                 // Filter bar
                 print '<tr class="liste_titre">';
@@ -412,7 +412,7 @@ if ($action == "view_ticketlist")
 
                 if (!empty($arrayfields['t.subject']['checked'])) {
                     print '<td class="liste_titre">';
-                    print '<input type="text" class="flat maxwidth100" name="search_subject" value="' . $search_subject . '">';
+                    print '<input type="text" class="flat maxwidth100" name="search_subject" value="'.$search_subject.'">';
                     print '</td>';
                 }
 
@@ -454,8 +454,8 @@ if ($action == "view_ticketlist")
                 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
                 // Fields from hook
-                $parameters=array('arrayfields'=>$arrayfields);
-                $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
+                $parameters = array('arrayfields'=>$arrayfields);
+                $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
                 print $hookmanager->resPrint;
 
                 // Status
@@ -468,7 +468,7 @@ if ($action == "view_ticketlist")
 
                 // Action column
                 print '<td class="liste_titre maxwidthsearch">';
-                $searchpicto=$form->showFilterButtons();
+                $searchpicto = $form->showFilterButtons();
                 print $searchpicto;
                 print '</td>';
                 print '</tr>';
@@ -516,8 +516,8 @@ if ($action == "view_ticketlist")
                 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
                 // Hook fields
-                $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-                $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+                $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+                $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
                 print $hookmanager->resPrint;
 
                 if (!empty($arrayfields['t.fk_statut']['checked'])) {
@@ -675,28 +675,28 @@ if ($action == "view_ticketlist")
             }
         }
     } else {
-        print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
+        print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
     }
 } else {
-    print '<p class="center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
+    print '<p class="center">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
 	print '<br>';
 
     print '<div id="form_view_ticket">';
-    print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="' . $_SERVER['PHP_SELF'] . '">';
-    print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+    print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="view_ticketlist">';
     //print '<input type="hidden" name="search_fk_status" value="non_closed">';
 
-    print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">' . $langs->trans("OneOfTicketTrackId") . '</span></label>';
-    print '<input size="30" id="track_id" name="track_id" value="' . (GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '') . '" />';
+    print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans("OneOfTicketTrackId").'</span></label>';
+    print '<input size="30" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
     print '</p>';
 
-    print '<p><label for="email" style="display: inline-block; width: 30%; "><span class="fieldrequired">' . $langs->trans('Email') . '</span></label>';
-    print '<input size="30" id="email" name="email" value="' . (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $_SESSION['customer_email']) . '" />';
+    print '<p><label for="email" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans('Email').'</span></label>';
+    print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $_SESSION['customer_email']).'" />';
     print '</p>';
 
     print '<p style="text-align: center; margin-top: 1.5em;">';
-    print '<input class="button" type="submit" name="btn_view_ticket_list" value="' . $langs->trans('ViewMyTicketList') . '" />';
+    print '<input class="button" type="submit" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
     print "</p>\n";
 
     print "</form>\n";

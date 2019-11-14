@@ -164,31 +164,31 @@ if (empty($reshook))
 	// Update record
 	elseif ($action == 'update' && $user->rights->loan->write)
 	{
-		if (! $cancel)
+		if (!$cancel)
 		{
 			$result = $object->fetch($id);
 
-			$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
+			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
 			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
 			$capital	= price2num(GETPOST('capital'));
 
-			if (! $capital)
+			if (!$capital)
 			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 				$action = 'edit';
 			}
 			else
 			{
-				$object->datestart	        = $datestart;
+				$object->datestart = $datestart;
 				$object->dateend	        = $dateend;
 				$object->capital	        = $capital;
 				$object->nbterm		        = GETPOST("nbterm", 'int');
-				$object->rate		        = price2num(GETPOST("rate", 'alpha'));
-                $object->insurance_amount   = price2num(GETPOST('insurance_amount', 'int'));
+				$object->rate = price2num(GETPOST("rate", 'alpha'));
+                $object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
 
-				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
-				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
-				$accountancy_account_interest	= GETPOST('accountancy_account_interest');
+				$accountancy_account_capital = GETPOST('accountancy_account_capital');
+				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
+				$accountancy_account_interest = GETPOST('accountancy_account_interest');
 
 				if ($accountancy_account_capital <= 0) { $object->account_capital = ''; } else { $object->account_capital = $accountancy_account_capital; }
 				if ($accountancy_account_insurance <= 0) { $object->account_insurance = ''; } else { $object->account_insurance = $accountancy_account_insurance; }
@@ -283,40 +283,40 @@ if ($action == 'create')
 	}
 
 	// Capital
-	print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . dol_escape_htmltag(GETPOST("capital")) . '"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="'.dol_escape_htmltag(GETPOST("capital")).'"></td></tr>';
 
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate($datestart?$datestart:-1, 'start', '', '', '', 'add', 1, 1);
+	print $form->selectDate($datestart ? $datestart : -1, 'start', '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate($dateend?$dateend:-1, 'end', '', '', '', 'add', 1, 1);
+	print $form->selectDate($dateend ? $dateend : -1, 'end', '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number of terms
-	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . dol_escape_htmltag(GETPOST('nbterm')) . '"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="'.dol_escape_htmltag(GETPOST('nbterm')).'"></td></tr>';
 
 	// Rate
-	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="'.dol_escape_htmltag(GETPOST("rate")).'"> %</td></tr>';
 
 	// Insurance amount
-	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="' . dol_escape_htmltag(GETPOST("insurance_amount")) . '" placeholder="'.$langs->trans('Amount').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="'.dol_escape_htmltag(GETPOST("insurance_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
-		$formproject=new FormProjets($db);
+		$formproject = new FormProjets($db);
 
 		// Projet associe
 		$langs->loadLangs(array("projects"));
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects(-1, $projectid, 'projectid', 16, 0, 1, 1);
+		$numproject = $formproject->select_projects(-1, $projectid, 'projectid', 16, 0, 1, 1);
 
 		print '</td></tr>';
 	}
@@ -425,61 +425,61 @@ if ($id > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
-		print '<script type="text/javascript">' . "\n";
-		print '  	function popEcheancier() {' . "\n";
-		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="98%" frameborder="0" src="createschedule.php?loanid=' . $object->id . '"></iframe></div>\');' . "\n";
-		print '  		$div.dialog({' . "\n";
-		print '  			modal:true' . "\n";
-		print '  			,width:"90%"' . "\n";
-		print '  			,height:$(window).height() - 160' . "\n";
-		print '  		});' . "\n";
-		print '  	}' . "\n";
+		print '<script type="text/javascript">'."\n";
+		print '  	function popEcheancier() {'."\n";
+		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="98%" frameborder="0" src="createschedule.php?loanid='.$object->id.'"></iframe></div>\');'."\n";
+		print '  		$div.dialog({'."\n";
+		print '  			modal:true'."\n";
+		print '  			,width:"90%"'."\n";
+		print '  			,height:$(window).height() - 160'."\n";
+		print '  		});'."\n";
+		print '  	}'."\n";
 		print '</script>';
 
 
 		// Loan card
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref='<div class="refidno">';
+		$morehtmlref = '<div class="refidno">';
 		// Ref loan
-		$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
 		// Project
-		if (! empty($conf->projet->enabled))
+		if (!empty($conf->projet->enabled))
 		{
 			$langs->loadLangs(array("projects"));
-			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->loan->write)
 			{
 				if ($action != 'classify')
-					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref.='<input type="hidden" name="action" value="classin">';
-					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref.='</form>';
+					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 				}
 			} else {
-				if (! empty($object->fk_project)) {
+				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-					$morehtmlref.=$proj->ref;
-					$morehtmlref.='</a>';
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
 				} else {
-					$morehtmlref.='';
+					$morehtmlref .= '';
 				}
 			}
 		}
-		$morehtmlref.='</div>';
+		$morehtmlref .= '</div>';
 
-		$object->totalpaid = $totalpaid;  // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -709,7 +709,7 @@ if ($id > 0)
 			$total_interest = 0;
 			$total_capital = 0;
 
-			print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';

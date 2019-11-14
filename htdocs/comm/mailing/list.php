@@ -55,7 +55,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -151,19 +151,19 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$title=$langs->trans("ListOfEMailings");
-	if ($filteremail) $title.=' ('.$langs->trans("SentTo", $filteremail).')';
+	$title = $langs->trans("ListOfEMailings");
+	if ($filteremail) $title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->mailing->creer)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
 	}
 
 	$i = 0;
 
 	$param = "&search_all=".urlencode($search_all);
-	if ($filteremail) $param.='&filteremail='.urlencode($filteremail);
+	if ($filteremail) $param .= '&filteremail='.urlencode($filteremail);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -189,11 +189,11 @@ if ($result)
 	print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_all" value="'.dol_escape_htmltag($search_all).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
+	if (!$filteremail) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
 	print "</tr>\n";

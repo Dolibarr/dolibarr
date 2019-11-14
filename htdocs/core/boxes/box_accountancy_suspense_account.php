@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_accountancy_suspense_account extends ModeleBoxes
 {
-    public $boxcode="accountancy_suspense_account";
-    public $boximg="object_invoice";
-    public $boxlabel="BoxSuspenseAccount";
+    public $boxcode = "accountancy_suspense_account";
+    public $boximg = "object_invoice";
+    public $boxlabel = "BoxSuspenseAccount";
     public $depends = array("accounting");
 
     /**
@@ -60,7 +60,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->accounting->mouvements->lire);
+        $this->hidden = !($user->rights->accounting->mouvements->lire);
     }
 
     /**

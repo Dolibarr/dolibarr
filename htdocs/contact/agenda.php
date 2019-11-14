@@ -47,12 +47,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
-$mesg=''; $error=0; $errors=array();
+$mesg = ''; $error = 0; $errors = array();
 
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $socid		= GETPOST('socid', 'int');
 
 $object = new Contact($db);
@@ -63,9 +63,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
-$objcanvas=null;
-$canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
-if (! empty($canvas))
+$objcanvas = null;
+$canvas = (!empty($object->canvas) ? $object->canvas : GETPOST("canvas"));
+if (!empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db, $action);
@@ -256,29 +256,29 @@ else
     	//print '<div class="tabsAction">';
         //print '</div>';
 
-    	$newcardbutton='';
-    	if (! empty($conf->agenda->enabled))
+    	$newcardbutton = '';
+    	if (!empty($conf->agenda->enabled))
     	{
-    		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+    		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create))
     		{
-                $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+                $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
     		}
     	}
 
-        if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+        if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
        	{
        		print '<br>';
 
-            $param='&id='.$id;
-            if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-            if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+            $param = '&id='.$id;
+            if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+            if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
             print load_fiche_titre($langs->trans("ActionsOnContact"), $newcardbutton, '');
             //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
 
             // List of all actions
-    		$filters=array();
-        	$filters['search_agenda_label']=$search_agenda_label;
+    		$filters = array();
+        	$filters['search_agenda_label'] = $search_agenda_label;
 
             show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
         }

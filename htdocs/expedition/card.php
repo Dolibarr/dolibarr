@@ -95,12 +95,12 @@ $extrafields->fetch_name_optionals_label($object->table_element_line);
 $extrafields->fetch_name_optionals_label(OrderLine::$table_element);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
-$permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
+$permissiondellink = $user->rights->expedition->livraison->creer; // Used by the include of actions_dellink.inc.php
 //var_dump($object->lines[0]->detail_batch);
 
 
@@ -1577,7 +1577,7 @@ if ($action == 'create')
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 					}
                 }
 
@@ -1630,10 +1630,10 @@ elseif ($id || $ref)
 
 		$res = $object->fetch_optionals();
 
-		$head=shipping_prepare_head($object);
+		$head = shipping_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
 
-		$formconfirm='';
+		$formconfirm = '';
 
 		// Confirm deleteion
 		if ($action == 'delete')
@@ -1649,7 +1649,7 @@ elseif ($id || $ref)
                         ),
                     );
             }
-		    $formconfirm=$form->formconfirm(
+		    $formconfirm = $form->formconfirm(
 			    $_SERVER['PHP_SELF'].'?id='.$object->id,
                 $langs->trans('DeleteSending'),
                 $langs->trans("ConfirmDeleteSending", $object->ref),
@@ -1702,57 +1702,57 @@ elseif ($id || $ref)
 
 		// Calculate totalWeight and totalVolume for all products
 		// by adding weight and volume of each product line.
-		$tmparray=$object->getTotalWeightVolume();
-		$totalWeight=$tmparray['weight'];
-		$totalVolume=$tmparray['volume'];
+		$tmparray = $object->getTotalWeightVolume();
+		$totalWeight = $tmparray['weight'];
+		$totalVolume = $tmparray['volume'];
 
 
-		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
 		{
-		    $objectsrc=new Commande($db);
+		    $objectsrc = new Commande($db);
 		    $objectsrc->fetch($object->$typeobject->id);
 		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+		if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
 		{
-		    $objectsrc=new Propal($db);
+		    $objectsrc = new Propal($db);
 		    $objectsrc->fetch($object->$typeobject->id);
 		}
 
 		// Shipment card
-		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
-		$morehtmlref='<div class="refidno">';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+		$morehtmlref = '<div class="refidno">';
 		// Ref customer shipment
-		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
-        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+        $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
         // Project
-        if (! empty($conf->projet->enabled)) {
+        if (!empty($conf->projet->enabled)) {
             $langs->load("projects");
-            $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+            $morehtmlref .= '<br>'.$langs->trans('Project').' ';
             if (0) {    // Do not change on shipment
                 if ($action != 'classify') {
-                    $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                    $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
                 }
                 if ($action == 'classify') {
                     // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                    $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+                    $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                    $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+                    $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                    $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+                    $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
                     $morehtmlref .= '</form>';
                 } else {
-                    $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                    $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
                 }
             } else {
                 // We don't have project on shipment, so we will use the project or source object instead
                 // TODO Add project on shipment
                 $morehtmlref .= ' : ';
-                if (! empty($objectsrc->fk_project)) {
+                if (!empty($objectsrc->fk_project)) {
                     $proj = new Project($db);
                     $proj->fetch($objectsrc->fk_project);
-                    $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                    $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
                     $morehtmlref .= $proj->ref;
                     $morehtmlref .= '</a>';
                 } else {
@@ -2041,7 +2041,7 @@ elseif ($id || $ref)
 			$editColspan = 3;
 			if (empty($conf->stock->enabled)) $editColspan--;
 			if (empty($conf->productbatch->enabled)) $editColspan--;
-			print '<td class="center linecoleditlineotherinfo" colspan="'. $editColspan . '">';
+			print '<td class="center linecoleditlineotherinfo" colspan="'.$editColspan.'">';
 			if ($object->statut <= 1)
 			{
 				print $langs->trans("QtyToShip").' - ';
@@ -2070,12 +2070,12 @@ elseif ($id || $ref)
 			{
 				print '<td class="center linecolqtyshipped">'.$langs->trans("QtyShipped").'</td>';
 			}
-			if (! empty($conf->stock->enabled))
+			if (!empty($conf->stock->enabled))
 			{
 				print '<td class="left linecolwarehousesource">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
-			if (! empty($conf->productbatch->enabled))
+			if (!empty($conf->productbatch->enabled))
 			{
 				print '<td class="left linecolbatch">'.$langs->trans("Batch").'</td>';
 			}
@@ -2091,14 +2091,14 @@ elseif ($id || $ref)
 		print "</tr>\n";
 		print '</thead>';
 
-		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+		if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 		{
 			$object->fetch_thirdparty();
 			$outputlangs = $langs;
-			$newlang='';
-			if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
-			if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
-			if (! empty($newlang))
+			$newlang = '';
+			if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if (empty($newlang)) $newlang = $object->thirdparty->default_lang;
+			if (!empty($newlang))
 			{
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -2452,11 +2452,11 @@ elseif ($id || $ref)
 				print "</tr>";
 
 				// Display lines extrafields
-				if (! empty($extrafields)) {
-					$colspan=6;
+				if (!empty($extrafields)) {
+					$colspan = 6;
 					if ($origin && $origin_id > 0) $colspan++;
-					if (! empty($conf->productbatch->enabled)) $colspan++;
-					if (! empty($conf->stock->enabled)) $colspan++;
+					if (!empty($conf->productbatch->enabled)) $colspan++;
+					if (!empty($conf->stock->enabled)) $colspan++;
 
 					$lines[$i]->fetch_optionals($lines[$i]->id);
 

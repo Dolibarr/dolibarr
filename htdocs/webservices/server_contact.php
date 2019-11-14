@@ -75,44 +75,44 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+        'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
     )
 );
 
 $contact_fields = array(
-	'id' => array('name'=>'id','type'=>'xsd:string'),
-	'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-	'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
-	'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
-	'address' => array('name'=>'address','type'=>'xsd:string'),
-	'zip' => array('name'=>'zip','type'=>'xsd:string'),
-	'town' => array('name'=>'town','type'=>'xsd:string'),
-	'state_id' => array('name'=>'state_id','type'=>'xsd:string'),
-	'state_code' => array('name'=>'state_code','type'=>'xsd:string'),
-	'state' => array('name'=>'state','type'=>'xsd:string'),
-	'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
-	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
-	'country' => array('name'=>'country','type'=>'xsd:string'),
-	'socid' => array('name'=>'socid','type'=>'xsd:string'),
-	'status' => array('name'=>'status','type'=>'xsd:string'),
-	'phone_pro' => array('name'=>'phone_pro','type'=>'xsd:string'),
-	'fax' => array('name'=>'fax','type'=>'xsd:string'),
-	'phone_perso' => array('name'=>'phone_perso','type'=>'xsd:string'),
-	'phone_mobile' => array('name'=>'phone_mobile','type'=>'xsd:string'),
-	'code' => array('name'=>'code','type'=>'xsd:string'),
-	'email' => array('name'=>'email','type'=>'xsd:string'),
-	'birthday' => array('name'=>'birthday','type'=>'xsd:string'),
-	'default_lang' => array('name'=>'default_lang','type'=>'xsd:string'),
-	'note' => array('name'=>'note','type'=>'xsd:string'),
-	'ref_facturation' => array('name'=>'ref_facturation','type'=>'xsd:string'),
-	'ref_contrat' => array('name'=>'ref_contrat','type'=>'xsd:string'),
-	'ref_commande' => array('name'=>'ref_commande','type'=>'xsd:string'),
-	'ref_propal' => array('name'=>'ref_propal','type'=>'xsd:string'),
-	'user_id' => array('name'=>'user_id','type'=>'xsd:string'),
-	'user_login' => array('name'=>'user_login','type'=>'xsd:string'),
-	'civility_id' => array('name'=>'civility_id','type'=>'xsd:string'),
-	'poste' => array('name'=>'poste','type'=>'xsd:string')
+	'id' => array('name'=>'id', 'type'=>'xsd:string'),
+	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
+	'lastname' => array('name'=>'lastname', 'type'=>'xsd:string'),
+	'firstname' => array('name'=>'firstname', 'type'=>'xsd:string'),
+	'address' => array('name'=>'address', 'type'=>'xsd:string'),
+	'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
+	'town' => array('name'=>'town', 'type'=>'xsd:string'),
+	'state_id' => array('name'=>'state_id', 'type'=>'xsd:string'),
+	'state_code' => array('name'=>'state_code', 'type'=>'xsd:string'),
+	'state' => array('name'=>'state', 'type'=>'xsd:string'),
+	'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
+	'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
+	'country' => array('name'=>'country', 'type'=>'xsd:string'),
+	'socid' => array('name'=>'socid', 'type'=>'xsd:string'),
+	'status' => array('name'=>'status', 'type'=>'xsd:string'),
+	'phone_pro' => array('name'=>'phone_pro', 'type'=>'xsd:string'),
+	'fax' => array('name'=>'fax', 'type'=>'xsd:string'),
+	'phone_perso' => array('name'=>'phone_perso', 'type'=>'xsd:string'),
+	'phone_mobile' => array('name'=>'phone_mobile', 'type'=>'xsd:string'),
+	'code' => array('name'=>'code', 'type'=>'xsd:string'),
+	'email' => array('name'=>'email', 'type'=>'xsd:string'),
+	'birthday' => array('name'=>'birthday', 'type'=>'xsd:string'),
+	'default_lang' => array('name'=>'default_lang', 'type'=>'xsd:string'),
+	'note' => array('name'=>'note', 'type'=>'xsd:string'),
+	'ref_facturation' => array('name'=>'ref_facturation', 'type'=>'xsd:string'),
+	'ref_contrat' => array('name'=>'ref_contrat', 'type'=>'xsd:string'),
+	'ref_commande' => array('name'=>'ref_commande', 'type'=>'xsd:string'),
+	'ref_propal' => array('name'=>'ref_propal', 'type'=>'xsd:string'),
+	'user_id' => array('name'=>'user_id', 'type'=>'xsd:string'),
+	'user_login' => array('name'=>'user_login', 'type'=>'xsd:string'),
+	'civility_id' => array('name'=>'civility_id', 'type'=>'xsd:string'),
+	'poste' => array('name'=>'poste', 'type'=>'xsd:string')
 	//...
 );
 
@@ -121,24 +121,24 @@ $elementtype = 'socpeople';
 
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
-$extrafields=new ExtraFields($db);
+$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
-$extrafield_array=null;
-if (is_array($extrafields) && count($extrafields)>0) {
+$extrafield_array = null;
+if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
 if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
-		$type =$extrafields->attributes[$elementtype]['type'][$key];
-		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-		else {$type='xsd:string';}
+		$type = $extrafields->attributes[$elementtype]['type'][$key];
+		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
+		else {$type = 'xsd:string'; }
 
-		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
-if (is_array($extrafield_array)) $contact_fields=array_merge($contact_fields, $extrafield_array);
+if (is_array($extrafield_array)) $contact_fields = array_merge($contact_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -314,16 +314,16 @@ function getContact($authentication, $id, $ref_ext)
 
             	//Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
-            	$extrafields=new ExtraFields($db);
+            	$extrafields = new ExtraFields($db);
             	$extrafields->fetch_name_optionals_label($elementtype, true);
             	//Get extrafield values
             	$contact->fetch_optionals();
 
             	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+            		foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	            	{
-	            		$contact_result_fields=array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
+	            		$contact_result_fields = array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
 	            	}
             	}
 

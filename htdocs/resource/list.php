@@ -42,7 +42,7 @@ $sortorder      = GETPOST('sortorder', 'alpha');
 $sortfield      = GETPOST('sortfield', 'alpha');
 
 // Initialize context for list
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'resourcelist';
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'resourcelist';
 
 // Initialize technical objects
 $object = new Dolresource($db);
@@ -177,42 +177,42 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$ret = $object->fetch_all('', '', 0, 0, $filter);
-	if($ret == -1) {
+	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
-	} else  {
+	} else {
 		$nbtotalofrecords = $ret;
 	}
 }
 
 // Load object list
 $ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
-if($ret == -1) {
+if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;
 } else {
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->resource->write)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
     }
 
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 }
 
 $moreforfilter = '';
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
-if (! empty($arrayfields['t.ref']['checked']))
+if (!empty($arrayfields['t.ref']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
 	print '</td>';
 }
-if (! empty($arrayfields['ty.label']['checked']))
+if (!empty($arrayfields['ty.label']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="6">';
@@ -222,14 +222,14 @@ if (! empty($arrayfields['ty.label']['checked']))
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Action column
 print '<td class="liste_titre maxwidthsearch">';
-$searchpicto=$form->showFilterAndCheckAddButtons(0);
+$searchpicto = $form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($arrayfields['t.ref']['checked'])) print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['ty.label']['checked'])) print_liste_field_titre($arrayfields['ty.label']['label'], $_SERVER["PHP_SELF"], "ty.label", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['t.ref']['checked'])) print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['ty.label']['checked'])) print_liste_field_titre($arrayfields['ty.label']['label'], $_SERVER["PHP_SELF"], "ty.label", "", $param, "", $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');

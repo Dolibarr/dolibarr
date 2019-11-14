@@ -84,10 +84,10 @@ if ($id > 0 || ! empty($ref) && $action!='add') {
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // fetch optionals attributes lines and labels
-$extralabelslines=$extrafields->fetch_name_optionals_label($object->table_element_line);
+$extralabelslines = $extrafields->fetch_name_optionals_label($object->table_element_line);
 
-$permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
+$permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->contrat->creer; // Used by the include of actions_dellink.inc.php
 
 
 
@@ -205,41 +205,41 @@ if (empty($reshook))
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-			$action='create';
+			$action = 'create';
 		}
 
-		if ($socid<1)
+		if ($socid < 1)
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
-			$action='create';
+			$action = 'create';
 			$error++;
 		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
-			$error ++;
+			$error++;
 			$action = 'create';
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			$object->socid						= $socid;
-			$object->date_contrat				= $datecontrat;
+			$object->socid = $socid;
+			$object->date_contrat = $datecontrat;
 
-			$object->commercial_suivi_id		= GETPOST('commercial_suivi_id', 'int');
-			$object->commercial_signature_id	= GETPOST('commercial_signature_id', 'int');
+			$object->commercial_suivi_id = GETPOST('commercial_suivi_id', 'int');
+			$object->commercial_signature_id = GETPOST('commercial_signature_id', 'int');
 
-			$object->note_private				= GETPOST('note_private', 'alpha');
+			$object->note_private = GETPOST('note_private', 'alpha');
 			$object->note_public				= GETPOST('note_public', 'alpha');
 			$object->fk_project					= GETPOST('projectid', 'int');
-			$object->remise_percent				= GETPOST('remise_percent', 'alpha');
-			$object->ref						= GETPOST('ref', 'alpha');
+			$object->remise_percent = GETPOST('remise_percent', 'alpha');
+			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
-			if (! empty($origin) && ! empty($originid))
+			if (!empty($origin) && !empty($originid))
 			{
 				// Parse element/subelement (ex: project_task)
 				$element = $subelement = $origin;
@@ -735,11 +735,11 @@ if (empty($reshook))
 			// Extrafields
 			$extralabelsline = $extrafields->fetch_name_optionals_label($objectline->table_element);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
-			$objectline->array_options=$array_options;
+			$objectline->array_options = $array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
 
-			$result=$objectline->update($user);
+			$result = $objectline->update($user);
 			if ($result < 0)
 			{
 				$error++;
@@ -1089,15 +1089,15 @@ llxHeader('', $langs->trans("Contract"), "");
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 // Load object modContract
-$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
+$module = (!empty($conf->global->CONTRACT_ADDON) ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 {
-	$module = substr($module, 0, dol_strlen($module)-4);
+	$module = substr($module, 0, dol_strlen($module) - 4);
 }
-$result=dol_include_once('/core/modules/contract/'.$module.'.php');
+$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 if ($result > 0)
 {
 	$modCodeContract = new $module();
@@ -1703,10 +1703,10 @@ else
 					}
 
 					// Display lines extrafields
-					if (is_array($extralabelslines) && count($extralabelslines)>0) {
+					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 					}
 				}
 				// Line in mode update
@@ -1779,24 +1779,24 @@ else
 					print '</td>';
 					print '</tr>';
 
-					$colspan=6;
-					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
-					if($conf->global->PRODUCT_USE_UNITS) $colspan++;
+					$colspan = 6;
+					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
+					if ($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
 					// Ligne dates prevues
 					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
-					print $form->selectDate($db->jdate($objp->date_debut), "date_start_update", $usehm, $usehm, ($db->jdate($objp->date_debut)>0?0:1), "update");
+					print $form->selectDate($db->jdate($objp->date_debut), "date_start_update", $usehm, $usehm, ($db->jdate($objp->date_debut) > 0 ? 0 : 1), "update");
 					print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
-					print $form->selectDate($db->jdate($objp->date_fin), "date_end_update", $usehm, $usehm, ($db->jdate($objp->date_fin)>0?0:1), "update");
+					print $form->selectDate($db->jdate($objp->date_fin), "date_end_update", $usehm, $usehm, ($db->jdate($objp->date_fin) > 0 ? 0 : 1), "update");
 					print '</td>';
 					print '</tr>';
 
-					if (is_array($extralabelslines) && count($extralabelslines)>0) {
+					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 					}
 				}
 

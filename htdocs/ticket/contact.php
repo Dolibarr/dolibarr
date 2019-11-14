@@ -26,13 +26,13 @@
 
 require '../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
-require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
@@ -75,7 +75,7 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
     }
 
     if ($result >= 0) {
-        Header("Location: " . $url_page_current . "?id=" . $object->id);
+        Header("Location: ".$url_page_current."?id=".$object->id);
         exit;
     } else {
         if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -102,7 +102,7 @@ if ($action == 'deletecontact' && $user->rights->ticket->write) {
         $result = $object->delete_contact($lineid);
 
         if ($result >= 0) {
-            Header("Location: " . $url_page_current . "?id=" . $object->id);
+            Header("Location: ".$url_page_current."?id=".$object->id);
             exit;
         }
     }
@@ -220,9 +220,9 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
         $permission = $user->rights->ticket->write;
 
         // Contacts lines (modules that overwrite templates must declare this into descriptor)
-        $dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+        $dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
         foreach ($dirtpls as $reldir) {
-            $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+            $res = @include dol_buildpath($reldir.'/contacts.tpl.php');
             if ($res) {
             	break;
             }

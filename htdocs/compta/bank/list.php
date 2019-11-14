@@ -198,41 +198,41 @@ else dol_print_error($db);
 
 
 
-$help_url='EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
 llxHeader('', $title, $help_url);
 
-$link='';
+$link = '';
 
 
 $num_rows = count($accounts);
 
-$arrayofselected=is_array($toselect)?$toselect:array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
-$param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($search_ref != '')      $param.='&search_ref='.$search_ref;
-if ($search_label != '')    $param.='&search_label='.$search_label;
-if ($search_number != '')   $param.='&search_number='.$search_number;
-if ($search_status != '')   $param.='&search_status='.$search_status;
-if ($show_files)            $param.='&show_files=' .$show_files;
-if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+$param = '';
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+if ($search_ref != '')      $param .= '&search_ref='.$search_ref;
+if ($search_label != '')    $param .= '&search_label='.$search_label;
+if ($search_number != '')   $param .= '&search_number='.$search_number;
+if ($search_status != '')   $param .= '&search_status='.$search_status;
+if ($show_files)            $param .= '&show_files='.$show_files;
+if ($optioncss != '')       $param .= '&optioncss='.$optioncss;
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
-$arrayofmassactions =  array(
+$arrayofmassactions = array(
 //    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->banque->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+if ($user->rights->banque->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton='';
+$newcardbutton = '';
 if ($user->rights->banque->configurer)
 {
-    $newcardbutton.= dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create');
+    $newcardbutton .= dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create');
 }
 
 
@@ -586,10 +586,10 @@ foreach ($accounts as $key=>$type)
 }
 
 // If no record found
-if (! $found)
+if (!$found)
 {
-    $colspan=1;
-    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    $colspan = 1;
+    foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
     print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

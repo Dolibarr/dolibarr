@@ -130,17 +130,17 @@ $arrayfields['t.progress'] = array('label'=>'ProgressDeclared', 'checked'=>1, 'e
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
     {
-    	if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-    		$arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+    	if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+    		$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
     }
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-$search_array_options_project=$extrafields->getOptionalsFromPost($project->table_element, '', 'search_');
-$search_array_options_task=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_task_');
+$search_array_options_project = $extrafields->getOptionalsFromPost($project->table_element, '', 'search_');
+$search_array_options_task = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_task_');
 
 
 /*
@@ -511,66 +511,66 @@ $moreforfilter = '';
 }*/
 
 // If the user can view user other than himself
-$moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
-$includeonly='hierarchyme';
-if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
-$moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
-$moreforfilter.='</div>';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= '<div class="inline-block hideonsmartphone">'.$langs->trans('User').' </div>';
+$includeonly = 'hierarchyme';
+if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
+$moreforfilter .= $form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
+$moreforfilter .= '</div>';
 
 if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
 {
-	$moreforfilter.='<div class="divsearchfield">';
-	$moreforfilter.='<div class="inline-block">'.$langs->trans('Project'). ' </div>';
-	$moreforfilter.='<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
-	$moreforfilter.='</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="inline-block">'.$langs->trans('Project').' </div>';
+	$moreforfilter .= '<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= '</div>';
 
-	$moreforfilter.='<div class="divsearchfield">';
-	$moreforfilter.='<div class="inline-block">'.$langs->trans('ThirdParty'). ' </div>';
-	$moreforfilter.='<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
-	$moreforfilter.='</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="inline-block">'.$langs->trans('ThirdParty').' </div>';
+	$moreforfilter .= '<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= '</div>';
 }
 
-if (! empty($moreforfilter))
+if (!empty($moreforfilter))
 {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
 
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 // This must be after the $selectedfields
-$addcolspan=0;
-if (! empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
-if (! empty($arrayfields['t.progress']['checked'])) $addcolspan++;
+$addcolspan = 0;
+if (!empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
+if (!empty($arrayfields['t.progress']['checked'])) $addcolspan++;
 foreach ($arrayfields as $key => $val)
 {
     if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
 }
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 // TASK fields
-$search_options_pattern='search_task_options_';
-$extrafieldsobjectkey='projet_task';
-$extrafieldsobjectprefix='efpt.';
+$search_options_pattern = 'search_task_options_';
+$extrafieldsobjectkey = 'projet_task';
+$extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 print '<td class="liste_titre"></td>';
-if (! empty($arrayfields['t.planned_workload']['checked']))
+if (!empty($arrayfields['t.planned_workload']['checked']))
 {
     print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
-if (! empty($arrayfields['t.progress']['checked']))
+if (!empty($arrayfields['t.progress']['checked']))
 {
     print '<td class="liste_titre"></td>';
 }
@@ -580,24 +580,24 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
 print '<td class="liste_titre nowrap right">';
-$searchpicto=$form->showFilterAndCheckAddButtons(0);
+$searchpicto = $form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("Project").'</th>';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("ThirdParty").'</th>';
+if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("Project").'</th>';
+if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("ThirdParty").'</th>';
 print '<th>'.$langs->trans("Task").'</th>';
 // TASK fields
-$extrafieldsobjectkey='projet_task';
-$extrafieldsobjectprefix='efpt.';
+$extrafieldsobjectkey = 'projet_task';
+$extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-if (! empty($arrayfields['t.planned_workload']['checked']))
+if (!empty($arrayfields['t.planned_workload']['checked']))
 {
     print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
 }
-if (! empty($arrayfields['t.progress']['checked']))
+if (!empty($arrayfields['t.progress']['checked']))
 {
     print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
 }
@@ -605,17 +605,17 @@ if (! empty($arrayfields['t.progress']['checked']))
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
-print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</th>';
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
+$restrictviewformytask = ((!isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
 
 // Get if user is available or not for each day
-$isavailable=array();
-if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
+$isavailable = array();
+if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 {
-	$tmparray=explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
 	if (count($tmparray) >= 2)
 	{
 		$numstartworkingday = $tmparray[0];
@@ -624,59 +624,59 @@ if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 }
 
 $statusofholidaytocheck = '3';
-$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck);	// $daytoparse is a date with hours = 0
-$isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck); // $daytoparse is a date with hours = 0
+$isavailable[$daytoparse] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-$tmparray = dol_getdate($daytoparse, true);	// detail of current day
+$tmparray = dol_getdate($daytoparse, true); // detail of current day
 $idw = $tmparray['wday'];
 
-$cssweekend='';
+$cssweekend = '';
 if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 {
-	$cssweekend='weekend';
+	$cssweekend = 'weekend';
 }
 
-$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
-$cssonholiday='';
-if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
-elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
-elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+$cssonholiday = '';
+if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
+elseif (!$isavailable[$daytoparse]['morning'])   $cssonholiday .= 'onholidaymorning ';
+elseif (!$isavailable[$daytoparse]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
-print '<th class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</th>';
+print '<th class="center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">'.$langs->trans("Duration").'</th>';
 print '<th class="center">'.$langs->trans("Note").'</th>';
 //print '<td class="center"></td>';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 
 print "</tr>\n";
 
-$colspan=4+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
+$colspan = 4 + (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : 2);
 
 if ($conf->use_javascript_ajax)
 {
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.($colspan-1+$addcolspan).'">';
+	print '<td class="liste_total" colspan="'.($colspan - 1 + $addcolspan).'">';
 	print $langs->trans("Total");
 	print '</td>';
 	print '<td class="liste_total leftborder">';
 	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
 
-	$tmparray = dol_getdate($daytoparse, true);	// detail of current day
+	$tmparray = dol_getdate($daytoparse, true); // detail of current day
 	$idw = $tmparray['wday'];
 
-	$cssweekend='';
+	$cssweekend = '';
 	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 	{
-		$cssweekend='weekend';
+		$cssweekend = 'weekend';
 	}
 
-	$cssonholiday='';
-	if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
-	elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
-	elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+	$cssonholiday = '';
+	if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
+	elseif (!$isavailable[$daytoparse]['morning'])   $cssonholiday .= 'onholidaymorning ';
+	elseif (!$isavailable[$daytoparse]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
-	print '<td class="liste_total center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
+	print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 
 	print '<td class="liste_total"></td>';
     print '<td class="liste_total"></td>';
@@ -690,32 +690,32 @@ if (count($tasksarray) > 0)
 	//var_dump($tasksarraywithoutfilter);	// contains all tasks (if there is a filter, not defined if no filter)
 	//var_dump($tasksrole);
 
-	$j=0;
-	$level=0;
+	$j = 0;
+	$level = 0;
 	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0, $arrayfields, $extrafields);
 	//var_dump($totalforvisibletasks);
 
 	// Show total for all other tasks
 
 	// Calculate total for all tasks
-	$listofdistinctprojectid=array();	// List of all distinct projects
+	$listofdistinctprojectid = array(); // List of all distinct projects
 	if (is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter))
 	{
-		foreach($tasksarraywithoutfilter as $tmptask)
+		foreach ($tasksarraywithoutfilter as $tmptask)
 		{
-			$listofdistinctprojectid[$tmptask->fk_project]=$tmptask->fk_project;
+			$listofdistinctprojectid[$tmptask->fk_project] = $tmptask->fk_project;
 		}
 	}
 	//var_dump($listofdistinctprojectid);
-	$totalforeachday=array();
-	foreach($listofdistinctprojectid as $tmpprojectid)
+	$totalforeachday = array();
+	foreach ($listofdistinctprojectid as $tmpprojectid)
 	{
-		$projectstatic->id=$tmpprojectid;
-		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+		$projectstatic->id = $tmpprojectid;
+		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++)
 		{
-			$tmpday=dol_time_plus_duree($daytoparse, $idw, 'd');
-			$totalforeachday[$tmpday]+=$projectstatic->weekWorkLoad[$tmpday];
+			$tmpday = dol_time_plus_duree($daytoparse, $idw, 'd');
+			$totalforeachday[$tmpday] += $projectstatic->weekWorkLoad[$tmpday];
 		}
 	}
 	//var_dump($totalforeachday);
