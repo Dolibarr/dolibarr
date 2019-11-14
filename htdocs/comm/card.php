@@ -491,7 +491,7 @@ if ($object->id > 0)
 		$langs->load("categories");
 		print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 		print '<td>';
-		print $form->showCategories($object->id, 'customer', 1);
+		print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 		print "</td></tr>";
 	}
 

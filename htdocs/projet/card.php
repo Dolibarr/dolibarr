@@ -1069,7 +1069,7 @@ elseif ($object->id > 0)
 		// Categories
 		if($conf->categorie->enabled) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($object->id, 'project', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
 		}
 

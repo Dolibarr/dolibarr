@@ -255,7 +255,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_B
 // Categories
 if($conf->categorie->enabled) {
     print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-    print $form->showCategories($object->id, 'project', 1);
+    print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
     print "</td></tr>";
 }
 
