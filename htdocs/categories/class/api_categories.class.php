@@ -275,6 +275,7 @@ class Categories extends DolibarrApi
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
+     * @param int		$page		Page number
      * @return array                Array of category objects
      *
      * @throws RestException
