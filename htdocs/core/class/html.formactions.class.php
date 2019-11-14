@@ -37,7 +37,7 @@ class FormActions
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     /**
@@ -67,7 +67,7 @@ class FormActions
     public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
     {
         // phpcs:enable
-        global $langs,$conf;
+        global $langs, $conf;
 
         $listofstatus = array(
             '-1' => $langs->trans("ActionNotApplicable"),
@@ -77,7 +77,7 @@ class FormActions
         );
 		// +ActionUncomplete
 
-        if (! empty($conf->use_javascript_ajax))
+        if (!empty($conf->use_javascript_ajax))
         {
             print "\n";
             print "<script type=\"text/javascript\">
@@ -98,7 +98,7 @@ class FormActions
                 function select_status() {
                     var defaultvalue = $('#select' + htmlname).val();
                     var percentage = $('input[name=percentage]');
-                    var selected = '".(isset($selected)?$selected:'')."';
+                    var selected = '".(isset($selected) ? $selected : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);
@@ -125,13 +125,13 @@ class FormActions
                 }
                 </script>\n";
         }
-        if (! empty($conf->use_javascript_ajax) || $onlyselect)
+        if (!empty($conf->use_javascript_ajax) || $onlyselect)
         {
         	//var_dump($selected);
-        	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'">';
-            if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
-            foreach($listofstatus as $key => $val)
+        	if ($selected == 'done') $selected = '100';
+            print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+            if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'></option>';
+            foreach ($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
                 if ($key == '50' && $onlyselect == 2)
@@ -140,17 +140,17 @@ class FormActions
                 }
             }
             print '</select>';
-            if ($selected == 0 || $selected == 100) $canedit=0;
+            if ($selected == 0 || $selected == 100) $canedit = 0;
 
             if (empty($onlyselect))
             {
-	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled').'>';
+	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
     	        print '<span class="hideonsmartphone hideifna">%</span>';
             }
         }
         else
 		{
-            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled').'>%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
         }
     }
 
@@ -284,8 +284,8 @@ class FormActions
 	        		print '<td class="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
 	        		if ($action->datef)
 	        		{
-		        		$tmpa=dol_getdate($action->datep);
-		        		$tmpb=dol_getdate($action->datef);
+		        		$tmpa = dol_getdate($action->datep);
+		        		$tmpb = dol_getdate($action->datef);
 		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
 		        		{
 		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef, 'hour', 'tzuserrel');
@@ -335,39 +335,39 @@ class FormActions
     public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
     {
         // phpcs:enable
-        global $langs,$user,$form,$conf;
+        global $langs, $user, $form, $conf;
 
-        if (! is_object($form)) $form=new Form($this->db);
+        if (!is_object($form)) $form = new Form($this->db);
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-        $caction=new CActionComm($this->db);
+        $caction = new CActionComm($this->db);
 
        	// Suggest a list with manual events or all auto events
-       	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
-       	array_unshift($arraylist, '&nbsp;');     // Add empty line at start
+       	$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+       	array_unshift($arraylist, '&nbsp;'); // Add empty line at start
        	//asort($arraylist);
 
-       	if ($selected == 'manual') $selected='AC_OTH';
-       	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
+       	if ($selected == 'manual') $selected = 'AC_OTH';
+       	if ($selected == 'auto')   $selected = 'AC_OTH_AUTO';
 
-       	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
+       	if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-       	$out='';
+       	$out = '';
 
-		if (! empty($multiselect))
+		if (!empty($multiselect))
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
 		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
-            $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''), 1);
+            $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''), 1);
         }
 
         if ($nooutput) return $out;

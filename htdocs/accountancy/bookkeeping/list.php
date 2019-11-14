@@ -88,7 +88,7 @@ $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -120,9 +120,9 @@ if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! 
 			$search_date_start = strtotime($fiscalYear->date_start);
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
-			$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+			$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
-			if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
+			if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
 			if ($month_end < 1)
@@ -137,7 +137,7 @@ if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! 
 }
 
 
-$arrayfields=array(
+$arrayfields = array(
 	't.piece_num'=>array('label'=>$langs->trans("TransactionNumShort"), 'checked'=>1),
 	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
 	't.doc_ref'=>array('label'=>$langs->trans("Piece"), 'checked'=>1),
@@ -166,8 +166,8 @@ $error = 0;
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -318,7 +318,7 @@ if (empty($reshook))
 if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
 	$import_key = GETPOST('importkey', 'alpha');
 
-	if (! empty($import_key)) {
+	if (!empty($import_key)) {
 		$result = $object->deleteByImportkey($import_key);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -331,15 +331,15 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 }
 if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
 	$delyear = GETPOST('delyear', 'int');
-	if ($delyear==-1) {
-		$delyear=0;
+	if ($delyear == -1) {
+		$delyear = 0;
 	}
 	$deljournal = GETPOST('deljournal', 'alpha');
-	if ($deljournal==-1) {
-		$deljournal=0;
+	if ($deljournal == -1) {
+		$deljournal = 0;
 	}
 
-	if (! empty($delyear) || ! empty($deljournal))
+	if (!empty($delyear) || !empty($deljournal))
 	{
 		$result = $object->deleteByYearAndJournal($delyear, $deljournal);
 		if ($result < 0) {
@@ -362,7 +362,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->supprimer) {
 	$mvt_num = GETPOST('mvt_num', 'int');
 
-	if (! empty($mvt_num)) {
+	if (!empty($mvt_num)) {
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -584,16 +584,16 @@ if ($action == 'delbookkeepingyear') {
 	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
 	$journal_array = $formaccounting->select_journal($deljournal, 'deljournal', '', 1, 1, 1, '', 0, 1);
 
-	$form_question['delyear'] = array (
+	$form_question['delyear'] = array(
 			'name' => 'delyear',
 			'type' => 'select',
 			'label' => $langs->trans('DelYear'),
 			'values' => $year_array,
 			'default' => $delyear
 	);
-	$form_question['deljournal'] = array (
+	$form_question['deljournal'] = array(
 			'name' => 'deljournal',
-			'type' => 'other',	   // We don't use select here, the journal_array is already a select html component
+			'type' => 'other', // We don't use select here, the journal_array is already a select html component
 			'label' => $langs->trans('DelJournal'),
 			'value' => $journal_array,
 			'default' => $deljournal
@@ -650,52 +650,52 @@ print '<table class="tagtable liste centpercent">';
 // Filters lines
 print '<tr class="liste_titre_filter">';
 // Movement number
-if (! empty($arrayfields['t.piece_num']['checked']))
+if (!empty($arrayfields['t.piece_num']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Date document
-if (! empty($arrayfields['t.doc_date']['checked']))
+if (!empty($arrayfields['t.doc_date']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From') . ' ';
-	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print $langs->trans('From').' ';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to') . ' ';
-	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+	print $langs->trans('to').' ';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
 // Ref document
-if (! empty($arrayfields['t.doc_ref']['checked']))
+if (!empty($arrayfields['t.doc_ref']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
 }
 // Accountancy account
-if (! empty($arrayfields['t.numero_compte']['checked']))
+if (!empty($arrayfields['t.numero_compte']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 	print $langs->trans('From').' ';
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to').' ';
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
 	print '</div>';
 	print '</td>';
 }
 // Subledger account
-if (! empty($arrayfields['t.subledger_account']['checked']))
+if (!empty($arrayfields['t.subledger_account']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 	print $langs->trans('From').' ';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 	{
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 	}
@@ -708,7 +708,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))
 	print $langs->trans('to').' ';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 	{
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 	}

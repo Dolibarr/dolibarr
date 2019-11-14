@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other","ticket"));
+$langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -278,7 +278,7 @@ if ($action == "view_ticketlist")
             $param .= '&search_fk_status=non_closed';
         }
 
-        require DOL_DOCUMENT_ROOT . '/core/actions_changeselectedfields.inc.php';
+        require DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
         $sortfield = GETPOST("sortfield", 'alpha');
         $sortorder = GETPOST("sortorder", 'alpha');
@@ -325,54 +325,54 @@ if ($action == "view_ticketlist")
         // Add fields for extrafields
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
         	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-        		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
+        		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
         }
-        $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_type as type ON type.code=t.type_code";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_category as category ON category.code=t.category_code";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_severity as severity ON severity.code=t.severity_code";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid=t.fk_soc";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as uc ON uc.rowid=t.fk_user_create";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as ua ON ua.rowid=t.fk_user_assign";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id=t.rowid";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_contact as tc ON ec.fk_c_type_contact=tc.rowid";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople sp ON ec.fk_socpeople=sp.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid=t.fk_user_create";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid=t.fk_user_assign";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id=t.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact=tc.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON ec.fk_socpeople=sp.rowid";
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticket_extrafields as ef on (t.rowid = ef.fk_object)";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
         }
-        $sql .= " WHERE t.entity IN (" . getEntity('ticket') . ")";
+        $sql .= " WHERE t.entity IN (".getEntity('ticket').")";
         $sql .= " AND ((tc.source = 'external'";
-        $sql .= " AND tc.element='" . $db->escape($object->dao->element) . "'";
+        $sql .= " AND tc.element='".$db->escape($object->dao->element)."'";
         $sql .= " AND tc.active=1)";
-        $sql .= " OR (sp.email='" . $db->escape($_SESSION['email_customer']) . "'";
-        $sql .= " OR s.email='" . $db->escape($_SESSION['email_customer']) . "'";
-        $sql .= " OR t.origin_email='" . $db->escape($_SESSION['email_customer']) . "'))";
+        $sql .= " OR (sp.email='".$db->escape($_SESSION['email_customer'])."'";
+        $sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";
+        $sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."'))";
         // Manage filter
         if (!empty($filter)) {
             foreach ($filter as $key => $value) {
                 if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-                    $sql .= ' AND ' . $key . ' = \'' . $value . '\'';
+                    $sql .= ' AND '.$key.' = \''.$value.'\'';
                 } elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
-                    $sql .= " AND " . $key . " = '" . $db->escape($value) ."'";
+                    $sql .= " AND ".$key." = '".$db->escape($value)."'";
                 } elseif ($key == 't.fk_statut') {
                     if (is_array($value) && count($value) > 0) {
-                        $sql .= 'AND ' . $key . ' IN (' . implode(',', $value) . ')';
+                        $sql .= 'AND '.$key.' IN ('.implode(',', $value).')';
                     } else {
-                        $sql .= ' AND ' . $key . ' = ' . $db->escape($value);
+                        $sql .= ' AND '.$key.' = '.$db->escape($value);
                     }
                 } else {
-                    $sql .= ' AND ' . $key . ' LIKE \'%' . $value . '%\'';
+                    $sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
                 }
             }
         }
         //$sql .= " GROUP BY t.track_id";
-        $sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
+        $sql .= " ORDER BY ".$sortfield.' '.$sortorder;
 
         $resql = $db->query($sql);
         if ($resql) {
             $num_total = $db->num_rows($resql);
             if (!empty($limit)) {
-                $sql .= ' ' . $db->plimit($limit + 1, $offset);
+                $sql .= ' '.$db->plimit($limit + 1, $offset);
             }
 
             $resql = $db->query($sql);
@@ -561,7 +561,7 @@ if ($action == "view_ticketlist")
                     // Subject
                     if (!empty($arrayfields['t.subject']['checked'])) {
                         print '<td>';
-                        print '<a href="javascript:viewticket(\'' . $obj->track_id . '\',\'' . $_SESSION['email_customer'] . '\');">' . $obj->subject . '</a>';
+                        print '<a href="javascript:viewticket(\''.$obj->track_id.'\',\''.$_SESSION['email_customer'].'\');">'.$obj->subject.'</a>';
                         print '</td>';
                     }
 
@@ -620,20 +620,20 @@ if ($action == "view_ticketlist")
                     }
 
                     if (!empty($arrayfields['t.tms']['checked'])) {
-                        print '<td>' . dol_print_date($db->jdate($obj->tms), 'dayhour') . '</td>';
+                        print '<td>'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
                     }
 
                     // Extra fields
                     if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
                     	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                            if (!empty($arrayfields["ef." . $key]['checked'])) {
+                            if (!empty($arrayfields["ef.".$key]['checked'])) {
                                 print '<td';
                                 $align = $extrafields->getAlignFlag($key);
                                 if ($align) {
-                                    print ' align="' . $align . '"';
+                                    print ' align="'.$align.'"';
                                 }
                                 print '>';
-                                $tmpkey = 'options_' . $key;
+                                $tmpkey = 'options_'.$key;
                                 print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
                                 print '</td>';
                             }
@@ -657,8 +657,8 @@ if ($action == "view_ticketlist")
                 print '</table>';
                 print '</form>';
 
-                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticket/view.php', 1) . '" style="display:none;">';
-                print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="'.dol_buildpath('/public/ticket/view.php', 1).'" style="display:none;">';
+                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="view_ticket">';
                 print '<input type="hidden" name="btn_view_ticket_list" value="1">';
                 print '<input type="hidden" name="track_id" value="">';

@@ -58,10 +58,10 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield = "aa.account_number";
-if (! $sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "aa.account_number";
+if (!$sortorder) $sortorder = "ASC";
 
-$arrayfields=array(
+$arrayfields = array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
     'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
@@ -78,27 +78,27 @@ $accounting = new AccountingAccount($db);
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha')) { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha')) { $massaction = ''; }
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-    if (! empty($cancel)) $action = '';
+    if (!empty($cancel)) $action = '';
 
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
     {
     	$search_account = "";
     	$search_label = "";
     	$search_accountparent = "";
     	$search_pcgtype = "";
     	$search_pcgsubtype = "";
-		$search_array_options=array();
+		$search_array_options = array();
     }
 
     if (GETPOST('change_chart', 'alpha') && (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax)))
@@ -108,8 +108,8 @@ if (empty($reshook))
         if ($chartofaccounts > 0)
         {
 			// Get language code for this $chartofaccounts
-			$sql ='SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
-			$sql.=' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
+			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -132,7 +132,7 @@ if (empty($reshook))
 				{
 					$offsetforchartofaccount += $reg[1];
 				}
-				$offsetforchartofaccount+=($conf->entity  * 100000000);
+				$offsetforchartofaccount += ($conf->entity * 100000000);
 
 				$result = run_sql($sqlfile, 1, $conf->entity, 1, '', 'default', 32768, 0, $offsetforchartofaccount);
 
@@ -146,7 +146,7 @@ if (empty($reshook))
 				}
 			}
 
-            if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
+            if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
                 $error++;
             }
         } else {
@@ -179,12 +179,12 @@ if (empty($reshook))
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("ListAccounts"));
 
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -192,11 +192,11 @@ $pcgver = $conf->global->CHARTOFACCOUNTS;
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
-$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = " . $conf->entity;
-if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = " . $conf->entity;
-else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = " . $conf->entity;
-$sql .= " WHERE asy.rowid = " . $pcgver;
+$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".$conf->entity;
+if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
+else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
+$sql .= " WHERE asy.rowid = ".$pcgver;
 //print $sql;
 if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
@@ -287,9 +287,9 @@ if ($resql)
         while ($i < $numbis) {
             $obj = $db->fetch_object($resqlchart);
 
-            print '<option value="' . $obj->rowid . '"';
+            print '<option value="'.$obj->rowid.'"';
             print ($pcgver == $obj->rowid) ? ' selected' : '';
-            print '>' . $obj->pcg_version . ' - ' . $obj->label . ' - (' . $obj->country_code . ')</option>';
+            print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
 
             $i++;
         }
@@ -351,27 +351,27 @@ if ($resql)
 		print '<tr class="oddeven">';
 
 		// Account number
-		if (! empty($arrayfields['aa.account_number']['checked']))
+		if (!empty($arrayfields['aa.account_number']['checked']))
 		{
 			print "<td>";
 			print $accountstatic->getNomUrl(1, 0, 0, '', 0, 1);
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Account label
-		if (! empty($arrayfields['aa.label']['checked']))
+		if (!empty($arrayfields['aa.label']['checked']))
 		{
 			print "<td>";
 			print $obj->label;
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Account parent
-		if (! empty($arrayfields['aa.account_parent']['checked']))
+		if (!empty($arrayfields['aa.account_parent']['checked']))
 		{
-			if (! empty($obj->account_parent))
+			if (!empty($obj->account_parent))
 			{
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;

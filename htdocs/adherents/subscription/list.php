@@ -29,37 +29,37 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->loadLangs(array("members","companies"));
+$langs->loadLangs(array("members", "companies"));
 
-$action=GETPOST('action', 'aZ09');
-$massaction=GETPOST('massaction', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$filter=GETPOST("filter", "alpha");
-$statut=(GETPOSTISSET("statut")?GETPOST("statut", "alpha"):1);
-$search_ref=GETPOST('search_ref', 'alpha');
-$search_type=GETPOST('search_type', 'alpha');
-$search_lastname=GETPOST('search_lastname', 'alpha');
-$search_firstname=GETPOST('search_firstname', 'alpha');
-$search_login=GETPOST('search_login', 'alpha');
-$search_note=GETPOST('search_note', 'alpha');
-$search_account=GETPOST('search_account', 'int');
-$search_amount=GETPOST('search_amount', 'alpha');
+$filter = GETPOST("filter", "alpha");
+$statut = (GETPOSTISSET("statut") ?GETPOST("statut", "alpha") : 1);
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_type = GETPOST('search_type', 'alpha');
+$search_lastname = GETPOST('search_lastname', 'alpha');
+$search_firstname = GETPOST('search_firstname', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
+$search_note = GETPOST('search_note', 'alpha');
+$search_account = GETPOST('search_account', 'int');
+$search_amount = GETPOST('search_amount', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$date_select=GETPOST("date_select", 'alpha');
+$date_select = GETPOST("date_select", 'alpha');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) {  $sortorder="DESC"; }
-if (! $sortfield) {  $sortfield="c.dateadh"; }
+if (!$sortorder) {  $sortorder = "DESC"; }
+if (!$sortfield) {  $sortfield = "c.dateadh"; }
 
 $object = new Subscription($db);
 
@@ -94,18 +94,18 @@ $arrayfields=array(
 );
 
 // Security check
-$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
+$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction = ''; }
 
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('socid'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -116,17 +116,17 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
-	    $search="";
-	    $search_type="";
-	    $search_ref="";
-	    $search_lastname="";
-	    $search_firstname="";
-	    $search_login="";
-	    $search_note="";
-	    $search_amount="";
-	    $search_account="";
-	    $toselect='';
-	    $search_array_options=array();
+	    $search = "";
+	    $search_type = "";
+	    $search_ref = "";
+	    $search_lastname = "";
+	    $search_firstname = "";
+	    $search_login = "";
+	    $search_note = "";
+	    $search_amount = "";
+	    $search_account = "";
+	    $toselect = '';
+	    $search_array_options = array();
     }
 }
 
@@ -194,10 +194,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 // Add limit
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if (! $result)
+if (!$result)
 {
 	dol_print_error($db);
 	exit;
@@ -205,9 +205,9 @@ if (! $result)
 
 $num = $db->num_rows($result);
 
-$arrayofselected=is_array($toselect)?$toselect:array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -362,17 +362,17 @@ if (! empty($arrayfields['d.amount']['checked']))
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields'=>$arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
-if (! empty($arrayfields['c.datec']['checked']))
+if (!empty($arrayfields['c.datec']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Date modification
-if (! empty($arrayfields['c.tms']['checked']))
+if (!empty($arrayfields['c.tms']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -380,7 +380,7 @@ if (! empty($arrayfields['c.tms']['checked']))
 
 // Action column
 print '<td class="liste_titre right">';
-$searchpicto=$form->showFilterButtons();
+$searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
 
@@ -594,15 +594,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 // If no record found
 if ($num == 0)
 {
-	$colspan=1;
-	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 $db->free($resql);
 
-$parameters=array('sql' => $sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+$parameters = array('sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>";

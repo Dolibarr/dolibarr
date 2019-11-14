@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other","agenda"));
+$langs->loadLangs(array("admin", "other", "agenda"));
 
 if (!$user->admin)
     accessforbidden();
@@ -60,14 +60,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 llxHeader('', $langs->trans("DAVSetup"), $wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-$head=dav_admin_prepare_head();
+$head = dav_admin_prepare_head();
 
 dol_fiche_head($head, 'webdav', '', -1, 'action');
 
@@ -80,7 +80,7 @@ if ($action == 'edit')
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
@@ -100,7 +100,7 @@ if ($action == 'edit')
 		}
 		else
 		{
-			print '<input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '">';
+			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'">';
 		}
 		print '</td></tr>';
 	}
@@ -119,7 +119,7 @@ else
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');

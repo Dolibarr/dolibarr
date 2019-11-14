@@ -140,7 +140,7 @@ class ExtraFields
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[] Array of Error code (or message)
@@ -153,7 +153,7 @@ class ExtraFields
 	public $errno;
 
 
-	public static $type2label=array(
+	public static $type2label = array(
 	    'varchar'=>'String',
 	    'text'=>'TextLong',
 	    'html'=>'HtmlText',
@@ -280,67 +280,67 @@ class ExtraFields
 	 */
 	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '')
 	{
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty') $elementtype = 'societe';
+		if ($elementtype == 'contact') $elementtype = 'socpeople';
 
-		$table=$elementtype.'_extrafields';
-		if ($elementtype == 'categorie') $table='categories_extrafields';
+		$table = $elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table = 'categories_extrafields';
 
-		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/", $attrname) && ! is_numeric($attrname))
+		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/", $attrname) && !is_numeric($attrname))
 		{
-			if ($type=='boolean') {
-				$typedb='int';
-				$lengthdb='1';
-			} elseif($type=='price') {
-				$typedb='double';
-				$lengthdb='24,8';
-			} elseif($type=='phone') {
-				$typedb='varchar';
-				$lengthdb='20';
-			} elseif($type=='mail') {
-				$typedb='varchar';
-				$lengthdb='128';
-			} elseif($type=='url') {
-				$typedb='varchar';
-				$lengthdb='255';
-			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
-				$typedb='varchar';
-				$lengthdb='255';
-			} elseif ($type=='link') {
-				$typedb='int';
-				$lengthdb='11';
-			} elseif ($type=='html') {
-				$typedb='text';
-				$lengthdb=$length;
-			} elseif($type=='password') {
-				$typedb='varchar';
-				$lengthdb='128';
+			if ($type == 'boolean') {
+				$typedb = 'int';
+				$lengthdb = '1';
+			} elseif ($type == 'price') {
+				$typedb = 'double';
+				$lengthdb = '24,8';
+			} elseif ($type == 'phone') {
+				$typedb = 'varchar';
+				$lengthdb = '20';
+			} elseif ($type == 'mail') {
+				$typedb = 'varchar';
+				$lengthdb = '128';
+			} elseif ($type == 'url') {
+				$typedb = 'varchar';
+				$lengthdb = '255';
+			} elseif (($type == 'select') || ($type == 'sellist') || ($type == 'radio') || ($type == 'checkbox') || ($type == 'chkbxlst')) {
+				$typedb = 'varchar';
+				$lengthdb = '255';
+			} elseif ($type == 'link') {
+				$typedb = 'int';
+				$lengthdb = '11';
+			} elseif ($type == 'html') {
+				$typedb = 'text';
+				$lengthdb = $length;
+			} elseif ($type == 'password') {
+				$typedb = 'varchar';
+				$lengthdb = '128';
 			} else {
-				$typedb=$type;
-				$lengthdb=$length;
-				if ($type == 'varchar' && empty($lengthdb)) $lengthdb='255';
+				$typedb = $type;
+				$lengthdb = $length;
+				if ($type == 'varchar' && empty($lengthdb)) $lengthdb = '255';
 			}
 			$field_desc = array(
 				'type'=>$typedb,
 				'value'=>$lengthdb,
-				'null'=>($required?'NOT NULL':'NULL'),
+				'null'=>($required ? 'NOT NULL' : 'NULL'),
 				'default' => $default_value
 			);
 
-			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+			$result = $this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
 				if ($unique)
 				{
-					$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
-					$resql=$this->db->query($sql, 1, 'dml');
+					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
-				$this->errno=$this->db->lasterrno();
+				$this->error = $this->db->lasterror();
+				$this->errno = $this->db->lasterrno();
 				return -1;
 			}
 		}
@@ -378,19 +378,19 @@ class ExtraFields
 	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
         // phpcs:enable
-		global $conf,$user;
+		global $conf, $user;
 
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty') $elementtype = 'societe';
+		if ($elementtype == 'contact') $elementtype = 'socpeople';
 
 		// Clean parameters
-		if (empty($pos)) $pos=0;
-		if (empty($list)) $list='0';
-		if (empty($required)) $required=0;
-		if (empty($unique)) $unique=0;
-		if (empty($alwayseditable)) $alwayseditable=0;
+		if (empty($pos)) $pos = 0;
+		if (empty($list)) $list = '0';
+		if (empty($required)) $required = 0;
+		if (empty($unique)) $unique = 0;
+		if (empty($alwayseditable)) $alwayseditable = 0;
 
-		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && ! is_numeric($attrname))
+		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname))
 		{
 			if (is_array($param) && count($param) > 0)
 			{
@@ -460,8 +460,8 @@ class ExtraFields
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
-				$this->errno=$this->db->lasterrno();
+				$this->error = $this->db->lasterror();
+				$this->errno = $this->db->lasterrno();
 				return -1;
 			}
 		}
@@ -476,30 +476,30 @@ class ExtraFields
 	 */
 	public function delete($attrname, $elementtype = 'member')
 	{
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty') $elementtype = 'societe';
+		if ($elementtype == 'contact') $elementtype = 'socpeople';
 
-		$table=$elementtype.'_extrafields';
-		if ($elementtype == 'categorie') $table='categories_extrafields';
+		$table = $elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table = 'categories_extrafields';
 
-		$error=0;
+		$error = 0;
 
-		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
+		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
 		{
-			$result=$this->delete_label($attrname, $elementtype);
+			$result = $this->delete_label($attrname, $elementtype);
 			if ($result < 0)
 			{
-			    $this->error=$this->db->lasterror();
-				$this->errors[]=$this->db->lasterror();
+			    $this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
 			    $error++;
 			}
 
-			if (! $error)
+			if (!$error)
 			{
         		$sql = "SELECT COUNT(rowid) as nb";
-        		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
-        		$sql.= " WHERE elementtype = '".$elementtype."'";
-        		$sql.= " AND name = '".$attrname."'";
+        		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+        		$sql .= " WHERE elementtype = '".$elementtype."'";
+        		$sql .= " AND name = '".$attrname."'";
         		//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
                 $resql = $this->db->query($sql);
                 if ($resql)
@@ -507,11 +507,11 @@ class ExtraFields
                     $obj = $this->db->fetch_object($resql);
                     if ($obj->nb <= 0)
                     {
-            			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname);	// This also drop the unique key
+            			$result = $this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname); // This also drop the unique key
             			if ($result < 0)
             			{
-            				$this->error=$this->db->lasterror();
-				            $this->errors[]=$this->db->lasterror();
+            				$this->error = $this->db->lasterror();
+				            $this->errors[] = $this->db->lasterror();
             				$error++;
             			}
                     }
@@ -539,18 +539,18 @@ class ExtraFields
         // phpcs:enable
 		global $conf;
 
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty') $elementtype = 'societe';
+		if ($elementtype == 'contact') $elementtype = 'socpeople';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-			$sql.= " WHERE name = '".$attrname."'";
-			$sql.= " AND entity IN  (0,".$conf->entity.')';
-			$sql.= " AND elementtype = '".$elementtype."'";
+			$sql .= " WHERE name = '".$attrname."'";
+			$sql .= " AND entity IN  (0,".$conf->entity.')';
+			$sql .= " AND elementtype = '".$elementtype."'";
 
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				return 1;
@@ -593,80 +593,80 @@ class ExtraFields
 	 */
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty') $elementtype = 'societe';
+		if ($elementtype == 'contact') $elementtype = 'socpeople';
 
-        $table=$elementtype.'_extrafields';
-		if ($elementtype == 'categorie') $table='categories_extrafields';
+        $table = $elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table = 'categories_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
 		{
-			if ($type=='boolean') {
-				$typedb='int';
-				$lengthdb='1';
-			} elseif($type=='price') {
-				$typedb='double';
-				$lengthdb='24,8';
-			} elseif($type=='phone') {
-				$typedb='varchar';
-				$lengthdb='20';
-			} elseif($type=='mail') {
-				$typedb='varchar';
-				$lengthdb='128';
-			} elseif($type=='url') {
-				$typedb='varchar';
-				$lengthdb='255';
-			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
-				$typedb='varchar';
-				$lengthdb='255';
+			if ($type == 'boolean') {
+				$typedb = 'int';
+				$lengthdb = '1';
+			} elseif ($type == 'price') {
+				$typedb = 'double';
+				$lengthdb = '24,8';
+			} elseif ($type == 'phone') {
+				$typedb = 'varchar';
+				$lengthdb = '20';
+			} elseif ($type == 'mail') {
+				$typedb = 'varchar';
+				$lengthdb = '128';
+			} elseif ($type == 'url') {
+				$typedb = 'varchar';
+				$lengthdb = '255';
+			} elseif (($type == 'select') || ($type == 'sellist') || ($type == 'radio') || ($type == 'checkbox') || ($type == 'chkbxlst')) {
+				$typedb = 'varchar';
+				$lengthdb = '255';
 			} elseif ($type == 'html') {
-				$typedb='text';
-			} elseif ($type=='link') {
-				$typedb='int';
-				$lengthdb='11';
-			} elseif($type=='password') {
-				$typedb='varchar';
-				$lengthdb='50';
+				$typedb = 'text';
+			} elseif ($type == 'link') {
+				$typedb = 'int';
+				$lengthdb = '11';
+			} elseif ($type == 'password') {
+				$typedb = 'varchar';
+				$lengthdb = '50';
 			} else {
-				$typedb=$type;
-				$lengthdb=$length;
+				$typedb = $type;
+				$lengthdb = $length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'), 'default'=>$default);
+			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
 
 			if ($type != 'separate') // No table update when separate type
 			{
-				$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate')
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable);
 				}
 				if ($result > 0)
 				{
-					$sql='';
+					$sql = '';
 					if ($unique)
 					{
-						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					}
 					else
 					{
-						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
-					$resql=$this->db->query($sql, 1, 'dml');
+					$resql = $this->db->query($sql, 1, 'dml');
 					return 1;
 				}
 				else
 				{
-					$this->error=$this->db->lasterror();
+					$this->error = $this->db->lasterror();
 					return -1;
 				}
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
+				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -708,17 +708,17 @@ class ExtraFields
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable);
 
 		// Clean parameters
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty') $elementtype = 'societe';
+		if ($elementtype == 'contact') $elementtype = 'socpeople';
 
-		if (empty($pos)) $pos=0;
-		if (empty($list)) $list='0';
+		if (empty($pos)) $pos = 0;
+		if (empty($list)) $list = '0';
         if (empty($totalizable)) {
             $totalizable = 0;
         }
-		if (empty($required)) $required=0;
-		if (empty($unique)) $unique=0;
-		if (empty($alwayseditable)) $alwayseditable=0;
+		if (empty($required)) $required = 0;
+		if (empty($unique)) $unique = 0;
+		if (empty($alwayseditable)) $alwayseditable = 0;
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
 		{
@@ -734,76 +734,76 @@ class ExtraFields
 			}
 			else
 			{
-				$params='';
+				$params = '';
 			}
 
 			if ($entity === '' || $entity != '0')
 			{
 				// We dont want on all entities, we delete all and current
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-				$sql_del.= " WHERE name = '".$attrname."'";
-				$sql_del.= " AND entity IN (0, ".($entity===''?$conf->entity:$entity).")";
-				$sql_del.= " AND elementtype = '".$elementtype."'";
+				$sql_del .= " WHERE name = '".$attrname."'";
+				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
+				$sql_del .= " AND elementtype = '".$elementtype."'";
 			}
 			else
 			{
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-				$sql_del.= " WHERE name = '".$attrname."'";
-				$sql_del.= " AND entity = 0";
-				$sql_del.= " AND elementtype = '".$elementtype."'";
+				$sql_del .= " WHERE name = '".$attrname."'";
+				$sql_del .= " AND entity = 0";
+				$sql_del .= " AND elementtype = '".$elementtype."'";
 			}
-			$resql1=$this->db->query($sql_del);
+			$resql1 = $this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
-			$sql.= " name,";		// This is code
-			$sql.= " entity,";
-			$sql.= " label,";
-			$sql.= " type,";
-			$sql.= " size,";
-			$sql.= " elementtype,";
-			$sql.= " fieldunique,";
-			$sql.= " fieldrequired,";
-			$sql.= " perms,";
-			$sql.= " langs,";
-			$sql.= " pos,";
-			$sql.= " alwayseditable,";
-			$sql.= " param,";
-			$sql.= " list,";
-            $sql.= " totalizable,";
-			$sql.= " fielddefault,";
-			$sql.= " fieldcomputed,";
-			$sql.= " fk_user_author,";
-			$sql.= " fk_user_modif,";
-			$sql.= " datec,";
-			$sql.= " enabled,";
-			$sql.= " help";
-			$sql.= ") VALUES (";
-			$sql.= "'".$attrname."',";
-			$sql.= " ".($entity===''?$conf->entity:$entity).",";
-			$sql.= " '".$this->db->escape($label)."',";
-			$sql.= " '".$this->db->escape($type)."',";
-			$sql.= " '".$this->db->escape($size)."',";
-			$sql.= " '".$this->db->escape($elementtype)."',";
-			$sql.= " ".$unique.",";
-			$sql.= " ".$required.",";
-			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
-			$sql.= " ".($langfile?"'".$this->db->escape($langfile)."'":"null").",";
-			$sql.= " ".$pos.",";
-			$sql.= " '".$this->db->escape($alwayseditable)."',";
-			$sql.= " '".$this->db->escape($params)."',";
-			$sql.= " '".$this->db->escape($list)."', ";
-            $sql.= " ".$totalizable.",";
-			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
-			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
-			$sql .= " " . $user->id . ",";
-			$sql .= " " . $user->id . ",";
-			$sql .= "'" . $this->db->idate(dol_now()) . "',";
-			$sql .= "'" . $this->db->escape($enabled). "',";
-			$sql.= " ".($help?"'".$this->db->escape($help)."'":"null");
-			$sql.= ")";
+			$sql .= " name,"; // This is code
+			$sql .= " entity,";
+			$sql .= " label,";
+			$sql .= " type,";
+			$sql .= " size,";
+			$sql .= " elementtype,";
+			$sql .= " fieldunique,";
+			$sql .= " fieldrequired,";
+			$sql .= " perms,";
+			$sql .= " langs,";
+			$sql .= " pos,";
+			$sql .= " alwayseditable,";
+			$sql .= " param,";
+			$sql .= " list,";
+            $sql .= " totalizable,";
+			$sql .= " fielddefault,";
+			$sql .= " fieldcomputed,";
+			$sql .= " fk_user_author,";
+			$sql .= " fk_user_modif,";
+			$sql .= " datec,";
+			$sql .= " enabled,";
+			$sql .= " help";
+			$sql .= ") VALUES (";
+			$sql .= "'".$attrname."',";
+			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
+			$sql .= " '".$this->db->escape($label)."',";
+			$sql .= " '".$this->db->escape($type)."',";
+			$sql .= " '".$this->db->escape($size)."',";
+			$sql .= " '".$this->db->escape($elementtype)."',";
+			$sql .= " ".$unique.",";
+			$sql .= " ".$required.",";
+			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
+			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
+			$sql .= " ".$pos.",";
+			$sql .= " '".$this->db->escape($alwayseditable)."',";
+			$sql .= " '".$this->db->escape($params)."',";
+			$sql .= " '".$this->db->escape($list)."', ";
+            $sql .= " ".$totalizable.",";
+			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
+			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
+			$sql .= " ".$user->id.",";
+			$sql .= " ".$user->id.",";
+			$sql .= "'".$this->db->idate(dol_now())."',";
+			$sql .= "'".$this->db->escape($enabled)."',";
+			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null");
+			$sql .= ")";
 
-			$resql2=$this->db->query($sql);
+			$resql2 = $this->db->query($sql);
 
 			if ($resql1 && $resql2)
 			{
@@ -871,12 +871,12 @@ class ExtraFields
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
-		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
-		if ($elementtype) $sql.= " WHERE elementtype = '".$elementtype."'";	// Filed with object->table_element
-		$sql.= " ORDER BY pos";
+		if ($elementtype) $sql .= " WHERE elementtype = '".$elementtype."'"; // Filed with object->table_element
+		$sql .= " ORDER BY pos";
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -888,7 +888,7 @@ class ExtraFields
 				        // This field is not in current entity. We discard but before we save it into the array of mandatory fields if it is a mandatory field without default value
 				        if ($tab->fieldrequired && is_null($tab->fielddefault))
 				        {
-				            $this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name]=$tab->type;
+				            $this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name] = $tab->type;
 				        }
 				        continue;
 				    }
@@ -1034,21 +1034,21 @@ class ExtraFields
 			{
 				$morecss = 'minwidth200imp';
 			}
-			elseif (in_array($type, array('int','integer','double','price')))
+			elseif (in_array($type, array('int', 'integer', 'double', 'price')))
 			{
 				$morecss = 'maxwidth75';
 			}
 			elseif ($type == 'password')
 			{
-				$morecss='maxwidth100';
+				$morecss = 'maxwidth100';
 			}
 			elseif ($type == 'url')
 			{
-				$morecss='minwidth400';
+				$morecss = 'minwidth400';
 			}
 			elseif ($type == 'boolean')
 			{
-				$morecss='';
+				$morecss = '';
 			}
 			else
 			{
@@ -1067,10 +1067,10 @@ class ExtraFields
 			}
 		}
 
-		if (in_array($type, array('date','datetime')))
+		if (in_array($type, array('date', 'datetime')))
 		{
-			$tmp=explode(',', $size);
-			$newsize=$tmp[0];
+			$tmp = explode(',', $size);
+			$newsize = $tmp[0];
 
 			$showtime = in_array($type, array('datetime')) ? 1 : 0;
 
@@ -1199,22 +1199,22 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
                 // 5 : id category type
                 // 6 : ids categories list separated by comma for category root
-				$keyList=(empty($InfoFieldList[2])?'rowid':$InfoFieldList[2].' as rowid');
+				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
-				if (count($InfoFieldList) > 4 && ! empty($InfoFieldList[4]))
+				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4]))
 				{
 					if (strpos($InfoFieldList[4], 'extra.') !== false)
 					{
-						$keyList='main.'.$InfoFieldList[2].' as rowid';
+						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
-						$keyList=$InfoFieldList[2].' as rowid';
+						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3]))
 				{
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList.= ', '.$parentField;
+					$keyList .= ', '.$parentField;
 				}
 
                 $filter_categorie = false;
@@ -1232,8 +1232,8 @@ class ExtraFields
                     }
 
                     $sqlwhere = '';
-                    $sql = 'SELECT ' . $keyList;
-                    $sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
+                    $sql = 'SELECT '.$keyList;
+                    $sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
                     if (!empty($InfoFieldList[4])) {
                         // can use curent entity filter
                         if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
@@ -1252,24 +1252,24 @@ class ExtraFields
                         }
                         //We have to join on extrafield table
                         if (strpos($InfoFieldList[4], 'extra') !== false) {
-                            $sql .= ' as main, ' . MAIN_DB_PREFIX . $InfoFieldList[0] . '_extrafields as extra';
-                            $sqlwhere .= ' WHERE extra.fk_object=main.' . $InfoFieldList[2] . ' AND ' . $InfoFieldList[4];
+                            $sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+                            $sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
                         } else {
-                            $sqlwhere .= ' WHERE ' . $InfoFieldList[4];
+                            $sqlwhere .= ' WHERE '.$InfoFieldList[4];
                         }
                     } else {
                         $sqlwhere .= ' WHERE 1=1';
                     }
                     // Some tables may have field, some other not. For the moment we disable it.
                     if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-                        $sqlwhere .= ' AND entity = ' . $conf->entity;
+                        $sqlwhere .= ' AND entity = '.$conf->entity;
                     }
                     $sql .= $sqlwhere;
                     //print $sql;
 
-                    $sql .= ' ORDER BY ' . implode(', ', $fields_label);
+                    $sql .= ' ORDER BY '.implode(', ', $fields_label);
 
-                    dol_syslog(get_class($this) . '::showInputField type=sellist', LOG_DEBUG);
+                    dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
                     $resql = $this->db->query($sql);
                     if ($resql) {
                         $out .= '<option value="0">&nbsp;</option>';
@@ -1500,7 +1500,7 @@ class ExtraFields
                             if (is_array($fields_label)) {
                                 $notrans = true;
                                 foreach ($fields_label as $field_toshow) {
-                                    $labeltoshow .= $obj->$field_toshow . ' ';
+                                    $labeltoshow .= $obj->$field_toshow.' ';
                                 }
                             } else {
                                 $labeltoshow = $obj->{$InfoFieldList[1]};
@@ -1511,9 +1511,9 @@ class ExtraFields
                                 foreach ($fields_label as $field_toshow) {
                                     $translabel = $langs->trans($obj->$field_toshow);
                                     if ($translabel != $obj->$field_toshow) {
-                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
+                                        $labeltoshow = dol_trunc($translabel, 18).' ';
                                     } else {
-                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
+                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18).' ';
                                     }
                                 }
 
@@ -1535,7 +1535,7 @@ class ExtraFields
                                 }
 
                                 if (!empty($InfoFieldList[3]) && $parentField) {
-                                    $parent = $parentName . ':' . $obj->{$parentField};
+                                    $parent = $parentName.':'.$obj->{$parentField};
                                 }
 
                                 $data[$obj->rowid] = $labeltoshow;
@@ -1725,38 +1725,38 @@ class ExtraFields
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$value='';	// value was used, so now we reste it to use it to build final output
+				$value = ''; // value was used, so now we reste it to use it to build final output
 
 				$obj = $this->db->fetch_object($resql);
 
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|', $InfoFieldList[1]);
 
-				if(is_array($fields_label) && count($fields_label)>1)
+				if (is_array($fields_label) && count($fields_label) > 1)
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel='';
+						$translabel = '';
 						if (!empty($obj->$field_toshow)) {
-							$translabel=$langs->trans($obj->$field_toshow);
+							$translabel = $langs->trans($obj->$field_toshow);
 						}
-						if ($translabel!=$field_toshow) {
-							$value.=dol_trunc($translabel, 18).' ';
-						}else {
-							$value.=$obj->$field_toshow.' ';
+						if ($translabel != $field_toshow) {
+							$value .= dol_trunc($translabel, 18).' ';
+						} else {
+							$value .= $obj->$field_toshow.' ';
 						}
 					}
 				}
 				else
 				{
-					$translabel='';
+					$translabel = '';
 					if (!empty($obj->{$InfoFieldList[1]})) {
-						$translabel=$langs->trans($obj->{$InfoFieldList[1]});
+						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 					}
-					if ($translabel!=$obj->{$InfoFieldList[1]}) {
-						$value=dol_trunc($translabel, 18);
-					}else {
-						$value=$obj->{$InfoFieldList[1]};
+					if ($translabel != $obj->{$InfoFieldList[1]}) {
+						$value = dol_trunc($translabel, 18);
+					} else {
+						$value = $obj->{$InfoFieldList[1]};
 					}
 				}
 			}
@@ -1764,20 +1764,20 @@ class ExtraFields
 		}
 		elseif ($type == 'radio')
 		{
-			$value=$param['options'][$value];
+			$value = $param['options'][$value];
 		}
 		elseif ($type == 'checkbox')
 		{
-			$value_arr=explode(',', $value);
-			$value='';
-			$toprint=array();
+			$value_arr = explode(',', $value);
+			$value = '';
+			$toprint = array();
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
-					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
 				}
 			}
-			$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 		elseif ($type == 'chkbxlst')
 		{
@@ -1791,7 +1791,7 @@ class ExtraFields
 
 			if (count($InfoFieldList) >= 3) {
 				$selectkey = $InfoFieldList[2];
-				$keyList = $InfoFieldList[2] . ' as rowid';
+				$keyList = $InfoFieldList[2].' as rowid';
 			}
 
 			$fields_label = explode('|', $InfoFieldList[1]);
@@ -1878,24 +1878,24 @@ class ExtraFields
 		}
 		elseif ($type == 'text')
 		{
-			$value=dol_htmlentitiesbr($value);
+			$value = dol_htmlentitiesbr($value);
 		}
 		elseif ($type == 'html')
 		{
-			$value=dol_htmlentitiesbr($value);
+			$value = dol_htmlentitiesbr($value);
 		}
 		elseif ($type == 'password')
 		{
-			$value=dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
+			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		}
 		else
 		{
-			$showsize=round($size);
-			if ($showsize > 48) $showsize=48;
+			$showsize = round($size);
+			if ($showsize > 48) $showsize = 48;
 		}
 
 		//print $type.'-'.$size;
-		$out=$value;
+		$out = $value;
 
 		return $out;
 	}
@@ -1909,44 +1909,44 @@ class ExtraFields
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		if (! empty($extrafieldsobjectkey)) $type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
-		else $type=$this->attribute_type[$key];
+		if (!empty($extrafieldsobjectkey)) $type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+		else $type = $this->attribute_type[$key];
 
-		$align='';
+		$align = '';
 
         if ($type == 'date')
 		{
-			$align="center";
+			$align = "center";
 		}
 		elseif ($type == 'datetime')
 		{
-			$align="center";
+			$align = "center";
 		}
 		elseif ($type == 'int')
 		{
-			$align="right";
+			$align = "right";
 		}
 		elseif ($type == 'double')
 		{
-			$align="right";
+			$align = "right";
 		}
 		elseif ($type == 'boolean')
 		{
-			$align="center";
+			$align = "center";
 		}
 		elseif ($type == 'radio')
 		{
-			$align="center";
+			$align = "center";
 		}
 		elseif ($type == 'checkbox')
 		{
-			$align="center";
+			$align = "center";
 		}
 		elseif ($type == 'price')
 		{
-			$align="right";
+			$align = "right";
 		}
 
 		return $align;
@@ -2144,29 +2144,29 @@ class ExtraFields
 					$key_type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
 				}
 
-				if (in_array($key_type, array('date','datetime')))
+				if (in_array($key_type, array('date', 'datetime')))
 				{
 					// Clean parameters
-					$value_key=dol_mktime($_POST[$keysuffix."options_".$key.$keyprefix."hour"], $_POST[$keysuffix."options_".$key.$keyprefix."min"], 0, $_POST[$keysuffix."options_".$key.$keyprefix."month"], $_POST[$keysuffix."options_".$key.$keyprefix."day"], $_POST[$keysuffix."options_".$key.$keyprefix."year"]);
+					$value_key = dol_mktime($_POST[$keysuffix."options_".$key.$keyprefix."hour"], $_POST[$keysuffix."options_".$key.$keyprefix."min"], 0, $_POST[$keysuffix."options_".$key.$keyprefix."month"], $_POST[$keysuffix."options_".$key.$keyprefix."day"], $_POST[$keysuffix."options_".$key.$keyprefix."year"]);
 				}
 				elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
-					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
-					$value_arr=(array) $value_arr;
-					$value_key=implode(',', $value_arr);
+					$value_arr = (array) $value_arr;
+					$value_key = implode(',', $value_arr);
 				}
-				elseif (in_array($key_type, array('price','double')))
+				elseif (in_array($key_type, array('price', 'double')))
 				{
-					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key=price2num($value_arr);
+					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_key = price2num($value_arr);
 				}
 				else
 				{
-					$value_key=GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 				}
 
-				$array_options[$keysuffix."options_".$key]=$value_key;	// No keyprefix here. keyprefix is used only for read.
+				$array_options[$keysuffix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
 			}
 
 			return $array_options;

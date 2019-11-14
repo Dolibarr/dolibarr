@@ -45,7 +45,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (! empty($object->status))
+	if (!empty($object->status))
 	{
     	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("SellingPrices");
@@ -53,10 +53,10 @@ function product_prepare_head($object)
     	$h++;
 	}
 
-	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
+	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
-    	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
-    	|| (! empty($conf->margin->enabled) && $user->rights->margin->liretous)
+    	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    	|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
     	)
     	{
     		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
@@ -67,7 +67,7 @@ function product_prepare_head($object)
 	}
 
 	// Multilangs
-	if (! empty($conf->global->MAIN_MULTILANGS))
+	if (!empty($conf->global->MAIN_MULTILANGS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
@@ -130,16 +130,16 @@ function product_prepare_head($object)
     // Tab to link resources
     if (!empty($conf->resource->enabled))
     {
-        if ($object->isProduct() && ! empty($conf->global->RESOURCE_ON_PRODUCTS))
+        if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS))
         {
-            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=product&ref=' . $object->ref;
+            $head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
             $head[$h][1] = $langs->trans("Resources");
             $head[$h][2] = 'resources';
             $h++;
         }
-        if ($object->isService() && ! empty($conf->global->RESOURCE_ON_SERVICES))
+        if ($object->isService() && !empty($conf->global->RESOURCE_ON_SERVICES))
         {
-            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=service&ref=' . $object->ref;
+            $head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
             $head[$h][1] = $langs->trans("Resources");
             $head[$h][2] = 'resources';
             $h++;
@@ -188,10 +188,10 @@ function product_prepare_head($object)
     // Log
     $head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Events");
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
     {
-    	$head[$h][1].= '/';
-    	$head[$h][1].= $langs->trans("Agenda");
+    	$head[$h][1] .= '/';
+    	$head[$h][1] .= $langs->trans("Agenda");
     }
     $head[$h][2] = 'agenda';
     $h++;
@@ -210,7 +210,7 @@ function productlot_prepare_head($object)
     global $db, $langs, $conf, $user;
 
     // Load translation files required by the page
-    $langs->loadLangs(array("products","productbatch"));
+    $langs->loadLangs(array("products", "productbatch"));
 
     $h = 0;
     $head = array();
@@ -270,7 +270,7 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
+	if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
 	{
 		$head[$h] = array(
 			0 => DOL_URL_ROOT."/product/admin/price_rules.php",
@@ -342,7 +342,7 @@ function product_lot_admin_prepare_head()
  */
 function show_stats_for_company($product, $socid)
 {
-	global $conf,$langs,$user,$db;
+	global $conf, $langs, $user, $db;
 
 	$nblines = 0;
 
@@ -354,10 +354,10 @@ function show_stats_for_company($product, $socid)
 	print '</tr>';
 
 	// Customer proposals
-	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
+	if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_propale($socid);
+		$ret = $product->load_stats_propale($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
@@ -372,10 +372,10 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier proposals
-	if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_proposal_supplier($socid);
+		$ret = $product->load_stats_proposal_supplier($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
@@ -390,10 +390,10 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer orders
-	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_commande($socid);
+		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
@@ -408,10 +408,10 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_commande_fournisseur($socid);
+		$ret = $product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
@@ -426,10 +426,10 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_facture($socid);
+		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
@@ -444,10 +444,10 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier invoices
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_facture_fournisseur($socid);
+		$ret = $product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
@@ -463,10 +463,10 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
+	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
 		$nblines++;
-		$ret=$product->load_stats_contrat($socid);
+		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
 		print '<tr><td>';
@@ -555,8 +555,8 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
  */
 function measuring_units_squared($unit)
 {
-	$measuring_units=array();
-	$measuring_units[0] = 0;   // m -> m3
+	$measuring_units = array();
+	$measuring_units[0] = 0; // m -> m3
 	$measuring_units[-1] = -2; // dm-> dm2
 	$measuring_units[-2] = -4; // cm -> cm2
 	$measuring_units[-3] = -6; // mm -> mm2
@@ -575,8 +575,8 @@ function measuring_units_squared($unit)
  */
 function measuring_units_cubed($unit)
 {
-	$measuring_units=array();
-	$measuring_units[0] = 0;   // m -> m2
+	$measuring_units = array();
+	$measuring_units[0] = 0; // m -> m2
 	$measuring_units[-1] = -3; // dm-> dm3
 	$measuring_units[-2] = -6; // cm -> cm3
 	$measuring_units[-3] = -9; // mm -> mm3

@@ -77,8 +77,8 @@ function dolKeepOnlyPhpCode($str)
 	$parts = explode('<?php', $str);
 	if (!empty($parts))
 	{
-		$i=0;
-		foreach($parts as $part)
+		$i = 0;
+		foreach ($parts as $part)
 		{
 			if ($i == 0) 	// The first part is never php code
 			{
@@ -394,13 +394,13 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	global $db, $website;
 
 	$newurl = '';
-	$result=0;
+	$result = 0;
 
 	// We make redirect using the alternative alias, we must find the real $containerref
 	if ($containeraliasalt)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-		$tmpwebsitepage=new WebsitePage($db);
+		$tmpwebsitepage = new WebsitePage($db);
 		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
 		if ($result > 0)
 		{
@@ -426,10 +426,10 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if (defined('USEDOLIBARRSERVER'))	// When page called from Dolibarr server
 	{
 		// Check new container exists
-		if (! $containeraliasalt)	// If containeraliasalt set, we already did the test
+		if (!$containeraliasalt)	// If containeraliasalt set, we already did the test
 		{
 			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-			$tmpwebsitepage=new WebsitePage($db);
+			$tmpwebsitepage = new WebsitePage($db);
 			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
 			unset($tmpwebsitepage);
 		}
@@ -503,14 +503,14 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile;		// Include because we want to execute code content
+	$res = include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
 	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
-	print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $tmpoutput);
+	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
-	if (! $res)
+	if (!$res)
 	{
 		print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref.".\n";
 	}
@@ -803,45 +803,45 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 {
 	global $conf;
 
-	$error=0;
+	$error = 0;
 
 	dol_syslog("Call getAllImages with grabimagesinto=".$grabimagesinto);
 
-	$alreadygrabbed=array();
+	$alreadygrabbed = array();
 
-	if (preg_match('/\/$/', $urltograb)) $urltograb.='.';
-	$urltograb = dirname($urltograb);							// So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
+	if (preg_match('/\/$/', $urltograb)) $urltograb .= '.';
+	$urltograb = dirname($urltograb); // So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
 	// Search X in "img...src=X"
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)
 	{
-		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
+		if (preg_match('/^data:image/i', $regs[2][$key])) continue; // We do nothing for such images
 
 		if (preg_match('/^\//', $regs[2][$key]))
 		{
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
-			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
 		}
 		else
 		{
-			$urltograbbis = $urltograb.'/'.$regs[2][$key];	// We use dir of grabbed file
+			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
 		$linkwithoutdomain = $regs[2][$key];
 		$dirforimages = '/'.$objectpage->pageurl;
-		if ($grabimagesinto == 'root') $dirforimages='';
+		if ($grabimagesinto == 'root') $dirforimages = '';
 
 		// Define $filetosave and $filename
-		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key]) ? '' : '/').$regs[2][$key];
 		if (preg_match('/^http/', $regs[2][$key]))
 		{
 			$urltograbbis = $regs[2][$key];
 			$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain) ? '' : '/').$linkwithoutdomain;
 		}
-		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain) ? '' : '/').$linkwithoutdomain;
 
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
@@ -860,24 +860,24 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-					$action='create';
+					$action = 'create';
 				}
 				elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-					$action='create';
+					$action = 'create';
 				}
 				else
 				{
-					$alreadygrabbed[$urltograbbis]=1;	// Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (! empty($conf->global->MAIN_UMASK))
+					if (!empty($conf->global->MAIN_UMASK))
 						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
 				}
 			}
@@ -894,33 +894,33 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 	foreach ($regs[0] as $key => $val)
 	{
-		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
+		if (preg_match('/^data:image/i', $regs[2][$key])) continue; // We do nothing for such images
 
 		if (preg_match('/^\//', $regs[2][$key]))
 		{
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
-			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
 		}
 		else
 		{
-			$urltograbbis = $urltograb.'/'.$regs[2][$key];	// We use dir of grabbed file
+			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
 		$linkwithoutdomain = $regs[2][$key];
 
 		$dirforimages = '/'.$objectpage->pageurl;
-		if ($grabimagesinto == 'root') $dirforimages='';
+		if ($grabimagesinto == 'root') $dirforimages = '';
 
-		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key]) ? '' : '/').$regs[2][$key];
 
 		if (preg_match('/^http/', $regs[2][$key]))
 		{
 			$urltograbbis = $regs[2][$key];
 			$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain) ? '' : '/').$linkwithoutdomain;
 		}
 
-		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain) ? '' : '/').$linkwithoutdomain;
 
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
@@ -939,24 +939,24 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-					$action='create';
+					$action = 'create';
 				}
 				elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-					$action='create';
+					$action = 'create';
 				}
 				else
 				{
-					$alreadygrabbed[$urltograbbis]=1;	// Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (! empty($conf->global->MAIN_UMASK))
+					if (!empty($conf->global->MAIN_UMASK))
 						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
 				}
 			}

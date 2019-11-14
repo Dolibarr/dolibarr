@@ -118,18 +118,18 @@ $listUserAssignedUpdated = false;
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0'))
 {
-	$idtoremove=GETPOST('removedassigned');
+	$idtoremove = GETPOST('removedassigned');
 
-	if (! empty($_SESSION['assignedtouser'])) $tmpassigneduserids=json_decode($_SESSION['assignedtouser'], 1);
-	else $tmpassigneduserids=array();
+	if (!empty($_SESSION['assignedtouser'])) $tmpassigneduserids = json_decode($_SESSION['assignedtouser'], 1);
+	else $tmpassigneduserids = array();
 
 	foreach ($tmpassigneduserids as $key => $val)
 	{
 		if ($val['id'] == $idtoremove || $val['id'] == -1) unset($tmpassigneduserids[$key]);
 	}
 	//var_dump($_POST['removedassigned']);exit;
-	$_SESSION['assignedtouser']=json_encode($tmpassigneduserids);
-	$donotclearsession=1;
+	$_SESSION['assignedtouser'] = json_encode($tmpassigneduserids);
+	$donotclearsession = 1;
 	if ($action == 'add') $action = 'create';
 	if ($action == 'update') $action = 'edit';
 
@@ -142,15 +142,15 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 	// Add a new user
 	if (GETPOST('assignedtouser') > 0)
 	{
-		$assignedtouser=array();
-		if (! empty($_SESSION['assignedtouser']))
+		$assignedtouser = array();
+		if (!empty($_SESSION['assignedtouser']))
 		{
-			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
+			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
-		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
-		$_SESSION['assignedtouser']=json_encode($assignedtouser);
+		$assignedtouser[GETPOST('assignedtouser')] = array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
+		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
 	}
-	$donotclearsession=1;
+	$donotclearsession = 1;
 	if ($action == 'add') $action = 'create';
 	if ($action == 'update') $action = 'edit';
 
@@ -168,7 +168,7 @@ if (empty($reshook) && $action == 'classin' && ($user->rights->agenda->allaction
 // Action clone object
 if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 {
-	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers'))
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	}
@@ -182,7 +182,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
             }
 			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
-				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 				exit();
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -195,17 +195,17 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 // Add event
 if (empty($reshook) && $action == 'add')
 {
-	$error=0;
+	$error = 0;
 
     if (empty($backtopage))
     {
         if ($socid > 0) $backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
-        else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
+        else $backtopage = DOL_URL_ROOT.'/comm/action/index.php';
     }
 
     if (!empty($socpeopleassigned[0]))
 	{
-		$result=$contact->fetch($socpeopleassigned[0]);
+		$result = $contact->fetch($socpeopleassigned[0]);
 	}
 
 	if ($cancel)
@@ -322,29 +322,29 @@ if (empty($reshook) && $action == 'add')
 
 	if (GETPOST('socid', 'int') > 0)
 	{
-		$object->socid=GETPOST('socid', 'int');
+		$object->socid = GETPOST('socid', 'int');
 		$object->fetch_thirdparty();
 
-		$object->societe = $object->thirdparty;	// For backward compatibility
+		$object->societe = $object->thirdparty; // For backward compatibility
 	}
 
 	// Check parameters
 	if (empty($object->userownerid) && empty($_SESSION['assignedtouser']))
 	{
-		$error++; $donotclearsession=1;
+		$error++; $donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 	}
 	if ($object->type_code == 'AC_RDV' && ($datep == '' || ($datef == '' && empty($fulldayevent))))
 	{
-		$error++; $donotclearsession=1;
+		$error++; $donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
-	if (! GETPOST('apyear') && ! GETPOST('adyear'))
+	if (!GETPOST('apyear') && !GETPOST('adyear'))
 	{
-		$error++; $donotclearsession=1;
+		$error++; $donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
@@ -400,16 +400,16 @@ if (empty($reshook) && $action == 'add')
 				// If error
 				$db->rollback();
 				$langs->load("errors");
-				$error=$langs->trans($object->error);
+				$error = $langs->trans($object->error);
 				setEventMessages($error, null, 'errors');
-				$action = 'create'; $donotclearsession=1;
+				$action = 'create'; $donotclearsession = 1;
 			}
 		}
 		else
 		{
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'create'; $donotclearsession=1;
+			$action = 'create'; $donotclearsession = 1;
 		}
 	}
 }
@@ -587,11 +587,11 @@ if (empty($reshook) && $action == 'update')
             }
         }
 
-		if (! $error)
+		if (!$error)
 		{
 			$db->begin();
 
-			$result=$object->update($user);
+			$result = $object->update($user);
 
 			if ($result > 0)
 			{
@@ -607,9 +607,9 @@ if (empty($reshook) && $action == 'update')
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-        if (! empty($backtopage))
+        if (!empty($backtopage))
         {
         	unset($_SESSION['assignedtouser']);
             header("Location: ".$backtopage);
@@ -631,7 +631,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete)
 	{
-		$result=$object->delete();
+		$result = $object->delete();
 
 		if ($result >= 0)
 		{
@@ -766,10 +766,10 @@ if (empty($reshook)) {
  * View
  */
 
-$form=new Form($db);
-$formproject=new FormProjets($db);
+$form = new Form($db);
+$formproject = new FormProjets($db);
 
-$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 if ($action == 'create')
@@ -779,13 +779,13 @@ if ($action == 'create')
 	$socpeopleassigned = GETPOST("socpeopleassigned", 'array');
 	if (!empty($socpeopleassigned[0]))
 	{
-		$result=$contact->fetch($socpeopleassigned[0]);
+		$result = $contact->fetch($socpeopleassigned[0]);
 		if ($result < 0) dol_print_error($db, $contact->error);
 	}
 
 	dol_set_focus("#label");
 
-    if (! empty($conf->use_javascript_ajax))
+    if (!empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript">';
         print '$(document).ready(function () {
@@ -887,24 +887,24 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Dev in progress
-	$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 	if ($userepeatevent)
 	{
 		// Repeat
 		print '<tr><td>'.$langs->trans("RepeatEvent").'</td><td colspan="3">';
 		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
-		$arrayrecurrulefreq=array(
+		$arrayrecurrulefreq = array(
 		'no'=>$langs->trans("No"),
 		'MONTHLY'=>$langs->trans("EveryMonth"),
 		'WEEKLY'=>$langs->trans("EveryWeek"),
 		//'DAYLY'=>$langs->trans("EveryDay")
 		);
-		$selectedrecurrulefreq='no';
-		$selectedrecurrulebymonthday='';
-		$selectedrecurrulebyday='';
-		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) $selectedrecurrulefreq=$reg[1];
-		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebymonthday=$reg[1];
-		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebyday=$reg[1];
+		$selectedrecurrulefreq = 'no';
+		$selectedrecurrulebymonthday = '';
+		$selectedrecurrulebyday = '';
+		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) $selectedrecurrulefreq = $reg[1];
+		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebymonthday = $reg[1];
+		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebyday = $reg[1];
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
 		// If recurrulefreq is MONTHLY
 		print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
@@ -946,13 +946,13 @@ if ($action == 'create')
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
-	$percent=-1;
-	if (isset($_GET['status']) || isset($_POST['status'])) $percent=GETPOST('status');
-	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent=GETPOST('percentage');
+	$percent = -1;
+	if (isset($_GET['status']) || isset($_POST['status'])) $percent = GETPOST('status');
+	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent = GETPOST('percentage');
 	else
 	{
-		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent='0';
-		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
+		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
+		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
 	}
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
@@ -960,29 +960,29 @@ if ($action == 'create')
     // Location
     if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     {
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.(GETPOST('location') ?GETPOST('location') : $object->location).'"></td></tr>';
     }
 
 	// Assigned to
 	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$listofuserid=array();
+	$listofuserid = array();
 	if (empty($donotclearsession))
 	{
-		$assignedtouser=GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
-		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser,'mandatory'=>0,'transparency'=>$object->transparency);	// Owner first
-		$listofuserid[$user->id]['transparency']=GETPOSTISSET('transparency')?GETPOST('transparency', 'alpha'):1;	// 1 by default at first init
-		$_SESSION['assignedtouser']=json_encode($listofuserid);
+		$assignedtouser = GETPOST("assignedtouser") ?GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
+		if ($assignedtouser) $listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>$object->transparency); // Owner first
+		$listofuserid[$user->id]['transparency'] = GETPOSTISSET('transparency') ?GETPOST('transparency', 'alpha') : 1; // 1 by default at first init
+		$_SESSION['assignedtouser'] = json_encode($listofuserid);
 	}
 	else
 	{
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$listofuserid=json_decode($_SESSION['assignedtouser'], true);
+			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
-		$listofuserid[$user->id]['transparency']=GETPOSTISSET('transparency')?GETPOST('transparency', 'alpha'):0;	// 0 by default when refreshing
+		$listofuserid[$user->id]['transparency'] = GETPOSTISSET('transparency') ?GETPOST('transparency', 'alpha') : 0; // 0 by default when refreshing
 	}
 	print '<div class="assignedtouser">';
-	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
+	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	/*if (in_array($user->id,array_keys($listofuserid)))
 	{
@@ -993,10 +993,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Realised by
-	if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
+	if (!empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $form->select_dolusers(GETPOST("doneby")?GETPOST("doneby"):(! empty($object->userdoneid) && $percent==100?$object->userdoneid:0), 'doneby', 1);
+		print $form->select_dolusers(GETPOST("doneby") ?GETPOST("doneby") : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
 		print '</td></tr>';
 	}
 
@@ -1021,8 +1021,8 @@ if ($action == 'create')
 		}
 		else
 		{
-			$events=array();
-			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			$events = array();
+			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
 				print $form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
@@ -1034,14 +1034,14 @@ if ($action == 'create')
 
 		// Related contact
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-		$preselectedids=GETPOST('socpeopleassigned', 'array');
-		if (GETPOST('contactid', 'int')) $preselectedids[GETPOST('contactid', 'int')]=GETPOST('contactid', 'int');
+		$preselectedids = GETPOST('socpeopleassigned', 'array');
+		if (GETPOST('contactid', 'int')) $preselectedids[GETPOST('contactid', 'int')] = GETPOST('contactid', 'int');
 		print $form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 		// Projet associe
 		$langs->load("projects");
@@ -1073,10 +1073,10 @@ if ($action == 'create')
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Task").'</td><td id="project-task-input-container" >';
 
-		$projectsListId=false;
-		if(!empty($projectid)){ $projectsListId=$projectid; }
-		$tid=GETPOST("projecttaskid")?GETPOST("projecttaskid"):'';
-		$formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
+		$projectsListId = false;
+		if (!empty($projectid)) { $projectsListId = $projectid; }
+		$tid = GETPOST("projecttaskid") ?GETPOST("projecttaskid") : '';
+		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
 
@@ -1094,24 +1094,24 @@ if ($action == 'create')
 
 	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg))
 	{
-		$object->datep=dol_mktime(0, 0, 0, $reg[2], $reg[3], $reg[1]);
+		$object->datep = dol_mktime(0, 0, 0, $reg[2], $reg[3], $reg[1]);
 	}
 
 	// Priority
 	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.(GETPOST('priority')?GETPOST('priority'):($object->priority?$object->priority:'')).'" size="5">';
+	print '<input type="text" name="priority" value="'.(GETPOST('priority') ?GETPOST('priority') : ($object->priority ? $object->priority : '')).'" size="5">';
 	print '</td></tr>';
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note', (GETPOST('note', 'none')?GETPOST('note', 'none'):$object->note), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ?GETPOST('note', 'none') : $object->note), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
     // Other attributes
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     if (empty($reshook))
 	{
@@ -1125,7 +1125,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" name="cancel" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print "</form>";
@@ -1134,7 +1134,7 @@ if ($action == 'create')
 // View or edit
 if ($id > 0)
 {
-	$result1=$object->fetch($id);
+	$result1 = $object->fetch($id);
 	if ($result1 <= 0)
 	{
 		$langs->load("errors");
@@ -1144,18 +1144,18 @@ if ($id > 0)
 		exit;
 	}
 
-	$result2=$object->fetch_thirdparty();
-	$result2=$object->fetch_projet();
-	$result3=$object->fetch_contact();
-	$result4=$object->fetch_userassigned();
-	$result5=$object->fetch_optionals();
+	$result2 = $object->fetch_thirdparty();
+	$result2 = $object->fetch_projet();
+	$result3 = $object->fetch_contact();
+	$result4 = $object->fetch_userassigned();
+	$result5 = $object->fetch_optionals();
 
 	if ($listUserAssignedUpdated || $donotclearsession)
 	{
-        $percentage=in_array(GETPOST('status'), array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'), array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
+        $percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
+		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -1180,18 +1180,18 @@ if ($id > 0)
 		exit;
 	}
 
-	if ($object->authorid > 0)		{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->authorid); $object->author=$tmpuser; }
-	if ($object->usermodid > 0)		{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->usermodid); $object->usermod=$tmpuser; }
+	if ($object->authorid > 0) { $tmpuser = new User($db); $res = $tmpuser->fetch($object->authorid); $object->author = $tmpuser; }
+	if ($object->usermodid > 0) { $tmpuser = new User($db); $res = $tmpuser->fetch($object->usermodid); $object->usermod = $tmpuser; }
 
 
 	/*
 	 * Show tabs
 	 */
 
-	$head=actions_prepare_head($object);
+	$head = actions_prepare_head($object);
 
-	$now=dol_now();
-	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+	$now = dol_now();
+	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 	// Confirmation suppression action
 	if ($action == 'delete')
@@ -1201,7 +1201,7 @@ if ($id > 0)
 
 	if ($action == 'edit')
 	{
-	    if (! empty($conf->use_javascript_ajax))
+	    if (!empty($conf->use_javascript_ajax))
         {
             print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
@@ -1232,7 +1232,7 @@ if ($id > 0)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="ref_ext" value="'.$object->ref_ext.'">';
-		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1'? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 
 		dol_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
@@ -1261,31 +1261,31 @@ if ($id > 0)
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
         // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
-            print $form->selectDate($datep?$datep:$object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
+            print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
         } elseif (GETPOST("afaire") == 2) {
-            print $form->selectDate($datep?$datep:$object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+            print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
         } else {
-            print $form->selectDate($datep?$datep:$object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+            print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
         }
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
-            print $form->selectDate($datef?$datef:$object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+            print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
         } elseif (GETPOST("afaire") == 2) {
-            print $form->selectDate($datef?$datef:$object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+            print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
         } else {
-            print $form->selectDate($datef?$datef:$object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+            print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
         }
 		print '</td></tr>';
 
         // Dev in progress
-		$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 		if ($userepeatevent)
 		{
 			// Repeat
@@ -1297,12 +1297,12 @@ if ($id > 0)
 				'WEEKLY'=>$langs->trans("EveryWeek"),
 				//'DAYLY'=>$langs->trans("EveryDay"),
 			);
-			$selectedrecurrulefreq='no';
-			$selectedrecurrulebymonthday='';
-			$selectedrecurrulebyday='';
-			if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) $selectedrecurrulefreq=$reg[1];
-			if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebymonthday=$reg[1];
-			if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebyday=$reg[1];
+			$selectedrecurrulefreq = 'no';
+			$selectedrecurrulebymonthday = '';
+			$selectedrecurrulebyday = '';
+			if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) $selectedrecurrulefreq = $reg[1];
+			if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebymonthday = $reg[1];
+			if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) $selectedrecurrulebyday = $reg[1];
 			print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
 			// If recurrulefreq is MONTHLY
 			print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
@@ -1343,7 +1343,7 @@ if ($id > 0)
 
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent = GETPOST("percentage") ? GETPOST("percentage"): $object->percentage;
+		$percent = GETPOST("percentage") ? GETPOST("percentage") : $object->percentage;
 		$formactions->form_select_status_action('formaction', $percent, 1);
 		print '</td></tr>';
 
@@ -1354,47 +1354,47 @@ if ($id > 0)
 	    }
 
 		// Assigned to
-	    $listofuserid=array();							// User assigned
+	    $listofuserid = array(); // User assigned
 	    if (empty($donotclearsession))
 	    {
 	    	if ($object->userownerid > 0)
 	    	{
-	    		$listofuserid[$object->userownerid]=array(
+	    		$listofuserid[$object->userownerid] = array(
 	    			'id'=>$object->userownerid,
 	    			'type'=>'user',
 	    			//'transparency'=>$object->userassigned[$user->id]['transparency'],
-	    			'transparency'=>$object->transparency, 										// Force transparency on ownerfrom event
+	    			'transparency'=>$object->transparency, // Force transparency on ownerfrom event
 	    			'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
 	    			'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
 	    		);
 	    	}
-	    	if (! empty($object->userassigned))	// Now concat assigned users
+	    	if (!empty($object->userassigned))	// Now concat assigned users
 	    	{
 	    		// Restore array with key with same value than param 'id'
-	    		$tmplist1=$object->userassigned;
-	    		foreach($tmplist1 as $key => $val)
+	    		$tmplist1 = $object->userassigned;
+	    		foreach ($tmplist1 as $key => $val)
 	    		{
 	    			if ($val['id'] && $val['id'] != $object->userownerid)
 	    			{
-	    				$listofuserid[$val['id']]=$val;
+	    				$listofuserid[$val['id']] = $val;
 	    			}
 	    		}
 	    	}
-	    	$_SESSION['assignedtouser']=json_encode($listofuserid);
+	    	$_SESSION['assignedtouser'] = json_encode($listofuserid);
 	    }
 	    else
 	    {
 	    	if (!empty($_SESSION['assignedtouser']))
 	    	{
-	    		$listofuserid=json_decode($_SESSION['assignedtouser'], true);
+	    		$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 	    	}
 	    }
-	    $listofcontactid=$object->socpeopleassigned;	// Contact assigned
-	    $listofotherid=$object->otherassigned;			// Other undefined email (not used yet)
+	    $listofcontactid = $object->socpeopleassigned; // Contact assigned
+	    $listofotherid = $object->otherassigned; // Other undefined email (not used yet)
 
 	    print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
+		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
 		print '</div>';
 		/*if (in_array($user->id,array_keys($listofuserid)))
 		{
@@ -1405,10 +1405,10 @@ if ($id > 0)
 		print '</td></tr>';
 
 		// Realised by
-		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
+		if (!empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-			print $form->select_dolusers($object->userdoneid> 0?$object->userdoneid:-1, 'doneby', 1);
+			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
 			print '</td></tr>';
 		}
 
@@ -1426,8 +1426,8 @@ if ($id > 0)
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
-			$events=array();     // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
-			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
+			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
 			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
@@ -1444,13 +1444,13 @@ if ($id > 0)
 		}
 
 		// Project
-		if (! empty($conf->projet->enabled))
+		if (!empty($conf->projet->enabled))
 		{
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
-			$numprojet=$formproject->select_projects(($object->socid  > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
-			if ($numprojet==0)
+			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
+			if ($numprojet == 0)
 			{
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
@@ -1459,20 +1459,20 @@ if ($id > 0)
 
 		// Priority
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
-		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
+		print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
 		print '</td></tr>';
 		// Object linked
-		if (! empty($object->fk_element) && ! empty($object->elementtype))
+		if (!empty($object->fk_element) && !empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
-			if ($object->elementtype == 'task' && ! empty($conf->projet->enabled))
+			if ($object->elementtype == 'task' && !empty($conf->projet->enabled))
 			{
 			    print '<td id="project-task-input-container" >';
 
-			    $urloption='?action=create'; // we use create not edit for more flexibility
+			    $urloption = '?action=create'; // we use create not edit for more flexibility
 			    $url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
 			    // update task list
@@ -1488,7 +1488,7 @@ if ($id > 0)
                })';
 			    print '</script>'."\n";
 
-			    $formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500', $object->fk_project);
+			    $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500', $object->fk_project);
 			    print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 			    print '</td>';
@@ -1509,13 +1509,13 @@ if ($id > 0)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
         // Editeur wysiwyg
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+        $doleditor = new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
         $doleditor->Create();
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
         if (empty($reshook))
 		{
@@ -1622,7 +1622,7 @@ if ($id > 0)
 		print '<table class="border tableforfield" width="100%">';
 
 		// Type
-		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$langs->trans($object->type).'</td></tr>';
 		}
@@ -1630,12 +1630,12 @@ if ($id > 0)
         // Full day event
         print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
 
-		$rowspan=4;
+		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if (! $object->fulldayevent) print dol_print_date($object->datep, 'dayhour');
+		if (!$object->fulldayevent) print dol_print_date($object->datep, 'dayhour');
 		else print dol_print_date($object->datep, 'day');
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
@@ -1643,9 +1643,9 @@ if ($id > 0)
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-        if (! $object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
+        if (!$object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
 		else print dol_print_date($object->datef, 'day');
-		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
+		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
         // Location
@@ -1656,41 +1656,41 @@ if ($id > 0)
 
 		// Assigned to
     	print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
-		$listofuserid=array();
+		$listofuserid = array();
 		if (empty($donotclearsession))
 		{
 			if ($object->userownerid > 0)
 			{
-				$listofuserid[$object->userownerid]=array(
+				$listofuserid[$object->userownerid] = array(
 					'id'=>$object->userownerid,
-					'transparency'=>$object->transparency,	// Force transparency on onwer from preoperty of event
+					'transparency'=>$object->transparency, // Force transparency on onwer from preoperty of event
 					'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
 					'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
 				);
 			}
-			if (! empty($object->userassigned))	// Now concat assigned users
+			if (!empty($object->userassigned))	// Now concat assigned users
 			{
 				// Restore array with key with same value than param 'id'
-				$tmplist1=$object->userassigned;
-				foreach($tmplist1 as $key => $val)
+				$tmplist1 = $object->userassigned;
+				foreach ($tmplist1 as $key => $val)
 				{
-					if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
+					if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']] = $val;
 				}
 			}
-			$_SESSION['assignedtouser']=json_encode($listofuserid);
+			$_SESSION['assignedtouser'] = json_encode($listofuserid);
 		}
 		else
 		{
 			if (!empty($_SESSION['assignedtouser']))
 			{
-				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
+				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
 
-		$listofcontactid=array();	// not used yet
-		$listofotherid=array();	// not used yet
+		$listofcontactid = array(); // not used yet
+		$listofotherid = array(); // not used yet
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($object->datep != $object->datef)?1:0, $listofuserid, $listofcontactid, $listofotherid);
+		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($object->datep != $object->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 		print '</div>';
 		/*
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
@@ -1710,7 +1710,7 @@ if ($id > 0)
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 			if ($object->userdoneid > 0)
 			{
-				$tmpuser=new User($db);
+				$tmpuser = new User($db);
 				$tmpuser->fetch($object->userdoneid);
 				print $tmpuser->getNomUrl(1);
 			}
@@ -1727,7 +1727,7 @@ if ($id > 0)
 		if ($conf->societe->enabled)
 		{
 		    // Related company
-		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
+		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -1770,16 +1770,16 @@ if ($id > 0)
 
 		// Priority
 		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td colspan="3">';
-		print ($object->priority?$object->priority:'');
+		print ($object->priority ? $object->priority : '');
 		print '</td></tr>';
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm.
-		if (! empty($object->fk_element) && ! empty($object->elementtype) && ! in_array($object->elementtype, array('societe','contact','project')))
+		if (!empty($object->fk_element) && !empty($object->elementtype) && !in_array($object->elementtype, array('societe', 'contact', 'project')))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			$link=dolGetElementUrl($object->fk_element, $object->elementtype, 1);
+			$link = dolGetElementUrl($object->fk_element, $object->elementtype, 1);
 			print '<td colspan="3">';
 			if (empty($link)) print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';
 			else print $link;
@@ -1792,8 +1792,8 @@ if ($id > 0)
 		print '</td></tr>';
 
         // Other attributes
-        $cols=3;
-        include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+        $cols = 3;
+        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
@@ -1809,8 +1809,8 @@ if ($id > 0)
 
 	print '<div class="tabsAction">';
 
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook))
 	{
 		if ($action != 'edit')
@@ -1860,11 +1860,11 @@ if ($id > 0)
              * Documents generes
              */
 
-            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-            $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+            $filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+            $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed=$user->rights->agenda->myactions->read;
-	        $delallowed=$user->rights->agenda->myactions->create;
+            $genallowed = $user->rights->agenda->myactions->read;
+	        $delallowed = $user->rights->agenda->myactions->create;
 
 
             print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
