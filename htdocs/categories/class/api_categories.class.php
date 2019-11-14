@@ -282,7 +282,7 @@ class Categories extends DolibarrApi
      *
      * @url GET /object/{type}/{id}
      */
-    public function getListForObject($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    public function getListForObject($id, $type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
     {
         // TODO add other types
         if (!in_array($type, ['product'/*, 'member', 'customer', 'supplier', 'contact'*/])) {
