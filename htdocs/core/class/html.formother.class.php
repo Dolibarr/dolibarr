@@ -754,7 +754,7 @@ class FormOther
 			        } ); });
 	             </script>';
             }
-            $out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.$set_color.'" />';
+            $out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
         }
         else  // In most cases, this is not used. We used instead function with no specific list of colors
         {

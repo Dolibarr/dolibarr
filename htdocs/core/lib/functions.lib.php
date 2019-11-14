@@ -5212,16 +5212,18 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	if ($idprodfournprice > 0)
 	{
-		if (!class_exists('ProductFournisseur'))
+		if (!class_exists('ProductFournisseur')) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		}
 		$prodprice = new ProductFournisseur($db);
 		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
 		return $prodprice->fourn_tva_npr;
 	}
 	elseif ($idprod > 0)
 	{
-		if (!class_exists('Product'))
+		if (!class_exists('Product')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		}
 		$prod = new Product($db);
 		$prod->fetch($idprod);
 		return $prod->tva_npr;
