@@ -2895,7 +2895,7 @@ class User extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user = ".$this->id;
 
-		dol_syslog(get_class($this)."::get_children result=".$result, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_children sql=".$sql, LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
