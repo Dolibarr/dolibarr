@@ -17,14 +17,14 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
+if (empty($langs) || !is_object($langs))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("main","bills","banks"));
+$langs->loadLangs(array("main", "bills", "banks"));
 
 // Object $form must de defined
 
@@ -53,30 +53,30 @@ else
 		{
 			case 'ESP':
 				echo $langs->trans("Cash");
-				$filtre='courant=2';
+				$filtre = 'courant=2';
 				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"];
 				break;
 			case 'CB':
 				echo $langs->trans("CreditCard");
-				$filtre='courant=1';
+				$filtre = 'courant=1';
 				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
 				break;
 			case 'CHQ':
 				echo $langs->trans("Cheque");
-				$filtre='courant=1';
+				$filtre = 'courant=1';
 				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"];
 				break;
 			case 'DIF':
 				echo $langs->trans("Reported");
-				$filtre='courant=1 OR courant=2';
-				$selected='';
+				$filtre = 'courant=1 OR courant=2';
+				$selected = '';
 				break;
 			default:
-				$filtre='courant=1 OR courant=2';
-				$selected='';
+				$filtre = 'courant=1 OR courant=2';
+				$selected = '';
 		}
 
 		?>
@@ -103,7 +103,7 @@ if ( $obj_facturation->montantRendu() ) {
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<p class="note_label">
 			<?php
-				echo $langs->trans("BankToPay"). "<br>";
+				echo $langs->trans("BankToPay")."<br>";
 				$form->select_comptes($selected, 'cashdeskbank', 0, $filtre);
 			?>
 		</p>

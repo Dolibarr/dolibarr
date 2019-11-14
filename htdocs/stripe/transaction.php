@@ -77,24 +77,24 @@ $stripeacc = $stripe->getStripeAccount($service);
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
 
-if (! $rowid) {
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+if (!$rowid) {
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '')
-		print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-	print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-	print '<input type="hidden" name="page" value="' . $page . '">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$title=$langs->trans("StripeTransactionList");
-	$title.=($stripeaccount?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
+	$title = $langs->trans("StripeTransactionList");
+	$title .= ($stripeaccount ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);

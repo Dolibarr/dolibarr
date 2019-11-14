@@ -911,7 +911,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Si il y a une erreur
         if (GETPOST('error')) {
-            switch(GETPOST('error')) {
+            switch (GETPOST('error')) {
                 case 'datefin' :
                     $errors[] = $langs->trans('ErrorEndDateCP');
                     break;
