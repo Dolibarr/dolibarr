@@ -679,7 +679,7 @@ class AdherentType extends CommonObject
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
-  
+
 	/**
 	 *  Return the label of a given status
 	 *
