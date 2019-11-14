@@ -108,6 +108,7 @@ class Users extends DolibarrApi
 
 	    if ($result)
 	    {
+	        $i = 0;
 	        $num = $db->num_rows($result);
 	        $min = min($num, ($limit <= 0 ? $num : $limit));
 	        while ($i < $min)
@@ -159,6 +160,41 @@ class Users extends DolibarrApi
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
 
+    /**
+     * Get properties of user connected
+     *
+     * @url	GET /info
+     *
+     * @return  array|mixed Data without useless information
+     *
+     * @throws  401     RestException       Insufficient rights
+     * @throws  404     RestException       User not found
+     * @throws  404     RestException       User group not found
+     */
+    public function getInfo()
+    {
+        $apiUser = DolibarrApiAccess::$user;
+
+        $result = $this->useraccount->fetch($apiUser->id);
+        if (!$result) {
+            throw new RestException(404, 'User not found');
+        }
+
+        if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
+            throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+        }
+
+        $usergroup = new UserGroup($this->db);
+        $userGroupList = $usergroup->listGroupsForUser($apiUser->id, false);
+        if (!is_array($userGroupList)) {
+            throw new RestException(404, 'User group not found');
+        }
+
+        $this->useraccount = $this->_cleanObjectDatas($this->useraccount);
+        $this->useraccount->user_group_list = $this->_cleanUserGroupListDatas($userGroupList);
+
+        return $this->useraccount;
+    }
 
 	/**
 	 * Create user account
@@ -413,6 +449,53 @@ class Users extends DolibarrApi
 
 	    return $object;
 	}
+
+    /**
+     * Clean sensible user group list datas
+     *
+     * @param   array  $objectList   Array of object to clean
+     * @return  array                Array of cleaned object properties
+     */
+    private function _cleanUserGroupListDatas($objectList)
+    {
+        $cleanObjectList = array();
+
+        foreach ($objectList as $object) {
+            $cleanObject = parent::_cleanObjectDatas($object);
+
+            unset($cleanObject->default_values);
+            unset($cleanObject->lastsearch_values);
+            unset($cleanObject->lastsearch_values_tmp);
+
+            unset($cleanObject->total_ht);
+            unset($cleanObject->total_tva);
+            unset($cleanObject->total_localtax1);
+            unset($cleanObject->total_localtax2);
+            unset($cleanObject->total_ttc);
+
+            unset($cleanObject->libelle_incoterms);
+            unset($cleanObject->location_incoterms);
+
+            unset($cleanObject->fk_delivery_address);
+            unset($cleanObject->fk_incoterms);
+            unset($cleanObject->all_permissions_are_loaded);
+            unset($cleanObject->shipping_method_id);
+            unset($cleanObject->nb_rights);
+            unset($cleanObject->search_sid);
+            unset($cleanObject->ldap_sid);
+            unset($cleanObject->clicktodial_loaded);
+
+            unset($cleanObject->datec);
+            unset($cleanObject->datem);
+            unset($cleanObject->members);
+            unset($cleanObject->note);
+            unset($cleanObject->note_private);
+
+            $cleanObjectList[] = $cleanObject;
+        }
+
+        return $cleanObjectList;
+    }
 
 	/**
 	 * Validate fields before create or update object
