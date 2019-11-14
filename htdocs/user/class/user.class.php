@@ -2886,7 +2886,7 @@ class User extends CommonObject
 	/**
 	 * Return and array with all instanciated first level children users of current user
 	 *
-	 * @return	void
+	 * @return	User[]|int
 	 * @see getAllChildIds()
 	 */
 	public function get_children()
