@@ -107,7 +107,7 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'account',		// old key for bank_account
+        'account'  => 'account', // old key for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
@@ -125,7 +125,7 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'     => 'user',
-        'account'  => 'account',		// old key for bank_account
+        'account'  => 'account', // old key for bank_account
         'bank_account'=> 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
@@ -853,29 +853,29 @@ class Categorie extends CommonObject
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
-		if ($type=="customer") {
-			$sub_type="societe";
-			$subcol_name="fk_soc";
+		if ($type == "customer") {
+			$sub_type = "societe";
+			$subcol_name = "fk_soc";
 		}
-		if ($type=="supplier") {
-			$sub_type="fournisseur";
-			$subcol_name="fk_soc";
+		if ($type == "supplier") {
+			$sub_type = "fournisseur";
+			$subcol_name = "fk_soc";
 		}
-		if ($type=="contact") {
-			$subcol_name="fk_socpeople";
+		if ($type == "contact") {
+			$subcol_name = "fk_socpeople";
 		}
 
 		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
 
 		$sql = "SELECT s.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.$idoftype;
-		$sql.= ' AND s.rowid = sub.fk_categorie';
-		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s";
+		$sql .= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
+		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
+		$sql .= ' AND s.type='.$idoftype;
+		$sql .= ' AND s.rowid = sub.fk_categorie';
+		$sql .= ' AND sub.'.$subcol_name.' = '.$id;
 
-		$sql.= $this->db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$offset = 0;
 		$nbtotalofrecords = '';
@@ -897,13 +897,13 @@ class Categorie extends CommonObject
 			}
 			$offset = $limit * $page;
 
-			$sql.= $this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$i=0;
+			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			while ($i < $min)
@@ -1636,8 +1636,8 @@ class Categorie extends CommonObject
 			if (is_array($file['name']) && count($file['name']) > 0)
 			{
 				$nbfile = count($file['name']);
-				for ($i = 0; $i <= $nbfile; $i ++) {
-					$originImage = $dir . $file['name'][$i];
+				for ($i = 0; $i <= $nbfile; $i++) {
+					$originImage = $dir.$file['name'][$i];
 
 					// Cree fichier en taille origine
 					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);

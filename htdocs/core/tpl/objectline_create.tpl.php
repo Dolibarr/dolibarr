@@ -33,59 +33,59 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object)) {
+if (empty($object) || !is_object($object)) {
     print "Error: this template page cannot be called directly as an URL";
     exit;
 }
 
-$usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
+$usemargins = 0;
+if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')))
 {
-    $usemargins=1;
+    $usemargins = 1;
 }
 
-if (! isset($dateSelector)) global $dateSelector;	// Take global var only if not already defined into function calling (for example formAddObjectLine)
+if (!isset($dateSelector)) global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
 
-if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
-elseif (empty($dateSelector)) $dateSelector=0;
-if (empty($forceall)) $forceall=0;
-if (empty($senderissupplier)) $senderissupplier=0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+if (!isset($dateSelector)) $dateSelector = 1; // For backward compatibility
+elseif (empty($dateSelector)) $dateSelector = 0;
+if (empty($forceall)) $forceall = 0;
+if (empty($senderissupplier)) $senderissupplier = 0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
 
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Columns: total ht + col edit + col delete
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
-if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+$colspan = 3; // Columns: total ht + col edit + col delete
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++; //Add column for Total (currency) if required
+if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier'))) $colspan++; // With this, there is a column move button
 //print $object->element;
 
 // Lines for extrafield
 $objectline = null;
 if (!empty($extrafields))
 {
-	if ($this->table_element_line=='commandedet') {
+	if ($this->table_element_line == 'commandedet') {
 		$objectline = new OrderLine($this->db);
 	}
-	elseif ($this->table_element_line=='propaldet') {
+	elseif ($this->table_element_line == 'propaldet') {
 		$objectline = new PropaleLigne($this->db);
 	}
-	elseif ($this->table_element_line=='supplier_proposaldet') {
+	elseif ($this->table_element_line == 'supplier_proposaldet') {
 		$objectline = new SupplierProposalLine($this->db);
 	}
-	elseif ($this->table_element_line=='facturedet') {
+	elseif ($this->table_element_line == 'facturedet') {
 		$objectline = new FactureLigne($this->db);
 	}
-	elseif ($this->table_element_line=='contratdet') {
+	elseif ($this->table_element_line == 'contratdet') {
 		$objectline = new ContratLigne($this->db);
 	}
-	elseif ($this->table_element_line=='commande_fournisseurdet') {
+	elseif ($this->table_element_line == 'commande_fournisseurdet') {
 		$objectline = new CommandeFournisseurLigne($this->db);
 	}
-	elseif ($this->table_element_line=='facture_fourn_det') {
+	elseif ($this->table_element_line == 'facture_fourn_det') {
 		$objectline = new SupplierInvoiceLine($this->db);
 	}
-	elseif ($this->table_element_line=='facturedet_rec') {
+	elseif ($this->table_element_line == 'facturedet_rec') {
 		$objectline = new FactureLigneRec($this->db);
 	}
 }

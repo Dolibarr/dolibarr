@@ -41,7 +41,7 @@ if ($object->fetch($id) < 1) {
  * Actions
  */
 
-if ($cancel) $action='';
+if ($cancel) $action = '';
 
 if ($_POST) {
 	if ($action == 'edit') {
@@ -71,7 +71,7 @@ if ($_POST) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				if ($objectval->update($user) > 0) {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -131,7 +131,7 @@ llxHeader('', $title);
 
 //print load_fiche_titre($title);
 
-$h=0;
+$h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
 $head[$h][1] = $langs->trans("Card");
 $head[$h][2] = 'variant';
