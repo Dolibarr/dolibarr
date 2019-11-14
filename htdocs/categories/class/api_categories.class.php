@@ -284,14 +284,21 @@ class Categories extends DolibarrApi
      */
     public function getListForObject($id, $type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
     {
-        // TODO add other types
-        if (!in_array($type, ['product'/*, 'member', 'customer', 'supplier', 'contact'*/])) {
+        if (!in_array($type, ['product', 'member', 'customer', 'supplier', 'contact'])) {
             throw new RestException(401);
         }
 
-        if($type == 'product' && ! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+        if($type == Categorie::TYPE_PRODUCT && ! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
             throw new RestException(401);
-        }
+        } elseif ($type == Categorie::TYPE_CONTACT && ! DolibarrApiAccess::$user->rights->contact->lire) {
+            throw new RestException(401);
+ 		} elseif ($type == Categorie::TYPE_CUSTOMER && ! DolibarrApiAccess::$user->rights->societe->lire) {
+            throw new RestException(401);
+ 		} elseif ($type == Categorie::TYPE_SUPPLIER && ! DolibarrApiAccess::$user->rights->fournisseur->lire) {
+            throw new RestException(401);
+ 		} elseif ($type == Categorie::TYPE_MEMBER && ! DolibarrApiAccess::$user->rights->adherent->lire) {
+            throw new RestException(401);
+ 		}
 
         $categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
