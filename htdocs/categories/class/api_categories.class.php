@@ -48,6 +48,11 @@ class Categories extends DolibarrApi
         3 => 'member',
         4 => 'contact',
         5 => 'account',
+        //6 => 'project',
+        //7 => 'user',
+        //8 => 'bank_line',
+        //9 => 'warehouse',
+        //10 => 'actioncomm',
     );
 
     /**
