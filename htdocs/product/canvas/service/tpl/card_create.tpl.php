@@ -16,16 +16,16 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$object=$GLOBALS['object'];
+$object = $GLOBALS['object'];
 
-$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
@@ -80,7 +80,7 @@ dol_fiche_head('');
 
 <br>
 
-<?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
+<?php if (!$conf->global->PRODUIT_MULTIPRICES) { ?>
 <table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
