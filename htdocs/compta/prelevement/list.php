@@ -46,8 +46,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.datec";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "p.datec";
 
 $search_line = GETPOST('search_line', 'alpha');
 $search_bon = GETPOST('search_bon', 'alpha');
@@ -55,8 +55,8 @@ $search_code = GETPOST('search_code', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $statut = GETPOST('statut', 'int');
 
-$bon=new BonPrelevement($db, "");
-$ligne=new LignePrelevement($db, $user);
+$bon = new BonPrelevement($db, "");
+$ligne = new LignePrelevement($db, $user);
 
 
 /*
@@ -65,11 +65,11 @@ $ligne=new LignePrelevement($db, $user);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_line="";
-	$search_bon="";
-	$search_code="";
-    $search_company="";
-	$statut="";
+	$search_line = "";
+	$search_bon = "";
+	$search_code = "";
+    $search_company = "";
+	$statut = "";
 }
 
 
@@ -77,31 +77,31 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  *  View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut, p.datec";
-$sql.= " ,f.rowid as facid, f.ref, f.total_ttc";
-$sql.= " , s.rowid as socid, s.nom as name, s.code_client";
-$sql.= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql.= " , ".MAIN_DB_PREFIX."facture as f";
-$sql.= " , ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pl.fk_prelevement_bons = p.rowid";
-$sql.= " AND pf.fk_prelevement_lignes = pl.rowid";
-$sql.= " AND pf.fk_facture = f.rowid";
-$sql.= " AND f.fk_soc = s.rowid";
-$sql.= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) $sql.= " AND s.rowid = ".$socid;
-if ($search_line) $sql.= " AND pl.rowid = '".$db->escape($search_line)."'";
-if ($search_bon) $sql.= natural_search("p.ref", $search_bon);
-if ($search_code) $sql.= natural_search("s.code_client", $search_code);
-if ($search_company) $sql.= natural_search("s.nom", $search_company);
+$sql .= " ,f.rowid as facid, f.ref, f.total_ttc";
+$sql .= " , s.rowid as socid, s.nom as name, s.code_client";
+$sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND pf.fk_prelevement_lignes = pl.rowid";
+$sql .= " AND pf.fk_facture = f.rowid";
+$sql .= " AND f.fk_soc = s.rowid";
+$sql .= " AND f.entity IN (".getEntity('invoice').")";
+if ($socid) $sql .= " AND s.rowid = ".$socid;
+if ($search_line) $sql .= " AND pl.rowid = '".$db->escape($search_line)."'";
+if ($search_bon) $sql .= natural_search("p.ref", $search_bon);
+if ($search_code) $sql .= natural_search("s.code_client", $search_code);
+if ($search_company) $sql .= natural_search("s.nom", $search_company);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -116,7 +116,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -126,28 +126,28 @@ if ($result)
 
     $urladd = "&amp;statut=".$statut;
     $urladd .= "&amp;search_bon=".$search_bon;
-	if ($limit > 0 && $limit != $conf->liste_limit) $urladd.='&limit='.urlencode($limit);
+	if ($limit > 0 && $limit != $conf->liste_limit) $urladd .= '&limit='.urlencode($limit);
 
     print"\n<!-- debut table -->\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
 	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
-	$moreforfilter='';
+	$moreforfilter = '';
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'.dol_escape_htmltag($search_line).'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'.dol_escape_htmltag($search_bon).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'. dol_escape_htmltag($search_company).'" size="6"></td>';
-    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.dol_escape_htmltag($search_company).'" size="6"></td>';
+    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'.dol_escape_htmltag($search_code).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterButtons();
+    $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';
     print '</tr>';
