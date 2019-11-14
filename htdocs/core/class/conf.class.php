@@ -126,6 +126,7 @@ class Conf
 		$this->service			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->actions			= new stdClass();
+  	$this->agenda			= new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture			= new stdClass();
