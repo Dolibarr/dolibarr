@@ -4275,7 +4275,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		}
 	}
 
-	if ($savlimit) {
+	if ($savlimit || $morehtmlright) {
 		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
@@ -4304,7 +4304,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
-	if ((int) $limit >= 0 && empty($hideselectlimit))
+	if ((int) $limit > 0 && empty($hideselectlimit))
 	{
 		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported

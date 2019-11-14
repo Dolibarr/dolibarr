@@ -1818,7 +1818,7 @@ function email_admin_prepare_head()
 	$head[$h][2] = 'templates';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 0 && ! empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && ! empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");

@@ -350,8 +350,35 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-//$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 $newcardbutton = '';
+if ($action != 'create') {
+	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create', '', $permissiontoadd);
+} else {
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<table class="border centpercent tableforfield">';
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.GETPOST('label', 'alphanohtml').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Signature").'</td><td><textarea name="signature">'.GETPOST('signature', 'none').'</textarea></td></tr>';
+	print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="label" class="maxwidth50" value="'.GETPOST('position', 'int').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>';
+	print '<input type="text" name="status" value="'.GETPOST('status', 'int').'">';
+	print '</td></tr>';
+	print '</table>';
+	print '<br>';
+	print '<div class="center">';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; ';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
+	print '</form>';
+}
 
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
