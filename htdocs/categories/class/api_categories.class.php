@@ -295,8 +295,11 @@ class Categories extends DolibarrApi
 
         $categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
-        if( ! count($categories)) {
-            throw new RestException(404, 'No category found for this object');
+        if( ! is_array($categories)) {
+            if ($categories == 0) {
+                throw new RestException(404, 'No category found for this object');
+            }
+            throw new RestException(500, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
         }
         return $categories;
     }
