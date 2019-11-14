@@ -78,6 +78,7 @@ class CMailFile
 	//! Defined background directly in body tag
     public $bodyCSS;
 
+    public $msgid;
     public $headers;
     public $message;
     /**
@@ -263,7 +264,8 @@ class CMailFile
 		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
 		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
-		// Action according to choosed sending method
+		// We set all data according to choosed sending method.
+		// We also set a value for ->msgid
 		if ($this->sendmode == 'mail')
 		{
 			// Use mail php function (default PHP method)
@@ -274,7 +276,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers
+			// Define smtp_headers (this also set ->msgid)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) $smtp_headers .= $moreinheader; // $moreinheader contains the \r\n
 
@@ -365,6 +367,9 @@ class CMailFile
 			$smtps->setErrorsTo($errors_to);
 			$smtps->setDeliveryReceipt($deliveryreceipt);
 
+			$host=dol_getprefix('email');
+			$this->msgid = time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host;
+
 			$this->smtps = $smtps;
 		}
 		elseif ($this->sendmode == 'swiftmailer')
@@ -386,7 +391,8 @@ class CMailFile
             // Adding a trackid header to a message
             $headers = $this->message->getHeaders();
             $headers->addTextHeader('X-Dolibarr-TRACKID', $trackid.'@'.$host);
-            $headerID = time().'.swiftmailer-dolibarr-'.$trackid.'@'.$host;
+            $this->msgid = time().'.swiftmailer-dolibarr-'.$trackid.'@'.$host;
+            $headerID = $this->msgid;
             $msgid = $headers->get('Message-ID');
             $msgid->setId($headerID);
             $headers->addIdHeader('References', $headerID);
@@ -1038,13 +1044,15 @@ class CMailFile
 		if ($trackid)
 		{
 			// References is kept in response and Message-ID is returned into In-Reply-To:
-			$out .= 'Message-ID: <'.time().'.phpmail-dolibarr-'.$trackid.'@'.$host.">".$this->eol2; // Uppercase seems replaced by phpmail
-			$out .= 'References: <'.time().'.phpmail-dolibarr-'.$trackid.'@'.$host.">".$this->eol2;
+			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
+			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
+			$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		}
 		else
 		{
-			$out .= 'Message-ID: <'.time().'.phpmail@'.$host.">".$this->eol2;
+			$this->msgid = time().'.phpmail@'.$host;
+			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
 		}
 
 		if (!empty($_SERVER['REMOTE_ADDR'])) $out .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR'].$this->eol2;
