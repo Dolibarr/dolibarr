@@ -89,7 +89,7 @@ $lettering = new Lettering($db);
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result<0)
+if ($result < 0)
 {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -126,8 +126,8 @@ if ($action == 'autolettrage') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$title=$object->name." - ".$langs->trans('TabLetteringSupplier');
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = $object->name." - ".$langs->trans('TabLetteringSupplier');
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
@@ -159,7 +159,7 @@ $solde = 0;
 // Count total nb of records and calc total sum
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
-if (! $resql)
+if (!$resql)
 {
 	dol_print_error($db);
 	exit;

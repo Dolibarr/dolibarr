@@ -31,14 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportstats.class.ph
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
-$object_status=GETPOST('object_status');
+$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$object_status = GETPOST('object_status');
 
-$userid=GETPOST('userid', 'int');
-$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 $id = GETPOST('id', 'int');
 
 // Security check
@@ -62,11 +62,11 @@ $endyear=$year;
  * View
  */
 
-$form=new Form($db);
-$tmpexpensereport=new ExpenseReport($db);
+$form = new Form($db);
+$tmpexpensereport = new ExpenseReport($db);
 
-$title=$langs->trans("TripsAndExpensesStatistics");
-$dir=$conf->expensereport->dir_temp;
+$title = $langs->trans("TripsAndExpensesStatistics");
+$dir = $conf->expensereport->dir_temp;
 
 llxHeader('', $title);
 
@@ -120,13 +120,13 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px2->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px2->SetLegend($legend);
@@ -161,13 +161,13 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px3->SetData($data);
-    $i = $startyear;$legend=array();
+    $i = $startyear; $legend = array();
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px3->SetLegend($legend);
@@ -187,16 +187,16 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
-    $arrayyears[$val['year']]=$val['year'];
+$arrayyears = array();
+foreach ($data as $val) {
+    $arrayyears[$val['year']] = $val['year'];
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 
-$h=0;
+$h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/expensereport/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/expensereport/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -222,18 +222,18 @@ print '</td></tr>';
 */
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-$include='';
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $include='hierarchy';
+$include = '';
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $include = 'hierarchy';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$liststatus=$tmpexpensereport->statuts;
+$liststatus = $tmpexpensereport->statuts;
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -251,11 +251,11 @@ print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
+	while ($year && $oldyear > $year + 1)
 	{	// If we have empty year
 		$oldyear--;
 
@@ -274,7 +274,7 @@ foreach ($data as $val)
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';

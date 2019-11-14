@@ -35,15 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 $langs->loadLangs(array('members', 'languages'));
 
 $id = GETPOST('rowid', 'int');
-$action=GETPOST('action', 'alpha');
-$cancel=GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
-$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
-$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) $socid=$user->socid;
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) $socid = $user->socid;
 // Security check
-$result=restrictedArea($user, 'adherent', $id, 'adherent_type');
+$result = restrictedArea($user, 'adherent', $id, 'adherent_type');
 
 
 /*
@@ -105,21 +105,21 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 
 	foreach ($object->multilangs as $key => $value) // saving new values in the object
 	{
-		if ( $key == $current_lang )
+		if ($key == $current_lang)
 		{
 			$object->label			= $_POST["libelle-".$key];
-			$object->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
+			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
 		}
 		else
 		{
 			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
-			$object->multilangs[$key]["description"]	= dol_htmlcleanlastbr($_POST["desc-".$key]);
+			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
 		}
 	}
 
-	if ( $object->setMultiLangs($user) > 0 )
+	if ($object->setMultiLangs($user) > 0)
 	{
 		$action = '';
 	}
@@ -135,10 +135,10 @@ if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights-
 {
 	$object = new AdherentType($db);
 	$object->fetch($id);
-	$langtodelete=GETPOST('langdel', 'alpha');
+	$langtodelete = GETPOST('langdel', 'alpha');
 
 
-	if ( $object->delMultiLangs($langtodelete, $user) > 0 )
+	if ($object->delMultiLangs($langtodelete, $user) > 0)
 	{
 		$action = '';
 	}
@@ -161,20 +161,20 @@ $title = $langs->trans('MemberTypeCard');
 $helpurl = '';
 $shortlabel = dol_trunc($object->label, 16);
 
-$title = $langs->trans('MemberType')." ". $shortlabel ." - ".$langs->trans('Translation');
-$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+$title = $langs->trans('MemberType')." ".$shortlabel." - ".$langs->trans('Translation');
+$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
-$formadmin=new FormAdmin($db);
+$formadmin = new FormAdmin($db);
 
 $head = member_type_prepare_head($object);
-$titre=$langs->trans("MemberType".$object->type);
+$titre = $langs->trans("MemberType".$object->type);
 
 // Calculate $cnt_trans
 $cnt_trans = 0;
-if (! empty($object->multilangs))
+if (!empty($object->multilangs))
 {
     foreach ($object->multilangs as $key => $value)
     {
@@ -224,12 +224,12 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-	if (! empty($object->multilangs))
+	if (!empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
 		{
-			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+			$s = picto_from_langcode($key);
+			print "<br>".($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
@@ -255,12 +255,12 @@ if ($action == 'edit')
 }
 elseif ($action != 'add')
 {
-	if (! empty($object->multilangs))
+	if (!empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
 		{
-			$s=picto_from_langcode($key);
-			print ($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			$s = picto_from_langcode($key);
+			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
@@ -271,7 +271,7 @@ elseif ($action != 'add')
 			print '</div>';
 		}
 	}
-	if (! $cnt_trans && $action != 'add') print '<div class="opacitymedium">'. $langs->trans('NoTranslation').'</div>';
+	if (!$cnt_trans && $action != 'add') print '<div class="opacitymedium">'.$langs->trans('NoTranslation').'</div>';
 }
 
 

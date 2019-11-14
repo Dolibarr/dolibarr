@@ -32,12 +32,12 @@ class Dolresource extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='dolresource';
+	public $element = 'dolresource';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='resource';
+	public $table_element = 'resource';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -57,9 +57,9 @@ class Dolresource extends CommonObject
 	public $fk_user_create;
 
 	public $type_label;
-	public $tms='';
+	public $tms = '';
 
-	public $cache_code_type_resource=array();
+	public $cache_code_type_resource = array();
 
 	public $oldcopy;
 
@@ -83,62 +83,62 @@ class Dolresource extends CommonObject
     public function create($user, $notrigger = 0)
     {
         global $conf, $langs, $hookmanager;
-        $error=0;
+        $error = 0;
 
     	// Clean parameters
 
-    	if (isset($this->ref)) $this->ref=trim($this->ref);
-    	if (isset($this->description)) $this->description=trim($this->description);
+    	if (isset($this->ref)) $this->ref = trim($this->ref);
+    	if (isset($this->description)) $this->description = trim($this->description);
         if (!is_numeric($this->country_id)) $this->country_id = 0;
-    	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
-    	if (isset($this->note_public)) $this->note_public=trim($this->note_public);
-    	if (isset($this->note_private)) $this->note_private=trim($this->note_private);
+    	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource = trim($this->fk_code_type_resource);
+    	if (isset($this->note_public)) $this->note_public = trim($this->note_public);
+    	if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 
 
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-    	$sql.= "entity,";
-    	$sql.= "ref,";
-    	$sql.= "description,";
-    	$sql.= "fk_country,";
-    	$sql.= "fk_code_type_resource,";
-    	$sql.= "note_public,";
-    	$sql.= "note_private";
+    	$sql .= "entity,";
+    	$sql .= "ref,";
+    	$sql .= "description,";
+    	$sql .= "fk_country,";
+    	$sql .= "fk_code_type_resource,";
+    	$sql .= "note_public,";
+    	$sql .= "note_private";
 
-    	$sql.= ") VALUES (";
+    	$sql .= ") VALUES (";
 
-    	$sql.= $conf->entity.", ";
-    	$sql.= " ".(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").",";
-    	$sql.= " ".(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").",";
-        $sql.= " ".($this->country_id > 0 ? $this->country_id : 'null').",";
-    	$sql.= " ".(! isset($this->fk_code_type_resource)?'NULL':"'".$this->db->escape($this->fk_code_type_resource)."'").",";
-    	$sql.= " ".(! isset($this->note_public)?'NULL':"'".$this->db->escape($this->note_public)."'").",";
-    	$sql.= " ".(! isset($this->note_private)?'NULL':"'".$this->db->escape($this->note_private)."'");
+    	$sql .= $conf->entity.", ";
+    	$sql .= " ".(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").",";
+    	$sql .= " ".(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
+        $sql .= " ".($this->country_id > 0 ? $this->country_id : 'null').",";
+    	$sql .= " ".(!isset($this->fk_code_type_resource) ? 'NULL' : "'".$this->db->escape($this->fk_code_type_resource)."'").",";
+    	$sql .= " ".(!isset($this->note_public) ? 'NULL' : "'".$this->db->escape($this->note_public)."'").",";
+    	$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'");
 
-    	$sql.= ")";
+    	$sql .= ")";
 
     	$this->db->begin();
 
     	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-    	$resql=$this->db->query($sql);
-    	if (! $resql) {
-    		$error++; $this->errors[]="Error ".$this->db->lasterror();
+    	$resql = $this->db->query($sql);
+    	if (!$resql) {
+    		$error++; $this->errors[] = "Error ".$this->db->lasterror();
     	}
 
-    	if (! $error)
+    	if (!$error)
     	{
     		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
     	}
 
-    	if (! $error)
+    	if (!$error)
     	{
-    		$action='create';
+    		$action = 'create';
 
     		// Actions on extra fields
    			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
    			{
-   				$result=$this->insertExtraFields();
+   				$result = $this->insertExtraFields();
    				if ($result < 0)
    				{
    					$error++;
@@ -146,15 +146,15 @@ class Dolresource extends CommonObject
     		}
     	}
 
-    	if (! $error)
+    	if (!$error)
     	{
-    		if (! $notrigger)
+    		if (!$notrigger)
     		{
     			//// Call triggers
-    			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    			$interface=new Interfaces($this->db);
-    			$result=$interface->run_triggers('RESOURCE_CREATE', $this, $user, $langs, $conf);
-    			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+    			$interface = new Interfaces($this->db);
+    			$result = $interface->run_triggers('RESOURCE_CREATE', $this, $user, $langs, $conf);
+    			if ($result < 0) { $error++; $this->errors = $interface->errors; }
     			//// End call triggers
     		}
     	}
@@ -162,13 +162,13 @@ class Dolresource extends CommonObject
     	// Commit or rollback
     	if ($error)
     	{
-    		foreach($this->errors as $errmsg)
+    		foreach ($this->errors as $errmsg)
     		{
     			dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-    			$this->error.=($this->error?', '.$errmsg:$errmsg);
+    			$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
     		}
     		$this->db->rollback();
-    		return -1*$error;
+    		return -1 * $error;
     	}
     	else
     	{
@@ -188,38 +188,38 @@ class Dolresource extends CommonObject
     {
     	global $langs;
     	$sql = "SELECT";
-    	$sql.= " t.rowid,";
-    	$sql.= " t.entity,";
-    	$sql.= " t.ref,";
-    	$sql.= " t.description,";
-		$sql.= " t.fk_country,";
-    	$sql.= " t.fk_code_type_resource,";
-    	$sql.= " t.note_public,";
-    	$sql.= " t.note_private,";
-    	$sql.= " t.tms,";
-    	$sql.= " ty.label as type_label";
-    	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
-    	if ($id) $sql.= " WHERE t.rowid = ".$this->db->escape($id);
-    	else $sql.= " WHERE t.ref = '".$this->db->escape($ref)."'";
+    	$sql .= " t.rowid,";
+    	$sql .= " t.entity,";
+    	$sql .= " t.ref,";
+    	$sql .= " t.description,";
+		$sql .= " t.fk_country,";
+    	$sql .= " t.fk_code_type_resource,";
+    	$sql .= " t.note_public,";
+    	$sql .= " t.note_private,";
+    	$sql .= " t.tms,";
+    	$sql .= " ty.label as type_label";
+    	$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
+    	if ($id) $sql .= " WHERE t.rowid = ".$this->db->escape($id);
+    	else $sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-    	$resql=$this->db->query($sql);
+    	$resql = $this->db->query($sql);
     	if ($resql)
     	{
     		if ($this->db->num_rows($resql))
     		{
     			$obj = $this->db->fetch_object($resql);
 
-    			$this->id						=	$obj->rowid;
-    			$this->entity					=	$obj->entity;
-    			$this->ref						=	$obj->ref;
-    			$this->description				=	$obj->description;
-                $this->country_id				=	$obj->fk_country;
-    			$this->fk_code_type_resource	=	$obj->fk_code_type_resource;
-    			$this->note_public				=	$obj->note_public;
-    			$this->note_private				=	$obj->note_private;
-    			$this->type_label				=	$obj->type_label;
+    			$this->id = $obj->rowid;
+    			$this->entity = $obj->entity;
+    			$this->ref = $obj->ref;
+    			$this->description				= $obj->description;
+                $this->country_id = $obj->fk_country;
+    			$this->fk_code_type_resource = $obj->fk_code_type_resource;
+    			$this->note_public				= $obj->note_public;
+    			$this->note_private = $obj->note_private;
+    			$this->type_label = $obj->type_label;
 
     			// Retreive all extrafield
     			// fetch optionals attributes and labels
@@ -231,7 +231,7 @@ class Dolresource extends CommonObject
     	}
     	else
     	{
-    		$this->error="Error ".$this->db->lasterror();
+    		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
     		return -1;
     	}
@@ -248,75 +248,75 @@ class Dolresource extends CommonObject
     public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs, $hookmanager;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->ref)) $this->ref=trim($this->ref);
-		if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
-		if (isset($this->description)) $this->description=trim($this->description);
+		if (isset($this->ref)) $this->ref = trim($this->ref);
+		if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource = trim($this->fk_code_type_resource);
+		if (isset($this->description)) $this->description = trim($this->description);
         if (!is_numeric($this->country_id)) $this->country_id = 0;
 
 		if (empty($this->oldcopy))
 		{
-			$org=new self($this->db);
+			$org = new self($this->db);
 			$org->fetch($this->id);
-			$this->oldcopy=$org;
+			$this->oldcopy = $org;
 		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
-		$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
-		$sql.= " fk_country=".($this->country_id > 0 ? $this->country_id :"null").",";
-		$sql.= " fk_code_type_resource=".(isset($this->fk_code_type_resource)?"'".$this->db->escape($this->fk_code_type_resource)."'":"null").",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
-		$sql.= " WHERE rowid=".$this->id;
+		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
+		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
+		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('RESOURCE_MODIFY', $user);
+				$result = $this->call_trigger('RESOURCE_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
 		}
 
-		if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
+		if (!$error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
 		{
 			// We remove directory
-			if (! empty($conf->resource->dir_output))
+			if (!empty($conf->resource->dir_output))
 			{
-				$olddir = $conf->resource->dir_output . "/" . dol_sanitizeFileName($this->oldcopy->ref);
-				$newdir = $conf->resource->dir_output . "/" . dol_sanitizeFileName($this->ref);
+				$olddir = $conf->resource->dir_output."/".dol_sanitizeFileName($this->oldcopy->ref);
+				$newdir = $conf->resource->dir_output."/".dol_sanitizeFileName($this->ref);
 				if (file_exists($olddir))
 				{
 					$res = @rename($olddir, $newdir);
-					if (! $res)
+					if (!$res)
 					{
 						$langs->load("errors");
-						$this->error=$langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
+						$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 						$error++;
 					}
 				}
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			$action='update';
+			$action = 'update';
 
 			// Actions on extra fields
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$result=$this->insertExtraFields();
+				$result = $this->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
@@ -327,13 +327,13 @@ class Dolresource extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -354,39 +354,39 @@ class Dolresource extends CommonObject
         // phpcs:enable
     	global $langs;
     	$sql = "SELECT";
-    	$sql.= " t.rowid,";
-   		$sql.= " t.resource_id,";
-		$sql.= " t.resource_type,";
-		$sql.= " t.element_id,";
-		$sql.= " t.element_type,";
-		$sql.= " t.busy,";
-		$sql.= " t.mandatory,";
-		$sql.= " t.fk_user_create,";
-		$sql.= " t.tms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-    	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
+    	$sql .= " t.rowid,";
+   		$sql .= " t.resource_id,";
+		$sql .= " t.resource_type,";
+		$sql .= " t.element_id,";
+		$sql .= " t.element_type,";
+		$sql .= " t.busy,";
+		$sql .= " t.mandatory,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.tms";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
+    	$sql .= " WHERE t.rowid = ".$this->db->escape($id);
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-    	$resql=$this->db->query($sql);
+    	$resql = $this->db->query($sql);
     	if ($resql)
     	{
     		if ($this->db->num_rows($resql))
     		{
     			$obj = $this->db->fetch_object($resql);
 
-    			$this->id				=	$obj->rowid;
-    			$this->resource_id		=	$obj->resource_id;
-    			$this->resource_type	=	$obj->resource_type;
-    			$this->element_id		=	$obj->element_id;
-    			$this->element_type		=	$obj->element_type;
-    			$this->busy				=	$obj->busy;
-    			$this->mandatory		=	$obj->mandatory;
-    			$this->fk_user_create	=	$obj->fk_user_create;
+    			$this->id = $obj->rowid;
+    			$this->resource_id = $obj->resource_id;
+    			$this->resource_type	= $obj->resource_type;
+    			$this->element_id = $obj->element_id;
+    			$this->element_type		= $obj->element_type;
+    			$this->busy = $obj->busy;
+    			$this->mandatory = $obj->mandatory;
+    			$this->fk_user_create = $obj->fk_user_create;
 
-				if($obj->resource_id && $obj->resource_type) {
+				if ($obj->resource_id && $obj->resource_type) {
 					$this->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
 				}
-				if($obj->element_id && $obj->element_type) {
+				if ($obj->element_id && $obj->element_type) {
 					$this->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
 				}
     		}
@@ -396,7 +396,7 @@ class Dolresource extends CommonObject
     	}
     	else
     	{
-    		$this->error="Error ".$this->db->lasterror();
+    		$this->error = "Error ".$this->db->lasterror();
     		return -1;
     	}
     }
@@ -410,38 +410,38 @@ class Dolresource extends CommonObject
      */
     public function delete($rowid, $notrigger = 0)
 	{
-		global $user,$langs,$conf;
-        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		global $user, $langs, $conf;
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE rowid =".$rowid;
+		$sql .= " WHERE rowid =".$rowid;
 
 		dol_syslog(get_class($this), LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-			$sql.= " WHERE element_type='resource' AND resource_id =".$this->db->escape($rowid);
+			$sql .= " WHERE element_type='resource' AND resource_id =".$this->db->escape($rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
-				$this->error=$this->db->lasterror();
+				$this->error = $this->db->lasterror();
 				$error++;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$error++;
 		}
 
 		// Removed extrafields
-		if (! $error) {
-			$result=$this->deleteExtraFields();
+		if (!$error) {
+			$result = $this->deleteExtraFields();
 			if ($result < 0)
 			{
 				$error++;
@@ -449,25 +449,25 @@ class Dolresource extends CommonObject
 			}
 		}
 
-		if (! $notrigger)
+		if (!$notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('RESOURCE_DELETE', $user);
+			$result = $this->call_trigger('RESOURCE_DELETE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if (! empty($conf->resource->dir_output))
+			if (!empty($conf->resource->dir_output))
 			{
-				$dir = $conf->resource->dir_output . "/" . dol_sanitizeFileName($this->ref);
+				$dir = $conf->resource->dir_output."/".dol_sanitizeFileName($this->ref);
 				if (file_exists($dir))
 				{
-					$res=@dol_delete_dir_recursive($dir);
-					if (! $res)
+					$res = @dol_delete_dir_recursive($dir);
+					if (!$res)
 					{
 						$this->errors[] = 'ErrorFailToDeleteDir';
 						$error++;
@@ -476,7 +476,7 @@ class Dolresource extends CommonObject
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return 1;
@@ -505,49 +505,49 @@ class Dolresource extends CommonObject
     	global $conf;
 
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-    	$extrafields=new ExtraFields($this->db);
+    	$extrafields = new ExtraFields($this->db);
 
-    	$sql="SELECT ";
-    	$sql.= " t.rowid,";
-    	$sql.= " t.entity,";
-    	$sql.= " t.ref,";
-    	$sql.= " t.description,";
-    	$sql.= " t.fk_code_type_resource,";
-    	$sql.= " t.tms,";
+    	$sql = "SELECT ";
+    	$sql .= " t.rowid,";
+    	$sql .= " t.entity,";
+    	$sql .= " t.ref,";
+    	$sql .= " t.description,";
+    	$sql .= " t.fk_code_type_resource,";
+    	$sql .= " t.tms,";
     	// Add fields from extrafields
-    	if (! empty($extrafields->attributes[$this->table_element]['label']))
-    		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
-    	$sql.= " ty.label as type_label";
-    	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
-    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	if (!empty($extrafields->attributes[$this->table_element]['label']))
+    		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+    	$sql .= " ty.label as type_label";
+    	$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
+    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
+    	$sql .= " WHERE t.entity IN (".getEntity('resource').")";
     	// Manage filter
-    	if (!empty($filter)){
-    		foreach($filter as $key => $value) {
+    	if (!empty($filter)) {
+    		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
-    				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+    				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
-    			elseif (strpos($key, 'ef.')!==false){
-    				$sql.= $value;
+    			elseif (strpos($key, 'ef.') !== false) {
+    				$sql .= $value;
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+    				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
-    	$sql.= $this->db->order($sortfield, $sortorder);
+    	$sql .= $this->db->order($sortfield, $sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $this->db->query($sql);
             $this->num_all = $this->db->num_rows($result);
         }
-    	if ($limit) $sql.= $this->db->plimit($limit, $offset);
+    	if ($limit) $sql .= $this->db->plimit($limit, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
-        $this->lines=array();
-    	$resql=$this->db->query($sql);
+        $this->lines = array();
+    	$resql = $this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
@@ -556,12 +556,12 @@ class Dolresource extends CommonObject
     			while ($obj = $this->db->fetch_object($resql))
     			{
     				$line = new Dolresource($this->db);
-    				$line->id						=	$obj->rowid;
-    				$line->ref						=	$obj->ref;
-    				$line->description				=	$obj->description;
-                    $line->country_id				=	$obj->fk_country;
-    				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
-    				$line->type_label				=	$obj->type_label;
+    				$line->id = $obj->rowid;
+    				$line->ref = $obj->ref;
+    				$line->description = $obj->description;
+                    $line->country_id = $obj->fk_country;
+    				$line->fk_code_type_resource = $obj->fk_code_type_resource;
+    				$line->type_label = $obj->type_label;
 
     				// fetch optionals attributes and labels
 
@@ -595,35 +595,35 @@ class Dolresource extends CommonObject
     {
         // phpcs:enable
    		global $conf;
-   		$sql="SELECT ";
-   		$sql.= " t.rowid,";
-   		$sql.= " t.resource_id,";
-		$sql.= " t.resource_type,";
-		$sql.= " t.element_id,";
-		$sql.= " t.element_type,";
-		$sql.= " t.busy,";
-		$sql.= " t.mandatory,";
-		$sql.= " t.fk_user_create,";
-		$sql.= " t.tms";
-   		$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-   		$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+   		$sql = "SELECT ";
+   		$sql .= " t.rowid,";
+   		$sql .= " t.resource_id,";
+		$sql .= " t.resource_type,";
+		$sql .= " t.element_id,";
+		$sql .= " t.element_type,";
+		$sql .= " t.busy,";
+		$sql .= " t.mandatory,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.tms";
+   		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources as t ';
+   		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
 
    		//Manage filter
-   		if (!empty($filter)){
-   			foreach($filter as $key => $value) {
+   		if (!empty($filter)) {
+   			foreach ($filter as $key => $value) {
    				if (strpos($key, 'date')) {
-   					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+   					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
-   					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
    				}
    			}
    		}
-    	$sql.= $this->db->order($sortfield, $sortorder);
-   		if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
+    	$sql .= $this->db->order($sortfield, $sortorder);
+   		if ($limit) $sql .= $this->db->plimit($limit + 1, $offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
-   		$resql=$this->db->query($sql);
+   		$resql = $this->db->query($sql);
    		if ($resql)
    		{
    			$num = $this->db->num_rows($resql);
@@ -632,18 +632,18 @@ class Dolresource extends CommonObject
    				while ($obj = $this->db->fetch_object($resql))
    				{
    					$line = new Dolresource($this->db);
-   					$line->id				=	$obj->rowid;
-   					$line->resource_id		=	$obj->resource_id;
-   					$line->resource_type	=	$obj->resource_type;
-   					$line->element_id		=	$obj->element_id;
-   					$line->element_type		=	$obj->element_type;
-   					$line->busy				=	$obj->busy;
-   					$line->mandatory		=	$obj->mandatory;
-   					$line->fk_user_create	=	$obj->fk_user_create;
+   					$line->id = $obj->rowid;
+   					$line->resource_id = $obj->resource_id;
+   					$line->resource_type	= $obj->resource_type;
+   					$line->element_id = $obj->element_id;
+   					$line->element_type		= $obj->element_type;
+   					$line->busy = $obj->busy;
+   					$line->mandatory = $obj->mandatory;
+   					$line->fk_user_create = $obj->fk_user_create;
 
-					if($obj->resource_id && $obj->resource_type)
+					if ($obj->resource_id && $obj->resource_type)
 						$line->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
-					if($obj->element_id && $obj->element_type)
+					if ($obj->element_id && $obj->element_type)
 						$line->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
         			$this->lines[] = $line;
    				}
@@ -674,55 +674,55 @@ class Dolresource extends CommonObject
         // phpcs:enable
     	global $conf;
 
-    	if ( ! $sortorder) $sortorder="ASC";
-    	if ( ! $sortfield) $sortfield="t.rowid";
+    	if (!$sortorder) $sortorder = "ASC";
+    	if (!$sortfield) $sortfield = "t.rowid";
 
-    	$sql="SELECT ";
-    	$sql.= " t.rowid,";
-    	$sql.= " t.resource_id,";
-    	$sql.= " t.resource_type,";
-    	$sql.= " t.element_id,";
-    	$sql.= " t.element_type,";
-    	$sql.= " t.busy,";
-    	$sql.= " t.mandatory,";
-    	$sql.= " t.fk_user_create,";
-    	$sql.= " t.tms";
-    	$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	$sql = "SELECT ";
+    	$sql .= " t.rowid,";
+    	$sql .= " t.resource_id,";
+    	$sql .= " t.resource_type,";
+    	$sql .= " t.element_id,";
+    	$sql .= " t.element_type,";
+    	$sql .= " t.busy,";
+    	$sql .= " t.mandatory,";
+    	$sql .= " t.fk_user_create,";
+    	$sql .= " t.tms";
+    	$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources as t ';
+    	$sql .= " WHERE t.entity IN (".getEntity('resource').")";
 
     	//Manage filter
-    	if (!empty($filter)){
-    		foreach($filter as $key => $value) {
+    	if (!empty($filter)) {
+    		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
-    				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+    				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
     			}
     		}
     	}
-    	$sql.= $this->db->order($sortfield, $sortorder);
-    	if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
+    	$sql .= $this->db->order($sortfield, $sortorder);
+    	if ($limit) $sql .= $this->db->plimit($limit + 1, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
-    	$resql=$this->db->query($sql);
+    	$resql = $this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$this->lines=array();
+    			$this->lines = array();
     			while ($obj = $this->db->fetch_object($resql))
     			{
     				$line = new Dolresource($this->db);
-    				$line->id				=	$obj->rowid;
-    				$line->resource_id		=	$obj->resource_id;
-    				$line->resource_type	=	$obj->resource_type;
-    				$line->element_id		=	$obj->element_id;
-    				$line->element_type		=	$obj->element_type;
-    				$line->busy				=	$obj->busy;
-    				$line->mandatory		=	$obj->mandatory;
-    				$line->fk_user_create	=	$obj->fk_user_create;
+    				$line->id = $obj->rowid;
+    				$line->resource_id = $obj->resource_id;
+    				$line->resource_type	= $obj->resource_type;
+    				$line->element_id = $obj->element_id;
+    				$line->element_type		= $obj->element_type;
+    				$line->busy = $obj->busy;
+    				$line->mandatory = $obj->mandatory;
+    				$line->fk_user_create = $obj->fk_user_create;
 
     				$this->lines[] = fetchObjectByElement($obj->resource_id, $obj->resource_type);
     			}
@@ -751,9 +751,9 @@ class Dolresource extends CommonObject
         // phpcs:enable
     	global $conf;
 
-    	if (! empty($conf->modules_parts['resources']))
+    	if (!empty($conf->modules_parts['resources']))
     	{
-    		$this->available_resources=(array) $conf->modules_parts['resources'];
+    		$this->available_resources = (array) $conf->modules_parts['resources'];
 
     		return count($this->available_resources);
     	}
@@ -772,40 +772,40 @@ class Dolresource extends CommonObject
     {
         // phpcs:enable
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->resource_id)) $this->resource_id=trim($this->resource_id);
-		if (isset($this->resource_type)) $this->resource_type=trim($this->resource_type);
-		if (isset($this->element_id)) $this->element_id=trim($this->element_id);
-		if (isset($this->element_type)) $this->element_type=trim($this->element_type);
-		if (isset($this->busy)) $this->busy=trim($this->busy);
-		if (isset($this->mandatory)) $this->mandatory=trim($this->mandatory);
+		if (isset($this->resource_id)) $this->resource_id = trim($this->resource_id);
+		if (isset($this->resource_type)) $this->resource_type = trim($this->resource_type);
+		if (isset($this->element_id)) $this->element_id = trim($this->element_id);
+		if (isset($this->element_type)) $this->element_type = trim($this->element_type);
+		if (isset($this->busy)) $this->busy = trim($this->busy);
+		if (isset($this->mandatory)) $this->mandatory = trim($this->mandatory);
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
-		$sql.= " resource_id=".(isset($this->resource_id)?"'".$this->db->escape($this->resource_id)."'":"null").",";
-		$sql.= " resource_type=".(isset($this->resource_type)?"'".$this->db->escape($this->resource_type)."'":"null").",";
-		$sql.= " element_id=".(isset($this->element_id)?$this->element_id:"null").",";
-		$sql.= " element_type=".(isset($this->element_type)?"'".$this->db->escape($this->element_type)."'":"null").",";
-		$sql.= " busy=".(isset($this->busy)?$this->busy:"null").",";
-		$sql.= " mandatory=".(isset($this->mandatory)?$this->mandatory:"null").",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+		$sql .= " resource_id=".(isset($this->resource_id) ? "'".$this->db->escape($this->resource_id)."'" : "null").",";
+		$sql .= " resource_type=".(isset($this->resource_type) ? "'".$this->db->escape($this->resource_type)."'" : "null").",";
+		$sql .= " element_id=".(isset($this->element_id) ? $this->element_id : "null").",";
+		$sql .= " element_type=".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
+		$sql .= " busy=".(isset($this->busy) ? $this->busy : "null").",";
+		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
 
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('RESOURCE_MODIFY', $user);
+                $result = $this->call_trigger('RESOURCE_MODIFY', $user);
                 if ($result < 0) $error++;
                 // End call triggers
 	    	}
@@ -814,13 +814,13 @@ class Dolresource extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -840,14 +840,14 @@ class Dolresource extends CommonObject
      */
     public function getElementResources($element, $element_id, $resource_type = '')
     {
-	    $resources=array();
+	    $resources = array();
 
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
-	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
-	    if($resource_type)
-	    	$sql.=" AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
+	    $sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
+	    $sql .= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
+	    if ($resource_type)
+	    	$sql .= " AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
 	    $sql .= ' ORDER BY resource_type';
 
 	    dol_syslog(get_class($this)."::getElementResources", LOG_DEBUG);
@@ -884,8 +884,8 @@ class Dolresource extends CommonObject
     public function fetchElementResources($element, $element_id)
     {
         $resources = $this->getElementResources($element, $element_id);
-        $i=0;
-        foreach($resources as $nb => $resource) {
+        $i = 0;
+        foreach ($resources as $nb => $resource) {
             $this->lines[$i] = fetchObjectByElement($resource['resource_id'], $resource['resource_type']);
             $i++;
         }
@@ -904,12 +904,12 @@ class Dolresource extends CommonObject
         // phpcs:enable
     	global $langs;
 
-    	if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0;    // Cache deja charge
+    	if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0; // Cache deja charge
 
     	$sql = "SELECT rowid, code, label, active";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";
-    	$sql.= " WHERE active > 0";
-    	$sql.= " ORDER BY rowid";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_type_resource";
+    	$sql .= " WHERE active > 0";
+    	$sql .= " ORDER BY rowid";
     	dol_syslog(get_class($this)."::load_cache_code_type_resource", LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if ($resql)
@@ -920,7 +920,7 @@ class Dolresource extends CommonObject
     		{
     			$obj = $this->db->fetch_object($resql);
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-    			$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
+    			$label = ($langs->trans("ResourceTypeShort".$obj->code) != ("ResourceTypeShort".$obj->code) ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
     			$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
     			$this->cache_code_type_resource[$obj->rowid]['label'] = $label;
     			$this->cache_code_type_resource[$obj->rowid]['active'] = $obj->active;
@@ -948,22 +948,22 @@ class Dolresource extends CommonObject
     {
         global $langs;
 
-        $result='';
-        $label=$langs->trans("ShowResource").': '.$this->ref;
+        $result = '';
+        $label = $langs->trans("ShowResource").': '.$this->ref;
 
         $linkstart = '';
         $linkend = '';
         if ($option == '')
         {
-            $linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $picto='resource';
-            $label=$langs->trans("ShowResource").': '.$this->ref;
-            $linkend='</a>';
+            $linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $picto = 'resource';
+            $label = $langs->trans("ShowResource").': '.$this->ref;
+            $linkend = '</a>';
         }
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= $this->ref;
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
 
         return $result;
