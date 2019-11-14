@@ -31,12 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $search_project_user = GETPOST('search_project_user', 'int');
-$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
+$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
-$socid=0;
-if ($user->socid > 0) $socid=$user->socid;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 

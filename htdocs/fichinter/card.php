@@ -57,28 +57,28 @@ $langs->loadLangs(array('bills', 'companies', 'interventions'));
 
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref', 'alpha');
-$socid		= GETPOST('socid', 'int');
-$contratid	= GETPOST('contratid', 'int');
+$socid = GETPOST('socid', 'int');
+$contratid = GETPOST('contratid', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 $mesg		= GETPOST('msg', 'alpha');
-$origin=GETPOST('origin', 'alpha');
-$originid=(GETPOST('originid', 'int')?GETPOST('originid', 'int'):GETPOST('origin_id', 'int')); // For backward compatibility
+$origin = GETPOST('origin', 'alpha');
+$originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $note_public = GETPOST('note_public', 'none');
 $lineid = GETPOST('line_id', 'int');
 
 //PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc 	 = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
-$hideref 	 = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('interventioncard','globalcard'));
+$hookmanager->initHooks(array('interventioncard', 'globalcard'));
 
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);
@@ -86,45 +86,45 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
-	$ret=$object->fetch($id, $ref);
-	if ($ret > 0) $ret=$object->fetch_thirdparty();
+	$ret = $object->fetch($id, $ref);
+	if ($ret > 0) $ret = $object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error('', $object->error);
 }
 
-$permissionnote=$user->rights->ficheinter->creer;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->ficheinter->creer;	// Used by the include of actions_dellink.inc.php
+$permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->ficheinter->creer; // Used by the include of actions_dellink.inc.php
 
 
 /*
  * Actions
  */
 
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('socid'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
 	if ($cancel)
 	{
-		if (! empty($backtopage))
+		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
 			exit;
 		}
-		$action='';
+		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
-		if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers'))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
@@ -135,7 +135,7 @@ if (empty($reshook))
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
 
-				$result=$object->createFromClone($user, $socid);
+				$result = $object->createFromClone($user, $socid);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -425,22 +425,22 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	    	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
+	    	$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
 	        $action = 'create';
 	    }
 	}
 
 	elseif ($action == 'update' && $user->rights->ficheinter->creer)
 	{
-		$object->socid			= $socid;
+		$object->socid = $socid;
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contrat		= GETPOST('contratid', 'int');
-		$object->author			= $user->id;
+		$object->author = $user->id;
 		$object->description	= GETPOST('description', 'alpha');
-		$object->ref			= $ref;
+		$object->ref = $ref;
 
-		$result=$object->update($user);
-		if ($result<0) {
+		$result = $object->update($user);
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -507,7 +507,7 @@ if (empty($reshook))
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
-        	$result=$object->addline(
+        	$result = $object->addline(
 				$user,
 	            $id,
 	            $desc,
@@ -739,10 +739,10 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
-		if (! $error)
+		if (!$error)
 		{
 			// Actions on extra fields
-			$result=$object->insertExtraFields('INTERVENTION_MODIFY');
+			$result = $object->insertExtraFields('INTERVENTION_MODIFY');
 			if ($result < 0)
 			{
 				$error++;
@@ -1045,19 +1045,19 @@ if ($action == 'create')
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
     	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+    	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
 
 		// Show origin lines
-		if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 			$title = $langs->trans('Services');
 			print load_fiche_titre($title);
 
 			print '<table class="noborder centpercent">';
 
-			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS)?'services':'');	// Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
+			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS) ? 'services' : ''); // Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
 
 			print '</table>';
 		}
@@ -1180,49 +1180,49 @@ elseif ($id > 0 || !empty($ref))
 
 
 	// Intervention card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	// Ref customer
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->fichinter->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	    if ($user->rights->ficheinter->creer)
 	    {
             if ($action != 'classify') {
-                $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
             }
             if ($action == 'classify') {
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                $morehtmlref.='</form>';
+                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+                $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref .= '</form>';
             } else {
-                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
             }
 	    } else {
-	        if (! empty($object->fk_project)) {
+	        if (!empty($object->fk_project)) {
 	            $proj = new Project($db);
 	            $proj->fetch($object->fk_project);
-	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-	            $morehtmlref.=$proj->ref;
-	            $morehtmlref.='</a>';
+	            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+	            $morehtmlref .= $proj->ref;
+	            $morehtmlref .= '</a>';
 	        } else {
-	            $morehtmlref.='';
+	            $morehtmlref .= '';
 	        }
 	    }
 	}
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -1498,7 +1498,7 @@ elseif ($id > 0 || !empty($ref))
 
                     print '<td class="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
-					print '</tr>' . "\n";
+					print '</tr>'."\n";
 
 					$line = new FichinterLigne($db);
 					$line->fetch($objp->rowid);
@@ -1579,7 +1579,7 @@ elseif ($id > 0 || !empty($ref))
 
 				print $lineadd->showOptionals($extrafields, 'edit', array('colspan'=>5));
 
-				if (! $num) print '</table>';
+				if (!$num) print '</table>';
 			}
 
 			if ($num) print '</table>';
@@ -1639,7 +1639,7 @@ elseif ($id > 0 || !empty($ref))
 				}
 
 				// create intervention model
-				if ($conf->global->MAIN_FEATURES_LEVEL >=2 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
+				if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';

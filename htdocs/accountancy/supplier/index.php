@@ -224,30 +224,30 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', 
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
-print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
-for($i = 1; $i <= 12; $i ++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
-	if ($j > 12) $j-=12;
-	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>';
+print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
+for ($i = 1; $i <= 12; $i++) {
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	if ($j > 12) $j -= 12;
+	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
-print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') ." AS codecomptable,";
-$sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
-for($i = 1; $i <= 12; $i ++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
-	if ($j > 12) $j-=12;
-	$sql .= "  SUM(" . $db->ifsql('MONTH(ff.datef)=' . $j, 'ffd.total_ht', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
+$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
+$sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
+for ($i = 1; $i <= 12; $i++) {
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	if ($j > 12) $j -= 12;
+	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
-$sql .= " WHERE ff.datef >= '" . $db->idate($search_date_start) . "'";
-$sql .= "  AND ff.datef <= '" . $db->idate($search_date_end) . "'";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
+$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
+$sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
+$sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 $sql .= "  AND ff.fk_statut > 0";
-$sql .= " AND ff.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
+$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -294,30 +294,30 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '',
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
-print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
-for($i = 1; $i <= 12; $i ++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
-	if ($j > 12) $j-=12;
-	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>';
+print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
+for ($i = 1; $i <= 12; $i++) {
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	if ($j > 12) $j -= 12;
+	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
-print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') ." AS codecomptable,";
-$sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
-for($i = 1; $i <= 12; $i ++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
-	if ($j > 12) $j-=12;
-	$sql .= "  SUM(" . $db->ifsql('MONTH(ff.datef)=' . $j, 'ffd.total_ht', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
+$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
+$sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
+for ($i = 1; $i <= 12; $i++) {
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+	if ($j > 12) $j -= 12;
+	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
-$sql .= " WHERE ff.datef >= '" . $db->idate($search_date_start) . "'";
-$sql .= "  AND ff.datef <= '" . $db->idate($search_date_end) . "'";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
+$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
+$sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
+$sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 $sql .= "  AND ff.fk_statut > 0";
-$sql .= " AND ff.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
+$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
 
@@ -367,27 +367,27 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td width="400" class="left">' . $langs->trans("Total") . '</td>';
-    for($i = 1; $i <= 12; $i ++) {
-    	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
-    	if ($j > 12) $j-=12;
-    	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+    print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("Total").'</td>';
+    for ($i = 1; $i <= 12; $i++) {
+    	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+    	if ($j > 12) $j -= 12;
+    	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
     }
-    print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+    print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-    $sql = "SELECT '" . $langs->trans("CAHTF") . "' AS label,";
-    for($i = 1; $i <= 12; $i ++) {
-    	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
-    	if ($j > 12) $j-=12;
-    	$sql .= "  SUM(" . $db->ifsql('MONTH(ff.datef)=' . $j, 'ffd.total_ht', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
+    $sql = "SELECT '".$langs->trans("CAHTF")."' AS label,";
+    for ($i = 1; $i <= 12; $i++) {
+    	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+    	if ($j > 12) $j -= 12;
+    	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
     }
     $sql .= "  SUM(ffd.total_ht) as total";
-    $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
-    $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-    $sql .= " WHERE ff.datef >= '" . $db->idate($search_date_start) . "'";
-    $sql .= "  AND ff.datef <= '" . $db->idate($search_date_end) . "'";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
+    $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+    $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
+    $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
     $sql .= "  AND ff.fk_statut > 0";
-    $sql .= " AND ff.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
+    $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 
     dol_syslog('htdocs/accountancy/supplier/index.php');
     $resql = $db->query($sql);

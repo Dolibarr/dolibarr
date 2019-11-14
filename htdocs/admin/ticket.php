@@ -177,7 +177,7 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -186,7 +186,7 @@ $head = ticketAdminPrepareHead();
 
 dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
+print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries").'</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
 dol_fiche_end();
 
@@ -241,20 +241,20 @@ foreach ($dirmodels as $reldir) {
                         print '<td class="nowrap">';
                         $tmp = $module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
-                            print '<div class="error">' . $langs->trans($tmp) . '</div>';
+                            print '<div class="error">'.$langs->trans($tmp).'</div>';
                         } elseif ($tmp == 'NotConfigured') {
                             print $langs->trans($tmp);
                         } else {
                             print $tmp;
                         }
 
-                        print '</td>' . "\n";
+                        print '</td>'."\n";
 
                         print '<td align="center">';
-                        if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
+                        if ($conf->global->TICKET_ADDON == 'mod_'.$classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
-                            print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
 

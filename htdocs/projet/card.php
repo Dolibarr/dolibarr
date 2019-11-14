@@ -36,57 +36,57 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
-$cancel=GETPOST('cancel', 'alpha');
-$confirm=GETPOST('confirm', 'aZ09');
-$status=GETPOST('status', 'int');
-$opp_status=GETPOST('opp_status', 'int');
-$opp_percent=price2num(GETPOST('opp_percent', 'alpha'));
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'aZ09');
+$status = GETPOST('status', 'int');
+$opp_status = GETPOST('opp_status', 'int');
+$opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
 
-if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
+if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !$_POST["cancel"])) accessforbidden();
 
-$mine = GETPOST('mode')=='mine' ? 1 : 0;
+$mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('projectcard','globalcard'));
+$hookmanager->initHooks(array('projectcard', 'globalcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
-	$ret = $object->fetch($id, $ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
+	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
-		$id=$object->id;
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+		$id = $object->id;
 	}
 }
 
 // Security check
-$socid=GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$date_start=dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
-$date_end=dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
+$date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
+$date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
 
 
 /*
  * Actions
  */
 
-$parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid, 'objcanvas'=>$objcanvas);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -780,16 +780,16 @@ elseif ($object->id > 0)
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
 
-	$head=project_prepare_head($object);
+	$head = project_prepare_head($object);
 
 	if ($action == 'edit' && $userWrite > 0)
 	{
-		dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+		dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public ? 'projectpub' : 'project'));
 
 		print '<table class="border centpercent">';
 
 		// Ref
-		$suggestedref=$object->ref;
+		$suggestedref = $object->ref;
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
 		print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
 		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));

@@ -37,7 +37,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 
 
-$arrayofparameters=array(
+$arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
     'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
     'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -166,22 +166,22 @@ print "<br>";
 
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
 // Show message
-$message='';
-$url='<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
-$message.=img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
-$message.='<br>';
-if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+$message = '';
+$url = '<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
+$message .= img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
+$message .= '<br>';
+if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
-	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
-	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
-	$message.=img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
-	$message.='<br>';
+	$urlEntity = (!empty($conf->multicompany->enabled) ? '?entity='.$conf->entity : '');
+	$url = '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+	$message .= img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
+	$message .= '<br>';
 }
 print $message;
 

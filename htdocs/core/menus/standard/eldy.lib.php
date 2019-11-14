@@ -43,14 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  */
 function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
 {
-	global $user,$conf,$langs,$mysoc;
+	global $user, $conf, $langs, $mysoc;
 	global $dolibarr_main_db_name;
 
-	$mainmenu=(empty($_SESSION["mainmenu"])?'':$_SESSION["mainmenu"]);
-	$leftmenu=(empty($_SESSION["leftmenu"])?'':$_SESSION["leftmenu"]);
+	$mainmenu = (empty($_SESSION["mainmenu"]) ? '' : $_SESSION["mainmenu"]);
+	$leftmenu = (empty($_SESSION["leftmenu"]) ? '' : $_SESSION["leftmenu"]);
 
-	$id='mainmenu';
-	$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$id = 'mainmenu';
+	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	if (empty($noout)) print_start_menu_array();
 
@@ -63,7 +63,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
     	$classname = 'class="tmenu menuhider"';
     	$idsel = 'menu';
 
-    	$menu->add('#', (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+    	$menu->add('#', (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
     $menu_arr = array();
@@ -72,7 +72,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr[] = array(
 		'name' => 'Home',
 		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
-		'title' => (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-home"></span>' : "Home") ,
+		'title' => (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-home"></span>' : "Home"),
 		'level' => 0,
 		'enabled' => $showmode = 1,
 		'target' => $atarget,
@@ -90,8 +90,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Members
 	$tmpentry = array(
-	    'enabled' => (! empty($conf->adherent->enabled) ) ,
-	    'perms' => (! empty($user->rights->adherent->lire) ),
+	    'enabled' => (!empty($conf->adherent->enabled)),
+	    'perms' => (!empty($user->rights->adherent->lire)),
 	    'module' => 'adherent'
 	);
 	$menu_arr[] = array(
@@ -115,12 +115,12 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Third parties
 	$tmpentry = array(
-	    'enabled'=> (	( ! empty($conf->societe->enabled) &&
-	        ( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
+	    'enabled'=> ((!empty($conf->societe->enabled) &&
+	        (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 	        )
-	        || ! empty($conf->fournisseur->enabled)
+	        || !empty($conf->fournisseur->enabled)
 	        ),
-	    'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
+	    'perms'=> (!empty($user->rights->societe->lire) || !empty($user->rights->fournisseur->lire)),
 	    'module'=>'societe|fournisseur'
 	);
 	$menu_arr[] = array(
@@ -144,16 +144,16 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Products-Services
 	$tmpentry = array(
-		'enabled'=> (! empty($conf->product->enabled) || ! empty($conf->service->enabled)  || ! empty($conf->expedition->enabled)),
-		'perms'=> (! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire) || ! empty($user->rights->expedition->lire)),
+		'enabled'=> (!empty($conf->product->enabled) || !empty($conf->service->enabled) || !empty($conf->expedition->enabled)),
+		'perms'=> (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire) || !empty($user->rights->expedition->lire)),
 	    'module'=>'product|service'
 	);
 	$menu_arr[] = array(
 		'name' => 'Products',
 		'link' => '/product/index.php?mainmenu=products&amp;leftmenu=',
-		'title' => (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-					? ( array("TMenuProducts" , " | " ,"TMenuServices") )
-					: (! empty($conf->product->enabled)? "TMenuProducts" : "TMenuServices" ),
+		'title' => (!empty($conf->product->enabled) && !empty($conf->service->enabled))
+					? (array("TMenuProducts", " | ", "TMenuServices"))
+					: (!empty($conf->product->enabled) ? "TMenuProducts" : "TMenuServices"),
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
@@ -171,8 +171,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// MRP
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
-	    'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
+	    'enabled'=>(!empty($conf->bom->enabled) || !empty($conf->mrp->enabled)),
+	    'perms'=>(!empty($user->rights->bom->read) || !empty($user->rights->mrp->read)),
 	    'module'=>'bom|mrp'
 	);
 	$menu_arr[] = array(
@@ -196,15 +196,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Projects
 	$tmpentry = array(
-	    'enabled'=> ( ! empty($conf->projet->enabled) ? 1 : 0),
-	    'perms'=> (! empty($user->rights->projet->lire) ? 1 : 0),
+	    'enabled'=> (!empty($conf->projet->enabled) ? 1 : 0),
+	    'perms'=> (!empty($user->rights->projet->lire) ? 1 : 0),
 	    'module'=>'projet'
 	);
 	$menu_arr[] = array(
 		'name' => 'Projet',
 		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
-		'title' => (empty($conf->global->PROJECT_USE_OPPORTUNITIES) || $conf->global->PROJECT_USE_OPPORTUNITIES == 2 )
-					? (($conf->global->PROJECT_USE_OPPORTUNITIES == 2)?"Leads":"Projects")
+		'title' => (empty($conf->global->PROJECT_USE_OPPORTUNITIES) || $conf->global->PROJECT_USE_OPPORTUNITIES == 2)
+					? (($conf->global->PROJECT_USE_OPPORTUNITIES == 2) ? "Leads" : "Projects")
 					: "Projects",
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -223,19 +223,19 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Commercial
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->propal->enabled) ||
-	        ! empty($conf->commande->enabled) ||
-	        ! empty($conf->supplier_order->enabled) ||
-	        ! empty($conf->supplier_proposal->enabled) ||
-	        ! empty($conf->contrat->enabled) ||
-	        ! empty($conf->ficheinter->enabled)
-	        )?1:0,
-		'perms'=>(! empty($user->rights->propal->lire) ||
-				  ! empty($user->rights->commande->lire) ||
-				  ! empty($user->rights->supplier_order->lire) ||
-				  ! empty($user->rights->supplier_proposal->lire) ||
-				  ! empty($user->rights->contrat->lire) ||
-				  ! empty($user->rights->ficheinter->lire)
+	    'enabled'=>(!empty($conf->propal->enabled) ||
+	        !empty($conf->commande->enabled) ||
+	        !empty($conf->supplier_order->enabled) ||
+	        !empty($conf->supplier_proposal->enabled) ||
+	        !empty($conf->contrat->enabled) ||
+	        !empty($conf->ficheinter->enabled)
+	        ) ? 1 : 0,
+		'perms'=>(!empty($user->rights->propal->lire) ||
+				  !empty($user->rights->commande->lire) ||
+				  !empty($user->rights->supplier_order->lire) ||
+				  !empty($user->rights->supplier_proposal->lire) ||
+				  !empty($user->rights->contrat->lire) ||
+				  !empty($user->rights->ficheinter->lire)
 			),
 	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
 	);
@@ -260,16 +260,16 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Billing - Financial
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->facture->enabled) ||
-	        ! empty($conf->don->enabled) ||
-	        ! empty($conf->tax->enabled) ||
-	        ! empty($conf->salaries->enabled) ||
-	        ! empty($conf->supplier_invoice->enabled) ||
-	        ! empty($conf->loan->enabled)
-	        )?1:0,
-	    'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->contact->lire)
-	        || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read)
-	        || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
+	    'enabled'=>(!empty($conf->facture->enabled) ||
+	        !empty($conf->don->enabled) ||
+	        !empty($conf->tax->enabled) ||
+	        !empty($conf->salaries->enabled) ||
+	        !empty($conf->supplier_invoice->enabled) ||
+	        !empty($conf->loan->enabled)
+	        ) ? 1 : 0,
+	    'perms'=>(!empty($user->rights->facture->lire) || !empty($user->rights->don->contact->lire)
+	        || !empty($user->rights->tax->charges->lire) || !empty($user->rights->salaries->read)
+	        || !empty($user->rights->fournisseur->facture->lire) || !empty($user->rights->loan->read)),
 	    'module'=>'facture|supplier_invoice|don|tax|salaries|loan'
 	);
 	$menu_arr[] = array(
@@ -293,8 +293,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Bank
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
-	    'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
+	    'enabled'=>(!empty($conf->banque->enabled) || !empty($conf->prelevement->enabled)),
+	    'perms'=>(!empty($user->rights->banque->lire) || !empty($user->rights->prelevement->lire)),
 	    'module'=>'banque|prelevement'
 	);
 	$menu_arr[] = array(
@@ -320,8 +320,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Accounting
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled)),
-	    'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
+	    'enabled'=>(!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled) || !empty($conf->asset->enabled)),
+	    'perms'=>(!empty($user->rights->compta->resultat->lire) || !empty($user->rights->accounting->mouvements->lire) || !empty($user->rights->asset->read)),
         'module'=>'comptabilite|accounting|asset'
 	);
 	$menu_arr[] = array(
@@ -341,14 +341,14 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
 
-		'loadLangs' => array("compta","accountancy","assets"),
+		'loadLangs' => array("compta", "accountancy", "assets"),
 		'submenus' => array(),
 	);
 
 	// HRM
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
-	    'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
+	    'enabled'=>(!empty($conf->hrm->enabled) || !empty($conf->holiday->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled)),
+	    'perms'=>(!empty($user->rights->hrm->employee->read) || !empty($user->rights->holiday->write) || !empty($user->rights->deplacement->lire) || !empty($user->rights->expensereport->lire)),
 	    'module'=>'hrm|holiday|deplacement|expensereport'
 	);
 	$menu_arr[] = array(
@@ -482,19 +482,19 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
     // Output menu entries
 	// Show logo company
-	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && !empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
-		$mysoc->logo_squarred_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+		$mysoc->logo_squarred_mini = (empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
-		if(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)){
+		if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)) {
 			$logoContainerAdditionalClass = '';
 		}
 
-		if (! empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
+		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
 		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
 		/*elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
@@ -502,10 +502,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		}*/
 		else
 		{
-			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
 			$logoContainerAdditionalClass = '';
 		}
-		$title=$langs->trans("GoIntoSetupToChangeLogo");
+		$title = $langs->trans("GoIntoSetupToChangeLogo");
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
 		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo"', 1);
@@ -517,14 +517,14 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	}
 
     if (empty($noout)) {
-        foreach($menu->liste as $menuval) {
+        foreach ($menu->liste as $menuval) {
             print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-            print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url']!='#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
+            print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
             print_end_menu_entry($menuval['enabled']);
         }
     }
 
-	$showmode=1;
+	$showmode = 1;
     if (empty($noout)) {
         print_start_menu_entry('', 'class="tmenuend"', $showmode);
         print_end_menu_entry($showmode);
@@ -583,10 +583,10 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	global $langs;
 
 	if ($showmode == 1) {
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').' title="'.dol_escape_htmltag($text).'">';
+		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').' title="'.dol_escape_htmltag($text).'">';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<span class="mainmenuaspan">';
 		print $text;
 		print '</span>';
@@ -653,8 +653,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$newmenu = $menu;
 
-	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
-	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
+	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
+	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
 
     $usemenuhider = 0;
 
@@ -925,14 +925,14 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
             }
 
 			// Suppliers orders
-            if (! empty($conf->supplier_order->enabled))
+            if (!empty($conf->supplier_order->enabled))
 			{
 				$langs->load("orders");
 				$newmenu->add("/fourn/commande/index.php?leftmenu=orders_suppliers", $langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire, '', $mainmenu, 'orders_suppliers', 400);
 				$newmenu->add("/fourn/commande/card.php?action=create&amp;leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
 				$newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
 
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "orders_suppliers") {
                     $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=0", $langs->trans("StatusSupplierOrderDraftShort"), 2, $user->rights->fournisseur->commande->lire);
                     if (empty($conf->global->SUPPLIER_ORDER_HIDE_VALIDATED)) $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=1", $langs->trans("StatusSupplierOrderValidated"), 2, $user->rights->fournisseur->commande->lire);
                     $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=2", $langs->trans("StatusSupplierOrderApprovedShort"), 2, $user->rights->fournisseur->commande->lire);
@@ -1166,9 +1166,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			$langs->load("companies");
 
 			// Accounting (Double entries)
-			if (! empty($conf->accounting->enabled))
+			if (!empty($conf->accounting->enabled))
 			{
-				$permtoshowmenu=(! empty($conf->accounting->enabled) || $user->rights->accounting->bind->write || $user->rights->compta->resultat->lire);
+				$permtoshowmenu = (!empty($conf->accounting->enabled) || $user->rights->accounting->bind->write || $user->rights->compta->resultat->lire);
 				//$newmenu->add("/accountancy/index.php?leftmenu=accountancy", $langs->trans("MenuAccountancy"), 0, $permtoshowmenu, '', $mainmenu, 'accountancy');
 
 				// Configuration
@@ -1186,16 +1186,16 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_chart', 41);
 					$newmenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_chart', 50);
 					$newmenu->add("/accountancy/admin/defaultaccounts.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 60);
-					if (! empty($conf->banque->enabled)) {
+					if (!empty($conf->banque->enabled)) {
 						$newmenu->add("/compta/bank/list.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_bank', 70);
 					}
-					if (! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled)) {
+					if (!empty($conf->facture->enabled) || !empty($conf->fournisseur->enabled)) {
 						$newmenu->add("/admin/dict.php?id=10&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuVatAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 80);
 					}
-					if (! empty($conf->tax->enabled)) {
+					if (!empty($conf->tax->enabled)) {
 						$newmenu->add("/admin/dict.php?id=7&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuTaxAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 90);
 					}
-					if (! empty($conf->expensereport->enabled)) {
+					if (!empty($conf->expensereport->enabled)) {
 						$newmenu->add("/admin/dict.php?id=17&from=accountancy&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuExpenseReportAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 100);
 					}
 					$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_product', 110);
@@ -1208,7 +1208,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
                 // Binding
                 // $newmenu->add("", $langs->trans("Binding"), 0, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch');
-                if (! empty($conf->facture->enabled))
+                if (!empty($conf->facture->enabled))
                 {
                 	$newmenu->add("/accountancy/customer/index.php?leftmenu=accountancy_dispatch_customer&amp;mainmenu=accountancy", $langs->trans("CustomersVentilation"), 1, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch_customer');
                 	if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_customer/', $leftmenu)) {
@@ -1216,7 +1216,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 		$newmenu->add("/accountancy/customer/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_customer", $langs->trans("Binded"), 2, $user->rights->accounting->bind->write);
                 	}
                 }
-                if (! empty($conf->supplier_invoice->enabled))
+                if (!empty($conf->supplier_invoice->enabled))
                 {
                 	$newmenu->add("/accountancy/supplier/index.php?leftmenu=accountancy_dispatch_supplier&amp;mainmenu=accountancy", $langs->trans("SuppliersVentilation"), 1, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch_supplier');
                 	if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_supplier/', $leftmenu)) {
@@ -1224,7 +1224,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 		$newmenu->add("/accountancy/supplier/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_supplier", $langs->trans("Binded"), 2, $user->rights->accounting->bind->write);
                 	}
                 }
-                if (! empty($conf->expensereport->enabled))
+                if (!empty($conf->expensereport->enabled))
                 {
                 	$newmenu->add("/accountancy/expensereport/index.php?leftmenu=accountancy_dispatch_expensereport&amp;mainmenu=accountancy", $langs->trans("ExpenseReportsVentilation"), 1, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch_expensereport');
                 	if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_expensereport/', $leftmenu)) {
@@ -1304,7 +1304,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->rights->accounting->mouvements->lire);
 
                 // Closure
-                if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+                if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
                     $newmenu->add("/accountancy/closure/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_closure", $langs->trans("MenuAccountancyClosure"), 1, $user->rights->accounting->fiscalyear->write, '', $mainmenu, 'closure');
 
                     if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_closure/', $leftmenu)) {
@@ -1313,7 +1313,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 }
 
 				// Files
-				if ((! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || ! empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
+				if ((!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || !empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
 				{
 					$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
 				}
@@ -1355,10 +1355,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
             }
 
 			// Accountancy (simple)
-            if (! empty($conf->comptabilite->enabled))
+            if (!empty($conf->comptabilite->enabled))
             {
             	// Files
-            	if ((! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || ! empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
+            	if ((!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || !empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
             	{
             		$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 0, $user->rights->compta->resultat->lire, '', $mainmenu, 'files');
             	}
@@ -1547,7 +1547,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 if ($conf->supplier_order->enabled) $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->creer && $user->rights->fournisseur->lire);
 
                 // Categories for warehouses
-                if (! empty($conf->categorie->enabled))
+                if (!empty($conf->categorie->enabled))
                 {
                 	$newmenu->add("/categories/index.php?leftmenu=stock&amp;type=9", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
                 }
@@ -1618,7 +1618,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		        $newmenu->add("/bom/bom_list.php?leftmenu=bom", $langs->trans("List"), 1, $user->rights->bom->read, '', $mainmenu, 'bom');
 		    }
 
-		    if (! empty($conf->mrp->enabled))
+		    if (!empty($conf->mrp->enabled))
 		    {
 		    	$langs->load("mrp");
 
@@ -1633,42 +1633,42 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		 */
 		if ($mainmenu == 'project')
 		{
-			if (! empty($conf->projet->enabled))
+			if (!empty($conf->projet->enabled))
 			{
 				$langs->load("projects");
 
 				$search_project_user = GETPOST('search_project_user', 'int');
 
 				$tmpentry = array(
-                    'enabled'=>(! empty($conf->projet->enabled)),
-				    'perms'=>(! empty($user->rights->projet->lire)),
+                    'enabled'=>(!empty($conf->projet->enabled)),
+				    'perms'=>(!empty($user->rights->projet->lire)),
                     'module'=>'projet'
                 );
-				$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
+				$showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 
-				$titleboth=$langs->trans("LeadsOrProjects");
-				$titlenew = $langs->trans("NewLeadOrProject");	// Leads and opportunities by default
+				$titleboth = $langs->trans("LeadsOrProjects");
+				$titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
 				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
 				{
-					$titleboth=$langs->trans("Projects");
+					$titleboth = $langs->trans("Projects");
 					$titlenew = $langs->trans("NewProject");
 				}
 				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
-					$titleboth=$langs->trans("Leads");
+					$titleboth = $langs->trans("Leads");
 					$titlenew = $langs->trans("NewLead");
 				}
 
 				// Project assigned to user
-				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user?'&search_project_user='.$search_project_user:''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
-				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user?'&search_project_user='.$search_project_user:''), $titlenew, 1, $user->rights->projet->creer);
+				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
+				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->rights->projet->creer);
 
 				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
 				{
-					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user?'&search_project_user='.$search_project_user:'').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 				}
 				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
 				{
-					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
 				}
@@ -1714,15 +1714,15 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			}
 
 			// Leave/Holiday/Vacation module
-			if (! empty($conf->holiday->enabled))
+			if (!empty($conf->holiday->enabled))
 			{
 			    // Load translation files required by the page
-                $langs->loadLangs(array("holiday","trips"));
+                $langs->loadLangs(array("holiday", "trips"));
 
 				$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'hrm');
 				$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=request", $langs->trans("New"), 1, $user->rights->holiday->write);
 				$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->holiday->read);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") {
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm") {
                     $newmenu->add("/holiday/list.php?search_statut=1&mainmenu=hrm&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
 				    $newmenu->add("/holiday/list.php?search_statut=2&mainmenu=hrm&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
 				    $newmenu->add("/holiday/list.php?search_statut=3&mainmenu=hrm&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
@@ -1857,7 +1857,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		// Add personalized menus and modules menus
 		//var_dump($newmenu->liste);    //
 		$menuArbo = new Menubase($db, 'eldy');
-		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->socid)?0:1), 'eldy', $tabMenu);
+		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->socid) ? 0 : 1), 'eldy', $tabMenu);
 		//var_dump($newmenu->liste);    //
 
 		// We update newmenu for special dynamic menus
