@@ -627,7 +627,8 @@ class AdherentType extends CommonObject
 			return -1;
 		}
 	}
-
+	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
@@ -642,7 +643,8 @@ class AdherentType extends CommonObject
         else return $langs->trans("MorPhy");
 		//return $morphy;
 	}
-
+	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return clicable name (with picto eventually)
      *
