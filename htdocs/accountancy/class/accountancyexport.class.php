@@ -871,7 +871,7 @@ class AccountancyExport
             }
             else
             {
-                print $line->montant * -1.$this->separator;
+                print ($line->montant * -1).$this->separator;
             }
             // Steuer
             print "0.00".$this->separator;
