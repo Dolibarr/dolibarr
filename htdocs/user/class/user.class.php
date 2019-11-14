@@ -2083,9 +2083,9 @@ class User extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    	Read clicktodial information for user
+	 *  Read clicktodial information for user
 	 *
-	 * 		@return		<0 if KO, >0 if OK
+	 *  @return int <0 if KO, >0 if OK
 	 */
 	public function fetch_clicktodial()
 	{
@@ -2123,7 +2123,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	integer
+	 *  @return	int  <0 if KO, >0 if OK
      */
     public function update_clicktodial()
     {
