@@ -355,6 +355,8 @@ class Conf
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
 		// For backward compatibility
+		// TODO this object is not used in dolibarr core
+		$this->banque = new stdClass();
 		$this->banque->multidir_output	= array($this->entity => $rootfordata."/bank");
 		$this->banque->multidir_temp	= array($this->entity => $rootfordata."/bank/temp");
 		$this->banque->dir_output=$rootfordata."/bank";
