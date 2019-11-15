@@ -71,11 +71,12 @@ class Categories extends DolibarrApi
      * Return an array with category informations
      *
      * @param 	int 	$id ID of category
+     * @param 	bool 	$include_childs Include child categories list (true or false)
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
-    public function get($id)
+    public function get($id, $include_childs = false)
     {
         if (! DolibarrApiAccess::$user->rights->categorie->lire) {
             throw new RestException(401);
@@ -88,6 +89,17 @@ class Categories extends DolibarrApi
 
         if ( ! DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+		
+        if ($include_childs) {
+            $cats = $this->category->get_filles();
+            if (!is_array($cats)) {
+                throw new RestException(500, 'Error when fetching child categories', array_merge(array($this->category->error), $this->category->errors));
+            }
+            $this->category->childs = [];
+            foreach ($cats as $cat) {
+                $this->category->childs[] = $this->_cleanObjectDatas($cat);
+            }
         }
 
         return $this->_cleanObjectDatas($this->category);
