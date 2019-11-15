@@ -305,7 +305,7 @@ class Categories extends DolibarrApi
         ])) {
             throw new RestException(401);
         }
-        
+
         if($type == Categorie::TYPE_PRODUCT && ! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
             throw new RestException(401);
         } elseif ($type == Categorie::TYPE_CONTACT && ! DolibarrApiAccess::$user->rights->contact->lire) {
@@ -355,7 +355,7 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-        
+
         if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
@@ -435,7 +435,7 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-        
+
         if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
@@ -515,7 +515,7 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-        
+
         if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
@@ -593,7 +593,7 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-        
+
         if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
