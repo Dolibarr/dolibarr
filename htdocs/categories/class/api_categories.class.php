@@ -90,7 +90,7 @@ class Categories extends DolibarrApi
         if ( ! DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-		
+
         if ($include_childs) {
             $cats = $this->category->get_filles();
             if (!is_array($cats)) {
