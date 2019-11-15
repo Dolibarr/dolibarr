@@ -218,7 +218,7 @@ elseif ($modulepart == 'bank')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->banque->dir_output;	// By default
+		$dir=$conf->bank->dir_output;	// By default
 	}
 }
 else {
