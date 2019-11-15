@@ -376,7 +376,6 @@ if ($action == 'confirm_generateinvoice')
 
 		if (! $error)
 		{
-			
 			if ($invoicemode == 'onelineperuser') {
 				$arrayoftasks=array();
 				foreach($toselect as $key => $value)
@@ -385,7 +384,6 @@ if ($action == 'confirm_generateinvoice')
 					$object->fetchTimeSpent($value);
 					$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user]['totalvaluetodivideby3600']+=($object->timespent_duration * $object->timespent_thm);
-					
 				}
 
 				foreach($arrayoftasks as $userid => $value)
@@ -418,16 +416,14 @@ if ($action == 'confirm_generateinvoice')
 						break;
 					}
 				}
-			
-			} 
-		
+			}
+
 			if ($invoicemode == 'onelinepertask') {
-			
 				foreach($toselect as $key => $value)
 				{
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
-								
+
 					$fuser->fetch($object->timespent_fk_user);
 					//$pu_ht = $value['timespent'] * $fuser->thm;
 					$username = $fuser->getFullName($langs);
@@ -444,15 +440,15 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					
+
 					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext.' - '.$object->timespent_note, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
-				
+
 					// Update lineid into line of timespent
 					$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
 					$sql.=' WHERE rowid = '.$object->timespent_id.' AND fk_user = '.$object->timespent_fk_user;
 					$result = $db->query($sql);
-					
-					
+
+
 					if (! $result)
 					{
 						$error++;
@@ -461,8 +457,6 @@ if ($action == 'confirm_generateinvoice')
 					}
 				}
 			}
-			
-						
 		}
 
 		if (! $error)
