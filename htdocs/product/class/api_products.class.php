@@ -373,7 +373,7 @@ class Products extends DolibarrApi
 
         return $this->product->delete(DolibarrApiAccess::$user);
     }
-    
+
     /**
      * Get the list of children of the product.
      *
@@ -391,22 +391,22 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
-        
+
         if(! DolibarrApi::_checkAccessToResource('product', $id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        
+
         $childsArbo = $this->product->getChildsArbo($id, 1);
-        
+
         $keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
         $childs = [];
         foreach ($childsArbo as $values) {
             $childs[] = array_combine($keys, $values);
         }
-        
+
         return $childs;
     }
-    
+
     /**
      * Add product child.
      *
@@ -421,26 +421,26 @@ class Products extends DolibarrApi
      * @throws RestException
      * @throws 401
      * @throws 404
-     * 
+     *
      * @url POST {id}/childs/add
      */
     public function addChild($id, $child_id, $qty, $incdec = 1)
-    {        
+    {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
-        
+
         if(! DolibarrApi::_checkAccessToResource('product', $id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        
+
         $result = $this->product->add_sousproduit($id, $child_id, $qty, $incdec);
         if ($result <= 0) {
             throw new RestException(500, "Error adding product child");
         }
         return $result;
     }
-    
+
     /**
      * Remove product child.
      *
@@ -461,11 +461,11 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
-        
+
         if(! DolibarrApi::_checkAccessToResource('product', $id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        
+
         $result = $this->product->del_sousproduit($id, $child_id);
         if ($result <= 0) {
             throw new RestException(500, "Error while removing product child");
@@ -887,18 +887,18 @@ class Products extends DolibarrApi
         if ($includestockdata) {
                $this->product->load_stock();
         }
-        
-        
-        
+
+
+
         if ($includesousproduits) {
             $childsArbo = $this->product->getChildsArbo($id, 1);
-            
+
             $keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
             $childs = [];
             foreach ($childsArbo as $values) {
                 $childs[] = array_combine($keys, $values);
             }
-            
+
             $this->product->sousprods = $childs;
         }
 
