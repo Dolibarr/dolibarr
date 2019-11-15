@@ -66,15 +66,16 @@ class Products extends DolibarrApi
      *
      * @param  int    $id               ID of product
      * @param  int    $includestockdata Load also information about stock (slower)
+     * @param  bool   $includesousproduits Load information about virtual product components
      * @return array|mixed                 Data without useless information
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    public function get($id, $includestockdata = 0)
+    public function get($id, $includestockdata = 0, $includesousproduits = false)
     {
-        return $this->_fetch($id, '', '', '', $includestockdata);
+        return $this->_fetch($id, '', '', '', $includestockdata, $includesousproduits);
     }
 
     /**
@@ -84,6 +85,7 @@ class Products extends DolibarrApi
      *
      * @param string $ref Ref of element
      * @param int $includestockdata Load also information about stock (slower)
+     * @param  bool   $includesousproduits Load information about virtual product components
      *
      * @return array|mixed                 Data without useless information
      *
@@ -93,9 +95,9 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    public function getByRef($ref, $includestockdata = 0)
+    public function getByRef($ref, $includestockdata = 0, $includesousproduits = false)
     {
-        return $this->_fetch('', $ref, '', '', $includestockdata);
+        return $this->_fetch('', $ref, '', '', $includestockdata, $includesousproduits);
     }
 
     /**
@@ -105,6 +107,7 @@ class Products extends DolibarrApi
      *
      * @param string $ref_ext Ref_ext of element
      * @param int $includestockdata Load also information about stock (slower)
+     * @param  bool   $includesousproduits Load information about virtual product components
      *
      * @return array|mixed Data without useless information
      *
@@ -114,9 +117,9 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    public function getByRefExt($ref_ext, $includestockdata = 0)
+    public function getByRefExt($ref_ext, $includestockdata = 0, $includesousproduits = false)
     {
-        return $this->_fetch('', '', $ref_ext, '', $includestockdata);
+        return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesousproduits);
     }
 
     /**
@@ -126,6 +129,7 @@ class Products extends DolibarrApi
      *
      * @param string $barcode Barcode of element
      * @param int $includestockdata Load also information about stock (slower)
+     * @param  bool   $includesousproduits Load information about virtual product components
      *
      * @return array|mixed Data without useless information
      *
@@ -135,9 +139,9 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    public function getByBarcode($barcode, $includestockdata = 0)
+    public function getByBarcode($barcode, $includestockdata = 0, $includesousproduits = false)
     {
-        return $this->_fetch('', '', '', $barcode, $includestockdata);
+        return $this->_fetch('', '', '', $barcode, $includestockdata, $includesousproduits);
     }
 
     /**
@@ -368,6 +372,105 @@ class Products extends DolibarrApi
         $user = DolibarrApiAccess::$user;
 
         return $this->product->delete(DolibarrApiAccess::$user);
+    }
+    
+    /**
+     * Get the list of children of the product.
+     *
+     * @param  int $id      Id of parent product/service
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     *
+     * @url GET {id}/childs
+     */
+    public function getChilds($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(401);
+        }
+        
+        if(! DolibarrApi::_checkAccessToResource('product', $id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        $childsArbo = $this->product->getChildsArbo($id, 1);
+        
+        $keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
+        $childs = [];
+        foreach ($childsArbo as $values) {
+            $childs[] = array_combine($keys, $values);
+        }
+        
+        return $childs;
+    }
+    
+    /**
+     * Add product child.
+     *
+     * Link a product/service to a parent product/service
+     *
+     * @param  int $id      Id of parent product/service
+     * @param  int $id_fils Id of child product/service
+     * @param  int $qty     Quantity
+     * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     * 
+     * @url POST {id}/childs/add
+     */
+    public function addChild($id, $child_id, $qty, $incdec = 1)
+    {        
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+        
+        if(! DolibarrApi::_checkAccessToResource('product', $id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        $result = $this->product->add_sousproduit($id, $child_id, $qty, $incdec);
+        if ($result <= 0) {
+            throw new RestException(500, "Error adding product child");
+        }
+        return $result;
+    }
+    
+    /**
+     * Remove product child.
+     *
+     *  Unlink a product/service from a parent product/service
+     *
+     * @param  int $id        Id of parent product/service
+     * @param  int $child_id  Id of child product/service
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     *
+     * @url DELETE {id}/childs/remove
+     */
+    public function delChild($id, $child_id)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+        
+        if(! DolibarrApi::_checkAccessToResource('product', $id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        $result = $this->product->del_sousproduit($id, $child_id);
+        if ($result <= 0) {
+            throw new RestException(500, "Error while removing product child");
+        }
+        return $result;
     }
 
 
@@ -753,13 +856,14 @@ class Products extends DolibarrApi
      * @param  string $ref_ext          Ref ext of element
      * @param  string $barcode          Barcode of element
      * @param  int    $includestockdata Load also information about stock (slower)
+     * @param  bool   $includesousproduits Load information about virtual product components
      * @return array|mixed                 Data without useless information
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesousproduits = false)
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -782,6 +886,20 @@ class Products extends DolibarrApi
 
         if ($includestockdata) {
                $this->product->load_stock();
+        }
+        
+        
+        
+        if ($includesousproduits) {
+            $childsArbo = $this->product->getChildsArbo($id, 1);
+            
+            $keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
+            $childs = [];
+            foreach ($childsArbo as $values) {
+                $childs[] = array_combine($keys, $values);
+            }
+            
+            $this->product->sousprods = $childs;
         }
 
         return $this->_cleanObjectDatas($this->product);
