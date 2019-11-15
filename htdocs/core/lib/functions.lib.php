@@ -6020,7 +6020,6 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__THIRDPARTY_LINKEDIN__'] = (is_object($object)?$object->linkedin:'');
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object)?dol_htmlentitiesbr($object->note_public):'');
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object)?dol_htmlentitiesbr($object->note_private):'');
-
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
@@ -6053,7 +6052,6 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__THIRDPARTY_LINKEDIN__'] = (is_object($object->thirdparty)?$object->thirdparty->linkedin:'');
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_public):'');
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_private):'');
-
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
