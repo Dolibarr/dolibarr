@@ -296,21 +296,27 @@ class Categories extends DolibarrApi
      */
     public function getListForObject($id, $type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
     {
-        if (!in_array($type, ['product', 'member', 'customer', 'supplier', 'contact'])) {
+        if (!in_array($type, [
+            Categorie::TYPE_PRODUCT,
+            Categorie::TYPE_CONTACT,
+            Categorie::TYPE_CUSTOMER,
+            Categorie::TYPE_SUPPLIER,
+            Categorie::TYPE_MEMBER
+        ])) {
             throw new RestException(401);
         }
-
+        
         if($type == Categorie::TYPE_PRODUCT && ! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
             throw new RestException(401);
         } elseif ($type == Categorie::TYPE_CONTACT && ! DolibarrApiAccess::$user->rights->contact->lire) {
             throw new RestException(401);
- 		} elseif ($type == Categorie::TYPE_CUSTOMER && ! DolibarrApiAccess::$user->rights->societe->lire) {
+        } elseif ($type == Categorie::TYPE_CUSTOMER && ! DolibarrApiAccess::$user->rights->societe->lire) {
             throw new RestException(401);
- 		} elseif ($type == Categorie::TYPE_SUPPLIER && ! DolibarrApiAccess::$user->rights->fournisseur->lire) {
+        } elseif ($type == Categorie::TYPE_SUPPLIER && ! DolibarrApiAccess::$user->rights->fournisseur->lire) {
             throw new RestException(401);
- 		} elseif ($type == Categorie::TYPE_MEMBER && ! DolibarrApiAccess::$user->rights->adherent->lire) {
+        } elseif ($type == Categorie::TYPE_MEMBER && ! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
- 		}
+        }
 
         $categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
@@ -349,13 +355,32 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-
-        // TODO Add all types
-        if ($type === "product") {
+        
+        if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
             }
             $object = new Product($this->db);
+        } elseif ($type === Categorie::TYPE_CUSTOMER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_SUPPLIER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_CONTACT) {
+            if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+                throw new RestException(401);
+            }
+            $object = new Contact($this->db);
+        } elseif ($type === Categorie::TYPE_MEMBER) {
+            if(! DolibarrApiAccess::$user->rights->adherent->creer) {
+                throw new RestException(401);
+            }
+            $object = new Adherent($this->db);
         } else {
             throw new RestException(401, "this type is not recognized yet.");
         }
@@ -410,13 +435,32 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-
-        // TODO Add all types
-        if ($type === "product") {
+        
+        if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
             }
             $object = new Product($this->db);
+        } elseif ($type === Categorie::TYPE_CUSTOMER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_SUPPLIER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_CONTACT) {
+            if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+                throw new RestException(401);
+            }
+            $object = new Contact($this->db);
+        } elseif ($type === Categorie::TYPE_MEMBER) {
+            if(! DolibarrApiAccess::$user->rights->adherent->creer) {
+                throw new RestException(401);
+            }
+            $object = new Adherent($this->db);
         } else {
             throw new RestException(401, "this type is not recognized yet.");
         }
@@ -471,13 +515,32 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-
-        // TODO Add all types
-        if ($type === "product") {
+        
+        if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
             }
             $object = new Product($this->db);
+        } elseif ($type === Categorie::TYPE_CUSTOMER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_SUPPLIER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_CONTACT) {
+            if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+                throw new RestException(401);
+            }
+            $object = new Contact($this->db);
+        } elseif ($type === Categorie::TYPE_MEMBER) {
+            if(! DolibarrApiAccess::$user->rights->adherent->creer) {
+                throw new RestException(401);
+            }
+            $object = new Adherent($this->db);
         } else {
             throw new RestException(401, "this type is not recognized yet.");
         }
@@ -530,13 +593,32 @@ class Categories extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
-
-        // TODO Add all types
-        if ($type === "product") {
+        
+        if ($type === Categorie::TYPE_PRODUCT) {
             if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
                 throw new RestException(401);
             }
             $object = new Product($this->db);
+        } elseif ($type === Categorie::TYPE_CUSTOMER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_SUPPLIER) {
+            if(! DolibarrApiAccess::$user->rights->societe->creer) {
+                throw new RestException(401);
+            }
+            $object = new Societe($this->db);
+        } elseif ($type === Categorie::TYPE_CONTACT) {
+            if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+                throw new RestException(401);
+            }
+            $object = new Contact($this->db);
+        } elseif ($type === Categorie::TYPE_MEMBER) {
+            if(! DolibarrApiAccess::$user->rights->adherent->creer) {
+                throw new RestException(401);
+            }
+            $object = new Adherent($this->db);
         } else {
             throw new RestException(401, "this type is not recognized yet.");
         }
