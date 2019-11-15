@@ -489,7 +489,7 @@ class AdherentType extends CommonObject
 	{
         global $langs, $conf;
 
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut, d.duration, d.subscription, d.mail_valid, d.note, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -506,7 +506,8 @@ class AdherentType extends CommonObject
 				$this->ref            = $obj->rowid;
 				$this->label          = $obj->label;
 				$this->morphy         = $obj->morphy;
-				$this->statut         = $obj->statut;
+				$this->statut         = $obj->status;	// deprecated
+				$this->status         = $obj->status;
 				$this->duration       = $obj->duration;
 				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
 				$this->duration_unit  = substr($obj->duration, -1);
@@ -668,14 +669,43 @@ class AdherentType extends CommonObject
         return $result;
     }
 
-    /**
-     *     getLibStatut
-     *
-     *     @return string     Return status of a type of member
-     */
-    public function getLibStatut()
-    {
-        return '';
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Return label of status (activity, closed)
+	 *
+	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @return   string     	   		Label of status
+	 */
+    public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	/**
+	 *  Return the label of a given status
+	 *
+	 *  @param	int		$status         Status id
+	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string          		Status label
+	 */
+    public function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+		global $langs;
+		$langs->load('companies');
+
+		$statusType = 'status4';
+		if ($status == 0) $statusType = 'status5';
+
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
+		{
+			$this->labelStatus[0] = $langs->trans("ActivityCeased");
+			$this->labelStatus[1] = $langs->trans("InActivity");
+			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->trans("InActivity");
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
