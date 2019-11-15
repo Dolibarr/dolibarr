@@ -2005,15 +2005,6 @@ else
 						}
 					}
 
-					if ($caneditgroup)
-					{
-						print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
-						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-						print '<input type="hidden" name="action" value="addgroup" />';
-					}
-
-					print '<table class="noborder centpercent">'."\n";
-
 					// Other form for add user to group
 					$parameters = array('caneditgroup' => $caneditgroup, 'groupslist' => $groupslist, 'exclude' => $exclude);
 					$reshook = $hookmanager->executeHooks('formAddUserToGroup', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2021,6 +2012,14 @@ else
 
 					if (empty($reshook))
 					{
+						if ($caneditgroup)
+						{
+							print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
+							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+							print '<input type="hidden" name="action" value="addgroup" />';
+						}
+
+						print '<table class="noborder centpercent">'."\n";
 						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 						print '<th class="liste_titre right">';
 						if ($caneditgroup)
@@ -2068,15 +2067,15 @@ else
 						{
 							print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 						}
-					}
 
-					print "</table>";
+						print "</table>";
 
-					if ($caneditgroup)
-					{
-						print '</form>';
+						if ($caneditgroup)
+						{
+							print '</form>';
+						}
+						print "<br>";
 					}
-					print "<br>";
 				}
 			}
 		}
