@@ -489,7 +489,7 @@ class AdherentType extends CommonObject
 	{
         global $langs, $conf;
 
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut, d.duration, d.subscription, d.mail_valid, d.note, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -506,8 +506,8 @@ class AdherentType extends CommonObject
 				$this->ref            = $obj->rowid;
 				$this->label          = $obj->label;
 				$this->morphy         = $obj->morphy;
-				$this->statut         = $obj->statut;
-				$this->status         = $obj->statut;
+				$this->statut         = $obj->status;	// deprecated
+				$this->status         = $obj->status;
 				$this->duration       = $obj->duration;
 				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
 				$this->duration_unit  = substr($obj->duration, -1);
