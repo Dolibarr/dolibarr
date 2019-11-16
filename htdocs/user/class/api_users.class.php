@@ -190,10 +190,9 @@ class Users extends DolibarrApi
             throw new RestException(404, 'User group not found');
         }
 
-        $this->useraccount = $this->_cleanObjectDatas($this->useraccount);
         $this->useraccount->user_group_list = $this->_cleanUserGroupListDatas($userGroupList);
 
-        return $this->useraccount;
+        return $this->_cleanObjectDatas($this->useraccount);
     }
 
 	/**
