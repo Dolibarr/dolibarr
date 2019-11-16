@@ -56,19 +56,19 @@ class FormWebsite
      */
     public function selectWebsite($selected = '', $htmlname = 'exportmodelid', $useempty = 0)
     {
-        $out='';
+        $out = '';
 
         $sql = "SELECT rowid, ref";
-        $sql.= " FROM ".MAIN_DB_PREFIX."website";
-        $sql.= " WHERE 1 = 1";
-        $sql.= " ORDER BY rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."website";
+        $sql .= " WHERE 1 = 1";
+        $sql .= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
         {
-            $out.='<select class="flat minwidth100" name="'.$htmlname.'" id="'.$htmlname.'">';
+            $out .= '<select class="flat minwidth100" name="'.$htmlname.'" id="'.$htmlname.'">';
             if ($useempty)
             {
-                $out.='<option value="-1">&nbsp;</option>';
+                $out .= '<option value="-1">&nbsp;</option>';
             }
 
             $num = $this->db->num_rows($result);
@@ -78,17 +78,17 @@ class FormWebsite
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid)
                 {
-                    $out.='<option value="'.$obj->rowid.'" selected>';
+                    $out .= '<option value="'.$obj->rowid.'" selected>';
                 }
                 else
                 {
-                    $out.='<option value="'.$obj->rowid.'">';
+                    $out .= '<option value="'.$obj->rowid.'">';
                 }
-                $out.=$obj->ref;
-                $out.='</option>';
+                $out .= $obj->ref;
+                $out .= '</option>';
                 $i++;
             }
-            $out.="</select>";
+            $out .= "</select>";
         }
         else {
             dol_print_error($this->db);
@@ -114,9 +114,9 @@ class FormWebsite
         $langs->load("admin");
 
         $sql = "SELECT rowid, code, label, entity";
-        $sql.= " FROM ".MAIN_DB_PREFIX.'c_type_container';
-        $sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
-        $sql.= " ORDER BY label";
+        $sql .= " FROM ".MAIN_DB_PREFIX.'c_type_container';
+        $sql .= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
+        $sql .= " ORDER BY label";
 
     	dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
     	$result = $this->db->query($sql);
@@ -126,7 +126,7 @@ class FormWebsite
     		$i = 0;
     		if ($num)
     		{
-    			print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+    			print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
     			if ($useempty == 1 || ($useempty == 2 && $num > 1))
     			{
     				print '<option value="-1">&nbsp;</option>';
@@ -179,8 +179,8 @@ class FormWebsite
     	$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
 
     	$arrayofsamples = array();
-    	$arrayofsamples['empty']='EmptyPage';	// Always this one first
-    	foreach($listofsamples as $sample)
+    	$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
+    	foreach ($listofsamples as $sample)
     	{
     		$reg = array();
     		if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg))
@@ -193,14 +193,14 @@ class FormWebsite
     	}
 
     	$out = '';
-    	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+    	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
     	if ($useempty == 1 || $useempty == 2)
     	{
     		$out .= '<option value="-1">&nbsp;</option>';
     	}
 
-    	foreach($arrayofsamples as $key => $val)
+    	foreach ($arrayofsamples as $key => $val)
     	{
     		if ($selected == $key)
     		{
