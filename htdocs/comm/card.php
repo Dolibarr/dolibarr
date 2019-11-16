@@ -178,7 +178,7 @@ if (empty($reshook))
 		$result = $object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	// update outstandng risk rating
 	if ($action == 'setoutstanding_risk')
 	{
@@ -446,7 +446,7 @@ if ($object->id > 0)
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Maximum number of payment days
 	if ($object->client)
 	{
@@ -458,7 +458,7 @@ if ($object->id > 0)
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Rating Outstanding Risk
 	if ($object->client)
 	{
@@ -466,7 +466,7 @@ if ($object->id > 0)
 	    print '<td>';
 	    print $form->editfieldkey($langs->trans("Rating Outstanding Risk"), 'id_risk', $object->id_risk, $object, $user->rights->societe->creer);
 	    print '</td><td>';
-		
+
 		if ($action == 'editid_risk')
 		{
 			print $form->selectRatingOutstandingRisk($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->id_risk, 'id_risk');
