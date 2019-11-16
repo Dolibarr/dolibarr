@@ -4645,6 +4645,7 @@ class Form
 	/**
 	 *  Rating Outstanding Risk
 	 *
+	 *  @param	string	$page        	Page
 	 *  @param	string	$selected       Id pre-selectionne
 	 *  @param  string	$htmlname       Nom de la zone select
 	 * 	@return	string					Code of HTML select to chose Rating Outstanding Risk or not
