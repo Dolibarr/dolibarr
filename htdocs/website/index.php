@@ -3036,14 +3036,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			{
 				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
 				$i = 0;
+				$tmppage = new WebsitePage($db);
 				while ($obj = $db->fetch_object($resql))
 				{
-					$tmppage = new WebsitePage($db);
-					$tmppage->fetch($obj->rowid);
-					if ($i > 0) print ' - ';
-					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')<br>';
-					$translatedby++;
-					$i++;
+					$result = $tmppage->fetch($obj->rowid);
+					if ($result > 0) {
+						if ($i > 0) print '<br>';
+						print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$translatedby++;
+						$i++;
+					}
 				}
 			}
 		}
