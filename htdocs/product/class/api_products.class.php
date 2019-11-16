@@ -412,10 +412,10 @@ class Products extends DolibarrApi
      *
      * Link a product/service to a parent product/service
      *
-     * @param  int $id      Id of parent product/service
-     * @param  int $id_fils Id of child product/service
-     * @param  int $qty     Quantity
-     * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
+     * @param  int $id       Id of parent product/service
+     * @param  int $child_id Id of child product/service
+     * @param  int $qty      Quantity
+     * @param  int $incdec   1=Increase/decrease stock of child when parent stock increase/decrease
      * @return int
      *
      * @throws RestException
