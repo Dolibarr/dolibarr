@@ -238,57 +238,57 @@ class FormWebsite
 
     	$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
 
-	    $out='';
+	    $out = '';
 	    if ($atleastonepage && $action != 'editsource')
 	    {
-	    	$out.='<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
+	    	$out .= '<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
 	    }
 	    else
 	    {
-	    	$out.='<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
+	    	$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
 	    }
 
-	    if ($showempty || ! $atleastonepage) $out.='<option value="-1">&nbsp;</option>';
+	    if ($showempty || !$atleastonepage) $out .= '<option value="-1">&nbsp;</option>';
 
 	    if ($atleastonepage)
 	    {
 	    	if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
 	    	{
-	    		$firstpageid=0;$homepageid=0;
-	    		foreach($website->lines as $key => $valpage)
+	    		$firstpageid = 0; $homepageid = 0;
+	    		foreach ($website->lines as $key => $valpage)
 	    		{
-	    			if (empty($firstpageid)) $firstpageid=$valpage->id;
-	    			if ($website->fk_default_home && $key == $website->fk_default_home) $homepageid=$valpage->id;
+	    			if (empty($firstpageid)) $firstpageid = $valpage->id;
+	    			if ($website->fk_default_home && $key == $website->fk_default_home) $homepageid = $valpage->id;
 	    		}
-	    		$pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
+	    		$pageid = $homepageid ? $homepageid : $firstpageid; // We choose home page and if not defined yet, we take first page
 	    	}
 
-	    	foreach($website->lines as $key => $valpage)
+	    	foreach ($website->lines as $key => $valpage)
 	    	{
 	    		if (is_array($excludeids) && count($excludeids) && in_array($valpage->id, $excludeids)) continue;
 
 	    		$valueforoption = '<span class="opacitymedium">['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).']</span> ';
-	    		$valueforoption.= $valpage->pageurl.' - '.$valpage->title;
-	    		if ($website->fk_default_home && $key == $website->fk_default_home) $valueforoption.=' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
+	    		$valueforoption .= $valpage->pageurl.' - '.$valpage->title;
+	    		if ($website->fk_default_home && $key == $website->fk_default_home) $valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
 
-	    		$out.='<option value="'.$key.'"';
-	    		if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
-	    		$out.=' data-html="'.dol_escape_htmltag($valueforoption).'"';
-	    		$out.='>';
-	    		$out.=$valueforoption;
-	    		$out.='</option>';
+	    		$out .= '<option value="'.$key.'"';
+	    		if ($pageid > 0 && $pageid == $key) $out .= ' selected'; // To preselect a value
+	    		$out .= ' data-html="'.dol_escape_htmltag($valueforoption).'"';
+	    		$out .= '>';
+	    		$out .= $valueforoption;
+	    		$out .= '</option>';
 	    	}
 	    }
-	    $out.='</select>';
+	    $out .= '</select>';
 
 	    if ($atleastonepage && $action != 'editsource')
 	    {
-	    	$out.=ajax_combobox($htmlname);
+	    	$out .= ajax_combobox($htmlname);
 	    }
 	    else
 	    {
-	    	$out.='<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
-	    	$out.=ajax_combobox($htmlname);
+	    	$out .= '<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
+	    	$out .= ajax_combobox($htmlname);
 	    }
 	    return $out;
 	}
