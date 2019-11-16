@@ -3034,19 +3034,23 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$num_rows = $db->num_rows($resql);
 			if ($num_rows > 0)
 			{
-				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
+				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span>';
 				$i = 0;
 				$tmppage = new WebsitePage($db);
+				$tmpstring = '';
 				while ($obj = $db->fetch_object($resql))
 				{
 					$result = $tmppage->fetch($obj->rowid);
 					if ($result > 0) {
-						if ($i > 0) print '<br>';
-						print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						if ($i > 0) $tmpstring .= '<br>';
+						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
 						$translatedby++;
 						$i++;
 					}
 				}
+				if ($i > 1) print '<br>';
+				else print ' ';
+				print $tmpstring;
 			}
 		}
 		else dol_print_error($db);
@@ -3064,6 +3068,9 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
 			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			if ($translationof > 0) {
+				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+			}
 		}
 	}
 	print '</td></tr>';
