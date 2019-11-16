@@ -373,11 +373,11 @@ if ($action == 'create')
 
 	// Other attributes
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 	print '<tbody>';
 	print "</table>\n";
@@ -823,7 +823,7 @@ if ($rowid > 0)
         	print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
-		    print $object->showOptionals($extrafields, 'edit');
+		    print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
 		print '</table>';

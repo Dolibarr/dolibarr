@@ -336,22 +336,22 @@ if ($action == 'create' && !$error) {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Ref supplier
 	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier', 'alpha', 2) : '').'" type="text"></td>';
 	print '</tr>';
 
 	// Date invoice
-	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 	print $html->selectDate('', '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 	// Payment term
-	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	$html->select_conditions_paiements(isset($_POST['cond_reglement_id']) ? $_POST['cond_reglement_id'] : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 	// Payment mode
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	$html->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 	// Project
@@ -359,7 +359,7 @@ if ($action == 'create' && !$error) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
-		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans('Project').'</td><td>';
 		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
@@ -367,9 +367,7 @@ if ($action == 'create' && !$error) {
 	// Other attributes
 	$parameters = array(
 			'objectsrc' => $objectsrc,
-			'idsrc' => $listoforders,
-			'colspan' => ' colspan="2"',
-	        'cols'=>2
+			'idsrc' => $listoforders
 	);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -390,7 +388,7 @@ if ($action == 'create' && !$error) {
 	// Public note
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
-	print '<td colspan="2">';
+	print '<td>';
 	print '<textarea name="note_public" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">';
 
 	print $langs->trans("Orders").": ".implode(', ', $listoforders);
@@ -401,7 +399,7 @@ if ($action == 'create' && !$error) {
 	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
-		print '<td colspan="2">';
+		print '<td>';
 		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 
 		print '</textarea></td></tr>';

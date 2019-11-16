@@ -6614,10 +6614,19 @@ abstract class CommonObject
 				// Load language if required
 				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 
-				$colspan = '3';
+				$colspan = '';
 				if (is_array($params) && count($params) > 0) {
-					if (array_key_exists('colspan', $params)) {
-						$colspan = $params['colspan'];
+					if (array_key_exists('cols', $params)) {
+						$colspan = $params['cols'];
+					}
+					elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
+						$reg = array();
+						if (preg_match('/colspan="(\d+)"/', $params['colspan'], $reg)) {
+							$colspan = $reg[1];
+						}
+						else {
+							$colspan = $params['colspan'];
+						}
 					}
 				}
 
@@ -6659,7 +6668,7 @@ abstract class CommonObject
                         }
                     }
 
-					$out .= $extrafields->showSeparator($key, $this);
+					$out .= $extrafields->showSeparator($key, $this, ($colspan + 1));
 				}
 				else
 				{
@@ -6679,9 +6688,9 @@ abstract class CommonObject
 					$domData .= ' data-targetelement="'.$this->element.'"';
 					$domData .= ' data-targetid="'.$this->id.'"';
 
-					$html_id = !empty($this->id) ? 'extrarow-'.$this->element.'_'.$key.'_'.$this->id : '';
+					$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
 
-					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
+					$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ': '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 
 					if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
 
@@ -6724,9 +6733,8 @@ abstract class CommonObject
 					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-
-					$out .= '<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
-					//$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'">';
+					
+					$out .= '<td '.($html_id ? 'id="'.$html_id.'" ': '').'class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 
 					switch ($mode) {
 						case "view":

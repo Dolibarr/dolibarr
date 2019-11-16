@@ -1115,7 +1115,7 @@ if ($action == 'create')
     print $hookmanager->resPrint;
     if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 
 	print '</table>';
@@ -1519,7 +1519,7 @@ if ($id > 0)
         print $hookmanager->resPrint;
         if (empty($reshook))
 		{
-			print $object->showOptionals($extrafields, 'edit');
+			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
 		print '</table>';
