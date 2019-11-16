@@ -38,7 +38,7 @@ class BookKeeping extends CommonObject
 	public $error;
 
 	/**
-	 * @var string[] Error codes (or messages)
+	 * @var string[] Array of Error codes (or messages)
 	 */
 	public $errors = array();
 
@@ -67,7 +67,14 @@ class BookKeeping extends CommonObject
 	 */
 	public $id;
 
+    /**
+     * @var string Date of source document, in db date NOT NULL
+     */
 	public $doc_date;
+
+    /**
+     * @var int Deadline for payment
+     */
 	public $date_lim_reglement;
 
     /**
@@ -119,9 +126,25 @@ class BookKeeping extends CommonObject
      * @var string label operation
      */
     public $label_operation;
+
+    /**
+     * @var float FEC:Debit
+     */
 	public $debit;
+
+    /**
+     * @var float FEC:Credit
+     */
 	public $credit;
+
+    /**
+     * @var float FEC:Amount (Not necessary)
+     */
 	public $montant;
+
+    /**
+     * @var string FEC:Sens (Not necessary)
+     */
 	public $sens;
 
 	/**
@@ -129,16 +152,30 @@ class BookKeeping extends CommonObject
      */
 	public $fk_user_author;
 
+    /**
+     * @var string key for import
+     */
 	public $import_key;
+
+    /**
+     * @var string code journal
+     */
 	public $code_journal;
+
+    /**
+     * @var string label journal
+     */
 	public $journal_label;
+
+    /**
+     * @var int accounting transaction id
+     */
 	public $piece_num;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
-
 
 
 	/**
