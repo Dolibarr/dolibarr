@@ -178,6 +178,24 @@ if (empty($reshook))
 		$result = $object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
+	
+	// update outstandng risk rating
+	if ($action == 'setoutstanding_risk')
+	{
+		$object->fetch($id);
+		$object->id_risk = GETPOST('id_risk');
+		$result = $object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	// update Maximum number of payment days
+	if ($action == 'setmax_payment_days')
+	{
+		$object->fetch($id);
+		$object->max_payment_days = GETPOST('max_payment_days');
+		$result = $object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
 
 	// update order min amount
 	if ($action == 'setorder_min_amount')
@@ -428,6 +446,38 @@ if ($object->id > 0)
 	    print '</td>';
 	    print '</tr>';
 	}
+	
+	// Maximum number of payment days
+	if ($object->client)
+	{
+	    print '<tr class="nowrap">';
+	    print '<td>';
+	    print $form->editfieldkey($langs->trans("Max number of payment days"), 'max_payment_days', $object->max_payment_days, $object, $user->rights->societe->creer);
+	    print '</td><td>';
+	    print $form->editfieldval($langs->trans("Max number of payment days"), 'max_payment_days', $object->max_payment_days, $object, $user->rights->societe->creer);
+	    print '</td>';
+	    print '</tr>';
+	}
+	
+	// Rating Outstanding Risk
+	if ($object->client)
+	{
+	    print '<tr class="nowrap">';
+	    print '<td>';
+	    print $form->editfieldkey($langs->trans("Rating Outstanding Risk"), 'id_risk', $object->id_risk, $object, $user->rights->societe->creer);
+	    print '</td><td>';
+		
+		if ($action == 'editid_risk')
+		{
+			print $form->selectRatingOutstandingRisk($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->id_risk, 'id_risk');
+		}
+		else
+		{
+			print $form->selectRatingOutstandingRisk($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->id_risk, 'none');
+		}
+	    print '</td>';
+	    print '</tr>';
+	}
 
 	if ($object->client)
 	{
@@ -476,7 +526,7 @@ if ($object->id > 0)
         print '</td><td>';
         if ($action == 'editshipping')
         {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id');
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
         }
         else
         {
