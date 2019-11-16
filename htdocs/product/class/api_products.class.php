@@ -375,7 +375,7 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Get the list of children of the product.
+     * Get the list of subproducts of the product.
      *
      * @param  int $id      Id of parent product/service
      * @return array
@@ -384,9 +384,9 @@ class Products extends DolibarrApi
      * @throws 401
      * @throws 404
      *
-     * @url GET {id}/childs
+     * @url GET {id}/subproducts
      */
-    public function getChilds($id)
+    public function getSubproducts($id)
     {
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
@@ -408,23 +408,23 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Add product child.
+     * Add subproduct.
      *
      * Link a product/service to a parent product/service
      *
-     * @param  int $id       Id of parent product/service
-     * @param  int $child_id Id of child product/service
-     * @param  int $qty      Quantity
-     * @param  int $incdec   1=Increase/decrease stock of child when parent stock increase/decrease
+     * @param  int $id            Id of parent product/service
+     * @param  int $subproduct_id Id of child product/service
+     * @param  int $qty           Quantity
+     * @param  int $incdec        1=Increase/decrease stock of child when parent stock increase/decrease
      * @return int
      *
      * @throws RestException
      * @throws 401
      * @throws 404
      *
-     * @url POST {id}/childs/add
+     * @url POST {id}/subproducts/add
      */
-    public function addChild($id, $child_id, $qty, $incdec = 1)
+    public function addSubproducts($id, $subproduct_id, $qty, $incdec = 1)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -434,7 +434,7 @@ class Products extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->product->add_sousproduit($id, $child_id, $qty, $incdec);
+        $result = $this->product->add_sousproduit($id, $subproduct_id, $qty, $incdec);
         if ($result <= 0) {
             throw new RestException(500, "Error adding product child");
         }
@@ -442,21 +442,21 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Remove product child.
+     * Remove subproduct.
      *
      *  Unlink a product/service from a parent product/service
      *
-     * @param  int $id        Id of parent product/service
-     * @param  int $child_id  Id of child product/service
+     * @param  int $id             Id of parent product/service
+     * @param  int $subproduct_id  Id of child product/service
      * @return int
      *
      * @throws RestException
      * @throws 401
      * @throws 404
      *
-     * @url DELETE {id}/childs/remove
+     * @url DELETE {id}/subproducts/remove
      */
-    public function delChild($id, $child_id)
+    public function delSubproducts($id, $subproduct_id)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -466,7 +466,7 @@ class Products extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->product->del_sousproduit($id, $child_id);
+        $result = $this->product->del_sousproduit($id, $subproduct_id);
         if ($result <= 0) {
             throw new RestException(500, "Error while removing product child");
         }
