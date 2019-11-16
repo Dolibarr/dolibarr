@@ -126,7 +126,7 @@ class Conf
 		$this->service			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->actions			= new stdClass();
-  	$this->agenda			= new stdClass();
+		$this->agenda			= new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture			= new stdClass();
@@ -354,11 +354,11 @@ class Conf
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
-		// For backward compatibility
-		$this->banque->multidir_output	= array($this->entity => $rootfordata."/bank");
-		$this->banque->multidir_temp	= array($this->entity => $rootfordata."/bank/temp");
-		$this->banque->dir_output=$rootfordata."/bank";
-		$this->banque->dir_temp=$rootfordata."/bank/temp";
+		// For bank storage
+		$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
+		$this->bank->multidir_temp = array($this->entity => $rootfordata."/bank/temp");
+		$this->bank->dir_output = $rootfordata."/bank";
+		$this->bank->dir_temp = $rootfordata."/bank/temp";
 
 		// For medias storage
 		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");

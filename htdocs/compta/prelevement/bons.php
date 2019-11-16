@@ -101,14 +101,14 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd= "&amp;statut=".$statut;
+    $urladd = "&amp;statut=".$statut;
 
-    $selectedfields='';
+    $selectedfields = '';
 
-    $newcardbutton='';
+    $newcardbutton = '';
     if ($user->rights->prelevement->bons->creer)
     {
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
     }
 
     // Lines of title fields
@@ -124,18 +124,18 @@ if ($result)
 
     print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
-    $moreforfilter='';
+    $moreforfilter = '';
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. dol_escape_htmltag($search_ref).'"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
+    print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterButtons();
+    $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';
     print '</tr>';

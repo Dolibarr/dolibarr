@@ -110,7 +110,7 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'account',		// old key for bank_account
+        'account'  => 'account', // old key for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
@@ -129,7 +129,7 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'     => 'user',
-        'account'  => 'account',		// old key for bank_account
+        'account'  => 'account', // old key for bank_account
         'bank_account'=> 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
@@ -248,24 +248,29 @@ class Categorie extends CommonObject
 	/**
 	 * 	Load category into memory from database
 	 *
-	 * 	@param		int		$id		Id of category
-	 *  @param		string	$label	Label of category
-	 *  @param		string	$type	Type of category ('product', '...') or (0, 1, ...)
+	 * 	@param		int		$id      Id of category
+	 *  @param		string	$label   Label of category
+	 *  @param		string	$type    Type of category ('product', '...') or (0, 1, ...)
+	 *  @param		string	$ref_ext External reference of object
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	public function fetch($id, $label = '', $type = null)
+	public function fetch($id, $label = '', $type = null, $ref_ext = '')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($label)) return -1;
+		if (empty($id) && empty($label) && empty($ref_ext)) return -1;
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
 			$sql .= " WHERE rowid = ".$id;
+		}
+		elseif (!empty($ref_ext))
+		{
+			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
 		}
 		else
 		{
@@ -290,6 +295,7 @@ class Categorie extends CommonObject
 				$this->socid		= $res['fk_soc'];
 				$this->visible = $res['visible'];
 				$this->type			= $res['type'];
+				$this->ref_ext = $res['ref_ext'];
 				$this->entity = $res['entity'];
 
 				// Retreive all extrafield
@@ -342,6 +348,7 @@ class Categorie extends CommonObject
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
+		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) $this->visible = 0;
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
@@ -367,6 +374,7 @@ class Categorie extends CommonObject
 		$sql .= " visible,";
 		$sql .= " type,";
 		$sql .= " import_key,";
+		$sql .= " ref_ext,";
 		$sql .= " entity";
 		$sql .= ") VALUES (";
 		$sql .= $this->db->escape($this->fk_parent).",";
@@ -380,6 +388,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->visible)."',";
 		$sql .= $this->db->escape($type).",";
 		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
+		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
 		$sql .= $this->db->escape($conf->entity);
 		$sql .= ")";
 
@@ -454,6 +463,7 @@ class Categorie extends CommonObject
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+		$this->ref_ext = trim($this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
@@ -469,6 +479,7 @@ class Categorie extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 		$sql .= " SET label = '".$this->db->escape($this->label)."',";
 		$sql .= " description = '".$this->db->escape($this->description)."',";
+		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
@@ -861,29 +872,29 @@ class Categorie extends CommonObject
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
-		if ($type=="customer") {
-			$sub_type="societe";
-			$subcol_name="fk_soc";
+		if ($type == "customer") {
+			$sub_type = "societe";
+			$subcol_name = "fk_soc";
 		}
-		if ($type=="supplier") {
-			$sub_type="fournisseur";
-			$subcol_name="fk_soc";
+		if ($type == "supplier") {
+			$sub_type = "fournisseur";
+			$subcol_name = "fk_soc";
 		}
-		if ($type=="contact") {
-			$subcol_name="fk_socpeople";
+		if ($type == "contact") {
+			$subcol_name = "fk_socpeople";
 		}
 
 		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
 
 		$sql = "SELECT s.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
-		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.$idoftype;
-		$sql.= ' AND s.rowid = sub.fk_categorie';
-		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s";
+		$sql .= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
+		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
+		$sql .= ' AND s.type='.$idoftype;
+		$sql .= ' AND s.rowid = sub.fk_categorie';
+		$sql .= ' AND sub.'.$subcol_name.' = '.$id;
 
-		$sql.= $this->db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$offset = 0;
 		$nbtotalofrecords = '';
@@ -905,13 +916,13 @@ class Categorie extends CommonObject
 			}
 			$offset = $limit * $page;
 
-			$sql.= $this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$i=0;
+			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			while ($i < $min)
@@ -926,6 +937,7 @@ class Categorie extends CommonObject
 					$categories[$i]['description'] = $category_static->description;
 					$categories[$i]['color']    		= $category_static->color;
 					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['ref_ext']			= $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
 					$categories[$i]['entity'] = $category_static->entity;
@@ -1090,6 +1102,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$this->cats[$obj->rowid]['color'] = $obj->color;
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
+				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$i++;
 			}
 		}
@@ -1644,8 +1657,8 @@ class Categorie extends CommonObject
 			if (is_array($file['name']) && count($file['name']) > 0)
 			{
 				$nbfile = count($file['name']);
-				for ($i = 0; $i <= $nbfile; $i ++) {
-					$originImage = $dir . $file['name'][$i];
+				for ($i = 0; $i <= $nbfile; $i++) {
+					$originImage = $dir.$file['name'][$i];
 
 					// Cree fichier en taille origine
 					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
