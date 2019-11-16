@@ -809,7 +809,7 @@ table[summary="list_of_modules"] .fa-cog {
 
 .img-skinthumb {
 	width: 160px;
-	height: 120px;
+	height: 100px;
 }
 
 
