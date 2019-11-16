@@ -251,7 +251,10 @@ if ($action == 'create')
 						}
 					});*/
 				}
-				else {
+				else if (jQuery('#fk_bom').val() < 0) {
+					// Redirect to page with all fields defined except fk_bom set
+					console.log(jQuery('#fk_product').val());
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&qty='+jQuery('#qty').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
 					/*
 					$('#qty').val('');
 					$("#fk_product").val('');
@@ -275,15 +278,19 @@ if ($action == 'create')
 	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
-	print load_fiche_titre($langs->trans("ToConsume"));
+	if (GETPOST('fk_bom', 'int') > 0) {
+		print load_fiche_titre($langs->trans("ToConsume"));
 
-	print '<table class="noborder centpercent">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 
-	$object->lines = $objectbom->lines;
+		$object->lines = $objectbom->lines;
 
-	$object->printOriginLinesList('', array());
+		$object->printOriginLinesList('', array());
 
-	print '</table>';
+		print '</table>';
+		print '</div>';
+	}
 
 	print '</form>';
 }
