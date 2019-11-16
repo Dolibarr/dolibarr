@@ -88,6 +88,15 @@ class Project extends CommonObject
     public $thirdparty_name; // To store name of thirdparty (defined only in some cases)
 
     public $user_author_id; //!< Id of project creator. Not defined if shared project.
+
+    /**
+     * @var int user close id
+     */
+    public $fk_user_close;
+
+    /**
+     * @var int user close id
+     */
 	public $user_close_id;
     public $public; //!< Tell if this is a public or private project
     public $budget_amount;

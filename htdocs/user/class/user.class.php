@@ -2083,9 +2083,9 @@ class User extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    	Read clicktodial information for user
+	 *  Read clicktodial information for user
 	 *
-	 * 		@return		<0 if KO, >0 if OK
+	 *  @return int <0 if KO, >0 if OK
 	 */
 	public function fetch_clicktodial()
 	{
@@ -2123,7 +2123,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	integer
+	 *  @return	int  <0 if KO, >0 if OK
      */
     public function update_clicktodial()
     {
@@ -2886,7 +2886,7 @@ class User extends CommonObject
 	/**
 	 * Return and array with all instanciated first level children users of current user
 	 *
-	 * @return	void
+	 * @return	User[]|int
 	 * @see getAllChildIds()
 	 */
 	public function get_children()
@@ -2895,7 +2895,7 @@ class User extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user = ".$this->id;
 
-		dol_syslog(get_class($this)."::get_children result=".$result, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_children sql=".$sql, LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{

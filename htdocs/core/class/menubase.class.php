@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +45,32 @@ class Menubase
     public $errors = array();
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var int ID
+     */
+    public $id;
 
+    /**
+     * @var string Menu handler
+     */
     public $menu_handler;
+
+    /**
+     * @var string Module name if record is added by a module
+     */
     public $module;
+
+    /**
+     * @var string Menu top or left
+     */
     public $type;
+
+    /**
+     * @var string Name family/module for top menu (home, companies, ...)
+     */
     public $mainmenu;
 
     /**
-     * @var int ID
+     * @var int 0 or Id of mother menu line, or -1 if we use fk_mainmenu and fk_leftmenu
      */
     public $fk_menu;
 
@@ -70,23 +85,71 @@ class Menubase
     public $fk_leftmenu;
 
     /**
-     * @var int position
+     * @var int Sort order of entry
      */
     public $position;
+
+    /**
+     * @var string Relative (or absolute) url to go
+     */
     public $url;
+
+    /**
+     * @var string Target of Url link
+     */
     public $target;
+
+    /**
+     * @var string Key for menu translation
+     * @deprecated
+     * @see title
+     */
     public $titre;
+
+    /**
+     * @var string Key for menu translation
+     */
+    public $title;
+
+    /**
+     * @var string Lang file to load for translation
+     */
     public $langs;
+
+    /**
+     * @var string Not used
+     * @deprecated
+     */
     public $level;
-    public $leftmenu;		//<! Not used
+
+    /**
+     * @var string Name family/module for left menu (setup, info, ...)
+     */
+    public $leftmenu;
+
+    /**
+     * @var string Condition to show enabled or disabled
+     */
     public $perms;
+
+    /**
+     * @var string Condition to show or hide
+     */
     public $enabled;
+
+    /**
+     * @var int 0 if menu for all users, 1 for external only, 2 for internal only
+     */
     public $user;
+
+    /**
+     * @var int timestamp
+     */
     public $tms;
 
 
     /**
-	 *	Constructor
+	 *  Constructor
 	 *
 	 *  @param		DoliDB		$db 		    Database handler
      *  @param     	string		$menu_handler	Menu handler
@@ -100,10 +163,10 @@ class Menubase
 
 
     /**
-     *      Create menu entry into database
+     *  Create menu entry into database
      *
-     *      @param      User	$user       User that create
-     *      @return     int      			<0 if KO, Id of record if OK
+     *  @param      User	$user       User that create
+     *  @return     int      			<0 if KO, Id of record if OK
      */
     public function create($user = null)
     {
@@ -125,7 +188,7 @@ class Menubase
         $this->langs=trim($this->langs);
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
-        $this->user=trim($this->user);
+        $this->user = (int) $this->user;
         if (empty($this->position)) $this->position=0;
         if (! $this->level) $this->level=0;
 
@@ -246,7 +309,7 @@ class Menubase
      */
     public function update($user = null, $notrigger = 0)
     {
-        global $conf, $langs;
+        //global $conf, $langs;
 
         // Clean parameters
         $this->rowid=trim($this->rowid);
@@ -265,7 +328,7 @@ class Menubase
         $this->langs=trim($this->langs);
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
-        $this->user=trim($this->user);
+        $this->user = (int) $this->user;
 
         // Check parameters
         // Put here code to add control on parameters values
@@ -311,7 +374,7 @@ class Menubase
      */
     public function fetch($id, $user = null)
     {
-        global $langs;
+        //global $langs;
 
         $sql = "SELECT";
         $sql.= " t.rowid,";
@@ -385,7 +448,7 @@ class Menubase
      */
     public function delete($user)
     {
-        global $conf, $langs;
+        //global $conf, $langs;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE rowid=".$this->id;

@@ -240,24 +240,29 @@ class Categorie extends CommonObject
 	/**
 	 * 	Load category into memory from database
 	 *
-	 * 	@param		int		$id		Id of category
-	 *  @param		string	$label	Label of category
-	 *  @param		string	$type	Type of category ('product', '...') or (0, 1, ...)
+	 * 	@param		int		$id      Id of category
+	 *  @param		string	$label   Label of category
+	 *  @param		string	$type    Type of category ('product', '...') or (0, 1, ...)
+	 *  @param		string	$ref_ext External reference of object
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	public function fetch($id, $label = '', $type = null)
+	public function fetch($id, $label = '', $type = null, $ref_ext = '')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($label)) return -1;
+		if (empty($id) && empty($label) && empty($ref_ext)) return -1;
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
 			$sql .= " WHERE rowid = ".$id;
+		}
+		elseif (!empty($ref_ext))
+		{
+			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
 		}
 		else
 		{
@@ -282,6 +287,7 @@ class Categorie extends CommonObject
 				$this->socid		= $res['fk_soc'];
 				$this->visible = $res['visible'];
 				$this->type			= $res['type'];
+				$this->ref_ext = $res['ref_ext'];
 				$this->entity = $res['entity'];
 
 				// Retreive all extrafield
@@ -334,6 +340,7 @@ class Categorie extends CommonObject
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
+		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) $this->visible = 0;
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
@@ -359,6 +366,7 @@ class Categorie extends CommonObject
 		$sql .= " visible,";
 		$sql .= " type,";
 		$sql .= " import_key,";
+		$sql .= " ref_ext,";
 		$sql .= " entity";
 		$sql .= ") VALUES (";
 		$sql .= $this->db->escape($this->fk_parent).",";
@@ -372,6 +380,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->visible)."',";
 		$sql .= $this->db->escape($type).",";
 		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
+		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
 		$sql .= $this->db->escape($conf->entity);
 		$sql .= ")";
 
@@ -446,6 +455,7 @@ class Categorie extends CommonObject
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+		$this->ref_ext = trim($this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
@@ -461,6 +471,7 @@ class Categorie extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 		$sql .= " SET label = '".$this->db->escape($this->label)."',";
 		$sql .= " description = '".$this->db->escape($this->description)."',";
+		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
@@ -918,6 +929,7 @@ class Categorie extends CommonObject
 					$categories[$i]['description'] = $category_static->description;
 					$categories[$i]['color']    		= $category_static->color;
 					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['ref_ext']			= $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
 					$categories[$i]['entity'] = $category_static->entity;
@@ -1082,6 +1094,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$this->cats[$obj->rowid]['color'] = $obj->color;
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
+				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$i++;
 			}
 		}
