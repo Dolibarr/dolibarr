@@ -4641,6 +4641,64 @@ class Form
 		}
 	}
 
+
+	/**
+	 *  Rating Outstanding Risk
+	 *
+	 *  @param	string	$selected       Id pre-selectionne
+	 *  @param  string	$htmlname       Nom de la zone select
+	 * 	@return	string					Code of HTML select to chose Rating Outstanding Risk or not
+	 */
+    public function selectRatingOutstandingRisk($page, $selected = '', $htmlname = 'id_risk')
+	{
+		global $langs;
+
+		$return = '';
+
+		$options = array(
+			'1'=>$langs->trans("None"),
+			'2'=>$langs->trans("Low"),
+			'3'=>$langs->trans("Medium"),
+			'4'=>$langs->trans("High")
+		);
+
+		if ($htmlname != "none")
+		{
+			$return .=  '<form method="POST" action="'.$page.'">';
+			$return .=  '<input type="hidden" name="action" value="setmode">';
+			$return .=  '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+			$return .= '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+			foreach ($options as $id => $value)
+			{
+				if ($selected == $id)
+				{
+					$return .= '<option value="'.$id.'" selected>'.$value;
+				}
+				else
+				{
+					$return .= '<option value="'.$id.'">'.$value;
+				}
+				$return .= '</option>';
+			}
+			$return .= '</select>';
+
+			$return .=  '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$return .=  '</form>';
+		}
+		else
+		{
+			if ($selected)
+			{
+				return $options[$selected];
+			} else {
+				return "&nbsp;";
+			}
+		}
+
+		return $return;
+	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show form with multicurrency code
