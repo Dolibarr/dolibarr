@@ -64,18 +64,18 @@ class Products extends DolibarrApi
      *
      * Return an array with product information.
      *
-     * @param  int    $id               ID of product
-     * @param  int    $includestockdata Load also information about stock (slower)
-     * @param  bool   $includesousproduits Load information about virtual product components
+     * @param  int    $id                  ID of product
+     * @param  int    $includestockdata    Load also information about stock (slower)
+     * @param  bool   $includesubproducts  Load information about subproducts
      * @return array|mixed                 Data without useless information
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    public function get($id, $includestockdata = 0, $includesousproduits = false)
+    public function get($id, $includestockdata = 0, $includesubproducts = false)
     {
-        return $this->_fetch($id, '', '', '', $includestockdata, $includesousproduits);
+        return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts);
     }
 
     /**
@@ -83,21 +83,21 @@ class Products extends DolibarrApi
      *
      * Return an array with product information.
      *
-     * @param string $ref Ref of element
-     * @param int $includestockdata Load also information about stock (slower)
-     * @param  bool   $includesousproduits Load information about virtual product components
+     * @param  string $ref                Ref of element
+     * @param  int    $includestockdata   Load also information about stock (slower)
+     * @param  bool   $includesubproducts Load information about subproducts
      *
      * @return array|mixed                 Data without useless information
      *
-     * @url GET byRef/{ref}
+     * @url GET ref/{ref}
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    public function getByRef($ref, $includestockdata = 0, $includesousproduits = false)
+    public function getByRef($ref, $includestockdata = 0, $includesubproducts = false)
     {
-        return $this->_fetch('', $ref, '', '', $includestockdata, $includesousproduits);
+        return $this->_fetch('', $ref, '', '', $includestockdata, $includesubproducts);
     }
 
     /**
@@ -105,21 +105,21 @@ class Products extends DolibarrApi
      *
      * Return an array with product information.
      *
-     * @param string $ref_ext Ref_ext of element
-     * @param int $includestockdata Load also information about stock (slower)
-     * @param  bool   $includesousproduits Load information about virtual product components
+     * @param  string $ref_ext            Ref_ext of element
+     * @param  int    $includestockdata   Load also information about stock (slower)
+     * @param  bool   $includesubproducts Load information about subproducts
      *
      * @return array|mixed Data without useless information
      *
-     * @url GET byRefExt/{ref_ext}
+     * @url GET ref_ext/{ref_ext}
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    public function getByRefExt($ref_ext, $includestockdata = 0, $includesousproduits = false)
+    public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false)
     {
-        return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesousproduits);
+        return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesubproducts);
     }
 
     /**
@@ -127,21 +127,21 @@ class Products extends DolibarrApi
      *
      * Return an array with product information.
      *
-     * @param string $barcode Barcode of element
-     * @param int $includestockdata Load also information about stock (slower)
-     * @param  bool   $includesousproduits Load information about virtual product components
+     * @param  string $barcode            Barcode of element
+     * @param  int    $includestockdata   Load also information about stock (slower)
+     * @param  bool   $includesubproducts Load information about subproducts
      *
      * @return array|mixed Data without useless information
      *
-     * @url GET byBarcode/{barcode}
+     * @url GET barcode/{barcode}
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    public function getByBarcode($barcode, $includestockdata = 0, $includesousproduits = false)
+    public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false)
     {
-        return $this->_fetch('', '', '', $barcode, $includestockdata, $includesousproduits);
+        return $this->_fetch('', '', '', $barcode, $includestockdata, $includesubproducts);
     }
 
     /**
@@ -851,19 +851,19 @@ class Products extends DolibarrApi
      *
      * Return an array with product information.
      *
-     * @param  int    $id               ID of product
-     * @param  string $ref              Ref of element
-     * @param  string $ref_ext          Ref ext of element
-     * @param  string $barcode          Barcode of element
-     * @param  int    $includestockdata Load also information about stock (slower)
-     * @param  bool   $includesousproduits Load information about virtual product components
-     * @return array|mixed                 Data without useless information
+     * @param  int    $id                 ID of product
+     * @param  string $ref                Ref of element
+     * @param  string $ref_ext            Ref ext of element
+     * @param  string $barcode            Barcode of element
+     * @param  int    $includestockdata   Load also information about stock (slower)
+     * @param  bool   $includesubproducts Load information about subproducts
+     * @return array|mixed                Data without useless information
      *
      * @throws 401
      * @throws 403
      * @throws 404
      */
-    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesousproduits = false)
+    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false)
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -890,7 +890,7 @@ class Products extends DolibarrApi
 
 
 
-        if ($includesousproduits) {
+        if ($includesubproducts) {
             $childsArbo = $this->product->getChildsArbo($id, 1);
 
             $keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
