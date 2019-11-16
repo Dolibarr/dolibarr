@@ -71,7 +71,7 @@ class Users extends DolibarrApi
 
 	    $obj_ret = array();
 
-		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
+		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 	        throw new RestException(401, "You are not allowed to read list of users");
 	    }
 
@@ -79,29 +79,29 @@ class Users extends DolibarrApi
 	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 	    $sql = "SELECT t.rowid";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
-	    $sql.= ' WHERE t.entity IN ('.getEntity('user').')';
-	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."user as t";
+	    $sql .= ' WHERE t.entity IN ('.getEntity('user').')';
+	    if ($user_ids) $sql .= " AND t.rowid IN (".$user_ids.")";
 	    // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-	    $sql.= $db->order($sortfield, $sortorder);
-	    if ($limit)	{
+	    $sql .= $db->order($sortfield, $sortorder);
+	    if ($limit) {
 	        if ($page < 0)
 	        {
 	            $page = 0;
 	        }
 	        $offset = $limit * $page;
 
-	        $sql.= $db->plimit($limit + 1, $offset);
+	        $sql .= $db->plimit($limit + 1, $offset);
 	    }
 
 	    $result = $db->query($sql);
@@ -115,7 +115,7 @@ class Users extends DolibarrApi
 	        {
 	            $obj = $db->fetch_object($result);
 	            $user_static = new User($db);
-	            if($user_static->fetch($obj->rowid)) {
+	            if ($user_static->fetch($obj->rowid)) {
 	                $obj_ret[] = $this->_cleanObjectDatas($user_static);
 	            }
 	            $i++;
@@ -124,7 +124,7 @@ class Users extends DolibarrApi
 	    else {
 	        throw new RestException(503, 'Error when retrieve User list : '.$db->lasterror());
 	    }
-	    if( ! count($obj_ret)) {
+	    if (!count($obj_ret)) {
 	        throw new RestException(404, 'No User found');
 	    }
 	    return $obj_ret;
@@ -154,7 +154,7 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -181,7 +181,7 @@ class Users extends DolibarrApi
         }
 
         if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-            throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         $usergroup = new UserGroup($this->db);
@@ -250,7 +250,7 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value)
@@ -295,13 +295,13 @@ class Users extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (! DolibarrApiAccess::$user->rights->user->user->lire) {
+		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			throw new RestException(401);
 		}
 
 		$user = new User($this->db);
 		$result = $user->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'user not found');
 		}
 
@@ -341,12 +341,12 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && ! empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
+		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
 		{
-			$entity = (! empty($entity) ? $entity : $conf->entity);
+			$entity = (!empty($entity) ? $entity : $conf->entity);
 		}
 		else
 		{
@@ -356,7 +356,7 @@ class Users extends DolibarrApi
 		}
 
 		$result = $this->useraccount->SetInGroup($group, $entity);
-		if (! ($result > 0))
+		if (!($result > 0))
 		{
 			throw new RestException(500, $this->useraccount->error);
 		}
@@ -383,7 +383,7 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         $this->useraccount->oldcopy = clone $this->useraccount;
 		return $this->useraccount->delete(DolibarrApiAccess::$user);
@@ -435,10 +435,10 @@ class Users extends DolibarrApi
 	    unset($object->openid);
 
 
-	    $canreadsalary = ((! empty($conf->salaries->enabled) && ! empty(DolibarrApiAccess::$user->rights->salaries->read))
-	    	|| (! empty($conf->hrm->enabled) && ! empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
+	    $canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read))
+	    	|| (!empty($conf->hrm->enabled) && !empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
 
-		if (! $canreadsalary)
+		if (!$canreadsalary)
 		{
 			unset($object->salary);
 			unset($object->salaryextra);
