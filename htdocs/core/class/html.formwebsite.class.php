@@ -229,9 +229,10 @@ class FormWebsite
      *  @param	int			$showempty		Show empty record
      *  @param	string		$action			Action on page that use this select list
      *  @param	string		$morecss		More CSS
+     *  @param	array		$excludeids		Exclude some ID in list
      * 	@return	string						HTML select component with list of type of containers
      */
-    public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200')
+    public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
     {
     	global $langs;
 
@@ -264,6 +265,8 @@ class FormWebsite
 
 	    	foreach($website->lines as $key => $valpage)
 	    	{
+	    		if (is_array($excludeids) && count($excludeids) && in_array($valpage->id, $excludeids)) continue;
+
 	    		$valueforoption = '<span class="opacitymedium">['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).']</span> ';
 	    		$valueforoption.= $valpage->pageurl.' - '.$valpage->title;
 	    		if ($website->fk_default_home && $key == $website->fk_default_home) $valueforoption.=' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
