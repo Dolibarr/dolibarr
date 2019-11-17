@@ -17,6 +17,7 @@
 --
 -- This table is dedicated to store detail (lots/serial) of a stock
 -- ============================================================================
+
 CREATE TABLE llx_product_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
