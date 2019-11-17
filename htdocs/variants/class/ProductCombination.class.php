@@ -495,6 +495,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * [...]
 	 * )
 	 *
+	 * @param User $user Object user
 	 * @param Product $product Parent product
 	 * @param array $combinations Attribute and value combinations.
 	 * @param array $variations Price and weight variations
@@ -503,9 +504,9 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * @param bool|float $forced_weightvar If the weight variation is forced
 	 * @return int <0 KO, >0 OK
 	 */
-	public function createProductCombination(Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
 	{
-		global $db, $user, $conf;
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
@@ -660,11 +661,12 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
     /**
      * Copies all product combinations from the origin product to the destination product
      *
+	 * @param 	User 	$user	Object user
      * @param   int     $origProductId  Origin product id
      * @param   Product $destProduct    Destination product
      * @return  int                     >0 OK <0 KO
      */
-	public function copyAll($origProductId, Product $destProduct)
+	public function copyAll(User $user, $origProductId, Product $destProduct)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
@@ -686,6 +688,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			}
 
             if ($this->createProductCombination(
+				$user,
 				$destProduct,
 				$variations,
 				array(),
