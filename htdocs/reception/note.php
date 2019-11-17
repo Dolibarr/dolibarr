@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 dol_include_once('/fourn/class/fournisseur.commande.class.php');
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -65,26 +65,26 @@ if ($id > 0 || ! empty($ref))
     }
 
     // Linked documents
-    if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+    if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
     {
-        $objectsrc=new Commande($db);
+        $objectsrc = new Commande($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
-    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+    if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
     {
-        $objectsrc=new Propal($db);
+        $objectsrc = new Propal($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
 }
 
-$permissionnote=$user->rights->reception->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->reception->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
@@ -144,7 +144,7 @@ if ($id > 0 || ! empty($ref))
             }
         }
     }
-    $morehtmlref.='</div>';
+    $morehtmlref .= '</div>';
 
     $object->picto = 'sending';
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -152,7 +152,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<div class="underbanner clearboth"></div>';
 
-	$cssclass='titlefield';
+	$cssclass = 'titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();

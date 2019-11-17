@@ -239,8 +239,8 @@ class CoreObject extends CommonObject
     /**
      * Function to update object or create or delete if needed
      *
-     * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @param   User    $user   User object
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function update(User &$user)
     {
@@ -280,7 +280,7 @@ class CoreObject extends CommonObject
      * Function to create object in database
      *
      * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function create(User &$user)
     {
@@ -321,7 +321,7 @@ class CoreObject extends CommonObject
      * Function to delete object in database
      *
      * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function delete(User &$user)
     {

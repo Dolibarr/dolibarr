@@ -146,7 +146,7 @@ if ($action == 'valide')
 }
 
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Ref
 print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
@@ -210,7 +210,7 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder" width="100%">';
+	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Loan').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';

@@ -33,59 +33,59 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object)) {
+if (empty($object) || !is_object($object)) {
     print "Error: this template page cannot be called directly as an URL";
     exit;
 }
 
-$usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
+$usemargins = 0;
+if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')))
 {
-    $usemargins=1;
+    $usemargins = 1;
 }
 
-if (! isset($dateSelector)) global $dateSelector;	// Take global var only if not already defined into function calling (for example formAddObjectLine)
+if (!isset($dateSelector)) global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
 
-if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
-elseif (empty($dateSelector)) $dateSelector=0;
-if (empty($forceall)) $forceall=0;
-if (empty($senderissupplier)) $senderissupplier=0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+if (!isset($dateSelector)) $dateSelector = 1; // For backward compatibility
+elseif (empty($dateSelector)) $dateSelector = 0;
+if (empty($forceall)) $forceall = 0;
+if (empty($senderissupplier)) $senderissupplier = 0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
 
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Columns: total ht + col edit + col delete
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
-if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+$colspan = 3; // Columns: total ht + col edit + col delete
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++; //Add column for Total (currency) if required
+if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier'))) $colspan++; // With this, there is a column move button
 //print $object->element;
 
 // Lines for extrafield
 $objectline = null;
 if (!empty($extrafields))
 {
-	if ($this->table_element_line=='commandedet') {
+	if ($this->table_element_line == 'commandedet') {
 		$objectline = new OrderLine($this->db);
 	}
-	elseif ($this->table_element_line=='propaldet') {
+	elseif ($this->table_element_line == 'propaldet') {
 		$objectline = new PropaleLigne($this->db);
 	}
-	elseif ($this->table_element_line=='supplier_proposaldet') {
+	elseif ($this->table_element_line == 'supplier_proposaldet') {
 		$objectline = new SupplierProposalLine($this->db);
 	}
-	elseif ($this->table_element_line=='facturedet') {
+	elseif ($this->table_element_line == 'facturedet') {
 		$objectline = new FactureLigne($this->db);
 	}
-	elseif ($this->table_element_line=='contratdet') {
+	elseif ($this->table_element_line == 'contratdet') {
 		$objectline = new ContratLigne($this->db);
 	}
-	elseif ($this->table_element_line=='commande_fournisseurdet') {
+	elseif ($this->table_element_line == 'commande_fournisseurdet') {
 		$objectline = new CommandeFournisseurLigne($this->db);
 	}
-	elseif ($this->table_element_line=='facture_fourn_det') {
+	elseif ($this->table_element_line == 'facture_fourn_det') {
 		$objectline = new SupplierInvoiceLine($this->db);
 	}
-	elseif ($this->table_element_line=='facturedet_rec') {
+	elseif ($this->table_element_line == 'facturedet_rec') {
 		$objectline = new FactureLigneRec($this->db);
 	}
 }
@@ -115,12 +115,12 @@ if ($nolinesbefore) {
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 	<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 	<?php } ?>
-	<?php if (! empty($inputalsopricewithtax)) { ?>
+	<?php if (!empty($inputalsopricewithtax)) { ?>
 	<td class="linecoluttc right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
 	<td class="linecolqty right"><?php echo $langs->trans('Qty'); ?></td>
 	<?php
-	if($conf->global->PRODUCT_USE_UNITS)
+	if ($conf->global->PRODUCT_USE_UNITS)
 	{
 		print '<td class="linecoluseunit left">';
 		print '<span id="title_units">';
@@ -466,20 +466,20 @@ $coldisplay+=$colspan;
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
 
-if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
+if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
-	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
-	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1); ?>">
+	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1); ?>">
 	<?php
-	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-	if (! empty($object->element) && $object->element == 'contrat')
+	$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	if (!empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
 		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
@@ -489,9 +489,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	else
 	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
+		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		echo ' '.$langs->trans('to').' ';
-		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
+		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 	};
 	print '<script>';
 	if (!$date_start) {
@@ -649,7 +649,7 @@ jQuery(document).ready(function() {
 	});
 
 	<?php
-	if(!$freelines) { ?>
+	if (!$freelines) { ?>
 		$("#prod_entry_mode_predef").click();
 		<?php
 	}
@@ -676,7 +676,7 @@ jQuery(document).ready(function() {
 			<?php
 		}
 
-		if (! empty($usemargins) && $user->rights->margins->creer)
+		if (!empty($usemargins) && $user->rights->margins->creer)
 		{
 			$langs->load('stocks');
 			?>

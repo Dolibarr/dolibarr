@@ -289,7 +289,7 @@ if ($action == 'create' || empty($action))
 	$num = 1;
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ExpenseReport").'</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td>';

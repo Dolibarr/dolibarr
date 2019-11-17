@@ -85,7 +85,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 _updateBtn();
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 
 _printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));

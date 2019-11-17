@@ -37,43 +37,43 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (! empty($conf->contrat->enabled)) {
+if (!empty($conf->contrat->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("interventions","admin","compta","bills"));
+$langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
-$id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));
-$action=GETPOST('action', 'alpha');
-if ($user->socid) $socid=$user->socid;
+$id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$action = GETPOST('action', 'alpha');
+if ($user->socid) $socid = $user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
 if ($page == -1)
-	$page = 0 ;
+	$page = 0;
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$offset = $limit * $page ;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$offset = $limit * $page;
 
 if ($sortorder == "")
-	$sortorder="DESC";
+	$sortorder = "DESC";
 
 if ($sortfield == "")
-	$sortfield="f.datec";
+	$sortfield = "f.datec";
 
 $object = new FichinterRec($db);
 $extrafields = new ExtraFields($db);
 
 
-$arrayfields=array(
+$arrayfields = array(
 	'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
 	'f.fk_contrat'=>array('label'=>$langs->trans("Contract"), 'checked'=>1),
@@ -95,26 +95,26 @@ $arrayfields=array(
 
 // Create predefined intervention
 if ($action == 'add') {
-	if (! GETPOST('titre')) {
+	if (!GETPOST('titre')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
 
-	if (! GETPOST('socid')) {
+	if (!GETPOST('socid')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Customer")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
 
 	// gestion des fréquences et des échéances
-	$frequency=GETPOST('frequency', 'int');
-	$reyear=GETPOST('reyear');
-	$remonth=GETPOST('remonth');
-	$reday=GETPOST('reday');
-	$rehour=GETPOST('rehour');
-	$remin=GETPOST('remin');
-	$nb_gen_max = (GETPOST('nb_gen_max', 'int')?GETPOST('nb_gen_max', 'int'):0);
+	$frequency = GETPOST('frequency', 'int');
+	$reyear = GETPOST('reyear');
+	$remonth = GETPOST('remonth');
+	$reday = GETPOST('reday');
+	$rehour = GETPOST('rehour');
+	$remin = GETPOST('remin');
+	$nb_gen_max = (GETPOST('nb_gen_max', 'int') ?GETPOST('nb_gen_max', 'int') : 0);
 	if (GETPOST('frequency')) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
@@ -128,8 +128,8 @@ if ($action == 'add') {
 		}
 	}
 
-	if (! $error) {
-		$object->id_origin		= $id;
+	if (!$error) {
+		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
 		$object->description	= GETPOST('description', 'alpha');
 		$object->socid			= GETPOST('socid', 'alpha');
@@ -160,19 +160,19 @@ if ($action == 'add') {
 
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
-		$newinter->socid=$object->socid;
-		$newinter->fk_project=$object->fk_project;
-		$newinter->fk_contrat=$object->fk_contrat;
+		$newinter->socid = $object->socid;
+		$newinter->fk_project = $object->fk_project;
+		$newinter->fk_contrat = $object->fk_contrat;
 	} else {
-		$newinter->socid=GETPOST("socid");
+		$newinter->socid = GETPOST("socid");
 	}
 
-	$newinter->entity=$object->entity;
-	$newinter->duree=$object->duree;
+	$newinter->entity = $object->entity;
+	$newinter->duree = $object->duree;
 
-	$newinter->description=$object->description;
-	$newinter->note_private=$object->note_private;
-	$newinter->note_public=$object->note_public;
+	$newinter->description = $object->description;
+	$newinter->note_private = $object->note_private;
+	$newinter->note_public = $object->note_public;
 
 	// on créer un nouvelle intervention
 	$extrafields->fetch_name_optionals_label($newinter->table_element);
@@ -195,13 +195,13 @@ if ($action == 'add') {
 		exit;
 	} else {
 		setEventMessages($newinter->error, $newinter->errors, 'errors');
-		$action='';
+		$action = '';
 	}
 } elseif ($action == 'delete' && $user->rights->ficheinter->supprimer) {
 	// delete modele
 	$object->fetch($id);
 	$object->delete();
-	$id = 0 ;
+	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 } elseif ($action == 'setfrequency' && $user->rights->ficheinter->creer) {
@@ -228,16 +228,16 @@ llxHeader('', $langs->trans("RepeatableInterventional"), 'ch-fichinter.html#s-fa
 
 $form = new Form($db);
 $companystatic = new Societe($db);
-if (! empty($conf->contrat->enabled)) {
+if (!empty($conf->contrat->enabled)) {
 	$contratstatic = new Contrat($db);
 }
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	$projectstatic = new Project($db);
 }
 
 $now = dol_now();
-$tmparray=dol_getdate($now);
-$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);   // Today is last second of current day
+$tmparray = dol_getdate($now);
+$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
 
 
@@ -247,7 +247,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'fichinter');
 
-	$object = new Fichinter($db);   // Source invoice
+	$object = new Fichinter($db); // Source invoice
 	//$object = new Managementfichinter($db);   // Source invoice
 
 	if ($object->fetch($id, $ref) > 0) {
@@ -258,11 +258,11 @@ if ($action == 'create') {
 
 		dol_fiche_head();
 
-		$rowspan=4;
-		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
-		if (! empty($conf->contrat->enabled) && $object->fk_contrat > 0) $rowspan++;
+		$rowspan = 4;
+		if (!empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
+		if (!empty($conf->contrat->enabled) && $object->fk_contrat > 0) $rowspan++;
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$object->fetch_thirdparty();
 
@@ -297,24 +297,24 @@ if ($action == 'create') {
 		}
 
 		// Project
-		if (! empty($conf->projet->enabled)) {
+		if (!empty($conf->projet->enabled)) {
 			$formproject = new FormProjets($db);
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
-			$projectid = GETPOST('projectid')?GETPOST('projectid'):$object->fk_project;
+			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
 
 			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->thirdparty->id;
 			print '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?action=create';
-			print '&socid='.$object->thirdparty->id.(!empty($id)?'&id='.$id:'').'">';
+			print '&socid='.$object->thirdparty->id.(!empty($id) ? '&id='.$id : '').'">';
 			print $langs->trans("AddProject").'</a>';
 			print "</td></tr>";
 		}
 
 		// Contrat
-		if (! empty($conf->contrat->enabled)) {
+		if (!empty($conf->contrat->enabled)) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid')?GETPOST('contractid'):$object->fk_contract;
+			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
@@ -327,14 +327,14 @@ if ($action == 'create') {
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Frequency
 		print '<tr><td class="titlefieldcreate">';
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
 		print '<input type="text" name="frequency" value="'.GETPOST('frequency', 'int').'" size="4">&nbsp;';
-		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
+		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ?GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// First date of execution for cron
@@ -370,10 +370,10 @@ if ($action == 'create') {
 		print '<tr><td colspan="3">';
 
 		$sql = 'SELECT l.rowid, l.description, l.duree';
-		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet as l";
-		$sql.= " WHERE l.fk_fichinter= ".$object->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet as l";
+		$sql .= " WHERE l.fk_fichinter= ".$object->id;
 		//$sql.= " AND l.fk_product is null ";
-		$sql.= " ORDER BY l.rang";
+		$sql .= " ORDER BY l.rang";
 
 		$result = $db->query($sql);
 		if ($result) {
@@ -381,7 +381,7 @@ if ($action == 'create') {
 			$i = 0;
 			$total = 0;
 
-			echo '<table class="noborder" width="100%">';
+			echo '<table class="noborder centpercent">';
 			if ($num) {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
@@ -433,7 +433,7 @@ if ($action == 'create') {
 	dol_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 	print $form->select_company('', 'socid', '', 1, 1);
 	print '</td></tr>';
@@ -467,44 +467,44 @@ if ($action == 'create') {
 			// Intervention card
 			$linkback = '<a href="card-rec.php">'.$langs->trans("BackToList").'</a>';
 
-			$morehtmlref='<div class="refidno">';
+			$morehtmlref = '<div class="refidno">';
 			// Thirdparty
 
-			$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (! empty($conf->projet->enabled)) {
+			if (!empty($conf->projet->enabled)) {
 				$formproject = new FormProjets($db);
 				$langs->load("projects");
-				$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->ficheinter->creer) {
 					if ($action != 'classify') {
-						$morehtmlref.='<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
-						$morehtmlref.=img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
+						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
-						$morehtmlref.= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                        $morehtmlref.= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.= '</form>';
+						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                        $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '</form>';
 					} else {
-                        $morehtmlref.= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                        $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 					}
 				} else {
-					if (! empty($object->fk_project)) {
+					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref.= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'"';
-						$morehtmlref.= 'title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref.= $proj->ref;
-						$morehtmlref.= '</a>';
+						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'"';
+						$morehtmlref .= 'title="'.$langs->trans('ShowProject').'">';
+						$morehtmlref .= $proj->ref;
+						$morehtmlref .= '</a>';
 					} else {
-						$morehtmlref.= '';
+						$morehtmlref .= '';
 					}
 				}
 			}
-			$morehtmlref.='</div>';
+			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -512,7 +512,7 @@ if ($action == 'create') {
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
@@ -527,7 +527,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (! empty($conf->contrat->enabled)) {
+			if (!empty($conf->contrat->enabled)) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -543,7 +543,7 @@ if ($action == 'create') {
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'contrat') {
-					$formcontract= new Formcontract($db);
+					$formcontract = new Formcontract($db);
                     $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 				} else {
 					if ($object->fk_contrat) {
@@ -569,7 +569,7 @@ if ($action == 'create') {
 			$title = $langs->trans("Recurrence");
 			print load_fiche_titre($title, '', 'calendar');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// if "frequency" is empty or = 0, the reccurence is disabled
 			print '<tr><td style="width: 50%">';
@@ -578,18 +578,18 @@ if ($action == 'create') {
 			print '</td>';
 			if ($action != 'editfrequency' && $user->rights->ficheinter->creer) {
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&amp;id='.$id.'">';
-				print img_edit($langs->trans('Edit'), 1) . '</a></td>';
+				print img_edit($langs->trans('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editfrequency') {
-				print '<form method="post" action="'.$_SERVER["PHP_SELF"] . '?id=' . $object->id.'">';
+				print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setfrequency">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				print '<tr><td>';
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
-				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
+				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
@@ -603,7 +603,7 @@ if ($action == 'create') {
 
 			// Date when
 			print '<tr><td>';
-			if ( $user->rights->ficheinter->creer && ($action == 'date_when' || $object->frequency > 0)) {
+			if ($user->rights->ficheinter->creer && ($action == 'date_when' || $object->frequency > 0)) {
 				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 			} else {
 				print $langs->trans("NextDateToExecution");
@@ -624,7 +624,7 @@ if ($action == 'create') {
 
 			print '</td><td>';
 			if ($action == 'nb_gen_max' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
+				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->rights->facture->creer);
 			}
 			else
 				print '';
@@ -647,7 +647,7 @@ if ($action == 'create') {
 				// Nb of generation already done
 				print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';
 				print '<td>';
-				print $object->nb_gen_done?$object->nb_gen_done:'0';
+				print $object->nb_gen_done ? $object->nb_gen_done : '0';
 				print '</td>';
 				print '</tr>';
 
@@ -681,7 +681,7 @@ if ($action == 'create') {
 
 			print load_fiche_titre($title);
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td class="center">'.$langs->trans("Duration").'</td>';
@@ -692,13 +692,13 @@ if ($action == 'create') {
 			while ($i < $num) {
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
-					$type=$object->lines[$i]->product_type;
+					$type = $object->lines[$i]->product_type;
 				else
 					$object->lines[$i]->fk_product_type;
 				// Try to enhance type detection using date_start and date_end for free lines when type
 				// was not saved.
-				if (! empty($objp->date_start)) $type=1;
-				if (! empty($objp->date_end)) $type=1;
+				if (!empty($objp->date_start)) $type = 1;
+				if (!empty($objp->date_end)) $type = 1;
 
 				// Show line
 				print '<tr class="oddeven">';
@@ -738,24 +738,24 @@ if ($action == 'create') {
 		 *  List mode
 		 */
 		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title,";
-		$sql.= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
-		$sql.= " f.date_last_gen, f.date_when, f.datec";
+		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
+		$sql .= " f.date_last_gen, f.date_when, f.datec";
 
-		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
-		$sql.= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (! $user->rights->societe->client->voir && ! $socid) {
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
+		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
+		if (!$user->rights->societe->client->voir && !$socid) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
-		$sql.= " WHERE f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql .= " WHERE f.fk_soc = s.rowid";
+		$sql .= " AND f.entity = ".$conf->entity;
 		if ($socid)	$sql .= " AND s.rowid = ".$socid;
-		if (! $user->rights->societe->client->voir && ! $socid) {
+		if (!$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($search_ref) $sql .= natural_search('f.titre', $search_ref);
 		if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-		if ($search_frequency == '1') $sql.= ' AND f.frequency > 0';
-		if ($search_frequency == '0') $sql.= ' AND (f.frequency IS NULL or f.frequency = 0)';
+		if ($search_frequency == '1') $sql .= ' AND f.frequency > 0';
+		if ($search_frequency == '0') $sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 
 
 		//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
@@ -780,14 +780,14 @@ if ($action == 'create') {
 			print $langs->trans("ToCreateAPredefinedInterventional").'<br><br>';
 
 			$i = 0;
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
             print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
             print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-            if (! empty($conf->contrat->enabled)) {
+            if (!empty($conf->contrat->enabled)) {
                 print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
             }
-            if (! empty($conf->projet->enabled)) {
+            if (!empty($conf->projet->enabled)) {
                 print_liste_field_titre("Project", $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
             }
             print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
@@ -811,22 +811,22 @@ if ($action == 'create') {
 					print img_object($langs->trans("ShowIntervention"), "intervention").' '.$objp->title;
 					print "</a></td>\n";
 					if ($objp->socid) {
-						$companystatic->id=$objp->socid;
-						$companystatic->name=$objp->name;
+						$companystatic->id = $objp->socid;
+						$companystatic->name = $objp->name;
 						print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 					} else {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (! empty($conf->contrat->enabled)) {
+					if (!empty($conf->contrat->enabled)) {
 						print '<td>';
-						if ($objp->fk_contrat >0) {
+						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);
 							print $contratstatic->getNomUrl(1);
 						}
 						print '</td>';
 					}
-					if (! empty($conf->projet->enabled)) {
+					if (!empty($conf->projet->enabled)) {
 						print '<td>';
 						if ($objp->fk_project > 0) {
 							$projectstatic->fetch($objp->fk_project);
@@ -837,15 +837,15 @@ if ($action == 'create') {
 
 					print '<td class=right>'.convertSecondToTime($objp->duree).'</td>';
 
-					print '<td class="center">'.yn($objp->frequency?1:0).'</td>';
+					print '<td class="center">'.yn($objp->frequency ? 1 : 0).'</td>';
 
 					print '<td class="center">';
 					if ($objp->frequency) {
-						print $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') ;
+						print $objp->nb_gen_done.($objp->nb_gen_max > 0 ? ' / '.$objp->nb_gen_max : '');
 						print '</td>';
 
 						print '<td class="center">';
-						print dol_print_date($db->jdate($objp->date_last_gen), 'day') ;
+						print dol_print_date($db->jdate($objp->date_last_gen), 'day');
 						print '</td>';
 
 						print '<td class="center">';

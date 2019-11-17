@@ -72,9 +72,9 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql.= " AND active = 1";
-$sql.= " ORDER BY libelle";
+$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql .= " AND active = 1";
+$sql .= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
 if ($resql) {
@@ -102,7 +102,7 @@ if ($invoice->id > 0)
 }
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
-if ($conf->global->TAKEPOS_NUMPAD==0) print "var received='';";
+if ($conf->global->TAKEPOS_NUMPAD == 0) print "var received='';";
 else print "var received=0;";
 
 ?>
@@ -118,10 +118,10 @@ else print "var received=0;";
     	$('.change1').val(parseFloat(received));
 		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
     	//console.log("already+received = "+alreadypaydplusreceived);
-    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc;?>);
-    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc;?>)
+    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc; ?>);
+    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc; ?>)
    		{
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
+			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc; ?>);
 			$('.change2').html(pricejs(change, 'MT'));
 	    	$('.change2').val(change);
 	    	$('.change1').removeClass('colorred');
@@ -133,7 +133,7 @@ else print "var received=0;";
     	{
 			$('.change2').html(pricejs(0, 'MT'));
 	    	$('.change2').val(0);
-	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc;?>)
+	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc; ?>)
 	    	{
 		    	$('.change1').removeClass('colorred');
 		    	$('.change1').addClass('colorgreen');
@@ -213,11 +213,11 @@ $action_buttons = array(
 	    "class" => "poscolordelete"
 	),
 );
-$numpad=$conf->global->TAKEPOS_NUMPAD;
+$numpad = $conf->global->TAKEPOS_NUMPAD;
 ?>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "7"; else print "10";?>);"><?php if ($numpad==0) print "7"; else print "10";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "8"; else print "20";?>);"><?php if ($numpad==0) print "8"; else print "20";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "9"; else print "50";?>);"><?php if ($numpad==0) print "9"; else print "50";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "7"; else print "10"; ?>);"><?php if ($numpad == 0) print "7"; else print "10"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "8"; else print "20"; ?>);"><?php if ($numpad == 0) print "8"; else print "20"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "9"; else print "50"; ?>);"><?php if ($numpad == 0) print "9"; else print "50"; ?></button>
 <?php if (count($paiements) > 0) {
     $paycode = $paiements[0]->code;
     if ($paycode == 'LIQ') $paycode = 'cash';
@@ -226,11 +226,11 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[0]->code); ?></button>
 <?php } else { ?>
-<button type="button" class="calcbutton2"><?php echo $langs->trans("NoPaimementModesDefined");?></button>
+<button type="button" class="calcbutton2"><?php echo $langs->trans("NoPaimementModesDefined"); ?></button>
 <?php } ?>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "4"; else print "1";?>);"><?php if ($numpad==0) print "4"; else print "1";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "5"; else print "2";?>);"><?php if ($numpad==0) print "5"; else print "2";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "6"; else print "5";?>);"><?php if ($numpad==0) print "6"; else print "5";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "4"; else print "1"; ?>);"><?php if ($numpad == 0) print "4"; else print "1"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "5"; else print "2"; ?>);"><?php if ($numpad == 0) print "5"; else print "2"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "6"; else print "5"; ?>);"><?php if ($numpad == 0) print "6"; else print "5"; ?></button>
 <?php if (count($paiements) > 1) {
     $paycode = $paiements[1]->code;
     if ($paycode == 'LIQ') $paycode = 'cash';

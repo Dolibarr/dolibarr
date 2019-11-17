@@ -22,13 +22,13 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket'));
@@ -40,28 +40,28 @@ $track_id = GETPOST('track_id', 'alpha', 3);
 $socid    = GETPOST('socid', 'int');
 $action   = GETPOST('action', 'aZ09');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-if (! $sortfield) $sortfield="a.datep,a.id";
-if (! $sortorder) $sortorder="desc";
-$offset = $limit * $page ;
+if (!$sortfield) $sortfield = "a.datep,a.id";
+if (!$sortorder) $sortorder = "desc";
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode', 'array', 3);
-	if (! count($actioncode)) $actioncode='0';
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
-$search_agenda_label=GETPOST('search_agenda_label');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 $object = new Ticket($db);
 $object->fetch($id, $ref, $track_id);
@@ -99,11 +99,11 @@ if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object-
  * Actions
  */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if(empty($reshook))
+if (empty($reshook))
 {
 	// Set view style
 	$_SESSION['ticket-view-type'] = "messaging";
@@ -112,8 +112,8 @@ if(empty($reshook))
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$actioncode='';
-	$search_agenda_label='';
+	$actioncode = '';
+	$search_agenda_label = '';
 }
 
 
@@ -126,8 +126,8 @@ $form = new Form($db);
 $userstat = new User($db);
 $formticket = new FormTicket($db);
 
-$title=$langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $title, $help_url);
 
@@ -143,19 +143,19 @@ if ($socid > 0) {
 }
 
 if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
-    $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
+    $object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 } elseif ($user->socid > 0) {
-    $object->next_prev_filter = "te.fk_soc = '" . $user->socid . "'";
+    $object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
 }
 $head = ticket_prepare_head($object);
 
 dol_fiche_head($head, 'tabTicketLogs', $langs->trans("Ticket"), 0, 'ticket');
 
-$morehtmlref ='<div class="refidno">';
-$morehtmlref.= $object->subject;
+$morehtmlref = '<div class="refidno">';
+$morehtmlref .= $object->subject;
 // Author
 if ($object->fk_user_create > 0) {
-	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
+	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
 	$langs->load("users");
 	$fuser = new User($db);
@@ -228,31 +228,31 @@ print '<br>';
 
 if (!empty($object->id))
 {
-	$param='&id='.$object->id;
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	$param = '&id='.$object->id;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
     $morehtmlright = '';
 
-	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
+	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1);
 
 	// Show link to add a message (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
+	$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init';
 	$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 	// Show link to add event (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id=' . $object->track_id);
+	$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 
 	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 	// List of all actions
-	$filters=array();
-	$filters['search_agenda_label']=$search_agenda_label;
+	$filters = array();
+	$filters['search_agenda_label'] = $search_agenda_label;
     show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 

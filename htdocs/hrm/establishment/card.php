@@ -181,7 +181,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
 	// Name
 	print '<tr>';
@@ -278,7 +278,7 @@ if (($id || $ref) && $action == 'edit')
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref
             print "<tr>";

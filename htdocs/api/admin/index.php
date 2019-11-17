@@ -32,10 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 //Activate ProfId
 if ($action == 'setproductionmode')
@@ -44,7 +44,7 @@ if ($action == 'setproductionmode')
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
 	{
-		$error=0;
+		$error = 0;
 
 		if ($status == 1)
 		{
@@ -84,7 +84,7 @@ if ($action == 'save')
 }
 
 
-dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
+dol_mkdir(DOL_DATA_ROOT.'/api/temp'); // May have been deleted by a purge
 
 
 /*
@@ -93,7 +93,7 @@ dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
 print $langs->trans("ApiDesc")."<br>\n";
@@ -103,7 +103,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="save">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
@@ -113,16 +113,16 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ApiProductionMode").'</td>';
-$production_mode=(empty($conf->global->API_PRODUCTION_MODE)?false:true);
+$production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
 if ($production_mode)
 {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
+    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
     print '</a></td>';
 }
 else
 {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
+    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
     print '</a></td>';
 }
@@ -144,15 +144,15 @@ print '</form>';
 
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // Show message
-$message='';
-$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
-$message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('', 'globe').' '.$url;
+$message = '';
+$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
+$message .= $langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message .= img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';
 print '<br>';
@@ -161,7 +161,7 @@ print '<br>';
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
 {
-    $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
+    $url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
     print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 else

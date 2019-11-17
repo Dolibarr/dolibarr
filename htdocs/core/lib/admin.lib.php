@@ -1427,7 +1427,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
         print '<input type="hidden" name="action" value="updateall">';
     }
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td class="titlefield">'.$langs->trans("Description").'</td>';
     print '<td>';
