@@ -548,10 +548,10 @@ abstract class CommonObject
 		if (empty($lastname))  $lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
 
 		$ret = '';
-		if ($option && $this->civility_id)
+		if ($option && $this->civility_code)
 		{
-			if ($langs->transnoentitiesnoconv("Civility".$this->civility_id) != "Civility".$this->civility_id) $ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_id).' ';
-			else $ret .= $this->civility_id.' ';
+			if ($langs->transnoentitiesnoconv("Civility".$this->civility_code) != "Civility".$this->civility_code) $ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_code).' ';
+			else $ret .= $this->civility_code.' ';
 		}
 
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
