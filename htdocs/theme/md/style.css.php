@@ -1503,9 +1503,9 @@ div.nopadding {
 	padding: 0 !important;
 }
 
-table.noborder tr.liste_titre td {
+/*table.noborder tr.liste_titre td {
 	padding: 3px !important;
-}
+}*/
 
 .containercenter {
 	display : table;
