@@ -78,7 +78,7 @@ dol_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
 
 print "<br>\n";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";

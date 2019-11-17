@@ -62,7 +62,7 @@ if ($socid > 0)
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     // Name
     print '<tr><td width="20%">'.$langs->trans("ThirdParty").'</td><td width="80%" colspan="3">'.$societe->getNomUrl(1).'</td></tr>';

@@ -58,6 +58,12 @@ class AccountancyCategory // extends CommonObject
 	public $table_element='c_accounting_category';
 
 	/**
+	 * @var int ID
+	 * @deprecated
+	 */
+	public $rowid;
+
+	/**
      * @var int ID
      */
     public $id;

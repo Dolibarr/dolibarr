@@ -215,7 +215,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			if ($filter) print load_fiche_titre($langs->trans("OtherSendingsForSameOrder"));
 			else print load_fiche_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 
-			print '<table class="liste" width="100%">';
+			print '<table class="liste centpercent">';
 			print '<tr class="liste_titre">';
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
 			print '<td>'.$langs->trans("SendingSheet").'</td>';

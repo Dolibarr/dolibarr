@@ -39,11 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
-if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
+if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
 
-$filter = GETPOST("search_filter", 'alpha', 3)?GETPOST("search_filter", 'alpha', 3):GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3)?GETPOST("search_filtert", "int", 3):GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3)?GETPOST("search_usergroup", "int", 3):GETPOST("usergroup", "int", 3);
+$filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
+$filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
+$usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = 0;
@@ -150,11 +150,11 @@ $hookmanager->initHooks(array('agenda'));
  * Actions
  */
 
-if ($action =='delete_action')
+if ($action == 'delete_action')
 {
     $event = new ActionComm($db);
     $event->fetch($actionid);
-    $result=$event->delete();
+    $result = $event->delete();
 }
 
 
@@ -163,21 +163,21 @@ if ($action =='delete_action')
  * View
  */
 
-$form=new Form($db);
-$companystatic=new Societe($db);
+$form = new Form($db);
+$companystatic = new Societe($db);
 
-$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
-$now=dol_now();
-$nowarray=dol_getdate($now);
-$nowyear=$nowarray['year'];
-$nowmonth=$nowarray['mon'];
-$nowday=$nowarray['mday'];
+$now = dol_now();
+$nowarray = dol_getdate($now);
+$nowyear = $nowarray['year'];
+$nowmonth = $nowarray['mon'];
+$nowday = $nowarray['mday'];
 
 
 // Define list of all external calendars (global setup)
-$listofextcals=array();
+$listofextcals = array();
 
 $prev = dol_get_first_day_week($day, $month, $year);
 $first_day   = $prev['first_day'];
@@ -198,31 +198,31 @@ $tmpday = $first_day;
 //print 'xx'.$prev_year.'-'.$prev_month.'-'.$prev_day;
 //print 'xx'.$next_year.'-'.$next_month.'-'.$next_day;
 
-$title=$langs->trans("DoneAndToDoActions");
-if ($status == 'done') $title=$langs->trans("DoneActions");
-if ($status == 'todo') $title=$langs->trans("ToDoActions");
+$title = $langs->trans("DoneAndToDoActions");
+if ($status == 'done') $title = $langs->trans("DoneActions");
+if ($status == 'todo') $title = $langs->trans("ToDoActions");
 
-$param='';
+$param = '';
 if ($actioncode || isset($_GET['search_actioncode']) || isset($_POST['search_actioncode'])) {
-	if(is_array($actioncode)) {
-		foreach($actioncode as $str_action) $param.="&search_actioncode[]=".urlencode($str_action);
-	} else $param.="&search_actioncode=".urlencode($actioncode);
+	if (is_array($actioncode)) {
+		foreach ($actioncode as $str_action) $param .= "&search_actioncode[]=".urlencode($str_action);
+	} else $param .= "&search_actioncode=".urlencode($actioncode);
 }
-if ($resourceid > 0) $param.="&search_resourceid=".urlencode($resourceid);
-if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&search_status=".urlencode($status);
-if ($filter)        $param.="&search_filter=".urlencode($filter);
-if ($filtert)       $param.="&search_filtert=".urlencode($filtert);
-if ($usergroup)     $param.="&search_usergroup=".urlencode($usergroup);
-if ($socid)         $param.="&search_socid=".urlencode($socid);
-if ($showbirthday)  $param.="&search_showbirthday=1";
-if ($pid)           $param.="&search_projectid=".urlencode($pid);
-if ($type)          $param.="&search_type=".urlencode($type);
-if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param.='&action='.urlencode($action);
-if ($begin_h != '') $param.='&begin_h='.urlencode($begin_h);
-if ($end_h != '')   $param.='&end_h='.urlencode($end_h);
-if ($begin_d != '') $param.='&begin_d='.urlencode($begin_d);
-if ($end_d != '')   $param.='&end_d='.urlencode($end_d);
-$param.="&maxprint=".urlencode($maxprint);
+if ($resourceid > 0) $param .= "&search_resourceid=".urlencode($resourceid);
+if ($status || isset($_GET['status']) || isset($_POST['status'])) $param .= "&search_status=".urlencode($status);
+if ($filter)        $param .= "&search_filter=".urlencode($filter);
+if ($filtert)       $param .= "&search_filtert=".urlencode($filtert);
+if ($usergroup)     $param .= "&search_usergroup=".urlencode($usergroup);
+if ($socid)         $param .= "&search_socid=".urlencode($socid);
+if ($showbirthday)  $param .= "&search_showbirthday=1";
+if ($pid)           $param .= "&search_projectid=".urlencode($pid);
+if ($type)          $param .= "&search_type=".urlencode($type);
+if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param .= '&action='.urlencode($action);
+if ($begin_h != '') $param .= '&begin_h='.urlencode($begin_h);
+if ($end_h != '')   $param .= '&end_h='.urlencode($end_h);
+if ($begin_d != '') $param .= '&begin_d='.urlencode($begin_d);
+if ($end_d != '')   $param .= '&end_d='.urlencode($end_d);
+$param .= "&maxprint=".urlencode($maxprint);
 
 
 $prev = dol_get_first_day_week($day, $month, $year);
@@ -232,7 +232,7 @@ $prev_year  = $prev['prev_year'];
 $prev_month = $prev['prev_month'];
 $prev_day   = $prev['prev_day'];
 $first_day  = $prev['first_day'];
-$first_month= $prev['first_month'];
+$first_month = $prev['first_month'];
 $first_year = $prev['first_year'];
 
 $week = $prev['week'];
@@ -244,10 +244,10 @@ $next_month = $next['month'];
 $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow=dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
+$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
 
-$nb_weeks_to_show = (! empty($conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER)) ? ((int) $conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7) : 7;
-$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
+$nb_weeks_to_show = (!empty($conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER)) ? ((int) $conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7) : 7;
+$lastdaytoshow = dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow,'dayhour');
 //print dol_print_date($lastdaytoshow,'dayhour');
@@ -255,13 +255,13 @@ $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 $max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year));
 
 $tmpday = $first_day;
-$picto='calendarweek';
+$picto = 'calendarweek';
 
-$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
-$nav.=" </span>\n";
-$nav.=" &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
-$nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$nav = "<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
+$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
+$nav .= " </span>\n";
+$nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
+$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 
 /*$nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
 $nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -279,24 +279,24 @@ $nav.='<input type="hidden" name="begin_d" value="' . $begin_d . '">';
 $nav.='<input type="hidden" name="end_d" value="' . $end_d . '">';
 $nav.='<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
 */
-$nav.= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 //$nav.='</form>';
 
 // Must be after the nav definition
-$param.='&year='.urlencode($year).'&month='.urlencode($month).($day?'&day='.urlencode($day):'');
+$param .= '&year='.urlencode($year).'&month='.urlencode($month).($day ? '&day='.urlencode($day) : '');
 //print 'x'.$param;
 
 
 
-$tabactive='';
-if ($action == 'show_month') $tabactive='cardmonth';
-if ($action == 'show_week') $tabactive='cardweek';
-if ($action == 'show_day')  $tabactive='cardday';
-if ($action == 'show_list') $tabactive='cardlist';
-if ($action == 'show_peruser') $tabactive='cardperuser';
+$tabactive = '';
+if ($action == 'show_month') $tabactive = 'cardmonth';
+if ($action == 'show_week') $tabactive = 'cardweek';
+if ($action == 'show_day')  $tabactive = 'cardday';
+if ($action == 'show_list') $tabactive = 'cardlist';
+if ($action == 'show_peruser') $tabactive = 'cardperuser';
 
-$paramnoaction=preg_replace('/action=[a-z_]+/', '', $param);
+$paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 
 $head = calendars_prepare_head($paramnoaction);
 
@@ -306,51 +306,51 @@ dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
 dol_fiche_end();
 
-$showextcals=$listofextcals;
+$showextcals = $listofextcals;
 // Legend
 if ($conf->use_javascript_ajax)
 {
-	$s='';
-	$s.='<script type="text/javascript">' . "\n";
-	$s.='jQuery(document).ready(function () {' . "\n";
-	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
-	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
-	$s.='jQuery(".family_birthday").toggle();' . "\n";
-	if ($action=="show_week" || $action=="show_month" || empty($action))
+	$s = '';
+	$s .= '<script type="text/javascript">'."\n";
+	$s .= 'jQuery(document).ready(function () {'."\n";
+	$s .= 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });'."\n";
+	$s .= 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });'."\n";
+	$s .= 'jQuery(".family_birthday").toggle();'."\n";
+	if ($action == "show_week" || $action == "show_month" || empty($action))
 	{
-    	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
-    	$s.='var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
+    	$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
+    	$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
-  	$s.='});' . "\n";
-	$s.='</script>' . "\n";
-	if (! empty($conf->use_javascript_ajax))
+  	$s .= '});'."\n";
+	$s .= '</script>'."\n";
+	if (!empty($conf->use_javascript_ajax))
 	{
-		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+		$s .= '<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 		if (is_array($showextcals) && count($showextcals) > 0)
 		{
 			foreach ($showextcals as $val)
 			{
 				$htmlname = md5($val['name']);
-				$s.='<script type="text/javascript">' . "\n";
-				$s.='jQuery(document).ready(function () {' . "\n";
-				$s.='		jQuery("#check_ext' . $htmlname . '").click(function() {';
-				$s.=' 		/* alert("'.$htmlname.'"); */';
-				$s.=' 		jQuery(".family_ext' . $htmlname . '").toggle();';
-				$s.='		});' . "\n";
-				$s.='});' . "\n";
-				$s.='</script>' . "\n";
-				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val ['name'] . ' &nbsp; </div>';
+				$s .= '<script type="text/javascript">'."\n";
+				$s .= 'jQuery(document).ready(function () {'."\n";
+				$s .= '		jQuery("#check_ext'.$htmlname.'").click(function() {';
+				$s .= ' 		/* alert("'.$htmlname.'"); */';
+				$s .= ' 		jQuery(".family_ext'.$htmlname.'").toggle();';
+				$s .= '		});'."\n";
+				$s .= '});'."\n";
+				$s .= '</script>'."\n";
+				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" checked> '.$val ['name'].' &nbsp; </div>';
 			}
 		}
 
 		//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
 
 		// Calendars from hooks
-	    $parameters=array(); $object=null;
-		$reshook=$hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
+	    $parameters = array(); $object = null;
+		$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 	    if (empty($reshook))
 	    {
-			$s.= $hookmanager->resPrint;
+			$s .= $hookmanager->resPrint;
 	    }
 	    elseif ($reshook > 1)
 		{
@@ -555,29 +555,29 @@ if ($resql)
         else
 		{
 			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
-        	$event->fetch_userassigned();				// This load $event->userassigned
+        	$event->fetch_userassigned(); // This load $event->userassigned
 
-			if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-            if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow - 1);
+			if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar = $firstdaytoshow;
+            if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar = ($lastdaytoshow - 1);
 
             // Add an entry in actionarray for each day
-            $daycursor=$event->date_start_in_calendar;
+            $daycursor = $event->date_start_in_calendar;
             $annee = date('Y', $daycursor);
             $mois = date('m', $daycursor);
             $jour = date('d', $daycursor);
 
             // Loop on each day covered by action to prepare an index to show on calendar
-            $loop=true; $j=0;
-            $daykey=dol_mktime(0, 0, 0, $mois, $jour, $annee);
+            $loop = true; $j = 0;
+            $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
             do
 			{
                 //if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
 
-                $eventarray[$daykey][]=$event;
+                $eventarray[$daykey][] = $event;
                 $j++;
 
-                $daykey+=60*60*24;
-                if ($daykey > $event->date_end_in_calendar) $loop=false;
+                $daykey += 60 * 60 * 24;
+                if ($daykey > $event->date_end_in_calendar) $loop = false;
             }
             while ($loop);
 
@@ -593,10 +593,10 @@ else
     dol_print_error($db);
 }
 
-$maxnbofchar=18;
-$cachethirdparties=array();
-$cachecontacts=array();
-$cacheusers=array();
+$maxnbofchar = 18;
+$cachethirdparties = array();
+$cachecontacts = array();
+$cacheusers = array();
 
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
@@ -604,23 +604,23 @@ if (is_readable($color_file))
 {
     include_once $color_file;
 }
-if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
+if (!is_array($theme_datacolor)) $theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
 
-$newparam=$param;   // newparam is for birthday links
-$newparam=preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam);	// To avoid replacement when replace day= is done
-$newparam=preg_replace('/action=show_month&?/i', '', $newparam);
-$newparam=preg_replace('/action=show_week&?/i', '', $newparam);
-$newparam=preg_replace('/day=[0-9]+&?/i', '', $newparam);
-$newparam=preg_replace('/month=[0-9]+&?/i', '', $newparam);
-$newparam=preg_replace('/year=[0-9]+&?/i', '', $newparam);
-$newparam=preg_replace('/viewweek=[0-9]+&?/i', '', $newparam);
-$newparam=preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam);	// Restore correct parameter
-$newparam.='&viewweek=1';
+$newparam = $param; // newparam is for birthday links
+$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
+$newparam = preg_replace('/action=show_month&?/i', '', $newparam);
+$newparam = preg_replace('/action=show_week&?/i', '', $newparam);
+$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
+$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
+$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
+$newparam = preg_replace('/viewweek=[0-9]+&?/i', '', $newparam);
+$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
+$newparam .= '&viewweek=1';
 
 echo '<input type="hidden" name="actionmove" value="mupdate">';
 echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
-echo '<input type="hidden" name="newdate" id="newdate">' ;
+echo '<input type="hidden" name="newdate" id="newdate">';
 
 
 // Line header with list of days
@@ -644,7 +644,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo $langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
+		echo $langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7));
 		print "<br>";
 		if ($i) print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day');
 		else print dol_print_date($currentdaytoshow, 'day');
@@ -655,7 +655,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 
 	echo '<tr class="liste_titre">';
 	echo '<td></td>';
-	$i=0;
+	$i = 0;
 	while ($i < 7)
 	{
 		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
@@ -679,7 +679,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 	$usernames = array(); //init
 	$usernamesid = array();
 	/* Use this to have list of users only if users have events */
-	if (! empty($conf->global->AGENDA_SHOWOWNERONLY_ONPERUSERVIEW))
+	if (!empty($conf->global->AGENDA_SHOWOWNERONLY_ONPERUSERVIEW))
 	{
 		foreach ($eventarray as $daykey => $notused)
 		{
@@ -699,12 +699,12 @@ while($currentdaytoshow<$lastdaytoshow) {
 	else
 	{
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
-		$sql.= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user').")";
-		if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		if ($usergroup > 0)	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
+		$sql .= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user').")";
+		if ($usergroup > 0)	$sql .= " AND ug.fk_usergroup = ".$usergroup;
 		//print $sql;
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 		    $num = $db->num_rows($resql);
@@ -714,7 +714,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 		        while ($i < $num)
 		        {
 		            $obj = $db->fetch_object($resql);
-					$usernamesid[$obj->rowid]=$obj->rowid;
+					$usernamesid[$obj->rowid] = $obj->rowid;
 					$i++;
 		        }
 		    }
@@ -722,11 +722,11 @@ while($currentdaytoshow<$lastdaytoshow) {
 		else dol_print_error($db);
 	}
 	//var_dump($usernamesid);
-	foreach($usernamesid as $id)
+	foreach ($usernamesid as $id)
 	{
-		$tmpuser=new User($db);
-		$result=$tmpuser->fetch($id);
-		$usernames[]=$tmpuser;
+		$tmpuser = new User($db);
+		$result = $tmpuser->fetch($id);
+		$usernames[] = $tmpuser;
 	}
 
 	/*
@@ -791,11 +791,11 @@ while($currentdaytoshow<$lastdaytoshow) {
 			$tmpmonth = $tmparray['mon'];
 			$tmpyear = $tmparray['year'];
 
-			$style='cal_current_month';
-			if ($iter_day == 6) $style.=' cal_other_month';
-			$today=0;
-			if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
-			if ($today) $style='cal_today_peruser';
+			$style = 'cal_current_month';
+			if ($iter_day == 6) $style .= ' cal_other_month';
+			$today = 0;
+			if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $tmpmonth && $todayarray['year'] == $tmpyear) $today = 1;
+			if ($today) $style = 'cal_today_peruser';
 
 			show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype, $var);
 
@@ -808,21 +808,21 @@ while($currentdaytoshow<$lastdaytoshow) {
 	echo "</table>\n";
 	echo "<br>";
 
-	$currentdaytoshow =  dol_time_plus_duree($currentdaytoshow, 7, 'd');
+	$currentdaytoshow = dol_time_plus_duree($currentdaytoshow, 7, 'd');
 }
 
 echo '</div>';
 
-if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE))
+if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && !empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE))
 {
 	$langs->load("commercial");
 	print '<br>'.$langs->trans("Legend").': <br>';
-	foreach($colorsbytype as $code => $color)
+	foreach ($colorsbytype as $code => $color)
 	{
 		if ($color)
 		{
-			print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="'.($color?'background: #'.$color.';':'').'width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
-			print $langs->trans("Action".$code)!="Action".$code?$langs->trans("Action".$code):$labelbytype[$code];
+			print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="'.($color ? 'background: #'.$color.';' : '').'width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
+			print $langs->trans("Action".$code) != "Action".$code ? $langs->trans("Action".$code) : $labelbytype[$code];
 			//print $code;
 			print '</div>';
 		}
@@ -907,21 +907,21 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;
-	global $filter, $filtert, $status, $actioncode;	// Filters used into search form
-	global $theme_datacolor;	// Array with a list of different we can use (come from theme)
+	global $filter, $filtert, $status, $actioncode; // Filters used into search form
+	global $theme_datacolor; // Array with a list of different we can use (come from theme)
 	global $cachethirdparties, $cachecontacts, $cacheusers, $cacheprojects, $colorindexused;
 	global $begin_h, $end_h;
 
-	$cases1 = array();	// Color first half hour
+	$cases1 = array(); // Color first half hour
 	$cases2 = array(); // Color second half hour
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year, false, 0);
 
-	$i=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
-	$ymd=sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
+	$i = 0; $numother = 0; $numbirthday = 0; $numical = 0; $numicals = array();
+	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
-	$colorindexused[$user->id] = 0;			// Color index for current user (user->id) is always 0
-	$nextindextouse=count($colorindexused);	// At first run this is 0, so first user has 0, next 1, ...
+	$colorindexused[$user->id] = 0; // Color index for current user (user->id) is always 0
+	$nextindextouse = count($colorindexused); // At first run this is 0, so first user has 0, next 1, ...
 	//if ($username->id && $day==1) var_dump($eventarray);
 
 	// We are in a particular day for $username, now we scan all events
@@ -932,96 +932,96 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$jour = date('d', $daykey);
 		//print $annee.'-'.$mois.'-'.$jour.' '.$year.'-'.$month.'-'.$day."<br>\n";
 
-		if ($day==$jour && $month==$mois && $year==$annee)	// Is it the day we are looking for when calling function ?
+		if ($day == $jour && $month == $mois && $year == $annee)	// Is it the day we are looking for when calling function ?
 		{
 			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event)
 			{
 				//var_dump($event);
 
-				$keysofuserassigned=array_keys($event->userassigned);
-				$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
+				$keysofuserassigned = array_keys($event->userassigned);
+				$ponct = ($event->date_start_in_calendar == $event->date_end_in_calendar);
 
-				if (! in_array($username->id, $keysofuserassigned)) continue;	// We discard record if event is from another user than user we want to show
+				if (!in_array($username->id, $keysofuserassigned)) continue; // We discard record if event is from another user than user we want to show
 				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
 
-				$parameters=array();
-				$reshook=$hookmanager->executeHooks('formatEvent', $parameters, $event, $action);    // Note that $action and $object may have been modified by some hooks
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formatEvent', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 				// Define $color (Hex string like '0088FF') and $cssclass of event
-				$color=-1; $cssclass=''; $colorindex=-1;
+				$color = -1; $cssclass = ''; $colorindex = -1;
 				if (in_array($user->id, $keysofuserassigned))
 				{
-					$cssclass='family_mytasks';
+					$cssclass = 'family_mytasks';
 
 					if (empty($cacheusers[$event->userownerid]))
 					{
-						$newuser=new User($db);
+						$newuser = new User($db);
 						$newuser->fetch($event->userownerid);
-						$cacheusers[$event->userownerid]=$newuser;
+						$cacheusers[$event->userownerid] = $newuser;
 					}
 					//var_dump($cacheusers[$event->userownerid]->color);
 
 					// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
-					if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
+					if (!empty($cacheusers[$event->userownerid]->color)) $color = $cacheusers[$event->userownerid]->color;
 
-					if (! empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE)) $color=$event->type_color;
+					if (!empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE)) $color = $event->type_color;
 				}
 				elseif ($event->type_code == 'ICALEVENT')
 				{
 					$numical++;
-					if (! empty($event->icalname))
+					if (!empty($event->icalname))
 					{
-						if (! isset($numicals[dol_string_nospecial($event->icalname)])) {
+						if (!isset($numicals[dol_string_nospecial($event->icalname)])) {
 							$numicals[dol_string_nospecial($event->icalname)] = 0;
 						}
 						$numicals[dol_string_nospecial($event->icalname)]++;
 					}
 
-					$color=$event->icalcolor;
-					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unsortable');
+					$color = $event->icalcolor;
+					$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other unsortable');
 				}
 				elseif ($event->type_code == 'BIRTHDAY')
 				{
-					$numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+					$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday unsortable'; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 				}
 				else
 				{
 					$numother++;
-					$color=($event->icalcolor?$event->icalcolor:-1);
-					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
+					$color = ($event->icalcolor ? $event->icalcolor : -1);
+					$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other');
 
 					if (empty($cacheusers[$event->userownerid]))
 					{
-						$newuser=new User($db);
+						$newuser = new User($db);
 						$newuser->fetch($event->userownerid);
-						$cacheusers[$event->userownerid]=$newuser;
+						$cacheusers[$event->userownerid] = $newuser;
 					}
 					//var_dump($cacheusers[$event->userownerid]->color);
 
 					// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
-					if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
+					if (!empty($cacheusers[$event->userownerid]->color)) $color = $cacheusers[$event->userownerid]->color;
 
-					if (! empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE)) $color=$event->type_color;
+					if (!empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE)) $color = $event->type_color;
 				}
 
 				if ($color < 0)	// Color was not set on user card. Set color according to color index.
 				{
 					// Define color index if not yet defined
-					$idusertouse=($event->userownerid?$event->userownerid:0);
+					$idusertouse = ($event->userownerid ? $event->userownerid : 0);
 					if (isset($colorindexused[$idusertouse]))
 					{
-						$colorindex=$colorindexused[$idusertouse];	// Color already assigned to this user
+						$colorindex = $colorindexused[$idusertouse]; // Color already assigned to this user
 					}
 					else
 					{
-						$colorindex=$nextindextouse;
-						$colorindexused[$idusertouse]=$colorindex;
-						if (! empty($theme_datacolor[$nextindextouse+1])) $nextindextouse++;	// Prepare to use next color
+						$colorindex = $nextindextouse;
+						$colorindexused[$idusertouse] = $colorindex;
+						if (!empty($theme_datacolor[$nextindextouse + 1])) $nextindextouse++; // Prepare to use next color
 					}
 					// Define color
-					$color=sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+					$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 				}
 				//$cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 

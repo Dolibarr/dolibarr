@@ -38,8 +38,10 @@ class FormSms
      */
     public $db;
 
+    public $fromid;
     public $fromname;
     public $fromsms;
+    public $fromtype;
     public $replytoname;
     public $replytomail;
     public $toname;

@@ -85,12 +85,12 @@ class ProductAttributeValue
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->fk_product_attribute = $result->fk_product_attribute;
-		$this->ref = $result->ref;
-		$this->value = $result->value;
+		$this->id = $obj->rowid;
+		$this->fk_product_attribute = $obj->fk_product_attribute;
+		$this->ref = $obj->ref;
+		$this->value = $obj->value;
 
 		return 1;
 	}

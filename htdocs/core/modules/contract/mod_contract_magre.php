@@ -23,7 +23,7 @@
  *  \brief      File of class to manage contract numbering rules Magre
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 
 /**
  *	Class to manage contract numbering rules Magre
@@ -101,14 +101,14 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
     public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+     	global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
+    	$old_code_client = $mysoc->code_client;
+    	$mysoc->code_client = 'CCCCCCCCCC';
      	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
+		$mysoc->code_client = $old_code_client;
 
-		if (! $numExample)
+		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
@@ -124,19 +124,19 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
     public function getNextValue($objsoc, $contract)
     {
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask=$conf->global->CONTRACT_MAGRE_MASK;
+		$mask = $conf->global->CONTRACT_MAGRE_MASK;
 
-		if (! $mask)
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$numFinal=get_next_value($db, $mask, 'contrat', 'ref', '', $objsoc, $contract->date_contrat);
+		$numFinal = get_next_value($db, $mask, 'contrat', 'ref', '', $objsoc, $contract->date_contrat);
 
 		return  $numFinal;
 	}

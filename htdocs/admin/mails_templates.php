@@ -451,7 +451,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Line to enter new values (title)
 print '<tr class="liste_titre">';
@@ -597,7 +597,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // List of available record in database
 dol_syslog("htdocs/admin/dict", LOG_DEBUG);

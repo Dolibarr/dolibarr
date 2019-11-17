@@ -198,7 +198,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
 print '<td>'.$langs->trans("Value").'</td>';

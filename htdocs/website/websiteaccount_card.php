@@ -29,48 +29,48 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("website","other"));
+$langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object=new SocieteAccount($db);
+$object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('websiteaccountcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
-$search=array();
-foreach($object->fields as $key => $val)
+$search_all = trim(GETPOST("search_all", 'alpha'));
+$search = array();
+foreach ($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action='view';
+if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Security check - Protection if external user
 //if ($user->socid > 0) access_forbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
 
-$permissionnote=$user->rights->websiteaccount->write;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->websiteaccount->write;	// Used by the include of actions_dellink.inc.php
-$permissiontoadd=$user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->rights->websiteaccount->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->websiteaccount->write; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
 
@@ -78,13 +78,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-	$error=0;
+	$error = 0;
 
 	$permissiontoadd = $user->rights->website->write;
 	$permissiontodelete = $user->rights->website->delete;
@@ -97,9 +97,9 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='WEBSITEACCOUNT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_WEBSITEACCOUNT_TO';
-	$trackid='websiteaccount'.$object->id;
+	$trigger_name = 'WEBSITEACCOUNT_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_WEBSITEACCOUNT_TO';
+	$trackid = 'websiteaccount'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
@@ -108,8 +108,8 @@ if (empty($reshook))
  * View
  */
 
-$form=new Form($db);
-$formfile=new FormFile($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
 llxHeader('', 'WebsiteAccount', '');
 
@@ -144,10 +144,10 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	print '</table>'."\n";
 
@@ -156,7 +156,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -177,10 +177,10 @@ if (($id || $ref) && $action == 'edit')
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	print '</table>';
 
@@ -196,7 +196,7 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	if ($object->fk_soc >0 && empty($socid)) $socid = $object->fk_soc;
+	if ($object->fk_soc > 0 && empty($socid)) $socid = $object->fk_soc;
 
     $res = $object->fetch_optionals();
 
@@ -207,14 +207,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Call Hook formConfirm
 	$parameters = array('lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -222,11 +222,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback='';
-	if ($socid) $linkback = '<a href="' .DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToListOfThirdParty") . '</a>';
-	if ($fk_website) $linkback = '<a href="' .DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '';
+	if ($socid) $linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListOfThirdParty").'</a>';
+	if ($fk_website) $linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	/*
 	// Ref bis
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', 0, 1);
@@ -268,7 +268,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    }
 	}
 	*/
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
 	if ($socid > 0) $object->next_prev_filter = 'te.fk_soc = '.$socid;
 
@@ -281,10 +281,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 	print '</div>';
@@ -299,14 +299,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    	$parameters = array();
+    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))
     	{
     	    // Send
-            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>'."\n";
+            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 
     		if ($user->rights->website->write)
     		{
@@ -376,8 +376,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail='websiteaccount';
-	$defaulttopic='Information';
+	$modelmail = 'websiteaccount';
+	$defaulttopic = 'Information';
 	$diroutput = $conf->website->dir_output;
 	$trackid = 'websiteaccount'.$object->id;
 

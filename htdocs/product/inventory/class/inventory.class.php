@@ -25,7 +25,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -83,7 +83,7 @@ class Inventory extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'ref' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object', 'css'=>'maxwidth200'),
 		'entity'         => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
@@ -131,8 +131,17 @@ class Inventory extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $date_validation;
+
+
 	public $tms;
 
 	/**
@@ -199,8 +208,8 @@ class Inventory extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
 	}
 
 
@@ -335,37 +344,37 @@ class Inventory extends CommonObject
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("Inventory") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label = '<u>'.$langs->trans("Inventory").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
         $url = dol_buildpath('/product/inventory/card.php', 1).'?id='.$this->id;
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowInventory");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+                $label = $langs->trans("ShowInventory");
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
         }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart.=$linkclose.'>';
-		$linkend='</a>';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -396,16 +405,12 @@ class Inventory extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if (empty($this->labelStatus))
-		{
-			global $langs;
-			//$langs->load("mrp");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		}
+		$labelStatus = array();
+		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', 'status'.$status, $mode);
+		return dolGetStatus($labelStatus[$status], $labelStatus[$status], '', 'status'.$status, $mode);
 	}
 
 	/**
@@ -417,10 +422,10 @@ class Inventory extends CommonObject
     public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql.= ' fk_user_creat, fk_user_modif';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql.= ' WHERE t.rowid = '.$id;
-		$result=$this->db->query($sql);
+		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' WHERE t.rowid = '.$id;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
@@ -431,7 +436,7 @@ class Inventory extends CommonObject
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation   = $cuser;
+					$this->user_creation = $cuser;
 				}
 
 				if ($obj->fk_user_valid)
@@ -445,7 +450,7 @@ class Inventory extends CommonObject
 				{
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture   = $cluser;
+					$this->user_cloture = $cluser;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);

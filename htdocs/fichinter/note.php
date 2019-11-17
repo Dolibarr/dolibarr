@@ -27,8 +27,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -62,7 +62,7 @@ llxHeader('', $langs->trans("Intervention"));
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$object->fetch_thirdparty();
 
