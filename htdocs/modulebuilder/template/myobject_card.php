@@ -110,7 +110,7 @@ $permissiontoadd = $user->rights->mymodule->myobject->write; 	// Used by the inc
 $permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->mymodule->myobject->write;		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mymodule->myobject->write;	// Used by the include of actions_dellink.inc.php
-
+$upload_dir = $conf->mymodule->multidir_output[isset($object->entity)?$object->entity:1];
 
 
 /*
@@ -128,8 +128,10 @@ if (empty($reshook))
     $backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
 
     if (empty($backtopage) || ($cancel && empty($id))) {
-    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    	else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+    	if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+    		if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    		else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+    	}
     }
     $triggermodname = 'MYMODULE_MYOBJECT_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -454,9 +456,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
             // Back to draft
-            if (! empty($user->rights->mymodule->myobject->write) && $object->status == BOM::STATUS_VALIDATED)
+            if ($object->status == $object::STATUS_VALIDATED)
             {
-            	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
+	            if ($permissiontoadd)
+	            {
+	            	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
+	            }
             }
 
             // Modify
@@ -467,6 +472,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		else
     		{
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+    		}
+
+    		// Validate
+    		if ($object->status == $object::STATUS_DRAFT)
+    		{
+	    		if ($permissiontoadd)
+	    		{
+	    			if (is_array($object->lines) && count($object->lines) > 0)
+	    			{
+	    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+	    			}
+	    			else
+	    			{
+	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    			}
+	    		}
     		}
 
     		// Clone

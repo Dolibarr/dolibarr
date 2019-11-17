@@ -23,7 +23,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
+.button, .buttonDelete, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
 	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;

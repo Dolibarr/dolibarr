@@ -26,7 +26,7 @@
  * \brief      File containing class for numbering model of MOs advanced
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/mrp/modules_mrp.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mo.php';
 
 
 /**
@@ -38,7 +38,7 @@ class mod_mo_advanced extends ModeleNumRefMos
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var string Error message
@@ -48,7 +48,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 * @var string name
 	 */
-	public $name='advanced';
+	public $name = 'advanced';
 
 
     /**
@@ -65,28 +65,28 @@ class mod_mo_advanced extends ModeleNumRefMos
 		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstBom" value="MRP_MO_ADVANCED_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstBom" value="MRP_MO_ADVANCED_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMo" value="'.$conf->global->MRP_MO_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMo" value="'.$conf->global->MRP_MO_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
-		$texte.= '</tr>';
+		$texte .= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
     }
@@ -98,17 +98,17 @@ class mod_mo_advanced extends ModeleNumRefMos
      */
     public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+     	global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$old_code_type=$mysoc->typent_code;
-    	$mysoc->code_client='CCCCCCCCCC';
-    	$mysoc->typent_code='TTTTTTTTTT';
+    	$old_code_client = $mysoc->code_client;
+    	$old_code_type = $mysoc->typent_code;
+    	$mysoc->code_client = 'CCCCCCCCCC';
+    	$mysoc->typent_code = 'TTTTTTTTTT';
      	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
-		$mysoc->typent_code=$old_code_type;
+		$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;
 
-		if (! $numExample)
+		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
@@ -124,22 +124,22 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 */
     public function getNextValue($objprod, $object)
     {
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->MRP_MO_ADVANCED_MASK;
+		$mask = $conf->global->MRP_MO_ADVANCED_MASK;
 
-		if (! $mask)
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = ($object->date_mo ? $object->date_mo : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'mrp_mo', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'mrp_mo', 'ref', '', null, $date);
 
 		return  $numFinal;
 	}

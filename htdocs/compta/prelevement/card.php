@@ -177,7 +177,7 @@ if ($id > 0 || $ref)
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -214,7 +214,7 @@ if ($id > 0 || $ref)
 	print '<br>';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	$acc = new Account($db);
 	$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);

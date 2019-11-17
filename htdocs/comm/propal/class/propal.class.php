@@ -121,10 +121,9 @@ class Propal extends CommonObject
 	 */
 	public $datec;
 
-	/**
-	 * Creation date
-	 * @var int
-	 */
+    /**
+     * @var integer|string $date_creation;
+     */
 	public $date_creation;
 
 	/**
@@ -134,15 +133,13 @@ class Propal extends CommonObject
 	public $datev;
 
 	/**
-	 * Validation date
-	 * @var int
-	 */
+     * @var integer|string $date_validation;
+     */
 	public $date_validation;
 
 	/**
-	 * Date of the quote
-	 * @var
-	 */
+     * @var integer|string date of the quote;
+     */
 	public $date;
 
 	/**
@@ -150,7 +147,13 @@ class Propal extends CommonObject
 	 * @see $date
 	 */
 	public $datep;
+
+	/**
+	 * @var integer|string $date_livraison;
+	 */
 	public $date_livraison;
+
+
 	public $fin_validite;
 
 	public $user_author_id;
@@ -628,7 +631,7 @@ class Propal extends CommonObject
                 if ($result > 0)
                 {
                     $this->db->commit();
-                    return $this->line->rowid;
+                    return $this->line->id;
                 }
                 else
                 {
@@ -769,7 +772,7 @@ class Propal extends CommonObject
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->rowid				= $rowid;
+			$this->line->id					= $rowid;
 			$this->line->label				= $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
@@ -1298,9 +1301,9 @@ class Propal extends CommonObject
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client = '';
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1)
 		{
-				 $object->note_private = '';
-                                 $object->note_public = '';
-        }
+			$object->note_private = '';
+			$object->note_public = '';
+		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);

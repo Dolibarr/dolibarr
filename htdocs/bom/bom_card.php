@@ -79,6 +79,7 @@ $permissionnote=$user->rights->bom->write;	// Used by the include of actions_set
 $permissiondellink=$user->rights->bom->write;	// Used by the include of actions_dellink.inc.php
 $permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$upload_dir = $conf->bom->multidir_output[isset($object->entity)?$object->entity:1];
 
 
 /*
@@ -583,44 +584,63 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_VALIDATED)
+    		// Back to draft
+    		if ($object->status == $object::STATUS_VALIDATED)
     		{
-    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    		if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    		}
     		}
 
             // Modify
-    		if ($permissiontoadd)
+    		if ($object->status == $object::STATUS_DRAFT)
     		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+	    		if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
+	    		}
+	    		else
+	    		{
+	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+	    		}
     		}
 
     		// Validate
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_DRAFT)
+    		if ($object->status == $object::STATUS_DRAFT)
     		{
-    			if (is_array($object->lines) && count($object->lines) > 0)
-    			{
-    				print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=validate">' . $langs->trans("Validate") . '</a>';
-    			}
-    			else
-    			{
-    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">' . $langs->trans("Validate") . '</a>';
-    			}
+	    		if ($permissiontoadd)
+	    		{
+	    			if (is_array($object->lines) && count($object->lines) > 0)
+	    			{
+	    				print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=validate">' . $langs->trans("Validate") . '</a>';
+	    			}
+	    			else
+	    			{
+	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">' . $langs->trans("Validate") . '</a>';
+	    			}
+	    		}
     		}
 
     		// Close / Cancel
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_VALIDATED)
+    		if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
     		{
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=close">' . $langs->trans("Disable") . '</a>';
     		}
 
     		// Re-open
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_CANCELED)
+    		if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
     		{
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen">' . $langs->trans("ReOpen") . '</a>';
+    		}
+
+    		// Create MO
+    		if ($conf->mrp->enabled)
+    		{
+	    		if ($object->status == $object::STATUS_VALIDATED && ! empty($user->rights->mrp->write))
+	    		{
+	    			print '<a class="butAction" href="' . DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("CreateMO") . '</a>';
+	    		}
     		}
 
     		// Clone

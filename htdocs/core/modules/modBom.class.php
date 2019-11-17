@@ -25,7 +25,7 @@
  *  \ingroup    bom
  *  \brief      Description and activation file for module Bom
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -75,7 +75,7 @@ class modBom extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='bom';
+		$this->picto = 'bom';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -103,15 +103,15 @@ class modBom extends DolibarrModules
 		$this->config_page_url = array("bom.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('modProduct');		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-		$this->requiredby = array('modMrp');	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('modProduct'); // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		$this->requiredby = array('modMrp'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
 		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(9,0);		// Minimum version of Dolibarr required by module
-		$this->warnings_activation = array();			// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array();		// Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->need_dolibarr_version = array(9, 0); // Minimum version of Dolibarr required by module
+		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'BomWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -132,10 +132,10 @@ class modBom extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (! isset($conf->bom) || ! isset($conf->bom->enabled))
+		if (!isset($conf->bom) || !isset($conf->bom->enabled))
 		{
-			$conf->bom=new stdClass();
-			$conf->bom->enabled=0;
+			$conf->bom = new stdClass();
+			$conf->bom->enabled = 0;
 		}
 
 
@@ -281,28 +281,28 @@ class modBom extends DolibarrModules
 
 
 		// Exports
-		$r=1;
+		$r = 1;
 
 		/* BEGIN MODULEBUILDER EXPORT BILLOFMATERIALS */
 		$langs->load("mrp");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='BomAndBomLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='bom';
-		$keyforclass = 'BOM'; $keyforclassfile='/bom/class/bom.class.php'; $keyforelement='bom';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'BomAndBomLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = 'bom';
+		$keyforclass = 'BOM'; $keyforclassfile = '/bom/class/bom.class.php'; $keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforclass = 'BOMLine'; $keyforclassfile='/bom/class/bom.class.php'; $keyforelement='bomline'; $keyforalias='tl';
+		$keyforclass = 'BOMLine'; $keyforclassfile = '/bom/class/bom.class.php'; $keyforelement = 'bomline'; $keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		unset($this->export_fields_array[$r]['tl.fk_bom']);
-		$keyforselect ='bom_bom'; $keyforaliasextra='extra'; $keyforelement='bom';
+		$keyforselect = 'bom_bom'; $keyforaliasextra = 'extra'; $keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect ='bom_bomline'; $keyforaliasextra='extraline'; $keyforelement='bomline';
+		$keyforselect = 'bom_bomline'; $keyforaliasextra = 'extraline'; $keyforelement = 'bomline';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_dependencies_array[$r]=array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('bom').')';
+		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
+		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
+		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';
 		$r++;
 		/* END MODULEBUILDER EXPORT BILLOFMATERIALS */
 	}
@@ -319,7 +319,7 @@ class modBom extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result=$this->_load_tables('/bom/sql/');
+		$result = $this->_load_tables('/bom/sql/');
 		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
 		// Create extrafields

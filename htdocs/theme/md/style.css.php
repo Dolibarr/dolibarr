@@ -550,7 +550,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled, .button.disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled, .buttonDelete.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -966,6 +966,15 @@ select.selectarrowonleft option {
 
 table[summary="list_of_modules"] .fa-cog {
     font-size: 1.5em;
+}
+
+.linkedcol-element {
+	min-width: 100px;
+}
+
+.img-skinthumb {
+	width: 160px;
+	height: 100px;
 }
 
 
@@ -2738,7 +2747,7 @@ div.colorback
     border-left: 1px solid #ccc;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
-	width: 100%;
+	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
@@ -3919,10 +3928,13 @@ tr.visible {
     background-image: none;
     border: 1px solid #aaa;
 	font-weight: normal;
+	color: #444 !important;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
+	display: inline-block;
+    padding: 4px 0 4px 0;
 }
 .websitebar .button, .websitebar .buttonDelete
 {
@@ -3930,8 +3942,12 @@ tr.visible {
 	margin: 2px 4px 2px 4px  !important;
     line-height: normal;
 }
+.websitebar input.button.bordertransp, .websitebar input.buttonDelete.bordertransp {
+    color: #444 !important;
+    text-shadow: none;
+}
 .websiteselection {
-	display: inline-block;
+	/* display: inline-block; */
 	padding-left: 10px;
 	vertical-align: middle;
 }
@@ -3943,7 +3959,6 @@ tr.visible {
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
-
 .websiteinputurl {
     display: inline-block;
     vertical-align: top;

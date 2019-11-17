@@ -56,11 +56,11 @@ $form = new Form($db);
 $societestatic = new Societe($db);
 $memberstatic = new Adherent($db);
 $acc = new Account($db);
-$stripe=new Stripe($db);
+$stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
 {
 	$service = 'StripeTest';
 	$servicestatus = '0';
@@ -89,13 +89,13 @@ if (!$rowid)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 
-    $title=$langs->trans("StripeChargeList");
-    $title.=($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
+    $title = $langs->trans("StripeChargeList");
+    $title .= ($stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     print '<tr class="liste_titre">';
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -163,7 +163,7 @@ if (!$rowid)
 		{
 			$societestatic->id = 0;
 		}
-		if (! empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
+		if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
 		}
@@ -174,26 +174,26 @@ if (!$rowid)
 
 		print '<tr class="oddeven">';
 
-        if (!empty($stripeacc)) $connect=$stripeacc.'/';
+        if (!empty($stripeacc)) $connect = $stripeacc.'/';
 
 		// Ref
-		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
         if ($servicestatus)
         {
-        	$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
+        	$url = 'https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
         }
 		print "<td>";
         print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 		print "</td>\n";
 		// Stripe customer
 		print "<td>";
-        if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
-		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
+        if (!empty($conf->stripe->enabled) && !empty($stripeacc)) $connect = $stripeacc.'/';
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
 		if ($servicestatus)
 		{
-            $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+            $url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
 		}
-		if (! empty($charge->customer))
+		if (!empty($charge->customer))
 		{
     		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').' '.$charge->customer.'</a>';
 		}
@@ -238,7 +238,7 @@ if (!$rowid)
 		print $type;
 	    print '</td>';
 	    // Amount
-	    print '<td class="right">'.price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
+	    print '<td class="right">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
 	    // Status
 	    print '<td class="right">';
 	    print $status;

@@ -1006,7 +1006,7 @@ class Facture extends CommonInvoice
 	 */
 	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $hookmanager;
+		global $conf, $hookmanager;
 
 		$error = 0;
 
@@ -1048,11 +1048,10 @@ class Facture extends CommonInvoice
 		$object->close_code         = '';
 		$object->close_note         = '';
 		$object->products = $object->lines; // For backward compatibility
-		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1)
-                {
-                                 $object->note_private = '';
-                                 $object->note_public = '';
-        }
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
+			$object->note_private = '';
+			$object->note_public = '';
+		}
 
 		// Loop on each line of new invoice
 		foreach ($object->lines as $i => $line)
@@ -1175,7 +1174,7 @@ class Facture extends CommonInvoice
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->date_livraison       = $object->date_livraison;
-		$this->fk_delivery_address  = $object->fk_delivery_address;
+		$this->fk_delivery_address  = $object->fk_delivery_address;		// deprecated
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
 
@@ -2016,7 +2015,7 @@ class Facture extends CommonInvoice
 			$list_rowid_det = array();
 			foreach ($this->lines as $key => $invoiceline)
 			{
-				$list_rowid_det[] = $invoiceline->rowid;
+				$list_rowid_det[] = $invoiceline->id;
 			}
 
 			// Consumned discounts are freed
@@ -3133,6 +3132,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 
+			$this->line->id					= $rowid;
 			$this->line->rowid				= $rowid;
 			$this->line->label				= $label;
 			$this->line->desc = $desc;

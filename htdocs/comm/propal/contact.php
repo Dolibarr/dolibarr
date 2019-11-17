@@ -62,7 +62,7 @@ if ($id > 0 || ! empty($ref))
 		$error++;
 	}
 }
-if (! $error)
+if (!$error)
 {
 	$object->fetch_thirdparty();
 }
@@ -109,7 +109,7 @@ elseif ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	if ($object->id > 0)
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
 }
 
@@ -143,7 +143,7 @@ elseif ($action == 'setaddress' && $user->rights->propale->creer)
 llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
-$formcompany= new FormCompany($db);
+$formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 if ($object->id > 0)
@@ -205,10 +205,10 @@ if ($object->id > 0)
 
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach($dirtpls as $reldir)
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir)
 	{
-		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
 		if ($res) break;
 	}
 }

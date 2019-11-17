@@ -26,22 +26,22 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-if (! is_object($form)) $form=new Form($db);
+if (!is_object($form)) $form = new Form($db);
 
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
-if (! is_array($parameters)) $parameters = array();
-if (! empty($cols)) $parameters['colspan'] = ' colspan="'.$cols.'"';
-if (! empty($cols)) $parameters['cols'] = $cols;
-if (! empty($object->fk_soc)) $parameters['socid'] = $object->fk_soc;
+if (!is_array($parameters)) $parameters = array();
+if (!empty($cols)) $parameters['colspan'] = ' colspan="'.$cols.'"';
+if (!empty($cols)) $parameters['cols'] = $cols;
+if (!empty($object->fk_soc)) $parameters['socid'] = $object->fk_soc;
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -94,10 +94,10 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
             if (!empty($extrafield_param) && is_array($extrafield_param)) {
                 $extrafield_param_list = array_keys($extrafield_param['options']);
 
-                if (count($extrafield_param_list)>0) {
+                if (count($extrafield_param_list) > 0) {
                     $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
-                    if ($extrafield_collapse_display_value==1 || $extrafield_collapse_display_value==2) {
+                    if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
                         $extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$key];
                     }
                 }
@@ -105,7 +105,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 			print $extrafields->showSeparator($key, $object);
 
-			$lastseparatorkeyfound=$key;
+			$lastseparatorkeyfound = $key;
 		}
 		else
 		{
@@ -184,14 +184,14 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 
 			print '</td>';
-			print '</tr>' . "\n";
+			print '</tr>'."\n";
 		}
 	}
 
 
 	// Add code to manage list depending on others
 	// TODO Test/enhance this with a more generic solution
-	if (! empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax))
 	{
 		print "\n";
 		print '
