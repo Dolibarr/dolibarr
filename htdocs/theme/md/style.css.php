@@ -3029,6 +3029,9 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 /* Set the color for hover lines */
 
+.tmenucompanylogo.nohover, .tmenucompanylogo.nohover:hover {
+	opacity: unset !important;
+}
 .nohoverborder:hover {
 	border: unset;
 	box-shadow: unset;
