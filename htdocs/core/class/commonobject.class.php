@@ -5626,13 +5626,11 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-
 		if ($computed)
 		{
 			if (!preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
 			else return '';
 		}
-
 
 		// Set value of $morecss. For this, we use in priority showsize from parameters, then $val['css'] then autodefine
 		if (empty($morecss) && !empty($val['css']))
@@ -5688,6 +5686,10 @@ abstract class CommonObject
 
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+		}
+		elseif (in_array($type, array('duration')))
+		{
+			$out=$form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
 		}
 		elseif (in_array($type, array('int', 'integer')))
 		{
@@ -6239,7 +6241,6 @@ abstract class CommonObject
             $type = 'sellist';
         }
 
-
 		$langfile = $val['langfile'];
 		$list = $val['list'];
 		$help = $val['help'];
@@ -6313,9 +6314,16 @@ abstract class CommonObject
 				$value = '';
 			}
 		}
+		elseif ($type == 'duration')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			if (! is_null($value) && $value !== '') {
+				$value = convertSecondToTime($value, 'allhourmin');
+			}
+		}
 		elseif ($type == 'double' || $type == 'real')
 		{
-			if (!empty($value)) {
+			if (! is_null($value) && $value !== '') {
 				$value = price($value);
 			}
 		}
@@ -6341,7 +6349,9 @@ abstract class CommonObject
 		}
 		elseif ($type == 'price')
 		{
-			$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			if (! is_null($value) && $value !== '') {
+				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			}
 		}
 		elseif ($type == 'select')
 		{
@@ -6733,7 +6743,7 @@ abstract class CommonObject
 					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-					
+
 					$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').'class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 
 					switch ($mode) {
@@ -7182,6 +7192,22 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Function test if type is duration
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return  bool			true if field of type duration
+	 */
+	public function isDuration($info)
+	{
+		if (is_array($info))
+		{
+			if (isset($info['type']) && ($info['type'] == 'duration')) return true;
+			else return false;
+		}
+		else return false;
+	}
+
+	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
@@ -7315,19 +7341,24 @@ abstract class CommonObject
 					$queryarray[$field] = null;
 				}
 			}
-			elseif ($this->isInt($info))
+			elseif ($this->isDuration($info))
+			{
+				// $this->{$field} may be null, '', 0, '0', 123, '123'
+				if ($this->{$field} != '' || !empty($info['notnull'])) $queryarray[$field] = (int) $this->{$field};		// If '0', it may be set to null later if $info['notnull'] == -1
+				else $queryarray[$field] = null;
+			}
+			elseif ($this->isInt($info) || $this->isFloat($info))
 			{
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field] = $conf->entity;
 				else
 				{
-					$queryarray[$field] = (int) $this->{$field};
-					if (empty($queryarray[$field])) $queryarray[$field] = 0; // May be reset to null later if property 'notnull' is -1 for this field.
+					// $this->{$field} may be null, '', 0, '0', 123, '123'
+					if ($this->{$field} != '' || !empty($info['notnull'])) {
+						if ($this->isInt($info)) $queryarray[$field] = (int) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
+						if ($this->isFloat($info)) $queryarray[$field] = (double) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
+					}
+					else $queryarray[$field] = null;
 				}
-			}
-			elseif ($this->isFloat($info))
-			{
-				$queryarray[$field] = (double) $this->{$field};
-				if (empty($queryarray[$field])) $queryarray[$field] = 0;
 			}
 			else
 			{
@@ -7335,7 +7366,7 @@ abstract class CommonObject
 			}
 
 			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
-			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;
+			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;	// May force 0 to null
 		}
 
 		return $queryarray;
@@ -7378,7 +7409,11 @@ abstract class CommonObject
 					}
 					else
 					{
-						$this->{$field} = (int) $obj->{$field};
+						if (! is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+							$this->{$field} = (int) $obj->{$field};
+						} else {
+							$this->{$field} = null;
+						}
 					}
 				}
 			}
@@ -7391,7 +7426,11 @@ abstract class CommonObject
 				}
 				else
 				{
-					$this->{$field} = (double) $obj->{$field};
+					if (! is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						$this->{$field} = (double) $obj->{$field};
+					} else {
+						$this->{$field} = null;
+					}
 				}
 			}
 			else
@@ -7425,7 +7464,7 @@ abstract class CommonObject
 	protected function quote($value, $fieldsentry)
 	{
 		if (is_null($value)) return 'NULL';
-		elseif (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+		elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) return $this->db->escape("$value");
 		else return "'".$this->db->escape($value)."'";
 	}
 
@@ -7446,6 +7485,7 @@ abstract class CommonObject
 		$now = dol_now();
 
 		$fieldvalues = $this->setSaveQuery();
+
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
@@ -7467,7 +7507,7 @@ abstract class CommonObject
 			if (!empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key] = '';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && !isset($values[$key]) && is_null($val['default']))
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && !isset($values[$key]) && is_null($this->fields[$key]['default']))
 			{
 				$error++;
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
@@ -7678,6 +7718,7 @@ abstract class CommonObject
 		$now = dol_now();
 
 		$fieldvalues = $this->setSaveQuery();
+
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) $fieldvalues['date_modification'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
