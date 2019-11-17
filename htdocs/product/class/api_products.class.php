@@ -21,6 +21,10 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 /**
  * API class for products
@@ -797,6 +801,548 @@ class Products extends DolibarrApi
         }
 
         return $this->_cleanObjectDatas($this->productsupplier);
+    }
+    
+    /**
+     * Get attributes.
+     *
+     * @return array
+     *
+     * @throws RestException
+     *
+     * @url GET attributes
+     */
+    public function getAttributes()
+    {        
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        return $prodattr->fetchAll();
+    }
+    
+    /**
+     * Get attribute by ID.
+     *
+     * @param  int $id ID of Attribute
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     *
+     * @url GET attributes/{id}
+     */
+    public function getAttributeById($id)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        $result = $prodattr->fetch((int) $id);
+        
+        if($result < 0) {
+            throw new RestException(404, "Attribute not found");
+        }
+        
+        return $prodattr;
+    }
+    
+    /**
+     * Add attributes.
+     *
+     * @param  string $ref   Reference of Attribute
+     * @param  string $label Label of Attribute
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url POST attributes
+     */
+    public function addAttributes($ref, $label)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        $prodattr->label = $label;
+        $prodattr->ref = $ref;
+        
+        $resid = $prodattr->create(DolibarrApiAccess::$user);
+        if ($resid <= 0) {
+            throw new RestException(500, "Error creating new attribute");
+        }
+        return $resid;
+    }
+    
+    /**
+     * Update attributes by id.
+     *
+     * @param  int $id    ID of Attribute
+     * @param  string $ref   Reference of Attribute
+     * @param  string $label Label of Attribute
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     *
+     * @url PUT attributes/{id}
+     */
+    public function putAttributes($id, $ref, $label)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        
+        $result = $prodattr->fetch((int) $id);
+        if ($result == 0) {
+            throw new RestException(404, 'Attribute not found');
+        } elseif ($result < 0) {
+            throw new RestException(500, "Error fetching attribute");
+        }
+        
+        
+        $prodattr->label = $label;
+        $prodattr->ref = $ref;
+        
+        if ($prodattr->update(DolibarrApiAccess::$user) > 0) {
+            return 1;
+        }
+        throw new RestException(500, "Error updating attribute");
+    }
+    
+    /**
+     * Delete attributes by id.
+     *
+     * @param  int $id ID of Attribute
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url DELETE attributes/{id}
+     */
+    public function deleteAttributes($id)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        $prodattr->id = (int) $id;
+        $result = $prodattr->delete();
+        
+        if ($result > 0) {
+            return 1;
+        }
+        throw new RestException(500, "Error deleting attribute");
+    }
+    
+    /**
+     * Delete attributes by ref.
+     *
+     * @param  string $ref Reference of Attribute
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url DELETE attributes/ref/{ref}
+     */
+    public function deleteAttributesByRef($ref)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '". trim($ref) ."'";
+        
+        if ($this->db->query($sql)) {
+            return 1;
+        }
+        throw new RestException(500, "Error deleting attribute");
+    }
+    
+    /**
+     * Get all values for an attribute id.
+     *
+     * @param  int $id ID of an Attribute
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url GET attributes/{id}/values
+     */
+    public function getAttributeValues($id)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $objectval = new ProductAttributeValue($this->db);
+        return $objectval->fetchAllByProductAttribute((int) $id);
+    }
+    
+    /**
+     * Get all values for an attribute ref.
+     *
+     * @param  string $ref Ref of an Attribute
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url GET attributes/ref/{ref}/values
+     */
+    public function getAttributeValuesByRef($ref)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $return = array();
+        
+        $sql = 'SELECT ';
+        $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
+        $sql .= "WHERE v.fk_product_attribute = ( SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '". strtoupper(trim($ref)) ."' LIMIT 1)";
+
+        $query = $this->db->query($sql);
+        
+        while ($result = $this->db->fetch_object($query)) {
+            $tmp = new ProductAttributeValue($this->db);
+            $tmp->fk_product_attribute = $result->fk_product_attribute;
+            $tmp->id = $result->rowid;
+            $tmp->ref = $result->ref;
+            $tmp->value = $result->value;
+            
+            $return[] = $tmp;
+        }
+        
+        return $return;
+    }
+    
+    /**
+     * Add attribute value.
+     *
+     * @param  int    $id    ID of Attribute
+     * @param  string $ref   Reference of Attribute value
+     * @param  string $value Value of Attribute value
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url POST attributes/{id}/values
+     */
+    public function addAttributeValue($id, $ref, $value)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        if (empty($ref) || empty($value)) {
+            throw new RestException(401);
+        }
+        
+        $objectval = new ProductAttributeValue($this->db);
+        $objectval->fk_product_attribute = $id;
+        $objectval->ref = $ref;
+        $objectval->value = $value;
+        
+        if ($objectval->create(DolibarrApiAccess::$user) > 0) {
+            return $objectval->id;
+        }
+        throw new RestException(500, "Error creating new attribute value");
+    }
+    
+    /**
+     * Delete attribute value by id.
+     *
+     * @param  int $id ID of Attribute value
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url DELETE attributes/values/{id}
+     */
+    public function deleteAttributeValueById($id)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $objectval = new ProductAttributeValue($this->db);
+        $objectval->id = (int) $id;
+        
+        if ($objectval->delete() > 0) {
+            return 1;
+        }
+        throw new RestException(500, "Error deleting attribute value");
+    }
+    
+    /**
+     * Delete attribute value by ref.
+     *
+     * @param  string $ref Ref of Attribute value
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url DELETE attributes/values/ref/{ref}
+     */
+    public function deleteAttributeValueByRef($ref)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."'";
+        
+        if ($this->db->query($sql)) {
+            return 1;
+        }
+        
+        throw new RestException(500, "Error deleting attribute value");
+    }
+    
+    /**
+     * Get product variants.
+     *
+     * @param  int $id ID of Product
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url GET {id}/variants
+     */
+    public function getVariants($id)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $prodcomb = new ProductCombination($this->db);
+        return $prodcomb->fetchAllByFkProductParent((int) $id);
+    }
+    
+    /**
+     * Get product variants by Product ref.
+     *
+     * @param  string $ref Ref of Product
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url GET ref/{ref}/variants
+     */
+    public function getVariantsByProdRef($ref)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->lire || DolibarrApiAccess::$user->rights->service->lire)) {
+            throw new RestException(401);
+        }
+        
+        $result = $this->product->fetch('', $ref);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+        
+        $prodcomb = new ProductCombination($this->db);
+        return $prodcomb->fetchAllByFkProductParent((int) $this->product->id);
+    }
+    
+    /**
+     * Add variant.
+     * 
+     * "features" is a list of attributes pairs id_attribute=>id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     *
+     * @param  int    $id                       ID of Product
+     * @param  float  $weight_impact            Weight impact of variant
+     * @param  float  $price_impact             Price impact of variant
+     * @param  bool   $price_impact_is_percent  Price impact in percent (true or false)
+     * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     *
+     * @url POST {id}/variants
+     */
+    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+            throw new RestException(401);
+        }
+        
+        if (empty($id) || empty($weight_impact) || empty($price_impact) || empty($features) || !is_array($features)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        $prodattr_val = new ProductAttributeValue($this->db);
+        foreach ($features as $id_attr => $id_value) {
+            if ($prodattr->fetch((int) $id_attr) < 0) {
+                throw new RestException(401);
+            }
+            if ($prodattr_val->fetch((int) $id_value) < 0) {
+                throw new RestException(401);
+            }
+        }
+        
+        $result = $this->product->fetch((int) $id);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+        
+        $prodcomb = new ProductCombination($this->db);
+        if (! $prodcomb->fetchByProductCombination2ValuePairs($id, $features))
+        {
+            $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);
+            if ($result > 0)
+            {
+                return $result;
+            } else {
+                throw new RestException(500, "Error creating new product variant");
+            }
+        } else {
+            return $prodcomb->id;
+        }
+    }
+    
+    /**
+     * Add variant by product ref.
+     * 
+     * "features" is a list of attributes pairs id_attribute=>id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     *
+     * @param  string $ref                      Ref of Product
+     * @param  float  $weight_impact            Weight impact of variant
+     * @param  float  $price_impact             Price impact of variant
+     * @param  bool   $price_impact_is_percent  Price impact in percent (true or false)
+     * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
+     *
+     * @url POST ref/{ref}/variants
+     */
+    public function addVariantByProductRef($ref, $weight_impact, $price_impact, $price_impact_is_percent, $features)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+            throw new RestException(401);
+        }
+        
+        if (empty($ref) || empty($weight_impact) || empty($price_impact) || empty($features) || !is_array($features)) {
+            throw new RestException(401);
+        }
+        
+        $prodattr = new ProductAttribute($this->db);
+        $prodattr_val = new ProductAttributeValue($this->db);
+        foreach ($features as $id_attr => $id_value) {
+            if ($prodattr->fetch((int) $id_attr) < 0) {
+                throw new RestException(404);
+            }
+            if ($prodattr_val->fetch((int) $id_value) < 0) {
+                throw new RestException(404);
+            }
+        }
+        
+        $result = $this->product->fetch('', trim($ref));
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+        
+        $prodcomb = new ProductCombination($this->db);
+        if (! $prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $features))
+        {
+            $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);            
+            if ($result > 0)
+            {
+                return $result;
+            } else {
+                throw new RestException(500, "Error creating new product variant");
+            }
+        } else {
+            return $prodcomb->id;
+        }
+    }
+    
+    /**
+     * Put product variants.
+     *
+     * @param  int $id ID of Variant
+     * @param  array $request_data Datas
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url PUT variants/{id}
+     */
+    public function putVariant($id, $request_data = null)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->creer || DolibarrApiAccess::$user->rights->service->creer)) {
+            throw new RestException(401);
+        }
+        
+        $prodcomb = new ProductCombination($this->db);
+        $prodcomb->fetch((int) $id);
+        
+        $old_prodcomb = dol_clone($prodcomb, 0);
+        
+        foreach($request_data as $field => $value) {
+            if ($field == 'rowid') { continue;
+            }
+            $prodcomb->$field = $value;
+        }
+        
+        $result = $prodcomb->update(DolibarrApiAccess::$user);
+        if ($result > 0)
+        {
+            return 1;
+        }
+        throw new RestException(500, "Error editing variant");
+    }
+    
+    /**
+     * Delete product variants.
+     *
+     * @param  int $id ID of Variant
+     * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url DELETE variants/{id}
+     */
+    public function deleteVariant($id)
+    {
+        if(! (DolibarrApiAccess::$user->rights->produit->supprimer || DolibarrApiAccess::$user->rights->service->supprimer)) {
+            throw new RestException(401);
+        }
+        
+        $prodcomb = new ProductCombination($this->db);
+        $prodcomb->id = (int) $id;
+        $result = $prodcomb->delete(DolibarrApiAccess::$user);
+        return $result;
+        if ($result > 0)
+        {
+            return 1;
+        }
+        throw new RestException(500, "Error deleting variant");
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
