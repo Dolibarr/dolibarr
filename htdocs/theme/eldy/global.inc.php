@@ -2120,9 +2120,9 @@ img.login, img.printer, img.entity {
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
-	border-radius: 0.725em;
-	width: 1.45em;
-    height: 1.45em;
+	border-radius: 0.72em;
+	width: 1.4em;
+    height: 1.4em;
     background-size: contain;
     vertical-align: middle;
 }
