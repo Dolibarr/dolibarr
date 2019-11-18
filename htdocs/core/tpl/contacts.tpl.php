@@ -22,7 +22,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -35,28 +35,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
-elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
-elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
-elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
-elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
-elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
-elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
-elseif ($module == 'reception')		{ $permission=$user->rights->reception->creer; }
-elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
-elseif (! isset($permission) && isset($user->rights->$module->creer))
+if ($module == 'propal') { $permission = $user->rights->propale->creer; }
+elseif ($module == 'fichinter') { $permission = $user->rights->ficheinter->creer; }
+elseif ($module == 'order_supplier') { $permission = $user->rights->fournisseur->commande->creer; }
+elseif ($module == 'invoice_supplier') { $permission = $user->rights->fournisseur->facture->creer; }
+elseif ($module == 'project') { $permission = $user->rights->projet->creer; }
+elseif ($module == 'action') { $permission = $user->rights->agenda->myactions->create; }
+elseif ($module == 'shipping') { $permission = $user->rights->expedition->creer; }
+elseif ($module == 'reception') { $permission = $user->rights->reception->creer; }
+elseif ($module == 'project_task') { $permission = $user->rights->projet->creer; }
+elseif (!isset($permission) && isset($user->rights->$module->creer))
 {
-	$permission=$user->rights->$module->creer;
+	$permission = $user->rights->$module->creer;
 }
-elseif (! isset($permission)  && isset($user->rights->$module->write))
+elseif (!isset($permission) && isset($user->rights->$module->write))
 {
-	$permission=$user->rights->$module->write;
+	$permission = $user->rights->$module->write;
 }
 
-$formcompany= new FormCompany($db);
-$companystatic=new Societe($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$formcompany = new FormCompany($db);
+$companystatic = new Societe($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 ?>
 
@@ -90,11 +90,11 @@ if ($permission) {
 	    <?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
 		<div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div>
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
-		<div class="tagtd maxwidthonsmartphone"><?php echo $form->select_dolusers($user->id, 'userid', 0, (! empty($userAlreadySelected)?$userAlreadySelected:null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
+		<div class="tagtd maxwidthonsmartphone"><?php echo $form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
-		$tmpobject=$object;
-		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+		$tmpobject = $object;
+		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
@@ -116,7 +116,7 @@ if ($permission) {
 	    <?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
 		<div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
-			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
+			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : $object->socid; ?>
 			<?php
 			// add company icon before select list
 			if ($selectedCompany)
@@ -127,7 +127,16 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp'); ?>
+			<?php
+			$nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+
+			$newcardbutton = '';
+			if (! empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer)
+			{
+				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+			}
+			print $newcardbutton;
+			?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -156,8 +165,6 @@ if ($permission) {
 	</form>
 
 <?php
-$var = false;
-
 $arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 foreach($arrayofsource as $source) {
 	$tmpobject=$object;
@@ -168,10 +175,9 @@ foreach($arrayofsource as $source) {
 
 	$i = 0;
 	while ($i < $num) {
-	    $var = ! $var;
         ?>
 
-	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
+	<form class="tagtr oddeven">
 		<div class="tagtd left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>

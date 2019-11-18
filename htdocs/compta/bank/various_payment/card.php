@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -48,12 +48,11 @@ $backtopage	= GETPOST('backtopage', 'alpha');
 $accountid =            GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
 $label =                GETPOST("label", "alpha");
 $sens =                 GETPOST("sens", "int");
-$amount =               GETPOST("amount", "alpha");
+$amount =               price2num(GETPOST("amount", "alpha"));
 $paymenttype =          GETPOST("paymenttype", "int");
 $accountancy_code =     GETPOST("accountancy_code", "alpha");
 $subledger_account =    GETPOST("subledger_account", "alpha");
 $projectid =            (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-$category_transaction = GETPOST("category_transaction", 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -86,39 +85,39 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/list.php', 1);
+			$urltogo = $backtopage ? $backtopage : dol_buildpath('/compta/bank/various_payment/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id, $ref);
-		$action='';
+		if ($id > 0 || !empty($ref)) $ret = $object->fetch($id, $ref);
+		$action = '';
 	}
 
 	if ($action == 'add')
 	{
-		$error=0;
+		$error = 0;
 
-		$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
-		$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
-		if (empty($datev)) $datev=$datep;
+		$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+		$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+		if (empty($datev)) $datev = $datep;
 
-		$object->ref='';	// TODO
-		$object->accountid=GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
-		$object->datev=$datev;
-		$object->datep=$datep;
-		$object->amount=price2num(GETPOST("amount", 'alpha'));
-		$object->label=GETPOST("label", 'none');
-		$object->note=GETPOST("note", 'none');
-		$object->type_payment=GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
-		$object->num_payment=GETPOST("num_payment", 'alpha');
-		$object->fk_user_author=$user->id;
-		$object->category_transaction=GETPOST("category_transaction", 'alpha');
+		$object->ref = ''; // TODO
+		$object->accountid = GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
+		$object->datev = $datev;
+		$object->datep = $datep;
+		$object->amount = price2num(GETPOST("amount", 'alpha'));
+		$object->label = GETPOST("label", 'none');
+		$object->note = GETPOST("note", 'none');
+		$object->type_payment = GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->num_payment = GETPOST("num_payment", 'alpha');
+		$object->fk_user_author = $user->id;
+		$object->category_transaction = GETPOST("category_transaction", 'alpha');
 
-		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
-        $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
+		$object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
+        $object->subledger_account = GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
 
-		$object->sens=GETPOST('sens');
-		$object->fk_project= GETPOST('fk_project', 'int');
+		$object->sens = GETPOST('sens');
+		$object->fk_project = GETPOST('fk_project', 'int');
 
 		if (empty($datep) || empty($datev))
 		{
@@ -138,29 +137,29 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 			$error++;
 		}
-		if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
+		if (!empty($conf->banque->enabled) && !$object->accountid > 0)
 		{
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
 		}
 		// TODO Remove this and allow instead to edit a various payment to enter accounting code
-		if (! empty($conf->accounting->enabled) && ! $object->accountancy_code)
+		if (!empty($conf->accounting->enabled) && !$object->accountancy_code)
 		{
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$db->begin();
 
-			$ret=$object->create($user);
+			$ret = $object->create($user);
 			if ($ret > 0)
 			{
 				$db->commit();
-				$urltogo=($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
+				$urltogo = ($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 				header("Location: ".$urltogo);
 				exit;
 			}
@@ -168,29 +167,29 @@ if (empty($reshook))
 			{
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action="create";
+				$action = "create";
 			}
 		}
 
-		$action='create';
+		$action = 'create';
 	}
 
 	if ($action == 'delete')
 	{
-		$result=$object->fetch($id);
+		$result = $object->fetch($id);
 
 		if ($object->rappro == 0)
 		{
 			$db->begin();
 
-			$ret=$object->delete($user);
+			$ret = $object->delete($user);
 			if ($ret > 0)
 			{
 				if ($object->fk_bank)
 				{
-					$accountline=new AccountLine($db);
-					$result=$accountline->fetch($object->fk_bank);
-					if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+					$accountline = new AccountLine($db);
+					$result = $accountline->fetch($object->fk_bank);
+					if ($result > 0) $result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 				}
 
 				if ($result >= 0)
@@ -201,7 +200,7 @@ if (empty($reshook))
 				}
 				else
 				{
-					$object->error=$accountline->error;
+					$object->error = $accountline->error;
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -227,8 +226,8 @@ if (empty($reshook))
 llxHeader("", $langs->trans("VariousPayment"));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
-if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id)
 {
@@ -267,30 +266,30 @@ if ($action == 'create')
 
 	dol_fiche_head('', '');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Date payment
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datep) ?-1 : $datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
-	print $form->selectDate((empty($datev)?-1:$datev), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.($label?$label:$langs->trans("VariousPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Sens
 	print '<tr><td>';
 	print $form->editfieldkey('Sens', 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
-    $sensarray=array( '0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+    $sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
     print $form->selectarray('sens', $sensarray, $sens);
 	print '</td></tr>';
 
@@ -301,11 +300,11 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank
-	if (! empty($conf->banque->enabled))
+	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid, "accountid", 0, '', 1);  // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -316,7 +315,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Number
-	if (! empty($conf->banque->enabled))
+	if (!empty($conf->banque->enabled))
 	{
 		// Number
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
@@ -326,26 +325,24 @@ if ($action == 'create')
 	}
 
     // Project
-    if (! empty($conf->projet->enabled))
+    if (!empty($conf->projet->enabled))
     {
-        $formproject=new FormProjets($db);
+        $formproject = new FormProjets($db);
 
         // Associated project
         $langs->load("projects");
 
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-        $numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+        $numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
 
         print '</td></tr>';
     }
 
     // Other attributes
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-
-    print '</td></tr>';
 
     // Category
     if (is_array($options) && count($options) && $conf->categorie->enabled)
@@ -356,7 +353,7 @@ if ($action == 'create')
     }
 
 	// Accountancy account
-	if (! empty($conf->accounting->enabled))
+	if (!empty($conf->accounting->enabled))
 	{
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
@@ -372,11 +369,11 @@ if ($action == 'create')
 	}
 
     // Subledger account
-    if (! empty($conf->accounting->enabled))
+    if (!empty($conf->accounting->enabled))
     {
         print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
         print '<td>';
-        if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+        if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
         {
             print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
         }
@@ -459,7 +456,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -485,7 +482,7 @@ if ($id)
 	print '<tr><td class="nowrap">';
 	print $langs->trans("AccountAccounting");
 	print '</td><td>';
-	if (! empty($conf->accounting->enabled))
+	if (!empty($conf->accounting->enabled))
 	{
 		$accountingaccount = new AccountingAccount($db);
 		$accountingaccount->fetch('', $object->accountancy_code, 1);
@@ -503,11 +500,11 @@ if ($id)
     print $object->subledger_account;
     print '</td></tr>';
 
-	if (! empty($conf->banque->enabled))
+	if (!empty($conf->banque->enabled))
 	{
 		if ($object->fk_account > 0)
 		{
-			$bankline=new AccountLine($db);
+			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);
 
 			print '<tr>';
@@ -520,8 +517,8 @@ if ($id)
 	}
 
 	// Other attributes
-	$parameters=array('socid'=>$object->id);
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	$parameters = array('socid'=>$object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
@@ -543,7 +540,7 @@ if ($id)
 	// Delete
 	if (empty($object->rappro))
 	{
-		if (! empty($user->rights->banque->modifier))
+		if (!empty($user->rights->banque->modifier))
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}

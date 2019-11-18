@@ -261,7 +261,7 @@ if ($action == 'edit')
 
     clearstatcache();
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
@@ -333,7 +333,7 @@ else
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page

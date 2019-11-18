@@ -86,12 +86,12 @@ class ProductAttribute
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->ref = $result->ref;
-		$this->label = $result->label;
-		$this->rang = $result->rang;
+		$this->id = $obj->rowid;
+		$this->ref = $obj->ref;
+		$this->label = $obj->label;
+		$this->rang = $obj->rang;
 
 		return 1;
 	}

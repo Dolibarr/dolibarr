@@ -51,6 +51,10 @@ ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle
 
 -- For v11
 
+insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
+
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
+
 ALTER TABLE llx_don ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_origin_line (fk_origin_line);
@@ -61,6 +65,7 @@ ALTER TABLE llx_rights_def ADD COLUMN family_position INTEGER NOT NULL DEFAULT 0
 UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND module = 'accounting' AND subperms IS NULL;
 
 ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN fk_warehouse integer;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0;
@@ -273,24 +278,24 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tumblr', 'Tumblr', 'https://www.tumblr.com/{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tumblr', 'Tumblr', 'https://www.tumblr.com/{socialid}', 'fa-tumblr', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'vero', 'Vero', 'https://vero.co/{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'viadeo', 'Viadeo', 'https://fr.viadeo.com/fr/{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'slack', 'Slack', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'xing', 'Xing', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'meetup', 'Meetup', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'pinterest', 'Pinterest', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'flickr', 'Flickr', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, '500px', '500px', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'viadeo', 'Viadeo', 'https://fr.viadeo.com/fr/{socialid}', 'fa-viadeo', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'slack', 'Slack', '{socialid}', 'fa-slack', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'xing', 'Xing', '{socialid}', 'fa-xing', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'meetup', 'Meetup', '{socialid}', 'fa-meetup', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'pinterest', 'Pinterest', '{socialid}', 'fa-pinterest', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'flickr', 'Flickr', '{socialid}', 'fa-flickr', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, '500px', '500px', '{socialid}', 'fa-500px', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'giphy', 'Giphy', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'gifycat', 'Gificat', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'dailymotion', 'Dailymotion', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'vimeo', 'Vimeo', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'periscope', 'Periscope', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'twitch', 'Twitch', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'discord', 'Discord', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'discord', 'Discord', '{socialid}', 'fa-discord', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'wikipedia', 'Wikipedia', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'reddit', 'Reddit', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'reddit', 'Reddit', '{socialid}', 'fa-reddit', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'quora', 'Quora', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tripadvisor', 'Tripadvisor', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'mastodon', 'Mastodon', '{socialid}', '', 0);
@@ -420,6 +425,14 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id
 )ENGINE=innodb;
 
+CREATE TABLE llx_product_fournisseur_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_product_fournisseur_price_extrafields ADD INDEX idx_product_fournisseur_price_extrafields (fk_object);
 
 CREATE TABLE llx_mrp_mo(
     -- BEGIN MODULEBUILDER FIELDS
@@ -473,14 +486,41 @@ create table llx_mrp_mo_extrafields
 ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',401);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',402);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',403);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',404);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',650);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',651);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',652);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',653);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',654);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',410);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',411);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',412);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
+
+
+CREATE TABLE llx_mrp_production(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_mo integer NOT NULL, 
+	position integer NOT NULL DEFAULT 0,
+	fk_product integer NOT NULL, 
+	fk_warehouse integer,
+	qty integer NOT NULL DEFAULT 1,
+	batch varchar(30),
+	role varchar(10),      			-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
+	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
+	fk_stock_movement integer,		-- id of stock movement when movements are validated
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_mo FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
+ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement FOREIGN KEY (fk_stock_movement) REFERENCES llx_stock_mouvement (rowid);
+
+ALTER TABLE llx_mrp_production ADD INDEX idx_mrp_production_fk_mo (fk_mo);
+

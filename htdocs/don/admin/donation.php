@@ -228,7 +228,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -337,7 +337,7 @@ print '</table><br>';
  */
 print load_fiche_titre($langs->trans("Options"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60" class="center">'.$langs->trans("Value")."</td>\n";
@@ -402,7 +402,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<br>';
 	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 	print '<td class="center">'.$langs->trans("Status").'</td>'."\n";

@@ -69,14 +69,14 @@ if ($action == 'classin' && $user->rights->don->creer)
  * View
  */
 
-$title = $langs->trans('Donation') . " - " . $langs->trans('Notes');
+$title = $langs->trans('Donation')." - ".$langs->trans('Notes');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
-if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$object = new Don($db);
 	$object->fetch($id, $ref);

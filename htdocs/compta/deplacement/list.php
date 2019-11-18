@@ -120,7 +120,7 @@ if ($resql)
 
     $i = 0;
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", "&socid=$socid", '', $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "d.type", "", "&socid=$socid", '', $sortfield, $sortorder);

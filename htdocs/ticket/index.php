@@ -22,10 +22,10 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticketstats.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $hookmanager = new HookManager($db);
 
@@ -76,13 +76,13 @@ $tickesupstatic = new Ticket($db);
 
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
-$linkback='';
+$linkback = '';
 print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
 
 
 $dir = '';
-$filenamenb = $dir . "/" . $prefix . "ticketinyear-" . $endyear . ".png";
-$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=ticket&amp;file=ticketinyear-' . $endyear . '.png';
+$filenamenb = $dir."/".$prefix."ticketinyear-".$endyear.".png";
+$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=ticket&amp;file=ticketinyear-'.$endyear.'.png';
 
 $stats = new TicketStats($db, $socid, $userid);
 $param_year = 'DOLUSERCOOKIE_ticket_by_status_year';
@@ -129,24 +129,24 @@ $tick = array(
 );
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
-$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 if (!$user->rights->societe->client->voir && !$socid) {
-    $sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
+    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
+$sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
 if (!$user->rights->societe->client->voir && !$socid) {
-    $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
+    $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 
 // External users restriction
 if ($user->socid > 0) {
-    $sql .= " AND t.fk_soc='" . $user->socid . "'";
+    $sql .= " AND t.fk_soc='".$user->socid."'";
 } else {
     // For internals users,
     if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-        $sql .= " AND t.fk_user_assign=" . $user->id;
+        $sql .= " AND t.fk_user_assign=".$user->id;
     }
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -202,24 +202,24 @@ $stringtoshow = '<script type="text/javascript" language="javascript">
     });
     </script>';
 $stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_by_status">'; // hideobject is to start hidden
-$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-$stringtoshow .= '<input type="hidden" name="action" value="' . $refreshaction . '">';
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
-$stringtoshow .= $langs->trans("Year") . ' <input class="flat" size="4" type="text" name="' . $param_year . '" value="' . $endyear . '">';
-$stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src="' . img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1) . '">';
+$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"') . '</th></tr>';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
 
 print '<tr><td class="center">';
 print $stringtoshow;
 
 // don't display graph if no series
-if (! empty($dataseries) && count($dataseries) > 1) {
-	$totalnb=0;
+if (!empty($dataseries) && count($dataseries) > 1) {
+	$totalnb = 0;
 	foreach ($dataseries as $key => $value) {
 		$totalnb += $value['data'];
 	}
@@ -252,7 +252,7 @@ if (! empty($dataseries) && count($dataseries) > 1) {
         //$px1->SetTitle($langs->trans("TicketStatByStatus"));
 
         $px1->draw($filenamenb, $fileurlnb);
-        print $px1->show($totalnb?0:1);
+        print $px1->show($totalnb ? 0 : 1);
     }
 }
 print '</td></tr>';
@@ -274,26 +274,26 @@ $max = 10;
 
 $sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut, t.progress,";
 $sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
-$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_type as type ON type.code=t.type_code";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_category as category ON category.code=t.category_code";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_severity as severity ON severity.code=t.severity_code";
+$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 if (!$user->rights->societe->client->voir && !$socid) {
-    $sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
+    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 
-$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
+$sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
 if (!$user->rights->societe->client->voir && !$socid) {
-    $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
+    $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 
 if ($user->socid > 0) {
-    $sql .= " AND t.fk_soc='" . $user->socid . "'";
+    $sql .= " AND t.fk_soc='".$user->socid."'";
 } else {
     // Restricted to assigned user only
     if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
-        $sql .= " AND t.fk_user_assign=" . $user->id;
+        $sql .= " AND t.fk_user_assign=".$user->id;
     }
 }
 $sql .= $db->order("t.datec", "DESC");
@@ -309,8 +309,8 @@ if ($result) {
     $transRecordedType = $langs->trans("LatestNewTickets", $max);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><th colspan="5">' . $transRecordedType . '</th>';
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre"><th colspan="5">'.$transRecordedType.'</th>';
     print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
     print '</tr>';
     if ($num > 0) {
@@ -338,7 +338,7 @@ if ($result) {
 
             // Subject
             print '<td class="nowrap">';
-            print '<a href="card.php?track_id=' . $objp->track_id . '">' . dol_trunc($objp->subject, 30) . '</a>';
+            print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
             print "</td>\n";
 
             // Type
@@ -366,7 +366,7 @@ if ($result) {
 
         $db->free();
     } else {
-        print '<tr><td colspan="6" class="opacitymedium">' . $langs->trans('NoUnreadTicketsFound') . '</td></tr>';
+        print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
     }
 
     print "</table>";

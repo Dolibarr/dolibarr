@@ -179,7 +179,7 @@ function print_start_menu_array_auguria()
     global $conf;
 
 	print '<div class="tmenudiv">';
-	print '<ul role="navigation" class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' title="Top menu"').'>';
 }
 
 /**
@@ -294,7 +294,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	global $usemenuhider;
 	$usemenuhider = 0;
 
-	if (is_array($moredata) && ! empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
+	if (is_array($moredata) && !empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
 	{
         print "\n";
         print "<!-- Begin SearchForm -->\n";
@@ -304,7 +304,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
         print "<!-- End SearchForm -->\n";
 	}
 
-	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	if (is_array($moredata) && !empty($moredata['bookmarks']))
 	{
 	    print "\n";
 	    print "<!-- Begin Bookmarks -->\n";
@@ -443,15 +443,15 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 	if (! empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 	{
-		$MAXFTP=20;
-		$i=1;
+		$MAXFTP = 20;
+		$i = 1;
 		while ($i <= $MAXFTP)
 		{
-			$paramkey='FTP_NAME_'.$i;
+			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (! empty($conf->global->$paramkey))
+			if (!empty($conf->global->$paramkey))
 			{
-				$link="/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
+				$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 
 				$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
 			}
@@ -463,79 +463,79 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
 	//var_dump($menu_array_before);exit;
 	//var_dump($menu_array_after);exit;
-	$menu_array=$newmenu->liste;
-	if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
-	if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
+	$menu_array = $newmenu->liste;
+	if (is_array($menu_array_before)) $menu_array = array_merge($menu_array_before, $menu_array);
+	if (is_array($menu_array_after))  $menu_array = array_merge($menu_array, $menu_array_after);
 	//var_dump($menu_array);exit;
-	if (! is_array($menu_array)) return 0;
+	if (!is_array($menu_array)) return 0;
 
 	// Show menu
-	$invert=empty($conf->global->MAIN_MENU_INVERT)?"":"invert";
+	$invert = empty($conf->global->MAIN_MENU_INVERT) ? "" : "invert";
 	if (empty($noout))
 	{
-		$altok=0; $blockvmenuopened=false; $lastlevel0='';
-		$num=count($menu_array);
+		$altok = 0; $blockvmenuopened = false; $lastlevel0 = '';
+		$num = count($menu_array);
 		for ($i = 0; $i < $num; $i++)     // Loop on each menu entry
 		{
-			$showmenu=true;
-			if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu=false;
+			$showmenu = true;
+			if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu = false;
 
 			// Begin of new left menu block
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
 				$altok++;
-				$blockvmenuopened=true;
-				$lastopened=true;
-				for($j = ($i + 1); $j < $num; $j++)
+				$blockvmenuopened = true;
+				$lastopened = true;
+				for ($j = ($i + 1); $j < $num; $j++)
 				{
-				    if (empty($menu_array[$j]['level'])) $lastopened=false;
+				    if (empty($menu_array[$j]['level'])) $lastopened = false;
 				}
 				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				}
 			}
 
 			// Add tabulation
-			$tabstring='';
-			$tabul=($menu_array[$i]['level'] - 1);
+			$tabstring = '';
+			$tabul = ($menu_array[$i]['level'] - 1);
 			if ($tabul > 0)
 			{
-				for ($j=0; $j < $tabul; $j++)
+				for ($j = 0; $j < $tabul; $j++)
 				{
-					$tabstring.='&nbsp;&nbsp;&nbsp;';
+					$tabstring .= '&nbsp;&nbsp;&nbsp;';
 				}
 			}
 
 			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
 			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$substitarray['__USERID__'] = $user->id; // For backward compatibility
 			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
 			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];
-			if (! preg_match("/^(http:\/\/|https:\/\/)/i", $menu_array[$i]['url']))
+			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $menu_array[$i]['url']))
 			{
-				$tmp=explode('?', $menu_array[$i]['url'], 2);
+				$tmp = explode('?', $menu_array[$i]['url'], 2);
 				$url = $shorturl = $tmp[0];
-				$param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
+				$param = (isset($tmp[1]) ? $tmp[1] : ''); // params in url of the menu link
 
 				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
-				if ((! preg_match('/mainmenu/i', $param)) && (! preg_match('/leftmenu/i', $param)) && ! empty($menu_array[$i]['mainmenu']))
+				if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && !empty($menu_array[$i]['mainmenu']))
 				{
-					$param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
+					$param .= ($param ? '&' : '').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
 				}
-				if ((! preg_match('/mainmenu/i', $param)) && (! preg_match('/leftmenu/i', $param)) && empty($menu_array[$i]['mainmenu']))
+				if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && empty($menu_array[$i]['mainmenu']))
 				{
-					$param.=($param?'&':'').'leftmenu=';
+					$param .= ($param ? '&' : '').'leftmenu=';
 				}
 				//$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
-				$url = dol_buildpath($url, 1).($param?'?'.$param:'');
+				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
 				$shorturlwithoutparam = $shorturl;
-				$shorturl = $shorturl.($param?'?'.$param:'');
+				$shorturl = $shorturl.($param ? '?'.$param : '');
 			}
 
 
@@ -547,22 +547,22 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
 					print '<div class="menu_titre">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vmenu">';
-					print ($menu_array[$i]['prefix']?$menu_array[$i]['prefix']:'').$menu_array[$i]['titre'];
+					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';
 					else print '</span>';
 					print '</div>'."\n";
-					$lastlevel0='enabled';
+					$lastlevel0 = 'enabled';
 				}
 				elseif ($showmenu)                 // Not enabled but visible (so greyed)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
-					$lastlevel0='greyed';
+					$lastlevel0 = 'greyed';
 				}
 				else
 				{
-				    $lastlevel0='hidden';
+				    $lastlevel0 = 'hidden';
 				}
 				if ($showmenu)
 				{
@@ -579,13 +579,13 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';
 					else print '</span>';
 					// If title is not pure text and contains a table, no carriage return added
-					if (! strstr($menu_array[$i]['titre'], '<table')) print '<br>';
+					if (!strstr($menu_array[$i]['titre'], '<table')) print '<br>';
 					print '</div>'."\n";
 				}
 				elseif ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
@@ -595,15 +595,15 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 			}
 
 			// If next is a new block or if there is nothing after
-			if (empty($menu_array[$i+1]['level']))               // End menu block
+			if (empty($menu_array[$i + 1]['level']))               // End menu block
 			{
 				if ($showmenu)
 					print '<div class="menu_end"></div>'."\n";
-				if ($blockvmenuopened) { print '</div>'."\n"; $blockvmenuopened=false; }
+				if ($blockvmenuopened) { print '</div>'."\n"; $blockvmenuopened = false; }
 			}
 		}
 
-		if ($altok) print '<div class="blockvmenuend"></div>';    // End menu block
+		if ($altok) print '<div class="blockvmenuend"></div>'; // End menu block
 	}
 
 	return count($menu_array);
@@ -624,21 +624,21 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
-	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
+	if (empty($menuentry['enabled'])) return 0; // Entry disabled by condition
 	if ($type_user && $menuentry['module'])
 	{
-		$tmploops=explode('|', $menuentry['module']);
-		$found=0;
-		foreach($tmploops as $tmploop)
+		$tmploops = explode('|', $menuentry['module']);
+		$found = 0;
+		foreach ($tmploops as $tmploop)
 		{
 			if (in_array($tmploop, $listofmodulesforexternal)) {
 				$found++; break;
 			}
 		}
-		if (! $found) return 0;	// Entry is for menus all excluded to external users
+		if (!$found) return 0; // Entry is for menus all excluded to external users
 	}
-	if (! $menuentry['perms'] && $type_user) return 0; 											// No permissions and user is external
-	if (! $menuentry['perms'] && ! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0;	// No permissions and option to hide when not allowed, even for internal user, is on
-	if (! $menuentry['perms']) return 2;															// No permissions and user is external
+	if (!$menuentry['perms'] && $type_user) return 0; // No permissions and user is external
+	if (!$menuentry['perms'] && !empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0; // No permissions and option to hide when not allowed, even for internal user, is on
+	if (!$menuentry['perms']) return 2; // No permissions and user is external
 	return 1;
 }

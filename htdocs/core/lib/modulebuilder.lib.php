@@ -63,8 +63,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-    	if (! preg_match('/^(integer|price|sellist|date|varchar|double|text|html)/', $addfieldentry['type'])
-    		&& ! preg_match('/^(boolean|real|timestamp)$/', $addfieldentry['type']))
+    	if (! preg_match('/^(integer|price|sellist|varchar|double|text|html|duration)/', $addfieldentry['type'])
+    		&& ! preg_match('/^(boolean|real|date|datetime|timestamp)$/', $addfieldentry['type']))
     	{
     		setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
     		return -2;
@@ -164,7 +164,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
         if (count($object->fields))
         {
-        	$typetotypephp=array('integer'=>'integer', 'varchar'=>'string');
+        	//$typetotypephp=array('integer'=>'integer', 'duration'=>'integer', 'varchar'=>'string');
 
         	foreach($object->fields as $key => $val)
             {
@@ -266,7 +266,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
             if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
             elseif ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
-            elseif ($type == 'link' || $type == 'sellist') $type = 'integer';
+            elseif (in_array($type, array('link', 'sellist', 'duration'))) $type = 'integer';
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';

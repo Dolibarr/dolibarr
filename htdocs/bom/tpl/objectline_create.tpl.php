@@ -30,7 +30,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object)) {
+if (empty($object) || !is_object($object)) {
     print "Error: this template page cannot be called directly as an URL";
     exit;
 }
@@ -38,11 +38,11 @@ if (empty($object) || ! is_object($object)) {
 
 global $forceall, $forcetoshowtitlelines;
 
-if (empty($forceall)) $forceall=0;
+if (empty($forceall)) $forceall = 0;
 
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Columns: total ht + col edit + col delete
+$colspan = 3; // Columns: total ht + col edit + col delete
 //print $object->element;
 
 // Lines for extrafield
@@ -80,11 +80,11 @@ $coldisplay=0;
 // Adds a line numbering column
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
     $coldisplay++;
-    echo '<td class="nobottom linecolnum center"></td>';
+    echo '<td class="bordertop nobottom linecolnum center"></td>';
 }
 
 $coldisplay++;
-print '<td class="nobottom linecoldescription minwidth500imp">';
+print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
@@ -109,7 +109,7 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 }
 
 $coldisplay++;
-print '<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1).'">';
+print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1).'">';
 print '</td>';
 
 if($conf->global->PRODUCT_USE_UNITS)
@@ -121,27 +121,27 @@ if($conf->global->PRODUCT_USE_UNITS)
 }
 
 $coldisplay++;
-print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOST("qty_frozen", 'alpha')?' checked="checked"':'').'>';
+print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOST("qty_frozen", 'alpha')?' checked="checked"':'').'>';
 print '</td>';
 
 $coldisplay++;
-print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha')?' checked="checked"':'').'">';
+print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha')?' checked="checked"':'').'">';
 print '</td>';
 
-$coldisplay++;
-print '<td class="nobottom nowrap linecollost right">';
-print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
-print '</td>';
+//$coldisplay++;
+//print '<td class="bordertop nobottom nowrap linecollost right">';
+//print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
+//print '</td>';
 
 
 $coldisplay += $colspan;
-print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
+print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
 print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline" id="addline">';
 print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
 ?>
 

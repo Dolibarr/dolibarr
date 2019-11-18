@@ -350,7 +350,7 @@ if ($mode == 'config' && $user->admin) {
     dol_fiche_head();
 
     print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
@@ -363,7 +363,7 @@ if ($mode == 'config' && $user->admin) {
 
     dol_fiche_head();
     print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_EPOSTEP").':</td><td>'.$langs->trans("PROFILE_EPOSTEP_HELP").'</td></tr>';

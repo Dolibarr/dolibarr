@@ -101,7 +101,7 @@ if ($action == 'edit')
 
     clearstatcache();
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
@@ -135,7 +135,7 @@ if ($action == 'edit')
 }
 else
 {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
