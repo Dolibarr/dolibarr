@@ -514,7 +514,7 @@ class Facture extends CommonInvoice
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
 			// Update ref with new one
-			if (empty($this->ref) == '')	$this->ref='(PROV'.$this->id.')';
+			if (empty($this->ref))	$this->ref='(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
 
 			$resql=$this->db->query($sql);
