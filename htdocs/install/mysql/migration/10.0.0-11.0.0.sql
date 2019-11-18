@@ -524,3 +524,4 @@ ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement F
 
 ALTER TABLE llx_mrp_production ADD INDEX idx_mrp_production_fk_mo (fk_mo);
 
+ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_ref(ref, entity);
