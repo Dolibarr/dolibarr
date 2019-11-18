@@ -508,7 +508,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$title = $langs->trans("GoIntoSetupToChangeLogo");
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
-		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo"', 1);
+		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo nohover"', 1);
 
 
 		print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";

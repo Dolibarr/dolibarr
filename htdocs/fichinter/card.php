@@ -906,18 +906,17 @@ if ($action == 'create')
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="socid" value='.$soc->id.'>';
+		print '<input type="hidden" name="action" value="add">';
 
 		dol_fiche_head('');
 
 		print '<table class="border centpercent">';
 
-		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 
-		print '<input type="hidden" name="action" value="add">';
-
 		// Ref
-		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
 
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
@@ -963,15 +962,15 @@ if ($action == 'create')
         // Model
         print '<tr>';
         print '<td>'.$langs->trans("DefaultModel").'</td>';
-        print '<td colspan="2">';
+        print '<td>';
         $liste = ModelePDFFicheinter::liste_modeles($db);
         print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
 
         // Public note
         print '<tr>';
-        print '<td tdtop">'.$langs->trans('NotePublic').'</td>';
-        print '<td colspan="2">';
+        print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
+        print '<td>';
         $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         //print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
@@ -982,7 +981,7 @@ if ($action == 'create')
         {
         	print '<tr>';
         	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
-        	print '<td colspan="2">';
+        	print '<td>';
         	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         	print $doleditor->Create(1);
         	//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
@@ -990,7 +989,7 @@ if ($action == 'create')
         }
 
         // Other attributes
-        $parameters = array('colspan' => ' colspan="2"');
+        $parameters = array();
         $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
         if (empty($reshook))

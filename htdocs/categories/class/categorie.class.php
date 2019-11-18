@@ -789,18 +789,19 @@ class Categorie extends CommonObject
 
 		$objs = array();
 
-		$obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
+		$tmpclass = $this->MAP_OBJ_CLASS[$type];
+		$obj = new $tmpclass($this->db);
 
-		$sql = "SELECT c.fk_" . $this->MAP_CAT_FK[$type];
-		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as c";
-		$sql .= ", " . MAIN_DB_PREFIX . $this->MAP_OBJ_TABLE[$type] . " as o";
-		$sql .= " WHERE o.entity IN (" . getEntity($obj->element).")";
+		$sql = "SELECT c.fk_".$this->MAP_CAT_FK[$type];
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type]." as c";
+		$sql .= ", ".MAIN_DB_PREFIX.$this->MAP_OBJ_TABLE[$type]." as o";
+		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".$this->id;
-		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
+		$sql .= " AND c.fk_".$this->MAP_CAT_FK[$type]." = o.rowid";
 		// Protection for external users
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0)
 		{
-			$sql.= " AND o.rowid = ".$user->socid;
+			$sql .= " AND o.rowid = ".$user->socid;
 		}
 		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -937,7 +938,7 @@ class Categorie extends CommonObject
 					$categories[$i]['description'] = $category_static->description;
 					$categories[$i]['color']    		= $category_static->color;
 					$categories[$i]['socid']			= $category_static->socid;
-					$categories[$i]['ref_ext']			= $category_static->ref_ext;
+					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
 					$categories[$i]['entity'] = $category_static->entity;
@@ -1577,7 +1578,7 @@ class Categorie extends CommonObject
 			$sql .= " AND rowid = '".$id."'";
 		}
 
-		$res  = $this->db->query($sql);
+		$res = $this->db->query($sql);
 		if ($res)
 		{
 			while ($rec = $this->db->fetch_array($res))

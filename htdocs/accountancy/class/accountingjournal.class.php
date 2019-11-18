@@ -42,8 +42,7 @@ class AccountingJournal extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -57,6 +56,9 @@ class AccountingJournal extends CommonObject
 	 */
 	public $rowid;
 
+    /**
+     * @var string Accounting journal code
+     */
 	public $code;
 
 	/**
@@ -64,9 +66,19 @@ class AccountingJournal extends CommonObject
      */
     public $label;
 
-	public $nature; // 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
+    /**
+     * @var int 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
+     */
+    public $nature;
+
+    /**
+     * @var int is active or not
+     */
 	public $active;
 
+    /**
+     * @var array array of lines
+     */
 	public $lines;
 
 	/**

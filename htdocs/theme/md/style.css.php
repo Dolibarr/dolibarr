@@ -968,6 +968,15 @@ table[summary="list_of_modules"] .fa-cog {
     font-size: 1.5em;
 }
 
+.linkedcol-element {
+	min-width: 100px;
+}
+
+.img-skinthumb {
+	width: 160px;
+	height: 100px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1494,9 +1503,9 @@ div.nopadding {
 	padding: 0 !important;
 }
 
-table.noborder tr.liste_titre td {
+/*table.noborder tr.liste_titre td {
 	padding: 3px !important;
-}
+}*/
 
 .containercenter {
 	display : table;
@@ -2738,7 +2747,7 @@ div.colorback
     border-left: 1px solid #ccc;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
-	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears dur to overflow-x: auto; of div-tableèresponsive
+	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
@@ -3020,6 +3029,9 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 /* Set the color for hover lines */
 
+.tmenucompanylogo.nohover, .tmenucompanylogo.nohover:hover {
+	opacity: unset !important;
+}
 .nohoverborder:hover {
 	border: unset;
 	box-shadow: unset;

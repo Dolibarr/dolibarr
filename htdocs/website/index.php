@@ -1398,7 +1398,7 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
-		$objectpage->fk_page = GETPOST('pageidfortranslation', 'int');
+		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
@@ -3034,17 +3034,23 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$num_rows = $db->num_rows($resql);
 			if ($num_rows > 0)
 			{
-				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
+				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span>';
 				$i = 0;
+				$tmppage = new WebsitePage($db);
+				$tmpstring = '';
 				while ($obj = $db->fetch_object($resql))
 				{
-					$tmppage = new WebsitePage($db);
-					$tmppage->fetch($obj->rowid);
-					if ($i > 0) print ' - ';
-					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')<br>';
-					$translatedby++;
-					$i++;
+					$result = $tmppage->fetch($obj->rowid);
+					if ($result > 0) {
+						if ($i > 0) $tmpstring .= '<br>';
+						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$translatedby++;
+						$i++;
+					}
 				}
+				if ($i > 1) print '<br>';
+				else print ' ';
+				print $tmpstring;
 			}
 		}
 		else dol_print_error($db);
@@ -3059,10 +3065,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		}
 		elseif ($result > 0)
 		{
-			$translationof = 0;
-			//$translationof = $sourcepage->id;
+			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', $translationof, 1, $action, 'minwidth300');
+			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			if ($translationof > 0) {
+				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+			}
 		}
 	}
 	print '</td></tr>';

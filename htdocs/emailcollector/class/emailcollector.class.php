@@ -864,17 +864,17 @@ class EmailCollector extends CommonObject
 
         if (empty($this->host))
         {
-            $this->error = $langs->trans('ErrorFieldRequired', 'EMailHost');
+            $this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMailHost'));
             return -1;
         }
         if (empty($this->login))
         {
-            $this->error = $langs->trans('ErrorFieldRequired', 'Login');
+        	$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Login'));
             return -1;
         }
         if (empty($this->source_directory))
         {
-            $this->error = $langs->trans('ErrorFieldRequired', 'MailboxSourceDirectory');
+        	$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('MailboxSourceDirectory'));
             return -1;
         }
         if (!function_exists('imap_open'))

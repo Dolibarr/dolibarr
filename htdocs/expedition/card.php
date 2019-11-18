@@ -1025,7 +1025,7 @@ if ($action == 'create')
             print "</td></tr>\n";
 
             // Other attributes
-            $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
+            $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
             $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $expe, $action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
@@ -1034,7 +1034,7 @@ if ($action == 'create')
 				if ($object->fetch_optionals() > 0) {
 					$expe->array_options = array_merge($expe->array_options, $object->array_options);
 				}
-				print $expe->showOptionals($extrafields, 'edit');
+				print $expe->showOptionals($extrafields, 'edit', $parameters);
 			}
 
 
@@ -1994,7 +1994,7 @@ elseif ($id || $ref)
 		}
 
 		// Other attributes
-		$parameters = array('colspan' => ' colspan="3"');
+		$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
