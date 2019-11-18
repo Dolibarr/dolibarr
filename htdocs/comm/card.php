@@ -477,7 +477,7 @@ if ($object->id > 0)
         print '</td><td>';
         if ($action == 'editshipping')
         {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'shipping_method_id');
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'shipping_method_id', 1);
         }
         else
         {
