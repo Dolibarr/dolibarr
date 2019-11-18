@@ -89,7 +89,7 @@ if ($resql)
 	$i = 0;
 
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
@@ -182,7 +182,7 @@ if ($resql)
 	$i = 0;
 
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
 	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';

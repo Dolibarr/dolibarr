@@ -53,7 +53,7 @@ $search_day_lim		= GETPOST('search_day_lim', 'int');
 $search_month_lim	= GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
@@ -135,45 +135,45 @@ if ($year > 0)
     $sql .= ")";
 }
 if ($filtre) {
-    $filtre=str_replace(":", "=", $filtre);
+    $filtre = str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
 }
 if ($search_typeid) {
     $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
-$sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$sql .= $db->order($sortfield, $sortorder);
 
-$totalnboflines=0;
-$result=$db->query($sql);
+$totalnboflines = 0;
+$result = $db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref)    $param.='&search_ref='.urlencode($search_ref);
-	if ($search_label)  $param.='&search_label='.urlencode($search_label);
-	if ($search_amount) $param.='&search_amount='.urlencode($search_amount);
-	if ($search_typeid) $param.='&search_typeid='.urlencode($search_typeid);
-	if ($search_status != '' && $search_status != '-1') $param.='&search_status='.urlencode($search_status);
-	if ($year)          $param.='&year='.urlencode($year);
+	$param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($search_ref)    $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_label)  $param .= '&search_label='.urlencode($search_label);
+	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
+	if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
+	if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
+	if ($year)          $param .= '&year='.urlencode($year);
 
-	$newcardbutton='';
-	if($user->rights->tax->charges->creer)
+	$newcardbutton = '';
+	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
+		$newcardbutton .= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton .= '</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -199,14 +199,14 @@ if ($resql)
 	{
 		print '<div class="error">';
 		$langs->load("errors");
-		$countrynotdefined=$langs->trans("ErrorSetACountryFirst");
+		$countrynotdefined = $langs->trans("ErrorSetACountryFirst");
 		print $countrynotdefined;
 		print '</div>';
 	}
 	else
 	{
 	    print '<div class="div-table-responsive">';
-	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre_filter">';
 		// Ref

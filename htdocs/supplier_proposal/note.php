@@ -51,9 +51,9 @@ $object = new SupplierProposal($db);
  * Actions
  */
 
-$permissionnote=$user->rights->supplier_proposal->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
@@ -134,7 +134,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			$cssclass="titlefield";
+			$cssclass = "titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 			print '</div>';

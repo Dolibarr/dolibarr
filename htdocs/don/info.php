@@ -25,7 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -56,12 +56,12 @@ if ($action == 'classin' && $user->rights->don->creer)
 /*
  * View
  */
-$title = $langs->trans('Donation') . " - " . $langs->trans('Info');
+$title = $langs->trans('Donation')." - ".$langs->trans('Info');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
-if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $object->info($id);
 

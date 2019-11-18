@@ -65,15 +65,15 @@ if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
  *	Actions
  */
 
-$parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-    $actioncode='';
-    $search_agenda_label='';
+    $actioncode = '';
+    $search_agenda_label = '';
 }
 
 
@@ -82,22 +82,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-$form =	new	Form($db);
+$form = new	Form($db);
 $object = new CommandeFournisseur($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
     $object->info($object->id);
 }
 
-$title=$langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
-$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+$title = $langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 
-$now=dol_now();
+$now = dol_now();
 
 $head = ordersupplier_prepare_head($object);
 
@@ -170,19 +170,19 @@ dol_fiche_end();
 
 // Actions buttons
 
-$out='';
-$permok=$user->rights->agenda->myactions->create;
+$out = '';
+$permok = $user->rights->agenda->myactions->create;
 if ($permok)
 {
-    $out.='&originid='.$object->id.'&origin=order_supplier';
+    $out .= '&originid='.$object->id.'&origin=order_supplier';
 }
 
 
 print '<div class="tabsAction">';
 
-if (! empty($conf->agenda->enabled))
+if (!empty($conf->agenda->enabled))
 {
-    if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+    if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create))
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
     }
@@ -197,9 +197,9 @@ print '</div>';
 
 if (!empty($object->id))
 {
-    $param='&id='.$object->id;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param = '&id='.$object->id;
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
     print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
 
@@ -215,8 +215,8 @@ if (!empty($object->id))
     //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
 
     // List of all actions
-    $filters=array();
-    $filters['search_agenda_label']=$search_agenda_label;
+    $filters = array();
+    $filters['search_agenda_label'] = $search_agenda_label;
     show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters);
 }
 

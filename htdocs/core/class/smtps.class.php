@@ -1304,13 +1304,6 @@ class SMTPs
         $_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
         */
 
-        $host=$this->getHost();
-        $usetls = preg_match('@tls://@i', $host);
-
-        $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
-
         $host=dol_getprefix('email');
 
         //NOTE: Message-ID should probably contain the username of the user who sent the msg
@@ -1385,7 +1378,7 @@ class SMTPs
             // Similar code to forge a text from html is also in CMailFile.class.php
             $strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
             $strContentAltText = html_entity_decode(strip_tags($strContentAltText));
-            $strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
+            $strContentAltText = trim(wordwrap($strContentAltText, 75, "\r\n"));
         }
 
         // Make RFC2045 Compliant

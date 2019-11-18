@@ -97,7 +97,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Statistics
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
@@ -160,7 +160,7 @@ if ($result)
 
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</td>';
     print '<td class="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';

@@ -185,7 +185,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$i = 0;
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
-		print '<table class="liste" width="100%">';
+		print '<table class="liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.rowid", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, "", $sortfield, $sortorder);

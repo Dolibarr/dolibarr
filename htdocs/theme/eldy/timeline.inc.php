@@ -8,7 +8,7 @@
  *           Please visit http://opensource.org/licenses/MIT for more information
  */
 
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 

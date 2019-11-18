@@ -36,7 +36,7 @@ class AccountancySystem
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var int ID
@@ -48,7 +48,14 @@ class AccountancySystem
      */
 	public $fk_pcg_version;
 
+    /**
+     * @var string pcg type
+     */
 	public $pcg_type;
+
+    /**
+     * @var string pcg subtype
+     */
 	public $pcg_subtype;
 
 	/**
@@ -61,7 +68,14 @@ class AccountancySystem
      */
     public $label;
 
+    /**
+     * @var string account number
+     */
 	public $account_number;
+
+    /**
+     * @var string account parent
+     */
 	public $account_parent;
 
 	/**

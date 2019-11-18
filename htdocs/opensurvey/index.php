@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,8 @@ print load_fiche_titre($title, '', 'wrench');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("NbOfSurveys").'</td><td class="right"><a href="list.php">'.$nbsondages.'</a></td>';
@@ -72,6 +74,7 @@ print "</tr>";
 //print $total;
 //print '</td></tr>';
 print '</table>';
+print '</div>';
 
 print '</div></div>';
 

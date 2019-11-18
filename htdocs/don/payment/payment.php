@@ -229,7 +229,7 @@ if ($action == 'create')
 	$num = 1;
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Donation").'</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td>';

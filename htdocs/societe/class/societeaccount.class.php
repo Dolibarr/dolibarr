@@ -121,7 +121,13 @@ class SocieteAccount extends CommonObject
     public $fk_soc;
 
 	public $site;
+
+	/**
+	 * @var integer|string date_last_login
+	 */
 	public $date_last_login;
+
+
 	public $date_previous_login;
 	public $note_private;
 

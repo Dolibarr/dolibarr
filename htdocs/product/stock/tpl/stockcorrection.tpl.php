@@ -62,7 +62,7 @@ if (empty($conf) || ! is_object($conf)) {
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Warehouse or product
 		print '<tr>';

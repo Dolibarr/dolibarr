@@ -89,7 +89,7 @@ if ($result)
 	$i = 0;
 
 	// Load attribute_label
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
