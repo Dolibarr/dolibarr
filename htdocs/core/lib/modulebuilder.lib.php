@@ -42,9 +42,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
     global $db, $langs;
 
     if (empty($objectname)) return -1;
-    if (empty($readdir)) $readdir=$destdir;
+    if (empty($readdir)) $readdir = $destdir;
 
-    if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
+    if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval']))
     {
     	dol_print_error('', 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
     	return -1;
@@ -63,17 +63,17 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-    	if (! preg_match('/^(integer|price|sellist|varchar|double|text|html|duration)/', $addfieldentry['type'])
-    		&& ! preg_match('/^(boolean|real|date|datetime|timestamp)$/', $addfieldentry['type']))
+    	if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration)/', $addfieldentry['type'])
+    		&& !preg_match('/^(boolean|real|date|datetime|timestamp)$/', $addfieldentry['type']))
     	{
     		setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
     		return -2;
     	}
     }
 
-    $pathoffiletoeditsrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
-    $pathoffiletoedittarget=$destdir.'/class/'.strtolower($objectname).'.class.php'.($readdir != $destdir ? '.new' : '');
-    if (! dol_is_file($pathoffiletoeditsrc))
+    $pathoffiletoeditsrc = $readdir.'/class/'.strtolower($objectname).'.class.php';
+    $pathoffiletoedittarget = $destdir.'/class/'.strtolower($objectname).'.class.php'.($readdir != $destdir ? '.new' : '');
+    if (!dol_is_file($pathoffiletoeditsrc))
     {
     	$langs->load("errors");
         setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
@@ -86,7 +86,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
     try
     {
         include_once $pathoffiletoeditsrc;
-        if (class_exists($objectname)) $object=new $objectname($db);
+        if (class_exists($objectname)) $object = new $objectname($db);
         else return -4;
 
         // Backup old file
@@ -100,86 +100,86 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
         {
         	if (is_array($addfieldentry) && count($addfieldentry))
         	{
-				$name=$addfieldentry['name'];
+				$name = $addfieldentry['name'];
         		unset($addfieldentry['name']);
 
-        		$object->fields[$name]=$addfieldentry;
+        		$object->fields[$name] = $addfieldentry;
         	}
-        	if (! empty($delfieldentry))
+        	if (!empty($delfieldentry))
         	{
-        		$name=$delfieldentry;
+        		$name = $delfieldentry;
         		unset($object->fields[$name]);
         	}
         }
 
         dol_sort_array($object->fields, 'position');
 
-        $i=0;
+        $i = 0;
         $texttoinsert = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
-        $texttoinsert.= "\t".'/**'."\n";
-        $texttoinsert.= "\t".' * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.'."\n";
-        $texttoinsert.= "\t".' */'."\n";
-        $texttoinsert.= "\t".'public $fields=array('."\n";
+        $texttoinsert .= "\t".'/**'."\n";
+        $texttoinsert .= "\t".' * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.'."\n";
+        $texttoinsert .= "\t".' */'."\n";
+        $texttoinsert .= "\t".'public $fields=array('."\n";
 
         if (count($object->fields))
         {
-            foreach($object->fields as $key => $val)
+            foreach ($object->fields as $key => $val)
             {
                 $i++;
-                $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
-                $texttoinsert.= " 'enabled'=>".($val['enabled']!=''?$val['enabled']:1).",";
-                $texttoinsert.= " 'position'=>".($val['position']!=''?$val['position']:50).",";
-                $texttoinsert.= " 'notnull'=>".(empty($val['notnull'])?0:$val['notnull']).",";
-                $texttoinsert.= " 'visible'=>".($val['visible']!=''?$val['visible']:-1).",";
-                if ($val['noteditable'])    $texttoinsert.= " 'noteditable'=>'".$val['noteditable']."',";
-                if ($val['default'])        $texttoinsert.= " 'default'=>'".$val['default']."',";
-                if ($val['index'])          $texttoinsert.= " 'index'=>".$val['index'].",";
-                if ($val['foreignkey'])     $texttoinsert.= " 'foreignkey'=>'".$val['foreignkey']."',";
-                if ($val['searchall'])      $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
-                if ($val['isameasure'])     $texttoinsert.= " 'isameasure'=>'".$val['isameasure']."',";
-                if ($val['css'])            $texttoinsert.= " 'css'=>'".$val['css']."',";
-                if ($val['help'])           $texttoinsert.= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
-                if ($val['showoncombobox']) $texttoinsert.= " 'showoncombobox'=>'".$val['showoncombobox']."',";
-                if ($val['disabled'])       $texttoinsert.= " 'disabled'=>'".$val['disabled']."',";
+                $texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
+                $texttoinsert .= " 'enabled'=>".($val['enabled'] != '' ? $val['enabled'] : 1).",";
+                $texttoinsert .= " 'position'=>".($val['position'] != '' ? $val['position'] : 50).",";
+                $texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
+                $texttoinsert .= " 'visible'=>".($val['visible'] != '' ? $val['visible'] : -1).",";
+                if ($val['noteditable'])    $texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
+                if ($val['default'])        $texttoinsert .= " 'default'=>'".$val['default']."',";
+                if ($val['index'])          $texttoinsert .= " 'index'=>".$val['index'].",";
+                if ($val['foreignkey'])     $texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
+                if ($val['searchall'])      $texttoinsert .= " 'searchall'=>".$val['searchall'].",";
+                if ($val['isameasure'])     $texttoinsert .= " 'isameasure'=>'".$val['isameasure']."',";
+                if ($val['css'])            $texttoinsert .= " 'css'=>'".$val['css']."',";
+                if ($val['help'])           $texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
+                if ($val['showoncombobox']) $texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
+                if ($val['disabled'])       $texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
                 if ($val['arrayofkeyval'])
                 {
-                	$texttoinsert.= " 'arrayofkeyval'=>array(";
-                	$i=0;
-                	foreach($val['arrayofkeyval'] as $key2 => $val2)
+                	$texttoinsert .= " 'arrayofkeyval'=>array(";
+                	$i = 0;
+                	foreach ($val['arrayofkeyval'] as $key2 => $val2)
                 	{
-                		if ($i) $texttoinsert.=", ";
-                		$texttoinsert.="'".$key2."'=>'".$val2."'";
+                		if ($i) $texttoinsert .= ", ";
+                		$texttoinsert .= "'".$key2."'=>'".$val2."'";
                 		$i++;
                 	}
-                	$texttoinsert.= "),";
+                	$texttoinsert .= "),";
                 }
-                if ($val['comment'])        $texttoinsert.= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
+                if ($val['comment'])        $texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
 
-                $texttoinsert.= "),\n";
+                $texttoinsert .= "),\n";
             }
         }
 
-        $texttoinsert.= "\t".');'."\n";
+        $texttoinsert .= "\t".');'."\n";
 		//print ($texttoinsert);exit;
 
         if (count($object->fields))
         {
         	//$typetotypephp=array('integer'=>'integer', 'duration'=>'integer', 'varchar'=>'string');
 
-        	foreach($object->fields as $key => $val)
+        	foreach ($object->fields as $key => $val)
             {
                 $i++;
                 //$typephp=$typetotypephp[$val['type']];
-                $texttoinsert.= "\t".'public $'.$key.";";
+                $texttoinsert .= "\t".'public $'.$key.";";
                 //if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
                 //if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
                 //$texttoinsert.= ($val['notnull']?' NOT NULL':'');
                 //if ($i < count($object->fields)) $texttoinsert.=";";
-                $texttoinsert.= "\n";
+                $texttoinsert .= "\n";
             }
         }
 
-        $texttoinsert.= "\t".'// END MODULEBUILDER PROPERTIES';
+        $texttoinsert .= "\t".'// END MODULEBUILDER PROPERTIES';
 
         //print($texttoinsert);exit;
 
@@ -193,7 +193,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
         return $object;
     }
-    catch(Exception $e)
+    catch (Exception $e)
     {
         print $e->getMessage();
         return -5;
@@ -219,14 +219,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
     $error = 0;
 
     if (empty($objectname)) return -1;
-    if (empty($readdir)) $readdir=$destdir;
+    if (empty($readdir)) $readdir = $destdir;
 
-    $pathoffiletoclasssrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
+    $pathoffiletoclasssrc = $readdir.'/class/'.strtolower($objectname).'.class.php';
 
     // Edit .sql file
-    $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
-	if (! dol_is_file($pathoffiletoeditsrc))
+    $pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+    $pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	if (!dol_is_file($pathoffiletoeditsrc))
     {
     	$langs->load("errors");
     	setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
@@ -236,14 +236,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
     // Load object from myobject.class.php
     try
     {
-    	if (! is_object($object))
+    	if (!is_object($object))
     	{
     		include_once $pathoffiletoclasssrc;
-        	if (class_exists($objectname)) $object=new $objectname($db);
+        	if (class_exists($objectname)) $object = new $objectname($db);
         	else return -1;
     	}
     }
-    catch(Exception $e)
+    catch (Exception $e)
     {
         print $e->getMessage();
     }
@@ -253,38 +253,38 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
     $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
-    $i=0;
+    $i = 0;
     $texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
     if (count($object->fields))
     {
-        foreach($object->fields as $key => $val)
+        foreach ($object->fields as $key => $val)
         {
             $i++;
 
             $type = $val['type'];
-            $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
+            $type = preg_replace('/:.*$/', '', $type); // For case type = 'integer:Societe:societe/class/societe.class.php'
 
-            if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
-            elseif ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+            if ($type == 'html') $type = 'text'; // html modulebuilder type is a text type in database
+            elseif ($type == 'price') $type = 'double'; // html modulebuilder type is a text type in database
             elseif (in_array($type, array('link', 'sellist', 'duration'))) $type = 'integer';
-            $texttoinsert.= "\t".$key." ".$type;
-            if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
-            if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
+            $texttoinsert .= "\t".$key." ".$type;
+            if ($key == 'rowid')  $texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
+            if ($key == 'entity') $texttoinsert .= ' DEFAULT 1';
             else
             {
             	if ($val['default'] != '')
             	{
-            		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
-            		elseif (preg_match('/varchar/', $type)) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
-            		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
+            		if (preg_match('/^null$/i', $val['default'])) $texttoinsert .= " DEFAULT NULL";
+            		elseif (preg_match('/varchar/', $type)) $texttoinsert .= " DEFAULT '".$db->escape($val['default'])."'";
+            		else $texttoinsert .= (($val['default'] > 0) ? ' DEFAULT '.$val['default'] : '');
             	}
             }
-            $texttoinsert.= (($val['notnull'] > 0)?' NOT NULL':'');
-            if ($i < count($object->fields)) $texttoinsert.=", ";
-            $texttoinsert.= "\n";
+            $texttoinsert .= (($val['notnull'] > 0) ? ' NOT NULL' : '');
+            if ($i < count($object->fields)) $texttoinsert .= ", ";
+            $texttoinsert .= "\n";
         }
     }
-    $texttoinsert.= "\t".'-- END MODULEBUILDER FIELDS';
+    $texttoinsert .= "\t".'-- END MODULEBUILDER FIELDS';
 
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
 
@@ -299,35 +299,35 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
     }
 
     // Edit .key.sql file
-    $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+    $pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+    $pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
 
     $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
-    $i=0;
+    $i = 0;
     $texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
     if (count($object->fields))
     {
-        foreach($object->fields as $key => $val)
+        foreach ($object->fields as $key => $val)
         {
             $i++;
-            if (! empty($val['index']))
+            if (!empty($val['index']))
             {
-                $texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
-                $texttoinsert.= "\n";
+                $texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
+                $texttoinsert .= "\n";
             }
-            if (! empty($val['foreignkey']))
+            if (!empty($val['foreignkey']))
             {
-            	$tmp=explode('.', $val['foreignkey']);
-            	if (! empty($tmp[0]) && ! empty($tmp[1]))
+            	$tmp = explode('.', $val['foreignkey']);
+            	if (!empty($tmp[0]) && !empty($tmp[1]))
             	{
-            		$texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";
-            		$texttoinsert.= "\n";
+            		$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";
+            		$texttoinsert .= "\n";
             	}
             }
         }
     }
-    $texttoinsert.= '-- END MODULEBUILDER INDEXES';
+    $texttoinsert .= '-- END MODULEBUILDER INDEXES';
 
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
 

@@ -5689,7 +5689,7 @@ abstract class CommonObject
 		}
 		elseif (in_array($type, array('duration')))
 		{
-			$out=$form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
+			$out = $form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
 		}
 		elseif (in_array($type, array('int', 'integer')))
 		{
@@ -6317,13 +6317,13 @@ abstract class CommonObject
 		elseif ($type == 'duration')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			if (! is_null($value) && $value !== '') {
+			if (!is_null($value) && $value !== '') {
 				$value = convertSecondToTime($value, 'allhourmin');
 			}
 		}
 		elseif ($type == 'double' || $type == 'real')
 		{
-			if (! is_null($value) && $value !== '') {
+			if (!is_null($value) && $value !== '') {
 				$value = price($value);
 			}
 		}
@@ -6349,7 +6349,7 @@ abstract class CommonObject
 		}
 		elseif ($type == 'price')
 		{
-			if (! is_null($value) && $value !== '') {
+			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		}
@@ -7366,7 +7366,7 @@ abstract class CommonObject
 			}
 
 			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
-			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;	// May force 0 to null
+			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null; // May force 0 to null
 		}
 
 		return $queryarray;
@@ -7409,7 +7409,7 @@ abstract class CommonObject
 					}
 					else
 					{
-						if (! is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 							$this->{$field} = (int) $obj->{$field};
 						} else {
 							$this->{$field} = null;
@@ -7426,7 +7426,7 @@ abstract class CommonObject
 				}
 				else
 				{
-					if (! is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 						$this->{$field} = (double) $obj->{$field};
 					} else {
 						$this->{$field} = null;
