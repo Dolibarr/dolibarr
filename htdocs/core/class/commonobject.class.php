@@ -4806,6 +4806,11 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs,$conf;
 
+		if (! is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
+			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+			$langs = new Translate('', $conf);
+		}
+
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		$interface=new Interfaces($this->db);
 		$result=$interface->run_triggers($trigger_name, $this, $user, $langs, $conf);
@@ -7080,13 +7085,13 @@ abstract class CommonObject
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
 				else
 				{
-					$queryarray[$field] = (int) price2num($this->{$field});
+					$queryarray[$field] = (int) $this->{$field};
 					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
 				}
 			}
 			elseif($this->isFloat($info))
 			{
-				$queryarray[$field] = (double) price2num($this->{$field});
+				$queryarray[$field] = (double) $this->{$field};
 				if (empty($queryarray[$field])) $queryarray[$field]=0;
 			}
 			else

@@ -116,6 +116,7 @@ $search_type         = GETPOST('search_type', 'int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	'cp.ref'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname'
@@ -197,10 +198,7 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 $order = $db->order($sortfield, $sortorder).$db->plimit($limit + 1, $offset);
 
 // Ref
-if(!empty($search_ref))
-{
-    $filter.= " AND cp.rowid = ".(int) $db->escape($search_ref);
-}
+if (!empty($search_ref)) $filter.= natural_search("cp.ref", $search_ref);
 // Start date
 $filter.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date
@@ -230,7 +228,6 @@ if (!empty($sall))
 }
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',', $childids).')';
-
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;

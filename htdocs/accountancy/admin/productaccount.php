@@ -238,7 +238,7 @@ elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA')
 }
 else
 {
-    $sql.=" p.accountancy_code_sell_intra = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
+    $sql.=" p.accountancy_code_sell_export = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
 }
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {

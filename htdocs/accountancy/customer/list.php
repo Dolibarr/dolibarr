@@ -311,6 +311,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
+// MAX_JOIN_SIZE can be very low (ex: 300000) on some limited configurations (ex: https://www.online.net/fr/hosting/online-perso)
+// This big SELECT command may exceed the MAX_JOIN_SIZE limit => Therefore we use SQL_BIG_SELECTS=1 to disable the MAX_JOIN_SIZE security
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=1");
+}
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
@@ -418,7 +423,9 @@ if ($result) {
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 
-    $isSellerInEEC = isInEEC($mysoc);
+	$isSellerInEEC = isInEEC($mysoc);
+
+    $accountingaccount_codetotid_cache = array();
 
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
@@ -488,8 +495,8 @@ if ($result) {
             }
         }
 
-		if (! empty($objp->code_sell)) {
-			//$objp->code_sell_p = $objp->code_sell;       // Code on product
+		if (! empty($objp->code_sell_p)) {
+			// Value was defined previously
 		} else {
 			$code_sell_p_notset = 'color:orange';
 		}
@@ -561,11 +568,26 @@ if ($result) {
 		print '</td>';
 
 		// Suggested accounting account
+		// $objp->code_sell_l = default (it takes the country into consideration), $objp->code_sell_p is value for product (it takes the country into consideration too)
 		print '<td>';
 		$suggestedid = $objp->aarowid_suggest;
+		/*var_dump($suggestedid);
+		var_dump($objp->code_sell_p);
+		var_dump($objp->code_sell_l);*/
 		if (empty($suggestedid) && empty($objp->code_sell_p) && ! empty($objp->code_sell_l) && ! empty($conf->global->ACCOUNTANCY_AUTOFILL_ACCOUNT_WITH_GENERIC))
 		{
-			//$suggestedid = // id of $objp->code_sell_l
+			if (empty($accountingaccount_codetotid_cache[$objp->code_sell_l]))
+			{
+				$tmpaccount = new AccountingAccount($db);
+				$tmpaccount->fetch(0, $objp->code_sell_l, 1);
+				if ($tmpaccount->id > 0) {
+					$suggestedid = $tmpaccount->id;
+				}
+				$accountingaccount_codetotid_cache[$objp->code_sell_l] = $tmpaccount->id;
+			}
+			else {
+				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_sell_l];
+			}
 		}
 		print $formaccounting->select_account($suggestedid, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
@@ -586,6 +608,9 @@ if ($result) {
 	print '</form>';
 } else {
 	print $db->error();
+}
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=0");  // Enable MAX_JOIN_SIZE limitation
 }
 
 // Add code to auto check the box when we select an account

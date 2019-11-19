@@ -254,8 +254,8 @@ if (empty($reshook))
 			{
 				$supplier=new Fournisseur($db);
 				$result=$supplier->fetch($id_fourn);
-				if (isset($_POST['ref_fourn_price_id']))
-					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+				if (GETPOSTISSET('ref_fourn_price_id'))
+					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
 
 				$newprice = price2num(GETPOST("price", "alpha"));
 

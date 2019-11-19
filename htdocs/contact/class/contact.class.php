@@ -325,13 +325,13 @@ class Contact extends CommonObject
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		if (empty($this->statut)) $this->statut = 0;
-
+		if (empty($this->civility_code) && ! is_numeric($this->civility_id)) $this->civility_code = $this->civility_id;   // For backward compatibility
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
+		$sql .= "  civility='".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
