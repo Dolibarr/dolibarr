@@ -210,3 +210,4 @@ StockIncreaseAfterCorrectTransfer=Increase by correction/transfer
 StockDecreaseAfterCorrectTransfer=Decrease by correction/transfer
 StockIncrease=Stock increase
 StockDecrease=Stock decrease
+StockIsRequiredToChooseWhichLotToUse=Stock is required to choose which lot to use
