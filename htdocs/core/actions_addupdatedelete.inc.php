@@ -30,22 +30,22 @@
 // $backtopage may be defined
 // $triggermodname may be defined
 
-if (! empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit;	// For backward compatibility
+if (!empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit; // For backward compatibility
 
 if ($cancel)
 {
 	/*var_dump($cancel);
 	var_dump($backtopage);exit;*/
-	if (! empty($backtopage))
+	if (!empty($backtopage))
 	{
 		header("Location: ".$backtopage);
 		exit;
 	}
-	$action='';
+	$action = '';
 }
 
 // Action to add record
-if ($action == 'add' && ! empty($permissiontoadd))
+if ($action == 'add' && !empty($permissiontoadd))
 {
 	foreach ($object->fields as $key => $val)
 	{
@@ -66,17 +66,17 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 		} elseif ($object->fields[$key]['type'] == 'duration') {
-			$value = 60*60*GETPOST($key.'hour', 'int') + 60*GETPOST($key.'min', 'int');
+			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-			$value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
-		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
-		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
+		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value = ''; // This is an implicit foreign key field
+		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') $value = ''; // This is an explicit foreign key field
 
-		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '' && ! is_null($val['default']) && $val['default'] == '(PROV)')
+		$object->$key = $value;
+		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)')
 		{
 		    $object->$key = '(PROV)';
 		}
@@ -136,7 +136,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type'] == 'duration') {
 			if (GETPOST($key.'hour', 'int') != '' || GETPOST($key.'min', 'int') != '') {
-				$value = 60*60*GETPOST($key.'hour', 'int') + 60*GETPOST($key.'min', 'int');
+				$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
 			} else {
 				$value = '';
 			}
