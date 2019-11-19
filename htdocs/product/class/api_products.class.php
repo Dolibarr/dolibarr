@@ -1134,12 +1134,12 @@ class Products extends DolibarrApi
 
         $prodcomb = new ProductCombination($this->db);
         $combinations = $prodcomb->fetchAllByFkProductParent((int) $id);
-        
+
         foreach ($combinations as $key => $combination) {
             $prodc2vp = new ProductCombination2ValuePair($this->db);
             $combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
         }
-        
+
         return $combinations;
     }
 
@@ -1167,12 +1167,12 @@ class Products extends DolibarrApi
 
         $prodcomb = new ProductCombination($this->db);
         $combinations = $prodcomb->fetchAllByFkProductParent((int) $this->product->id);
-        
+
         foreach ($combinations as $key => $combination) {
             $prodc2vp = new ProductCombination2ValuePair($this->db);
             $combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
         }
-        
+
         return $combinations;
     }
 
