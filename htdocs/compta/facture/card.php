@@ -986,7 +986,7 @@ if (empty($reshook))
 					$object->entity = $originentity;
 				}
 				$object->socid = GETPOST('socid', 'int');
-				$object->number = $_POST['ref'];
+				$object->ref = $_POST['ref'];
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'none'));
@@ -1166,7 +1166,7 @@ if (empty($reshook))
 			{
 				$object->socid = GETPOST('socid', 'int');
 				$object->type            = $_POST['type'];
-				$object->number          = $_POST['ref'];
+				$object->ref             = $_POST['ref'];
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public = trim(GETPOST('note_public', 'none'));
@@ -1216,7 +1216,7 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
-				$object->number = $_POST['ref'];
+				$object->ref                = $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'none'));
