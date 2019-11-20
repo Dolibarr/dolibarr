@@ -1131,12 +1131,12 @@ class DolGraph
 	 */
     public function total()
 	{
-      $value = 0;
-			foreach($this->data as $valarray)	// Loop on each x
+		$value = 0;
+		foreach($this->data as $valarray)	// Loop on each x
 			{
-				$value += $valarray[1];
-			}
-      return $value;
+			$value += $valarray[1];
+		}
+		return $value;
 	}
 
 	/**
