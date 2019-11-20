@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019		Thibault FOUCARt		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -351,6 +352,7 @@ if ($result || empty($id))
 					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
 					$px->draw($dir."/".$graphfiles[$key]['file'], $url);
 
+					$graphfiles[$key]['total'] = $px->total();
 					$graphfiles[$key]['output'] = $px->show();
 				}
 				else
@@ -405,7 +407,7 @@ if ($result || empty($id))
 			// Label
 			print '<tr class="liste_titre"><td>';
 			print $graphfiles[$key]['label'];
-			print '</td>';
+			print ' ('.$graphfiles[$key]['total'].')</td>';
 			print '<td align="right">'.$linktoregenerate.'</td>';
 			print '</tr>';
 			// Image
