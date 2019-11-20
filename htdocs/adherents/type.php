@@ -1,4 +1,3 @@
-
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
@@ -809,7 +808,7 @@ if ($rowid > 0)
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-    		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
