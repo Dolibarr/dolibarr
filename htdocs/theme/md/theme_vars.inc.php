@@ -67,7 +67,7 @@ $colortexttitlenotab='90,90,90';
 $colortexttitle='20,20,20';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
-$fontsize='14';
+$fontsize = '14';
 $fontsizesmaller='11';
 
 // text color
