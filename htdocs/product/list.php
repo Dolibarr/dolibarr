@@ -173,9 +173,10 @@ $arrayfields = array(
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled))),
 	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(!empty($conf->service->enabled) && (string) $type == '1')),
     'p.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled))),
-    'p.length'=>array('label'=>$langs->trans("Length"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_DISABLE_SIZE))),
-    'p.surface'=>array('label'=>$langs->trans("Surface"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_DISABLE_SURFACE))),
-    'p.volume'=>array('label'=>$langs->trans("Volume"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_DISABLE_VOLUME))),
+    'p.length'=>array('label'=>$langs->trans("Length"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE))),
+    'p.surface'=>array('label'=>$langs->trans("Surface"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE))),
+    'p.volume'=>array('label'=>$langs->trans("Volume"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME))),
+    'cu.label'=>array('label'=>$langs->trans("DefaultUnitToShow"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_USE_UNITS))),
     'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
 	'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire))),
 	'p.numbuyprice'=>array('label'=>$langs->trans("BuyingPriceNumShort"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire))),
@@ -289,6 +290,7 @@ $sql .= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte
 $sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units,';
+if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ' p.fk_unit, cu.label as cu_label,';
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= ', pac.rowid prod_comb_id';
@@ -311,6 +313,7 @@ if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
+if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units cu ON cu.rowid = p.fk_unit";
 
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -376,6 +379,7 @@ $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.pric
 $sql .= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp, p.stock,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units';
+if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ', p.fk_unit';
 
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= ', pac.rowid';
@@ -639,6 +643,13 @@ if ($resql)
 	    print '</td>';
 	}
 
+	// Unit
+    if (!empty($arrayfields['cu.label']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+
 	// Sell price
 	if (!empty($arrayfields['p.sellprice']['checked']))
 	{
@@ -759,6 +770,7 @@ if ($resql)
 	if (!empty($arrayfields['p.length']['checked']))  print_liste_field_titre($arrayfields['p.length']['label'], $_SERVER["PHP_SELF"], "p.length", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.surface']['checked'])) print_liste_field_titre($arrayfields['p.surface']['label'], $_SERVER["PHP_SELF"], "p.surface", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.volume']['checked']))  print_liste_field_titre($arrayfields['p.volume']['label'], $_SERVER["PHP_SELF"], "p.volume", "", $param, '', $sortfield, $sortorder, 'center ');
+    if (!empty($arrayfields['cu.label']['checked']))  print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
     if (!empty($arrayfields['p.sellprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
@@ -875,6 +887,9 @@ if ($resql)
 		$product_static->volume_units = $obj->volume_units;
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
+        if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+            $product_static->fk_unit = $obj->fk_unit;
+        }
 
 		if ((!empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 		{
@@ -986,6 +1001,16 @@ if ($resql)
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
 		}
+        // Unit
+        if (!empty($arrayfields['cu.label']['checked']))
+        {
+            print '<td align="center">';
+            if ($obj->cu_label !== '') {
+                print $langs->trans($obj->cu_label);
+            }
+            print '</td>';
+            if (!$i) $totalarray['nbfield']++;
+        }
 
 		// Sell price
 		if (!empty($arrayfields['p.sellprice']['checked']))
