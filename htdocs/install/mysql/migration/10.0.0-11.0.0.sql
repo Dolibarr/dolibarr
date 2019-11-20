@@ -48,9 +48,13 @@ UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
 
 ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
 
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN lastname varchar(160);
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN firstname varchar(160);
+
 
 -- For v11
 
+ 
 insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
 
 INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
