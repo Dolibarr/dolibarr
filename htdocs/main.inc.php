@@ -553,7 +553,7 @@ if (!defined('NOLOGIN'))
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		if ($test && $goontestloop && GETPOST('action', 'aZ09') == 'login')
+		if ($test && $goontestloop && GETPOST('actionlogin', 'aZ09') == 'login')
 		{
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login)
@@ -611,8 +611,8 @@ if (!defined('NOLOGIN'))
 		// End test login / passwords
 		if (! $login || (in_array('ldap', $authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
 		{
-			// No data to test login, so we show the login page
-			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09').", showing the login form and exit");
+			// No data to test login, so we show the login page.
+			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit");
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) return 'ERROR_NOT_LOGGED';
 			else dol_loginfunction($langs, $conf, (! empty($mysoc)?$mysoc:''));
 			exit;
