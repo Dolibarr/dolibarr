@@ -1005,7 +1005,7 @@ if ($resql)
         if (!empty($arrayfields['cu.label']['checked']))
         {
             print '<td align="center">';
-            if ($obj->cu_label !== '') {
+            if (!empty($obj->cu_label)) {
                 print $langs->trans($obj->cu_label);
             }
             print '</td>';
