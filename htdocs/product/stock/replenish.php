@@ -89,7 +89,7 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
-$usevirtualstock=0;
+$usevirtualstock = !empty($conf->global->STOCK_USE_VIRTUAL_STOCK);
 if ($mode == 'virtual') $usevirtualstock=1;
 
 $parameters=array();
