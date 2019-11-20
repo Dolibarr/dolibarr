@@ -11,7 +11,7 @@ LaunchProgram=Launch %1
 AssocFileExtension=&Associate %1 with the %2 file extension
 AssocingFileExtension=Associating %1 with the %2 file extension...
 
-YouWillInstallDoliWamp=You will install or upgrade DoliWamp (so Dolibarr + all required third party softwares like Apache, Mysql and PHP) on your computer.
+YouWillInstallDoliWamp=You will install or upgrade DoliWamp (so Dolibarr + all required third party software like Apache, Mysql and PHP) on your computer.
 ThisAssistantInstallOrUpgrade=WARNING: Using an ERP CRM installed on a local computer can be dangerous: if your computer break down, you can lose all your data. Do this if you are ready to manage backup yourself seriously. If not, use an installation in Saas instead (see https://saas.dolibarr.org).
 IfYouHaveTechnicalKnowledge=Moreover, if you have technical knowledges and want to manage your Apache, Mysql and PHP yourself, you should not use this assistant and make a manual installation of Dolibarr on your existing server with Apache, Mysql and PHP.
 ButIfYouLook=But if you look for an automatic setup on your local computer, you''re on the good way...

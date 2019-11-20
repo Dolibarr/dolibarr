@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -251,7 +251,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_UNVALIDATE')
         {
-           // Load translation files required by the page
+            // Load translation files required by the page
             $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceBackToDraftInDolibarr", $object->ref);
@@ -649,12 +649,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Load translation files required by the page
             $langs->loadLangs(array("agenda","other","members"));
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->ref, $object->getFullName($langs));
-            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->ref, $object->getFullName($langs));
-            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
-            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');
+            $member = $this->context['member'];
+            if (! is_object($member))	// This should not happen
+            {
+	            include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	            $member = new Adherent($this->db);
+	            $member->fetch($this->fk_adherent);
+            }
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->fk_type;
+            $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->amount;
+            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid=0;
 			if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
@@ -664,12 +672,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	// Load translation files required by the page
             $langs->loadLangs(array("agenda","other","members"));
 
-        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->ref, $object->getFullName($langs));
-        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->ref, $object->getFullName($langs));
-        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
-        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
-        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');
+            $member = $this->context['member'];
+            if (! is_object($member))	// This should not happen
+            {
+            	include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+            	$member = new Adherent($this->db);
+            	$member->fetch($this->fk_adherent);
+            }
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->id, $member->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->id, $member->getFullName($langs));
+        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
+        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->fk_type;
+        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->amount;
+        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
         	$object->sendtoid=0;
         	if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
@@ -783,6 +799,35 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
+		elseif($action == 'TICKET_ASSIGNED')
+		{
+		    // Load translation files required by the page
+		    $langs->loadLangs(array("agenda","other","projects"));
+
+		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
+		    $object->actionmsg=$langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
+		    if ($object->oldcopy->fk_user_assign > 0)
+		    {
+		        $tmpuser=new User($this->db);
+		        $tmpuser->fetch($object->oldcopy->fk_user_assign);
+		        $object->actionmsg.="\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
+		    }
+		    else
+		    {
+		        $object->actionmsg.="\n".$langs->transnoentities("OldUser").': '.$langs->trans("None");
+		    }
+		    if ($object->fk_user_assign > 0)
+		    {
+		        $tmpuser=new User($this->db);
+		        $tmpuser->fetch($object->fk_user_assign);
+		        $object->actionmsg.="\n".$langs->transnoentities("NewUser").': '.$tmpuser->getFullName($langs);
+		    }
+		    else
+		    {
+		        $object->actionmsg.="\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
+		    }
+		    $object->sendtoid=0;
+		}
 		// TODO Merge all previous cases into this generic one
 		else	// $action = TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{
@@ -847,15 +892,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode;		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note        = $object->actionmsg;          // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
+		$actioncomm->note_private= $object->actionmsg;          // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
 		$actioncomm->punctual    = 1;
 		$actioncomm->percentage  = -1;   // Not applicable
-		$actioncomm->societe     = $societeforaction;
-		$actioncomm->contact     = $contactforaction;
 		$actioncomm->socid       = $societeforaction->id;
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action

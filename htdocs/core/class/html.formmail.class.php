@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,9 +41,21 @@ class FormMail extends Form
      */
     public $db;
 
-	public $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
+    /**
+     * @var int 1 = Include HTML form tag and show submit button
+     *          0 = Do not include form tag and submit button
+     *          -1 = Do not include form tag but include submit button
+     */
+	public $withform;
 
+    /**
+     * @var string name from
+     */
 	public $fromname;
+
+    /**
+     * @var string email from
+     */
 	public $frommail;
 
     /**
@@ -52,9 +64,14 @@ class FormMail extends Form
     public $fromtype;
 
     /**
-     * @var int ID
+     * @var int from ID
      */
     public $fromid;
+
+    /**
+     * @var int also from robot
+     */
+    public $fromalsorobot;
 
     /**
      * @var string thirdparty etc
@@ -66,10 +83,29 @@ class FormMail extends Form
      */
     public $toid;
 
+    /**
+     * @var string replyto name
+     */
     public $replytoname;
+
+    /**
+     * @var string replyto email
+     */
 	public $replytomail;
+
+    /**
+     * @var string to name
+     */
 	public $toname;
+
+    /**
+     * @var string to email
+     */
 	public $tomail;
+
+    /**
+     * @var string trackid
+     */
 	public $trackid;
 
 	public $withsubstit;			// Show substitution array
@@ -212,7 +248,7 @@ class FormMail extends Form
 	/**
 	 * Remove a file from the list of attached files (stored in SECTION array)
 	 *
-	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
+	 * @param  	string	$keytodelete     Key index in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
 	public function remove_attached_files($keytodelete)
@@ -394,6 +430,7 @@ class FormMail extends Form
 			if ($this->param['models'] != 'none')
 			{
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+
 				if ($result < 0)
 				{
 					setEventMessages($this->error, $this->errors, 'errors');
@@ -935,7 +972,6 @@ class FormMail extends Form
 					$defaultmessage=preg_replace("/^(<br>)+/", "", $defaultmessage);
 					$defaultmessage=preg_replace("/^\n+/", "", $defaultmessage);
 				}
-
 				$out.= '<tr>';
 				$out.= '<td valign="top">';
 				$out.=$form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
@@ -1154,6 +1190,12 @@ class FormMail extends Form
 			return -1;
 		}
 
+		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
+		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
+		$tmparray = explode('_', $languagetosearch);
+		$languagetosearchmain = $tmparray[0].'_'.strtoupper($tmparray[0]);
+		if ($languagetosearchmain == $languagetosearch) $languagetosearchmain = '';
+
 		$sql = "SELECT rowid, label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
@@ -1161,10 +1203,10 @@ class FormMail extends Form
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if ($label) $sql.=" AND label ='".$db->escape($label)."'";
-		if (! ($id > 0) && is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
+		if (! ($id > 0) && $languagetosearch) $sql.= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
-		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label", "ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
+		if ($languagetosearch) $sql.= $db->order("position,lang,label", "ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
 		else $sql.= $db->order("position,lang,label", "ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
 		$sql.= $db->plimit(1);
 		//print $sql;

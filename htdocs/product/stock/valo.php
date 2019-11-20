@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,7 +83,7 @@ if ($result)
 
     print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);
     print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", "", "", $sortfield, $sortorder);

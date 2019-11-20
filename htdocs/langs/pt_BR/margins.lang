@@ -17,6 +17,7 @@ MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global e tratado como 
 MARGIN_TYPE=Compra / Preço de custo sugerido por padrão para cálculo da margem de
 MargeType2=Margem sobre o Preço Médio Ponderado (PMP)
 MargeType3=Margem sobre o preço de custo
+MarginTypeDesc=*Margem sobre o melhor preço de compra = Preço de venda - Melhor preço de fornecedor definido no cartão do produto <br> *Margem no Preço Médio Ponderado (WAP) = Preço de Venda - Preço Médio Ponderado pelo Produto (WAP) ou melhor preço de fornecedor se o WAP ainda não estiver definido <br> *Margem no preço de custo = preço de venda - preço de custo definido no cartão do produto ou WAP se o preço de custo não estiver definido ou o melhor preço do fornecedor se o WAP ainda não estiver definido
 AgentContactType=Tipo contato do agente comercial
 AgentContactTypeDetails=Defina o tipo de contato (conectado coma as faturas) sera usado para o relatorio de margem dos representantes
 rateMustBeNumeric=Rata deve ser um valor numerico

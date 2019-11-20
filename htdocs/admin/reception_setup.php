@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *	    \file       htdocs/admin/confexped.php
- *		\ingroup    produit
+ *	    \file       htdocs/admin/reception_setup.php
+ *		\ingroup    reception
  *		\brief      Page to setup reception module
  */
 
@@ -27,13 +27,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 
-$langs->load("admin");
-$langs->load("receptions");
-$langs->load('other');
+$langs->loadLangs(array("admin", "receptions", 'other'));
 
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action=GETPOST('action', 'alpha');
 $value=GETPOST('value', 'alpha');
@@ -211,7 +208,7 @@ dol_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
 
 print load_fiche_titre($langs->trans("ReceptionsNumberingModules"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -225,7 +222,7 @@ clearstatcache();
 foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/reception/");
-	
+
 	if (is_dir($dir))
 	{
 		$handle = opendir($dir);
@@ -269,7 +266,7 @@ foreach ($dirmodels as $reldir)
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -340,7 +337,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -374,7 +371,6 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
@@ -424,7 +420,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')

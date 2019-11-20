@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -84,7 +84,6 @@ if ($_POST)
 	}
 
 	if ($sanitized_values) {
-
 		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$adapted_values = array();
@@ -106,7 +105,6 @@ if ($_POST)
 
 		//Current combinations will be deleted
 		if ($delete_prev_comb_res > 0) {
-
 			$res = 1;
 
 			$cartesianarray = cartesianArray($adapted_values);
@@ -161,7 +159,7 @@ if (! empty($id) || ! empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 		$object->next_prev_filter=" fk_product_type = ".$object->type;
 
-		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+		dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
 
 		dol_fiche_end();
 	}
@@ -181,7 +179,7 @@ if (! empty($id) || ! empty($ref)) {
 	<script>
 
 		dictionary_attr = <?php echo json_encode($dictionary_attr) ?>;
-		weight_units = '<?php echo measuring_units_string($object->weight_units, 'weight') ?>';
+		weight_units = '<?php echo measuringUnitString(0, 'weight', $object->weight_units) ?>';
 		attr_selected = {};
 		percentage_variation = jQuery('input#price_var_percent').prop('checked');
 
@@ -331,7 +329,7 @@ if (! empty($id) || ! empty($ref)) {
 
 			<form method="post" id="combinationsform">
 
-					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->trans('DoNotRemovePreviousCombinations')) ?></p>
+					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->transnoentitiesnoconv('DoNotRemovePreviousCombinations')) ?></p>
 					<input type="checkbox" name="price_var_percent"
 					       id="price_var_percent"<?php echo $price_var_percent ? ' checked' : '' ?>> <label
 						for="price_var_percent"><?php echo $langs->trans('UsePercentageVariations') ?></label>
@@ -380,8 +378,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-  // End of page
-  llxFooter();
+    // End of page
+    llxFooter();
 }
 
 $db->close();

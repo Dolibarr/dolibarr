@@ -1,30 +1,28 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=以下網址可提供給客戶的網頁上，能夠作出Dolibarr支付對象
 PaymentForm=付款方式
-WelcomeOnPaymentPage=歡迎您來到我們的在線支付服務
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=這個屏幕允許你進行網上支付%s。
 ThisIsInformationOnPayment=這是在做付款信息
 ToComplete=要完成
 YourEMail=付款確認的電子郵件
-STRIPE_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=債權人
 PaymentCode=付款代碼
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=未來
 ToOfferALinkForOnlinePayment=網址為%s支付
-ToOfferALinkForOnlinePaymentOnOrder=網址提供一個命令%s網上支付的用戶界面
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
 ToOfferALinkForOnlinePaymentOnInvoice=網址提供發票一%s在線支付的用戶界面
 ToOfferALinkForOnlinePaymentOnContractLine=網址提供了一個合同線%s在線支付的用戶界面
 ToOfferALinkForOnlinePaymentOnFreeAmount=網址提供一個免費的網上支付金額%s用戶界面
 ToOfferALinkForOnlinePaymentOnMemberSubscription=網址為會員提供訂閱%s在線支付的用戶界面
 YouCanAddTagOnUrl=您還可以添加<b>標簽=</b> url參數<b>及<i>價值</i></b>的任何網址（只需要支付免費）添加自己的註釋標記付款。
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
-YourPaymentHasBeenRecorded=本頁面確認您的付款已記錄。謝謝。
-YourPaymentHasNotBeenRecorded=您的付款並沒有被記錄和交易已取消。謝謝。
 AccountParameter=帳戶參數
 UsageParameter=使用參數
 InformationToFindParameters=幫助，找到你的%s帳戶信息
@@ -42,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Import Stripe payments
-ExampleOfTestCreditCard=Example of credit card for test: %s (valid), %s (error CVC), %s (expired), %s (charge fails)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -63,3 +61,9 @@ ConfirmDeleteCard=Are you sure you want to delete this Credit or Debit card?
 CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

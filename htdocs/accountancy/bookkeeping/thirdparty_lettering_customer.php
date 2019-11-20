@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -37,11 +37,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","accountancy"));
 
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm    = GETPOST('confirm', 'alpha');
+$toselect   = GETPOST('toselect', 'array');
+$socid      = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -66,7 +67,7 @@ $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 */
 
 $lettering = GETPOST('lettering', 'alpha');
-if (! empty($lettering)) {
+if (!empty($lettering)) {
 	$action = $lettering;
 }
 
@@ -82,7 +83,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 // Security check
 $socid = GETPOST("socid", 'int');
-// if ($user->societe_id) $socid=$user->societe_id;
+// if ($user->socid) $socid=$user->socid;
 
 $lettering = new Lettering($db);
 $object = new Societe($db);
@@ -99,7 +100,6 @@ if ($result < 0)
  */
 
 if ($action == 'lettering') {
-
 	$result = $lettering->updateLettering($toselect);
 
 	if ($result < 0) {
@@ -127,8 +127,8 @@ if ($action == 'autolettrage') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$title=$object->name." - ".$langs->trans('TabLetteringCustomer');
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = $object->name." - ".$langs->trans('TabLetteringCustomer');
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
@@ -139,7 +139,7 @@ dol_fiche_head($head, 'lettering_customer', $langs->trans("ThirdParty"), 0, 'com
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
 dol_fiche_end();
 
@@ -164,13 +164,13 @@ $solde = 0;
 // Count total nb of records and calc total sum
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
-if (! $resql) {
+if (!$resql) {
 	dol_print_error($db);
 	exit();
 }
 $nbtotalofrecords = $db->num_rows($resql);
 
-while ( $obj = $db->fetch_object($resql) ) {
+while ($obj = $db->fetch_object($resql)) {
 	$debit += $obj->debit;
 	$credit += $obj->credit;
 
@@ -181,10 +181,13 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_customer.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if (! $resql) {
+if (!$resql) {
 	dol_print_error($db);
 	exit();
 }
+
+$param='';
+$param.="&socid=".urlencode($socid);
 
 $num = $db->num_rows($resql);
 
@@ -192,15 +195,17 @@ dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_customer.php", LOG_DEB
 if ($resql) {
 	$i = 0;
 
+    $param="&socid=".$socid;
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
+    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
     $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
-    //$letteringbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=lettering" value="lettering" name="lettering" id="lettering"><span class="valignmiddle">' . $langs->trans("Lettering") . '</span></a>';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="liste centpercent">'."\n";
 
 	/*
     print '<tr class="liste_titre">';
@@ -246,7 +251,6 @@ if ($resql) {
 	$tmp = '';
 
     while ( $obj = $db->fetch_object($resql) ) {
-
 		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
 		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 

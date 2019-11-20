@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -76,7 +76,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
@@ -123,6 +123,15 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkContact').'</td>';
 print '<td>';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
+print '<td>';
+echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
 print '</td>';
 print '<td></td>';
 print '</tr>';

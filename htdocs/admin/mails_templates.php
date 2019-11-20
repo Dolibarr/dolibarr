@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,12 +45,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","mails","languages"));
 
-$action     = GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
-$confirm    = GETPOST('confirm', 'alpha');												// Result of a confirmation
+$action = GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
+$confirm = GETPOST('confirm', 'alpha');												// Result of a confirmation
 
-$id			= GETPOST('id', 'int');
-$rowid		= GETPOST('rowid', 'alpha');
-$search_label=GETPOST('search_label', 'alpha');
+$id = GETPOST('id', 'int');
+$rowid = GETPOST('rowid', 'alpha');
+$search_label=GETPOST('search_label', 'alphanohtml');									// Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template=GETPOST('search_type_template', 'alpha');
 $search_lang=GETPOST('search_lang', 'alpha');
 $search_fk_user=GETPOST('search_fk_user', 'intcomma');
@@ -263,6 +263,7 @@ if (empty($reshook))
             {
             	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
             	$keycode=$listfieldvalue[$i];
+            	if ($value == 'label') $_POST[$keycode] = dol_escape_htmltag($_POST[$keycode]);
             	if ($value == 'lang') $keycode='langcode';
                 if ($value == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
@@ -326,7 +327,7 @@ if (empty($reshook))
                 $i++;
             }
             $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
-//print $sql;exit;
+            //print $sql;exit;
             dol_syslog("actionmodify", LOG_DEBUG);
             //print $sql;
             $resql = $db->query($sql);
@@ -450,7 +451,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Line to enter new values (title)
 print '<tr class="liste_titre">';
@@ -596,7 +597,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // List of available record in database
 dol_syslog("htdocs/admin/dict", LOG_DEBUG);
@@ -667,8 +668,6 @@ if ($resql)
     print '<tr class="liste_titre">';
     foreach ($fieldlist as $field => $value)
     {
-        // Determine le nom du champ par rapport aux noms possibles
-        // dans les dictionnaires de donnees
         $showfield=1;							  	// By defaut
         $align="left";
         $sortable=1;
@@ -695,7 +694,7 @@ if ($resql)
 		if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); $showfield=0;}
 		if ($fieldlist[$field]=='content_lines')   { $valuetoshow=$langs->trans("ContentLines"); $showfield=0; }
 
-        // Affiche nom du champ
+        // Show fields
         if ($showfield)
         {
             if (! empty($tabhelp[$id][$value]))
@@ -813,6 +812,10 @@ if ($resql)
                         $showfield=1;
                     	$align="left";
                         $valuetoshow=$obj->{$fieldlist[$field]};
+                        if ($value == 'label' || $value == 'topic')
+                        {
+                            $valuetoshow = dol_escape_htmltag($valuetoshow);
+                        }
                         if ($value == 'type_template')
                         {
                             $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
@@ -873,6 +876,7 @@ if ($resql)
                 // Status / Active
                 print '<td align="center" class="nowrap">';
                 if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                else print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
                 print "</td>";
 
                 // Modify link / Delete link

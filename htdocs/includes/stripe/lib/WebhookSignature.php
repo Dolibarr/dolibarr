@@ -60,7 +60,7 @@ abstract class WebhookSignature
         }
 
         // Check if timestamp is within tolerance
-        if (($tolerance > 0) && ((time() - $timestamp) > $tolerance)) {
+        if (($tolerance > 0) && (abs(time() - $timestamp) > $tolerance)) {
             throw new Error\SignatureVerification(
                 "Timestamp outside the tolerance zone",
                 $header,

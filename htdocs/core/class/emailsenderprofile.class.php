@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,8 +82,8 @@ class EmailSenderProfile extends CommonObject
 		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1),
 		//'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		//'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
-		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
-		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
+		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>-1, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
+		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>1, 'enabled'=>1, 'position'=>405, 'notnull'=>-1, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1),
@@ -105,7 +105,13 @@ class EmailSenderProfile extends CommonObject
     public $label;
 
 	public $email;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $tms;
 	//public $fk_user_creat;
 	//public $fk_user_modif;
@@ -131,9 +137,9 @@ class EmailSenderProfile extends CommonObject
 	 */
 	//public $class_element_line = 'EmailSenderProfileline';
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('emailsenderprofiledet');
+	//protected $childtables=array();
 	/**
 	 * @var EmailSenderProfileLine[]     Array of subtable lines
 	 */

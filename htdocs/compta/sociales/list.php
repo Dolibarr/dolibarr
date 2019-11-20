@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'sclist';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');
@@ -53,7 +53,7 @@ $search_day_lim		= GETPOST('search_day_lim', 'int');
 $search_month_lim	= GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
@@ -110,8 +110,8 @@ $chargesociale_static=new ChargeSociales($db);
 llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
-$sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
-$sql.= " c.libelle as type_lib,";
+$sql.= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
+$sql.= " c.libelle as type_label,";
 $sql.= " SUM(pc.amount) as alreadypayed";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -135,45 +135,45 @@ if ($year > 0)
     $sql .= ")";
 }
 if ($filtre) {
-    $filtre=str_replace(":", "=", $filtre);
+    $filtre = str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
 }
 if ($search_typeid) {
     $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
-$sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$sql .= $db->order($sortfield, $sortorder);
 
-$totalnboflines=0;
-$result=$db->query($sql);
+$totalnboflines = 0;
+$result = $db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref)    $param.='&search_ref='.urlencode($search_ref);
-	if ($search_label)  $param.='&search_label='.urlencode($search_label);
-	if ($search_amount) $param.='&search_amount='.urlencode($search_amount);
-	if ($search_typeid) $param.='&search_typeid='.urlencode($search_typeid);
-	if ($search_status != '' && $search_status != '-1') $param.='&search_status='.urlencode($search_status);
-	if ($year)          $param.='&year='.urlencode($year);
+	$param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($search_ref)    $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_label)  $param .= '&search_label='.urlencode($search_label);
+	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
+	if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
+	if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
+	if ($year)          $param .= '&year='.urlencode($year);
 
-	$newcardbutton='';
-	if($user->rights->tax->charges->creer)
+	$newcardbutton = '';
+	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
+		$newcardbutton .= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton .= '</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -187,26 +187,26 @@ if ($resql)
 
 	if ($year)
 	{
-	    $center=($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":"");
-	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+	    $center=($year?"<a href='list.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year+1)."'>".img_next()."</a>":"");
+	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
 
 	if (empty($mysoc->country_id) && empty($mysoc->country_code))
 	{
 		print '<div class="error">';
 		$langs->load("errors");
-		$countrynotdefined=$langs->trans("ErrorSetACountryFirst");
+		$countrynotdefined = $langs->trans("ErrorSetACountryFirst");
 		print $countrynotdefined;
 		print '</div>';
 	}
 	else
 	{
 	    print '<div class="div-table-responsive">';
-	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre_filter">';
 		// Ref
@@ -236,7 +236,7 @@ if ($resql)
 		print $form->selectarray('search_status', $liststatus, $search_status, 1);
 		print '</td>';
 
-        print '<td class="liste_titre right">';
+        print '<td class="liste_titre maxwidthsearch">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
@@ -261,8 +261,8 @@ if ($resql)
 
 			$chargesociale_static->id=$obj->id;
 			$chargesociale_static->ref=$obj->id;
-			$chargesociale_static->lib=$obj->libelle;
-			$chargesociale_static->type_libelle=$obj->type_lib;
+			$chargesociale_static->label=$obj->label;
+			$chargesociale_static->type_label=$obj->type_label;
 
 			print '<tr class="oddeven">';
 
@@ -272,16 +272,16 @@ if ($resql)
 			print '</td>';
 
 			// Label
-			print '<td>'.dol_trunc($obj->libelle, 42).'</td>';
+			print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
 			// Type
-			print '<td>'.$obj->type_lib.'</td>';
+			print '<td>'.$obj->type_label.'</td>';
 
 			// Date end period
 			print '<td align="center">';
 			if ($obj->periode)
 			{
-				print '<a href="index.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
+				print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
 			}
 			else
 			{
@@ -292,8 +292,8 @@ if ($resql)
 			// Amount
 			print '<td class="right" width="100">'.price($obj->amount).'</td>';
 			if (! $i) $totalarray['nbfield']++;
-		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-			$totalarray['totalttc'] += $obj->amount;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalttcfield';
+			$totalarray['val']['totalttcfield'] += $obj->amount;
 
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
@@ -307,20 +307,7 @@ if ($resql)
 		}
 
 		// Show total line
-		if (isset($totalarray['totalttcfield']))
-		{
-		    print '<tr class="liste_total">';
-            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-	        print '<td></td>';
-	        print '<td></td>';
-	        print '<td></td>';
-	        print '</tr>';
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 		print '</table>';
 		print '</div>';

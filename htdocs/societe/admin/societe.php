@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -311,17 +311,17 @@ if ($action == 'sethideinactivethirdparty')
 	}
 }
 if($action=='setonsearchandlistgooncustomerorsuppliercard'){
-       $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
-       $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
-       if (! $res > 0) $error++;
-       if (! $error)
-       {
-               setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-       }
-       else
-       {
-               setEventMessages($langs->trans("Error"), null, 'errors');
-       }
+    $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*
@@ -351,7 +351,7 @@ foreach ($conf->modules_parts['models'] as $mo)		$dirsociete[]=$mo.'core/modules
 print load_fiche_titre($langs->trans("CompanyCodeChecker"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
@@ -359,6 +359,8 @@ print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
+
+$arrayofmodules = array();
 
 foreach ($dirsociete as $dirroot)
 {
@@ -388,38 +390,44 @@ foreach ($dirsociete as $dirroot)
     			if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
     			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-    			print '<tr class="oddeven">'."\n";
-    			print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
-    			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
-    			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
-
-    			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
-    			{
-    				print '<td class="center">'."\n";
-    				print img_picto($langs->trans("Activated"), 'switch_on');
-    				print "</td>\n";
-    			}
-    			else
-    			{
-    				$disabled = false;
-    				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
-    				print '<td class="center">';
-    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
-    				print img_picto($langs->trans("Disabled"), 'switch_off');
-    				if (! $disabled) print '</a>';
-    				print '</td>';
-    			}
-
-    			print '<td class="center">';
-    			$s=$modCodeTiers->getToolTip($langs, null, -1);
-    			print $form->textwithpicto('', $s, 1);
-    			print '</td>';
-
-    			print '</tr>';
+    			$arrayofmodules[$file] = $modCodeTiers;
     		}
     	}
     	closedir($handle);
     }
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+foreach($arrayofmodules as $file => $modCodeTiers)
+{
+	print '<tr class="oddeven">'."\n";
+	print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
+	print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
+
+	if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
+	{
+		print '<td class="center">'."\n";
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print "</td>\n";
+	}
+	else
+	{
+		$disabled = (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+		print '<td class="center">';
+		if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		if (! $disabled) print '</a>';
+		print '</td>';
+	}
+
+	print '<td class="center">';
+	$s=$modCodeTiers->getToolTip($langs, null, -1);
+	print $form->textwithpicto('', $s, 1);
+	print '</td>';
+
+	print '</tr>';
 }
 print '</table>';
 print '</div>';
@@ -432,7 +440,7 @@ print "<br>";
 print load_fiche_titre($langs->trans("AccountCodeManager"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -440,6 +448,8 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
+
+$arrayofmodules = array();
 
 foreach ($dirsociete as $dirroot)
 {
@@ -464,33 +474,41 @@ foreach ($dirsociete as $dirroot)
 
     			$modCodeCompta = new $file;
 
-    			print '<tr class="oddeven">';
-    			print '<td>'.$modCodeCompta->name."</td><td>\n";
-    			print $modCodeCompta->info($langs);
-    			print '</td>';
-    			print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
-
-    			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
-    			{
-    				print '<td class="center">';
-    				print img_picto($langs->trans("Activated"), 'switch_on');
-    				print '</td>';
-    			}
-    			else
-    			{
-    				print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
-    				print img_picto($langs->trans("Disabled"), 'switch_off');
-    				print '</a></td>';
-    			}
-    			print '<td class="center">';
-    			$s=$modCodeCompta->getToolTip($langs, null, -1);
-    			print $form->textwithpicto('', $s, 1);
-    			print '</td>';
-    			print "</tr>\n";
+    			$arrayofmodules[$file] = $modCodeCompta;
     		}
     	}
-    	closedir($handle);
+        closedir($handle);
     }
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+
+foreach($arrayofmodules as $file => $modCodeCompta)
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$modCodeCompta->name."</td><td>\n";
+    print $modCodeCompta->info($langs);
+    print '</td>';
+    print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
+
+    if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
+    {
+    	print '<td class="center">';
+    	print img_picto($langs->trans("Activated"), 'switch_on');
+    	print '</td>';
+    }
+    else
+    {
+    	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
+    	print img_picto($langs->trans("Disabled"), 'switch_off');
+    	print '</a></td>';
+    }
+    print '<td class="center">';
+    $s=$modCodeCompta->getToolTip($langs, null, -1);
+    print $form->textwithpicto('', $s, 1);
+    print '</td>';
+    print "</tr>\n";
 }
 print "</table>\n";
 print '</div>';
@@ -526,7 +544,7 @@ else
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -649,7 +667,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("CompanyIdProfChecker"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -750,7 +768,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
@@ -813,12 +831,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
@@ -830,12 +848,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
@@ -849,12 +867,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
@@ -867,12 +885,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

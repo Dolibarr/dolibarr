@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,28 +29,11 @@
  *	Class to build HTML component for third parties management
  *	Only common components are here.
  */
-class FormCompany
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+class FormCompany extends Form
 {
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 *	Constructor
-	 *
-	 *	@param	DoliDB	$db		Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -63,17 +46,17 @@ class FormCompany
 	public function typent_array($mode = 0, $filter = '')
 	{
         // phpcs:enable
-		global $langs,$mysoc;
+		global $langs, $mysoc;
 
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
-		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
-		if ($filter) $sql.=" ".$filter;
-		$sql.= " ORDER by position, id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
+		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id) ? '0' : $mysoc->country_id).")";
+		if ($filter) $sql .= " ".$filter;
+		$sql .= " ORDER by position, id";
 		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
@@ -82,11 +65,11 @@ class FormCompany
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($resql);
-				if (! $mode) $key=$objp->id;
-				else $key=$objp->code;
+				if (!$mode) $key = $objp->id;
+				else $key = $objp->code;
 				if ($langs->trans($objp->code) != $objp->code) $effs[$key] = $langs->trans($objp->code);
 				else $effs[$key] = $objp->libelle;
-				if ($effs[$key]=='-') $effs[$key]='';
+				if ($effs[$key] == '-') $effs[$key] = '';
 				$i++;
 			}
 			$this->db->free($resql);
@@ -110,11 +93,11 @@ class FormCompany
 
 		$sql = "SELECT id, code, libelle";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
-		$sql.= " WHERE active = 1";
-		if ($filter) $sql.=" ".$filter;
+		$sql .= " WHERE active = 1";
+		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY id ASC";
 		dol_syslog(get_class($this).'::effectif_array', LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
@@ -123,10 +106,10 @@ class FormCompany
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($resql);
-				if (! $mode) $key=$objp->id;
-				else $key=$objp->code;
+				if (!$mode) $key = $objp->id;
+				else $key = $objp->code;
 
-				$effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
+				$effs[$key] = $objp->libelle != '-' ? $objp->libelle : '';
 				$i++;
 			}
 			$this->db->free($resql);
@@ -156,9 +139,9 @@ class FormCompany
 
 		dol_syslog(get_class($this).'::form_prospect_level', LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
-		$sql.= " WHERE active > 0";
-		$sql.= " ORDER BY sortorder";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+		$sql .= " WHERE active > 0";
+		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -181,7 +164,7 @@ class FormCompany
 			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		if (! empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
@@ -211,97 +194,97 @@ class FormCompany
      *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
      *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	string	$selected        	Code state preselected (mus be state id)
+	 *    @param	int		$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country()
 	 */
-	public function select_state($selected = '', $country_codeid = 0, $htmlname = 'state_id')
+	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id')
 	{
         // phpcs:enable
-		global $conf,$langs,$user;
+		global $conf, $langs, $user;
 
 		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid, LOG_DEBUG);
 
 		$langs->load("dict");
 
-		$out='';
+		$out = '';
 
 		// Serch departements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
-		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$this->db->escape($country_codeid)."'";
-		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
+		if ($country_codeid && !is_numeric($country_codeid)) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
 		$sql .= " ORDER BY c.code, d.code_departement";
 
-		$result=$this->db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
-			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'">';
-			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
+			if (!empty($htmlname)) $out .= '<select id="'.$htmlname.'" class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'">';
+			if ($country_codeid) $out .= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			dol_syslog(get_class($this)."::select_departement num=".$num, LOG_DEBUG);
 			if ($num)
 			{
-				$country='';
+				$country = '';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
 					if ($obj->code == '0')		// Le code peut etre une chaine
 					{
-						$out.= '<option value="0">&nbsp;</option>';
+						$out .= '<option value="0">&nbsp;</option>';
 					}
 					else {
-						if (! $country || $country != $obj->country)
+						if (!$country || $country != $obj->country)
 						{
 							// Affiche la rupture si on est en mode liste multipays
-							if (! $country_codeid && $obj->country_code)
+							if (!$country_codeid && $obj->country_code)
 							{
-								$out.= '<option value="-1" disabled>----- '.$obj->country." -----</option>\n";
-								$country=$obj->country;
+								$out .= '<option value="-1" disabled>----- '.$obj->country." -----</option>\n";
+								$country = $obj->country;
 							}
 						}
 
-						if ((! empty($selected) && $selected == $obj->rowid)
-						 || (empty($selected) && ! empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
+						if ((!empty($selected) && $selected == $obj->rowid)
+						 || (empty($selected) && !empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected>';
+							$out .= '<option value="'.$obj->rowid.'" selected>';
 						}
 						else
 						{
-							$out.= '<option value="'.$obj->rowid.'">';
+							$out .= '<option value="'.$obj->rowid.'">';
 						}
 
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 						if (!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
 						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
-							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
-								$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out .= $obj->region_name.' - '.$obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 							else {
-								$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+								$out .= $obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 						}
 						else {
-							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
-								$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out .= $obj->region_name.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 							else {
-								$out.= ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+								$out .= ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 						}
 
-						$out.= '</option>';
+						$out .= '</option>';
 					}
 					$i++;
 				}
 			}
-			if (! empty($htmlname)) $out.= '</select>';
-			if (! empty($htmlname) && $user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if (!empty($htmlname)) $out .= '</select>';
+			if (!empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		else
 		{
@@ -309,9 +292,9 @@ class FormCompany
 		}
 
 		// Make select dynamic
-		if (! empty($htmlname))
+		if (!empty($htmlname))
 		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
 		}
 
@@ -333,16 +316,16 @@ class FormCompany
 	public function select_region($selected = '', $htmlname = 'region_id')
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 		$langs->load("dict");
 
 		$sql = "SELECT r.rowid, r.code_region as code, r.nom as label, r.active, c.code as country_code, c.label as country";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
-		$sql.= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
-		$sql.= " ORDER BY c.code, c.label ASC";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
+		$sql .= " ORDER BY c.code, c.label ASC";
 
 		dol_syslog(get_class($this)."::select_region", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -350,7 +333,7 @@ class FormCompany
 			$i = 0;
 			if ($num)
 			{
-				$country='';
+				$country = '';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -361,10 +344,10 @@ class FormCompany
 						if ($country == '' || $country != $obj->country)
 						{
 							// Show break
-							$key=$langs->trans("Country".strtoupper($obj->country_code));
-							$valuetoshow=($key != "Country".strtoupper($obj->country_code))?$obj->country_code." - ".$key:$obj->country;
+							$key = $langs->trans("Country".strtoupper($obj->country_code));
+							$valuetoshow = ($key != "Country".strtoupper($obj->country_code)) ? $obj->country_code." - ".$key : $obj->country;
 							print '<option value="-1" disabled>----- '.$valuetoshow." -----</option>\n";
-							$country=$obj->country;
+							$country = $obj->country;
 						}
 
 						if ($selected > 0 && $selected == $obj->code)
@@ -391,7 +374,7 @@ class FormCompany
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   	Title preselected
+	 *  @param  string	$selected   	Civility/Title code preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
@@ -399,20 +382,20 @@ class FormCompany
 	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth100')
 	{
         // phpcs:enable
-		global $conf,$langs,$user;
+		global $conf, $langs, $user;
 		$langs->load("dict");
 
-		$out='';
+		$out = '';
 
 		$sql = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_civility";
-		$sql.= " WHERE active = 1";
+		$sql .= " WHERE active = 1";
 
 		dol_syslog("Form::select_civility", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-			$out.= '<option value="">&nbsp;</option>';
+			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			$out .= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -422,20 +405,20 @@ class FormCompany
 					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->code)
 					{
-						$out.= '<option value="'.$obj->code.'" selected>';
+						$out .= '<option value="'.$obj->code.'" selected>';
 					}
 					else
 					{
-						$out.= '<option value="'.$obj->code.'">';
+						$out .= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label!='-'?$obj->label:''));
-					$out.= '</option>';
+					$out .= ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+					$out .= '</option>';
 					$i++;
 				}
 			}
-			$out.= '</select>';
-			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= '</select>';
+			if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		else
 		{
@@ -477,10 +460,10 @@ class FormCompany
 	public function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code')
 	{
         // phpcs:enable
-		global $conf,$langs,$user;
+		global $conf, $langs, $user;
 		$langs->load("dict");
 
-		$out='';
+		$out = '';
 
 		// On recherche les formes juridiques actives des pays actifs
 		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
@@ -492,70 +475,70 @@ class FormCompany
 		$sql .= " ORDER BY c.code";
 
 		dol_syslog(get_class($this)."::select_juridicalstatus", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<div id="particulier2" class="visible">';
-			$out.= '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';	// When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
+			$out .= '<div id="particulier2" class="visible">';
+			$out .= '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
+			if ($country_codeid) $out .= '<option value="0">&nbsp;</option>'; // When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
 
 			$num = $this->db->num_rows($resql);
 			if ($num)
 			{
 				$i = 0;
-				$country=''; $arraydata=array();
+				$country = ''; $arraydata = array();
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj->code)		// We exclude empty line, we will add it later
 					{
-						$labelcountry=(($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code) ? $langs->trans("Country".$obj->country_code) : $obj->country);
-						$labeljs=(($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code) ? $langs->trans("JuridicalStatus".$obj->code) : ($obj->label!='-'?$obj->label:''));	// $obj->label is already in output charset (converted by database driver)
-						$arraydata[$obj->code]=array('code'=>$obj->code, 'label'=>$labeljs, 'label_sort'=>$labelcountry.'_'.$labeljs, 'country_code'=>$obj->country_code, 'country'=>$labelcountry);
+						$labelcountry = (($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) ? $langs->trans("Country".$obj->country_code) : $obj->country);
+						$labeljs = (($langs->trans("JuridicalStatus".$obj->code) != "JuridicalStatus".$obj->code) ? $langs->trans("JuridicalStatus".$obj->code) : ($obj->label != '-' ? $obj->label : '')); // $obj->label is already in output charset (converted by database driver)
+						$arraydata[$obj->code] = array('code'=>$obj->code, 'label'=>$labeljs, 'label_sort'=>$labelcountry.'_'.$labeljs, 'country_code'=>$obj->country_code, 'country'=>$labelcountry);
 					}
 					$i++;
 				}
 
-				$arraydata=dol_sort_array($arraydata, 'label_sort', 'ASC');
+				$arraydata = dol_sort_array($arraydata, 'label_sort', 'ASC');
 				if (empty($country_codeid))	// Introduce empty value (if $country_codeid not empty, empty value was already added)
 				{
-					$arraydata[0]=array('code'=>0, 'label'=>'', 'label_sort'=>'_', 'country_code'=>'', 'country'=>'');
+					$arraydata[0] = array('code'=>0, 'label'=>'', 'label_sort'=>'_', 'country_code'=>'', 'country'=>'');
 				}
 
-				foreach($arraydata as $key => $val)
+				foreach ($arraydata as $key => $val)
 				{
-					if (! $country || $country != $val['country'])
+					if (!$country || $country != $val['country'])
 					{
 						// Show break when we are in multi country mode
 						if (empty($country_codeid) && $val['country_code'])
 						{
-							$out.= '<option value="0" disabled class="selectoptiondisabledwhite">----- '.$val['country']." -----</option>\n";
-							$country=$val['country'];
+							$out .= '<option value="0" disabled class="selectoptiondisabledwhite">----- '.$val['country']." -----</option>\n";
+							$country = $val['country'];
 						}
 					}
 
 					if ($selected > 0 && $selected == $val['code'])
 					{
-						$out.= '<option value="'.$val['code'].'" selected>';
+						$out .= '<option value="'.$val['code'].'" selected>';
 					}
 					else
 					{
-						$out.= '<option value="'.$val['code'].'">';
+						$out .= '<option value="'.$val['code'].'">';
 					}
 					// If translation exists, we use it, otherwise we use default label in database
-					$out.= $val['label'];
-					$out.= '</option>';
+					$out .= $val['label'];
+					$out .= '</option>';
 				}
 			}
-			$out.= '</select>';
-			if ($user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= '</select>';
+			if ($user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 		    // Make select dynamic
-        	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 	        $out .= ajax_combobox($htmlname);
 
-			$out.= '</div>';
+			$out .= '</div>';
 		}
 		else
 		{
@@ -583,15 +566,15 @@ class FormCompany
 	{
 		global $conf, $langs;
 
-		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 		{
 			// Use Ajax search
-			$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
+			$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT) ? $conf->global->COMPANY_USE_SEARCH_TO_SELECT : 2);
 
-			$socid=0; $name='';
+			$socid = 0; $name = '';
 			if ($selected > 0)
 			{
-				$tmpthirdparty=new Societe($this->db);
+				$tmpthirdparty = new Societe($this->db);
 				$result = $tmpthirdparty->fetch($selected);
 				if ($result > 0)
 				{
@@ -601,13 +584,13 @@ class FormCompany
 			}
 
 
-			$events=array();
+			$events = array();
 			// Add an entry 'method' to say 'yes, we must execute url with param action = method';
 			// Add an entry 'url' to say which url to execute
 			// Add an entry htmlname to say which element we must change once url is called
 			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines
 			// To refresh contacts list on thirdparty list change
-			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 
 			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
 			{
@@ -663,29 +646,29 @@ class FormCompany
 
 			print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
 			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
-			print ajax_autocompleter(($socid?$socid:-1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
+			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		}
 		else
 		{
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name FROM";
-			$sql.= " ".MAIN_DB_PREFIX."societe as s";
-			$sql.= " WHERE s.entity IN (".getEntity('societe').")";
+			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto))
 			{
-				$sql.= " AND s.rowid IN (".join(',', $limitto).")";
+				$sql .= " AND s.rowid IN (".join(',', $limitto).")";
 			}
-			$sql.= " ORDER BY s.nom ASC";
+			$sql .= " ORDER BY s.nom ASC";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				print '<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"';
+				print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax)
 				{
-					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
 					print ' onChange="'.$javaScript.'"';
 				}
 				print '>';
@@ -697,8 +680,8 @@ class FormCompany
 					{
 						$obj = $this->db->fetch_object($resql);
 						if ($i == 0) $firstCompany = $obj->rowid;
-						$disabled=0;
-						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid, $limitto)) $disabled=1;
+						$disabled = 0;
+						if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) $disabled = 1;
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
 							print '<option value="'.$obj->rowid.'"';
@@ -712,16 +695,17 @@ class FormCompany
 							if ($disabled) print ' disabled';
 							print '>'.dol_trunc($obj->name, 24).'</option>';
 						}
-						$i ++;
+						$i++;
 					}
 				}
 				print "</select>\n";
+				print ajax_combobox($htmlname);
 				return $firstCompany;
 			}
 			else
 			{
 				dol_print_error($this->db);
-				print 'Error sql';
+				return 0;
 			}
 		}
 	}
@@ -745,9 +729,9 @@ class FormCompany
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
-			print '<select class="flat valignmiddle'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			print '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
-			foreach($lesTypes as $key=>$value)
+			foreach ($lesTypes as $key=>$value)
 			{
 				print '<option value="'.$key.'"';
 				if ($key == $selected) print ' selected';
@@ -760,6 +744,45 @@ class FormCompany
 
 			print "\n";
 		}
+	}
+
+	/**
+	 * showContactRoles on view and edit mode
+	 *
+	 * @param string $htmlname Html component name and id
+	 * @param Contact $contact Contact Obejct
+	 * @param string $rendermode view, edit
+	 * @param array $selected $key=>$val $val is selected Roles for input mode
+	 * @return string   String with contacts roles
+	 */
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
+	{
+		if ($rendermode === 'view') {
+			$toprint = array();
+			foreach ($contact->roles as $key => $val) {
+				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa;">'.$val['label'].'</li>';
+			}
+			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="'.$htmlname.'"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+		}
+
+		if ($rendermode === 'edit')
+		{
+			$contactType = $contact->listeTypeContacts('external', '', 1);
+			if (count($selected) > 0) {
+				$newselected = array();
+				foreach ($selected as $key=>$val) {
+					if (is_array($val) && array_key_exists('id', $val) && in_array($val['id'], array_keys($contactType))) {
+						$newselected[] = $val['id'];
+					} else {
+						break;
+					}
+				}
+				if (count($newselected) > 0) $selected = $newselected;
+			}
+			return $this->multiselectarray($htmlname, $contactType, $selected);
+		}
+
+		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -780,17 +803,17 @@ class FormCompany
         // phpcs:enable
 		global $conf;
 
-		$out='';
+		$out = '';
 
-		$size='';
-		if (!empty($fieldsize)) $size='size="'.$fieldsize.'"';
+		$size = '';
+		if (!empty($fieldsize)) $size = 'size="'.$fieldsize.'"';
 
 		if ($conf->use_javascript_ajax && empty($disableautocomplete))
 		{
-			$out.= ajax_multiautocompleter($htmlname, $fields, DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
-			$moreattrib.=' autocomplete="off"';
+			$out .= ajax_multiautocompleter($htmlname, $fields, DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
+			$moreattrib .= ' autocomplete="off"';
 		}
-		$out.= '<input id="'.$htmlname.'" class="maxwidthonsmartphone'.($morecss?' '.$morecss:'').'" type="text"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
+		$out .= '<input id="'.$htmlname.'" class="maxwidthonsmartphone'.($morecss ? ' '.$morecss : '').'" type="text"'.($moreattrib ? ' '.$moreattrib : '').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
 
 		return $out;
 	}
@@ -809,40 +832,40 @@ class FormCompany
     public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
     {
         // phpcs:enable
-        global $conf,$langs;
+        global $conf, $langs;
 
-        $formlength=0;
+        $formlength = 0;
         if (empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
         	if ($country_code == 'FR')
         	{
         		if (isset($idprof)) {
-        			if ($idprof==1) $formlength=9;
-        			elseif ($idprof==2) $formlength=14;
-        			elseif ($idprof==3) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
-        			elseif ($idprof==4) $formlength=32;     // No maximum as we need to include a town name in this id
+        			if ($idprof == 1) $formlength = 9;
+        			elseif ($idprof == 2) $formlength = 14;
+        			elseif ($idprof == 3) $formlength = 5; // 4 chiffres et 1 lettre depuis janvier
+        			elseif ($idprof == 4) $formlength = 32; // No maximum as we need to include a town name in this id
         		}
         	}
         	elseif ($country_code == 'ES')
         	{
-        		if ($idprof==1) $formlength=9;  //CIF/NIF/NIE 9 digits
-        		if ($idprof==2) $formlength=12; //NASS 12 digits without /
-        		if ($idprof==3) $formlength=5;  //CNAE 5 digits
-        		if ($idprof==4) $formlength=32; //depend of college
+        		if ($idprof == 1) $formlength = 9; //CIF/NIF/NIE 9 digits
+        		if ($idprof == 2) $formlength = 12; //NASS 12 digits without /
+        		if ($idprof == 3) $formlength = 5; //CNAE 5 digits
+        		if ($idprof == 4) $formlength = 32; //depend of college
         	}
         }
 
-        $selected=$preselected;
-        if (! $selected && isset($idprof)) {
-        	if ($idprof==1 && ! empty($this->idprof1)) $selected=$this->idprof1;
-        	elseif ($idprof==2 && ! empty($this->idprof2)) $selected=$this->idprof2;
-        	elseif ($idprof==3 && ! empty($this->idprof3)) $selected=$this->idprof3;
-        	elseif ($idprof==4 && ! empty($this->idprof4)) $selected=$this->idprof4;
+        $selected = $preselected;
+        if (!$selected && isset($idprof)) {
+        	if ($idprof == 1 && !empty($this->idprof1)) $selected = $this->idprof1;
+        	elseif ($idprof == 2 && !empty($this->idprof2)) $selected = $this->idprof2;
+        	elseif ($idprof == 3 && !empty($this->idprof3)) $selected = $this->idprof3;
+        	elseif ($idprof == 4 && !empty($this->idprof4)) $selected = $this->idprof4;
         }
 
-        $maxlength=$formlength;
-        if (empty($formlength)) { $formlength=24; $maxlength=128; }
+        $maxlength = $formlength;
+        if (empty($formlength)) { $formlength = 24; $maxlength = 128; }
 
-        $out = '<input type="text" '.($morecss?'class="'.$morecss.'" ':'').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $out = '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
     }
@@ -859,19 +882,19 @@ class FormCompany
     public function select_localtax($local, $selected, $htmlname)
     {
         // phpcs:enable
-        $tax=get_localtax_by_third($local);
+        $tax = get_localtax_by_third($local);
 
         $num = $this->db->num_rows($tax);
         $i = 0;
     	if ($num)
     	{
-    		$valors=explode(":", $tax);
+    		$valors = explode(":", $tax);
 
     		if (count($valors) > 1)
     		{
     			//montar select
     			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-    			while ($i <= (count($valors))-1)
+    			while ($i <= (count($valors)) - 1)
     			{
     				if ($selected == $valors[$i])
     				{
@@ -903,37 +926,37 @@ class FormCompany
     public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
     {
 
-    	global $conf,$langs;
+    	global $conf, $langs;
 
     	$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
-    	if ($typeinput=='form') {
-	    	if ($selected == '') $out .= '<option value="-1">&nbsp;</option>';
+    	if ($typeinput == 'form') {
+    		if ($selected == '' || $selected == '-1') $out .= '<option value="-1">&nbsp;</option>';
 	    	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-	    		$out .= '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+	    		$out .= '<option value="2"'.($selected == 2 ? ' selected' : '').'>'.$langs->trans('Prospect').'</option>';
 	    	}
 	    	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
-	    		$out .= '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+	    		$out .= '<option value="3"'.($selected == 3 ? ' selected' : '').'>'.$langs->trans('ProspectCustomer').'</option>';
 	    	}
 	    	if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-	    		$out .= '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+	    		$out .= '<option value="1"'.($selected == 1 ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
 	    	}
-	    	$out .= '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-    	} elseif ($typeinput=='list') {
-    		$out .=  '<option value="-1"'.($selected==''?' selected':'').'>&nbsp;</option>';
+	    	$out .= '<option value="0"'.((string) $selected == '0' ? ' selected' : '').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+    	} elseif ($typeinput == 'list') {
+    		$out .= '<option value="-1"'.(($selected == '' || $selected == '-1') ? ' selected' : '').'>&nbsp;</option>';
     		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-    			$out .=  '<option value="1,3"'.($selected=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
+    			$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
     		}
     		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-    			$out .=  '<option value="2,3"'.($selected=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+    			$out .= '<option value="2,3"'.($selected == '2,3' ? ' selected' : '').'>'.$langs->trans('Prospect').'</option>';
     		}
-    		$out .=  '<option value="4"'.($selected=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
-    		$out .=  '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
-    	} elseif ($typeinput=='admin') {
+    		$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
+    		$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Others').'</option>';
+    	} elseif ($typeinput == 'admin') {
     		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
-    			$out .= '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+    			$out .= '<option value="3"'.($selected == 3 ? ' selected' : '').'>'.$langs->trans('ProspectCustomer').'</option>';
     		}
     		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-    			$out .= '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+    			$out .= '<option value="1"'.($selected == 1 ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
     		}
     	}
     	$out .= '</select>';

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -421,7 +421,7 @@ $h++;
 dol_fiche_head($head, 'website', '', -1);
 
 
-print $langs->trans("WebsiteSetupDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><br>';
 print "<br>\n";
 
 
@@ -447,7 +447,7 @@ if ($id)
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 
     // Form to add a new line
     if ($tabname[$id])
@@ -532,7 +532,7 @@ if ($id)
             print '<input type="hidden" name="page" value="'.$page.'">';
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
 
             // Title of lines
             print '<tr class="liste_titre">';
@@ -572,7 +572,6 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
                 print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
@@ -618,14 +617,14 @@ if ($id)
 
                     // Active
                     print '<td align="center" class="nowrap">';
-                    print '<a href="'.$url.'action='.$acts[$obj->status].'">'.$actl[$obj->status].'</a>';
+                    print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status?1:0)].'">'.$actl[($obj->status?1:0)].'</a>';
                     print "</td>";
 
                     // Modify link
                     print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 
                     // Delete link
-                    if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete">'.img_delete().'</a></td>';
                     else print '<td align="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
                     print "</tr>\n";

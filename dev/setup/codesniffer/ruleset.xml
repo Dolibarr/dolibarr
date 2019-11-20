@@ -5,7 +5,9 @@
 
 	<exclude-pattern type="relative">build/html</exclude-pattern>
 	<exclude-pattern type="relative">build/aps</exclude-pattern>
+	<exclude-pattern type="relative">dev/namespacemig</exclude-pattern>
 	<exclude-pattern type="relative">documents</exclude-pattern>
+	<exclude-pattern type="relative">htdocs/core/class/lessc.class.php</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/custom</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/install/doctemplates/websites</exclude-pattern>
@@ -66,7 +68,9 @@
 		<severity>0</severity>
     </rule>
 
-    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
+   		<severity>0</severity>
+    </rule>
 
     <!--
     <rule ref="Generic.Commenting.Todo" />
@@ -75,9 +79,12 @@
 	<!-- Warning if action on same line than if -->
 	<!--
 		<rule ref="Generic.ControlStructures.InlineControlStructure">
-		<properties> <property name="error" value="false"/> </properties>
+		<properties>
+			<property name="error" value="false"/>
+		</properties>
 		</rule>
 	-->
+
 
     <!-- PHP code MUST use only UTF-8 without BOM. -->
     <rule ref="Generic.Files.ByteOrderMark"/>
@@ -97,8 +104,11 @@
 		</properties>
 	</rule>
 
-    <!-- To disallow several statements on same line -->
-	<!-- <rule ref="Generic.Formatting.DisallowMultipleStatements" /> -->
+    <!-- Disallow several statements on same line -->
+	<!--  We want to allow 'if () { ...small code... }' on same line for better code compacity and readability -->
+	<rule ref="Generic.Formatting.DisallowMultipleStatements">
+		<severity>0</severity>
+	</rule>
 
 	<!-- Have 2 chars padding maximum and always show as errors -->
 	<!--
@@ -112,13 +122,17 @@
     <rule ref="Generic.Functions.CallTimePassByReference" />
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
+
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">	<!-- We don't want this rule, we want to be able to align params on several similare functions on different lines -->
+
+    <!-- Disallow several spaces after comma -->
+	<!-- We want to allow this because we want to be able to align params on several similare functions on different lines -->
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
 		<severity>0</severity>
 	</rule>
 
@@ -152,7 +166,10 @@
     <rule ref="Generic.PHP.ForbiddenFunctions" />
 
     <!-- Warning when using @ before functions -->
-    <!-- <rule ref="Generic.PHP.NoSilencedErrors" /> -->
+    <!-- We want this. Some features need this -->
+    <rule ref="Generic.PHP.NoSilencedErrors">
+        <severity>0</severity>
+    </rule>
 
 	<!-- Say if null, true, false must be uppercase (Rule 2.5 of PSR2 https://www.php-fig.org/psr/psr-2/) -->
 	<rule ref="Generic.PHP.LowerCaseConstant" />
@@ -170,12 +187,21 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
+	<arg name="tab-width" value="4"/>
+	<rule ref="Generic.WhiteSpace.ScopeIndent">
+	  <properties>
+	    <property name="indent" value="4"/>
+	    <property name="tabIndent" value="true"/>
+	  </properties>
+	</rule>
+
+
     <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
 
     <!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <properties>
-            <property name="ignoreBlankLines" value="true"/>
+            <property name="ignoreBlankLines" value="false"/>
         </properties>
     </rule>
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
@@ -187,6 +213,8 @@
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
         <severity>0</severity>
     </rule>
+
+    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
@@ -310,22 +338,29 @@
 
     <rule ref="PEAR.Commenting.InlineComment" />
 
-	<!-- <rule ref="PEAR.ControlStructures.ControlSignature" /> -->
+	<!-- Check position of { after a control structure like if (), while (), etc... -->
+	<!--
+	<rule ref="PEAR.ControlStructures.ControlSignature" />
+	-->
 
 	<!-- <rule ref="PEAR.ControlStructures.MultiLineCondition" /> -->
 
 	<!-- Test if () are removed for includes -->
 	<rule ref="PEAR.Files.IncludingFile" />
+
     <!-- Disable some error messages that we do not want. -->
+
     <rule ref="PEAR.Files.IncludingFile.UseInclude">
         <severity>0</severity>
     </rule>
+    <!-- TODO Enable this test. We should use require for include in prior of include when out of if -->
     <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Files.IncludingFile.UseRequire">
         <severity>0</severity>
     </rule>
+    <!-- TODO Enable this test. We should use require for include in prior of include when out of if -->
     <rule ref="PEAR.Files.IncludingFile.UseRequireOnce">
         <severity>0</severity>
     </rule>
@@ -334,12 +369,15 @@
 
 	<rule ref="PEAR.Functions.FunctionCallSignature" />
 
+    <!-- TODO Enable this test. -->
     <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
         <severity>0</severity>
     </rule>
+    <!-- TODO Enable this test. -->
     <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
     </rule>
+
 	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
 	    <severity>0</severity>
 	</rule>

@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - languages
-LinkANewFile=لینک فایل جدید / سند
-LinkedFiles=اسناد و فایل های مرتبط
-NoLinkFound=بدون لینک ها
-LinkComplete=فایل با موفقیت ربط داده شده است
-ErrorFileNotLinked=فایل نمی تواند مرتبط شود
-LinkRemoved=لینک٪ s را حذف شده
-ErrorFailedToDeleteLink= برای حذف لینک <b>«٪ s»</b> شکست خورد
-ErrorFailedToUpdateLink= برای به روز رسانی لینک <b>«٪ s»</b> شکست خورد
-URLToLink=URL to link
+LinkANewFile=پیوند یک فایل/سند
+LinkedFiles=اسناد و فایل‌های مرتبط
+NoLinkFound=پیوند ثبت‌شده‌ای وجود ندارد
+LinkComplete=فایل با موفقیت پیوند شد
+ErrorFileNotLinked=امکان پیوند فایل وجود ندارد
+LinkRemoved=پیوند %s برداشته شد
+ErrorFailedToDeleteLink= امکان حذف پیوند '<b>%s</b>' نبود
+ErrorFailedToUpdateLink= امکان روزآمدسازی پیوند '<b>%s</b>' نبود
+URLToLink=نشانی برای پیوند کردن

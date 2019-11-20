@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuration du module Stripe
 StripeOrCBDoPayment=Payer avec carte de crédit ou Stripe
-STRIPE_PAYONLINE_SENDEMAIL=EMail à avertir après un paiement (succès ou non)
 YouWillBeRedirectedOnStripe=Vous serez redirigé sur la page Stripe sécurisée pour vous fournir des informations sur votre carte de crédit
 SetupStripeToHavePaymentCreatedAutomatically=Configurez votre Stripe avec url <b> %s</b> pour que le paiement soit créé automatiquement lorsqu'il est validé par Stripe.
 STRIPE_CGI_URL_V2=Url of Stripe CGI module de paiement

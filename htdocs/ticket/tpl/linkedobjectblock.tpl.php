@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
@@ -22,43 +21,69 @@ if (empty($conf) || ! is_object($conf))
 	print "Error, template page can't be called as URL";
 	exit;
 }
-?>
 
-<!-- BEGIN PHP TEMPLATE -->
+print "<!-- BEGIN PHP TEMPLATE -->\n";
 
-<?php
+
+global $user;
+global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
-$langs->load('ticket');
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-echo '<br>';
-print load_fiche_titre($langs->trans('RelatedTickets'));
-?>
-<table class="noborder" width="100%">
-<tr class="liste_titre">
-    <td><?php echo $langs->trans("Subject"); ?></td>
-    <td class="center"><?php echo $langs->trans("DateCreation"); ?></td>
-    <td class="center"><?php echo $langs->trans("Customer"); ?></td>
-    <td class="center"><?php echo $langs->trans("Status"); ?></td>
-</tr>
-<?php
-foreach ($linkedObjectBlock as $object) {
-?>
-<tr class="oddeven">
-    <td>
-        <a href="<?php echo dol_buildpath("/ticket/card.php", 1).'?track_id='.$object->track_id; ?>">
-    <?php echo img_object($langs->trans("ShowTicket"), "ticket") . ' ' . (! empty($object->subject) ? ' '.$object->subject : ''); ?>
-        </a>
-    </td>
-    <td class="center"><?php echo dol_print_date($object->datec, 'day'); ?></td>
-    <?php
-    $object->socid = $object->fk_soc;
-    $object->fetch_thirdparty();
-    ?>
-    <td class="center"><?php echo $object->thirdparty->getNomUrl(1); ?></td>
-    <td class="center"><?php echo $object->getLibstatut(2); ?></td>
-</tr>
-<?php } ?>
-</table>
 
-<!-- END PHP TEMPLATE -->
+// Load translation files required by the page
+$langs->load('ticket');
+
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'datec', 'desc', 0, 0, 1);
+
+$total=0;
+$ilink=0;
+foreach($linkedObjectBlock as $key => $objectlink)
+{
+	$ilink++;
+
+	$trclass='oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
+	?>
+    <tr class="<?php echo $trclass; ?>" >
+        <td class="linkedcol-element" ><?php echo $langs->trans("Ticket"); ?>
+        <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
+        </td>
+        <td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
+    	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
+	    <?php
+	    //$objectlink->socid = $objectlink->fk_soc;
+	    //$objectlink->fetch_thirdparty();
+	    ?>
+    	<td class="linkedcol-amount right"><?php //echo $objectlink->thirdparty->getNomUrl(1); ?></td>
+    	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action right">
+    		<?php
+    		// For now, shipments must stay linked to order, so link is not deletable
+    		if($object->element != 'shipping') {
+    			?>
+    			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
+    			<?php
+    		}
+    		?>
+    	</td>
+</tr>
+	<?php
+}
+if (count($linkedObjectBlock) > 1)
+{
+	?>
+    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
+        <td><?php echo $langs->trans("Total"); ?></td>
+        <td></td>
+    	<td align="center"></td>
+    	<td align="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
+    </tr>
+    <?php
+}
+
+print "<!-- END PHP TEMPLATE -->\n";

@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -52,7 +52,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */
@@ -92,7 +92,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */
@@ -137,9 +137,12 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			return 0;
 		}
 
+		// Get entities
+		$entity = getEntity('ordernumber', 1, $object);
+
 		$date = ($object->date_commande ? $object->date_commande : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date);
+		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 
 		return  $numFinal;
 	}

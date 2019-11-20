@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -91,7 +91,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 }
 
 /*
- * view
+ * View
  */
 
 $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -111,7 +111,7 @@ dol_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"), -1, 'ac
 
 print load_fiche_titre($langs->trans("ChequeReceiptsNumberingModule"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -184,7 +184,7 @@ foreach ($dirmodels as $reldir)
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -233,7 +233,6 @@ print '<br>';
 
 /*
  * Other options
- *
  */
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
@@ -241,7 +240,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="60">&nbsp;</td>';

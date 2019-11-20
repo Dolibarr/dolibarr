@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ if (GETPOST('sondage'))
 $object=new Opensurveysondage($db);
 $result=$object->fetch(0, $numsondage);
 
-$nblignes=$object->fetch_lines();
+$nblines=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
 $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
@@ -62,7 +62,7 @@ $listofvoters=explode(',', $_SESSION["savevoter"]);
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha'))
 {
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	$error=0;
 
@@ -97,7 +97,7 @@ if (GETPOST('ajoutcomment', 'alpha'))
 // Add vote
 if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrome, boutonp_x for firefox
 {
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	//Si le nom est bien entré
 	if (GETPOST('nom', 'nohtml'))
@@ -184,7 +184,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
-for ($i=0; $i<$nblignes; $i++)
+for ($i=0; $i < $nblines; $i++)
 {
 	if (isset($_POST['modifierligne'.$i]))
 	{
@@ -220,7 +220,7 @@ if ($testmodifier)
 		}
 	}
 
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	$idtomodify=$_POST["idtomodify".$modifier];
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
@@ -235,7 +235,7 @@ if ($testmodifier)
 $idcomment=GETPOST('deletecomment', 'int');
 if ($idcomment)
 {
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	$resql = $object->deleteComment($idcomment);
 }
@@ -294,7 +294,6 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-
 	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
 	llxFooterSurvey();
 
@@ -557,7 +556,7 @@ while ($compteur < $num)
 	}
 
 	//demande de confirmation pour modification de ligne
-	for ($i=0; $i<$nblignes; $i++)
+	for ($i=0; $i < $nblines; $i++)
 	{
 		if (isset($_POST["modifierligne".$i]))
 		{

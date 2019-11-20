@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,7 +60,7 @@ $pagenext = $page + 1;
 
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Si l'utilisateur n'a pas le droit de lire cette page
 if(!$user->rights->holiday->read_all) accessforbidden();
@@ -110,8 +110,8 @@ if (empty($reshook))
     // Mass actions
     /*$objectclass='MyObject';
     $objectlabel='MyObject';
-    $permtoread = $user->rights->mymodule->read;
-    $permtodelete = $user->rights->mymodule->delete;
+    $permissiontoread = $user->rights->mymodule->read;
+    $permissiontodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */
@@ -193,7 +193,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';

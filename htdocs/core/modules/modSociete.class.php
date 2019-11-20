@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@
  *	\ingroup    societe
  *	\brief      Fichier de description et activation du module Societe
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -49,7 +49,7 @@ class modSociete extends DolibarrModules
 		$this->numero = 1;
 
 		$this->family = "crm";
-		$this->module_position = '10';
+		$this->module_position = '09';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des sociétés et contacts";
@@ -60,22 +60,22 @@ class modSociete extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->config_page_url = array("societe.php@societe");
 		// Name of image file used for this module.
-		$this->picto='company';
+		$this->picto = 'company';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/societe/temp");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->langfiles = array("companies",'bills');
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array("modExpedition", "modFacture", "modFournisseur", "modFicheinter", "modPropale", "modContrat", "modCommande"); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->langfiles = array("companies", 'bills');
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "SOCIETE_CODECLIENT_ADDON";
 		$this->const[$r][1] = "chaine";
@@ -123,7 +123,7 @@ class modSociete extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array();
-		$r=0;
+		$r = 0;
 		$this->boxes[$r][1] = "box_clients.php";
 		$r++;
 		$this->boxes[$r][1] = "box_prospect.php";
@@ -139,7 +139,7 @@ class modSociete extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 121; // id de la permission
@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
-/*		$r++;
+        /*$r++;
 		$this->rights[$r][0] = 241;
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
@@ -163,7 +163,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-*/
+        */
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
@@ -172,8 +172,8 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
-/*		$r++;
-		 $this->rights[$r][0] = 251;
+        /* $r++;
+		$this->rights[$r][0] = 251;
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -187,7 +187,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-*/
+        */
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
@@ -270,6 +270,7 @@ class modSociete extends DolibarrModules
 			'st.code'=>'ProspectStatus','payterm.libelle'=>'PaymentConditions','paymode.libelle'=>'PaymentMode'
 		);
 		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
+		if (! empty($conf->global->PRODUIT_MULTIPRICES)) $this->export_fields_array[$r]['s.price_level']='PriceLevel';
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
@@ -295,7 +296,8 @@ class modSociete extends DolibarrModules
 			's.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.libelle'=>"Text",
 			'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
 			'st.code'=>'List:c_stcomm:libelle:code','d.nom'=>'Text','u.login'=>'Text','u.firstname'=>'Text','u.lastname'=>'Text','payterm.libelle'=>'Text',
-			'paymode.libelle'=>'Text','s.entity'=>'Numeric'
+			'paymode.libelle'=>'Text','s.entity'=>'Numeric',
+			's.price_level'=>'Numeric'
 		);
 
 		$this->export_entities_array[$r]=array('u.login'=>'user','u.firstname'=>'user','u.lastname'=>'user');	// We define here only fields that use another picto
@@ -391,14 +393,14 @@ class modSociete extends DolibarrModules
         // Import list of third parties and attributes
 
         $r++;
-        $this->import_code[$r] = $this->rights_class . '_' . $r;
+        $this->import_code[$r] = $this->rights_class.'_'.$r;
         $this->import_label[$r] = 'ImportDataset_company_1';
         $this->import_icon[$r] = 'company';
-        $this->import_entities_array[$r] = array();        // We define here only fields that use a different icon from the one defined in import_icon
+        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
         $this->import_tables_array[$r] = array(
-            's' => MAIN_DB_PREFIX . 'societe',
-            'extra' => MAIN_DB_PREFIX . 'societe_extrafields'
-        );    // List of tables to insert into (insert done in same order)
+            's' => MAIN_DB_PREFIX.'societe',
+            'extra' => MAIN_DB_PREFIX.'societe_extrafields'
+        ); // List of tables to insert into (insert done in same order)
         $this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
             's.nom' => "Name*",
             's.name_alias' => "AliasNameShort",
@@ -447,21 +449,21 @@ class modSociete extends DolibarrModules
             's.multicurrency_code' => 'MulticurrencyCurrency'
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'societe' AND entity = " . $conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity = ".$conf->entity;
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
             while ($obj = $this->db->fetch_object($resql)) {
-                $fieldname = 'extra.' . $obj->name;
+                $fieldname = 'extra.'.$obj->name;
                 $fieldlabel = ucfirst($obj->label);
-                $this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+                $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
             }
         }
         // End add extra fields
         $this->import_fieldshidden_array[$r] = array(
             's.fk_user_creat' => 'user->id',
-            'extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'societe'
-        );    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+            'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
+        ); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
         $this->import_convertvalue_array[$r] = array(//field order as per structure of table llx_societe
             's.code_client' => array('rule' => 'getcustomercodeifauto'),
             's.code_fournisseur' => array('rule' => 'getsuppliercodeifauto'),
@@ -494,17 +496,17 @@ class modSociete extends DolibarrModules
         //$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
         $this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
             's.status' => '^[0|1]',
-            's.fk_typent' => 'id@' . MAIN_DB_PREFIX . 'c_typent',
+            's.fk_typent' => 'id@'.MAIN_DB_PREFIX.'c_typent',
             's.client' => '^[0|1|2|3]',
             's.fournisseur' => '^[0|1]',
-            's.mode_reglement' => 'id@' . MAIN_DB_PREFIX . 'c_paiement',
-            's.cond_reglement' => 'rowid@' . MAIN_DB_PREFIX . 'c_payment_term',
-            's.mode_reglement_supplier' => 'id@' . MAIN_DB_PREFIX . 'c_paiement',
-            's.cond_reglement_supplier' => 'rowid@' . MAIN_DB_PREFIX . 'c_payment_term',
+            's.mode_reglement' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
+            's.cond_reglement' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
+            's.mode_reglement_supplier' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
+            's.cond_reglement_supplier' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
             's.tva_assuj' => '^[0|1]',
             's.fk_multicurrency' => '^[0|1]',
             's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$',
-            's.multicurrency_code' => 'code_iso@' . MAIN_DB_PREFIX . 'c_currencies'
+            's.multicurrency_code' => 'code_iso@'.MAIN_DB_PREFIX.'c_currencies'
         );
 
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
@@ -518,16 +520,16 @@ class modSociete extends DolibarrModules
             's.address' => "61 Jump Street",
             's.zip' => "123456",
             's.town' => "Bigtown",
-            's.fk_departement' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
+            's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
             's.phone' => "eg: +34123456789",
             's.fax' => "eg. +34987654321",
             's.url' => "e.g. https://www.mybigcompany.com",
             's.email' => "e.g. test@mybigcompany.com",
             's.skype' => "Skype name",
             's.fk_effectif' => "1/2/3/5: represents one of the five ranges of employees",
-            's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "' . MAIN_DB_PREFIX . 'c_typent"',
-            's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_forme_juridique"',
+            's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "'.MAIN_DB_PREFIX.'c_typent"',
+            's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "'.MAIN_DB_PREFIX.'c_forme_juridique"',
             's.siret' => "",
             's.siren' => "",
             's.ape' => "",
@@ -536,23 +538,23 @@ class modSociete extends DolibarrModules
             's.idprof6' => "",
             's.tva_intra' => 'VAT number e.g."FR0123456789"',
             's.capital' => "10000",
-            's.fk_stcomm' => '-1/0/1/2 etc... matches field "id" in table "' . MAIN_DB_PREFIX . 'c_stcomm"',
+            's.fk_stcomm' => '-1/0/1/2 etc... matches field "id" in table "'.MAIN_DB_PREFIX.'c_stcomm"',
             's.note_private' => "Example of a PRIVATE note.",
             's.note_public' => "Example of a PUBLIC note.",
             's.client' => '0 (no customer no prospect) / 1 (customer) / 2 (prospect)/ 3 (customer and prospect)',
             's.fournisseur' => '0 (not supplier) / 1 (supplier)',
-            's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "' . MAIN_DB_PREFIX . 'c_prospectlevel"',
-            's.mode_reglement' => '1/2/3...matches field "id" in table "' . MAIN_DB_PREFIX . 'c_paiement"',
-            's.cond_reglement' => '1/2/3...matches field "rowid" in table "' . MAIN_DB_PREFIX . 'c_payment_term"',
-            's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "' . MAIN_DB_PREFIX . 'c_paiement"',
-            's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "' . MAIN_DB_PREFIX . 'c_payment_term"',
+            's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "'.MAIN_DB_PREFIX.'c_prospectlevel"',
+            's.mode_reglement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+            's.cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
+            's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+            's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
             's.tva_assuj' => '0 (VAT not used) / 1 (VAT used)',
             's.barcode' => '123456789',
             's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
             's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
-            's.datec' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
+            's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
             's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
-            's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "' . MAIN_DB_PREFIX . 'c_currencies"'
+            's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"'
         );
         $this->import_updatekeys_array[$r] = array(
             's.nom' => 'Name',
@@ -564,14 +566,14 @@ class modSociete extends DolibarrModules
 
         // Import list of contacts/additional addresses and attributes
         $r++;
-        $this->import_code[$r] = $this->rights_class . '_' . $r;
+        $this->import_code[$r] = $this->rights_class.'_'.$r;
         $this->import_label[$r] = 'ImportDataset_company_2';
         $this->import_icon[$r] = 'contact';
-        $this->import_entities_array[$r] = array('s.fk_soc' => 'company');    // We define here only fields that use a different icon than the one defined in import_icon
+        $this->import_entities_array[$r] = array('s.fk_soc' => 'company'); // We define here only fields that use a different icon than the one defined in import_icon
         $this->import_tables_array[$r] = array(
-            's' => MAIN_DB_PREFIX . 'socpeople',
-            'extra' => MAIN_DB_PREFIX . 'socpeople_extrafields'
-        );    // List of tables to insert into (insert done in same order)
+            's' => MAIN_DB_PREFIX.'socpeople',
+            'extra' => MAIN_DB_PREFIX.'socpeople_extrafields'
+        ); // List of tables to insert into (insert done in same order)
         $this->import_fields_array[$r] = array(//field order as per structure of table llx_socpeople
             's.datec' => "DateCreation",
             's.fk_soc' => 'ThirdPartyName',
@@ -595,21 +597,21 @@ class modSociete extends DolibarrModules
             's.note_public' => "NotePublic"
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'socpeople' AND entity = " . $conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity = ".$conf->entity;
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on an old database (during a migration for example)
         {
             while ($obj = $this->db->fetch_object($resql)) {
-                $fieldname = 'extra.' . $obj->name;
+                $fieldname = 'extra.'.$obj->name;
                 $fieldlabel = ucfirst($obj->label);
-                $this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+                $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
             }
         }
         // End add extra fields
         $this->import_fieldshidden_array[$r] = array(
             's.fk_user_creat' => 'user->id',
-            'extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'socpeople'
-        );    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+            'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'
+        ); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
         $this->import_convertvalue_array[$r] = array(
             's.fk_soc' => array(
                 'rule' => 'fetchidfromref',
@@ -639,17 +641,17 @@ class modSociete extends DolibarrModules
             's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
         );
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
-            's.datec' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
+            's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
             's.fk_soc' => 'Third Party name eg. TPBigCompany',
-            's.civility' => 'Title of civility eg: MR...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_civility"',
+            's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
             's.lastname' => "lastname or label",
             's.firstname' => 'John',
             's.address' => '61 Jump street',
             's.zip' => '75000',
             's.town' => 'Bigtown',
-            's.fk_departement' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
-            's.birthday' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
+            's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
+            's.birthday' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
             's.poste' => "Director",
             's.phone' => "5551122",
             's.phone_perso' => "5551133",
@@ -663,11 +665,11 @@ class modSociete extends DolibarrModules
 
         // Import Bank Accounts
         $r++;
-        $this->import_code[$r] = $this->rights_class . '_' . $r;
-        $this->import_label[$r] = "ImportDataset_company_3";    // Translation key
+        $this->import_code[$r] = $this->rights_class.'_'.$r;
+        $this->import_label[$r] = "ImportDataset_company_3"; // Translation key
         $this->import_icon[$r] = 'company';
-        $this->import_entities_array[$r] = array();        // We define here only fields that use a different icon to the one defined in import_icon
-        $this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX . 'societe_rib');
+        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon to the one defined in import_icon
+        $this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_rib');
         $this->import_fields_array[$r] = array(//field order as per structure of table llx_societe_rib
             'sr.label' => "Label*",
             'sr.fk_soc' => "ThirdPartyName*",
@@ -697,7 +699,7 @@ class modSociete extends DolibarrModules
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
             'sr.label' => 'eg. "account1"',
             'sr.fk_soc' => 'eg. "TPBigCompany"',
-            'sr.datec' => 'date used for creating direct debit UMR formatted as ' . dol_print_date(dol_now(),
+            'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
                     '%Y-%m-%d'),
             'sr.bank' => 'bank name eg: "ING-Direct"',
             'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
@@ -714,18 +716,18 @@ class modSociete extends DolibarrModules
 
 		// Import Company Sales representatives
 		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="ImportDataset_company_4";	// Translation key
-		$this->import_icon[$r]='company';
-		$this->import_entities_array[$r]=array('sr.fk_user'=>'user');		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
-		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.fk_user'=>"User*");
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ImportDataset_company_4"; // Translation key
+		$this->import_icon[$r] = 'company';
+		$this->import_entities_array[$r] = array('sr.fk_user'=>'user'); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
+		$this->import_fields_array[$r] = array('sr.fk_soc'=>"ThirdPartyName*", 'sr.fk_user'=>"User*");
 
-		$this->import_convertvalue_array[$r]=array(
-				'sr.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
-				'sr.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+		$this->import_convertvalue_array[$r] = array(
+				'sr.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
+				'sr.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
 		);
-		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.fk_user'=>"login");
+		$this->import_examplevalues_array[$r] = array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");
 	}
 
 
@@ -745,19 +747,19 @@ class modSociete extends DolibarrModules
 		//$this->remove($options);
 
 		//ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/thirdparties';
-		$dest=$dirodt.'/template_thirdparty.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/thirdparties';
+		$dest = $dirodt.'/template_thirdparty.odt';
 
-		if (file_exists($src) && ! file_exists($dest))
+		if (file_exists($src) && !file_exists($dest))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}

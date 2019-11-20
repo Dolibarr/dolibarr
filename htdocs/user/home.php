@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,7 +45,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
@@ -124,8 +125,9 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
 	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	print '<td></td>';
 	print '</tr>';
 	$i = 0;
 
@@ -142,7 +144,7 @@ if ($resql)
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
 		$fuserstatic->skype = $obj->skype;
-		$fuserstatic->societe_id = $obj->fk_soc;
+		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id=$obj->fk_soc;
 		$companystatic->name=$obj->name;
@@ -194,7 +196,7 @@ if ($resql)
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
-		print '<td class="right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
         print '<td class="right">';
         print $fuserstatic->getLibStatut(3);
         print '</td>';
@@ -285,6 +287,10 @@ if ($canreadperms)
 
 //print '</td></tr></table>';
 print '</div></div></div>';
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardUsersGroups', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

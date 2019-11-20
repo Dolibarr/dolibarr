@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -62,7 +62,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 // Security check
 $id = GETPOST("id", 'int');
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user, 'projet', $id, '');
 
 if (!$user->rights->projet->lire)	accessforbidden();
@@ -73,15 +73,15 @@ if (!$user->rights->projet->lire)	accessforbidden();
  * Actions
  */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$actioncode='';
-	$search_agenda_label='';
+	$actioncode = '';
+	$search_agenda_label = '';
 }
 
 
@@ -93,43 +93,43 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 $form = new Form($db);
 $object = new Project($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
-	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
     $object->info($object->id);
 }
 
-$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
-$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+$title = $langs->trans("Project").' - '.$object->ref.' '.$object->name;
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url);
 
 $head = project_prepare_head($object);
 
-dol_fiche_head($head, 'agenda', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'agenda', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 
 // Project card
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
+$morehtmlref = '<div class="refidno">';
 // Title
-$morehtmlref.=$object->title;
+$morehtmlref .= $object->title;
 // Thirdparty
 if ($object->thirdparty->id > 0)
 {
-    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (! $user->rights->projet->all->lire)
+if (!$user->rights->projet->all->lire)
 {
     $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+    $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -161,16 +161,8 @@ if ($permok)
 $morehtmlcenter='';
 if (! empty($conf->agenda->enabled))
 {
-    if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    {
-        $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-        $morehtmlcenter.='<span class="fa fa-plus-circle valignmiddle"></span>';
-        $morehtmlcenter.='</a>';
-    }
-    else
-    {
-        $morehtmlcenter.='<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
-    }
+    $addActionBtnRight = ! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create);
+    $morehtmlcenter.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }
 
 //print '</div>';
@@ -179,15 +171,15 @@ if (!empty($object->id))
 {
 	print '<br>';
 
-	$param='&id='.$object->id;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	$param = '&id='.$object->id;
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
     print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
     // List of all actions
-    $filters=array();
-    $filters['search_agenda_label']=$search_agenda_label;
+    $filters = array();
+    $filters['search_agenda_label'] = $search_agenda_label;
     show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 

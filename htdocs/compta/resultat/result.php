@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -130,7 +130,7 @@ if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->comptarapport->lire)
 	accessforbidden();
@@ -143,18 +143,18 @@ $AccCat = new AccountancyCategory($db);
  */
 
 $months = array(
-	$langs->trans("JanuaryMin"),
-	$langs->trans("FebruaryMin"),
-	$langs->trans("MarchMin"),
-	$langs->trans("AprilMin"),
-	$langs->trans("MayMin"),
-	$langs->trans("JuneMin"),
-	$langs->trans("JulyMin"),
-	$langs->trans("AugustMin"),
-	$langs->trans("SeptemberMin"),
-	$langs->trans("OctoberMin"),
-	$langs->trans("NovemberMin"),
-	$langs->trans("DecemberMin"),
+	$langs->trans("MonthShort01"),
+	$langs->trans("MonthShort02"),
+	$langs->trans("MonthShort03"),
+	$langs->trans("MonthShort04"),
+	$langs->trans("MonthShort05"),
+	$langs->trans("MonthShort06"),
+	$langs->trans("MonthShort07"),
+	$langs->trans("MonthShort08"),
+	$langs->trans("MonthShort09"),
+	$langs->trans("MonthShort10"),
+	$langs->trans("MonthShort11"),
+	$langs->trans("MonthShort12"),
 );
 
 llxheader('', $langs->trans('ReportInOut'));
@@ -256,7 +256,6 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats();		// WARNING: Computed groups must be after group they include
 

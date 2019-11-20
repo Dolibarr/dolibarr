@@ -85,6 +85,7 @@ class Account extends ApiResource
         return $savedNestedResources;
     }
 
+    const PATH_CAPABILITIES = '/capabilities';
     const PATH_EXTERNAL_ACCOUNTS = '/external_accounts';
     const PATH_LOGIN_LINKS = '/login_links';
     const PATH_PERSONS = '/persons';
@@ -129,6 +130,141 @@ class Account extends ApiResource
     }
 
     /**
+     * @param array|null $clientId
+     * @param array|string|null $opts
+     *
+     * @return StripeObject Object containing the response from the API.
+     */
+    public function deauthorize($clientId = null, $opts = null)
+    {
+        $params = [
+            'client_id' => $clientId,
+            'stripe_user_id' => $this->id,
+        ];
+        return OAuth::deauthorize($params, $opts);
+    }
+
+    /*
+     * Capabilities methods
+     * We can not add the capabilities() method today as the Account object already has a
+     * capabilities property which is a hash and not the sub-list of capabilities.
+     */
+
+
+    /**
+     * @param string $id The ID of the account to which the capability belongs.
+     * @param string $capabilityId The ID of the capability to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Capability
+     */
+    public static function retrieveCapability($id, $capabilityId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_CAPABILITIES, $capabilityId, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account to which the capability belongs.
+     * @param string $capabilityId The ID of the capability to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Capability
+     */
+    public static function updateCapability($id, $capabilityId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_CAPABILITIES, $capabilityId, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account on which to retrieve the capabilities.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Collection The list of capabilities.
+     */
+    public static function allCapabilities($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_CAPABILITIES, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account on which to create the external account.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return BankAccount|Card
+     */
+    public static function createExternalAccount($id, $params = null, $opts = null)
+    {
+        return self::_createNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account to which the external account belongs.
+     * @param string $externalAccountId The ID of the external account to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return BankAccount|Card
+     */
+    public static function retrieveExternalAccount($id, $externalAccountId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $externalAccountId, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account to which the external account belongs.
+     * @param string $externalAccountId The ID of the external account to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return BankAccount|Card
+     */
+    public static function updateExternalAccount($id, $externalAccountId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $externalAccountId, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account to which the external account belongs.
+     * @param string $externalAccountId The ID of the external account to delete.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return BankAccount|Card
+     */
+    public static function deleteExternalAccount($id, $externalAccountId, $params = null, $opts = null)
+    {
+        return self::_deleteNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $externalAccountId, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account on which to retrieve the external accounts.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Collection The list of external accounts (BankAccount or Card).
+     */
+    public static function allExternalAccounts($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_EXTERNAL_ACCOUNTS, $params, $opts);
+    }
+
+    /**
+     * @param string $id The ID of the account on which to create the login link.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return LoginLink
+     */
+    public static function createLoginLink($id, $params = null, $opts = null)
+    {
+        return self::_createNestedResource($id, static::PATH_LOGIN_LINKS, $params, $opts);
+    }
+
+    /**
      * @param array|null $params
      * @param array|string|null $options
      *
@@ -144,97 +280,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param array|null $clientId
-     * @param array|string|null $opts
-     *
-     * @return StripeObject Object containing the response from the API.
-     */
-    public function deauthorize($clientId = null, $opts = null)
-    {
-        $params = [
-            'client_id' => $clientId,
-            'stripe_user_id' => $this->id,
-        ];
-        return OAuth::deauthorize($params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account on which to create the external account.
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return BankAccount|Card
-     */
-    public static function createExternalAccount($id, $params = null, $opts = null)
-    {
-        return self::_createNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account to which the external account belongs.
-     * @param array|null $externalAccountId The ID of the external account to retrieve.
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return BankAccount|Card
-     */
-    public static function retrieveExternalAccount($id, $externalAccountId, $params = null, $opts = null)
-    {
-        return self::_retrieveNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $externalAccountId, $params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account to which the external account belongs.
-     * @param array|null $externalAccountId The ID of the external account to update.
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return BankAccount|Card
-     */
-    public static function updateExternalAccount($id, $externalAccountId, $params = null, $opts = null)
-    {
-        return self::_updateNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $externalAccountId, $params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account to which the external account belongs.
-     * @param array|null $externalAccountId The ID of the external account to delete.
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return BankAccount|Card
-     */
-    public static function deleteExternalAccount($id, $externalAccountId, $params = null, $opts = null)
-    {
-        return self::_deleteNestedResource($id, static::PATH_EXTERNAL_ACCOUNTS, $externalAccountId, $params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account on which to retrieve the external accounts.
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Collection The list of external accounts (BankAccount or Card).
-     */
-    public static function allExternalAccounts($id, $params = null, $opts = null)
-    {
-        return self::_allNestedResources($id, static::PATH_EXTERNAL_ACCOUNTS, $params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account on which to create the login link.
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return LoginLink
-     */
-    public static function createLoginLink($id, $params = null, $opts = null)
-    {
-        return self::_createNestedResource($id, static::PATH_LOGIN_LINKS, $params, $opts);
-    }
-
-    /**
-     * @param string|null $id The ID of the account on which to create the person.
+     * @param string $id The ID of the account on which to create the person.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -246,8 +292,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the person belongs.
-     * @param string|null $personId The ID of the person to retrieve.
+     * @param string $id The ID of the account to which the person belongs.
+     * @param string $personId The ID of the person to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -259,8 +305,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the person belongs.
-     * @param string|null $personId The ID of the person to update.
+     * @param string $id The ID of the account to which the person belongs.
+     * @param string $personId The ID of the person to update.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -272,8 +318,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the person belongs.
-     * @param string|null $personId The ID of the person to delete.
+     * @param string $id The ID of the account to which the person belongs.
+     * @param string $personId The ID of the person to delete.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -285,7 +331,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to retrieve the persons.
+     * @param string $id The ID of the account on which to retrieve the persons.
      * @param array|null $params
      * @param array|string|null $opts
      *

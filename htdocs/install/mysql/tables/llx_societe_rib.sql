@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table with the payment modes of a thirdparty (BAN, Paypal, Card, ...)
 -- =============================================================================
@@ -24,7 +24,7 @@ create table llx_societe_rib
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   type           varchar(32) DEFAULT 'ban' NOT NULL,							-- 'ban' or 'paypal' or 'card' or 'stripe'
-  label          varchar(30),
+  label          varchar(200),
   fk_soc         integer NOT NULL,
   datec          datetime,
   tms            timestamp,

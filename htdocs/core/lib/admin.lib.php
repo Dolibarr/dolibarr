@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -663,14 +663,52 @@ function security_prepare_head()
 
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
-    if ($nbPerms > 0) $head[$h][1].= ' <span class="badge">'.$nbPerms.'</span>';
+    if ($nbPerms > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>';
     $head[$h][2] = 'default';
     $h++;
 
     return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ * @param object $object descriptor class
+ * @return  array				Array of tabs to show
+ */
+function modulehelp_prepare_head($object)
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
+    // FIX for compatibity habitual tabs
+    $object->id = $object->numero;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
+	$head[$h][1] = $langs->trans("Description");
+	$head[$h][2] = 'desc';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=feature';
+	$head[$h][1] = $langs->trans("TechnicalServicesProvided");
+	$head[$h][2] = 'feature';
+	$h++;
+
+	if ($object->isCoreOrExternalModule() == 'external')
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=changelog';
+		$head[$h][1] = $langs->trans("ChangeLog");
+		$head[$h][2] = 'changelog';
+		$h++;
+	}
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin');
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin', 'remove');
+
+
+    return $head;
+}
 /**
  * Prepare array with list of tabs
  *
@@ -683,7 +721,7 @@ function translation_prepare_head()
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-    $head[$h][1] = $langs->trans("TranslationOverwriteKey");
+    $head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
     $head[$h][2] = 'overwrite';
     $h++;
 
@@ -1044,9 +1082,9 @@ function unActivateModule($value, $requiredby = 1)
         $result=$objMod->remove();
         if ($result <= 0) $ret=$objMod->error;
     }
-    else
+    else    // We come here when we try to unactivate a module when module does not exists anymore in sources
     {
-        //print $dir.$modFile;
+        //print $dir.$modFile;exit;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
         include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
     	$genericMod = new DolibarrModules($db);
@@ -1054,11 +1092,11 @@ function unActivateModule($value, $requiredby = 1)
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i', '', $modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
-        $genericMod->_remove(array());
+        $genericMod->remove('');
     }
 
-    // Desactivation des modules qui dependent de lui
-    if (! $ret && $requiredby)
+    // Disable modules that depends on module we disable
+    if (! $ret && $requiredby && is_object($objMod) && is_array($objMod->requiredby))
     {
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
@@ -1093,6 +1131,8 @@ function unActivateModule($value, $requiredby = 1)
 function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck)
 {
     global $db, $modules, $conf, $langs;
+
+    dol_syslog("complete_dictionary_with_modules Search external modules to complete the list of dictionnary tables", LOG_DEBUG, 1);
 
     // Search modules
 	$modulesdir = dolGetModulesDirs();
@@ -1191,6 +1231,8 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
         }
     }
 
+    dol_syslog("", LOG_DEBUG, -1);
+
     return 1;
 }
 
@@ -1259,7 +1301,7 @@ function activateModulesRequiredByCountry($country_code)
 }
 
 /**
- *  Add external modules to list of contact element
+ *  Search external modules to complete the list of contact element
  *
  * 	@param		array		$elementList			elementList
  * 	@return		int			1
@@ -1277,6 +1319,8 @@ function complete_elementList_with_modules(&$elementList)
 
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
+
+    dol_syslog("complete_elementList_with_modules Search external modules to complete the list of contact element", LOG_DEBUG, 1);
 
     $modulesdir = dolGetModulesDirs();
 
@@ -1355,6 +1399,8 @@ function complete_elementList_with_modules(&$elementList)
         }
     }
 
+    dol_syslog("", LOG_DEBUG, -1);
+
     return 1;
 }
 
@@ -1381,7 +1427,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
         print '<input type="hidden" name="action" value="updateall">';
     }
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td class="titlefield">'.$langs->trans("Description").'</td>';
     print '<td>';
@@ -1724,13 +1770,10 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'company';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-    	$head[$h][0] = DOL_URL_ROOT."/admin/openinghours.php";
-    	$head[$h][1] = $langs->trans("OpeningHours");
-    	$head[$h][2] = 'openinghours';
-    	$h++;
-	}
+   	$head[$h][0] = DOL_URL_ROOT."/admin/openinghours.php";
+   	$head[$h][1] = $langs->trans("OpeningHours");
+   	$head[$h][2] = 'openinghours';
+   	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
 	$head[$h][1] = $langs->trans("Accountant");

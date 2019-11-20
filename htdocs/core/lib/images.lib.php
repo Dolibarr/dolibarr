@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -40,6 +40,7 @@ function image_format_supported($file)
     $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg';   // See also into product.class.php
 
     // Case filename is not a format image
+    $reg = array();
     if (! preg_match('/('.$regeximgext.')$/i', $file, $reg)) return -1;
 
     // Case filename is a format image but not supported by this PHP
@@ -51,6 +52,7 @@ function image_format_supported($file)
     if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
     if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
     if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
+    if (strtolower($reg[1]) == '.svg')  $imgfonction = 'imagecreatefromsvg';	// Never available
     if ($imgfonction)
     {
         if (! function_exists($imgfonction))

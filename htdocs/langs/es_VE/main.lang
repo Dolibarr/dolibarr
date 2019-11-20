@@ -32,6 +32,7 @@ MonthVeryShort03=L
 MonthVeryShort05=L
 MonthVeryShort09=D
 FindBug=Señalar un bug
+ValidatePayment=Validar este pago
 NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 LinkToOrder=Enlazar a un pedido

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -279,7 +279,7 @@ dol_fiche_head($head, 'general', $langs->trans("Invoices"), -1, 'invoice');
 
 print load_fiche_titre($langs->trans("BillsNumberingModule"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -352,7 +352,7 @@ foreach ($dirmodels as $reldir)
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -468,7 +468,7 @@ else
     dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -607,7 +607,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
     print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
     print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
-    print '<table id="default-pdf-modules-by-type-table" class="noborder" width="100%">';
+    print '<table id="default-pdf-modules-by-type-table" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Name").'</td>';
@@ -648,7 +648,7 @@ print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>';
@@ -720,7 +720,6 @@ if ($resql)
     $i = 0;
     while ($i < $num)
     {
-
         $row = $db->fetch_row($resql);
 
         print '<option value="'.$row[0].'"';
@@ -739,7 +738,7 @@ print "</form>";
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
@@ -808,36 +807,39 @@ print '</table>';
 print '<br>';
 print load_fiche_titre($langs->trans("PathToDocuments"), '', '');
 
-print '<table class="noborder" width="100%">'."\n";
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Value").'</td>'."\n";
 print "</tr>\n";
-print '<tr '.$bc[false].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td width="140">'.$langs->trans("PathDirectory").'</td>'."\n";
 print '<td>'.$conf->facture->dir_output.'</td>'."\n";
 print '</tr>'."\n";
 print "</table>\n";
-
+print "</div>\n";
 
 /*
  * Notifications
  */
 print '<br>';
 print load_fiche_titre($langs->trans("Notifications"), '', '');
-print '<table class="noborder" width="100%">';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td class="right">';
 print "</td></tr>\n";
-
 print '</table>';
+print "</div>\n";
+
 
 dol_fiche_end();
 

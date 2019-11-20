@@ -16,14 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  * \file       htdocs/core/modules/bom/mod_bom_advanced.php
  * \ingroup    bom
- * \brief      Fichier contenant la classe du modele de numerotation de reference de bom advanced
+ * \brief      File containing class for numbering model of BOMs advanced
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
@@ -52,7 +52,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */
@@ -92,7 +92,7 @@ class mod_bom_advanced extends ModeleNumRefboms
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */
@@ -118,11 +118,11 @@ class mod_bom_advanced extends ModeleNumRefboms
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param	Product		$objprod    Object product
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objsoc, $object)
+    public function getNextValue($objprod, $object)
     {
 		global $db,$conf;
 
@@ -139,7 +139,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 
 		$date = ($object->date_bom ? $object->date_bom : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'bom_bom', 'ref', '', $objsoc, $date);
+		$numFinal=get_next_value($db, $mask, 'bom_bom', 'ref', '', null, $date);
 
 		return  $numFinal;
 	}

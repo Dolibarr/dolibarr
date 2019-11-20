@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
@@ -31,18 +31,18 @@ header('Content-Type: application/json');
 $id = GETPOST('id', 'int');
 
 if (!$id) {
-print json_encode(array(
-		'error' => 'ID not set'
-	));
-	exit();
+    print json_encode(array(
+        'error' => 'ID not set'
+    ));
+    exit();
 }
 
 $product = new Product($db);
 
 if ($product->fetch($id) < 0) {
-print json_encode(array(
-		'error' => 'Product not found'
-	));
+    print json_encode(array(
+        'error' => 'Product not found'
+    ));
 }
 
 $prodcomb = new ProductCombination($db);

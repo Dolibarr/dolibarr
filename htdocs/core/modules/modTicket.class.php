@@ -12,13 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module descriptor for ticket system
  */
 
 /**
  *     \defgroup    ticket    Module Ticket
+ *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -80,8 +81,6 @@ class modTicket extends DolibarrModules
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory
             'triggers' => 1,
-            // Set this to 1 if module has its own models directory
-            'models' => 1,
         );
 
         // Data directories to create when module is enabled.
@@ -99,6 +98,7 @@ class modTicket extends DolibarrModules
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("ticket");
+
         // Constants
         // List of particular constants to add when module is enabled
         // (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -151,7 +151,7 @@ class modTicket extends DolibarrModules
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-        $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
 
         $r++;

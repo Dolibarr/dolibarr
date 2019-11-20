@@ -45,20 +45,20 @@ StatsOnShipmentsOnlyValidated=Statistika veikti uz sūtījumiem tikai apstiprin�
 DateDeliveryPlanned=Plānotais piegādes datums
 RefDeliveryReceipt=Ref piegādes kvīts
 StatusReceipt=Piegādes kvīts statuss
-DateReceived=Datums piegāde saņemti
-SendShippingByEMail=Nosūtīt sūtījumu pa e-pastu
-SendShippingRef=Submission of shipment %s
+DateReceived=Piegādes saņemšanas datums
+SendShippingByEMail=Sūtīt sūtījumu pa e-pastu
+SendShippingRef=Sūtījuma iesniegšana %s
 ActionsOnShipping=Notikumi sūtījumu
 LinkToTrackYourPackage=Saite uz izsekot savu paketi
 ShipmentCreationIsDoneFromOrder=Izveidot jaunu sūtījumu var no pasūtījuma kartiņas.
 ShipmentLine=Sūtījumu līnija
-ProductQtyInCustomersOrdersRunning=Produkta daudzums atvērtā klienta pasūtījumā
+ProductQtyInCustomersOrdersRunning=Produkta daudzums atvērtos pārdošanas pasūtījumos
 ProductQtyInSuppliersOrdersRunning=Produktu daudzums atvērtajos pirkuma pasūtījumos
-ProductQtyInShipmentAlreadySent=Produkta daudzums, kuri sakārtoti pēc piegādātāja pasūtīšanas
-ProductQtyInSuppliersShipmentAlreadyRecevied=Produkta daudzums jau ir saņemts no atvērta piegādātāja pasūtījuma
+ProductQtyInShipmentAlreadySent=Produkta daudzums no jau nosūtīta pasūtījuma
+ProductQtyInSuppliersShipmentAlreadyRecevied=Produkta daudzums no jau saņemtajiem pasūtījumiem
 NoProductToShipFoundIntoStock=Noliktavā nav atrasts neviens produkts, kas paredzēts piegādei <b> %s </ b>. Pareizu krājumu vai doties atpakaļ, lai izvēlētos citu noliktavu.
 WeightVolShort=Svars / tilp.
-ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+ValidateOrderFirstBeforeShipment=Vispirms jums ir jāapstiprina pasūtījums, lai varētu veikt sūtījumus.
 
 # Sending methods
 # ModelDocument
@@ -69,4 +69,4 @@ SumOfProductWeights=Summēt produkta svaru
 
 # warehouse details
 DetailWarehouseNumber= Noliktavas detaļas
-DetailWarehouseFormat= W:%s (Daudz. : %d)
+DetailWarehouseFormat= W: %s (Daudzums: %d)

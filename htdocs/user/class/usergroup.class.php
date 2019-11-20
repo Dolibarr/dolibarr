@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
+ * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,7 +52,10 @@ class UserGroup extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
-    public $picto='group';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='group';
 
 	/**
 	 * @var int Entity of group
@@ -552,13 +556,13 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
 		{
-			// Le fichier de ce module est deja charge
+			// Rights for this module are already loaded, so we leave
 			return;
 		}
 
 		if (! empty($this->all_permissions_are_loaded))
 		{
-			// Si les permissions ont deja ete chargees, on quitte
+			// We already loaded all rights for this group, so we leave
 			return;
 		}
 
@@ -618,7 +622,7 @@ class UserGroup extends CommonObject
 		}
 		else
 		{
-		    // Si module defini, on le marque comme charge en cache
+			// If module defined, we flag it as loaded into cache
 		    $this->_tab_loaded[$moduletag]=1;
 		}
 
@@ -835,11 +839,11 @@ class UserGroup extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int		$statut        	Id statut
+	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 	    global $langs;
@@ -867,7 +871,6 @@ class UserGroup extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
 
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
 
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("Group") . '</u><br>';
@@ -924,7 +927,8 @@ class UserGroup extends CommonObject
 		return $result;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -934,7 +938,7 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-    private function _load_ldap_dn($info, $mode = 0)
+    public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -946,16 +950,17 @@ class UserGroup extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    private function _load_ldap_info()
+    public function _load_ldap_info()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf;
 
 		$info=array();
 
@@ -977,7 +982,10 @@ class UserGroup extends CommonObject
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
-		}
+        }
+        if(!empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID])){
+            $info[$conf->global->LDAP_GROUP_FIELD_GROUPID]=$this->id;
+        }
 		return $info;
 	}
 

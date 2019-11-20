@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,12 +22,12 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
 
 /**
@@ -62,9 +62,13 @@ class EmailCollector extends CommonObject
     public $fk_element = 'fk_emailcollector';
 
     /**
-     * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
      */
-    protected $childtables=array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
+    protected $childtables=array();
+    /**
+     * @var array	List of child tables. To know object to delete on cascade.
+     */
+    protected $childtablesoncascade=array('emailcollector_emailcollectorfilter','emailcollector_emailcollectoraction');
 
 
     /**
@@ -147,7 +151,12 @@ class EmailCollector extends CommonObject
      */
     public $status;
 
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $tms;
 
     /**
@@ -169,7 +178,13 @@ class EmailCollector extends CommonObject
     public $source_directory;
     public $target_directory;
     public $maxemailpercollect;
+
+    /**
+     * @var integer|string $datelastresult
+     */
     public $datelastresult;
+
+
     public $lastresult;
     // END MODULEBUILDER PROPERTIES
 
@@ -177,6 +192,10 @@ class EmailCollector extends CommonObject
     public $actions;
 
     public $debuginfo;
+
+
+    const STATUS_DISABLED = 0;
+    const STATUS_ENABLED = 1;
 
 
     /**
@@ -190,11 +209,11 @@ class EmailCollector extends CommonObject
 
         $this->db = $db;
 
-        if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible']=0;
-        if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled']=0;
+        if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+        if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
         // Unset fields that are disabled
-        foreach($this->fields as $key => $val)
+        foreach ($this->fields as $key => $val)
         {
             if (isset($val['enabled']) && empty($val['enabled']))
             {
@@ -205,11 +224,11 @@ class EmailCollector extends CommonObject
         // Translate some data of arrayofkeyval
         foreach($this->fields as $key => $val)
         {
-            if (is_array($this->fields['status']['arrayofkeyval']))
+        	if (is_array($val['arrayofkeyval']))
             {
-                foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+            	foreach($val['arrayofkeyval'] as $key2 => $val2)
                 {
-                    $this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+                	$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
                 }
             }
         }
@@ -259,7 +278,7 @@ class EmailCollector extends CommonObject
         // Clear extrafields that are unique
         if (is_array($object->array_options) && count($object->array_options) > 0)
         {
-            $extrafields->fetch_name_optionals_label($this->element);
+            $extrafields->fetch_name_optionals_label($this->table_element);
             foreach($object->array_options as $key => $option)
             {
                 $shortkey = preg_replace('/options_/', '', $key);
@@ -340,19 +359,19 @@ class EmailCollector extends CommonObject
         $obj_ret = array();
 
         $sql = "SELECT s.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector as s";
-        $sql.= ' WHERE s.entity IN ('.getEntity('emailcollector').')';
+        $sql .= " FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector as s";
+        $sql .= ' WHERE s.entity IN ('.getEntity('emailcollector').')';
         if ($activeOnly) {
-            $sql.= " AND s.status = 1";
+            $sql .= " AND s.status = 1";
         }
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $this->db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
         $result = $this->db->query($sql);
@@ -373,7 +392,7 @@ class EmailCollector extends CommonObject
             dol_syslog('EmailCollector::fetchAll Error when retrieve emailcollector list', LOG_ERR);
             $ret = -1;
         }
-        if (! count($obj_ret)) {
+        if (!count($obj_ret)) {
             dol_syslog('EmailCollector::fetchAll No emailcollector found', LOG_DEBUG);
         }
 
@@ -458,22 +477,22 @@ class EmailCollector extends CommonObject
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
         }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-        $linkend='</a>';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= $this->ref;
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
         //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-        global $action,$hookmanager;
+        global $action, $hookmanager;
         $hookmanager->initHooks(array('emailcollectordao'));
-        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-        $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+        $parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
         if ($reshook > 0) $result = $hookmanager->resPrint;
         else $result .= $hookmanager->resPrint;
 
@@ -502,47 +521,20 @@ class EmailCollector extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        if (empty($this->labelstatus))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
         {
             global $langs;
             //$langs->load("mymodule");
-            $this->labelstatus[1] = $langs->trans('Enabled');
-            $this->labelstatus[0] = $langs->trans('Disabled');
+            $this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+            $this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
+            $this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+            $this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
         }
 
-        if ($mode == 0)
-        {
-            return $this->labelstatus[$status];
-        }
-        elseif ($mode == 1)
-        {
-            return $this->labelstatus[$status];
-        }
-        elseif ($mode == 2)
-        {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-        }
-        elseif ($mode == 3)
-        {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
-        elseif ($mode == 4)
-        {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-        }
-        elseif ($mode == 5)
-        {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
-        elseif ($mode == 6)
-        {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
+        $statusType = 'status5';
+        if ($status == self::STATUS_ENABLED) $statusType = 'status4';
+
+        return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     /**
@@ -554,10 +546,10 @@ class EmailCollector extends CommonObject
     public function info($id)
     {
         $sql = 'SELECT rowid, date_creation as 	datec, tms as datem,';
-        $sql.= ' fk_user_creat, fk_user_modif';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-        $sql.= ' WHERE t.rowid = '.$id;
-        $result=$this->db->query($sql);
+        $sql .= ' fk_user_creat, fk_user_modif';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+        $sql .= ' WHERE t.rowid = '.$id;
+        $result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
@@ -568,7 +560,7 @@ class EmailCollector extends CommonObject
                 {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation   = $cuser;
+                    $this->user_creation = $cuser;
                 }
 
                 if ($obj->fk_user_valid)
@@ -582,7 +574,7 @@ class EmailCollector extends CommonObject
                 {
                     $cluser = new User($this->db);
                     $cluser->fetch($obj->fk_user_cloture);
-                    $this->user_cloture   = $cluser;
+                    $this->user_cloture = $cluser;
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);
@@ -619,19 +611,19 @@ class EmailCollector extends CommonObject
         $this->filters = array();
 
         $sql = 'SELECT rowid, type, rulevalue, status';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter';
-        $sql.= ' WHERE fk_emailcollector = '.$this->id;
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter';
+        $sql .= ' WHERE fk_emailcollector = '.$this->id;
         //$sql.= ' ORDER BY position';
 
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num=$this->db->num_rows($resql);
+            $num = $this->db->num_rows($resql);
             $i = 0;
-            while($i < $num)
+            while ($i < $num)
             {
-                $obj=$this->db->fetch_object($resql);
-                $this->filters[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'rulevalue'=>$obj->rulevalue, 'status'=>$obj->status);
+                $obj = $this->db->fetch_object($resql);
+                $this->filters[$obj->rowid] = array('id'=>$obj->rowid, 'type'=>$obj->type, 'rulevalue'=>$obj->rulevalue, 'status'=>$obj->status);
                 $i++;
             }
             $this->db->free($resql);
@@ -651,19 +643,19 @@ class EmailCollector extends CommonObject
         $this->actions = array();
 
         $sql = 'SELECT rowid, type, actionparam, status';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
-        $sql.= ' WHERE fk_emailcollector = '.$this->id;
-        $sql.= ' ORDER BY position';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
+        $sql .= ' WHERE fk_emailcollector = '.$this->id;
+        $sql .= ' ORDER BY position';
 
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num=$this->db->num_rows($resql);
+            $num = $this->db->num_rows($resql);
             $i = 0;
-            while($i < $num)
+            while ($i < $num)
             {
-                $obj=$this->db->fetch_object($resql);
-                $this->actions[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
+                $obj = $this->db->fetch_object($resql);
+                $this->actions[$obj->rowid] = array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
                 $i++;
             }
             $this->db->free($resql);
@@ -680,9 +672,9 @@ class EmailCollector extends CommonObject
     public function getConnectStringIMAP()
     {
         // Connect to IMAP
-        $flags ='/service=imap';		// IMAP
-        $flags.='/ssl';					// '/tls'
-        $flags.='/novalidate-cert';
+        $flags = '/service=imap'; // IMAP
+        $flags .= '/ssl'; // '/tls'
+        $flags .= '/novalidate-cert';
         //$flags.='/readonly';
         //$flags.='/debug';
 
@@ -706,14 +698,14 @@ class EmailCollector extends CommonObject
         $arrayofcollectors = $this->fetchAll($user, 1);
 
         // Loop on each collector
-        foreach($arrayofcollectors as $emailcollector)
+        foreach ($arrayofcollectors as $emailcollector)
         {
             $result = $emailcollector->doCollectOneCollector();
             dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
 
-            $this->error.='EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
-            if (! empty($emailcollector->errors)) $this->error.=join('<br>', $emailcollector->errors);
-            $this->output.='EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
+            $this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
+            if (!empty($emailcollector->errors)) $this->error .= join('<br>', $emailcollector->errors);
+            $this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
         }
 
         return $nberror;
@@ -866,28 +858,28 @@ class EmailCollector extends CommonObject
 
         $error = 0;
         $this->output = '';
-        $this->error='';
+        $this->error = '';
 
         $now = dol_now();
 
         if (empty($this->host))
         {
-            $this->error=$langs->trans('ErrorFieldRequired', 'EMailHost');
+            $this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMailHost'));
             return -1;
         }
         if (empty($this->login))
         {
-            $this->error=$langs->trans('ErrorFieldRequired', 'Login');
+        	$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Login'));
             return -1;
         }
         if (empty($this->source_directory))
         {
-            $this->error=$langs->trans('ErrorFieldRequired', 'MailboxSourceDirectory');
+        	$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('MailboxSourceDirectory'));
             return -1;
         }
-        if (! function_exists('imap_open'))
+        if (!function_exists('imap_open'))
         {
-            $this->error='IMAP function not enabled on your PHP';
+            $this->error = 'IMAP function not enabled on your PHP';
             return -2;
         }
 
@@ -1069,7 +1061,7 @@ class EmailCollector extends CommonObject
                 if ($searchfilterdoltrackid > 0)
                 {
                     //if (empty($headers['X-Dolibarr-TRACKID'])) continue;
-                    if (empty($headers['References']) || ! preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
+                    if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
                         continue;
@@ -1077,7 +1069,7 @@ class EmailCollector extends CommonObject
                 }
                 if ($searchfilternodoltrackid > 0)
                 {
-                    if (! empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
+                    if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
                         continue;
@@ -1085,9 +1077,9 @@ class EmailCollector extends CommonObject
                     //if (! empty($headers['X-Dolibarr-TRACKID']) continue;
                 }
 
-                $thirdpartystatic=new Societe($this->db);
-                $contactstatic=new Contact($this->db);
-                $projectstatic=new Project($this->db);
+                $thirdpartystatic = new Societe($this->db);
+                $contactstatic = new Contact($this->db);
+                $projectstatic = new Project($this->db);
 
                 $nbactiondoneforemail = 0;
                 $errorforemail = 0;
@@ -1192,8 +1184,8 @@ class EmailCollector extends CommonObject
                 // References: <1542377954.SMTPs-dolibarr-tic649@8f6014fde11ec6cdec9a822234fc557e>
                 // References: <1542377954.SMTPs-dolibarr-abc649@8f6014fde11ec6cdec9a822234fc557e>
                 $trackid = '';
-                $reg=array();
-                if (! empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
+                $reg = array();
+                if (!empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
                 {
                     $trackid = $reg[1].$reg[2];
 
@@ -1242,7 +1234,7 @@ class EmailCollector extends CommonObject
 
                             $thirdpartyid = $objectemail->fk_soc;
                             $contactid = $objectemail->fk_socpeople;
-                            $projectid = isset($objectemail->fk_project)?$objectemail->fk_project:$objectemail->fk_projet;
+                            $projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
                         }
                     }
 
@@ -1287,13 +1279,14 @@ class EmailCollector extends CommonObject
                 if (empty($contactid))		// Try to find contact using email
                 {
                     $result = $contactstatic->fetch(0, null, '', $from);
+
                     if ($result > 0)
                     {
                         $contactid = $contactstatic->id;
                         $contactfoundby = 'email of contact ('.$from.')';
-                        if ($contactstatic->fk_soc > 0)
+	                    if ($contactstatic->socid > 0)
                         {
-                            $result = $thirdpartystatic->fetch($contactstatic->fk_soc);
+	                        $result = $thirdpartystatic->fetch($contactstatic->socid);
                             if ($result > 0)
                             {
                                 $thirdpartyid = $thirdpartystatic->id;
@@ -1309,9 +1302,8 @@ class EmailCollector extends CommonObject
                     if ($result > 0) $thirdpartyfoundby = 'email ('.$from.')';
                 }
 
-
                 // Do operations
-                foreach($this->actions as $operation)
+                foreach ($this->actions as $operation)
                 {
                     if ($errorforactions) break;
                     if (empty($operation['status'])) continue;
@@ -1413,7 +1405,7 @@ class EmailCollector extends CommonObject
                                 }
                             }
 
-                            if (! $errorforactions && $nametouseforthirdparty)
+                            if (!$errorforactions && $nametouseforthirdparty)
                             {
                                 $result = $thirdpartystatic->fetch(0, $nametouseforthirdparty);
                                 if ($result < 0)
@@ -1492,17 +1484,17 @@ class EmailCollector extends CommonObject
 
                         // Insert record of emails sent
                         $actioncomm = new ActionComm($this->db);
-
                         $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
                         $actioncomm->code        = 'AC_'.$actioncode;
                         $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
-                        $actioncomm->note        = $descriptionfull;
+                        $actioncomm->note_private= $descriptionfull;
                         $actioncomm->fk_project  = $projectstatic->id;
                         $actioncomm->datep       = $date;
                         $actioncomm->datef       = $date;
                         $actioncomm->percentage  = -1;   // Not applicable
                         $actioncomm->socid       = $thirdpartystatic->id;
                         $actioncomm->contactid   = $contactstatic->id;
+	                    $actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
                         $actioncomm->authorid    = $user->id;   // User saving action
                         $actioncomm->userownerid = $user->id;	// Owner of action
                         // Fields when action is an email (content should be added into note)
@@ -1768,14 +1760,14 @@ class EmailCollector extends CommonObject
                         }
                     }
 
-                    if (! $errorforactions)
+                    if (!$errorforactions)
                     {
                         $nbactiondoneforemail++;
                     }
                 }
 
                 // Error for email or not ?
-                if (! $errorforactions)
+                if (!$errorforactions)
                 {
                     if ($targetdir)
                     {
@@ -1805,7 +1797,7 @@ class EmailCollector extends CommonObject
 
                 $nbemailprocessed++;
 
-                if (! $errorforemail)
+                if (!$errorforemail)
                 {
                     $nbactiondone += $nbactiondoneforemail;
                     $nbemailok++;
@@ -1847,13 +1839,13 @@ class EmailCollector extends CommonObject
 
         if (! $error) $this->datelastok = $now;
 
-        if (! empty($this->errors)) $this->lastresult.= " - ".join(" - ", $this->errors);
+        if (!empty($this->errors)) $this->lastresult .= " - ".join(" - ", $this->errors);
         $this->codelastresult = ($error ? 'KO' : 'OK');
         $this->update($user);
 
         dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
 
-        return $error?-1:1;
+        return $error ?-1 : 1;
     }
 
 
@@ -1882,12 +1874,13 @@ class EmailCollector extends CommonObject
         // BODY
         $s = imap_fetchstructure($mbox, $mid);
 
-        if (!$s->parts)  // simple
+        if (!$s->parts) {
+            // simple
             $this->getpart($mbox, $mid, $s, 0);  // pass 0 as part-number
-        else {  // multipart: cycle through each part
-            foreach ($s->parts as $partno0=>$p)
-            {
-               $this->getpart($mbox, $mid, $p, $partno0+1);
+        } else {
+            // multipart: cycle through each part
+            foreach ($s->parts as $partno0 => $p) {
+                $this->getpart($mbox, $mid, $p, $partno0+1);
             }
         }
     }
@@ -1945,7 +1938,7 @@ class EmailCollector extends CommonObject
         {
             foreach ($p->dparameters as $x)
             {
-               $params[strtolower($x->attribute)] = $x->value;
+                $params[strtolower($x->attribute)] = $x->value;
             }
         }
 

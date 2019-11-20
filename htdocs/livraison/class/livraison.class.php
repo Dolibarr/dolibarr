@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,10 +63,24 @@ class Livraison extends CommonObject
 	public $socid;
 	public $ref_customer;
 
-	public $date_delivery;    // Date really received
+	/**
+	 * @var integer|string Date really received
+	 */
+	public $date_delivery;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+	/**
+	 * @var integer|string date_valid
+	 */
 	public $date_valid;
+
+
 	public $model_pdf;
+
 
 	/**
 	 * Constructor
@@ -278,7 +292,7 @@ class Livraison extends CommonObject
 		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
         $sql.= ', l.fk_incoterms, l.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.libelle as label_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
@@ -313,7 +327,7 @@ class Livraison extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -322,9 +336,7 @@ class Livraison extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				/*
-				 * Lignes
-				 */
+				// Load lines
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -441,13 +453,18 @@ class Livraison extends CommonObject
 						// Rename directory if dir was a temporary ref
 						if (preg_match('/^[\(]?PROV/i', $this->ref))
 						{
-							// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-							// afin de ne pas perdre les fichiers attaches
+							// Now we rename also files into index
+							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
+							$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$resql = $this->db->query($sql);
+							if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 							$oldref = dol_sanitizeFileName($this->ref);
 							$newref = dol_sanitizeFileName($numref);
 							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
 							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
-							if (file_exists($dirsource))
+							if (! $error && file_exists($dirsource))
 							{
 								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -820,38 +837,44 @@ class Livraison extends CommonObject
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int			$statut     Id statut
+	 *  @param	int			$status     Id status
 	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string					Label
 	 */
-    public function LibStatut($statut, $mode)
+    public function LibStatut($status, $mode)
 	{
         // phpcs:enable
 		global $langs;
 
 		if ($mode==0)
 		{
-			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled');
-			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft');
-			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated');
+			if ($status==-1) return $langs->trans('StatusDeliveryCanceled');
+			elseif ($status==0)  return $langs->trans('StatusDeliveryDraft');
+			elseif ($status==1)  return $langs->trans('StatusDeliveryValidated');
 		}
 		elseif ($mode==1)
 		{
-			if ($statut==-1) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==0)  return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
+			if ($status==-1) return $langs->trans($this->statuts[$status]);
+			elseif ($status==0)  return $langs->trans($this->statuts[$status]);
+			elseif ($status==1)  return $langs->trans($this->statuts[$status]);
+		}
+		elseif ($mode == 3)
+		{
+			if ($status==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			if ($status==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			if ($status==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5').' '.$langs->trans('StatusDeliveryCanceled');
-			elseif ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0').' '.$langs->trans('StatusDeliveryDraft');
-			elseif ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4').' '.$langs->trans('StatusDeliveryValidated');
+			if ($status==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5').' '.$langs->trans('StatusDeliveryCanceled');
+			elseif ($status==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			elseif ($status==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
-			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
-			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
+			if ($status==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			elseif ($status==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			elseif ($status==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 	}
 
@@ -942,7 +965,7 @@ class Livraison extends CommonObject
 			{
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Recupere les lignes de la source deja livrees
+				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
 				$sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
@@ -1042,7 +1065,6 @@ class Livraison extends CommonObject
 		$langs->load("deliveries");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'typhon';
 
 			if ($this->modelpdf) {

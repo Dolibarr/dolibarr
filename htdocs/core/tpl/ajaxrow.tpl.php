@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Javascript code to activate drag and drop on lines
  * You can use this if you want to be able to drag and drop rows of a table.
@@ -66,13 +66,15 @@ $(document).ready(function(){
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
 			var filepath = "<?php echo urlencode($filepath); ?>";
+			var token = "<?php echo $_SESSION["token"]; ?>";	// We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
 			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,
 						table_element_line: table_element_line,
 						fk_element: fk_element,
 						element_id: element_id,
-						filepath: filepath
+						filepath: filepath,
+						token: token
 					},
 					function() {
 						console.log("tableDND end of ajax call");

@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -258,7 +258,7 @@ dol_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'propal');
  */
 print load_fiche_titre($langs->trans("ProposalsNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
 print '<td>'.$langs->trans("Description")."</td>\n";
@@ -294,7 +294,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -314,7 +313,7 @@ foreach ($dirmodels as $reldir)
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -468,7 +467,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 	                            $htmltooltip = $langs->trans("Name").': '.$module->name;
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
@@ -524,7 +523,7 @@ if (empty($conf->facture->enabled))
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
 	print '<td>';
@@ -596,7 +595,6 @@ if (empty($conf->facture->enabled))
 		$i = 0;
 		while ($i < $num)
 		{
-
 			$row = $db->fetch_row($resql);
 
 			print '<option value="'.$row[0].'"';
@@ -748,7 +746,7 @@ print "</table>\n<br>";
  */
 
 print load_fiche_titre($langs->trans("Notifications"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60"></td>';

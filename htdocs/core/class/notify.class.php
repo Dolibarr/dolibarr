@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -541,7 +541,12 @@ class Notify
 							'',
 							'',
 							0,
-							-1
+							-1,
+                            '',
+                            '',
+                            '',
+                            '',
+                            'notification'
                         );
 
 						if ($mailfile->sendfile())
@@ -566,7 +571,7 @@ class Notify
 						}
 					}
 					else
-				  {
+				    {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
 					}
 					$i++;
@@ -769,7 +774,12 @@ class Notify
 						'',
 						'',
 						0,
-						1
+						1,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'notification'
 					);
 
 					if ($mailfile->sendfile())

@@ -9,6 +9,7 @@ ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
 # Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list
 # Module

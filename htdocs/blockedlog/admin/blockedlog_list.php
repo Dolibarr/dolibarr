@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -92,7 +92,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if ($action === 'downloadblockchain') {
-
 	$auth = new BlockedLogAuthority($db);
 
 	$bc = $auth->getLocalBlockChain();
@@ -362,7 +361,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Line of filters
 print '<tr class="liste_titre_filter">';
@@ -495,7 +494,7 @@ if (is_array($blocks))
 		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
-		   	print '<td class="right">'.price($block->amounts).'</td>';
+		   	print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
 		   	// Details link
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
@@ -575,7 +574,7 @@ jQuery(document).ready(function () {
 
 if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
 {
-?>
+    ?>
 		<script type="text/javascript">
 
 			$.ajax({
@@ -593,7 +592,7 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 			});
 
 		</script>
-<?php
+    <?php
 }
 
 if (GETPOST('withtab', 'alpha'))

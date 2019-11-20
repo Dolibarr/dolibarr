@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,6 @@ $erreur = false;
 // Insert survey
 if (GETPOST('confirmation'))
 {
-
 	// We save hours entered
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true)
 	{
@@ -471,7 +470,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 		{
 			$nbofchoice=count($_SESSION["totalchoixjour"]);
 			for ($j = 0; $j < $nbofchoice; $j++) {
-				//affichage des boutons ROUGES
+				// show red buttons
 				if (date("j", $_SESSION["totalchoixjour"][$j]) == $numerojour && date("n", $_SESSION["totalchoixjour"][$j]) == $_SESSION["mois"] && date("Y", $_SESSION["totalchoixjour"][$j]) == $_SESSION["annee"]) {
 					print '<td align="center" class="choisi"><input type="submit" class="bouton OFF" name="choixjourretrait[]" value="'.$numerojour.'"></td>'."\n";
 					$dejafait = $numerojour;
@@ -479,13 +478,13 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			}
 		}
 
-		//Si pas de bouton ROUGE alors on affiche un bouton VERT ou GRIS avec le numéro du jour dessus
+		// If no red button, we show green or grey button with number of day
 		if (isset($dejafait) === false || $dejafait != $numerojour){
-			//bouton vert
+			// green button
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
 			} else {
-                //bouton gris
+                // grey button
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}
@@ -537,8 +536,8 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
-			} else { //sinon la case est vide normalement
-
+			} else {
+				//sinon la case est vide normalement
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}
@@ -547,7 +546,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 
 	print '</table>'."\n";
 
-	//affichage des boutons de formulaire pour annuler, effacer les jours ou créer le sondage
+	// show buttons to cancel, delete days or create survey
 	print '<table>'."\n";
 	print '<tr>'."\n";
 	print '<td><input type="submit" class="button" name="reset" value="'. dol_escape_htmltag($langs->trans("RemoveAllDays")) .'"></td><td><input type="submit" class="button" name="reporterhoraires" value="'. dol_escape_htmltag($langs->trans("CopyHoursOfFirstDay")) .'"></td><td><input type="submit" class="button" name="resethoraires" value="'. dol_escape_htmltag($langs->trans("RemoveAllHours")) .'"></td></tr>'."\n";

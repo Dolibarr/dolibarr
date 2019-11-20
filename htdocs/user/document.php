@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,7 +64,7 @@ if ($id)
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2='user';
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -115,8 +115,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("UserCard").' - '.$langs->trans("Files"));
 
 if ($object->id)
 {
@@ -174,7 +173,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('', 0, 0);
+	accessforbidden('', 0, 1);
 }
 
 // End of page
