@@ -51,6 +51,11 @@ ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN lastname varchar(160);
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN firstname varchar(160);
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN login varchar(128);
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN codelastresult varchar(16);
+
+
+
 
 -- For v11
 
