@@ -435,6 +435,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			print $e->getMessage();
 		}
+
+		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	}
 	else
 	{

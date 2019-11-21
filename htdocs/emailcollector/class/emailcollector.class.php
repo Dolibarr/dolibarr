@@ -667,16 +667,20 @@ class EmailCollector extends CommonObject
     /**
      * Return the connectstring to use with IMAP connection function
      *
+     * @param	int		$norsh		Add /norsh to connectstring
      * @return string
      */
-    public function getConnectStringIMAP()
+    public function getConnectStringIMAP($ssl = 1, $norsh = 0)
     {
+    	global $conf;
+
         // Connect to IMAP
         $flags = '/service=imap'; // IMAP
-        $flags .= '/ssl'; // '/tls'
+        if ($ssl) $flags .= '/ssl'; // '/tls'
         $flags .= '/novalidate-cert';
         //$flags.='/readonly';
         //$flags.='/debug';
+        if ($norsh || ! empty($conf->global->IMPA_FORCE_NORSH)) $flags .= '/norsh';
 
         $connectstringserver = '{'.$this->host.':993'.$flags.'}';
 
