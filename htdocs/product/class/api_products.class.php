@@ -993,7 +993,6 @@ class Products extends DolibarrApi
      * Get attribute value by id.
      *
      * @param  int $id ID of Attribute value
-     * @param  string $ref Ref of Attribute value
      * @return array
      *
      * @throws RestException
