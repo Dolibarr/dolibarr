@@ -684,6 +684,38 @@ class EmailCollector extends CommonObject
     }
 
     /**
+     * Convert str to UTF-7 imap default mailbox names
+     *
+     * @param 	string $str			String to encode
+     * @return 	string				Encode string
+     */
+    function getEncodedUtf7($str) {
+    	if (function_exists('mb_convert_encoding')) {
+	    	# change spaces by entropy because mb_convert fail with spaces
+	    	$str=ereg_replace(" ","xyxy",$str);
+	    	# if mb_convert work
+	    	if ($str = mb_convert_encoding($str,"UTF-7")) {
+	    		# change characters
+	    		$str=preg_replace("/\+A/","&A",$str);
+	    		# change to spaces again
+	    		$str=preg_replace("/xyxy/"," ",$str);
+	    		# return encoded string
+	    		return $str;
+	    		# else
+	    	} else {
+	    		# print error and return false
+	    		echo "error: is not possible to encode this string '$str'.[".
+	     		imap_last_error().
+	     		"]";
+	     		return false;
+	    	}
+    	}
+    	else {
+    		return $str;
+    	}
+    }
+
+    /**
      * Action executed by scheduler
      * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
      *
