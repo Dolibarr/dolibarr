@@ -980,30 +980,114 @@ class Products extends DolibarrApi
         }
         throw new RestException(500, "Error deleting attribute");
     }
-
+    
     /**
-     * Delete attributes by ref.
+     * Get attribute value by id.
      *
-     * @param  string $ref Reference of Attribute
+     * @param  int $id ID of Attribute value
+     * @param  string $ref Ref of Attribute value
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url GET attributes/values/{id}
+     */
+    public function getAttributeValueById($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(401);
+        }
+        
+        $sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
+        
+        $query = $this->db->query($sql);
+        
+        if (!$query) {
+            throw new RestException(401);
+        }
+        
+        if (!$this->db->num_rows($query)) {
+            throw new RestException(404, 'Attribute value not found');
+        }
+        
+        $result = $this->db->fetch_object($query);
+        
+        $attrval = [];
+        $attrval['id'] = $result->rowid;
+        $attrval['fk_product_attribute'] = $result->fk_product_attribute;
+        $attrval['ref'] = $result->ref;
+        $attrval['value'] = $result->value;
+        
+        return $attrval;
+    }
+    
+    /**
+     * Get attribute value by ref.
+     *
+     * @param  int $id ID of Attribute value
+     * @param  string $ref Ref of Attribute value
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url GET attributes/{id}/values/ref/{ref}
+     */
+    public function getAttributeValueByRef($id, $ref)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(401);
+        }
+        
+        $sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."' AND fk_product_attribute = ". (int) $id ." AND entity IN (".getEntity('product').")";
+        
+        $query = $this->db->query($sql);
+        
+        if (!$query) {
+            throw new RestException(401);
+        }
+        
+        if (!$this->db->num_rows($query)) {
+            throw new RestException(404, 'Attribute value not found');
+        }
+        
+        $result = $this->db->fetch_object($query);
+        
+        $attrval = [];
+        $attrval['id'] = $result->rowid;
+        $attrval['fk_product_attribute'] = $result->fk_product_attribute;
+        $attrval['ref'] = $result->ref;
+        $attrval['value'] = $result->value;
+        
+        return $attrval;
+    }
+    
+    /**
+     * Delete attribute value by ref.
+     *
+     * @param  int $id ID of Attribute
+     * @param  string $ref Ref of Attribute value
      * @return int
      *
      * @throws RestException
      * @throws 401
      *
-     * @url DELETE attributes/ref/{ref}
+     * @url DELETE attributes/{id}/values/ref/{ref}
      */
-    public function deleteAttributesByRef($ref)
+    public function deleteAttributeValueByRef($id, $ref)
     {
         if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '". trim($ref) ."'";
-
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."' AND fk_product_attribute = ". (int) $id;
+        
         if ($this->db->query($sql)) {
             return 1;
         }
-        throw new RestException(500, "Error deleting attribute");
+        
+        throw new RestException(500, "Error deleting attribute value");
     }
 
     /**
