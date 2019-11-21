@@ -914,7 +914,7 @@ class Products extends DolibarrApi
         }
         return $resid;
     }
-    
+
     /**
      * Update attributes by id.
      *
@@ -933,22 +933,22 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
-        
+
         $prodattr = new ProductAttribute($this->db);
-        
+
         $result = $prodattr->fetch((int) $id);
         if ($result == 0) {
             throw new RestException(404, 'Attribute not found');
         } elseif ($result < 0) {
             throw new RestException(500, "Error fetching attribute");
         }
-        
+
         foreach($request_data as $field => $value) {
             if ($field == 'rowid') { continue;
             }
             $prodattr->$field = $value;
         }
-        
+
         if ($prodattr->update(DolibarrApiAccess::$user) > 0) {
             $result = $prodattr->fetch((int) $id);
             if ($result == 0) {
@@ -1190,7 +1190,7 @@ class Products extends DolibarrApi
         }
         throw new RestException(500, "Error creating new attribute value");
     }
-    
+
     /**
      * Update attribute value.
      *
@@ -1208,22 +1208,22 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
-        
+
         $objectval = new ProductAttributeValue($this->db);
         $result = $objectval->fetch((int) $id);
-        
+
         if ($result == 0) {
             throw new RestException(404, 'Attribute value not found');
         } elseif ($result < 0) {
             throw new RestException(500, "Error fetching attribute value");
         }
-        
+
         foreach($request_data as $field => $value) {
             if ($field == 'rowid') { continue;
             }
             $objectval->$field = $value;
         }
-        
+
         if ($objectval->update(DolibarrApiAccess::$user) > 0) {
             $result = $objectval->fetch((int) $id);
             if ($result == 0) {
