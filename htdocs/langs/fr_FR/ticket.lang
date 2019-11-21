@@ -33,7 +33,7 @@ TicketDictSeverity=Ticket - Sévérités
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Question commerciale
-TicketTypeShortINCIDENT=Demande d'assistance
+TicketTypeShortISSUE=Incident ou problem
 TicketTypeShortPROJET=Projet
 TicketTypeShortOTHER=Autre
 

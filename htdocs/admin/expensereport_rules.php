@@ -161,7 +161,7 @@ if ($action != 'edit')
 	echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 	echo '<input type="hidden" name="action" value="save" />';
 
-	echo '<table class="noborder" width="100%">';
+	echo '<table class="noborder centpercent">';
 
 	echo '<tr class="liste_titre">';
 	echo '<th>'.$langs->trans('ExpenseReportApplyTo').'</th>';
@@ -204,7 +204,7 @@ if ($action == 'edit')
 	echo '<input type="hidden" name="action" value="save" />';
 }
 
-echo '<table class="noborder" width="100%">';
+echo '<table class="noborder centpercent">';
 
 echo '<tr class="liste_titre">';
 echo '<th>'.$langs->trans('ExpenseReportApplyTo').'</th>';

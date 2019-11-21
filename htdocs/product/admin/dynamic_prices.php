@@ -161,7 +161,7 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 {
     print load_fiche_titre($langs->trans("GlobalVariables"), '', '');
 
-    print '<table summary="listofattributes" class="noborder" width="100%">';
+    print '<table summary="listofattributes" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Variable").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
@@ -242,7 +242,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 {
     print load_fiche_titre($langs->trans("GlobalVariableUpdaters"), '', '');
 
-    print '<table summary="listofattributes" class="noborder" width="100%">';
+    print '<table summary="listofattributes" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("VariableToUpdate").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';

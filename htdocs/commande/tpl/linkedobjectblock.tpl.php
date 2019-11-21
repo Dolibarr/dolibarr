@@ -63,7 +63,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     echo '<td class="linkedcol-action right">';
     // For now, shipments must stay linked to order, so link is not deletable
     if($object->element != 'shipping') {
-        echo '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
+        echo '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
     }
     echo '</td>';
     echo "</tr>\n";

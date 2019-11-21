@@ -133,10 +133,8 @@ if ($object->id)
 	dol_fiche_end();
 
 	$modulepart = 'mrp';
-	//$permission = $user->rights->mrp->create;
-	$permission = 1;
-	//$permtoedit = $user->rights->mrp->create;
-	$permtoedit = 1;
+	$permission = $user->rights->mrp->write;
+	$permtoedit = $user->rights->mrp->write;
 	$param = '&id=' . $object->id;
 
 	//$relativepathwithnofile='mo/' . dol_sanitizeFileName($object->id).'/';

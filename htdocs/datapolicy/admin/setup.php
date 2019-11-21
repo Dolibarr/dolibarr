@@ -23,7 +23,7 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/datapolicy.lib.php';
 
 // Translations
@@ -33,13 +33,13 @@ $langs->load('members');
 $langs->load('datapolicy@datapolicy');
 
 // Access control
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$arrayofparameters=array(
+$arrayofparameters = array(
     'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
@@ -78,7 +78,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 // }
 
 
-$arrayofparameters=array(
+$arrayofparameters = array(
     'ThirdParty' => array(
         'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200'),
         'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
@@ -120,7 +120,7 @@ $page_name = "datapolicySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'object_generic');
 
@@ -138,20 +138,20 @@ if ($action == 'edit')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    foreach($arrayofparameters as $title => $tab)
+    foreach ($arrayofparameters as $title => $tab)
     {
         print '<tr class="liste_titre"><td class="titlefield" colspan="2">'.$langs->trans($title).'</td></tr>';
-        foreach($tab as $key => $val)
+        foreach ($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';
             print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
             print '</td><td>';
-            print '<select name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'">';
+            print '<select name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'">';
             foreach ($valTab as $key1 => $val1) {
-                print '<option value="'.$key1.'" ' . ($conf->global->$key == $key1 ? 'selected="selected"' : '') . '>';
+                print '<option value="'.$key1.'" '.($conf->global->$key == $key1 ? 'selected="selected"' : '').'>';
                 print $val1;
                 print '</option>';
             }
@@ -169,17 +169,17 @@ if ($action == 'edit')
     print '</form>';
     print '<br>';
 } else {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    foreach($arrayofparameters as $title => $tab)
+    foreach ($arrayofparameters as $title => $tab)
     {
         print '<tr class="liste_titre"><td class="titlefield" colspan="2">'.$langs->trans($title).'</td></tr>';
-        foreach($tab as $key => $val)
+        foreach ($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';
             print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
-            print '</td><td>' . ($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]) . '</td></tr>';
+            print '</td><td>'.($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]).'</td></tr>';
         }
     }
 

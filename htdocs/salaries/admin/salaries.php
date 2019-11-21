@@ -95,7 +95,7 @@ print '<input type="hidden" name="action" value="update">';
 /*
  *  Params
  */
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60">'.$langs->trans("Value")."</td>\n";

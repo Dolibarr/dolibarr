@@ -401,7 +401,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
-	 *	@return		false|resource			Database access handler
+	 *	@return		bool|resource			Database access handler
 	 *	@see		close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)

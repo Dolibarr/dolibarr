@@ -115,8 +115,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("UserCard").' - '.$langs->trans("Files"));
 
 if ($object->id)
 {

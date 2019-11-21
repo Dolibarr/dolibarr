@@ -26,22 +26,22 @@
 require '../../main.inc.php';
 
 // Libraries
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/zapier.lib.php';
 
 // Translations
 $langs->loadLangs(array("admin", "zapier@zapier"));
 
 // Access control
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$arrayofparameters=array(
-    'ZAPIERFORDOLIBARR_MYPARAM1'=>array('css'=>'minwidth200','enabled'=>1),
-    'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500','enabled'=>1)
+$arrayofparameters = array(
+    'ZAPIERFORDOLIBARR_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
+    'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
 );
 
 
@@ -61,7 +61,7 @@ $page_name = "ZapierSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier@zapier');
 
@@ -78,13 +78,13 @@ if ($action == 'edit') {
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    foreach($arrayofparameters as $key => $val) {
+    foreach ($arrayofparameters as $key => $val) {
         print '<tr class="oddeven"><td>';
         print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-        print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+        print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
     }
     print '</table>';
 
@@ -95,14 +95,14 @@ if ($action == 'edit') {
     print '</form>';
     print '<br>';
 } else {
-    if (! empty($arrayofparameters)) {
-        print '<table class="noborder" width="100%">';
+    if (!empty($arrayofparameters)) {
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-        foreach($arrayofparameters as $key => $val) {
+        foreach ($arrayofparameters as $key => $val) {
             print '<tr class="oddeven"><td>';
             print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-            print '</td><td>' . $conf->global->$key . '</td></tr>';
+            print '</td><td>'.$conf->global->$key.'</td></tr>';
         }
 
         print '</table>';
