@@ -53,7 +53,7 @@ ALTER TABLE llx_mailing_cibles MODIFY COLUMN firstname varchar(160);
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN login varchar(128);
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN codelastresult varchar(16);
-
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer DEFAULT 0;
 
 
 
