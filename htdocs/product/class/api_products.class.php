@@ -1263,32 +1263,6 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Delete attribute value by ref.
-     *
-     * @param  string $ref Ref of Attribute value
-     * @return int
-     *
-     * @throws RestException
-     * @throws 401
-     *
-     * @url DELETE attributes/values/ref/{ref}
-     */
-    public function deleteAttributeValueByRef($ref)
-    {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
-            throw new RestException(401);
-        }
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."'";
-
-        if ($this->db->query($sql)) {
-            return 1;
-        }
-
-        throw new RestException(500, "Error deleting attribute value");
-    }
-
-    /**
      * Get product variants.
      *
      * @param  int $id ID of Product
