@@ -418,10 +418,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (function_exists('imap_open'))
 	{
 		$connectstringserver = $object->getConnectStringIMAP();
-		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $object->login, $object->password);
+		try {
+			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+			$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+
+			$connection = imap_open($connectstringsource, $object->login, $object->password);
+		}
+		catch(Exception $e)
+		{
+			print $e->getMessage();
+		}
 	}
 	else
 	{
