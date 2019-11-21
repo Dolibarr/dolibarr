@@ -1090,7 +1090,6 @@ class EmailCollector extends CommonObject
                 // If there is a filter on trackid
                 if ($searchfilterdoltrackid > 0)
                 {
-                    //if (empty($headers['X-Dolibarr-TRACKID'])) continue;
                     if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
@@ -1104,7 +1103,6 @@ class EmailCollector extends CommonObject
                         $nbemailprocessed++;
                         continue;
                     }
-                    //if (! empty($headers['X-Dolibarr-TRACKID']) continue;
                 }
 
                 $thirdpartystatic = new Societe($this->db);
