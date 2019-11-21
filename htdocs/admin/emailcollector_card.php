@@ -420,8 +420,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$connectstringserver = $object->getConnectStringIMAP();
 
 		try {
-			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-			$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+			if ($sourcedir) {
+				//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+				$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+			}
+			if ($targetdir) {
+				//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
+			}
 
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
 		}
