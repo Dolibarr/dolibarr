@@ -1347,9 +1347,12 @@ class Products extends DolibarrApi
             throw new RestException(401);
         }
 
-        if (empty($id) || empty($weight_impact) || empty($price_impact) || empty($features) || !is_array($features)) {
+        if (empty($id) || empty($features) || !is_array($features)) {
             throw new RestException(401);
         }
+		
+        $weight_impact = price2num($weight_impact);
+        $price_impact = price2num($price_impact);
 
         $prodattr = new ProductAttribute($this->db);
         $prodattr_val = new ProductAttributeValue($this->db);
@@ -1406,9 +1409,12 @@ class Products extends DolibarrApi
             throw new RestException(401);
         }
 
-        if (empty($ref) || empty($weight_impact) || empty($price_impact) || empty($features) || !is_array($features)) {
+        if (empty($ref) || empty($features) || !is_array($features)) {
             throw new RestException(401);
         }
+		
+        $weight_impact = price2num($weight_impact);
+        $price_impact = price2num($price_impact);
 
         $prodattr = new ProductAttribute($this->db);
         $prodattr_val = new ProductAttributeValue($this->db);
