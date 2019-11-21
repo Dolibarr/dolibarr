@@ -849,7 +849,7 @@ class Products extends DolibarrApi
 
         return $prodattr;
     }
-    
+
     /**
      * Get attributes by ref.
      *
@@ -866,23 +866,23 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
-        
+
         $sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '". trim($ref) ."' AND entity IN (".getEntity('product').")";
-        
+
         $query = $this->db->query($sql);
-        
+
         if (!$this->db->num_rows($query)) {
             throw new RestException(404);
         }
-        
+
         $result = $this->db->fetch_object($query);
-        
+
         $attr = [];
         $attr['id'] = $result->rowid;
         $attr['ref'] = $result->ref;
         $attr['label'] = $result->label;
         $attr['rang'] = $result->rang;
-        
+
         return $attr;
     }
 
