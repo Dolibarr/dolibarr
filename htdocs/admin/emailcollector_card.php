@@ -509,11 +509,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         else { jQuery("#rulevalue").prop("disabled", false); }
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
-	$noparam = array();
+	/*$noparam = array();
 	foreach ($arrayoftypes as $key => $value)
 	{
 	    if ($value['noparam']) $noparam[] = $key;
-	}
+	}*/
 	print '})';
 	print '</script>'."\n";
 
