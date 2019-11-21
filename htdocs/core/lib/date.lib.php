@@ -963,7 +963,7 @@ function monthArray($outputlangs, $short = 0)
 }
 /**
  *	Return array of week numbers.
- 
+
  *
  *	@param	int 		$month			Month number
  *  @param	int			$year			Year number
@@ -981,7 +981,7 @@ function getWeekNumbersOfMonth($month, $year) {
 }
 /**
  *	Return array of first day of weeks.
- 
+
  *
  *	@param	array 		$TWeek			array of week numbers
  *  @param	int			$year			Year number
@@ -997,7 +997,7 @@ function getFirstDayOfEachWeek($TWeek, $year) {
 }
 /**
  *	Return array of last day of weeks.
- 
+
  *
  *	@param	array 		$TWeek			array of week numbers
  *  @param	int			$year			Year number
@@ -1012,14 +1012,13 @@ function getLastDayOfEachWeek($TWeek, $year) {
 }
 /**
  *	Return week number.
- 
+
  *
  *	@param	int 		$day			Day number
  *	@param	int 		$month			Month number
  *  @param	int			$year			Year number
  *	@return int							Week number
  */
-
 function getWeekNumber($day, $month, $year) {
 	$date = new DateTime($year.'-'.$month.'-'.$day);
 	$week = $date->format("W");
