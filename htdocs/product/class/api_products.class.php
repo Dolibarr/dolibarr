@@ -980,7 +980,7 @@ class Products extends DolibarrApi
         }
         throw new RestException(500, "Error deleting attribute");
     }
-    
+
     /**
      * Get attribute value by id.
      *
@@ -998,30 +998,30 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
-        
+
         $sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
-        
+
         $query = $this->db->query($sql);
-        
+
         if (!$query) {
             throw new RestException(401);
         }
-        
+
         if (!$this->db->num_rows($query)) {
             throw new RestException(404, 'Attribute value not found');
         }
-        
+
         $result = $this->db->fetch_object($query);
-        
+
         $attrval = [];
         $attrval['id'] = $result->rowid;
         $attrval['fk_product_attribute'] = $result->fk_product_attribute;
         $attrval['ref'] = $result->ref;
         $attrval['value'] = $result->value;
-        
+
         return $attrval;
     }
-    
+
     /**
      * Get attribute value by ref.
      *
@@ -1039,30 +1039,30 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
-        
+
         $sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."' AND fk_product_attribute = ". (int) $id ." AND entity IN (".getEntity('product').")";
-        
+
         $query = $this->db->query($sql);
-        
+
         if (!$query) {
             throw new RestException(401);
         }
-        
+
         if (!$this->db->num_rows($query)) {
             throw new RestException(404, 'Attribute value not found');
         }
-        
+
         $result = $this->db->fetch_object($query);
-        
+
         $attrval = [];
         $attrval['id'] = $result->rowid;
         $attrval['fk_product_attribute'] = $result->fk_product_attribute;
         $attrval['ref'] = $result->ref;
         $attrval['value'] = $result->value;
-        
+
         return $attrval;
     }
-    
+
     /**
      * Delete attribute value by ref.
      *
@@ -1080,13 +1080,13 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
-        
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."' AND fk_product_attribute = ". (int) $id;
-        
+
         if ($this->db->query($sql)) {
             return 1;
         }
-        
+
         throw new RestException(500, "Error deleting attribute value");
     }
 
