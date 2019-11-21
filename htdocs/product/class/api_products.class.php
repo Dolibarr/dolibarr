@@ -1468,8 +1468,6 @@ class Products extends DolibarrApi
         $prodcomb = new ProductCombination($this->db);
         $prodcomb->fetch((int) $id);
 
-        $old_prodcomb = dol_clone($prodcomb, 0);
-
         foreach($request_data as $field => $value) {
             if ($field == 'rowid') { continue;
             }
