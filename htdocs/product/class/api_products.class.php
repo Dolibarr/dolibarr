@@ -1350,7 +1350,7 @@ class Products extends DolibarrApi
         if (empty($id) || empty($features) || !is_array($features)) {
             throw new RestException(401);
         }
-		
+
         $weight_impact = price2num($weight_impact);
         $price_impact = price2num($price_impact);
 
@@ -1412,7 +1412,7 @@ class Products extends DolibarrApi
         if (empty($ref) || empty($features) || !is_array($features)) {
             throw new RestException(401);
         }
-		
+
         $weight_impact = price2num($weight_impact);
         $price_impact = price2num($price_impact);
 
