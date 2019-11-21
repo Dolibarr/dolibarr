@@ -5966,15 +5966,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_IDPROF5__'] = '__THIRDPARTY_IDPROF5__';
 				$substitutionarray['__THIRDPARTY_IDPROF6__'] = '__THIRDPARTY_IDPROF6__';
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
-				$substitutionarray['__THIRDPARTY_SKYPE__'] = '__THIRDPARTY_SKYPE__';
-				$substitutionarray['__THIRDPARTY_TWITTER__'] = '__THIRDPARTY_TWITTER__';
-				$substitutionarray['__THIRDPARTY_FACEBOOK__'] = '__THIRDPARTY_FACEBOOK__';
-				$substitutionarray['__THIRDPARTY_INSTAGRAM__'] = '__THIRDPARTY_INSTAGRAM__';
-				$substitutionarray['__THIRDPARTY_SNAPCHAT__'] = '__THIRDPARTY_SNAPCHAT__';
-				$substitutionarray['__THIRDPARTY_GOOGLEPLUS__'] = '__THIRDPARTY_GOOGLEPLUS__';
-				$substitutionarray['__THIRDPARTY_YOUTUBE__'] = '__THIRDPARTY_YOUTUBE__';
-				$substitutionarray['__THIRDPARTY_WHATSAPP__'] = '__THIRDPARTY_WHATSAPP__';
-				$substitutionarray['__THIRDPARTY_LINKEDIN__'] = '__THIRDPARTY_LINKEDIN__';
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
@@ -6088,15 +6079,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object)?$object->idprof5:'');
 				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object)?$object->idprof6:'');
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object)?$object->tva_intra:'');
-				$substitutionarray['__THIRDPARTY_SKYPE__'] = (is_object($object)?$object->skype:'');
-				$substitutionarray['__THIRDPARTY_TWITTER__'] = (is_object($object)?$object->twitter:'');
-				$substitutionarray['__THIRDPARTY_FACEBOOK__'] = (is_object($object)?$object->facebook:'');
-				$substitutionarray['__THIRDPARTY_INSTAGRAM__'] = (is_object($object)?$object->instagram:'');
-				$substitutionarray['__THIRDPARTY_SNAPCHAT__'] = (is_object($object)?$object->snapchat:'');
-				$substitutionarray['__THIRDPARTY_GOOGLEPLUS__'] = (is_object($object)?$object->googleplus:'');
-				$substitutionarray['__THIRDPARTY_YOUTUBE__'] = (is_object($object)?$object->youtube:'');
-				$substitutionarray['__THIRDPARTY_WHATSAPP__'] = (is_object($object)?$object->watsapp:'');
-				$substitutionarray['__THIRDPARTY_LINKEDIN__'] = (is_object($object)?$object->linkedin:'');
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object)?dol_htmlentitiesbr($object->note_public):'');
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object)?dol_htmlentitiesbr($object->note_private):'');
 			}
@@ -6120,15 +6102,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof5:'');
 				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof6:'');
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->thirdparty->tva_intra:'');
-				$substitutionarray['__THIRDPARTY_SKYPE__'] = (is_object($object->thirdparty)?$object->thirdparty->skype:'');
-				$substitutionarray['__THIRDPARTY_TWITTER__'] = (is_object($object->thirdparty)?$object->thirdparty->twitter:'');
-				$substitutionarray['__THIRDPARTY_FACEBOOK__'] = (is_object($object->thirdparty)?$object->thirdparty->facebook:'');
-				$substitutionarray['__THIRDPARTY_INSTAGRAM__'] = (is_object($object->thirdparty)?$object->thirdparty->instagram:'');
-				$substitutionarray['__THIRDPARTY_SNAPCHAT__'] = (is_object($object->thirdparty)?$object->thirdparty->snapchat:'');
-				$substitutionarray['__THIRDPARTY_GOOGLEPLUS__'] = (is_object($object->thirdparty)?$object->thirdparty->googleplus:'');
-				$substitutionarray['__THIRDPARTY_YOUTUBE__'] = (is_object($object->thirdparty)?$object->thirdparty->youtube:'');
-				$substitutionarray['__THIRDPARTY_WHATSAPP__'] = (is_object($object->thirdparty)?$object->thirdparty->watsapp:'');
-				$substitutionarray['__THIRDPARTY_LINKEDIN__'] = (is_object($object->thirdparty)?$object->thirdparty->linkedin:'');
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_public):'');
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_private):'');
 			}
