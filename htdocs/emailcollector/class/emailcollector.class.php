@@ -692,21 +692,19 @@ class EmailCollector extends CommonObject
     function getEncodedUtf7($str) {
     	if (function_exists('mb_convert_encoding')) {
 	    	# change spaces by entropy because mb_convert fail with spaces
-	    	$str=ereg_replace(" ","xyxy",$str);
+	    	$str=preg_replace("/ /", "xyxy", $str);
 	    	# if mb_convert work
-	    	if ($str = mb_convert_encoding($str,"UTF-7")) {
+	    	if ($str = mb_convert_encoding($str, "UTF-7")) {
 	    		# change characters
-	    		$str=preg_replace("/\+A/","&A",$str);
+	    		$str=preg_replace("/\+A/", "&A", $str);
 	    		# change to spaces again
-	    		$str=preg_replace("/xyxy/"," ",$str);
+	    		$str=preg_replace("/xyxy/", " ", $str);
 	    		# return encoded string
 	    		return $str;
 	    		# else
 	    	} else {
 	    		# print error and return false
-	    		echo "error: is not possible to encode this string '$str'.[".
-	     		imap_last_error().
-	     		"]";
+	    		$this->error = "error: is not possible to encode this string '".$str."'";
 	     		return false;
 	    	}
     	}
