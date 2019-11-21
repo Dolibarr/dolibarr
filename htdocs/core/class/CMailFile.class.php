@@ -776,7 +776,7 @@ class CMailFile
 					else
 					{
 						if (empty($this->error)) $this->error = $result;
-						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>".$this->error, LOG_ERR);
 						$res = false;
 					}
 				}
