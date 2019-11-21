@@ -914,14 +914,13 @@ class Products extends DolibarrApi
         }
         return $resid;
     }
-
+    
     /**
      * Update attributes by id.
      *
      * @param  int $id    ID of Attribute
-     * @param  string $ref   Reference of Attribute
-     * @param  string $label Label of Attribute
-     * @return int
+     * @param  array $request_data Datas
+     * @return array
      *
      * @throws RestException
      * @throws 401
@@ -929,27 +928,36 @@ class Products extends DolibarrApi
      *
      * @url PUT attributes/{id}
      */
-    public function putAttributes($id, $ref, $label)
+    public function putAttributes($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
-
+        
         $prodattr = new ProductAttribute($this->db);
-
+        
         $result = $prodattr->fetch((int) $id);
         if ($result == 0) {
             throw new RestException(404, 'Attribute not found');
         } elseif ($result < 0) {
             throw new RestException(500, "Error fetching attribute");
         }
-
-
-        $prodattr->label = $label;
-        $prodattr->ref = $ref;
-
+        
+        foreach($request_data as $field => $value) {
+            if ($field == 'rowid') { continue;
+            }
+            $prodattr->$field = $value;
+        }
+        
         if ($prodattr->update(DolibarrApiAccess::$user) > 0) {
-            return 1;
+            $result = $prodattr->fetch((int) $id);
+            if ($result == 0) {
+                throw new RestException(404, 'Attribute not found');
+            } elseif ($result < 0) {
+                throw new RestException(500, "Error fetching attribute");
+            } else {
+                return $prodattr;
+            }
         }
         throw new RestException(500, "Error updating attribute");
     }
@@ -1181,6 +1189,52 @@ class Products extends DolibarrApi
             return $objectval->id;
         }
         throw new RestException(500, "Error creating new attribute value");
+    }
+    
+    /**
+     * Update attribute value.
+     *
+     * @param  int $id ID of Attribute
+     * @param  array $request_data Datas
+     * @return array
+     *
+     * @throws RestException
+     * @throws 401
+     *
+     * @url PUT attributes/values/{id}
+     */
+    public function putAttributeValue($id, $request_data)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+        
+        $objectval = new ProductAttributeValue($this->db);
+        $result = $objectval->fetch((int) $id);
+        
+        if ($result == 0) {
+            throw new RestException(404, 'Attribute value not found');
+        } elseif ($result < 0) {
+            throw new RestException(500, "Error fetching attribute value");
+        }
+        
+        foreach($request_data as $field => $value) {
+            if ($field == 'rowid') { continue;
+            }
+            $objectval->$field = $value;
+        }
+        
+        if ($objectval->update(DolibarrApiAccess::$user) > 0) {
+            $result = $objectval->fetch((int) $id);
+            if ($result == 0) {
+                throw new RestException(404, 'Attribute not found');
+            } elseif ($result < 0) {
+                throw new RestException(500, "Error fetching attribute");
+            } else {
+                return $objectval;
+            }
+        }
+        throw new RestException(500, "Error updating attribute");
     }
 
     /**
