@@ -972,6 +972,9 @@ select.flat.selectlimit {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
 /* Style used for most tables */
+div.fiche>div.tabBar>form>div.div-table-responsive {
+    min-height: 392px;
+}
 .div-table-responsive, .div-table-responsive-no-min {
     overflow-x: auto;
     min-height: 0.01%;
