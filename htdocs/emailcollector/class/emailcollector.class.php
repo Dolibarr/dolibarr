@@ -667,6 +667,7 @@ class EmailCollector extends CommonObject
     /**
      * Return the connectstring to use with IMAP connection function
      *
+     * @param	int		$ssl		Add /ssl tag
      * @param	int		$norsh		Add /norsh to connectstring
      * @return string
      */
@@ -693,21 +694,20 @@ class EmailCollector extends CommonObject
      * @param 	string $str			String to encode
      * @return 	string				Encode string
      */
-    function getEncodedUtf7($str) {
+    public function getEncodedUtf7($str)
+    {
     	if (function_exists('mb_convert_encoding')) {
-	    	# change spaces by entropy because mb_convert fail with spaces
+	    	// change spaces by entropy because mb_convert fail with spaces
 	    	$str=preg_replace("/ /", "xyxy", $str);
-	    	# if mb_convert work
+	    	// if mb_convert work
 	    	if ($str = mb_convert_encoding($str, "UTF-7")) {
-	    		# change characters
+	    		// change characters
 	    		$str=preg_replace("/\+A/", "&A", $str);
-	    		# change to spaces again
+	    		// change to spaces again
 	    		$str=preg_replace("/xyxy/", " ", $str);
-	    		# return encoded string
 	    		return $str;
-	    		# else
 	    	} else {
-	    		# print error and return false
+	    		// print error and return false
 	    		$this->error = "error: is not possible to encode this string '".$str."'";
 	     		return false;
 	    	}

@@ -6571,7 +6571,8 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to show lines of extrafields with output datas
+	 * Function to show lines of extrafields with output datas.
+	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan']
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output (view) or input (edit) for extrafield

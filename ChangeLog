@@ -29,6 +29,7 @@ Following changes may create regressions for some external modules, but were nec
 * All properties 'labelstatusshort' and 'labelstatut_short' were renamed into 'labelStatusShort'. 
 * All properties 'type_libelle' were renamed into 'type_label'.
 * Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
+* The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
 
 ***** ChangeLog for 10.0.3 compared to 10.0.2 *****
 IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
