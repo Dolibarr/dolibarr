@@ -1220,6 +1220,8 @@ else
 	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
+	    if ($conf->browser->layout == 'phone') print '</tr><tr>';
+
         print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
         print '<table class="nobordernopadding"><tr><td>';
 		$tmpcode = $object->code_client;
@@ -1241,6 +1243,10 @@ else
             if (!empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default = 1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ?GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0));
             print '</td>';
+
+
+            if ($conf->browser->layout == 'phone') print '</tr><tr>';
+
             print '<td>';
             if (!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire))
             {
@@ -1283,7 +1289,9 @@ else
         // Zip / Town
         print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
         print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
-        print '</td><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+        print '</td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
+        print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
         print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td></tr>';
 
@@ -1313,6 +1321,7 @@ else
         // Phone / Fax
         print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
         print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
         print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
@@ -1374,7 +1383,7 @@ else
         // }
 
         // Prof ids
-        $i = 1; $j = 0;
+        $i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
         while ($i <= 6)
         {
             $idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
@@ -1382,7 +1391,7 @@ else
             {
 	            $key = 'idprof'.$i;
 
-                if (($j % 2) == 0) print '<tr>';
+                if (($j % $NBCOLS) == 0) print '<tr>';
 
                 $idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
                 print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
@@ -1401,6 +1410,7 @@ else
         print '<td>';
         print $form->selectyesno('assujtva_value', GETPOSTISSET('assujtva_value') ?GETPOST('assujtva_value', 'int') : 1, 1); // Assujeti par defaut en creation
         print '</td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td class="nowrap">'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
@@ -1462,6 +1472,7 @@ else
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td>'.$form->editfieldkey('Staff', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);

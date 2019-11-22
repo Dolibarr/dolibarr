@@ -271,6 +271,12 @@ if ($result)
 		print "</tr>\n";
 		$i++;
 	}
+	if (empty($num)) {
+		$colspan = 6;
+		if (!$filteremail) $colspan++;
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	}
+
 	print '</table>';
 	print '</div>';
 	print '</form>';

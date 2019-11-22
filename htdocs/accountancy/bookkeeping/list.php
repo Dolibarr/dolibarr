@@ -575,8 +575,8 @@ if ($action == 'delmouv') {
 }
 if ($action == 'delbookkeepingyear') {
 	$form_question = array();
-	$delyear = GETPOST('delyear');
-	$deljournal = GETPOST('deljournal');
+	$delyear = GETPOST('delyear', 'int');
+	$deljournal = GETPOST('deljournal', 'alpha');
 
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');

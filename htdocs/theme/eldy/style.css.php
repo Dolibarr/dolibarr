@@ -109,7 +109,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='0.86em';
+    $conf->global->THEME_ELDY_FONT_SIZE1=$fontsize;
     $conf->global->THEME_ELDY_FONT_SIZE2='0.75em';
 }
 
