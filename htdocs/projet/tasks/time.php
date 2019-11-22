@@ -231,11 +231,11 @@ if (($action == 'updateline' || $action == 'updatesplitline') && ! $_POST["cance
 		if ($_POST['taskid'] != $id)
 		{
 			$id = $_POST['taskid'];
-			
+
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 			$result = $object->delTimeSpent($user);
-			
+
 			$object->fetch($id);
    			$object->timespent_note = $_POST["timespent_note_line"];
 			$object->timespent_duration = $_POST["new_durationhour"]*60*60;	// We store duration in seconds
@@ -261,7 +261,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && ! $_POST["cance
 				$error++;
 			}
 		}
-		else 
+		else
 		{
 			$object->fetch($id, $ref);
 			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
