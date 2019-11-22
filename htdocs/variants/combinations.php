@@ -141,7 +141,7 @@ if ($_POST) {
 
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
-				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
+				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -268,7 +268,7 @@ if ($action === 'confirm_deletecombination') {
 	if ($prodstatic->fetch('', $dest_product) > 0) {
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
-			if ($prodcomb->copyAll($object->id, $prodstatic) > 0) {
+			if ($prodcomb->copyAll($user, $object->id, $prodstatic) > 0) {
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
 				exit();
 			} else {
