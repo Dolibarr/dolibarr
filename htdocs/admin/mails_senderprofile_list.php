@@ -358,7 +358,7 @@ $newcardbutton = '';
 if ($action != 'create') {
 	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create', '', $permissiontoadd);
 } else {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	/*print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -366,6 +366,7 @@ if ($action != 'create') {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	*/
 	print '<table class="border centpercent tableforfield">';
 	print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.GETPOST('label', 'alphanohtml').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
@@ -374,7 +375,7 @@ if ($action != 'create') {
 	$doleditor = new DolEditor('signature', GETPOST('signature'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
-	print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="label" class="maxwidth50" value="'.GETPOST('position', 'int').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.GETPOST('position', 'int').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print $form->selectyesno('active', GETPOST('active', 'int'), 1);
 	print '</td></tr>';
@@ -385,7 +386,7 @@ if ($action != 'create') {
 	print ' &nbsp; ';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
-	print '</form>';
+	//print '</form>';
 }
 
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
