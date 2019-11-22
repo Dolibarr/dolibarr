@@ -124,7 +124,6 @@ class box_shipments extends ModeleBoxes
 
                     $orderstatic->id= $objp->commande_id;
                     $orderstatic->ref=$objp->commande_ref;
-                    print $orderstatic->getNomUrl(1);
 
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
