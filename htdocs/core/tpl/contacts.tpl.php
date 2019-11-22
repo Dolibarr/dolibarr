@@ -48,7 +48,7 @@ elseif ($module == 'project')
 		// ... a project has the visibility "public"
 		$permission = 1;
 	}
-	else if($user->rights->projet->all->lire && $user->rights->projet->all->creer)
+	elseif($user->rights->projet->all->lire && $user->rights->projet->all->creer)
 	{
 		// ... he have the read and write rights for all projects
 		$permission = 1;
@@ -60,7 +60,7 @@ elseif ($module == 'project')
 	//	$permission = 1;
 	//
 	// }
-	else if($user->rights->projet->creer &&  $object->user_author_id === $user->id)
+	elseif($user->rights->projet->creer &&  $object->user_author_id === $user->id)
 	{
 		// ... he is has created the project (as fallback)
 		$permission = 1;
