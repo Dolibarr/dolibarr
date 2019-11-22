@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Christophe Battarel		<christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,34 +226,70 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel
 
 	if (!$error)
 	{
-		$object->fetch($id, $ref);
-		// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
-
-		$object->timespent_id = $_POST["lineid"];
-		$object->timespent_note = $_POST["timespent_note_line"];
-		$object->timespent_old_duration = $_POST["old_duration"];
-		$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
-		$object->timespent_duration += $_POST["new_durationmin"] * 60; // We store duration in seconds
-        if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
-        {
-			$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
-			$object->timespent_withhour = 1;
-        }
-        else
+		if ($_POST['taskid'] != $id)
 		{
-			$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+			$id = $_POST['taskid'];
+			
+			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
+			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
+			$result = $object->delTimeSpent($user);
+			
+			$object->fetch($id);
+   			$object->timespent_note = $_POST["timespent_note_line"];
+			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60;	// We store duration in seconds
+			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60;   // We store duration in seconds
+			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
+			{
+				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_withhour = 1;
+			}
+			else
+			{
+				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+			}
+			$object->timespent_fk_user = $_POST["userid_line"];
+			$result = $object->addTimeSpent($user);
+			if ($result >= 0)
+			{
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			}
+			else
+			{
+				setEventMessages($langs->trans($object->error), null, 'errors');
+				$error++;
+			}
 		}
-		$object->timespent_fk_user = $_POST["userid_line"];
+		else 
+		{
+			$object->fetch($id, $ref);
+			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 
-		$result = $object->updateTimeSpent($user);
-		if ($result >= 0)
-		{
-			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-		}
-		else
-		{
-			setEventMessages($langs->trans($object->error), null, 'errors');
-			$error++;
+			$object->timespent_id = $_POST["lineid"];
+			$object->timespent_note = $_POST["timespent_note_line"];
+			$object->timespent_old_duration = $_POST["old_duration"];
+			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += $_POST["new_durationmin"] * 60; // We store duration in seconds
+			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
+			{
+				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_withhour = 1;
+			}
+			else
+			{
+				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+			}
+			$object->timespent_fk_user = $_POST["userid_line"];
+
+			$result = $object->updateTimeSpent($user);
+			if ($result >= 0)
+			{
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			}
+			else
+			{
+				setEventMessages($langs->trans($object->error), null, 'errors');
+				$error++;
+			}
 		}
 	}
 	else
@@ -1195,10 +1232,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
         		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes))   // Not a dedicated task
     			{
         			print '<td class="nowrap">';
-        			$tasktmp->id = $task_time->fk_task;
-        			$tasktmp->ref = $task_time->ref;
-        			$tasktmp->label = $task_time->label;
-        			print $tasktmp->getNomUrl(1, 'withproject', 'time');
+					if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
+					{
+						$formproject->selectTasks(-1, GETPOST('taskid', 'int')?GETPOST('taskid', 'int'):$task_time->fk_task, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+					}
+					else
+					{
+						$tasktmp->id = $task_time->fk_task;
+						$tasktmp->ref = $task_time->ref;
+						$tasktmp->label = $task_time->label;
+						print $tasktmp->getNomUrl(1, 'withproject', 'time');
+					}
         			print '</td>';
         			if (!$i) $totalarray['nbfield']++;
     			}
