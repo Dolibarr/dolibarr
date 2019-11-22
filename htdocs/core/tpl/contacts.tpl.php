@@ -39,7 +39,33 @@ if ($module == 'propal') { $permission = $user->rights->propale->creer; }
 elseif ($module == 'fichinter') { $permission = $user->rights->ficheinter->creer; }
 elseif ($module == 'order_supplier') { $permission = $user->rights->fournisseur->commande->creer; }
 elseif ($module == 'invoice_supplier') { $permission = $user->rights->fournisseur->facture->creer; }
-elseif ($module == 'project') { $permission = $user->rights->projet->creer; }
+elseif ($module == 'project')
+{
+	// A user can change the project owners when ...
+
+	if($object->public)
+	{
+		// ... a project has the visibility "public"
+		$permission = 1;
+	}
+	else if($user->rights->projet->all->lire && $user->rights->projet->all->creer)
+	{
+		// ... he have the read and write rights for all projects
+		$permission = 1;
+	}
+	// TODO:
+	// else if()
+	// {
+	//	// ... he is a project leader
+	//	$permission = 1;
+	//
+	// }
+	else if($user->rights->projet->creer &&  $object->user_author_id === $user->id)
+	{
+		// ... he is has created the project (as fallback)
+		$permission = 1;
+	}
+}
 elseif ($module == 'action') { $permission = $user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping') { $permission = $user->rights->expedition->creer; }
 elseif ($module == 'reception') { $permission = $user->rights->reception->creer; }
