@@ -244,7 +244,7 @@ if ($action === 'confirm_deletecombination') {
 	if ($prodcomb->fetch($valueid) > 0) {
 		$db->begin();
 
-		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
+		if ($prodcomb->delete($user) > 0) {
 			$db->commit();
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
