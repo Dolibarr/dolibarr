@@ -113,9 +113,6 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0)
 		$error++;
-	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0)
-		$error++;
 
 	if (!$error) {
 		$db->commit();
@@ -374,6 +371,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
     }
+  print ' ApplePAY, GooglePAY & MicrosoftPAY //TODO: put docs here for settings';
 	print '</td></tr>';
 }
 
@@ -388,6 +386,21 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
     }
+	print '</td></tr>';
+}
+
+// Activate iDEAL
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_IDEAL").'</td><td>';
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('STRIPE_IDEAL');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
+    }
+  print ' &nbsp; '.$langs->trans("ExampleOnlyForNLCustomers");
 	print '</td></tr>';
 }
 
