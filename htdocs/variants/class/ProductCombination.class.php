@@ -502,9 +502,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * @param bool $price_var_percent Is the price variation a relative variation?
 	 * @param bool|float $forced_pricevar If the price variation is forced
 	 * @param bool|float $forced_weightvar If the weight variation is forced
+	 * @param bool|string $forced_refvar If the reference is forced
 	 * @return int <0 KO, >0 OK
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false)
 	{
 		global $db, $conf;
 
@@ -528,7 +529,11 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		if ($forced_pricevar === false) {
 			$price_impact = 0;
 		}
-
+		
+		if ($forced_refvar !== false) {
+			$forced_refvar = trim($forced_refvar);
+		}
+		
 		$newcomb = new ProductCombination($db);
 		$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);
 
@@ -572,11 +577,14 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			if ($forced_pricevar === false) {
 				$price_impact += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 			}
-
-			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-			    $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+            if (empty($forced_refvar)) {
+				if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+				} else {
+					$newproduct->ref .= '_'.$prodattrval->ref;
+				}
 			} else {
-			    $newproduct->ref .= '_'.$prodattrval->ref;
+				$newproduct->ref = $forced_refvar;
 			}
 
 			//The first one should not contain a linebreak
