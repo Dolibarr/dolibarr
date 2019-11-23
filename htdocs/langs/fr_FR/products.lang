@@ -347,3 +347,4 @@ ErrorDestinationProductNotFound=Produit destination non trouvé
 ErrorProductCombinationNotFound=Variante du produit non trouvé
 ActionAvailableOnVariantProductOnly=Action disponible uniquement sur la variante du produit
 ProductsPricePerCustomer=Prix produit par clients
+DeleteLinkedProduct = Supprimer le produit enfant lié à la variante
