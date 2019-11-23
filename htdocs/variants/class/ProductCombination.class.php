@@ -515,17 +515,17 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		$db->begin();
 
 		$forced_refvar = trim($forced_refvar);
-        
+
 		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
-		  $existingProduct = new Product($db);
-		  $result = $existingProduct->fetch('', $forced_refvar);
-		  if ($result > 0) {
-		      $newproduct = $existingProduct;
-		  } else {
-		      $existingProduct = false;
-		      $newproduct = clone $product;
-		      $newproduct->ref = $forced_refvar;
-		  }
+			$existingProduct = new Product($db);
+			$result = $existingProduct->fetch('', $forced_refvar);
+			if ($result > 0) {
+				$newproduct = $existingProduct;
+			} else {
+				$existingProduct = false;
+				$newproduct = clone $product;
+				$newproduct->ref = $forced_refvar;
+			}
 		} else {
 		    $forced_refvar = false;
 		    $existingProduct = false;
@@ -588,12 +588,12 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			if ($forced_pricevar === false) {
 				$price_impact += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 			}
-            
+
 			if ($forced_refvar === false) {
     			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-    			  $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
     			} else {
-    			  $newproduct->ref .= '_'.$prodattrval->ref;
+					$newproduct->ref .= '_'.$prodattrval->ref;
     			}
 			}
 
@@ -618,11 +618,11 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
     		$newproduct->price_ttc = 0;
     		$newproduct->price_min = 0;
     		$newproduct->price_min_ttc = 0;
-    
+
     		// A new variant must use a new barcode (not same product)
     		$newproduct->barcode = -1;
 		    $result = $newproduct->create($user);
-		
+
     		if ($result < 0)
     		{
     			//In case the error is not related with an already existing product
@@ -632,31 +632,31 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
     				$db->rollback();
     				return -1;
     			}
-    
+
     			/**
     			 * If there is an existing combination, then we update the prices and weight
     			 * Otherwise, we try adding a random number to the ref
     			 */
-    
+
     			if ($newcomb->fk_product_child) {
     				$res = $newproduct->fetch($existingCombination->fk_product_child);
     			} else {
     				$orig_prod_ref = $newproduct->ref;
     				$i = 1;
-    
+
     				do {
     					$newproduct->ref = $orig_prod_ref.$i;
     					$res = $newproduct->create($user);
-    
+
     					if ($newproduct->error != 'ErrorProductAlreadyExists') {
     					    $this->errors[] = $newproduct->error;
     						break;
     					}
-    
+
     					$i++;
     				} while ($res < 0);
     			}
-    
+
     			if ($res < 0) {
     				$db->rollback();
     				return -1;
