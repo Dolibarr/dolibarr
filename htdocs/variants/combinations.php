@@ -42,6 +42,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
+$delete_product = GETPOST('delete_product', 'alpha');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
@@ -244,7 +245,7 @@ if ($action === 'confirm_deletecombination') {
 	if ($prodcomb->fetch($valueid) > 0) {
 		$db->begin();
 
-		if ($prodcomb->delete($user) > 0) {
+		if ($prodcomb->delete($user) > 0 && (empty($delete_product) || ($delete_product == 'on' && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0))) {
 			$db->commit();
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
@@ -635,7 +636,7 @@ if (! empty($id) || ! empty($ref))
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
-					'',
+					array(array('label'=> $langs->trans('DeleteLinkedProduct'),'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
 					0,
 					1
 				);
