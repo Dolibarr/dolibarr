@@ -33,6 +33,7 @@ $ref = GETPOST('ref', 'alpha');
 $weight_impact = GETPOST('weight_impact', 'alpha');
 $price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
+$reference = GETPOST('reference', 'alpha');
 $form = new Form($db);
 
 $action = GETPOST('action', 'alpha');
@@ -106,6 +107,10 @@ if ($_POST) {
 		}
 		else
 		{
+			$reference = trim($reference);
+		    if (empty($reference)) {
+		        $reference = false;
+		    }
 			$weight_impact = price2num($weight_impact);
 			$price_impact = price2num($price_impact);
 			$sanit_features = array();
@@ -141,7 +146,7 @@ if ($_POST) {
 
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
-				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
+				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact, $reference);
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -586,6 +591,10 @@ if (! empty($id) || ! empty($ref))
 				</td>
 				<td>
 				</td>
+			</tr>
+			<tr>
+				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
+				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
