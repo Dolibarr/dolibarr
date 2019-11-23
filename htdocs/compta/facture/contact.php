@@ -89,7 +89,7 @@ elseif ($action == 'swapstatut' && $user->rights->facture->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -118,14 +118,14 @@ elseif ($action == 'deletecontact' && $user->rights->facture->creer)
  * View
  */
 
-$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('ContactsAddresses');
+$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('ContactsAddresses');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 
 /* *************************************************************************** */
@@ -134,7 +134,7 @@ $userstatic=new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	if ($object->fetch($id, $ref) > 0)
 	{
@@ -201,10 +201,10 @@ if ($id > 0 || ! empty($ref))
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach($dirtpls as $reldir)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir)
 		{
-		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		    $res = @include dol_buildpath($reldir.'/contacts.tpl.php');
 		    if ($res) break;
 		}
 	}

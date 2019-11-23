@@ -61,8 +61,8 @@ $diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder");
-$page = GETPOST("page");
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (!$sortfield) $sortfield = "p.ref";

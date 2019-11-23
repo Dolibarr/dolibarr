@@ -133,7 +133,9 @@ class modExpedition extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = array(
+			0=>array('file'=>'box_shipments.php','enabledbydefaulton'=>'Home'),
+		);
 
 		// Permissions
 		$this->rights = array();

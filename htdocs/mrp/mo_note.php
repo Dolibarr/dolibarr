@@ -47,7 +47,7 @@ $hookmanager->initHooks(array('monote','globalcard'));     // Note that conf->ho
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mrp', $id);
 

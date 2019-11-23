@@ -34,18 +34,18 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'companies', 'website'));
 
-$action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
+$confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$rowid=GETPOST('rowid', 'alpha');
+$rowid = GETPOST('rowid', 'alpha');
 
 if (!$user->admin) accessforbidden();
 
 $status = 1;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -57,7 +57,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
-$arrayofparameters=array('WEBSITE_USE_WEBSITE_ACCOUNTS'=>array('css'=>'minwidth200'));
+$arrayofparameters = array('WEBSITE_USE_WEBSITE_ACCOUNTS'=>array('css'=>'minwidth200'));
 
 
 /*
@@ -72,16 +72,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  */
 
 $form = new Form($db);
-$formadmin=new FormAdmin($db);
+$formadmin = new FormAdmin($db);
 
 llxHeader('', $langs->trans("WebsiteSetup"));
 
-$titre=$langs->trans("WebsiteSetup");
-$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+$titre = $langs->trans("WebsiteSetup");
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($titre, $linkback, 'title_setup');
 
 // Onglets
-$head=array();
+$head = array();
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/website.php";
@@ -106,11 +106,11 @@ if ($action == 'edit')
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
 	}
 
 	print '</table>';
@@ -127,11 +127,11 @@ else
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>' . $conf->global->$key . '</td></tr>';
+		print '</td><td>'.$conf->global->$key.'</td></tr>';
 	}
 
 	print '</table>';

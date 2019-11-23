@@ -40,9 +40,9 @@ $result = restrictedArea($user, 'societe', $socid, '');
  * View
  */
 
-$commandestatic=new CommandeFournisseur($db);
-$facturestatic=new FactureFournisseur($db);
-$companystatic=new Societe($db);
+$commandestatic = new CommandeFournisseur($db);
+$facturestatic = new FactureFournisseur($db);
+$companystatic = new Societe($db);
 
 llxHeader("", $langs->trans("SuppliersArea"));
 
@@ -56,13 +56,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Orders
 $sql = "SELECT count(cf.rowid), cf.fk_statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
+$sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= " WHERE cf.fk_soc = s.rowid ";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = " .$user->id;
-$sql.= " AND cf.entity = ".$conf->entity;
-$sql.= " GROUP BY cf.fk_statut";
+$sql .= " WHERE cf.fk_soc = s.rowid ";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+$sql .= " AND cf.entity = ".$conf->entity;
+$sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -97,19 +97,19 @@ else
 
 
 // Draft orders
-if (! empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled))
 {
 	$langs->load("orders");
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
-	$sql.= " s.nom as name, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " s.nom as name, s.rowid as socid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-	$sql.= " WHERE cf.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = " .$user->id;
-	$sql.= " AND cf.entity = ".$conf->entity;
-	$sql.= " AND cf.fk_statut = 0";
+	$sql .= " WHERE cf.fk_soc = s.rowid";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND cf.entity = ".$conf->entity;
+	$sql .= " AND cf.fk_statut = 0";
 	if ($socid) $sql .= " AND cf.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
@@ -129,21 +129,21 @@ if (! empty($conf->fournisseur->enabled))
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td  class="nowrap">';
-				$commandestatic->id=$obj->rowid;
-				$commandestatic->ref=$obj->ref;
+				$commandestatic->id = $obj->rowid;
+				$commandestatic->ref = $obj->ref;
 				print $commandestatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td  class="nowrap">';
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->name;
-				$companystatic->client=0;
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->client = 0;
 				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td class="right nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
-			if ($total>0)
+			if ($total > 0)
 			{
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
@@ -154,22 +154,22 @@ if (! empty($conf->fournisseur->enabled))
 }
 
 // Draft invoices
-if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
-	$sql.= ", s.nom as name, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= ", s.nom as name, s.rowid as socid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-	$sql.= " WHERE s.rowid = ff.fk_soc";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = " .$user->id;
-	$sql.= " AND ff.entity = ".$conf->entity;
-	$sql.= " AND ff.fk_statut = 0";
+	$sql .= " WHERE s.rowid = ff.fk_soc";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND ff.entity = ".$conf->entity;
+	$sql .= " AND ff.fk_statut = 0";
 	if ($socid)	$sql .= " AND f.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 
-	if ( $resql )
+	if ($resql)
 	{
 		$num = $db->num_rows($resql);
 		if ($num)
@@ -185,20 +185,20 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td class="nowrap">';
-				$facturestatic->ref=$obj->ref;
-				$facturestatic->id=$obj->rowid;
-				$facturestatic->type=$obj->type;
+				$facturestatic->ref = $obj->ref;
+				$facturestatic->id = $obj->rowid;
+				$facturestatic->type = $obj->type;
 				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td class="nowrap">';
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->name;
-				$companystatic->client=0;
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->client = 0;
 				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
-				$tot_ttc+=$obj->total_ttc;
+				$tot_ttc += $obj->total_ttc;
 				$i++;
 			}
 
@@ -225,18 +225,18 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * List last modified supliers
  */
-$max=10;
+$max = 10;
 $sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
-$sql.= ", st.libelle as stcomm";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql .= ", st.libelle as stcomm";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.fournisseur = 1";
-$sql.= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql .= " WHERE s.fk_stcomm = st.id";
+$sql .= " AND s.fournisseur = 1";
+$sql .= " AND s.entity IN (".getEntity('societe').")";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
-$sql.= " ORDER BY s.tms DESC";
+$sql .= " ORDER BY s.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
@@ -252,7 +252,7 @@ if ($resql)
 	print '<td class="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
-	while ($obj = $db->fetch_object($resql) )
+	while ($obj = $db->fetch_object($resql))
 	{
 		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"), "company").'</a>';
@@ -275,7 +275,7 @@ else
  * List of suppliers categories
  */
 $companystatic->LoadSupplierCateg();
-$categstatic=new Categorie($db);
+$categstatic = new Categorie($db);
 
 if (count($companystatic->SupplierCategories))
 {
@@ -290,9 +290,9 @@ if (count($companystatic->SupplierCategories))
 	{
 		print '<tr class="oddeven">'."\n";
 		print '<td>';
-		$categstatic->id=$rowid;
-		$categstatic->ref=$label;
-		$categstatic->label=$label;
+		$categstatic->id = $rowid;
+		$categstatic->ref = $label;
+		$categstatic->label = $label;
 		print $categstatic->getNomUrl(1);
 		print '</td>'."\n";
 		// TODO this page not exist

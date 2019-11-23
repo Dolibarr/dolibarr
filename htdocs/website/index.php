@@ -1398,7 +1398,7 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
-		$objectpage->fk_page = GETPOST('pageidfortranslation', 'int');
+		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
@@ -3034,17 +3034,23 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$num_rows = $db->num_rows($resql);
 			if ($num_rows > 0)
 			{
-				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
+				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span>';
 				$i = 0;
+				$tmppage = new WebsitePage($db);
+				$tmpstring = '';
 				while ($obj = $db->fetch_object($resql))
 				{
-					$tmppage = new WebsitePage($db);
-					$tmppage->fetch($obj->rowid);
-					if ($i > 0) print ' - ';
-					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')<br>';
-					$translatedby++;
-					$i++;
+					$result = $tmppage->fetch($obj->rowid);
+					if ($result > 0) {
+						if ($i > 0) $tmpstring .= '<br>';
+						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$translatedby++;
+						$i++;
+					}
 				}
+				if ($i > 1) print '<br>';
+				else print ' ';
+				print $tmpstring;
 			}
 		}
 		else dol_print_error($db);
@@ -3059,9 +3065,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		}
 		elseif ($result > 0)
 		{
-			$translationof = $sourcepage->id;
+			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', $sourcepage->id, 1, $action);
+			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			if ($translationof > 0) {
+				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+			}
 		}
 	}
 	print '</td></tr>';
@@ -3262,9 +3271,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print $langs->trans("SearchReplaceInto");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="checkbox" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> '.$langs->trans("Content");
-	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords");
-	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> '.$langs->trans("GlobalCSSorJS");
+	print '<input type="checkbox" class="marginleftonly" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> '.$langs->trans("Content").'<br>';
+	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'<br>';
+	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> '.$langs->trans("GlobalCSSorJS").'<br>';
 	print '</div>';
 	print '</div>';
 
@@ -3327,7 +3336,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				if (get_class($answerrecord) == 'WebsitePage')
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("Container").'</td>';
+					print '<td>'.$langs->trans("Container").' - ';
+					print $langs->trans($answerrecord->type_container);	// TODO Use label of container
+					print '</td>';
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3339,7 +3350,23 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				else
 				{
 					print '<tr>';
-					print '<td>'.$answerrecord['type'].'</td>';
+					print '<td>';
+
+					$translateofrecordtype = array(
+						'website_csscontent'=>'WEBSITE_CSS_INLINE',
+						'website_jscontent'=>'WEBSITE_JS_INLINE',
+						'website_robotcontent'=>'WEBSITE_ROBOT',
+						'website_htmlheadercontent'=>'WEBSITE_HTML_HEADER',
+						'website_htaccess'=>'WEBSITE_HTACCESS',
+						'website_readme'=>'WEBSITE_README',
+						'website_manifestjson'=>'WEBSITE_MANIFEST_JSON'
+					);
+					if (! empty($translateofrecordtype[$answerrecord['type']])) {
+						print $langs->trans($translateofrecordtype[$answerrecord['type']]);
+					} else {
+						print $answerrecord['type'];
+					}
+					print '</td>';
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';

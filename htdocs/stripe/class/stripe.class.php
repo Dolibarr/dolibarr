@@ -178,7 +178,7 @@ class Stripe extends CommonObject
 				global $stripearrayofkeysbyenv;
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
-				dol_syslog(get_class($this)."::customerStripe found stripe customer key_account = ".$tiers." with publishable_key = ".$stripearrayofkeysbyenv[$status]['publishable_key']);
+				dol_syslog(get_class($this)."::customerStripe found stripe customer key_account = ".$tiers.". We will try to read it on Stripe with publishable_key = ".$stripearrayofkeysbyenv[$status]['publishable_key']);
 
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage

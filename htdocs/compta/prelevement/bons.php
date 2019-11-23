@@ -44,15 +44,15 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.datec";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "p.datec";
 
 // Get supervariables
 $statut = GETPOST('statut', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$bon=new BonPrelevement($db, "");
+$bon = new BonPrelevement($db, "");
 
 
 /*
@@ -61,8 +61,8 @@ $bon=new BonPrelevement($db, "");
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_ref="";
-    $search_amount="";
+    $search_ref = "";
+    $search_amount = "";
 }
 
 
@@ -73,12 +73,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " WHERE p.entity IN (".getEntity('invoice').")";
-if ($search_ref) $sql.=natural_search("p.ref", $search_ref);
-if ($search_amount) $sql.=natural_search("p.amount", $search_amount, 1);
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
+if ($search_ref) $sql .= natural_search("p.ref", $search_ref);
+if ($search_amount) $sql .= natural_search("p.amount", $search_amount, 1);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -93,7 +93,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -101,14 +101,14 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd= "&amp;statut=".$statut;
+    $urladd = "&amp;statut=".$statut;
 
-    $selectedfields='';
+    $selectedfields = '';
 
-    $newcardbutton='';
+    $newcardbutton = '';
     if ($user->rights->prelevement->bons->creer)
     {
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
     }
 
     // Lines of title fields
@@ -124,18 +124,18 @@ if ($result)
 
     print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
-    $moreforfilter='';
+    $moreforfilter = '';
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. dol_escape_htmltag($search_ref).'"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
+    print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterButtons();
+    $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';
     print '</tr>';

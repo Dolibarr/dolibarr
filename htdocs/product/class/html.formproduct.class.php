@@ -37,11 +37,11 @@ class FormProduct
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	// Cache arrays
-	public $cache_warehouses=array();
-	public $cache_lot=array();
+	public $cache_warehouses = array();
+	public $cache_lot = array();
 
 
 	/**
@@ -76,7 +76,7 @@ class FormProduct
 	{
 		global $conf, $langs;
 
-		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
+		if (empty($fk_product) && count($this->cache_warehouses)) return 0; // Cache already loaded and we do not want a list with information specific to a product
 
 		if (is_array($exclude))	$excludeGroups = implode("','", $exclude);
 
@@ -100,59 +100,59 @@ class FormProduct
 		{
 			if (!empty($batch))
 			{
-				$sql.= ", pb.qty as stock";
+				$sql .= ", pb.qty as stock";
 			}
 			else
 			{
-				$sql.= ", ps.reel as stock";
+				$sql .= ", ps.reel as stock";
 			}
 		}
 		elseif ($sumStock)
 		{
-			$sql.= ", sum(ps.reel) as stock";
+			$sql .= ", sum(ps.reel) as stock";
 		}
-		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
 		if (!empty($fk_product))
 		{
-			$sql.= " AND ps.fk_product = '".$fk_product."'";
+			$sql .= " AND ps.fk_product = '".$fk_product."'";
 			if (!empty($batch))
 			{
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
 			}
 		}
-		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
+		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+			$sql .= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
 		}
 		else
 		{
-			$sql.= " AND e.statut = 1";
+			$sql .= " AND e.statut = 1";
 		}
 
-		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
+		if (!empty($exclude)) $sql .= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
 
 		// minimum stock
         if ($stockMin !== false) {
             if (!empty($fk_product)) {
                 if (!empty($batch)) {
-                    $sql .= " AND pb.qty > " . $this->db->escape($stockMin);
+                    $sql .= " AND pb.qty > ".$this->db->escape($stockMin);
                 } else {
-                    $sql .= " AND ps.reel > " . $this->db->escape($stockMin);
+                    $sql .= " AND ps.reel > ".$this->db->escape($stockMin);
                 }
             }
         }
 
 		if ($sumStock && empty($fk_product)) {
-		    $sql.= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
+		    $sql .= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
 
             // minimum stock
             if ($stockMin !== false) {
-                $sql .= " HAVING sum(ps.reel) > " . $this->db->escape($stockMin);
+                $sql .= " HAVING sum(ps.reel) > ".$this->db->escape($stockMin);
             }
 		}
-        $sql.= " ORDER BY " . $orderBy;
+        $sql .= " ORDER BY ".$orderBy;
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -164,16 +164,16 @@ class FormProduct
 			{
 				$obj = $this->db->fetch_object($resql);
 				if ($sumStock) $obj->stock = price2num($obj->stock, 5);
-				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
-				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
-				$this->cache_warehouses[$obj->rowid]['parent_id']=$obj->fk_parent;
+				$this->cache_warehouses[$obj->rowid]['id'] = $obj->rowid;
+				$this->cache_warehouses[$obj->rowid]['label'] = $obj->label;
+				$this->cache_warehouses[$obj->rowid]['parent_id'] = $obj->fk_parent;
 				$this->cache_warehouses[$obj->rowid]['description'] = $obj->description;
 				$this->cache_warehouses[$obj->rowid]['stock'] = $obj->stock;
 				$i++;
 			}
 
 			// Full label init
-			foreach($this->cache_warehouses as $obj_rowid=>$tab) {
+			foreach ($this->cache_warehouses as $obj_rowid=>$tab) {
 				$this->cache_warehouses[$obj_rowid]['full_label'] = $this->get_parent_path($tab);
 			}
 
@@ -197,11 +197,11 @@ class FormProduct
 	private function get_parent_path($tab, $final_label = '')
 	{
 		//phpcs:enable
-		if(empty($final_label)) $final_label = $tab['label'];
+		if (empty($final_label)) $final_label = $tab['label'];
 
-		if(empty($tab['parent_id'])) return $final_label;
+		if (empty($tab['parent_id'])) return $final_label;
 		else {
-			if(!empty($this->cache_warehouses[$tab['parent_id']])) {
+			if (!empty($this->cache_warehouses[$tab['parent_id']])) {
 				$final_label = $this->cache_warehouses[$tab['parent_id']]['label'].' >> '.$final_label;
 				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
 			}
@@ -309,8 +309,8 @@ class FormProduct
             print '</tr></table></form>';
         } else {
             if ($selected) {
-                require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
-                $warehousestatic=new Entrepot($this->db);
+                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+                $warehousestatic = new Entrepot($this->db);
                 $warehousestatic->fetch($selected);
                 print $warehousestatic->getNomUrl();
             } else {
@@ -357,7 +357,7 @@ class FormProduct
 		$return = '';
 
 		// TODO Use a cache
-		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
 
 		$filter = array();
@@ -375,10 +375,10 @@ class FormProduct
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat" name="' . $name . '">';
+			$return .= '<select class="flat" name="'.$name.'">';
 			if ($adddefault || $adddefault === '')
 			{
-				$return .= '<option value="0">' . ($adddefault ? $langs->trans("Default") : ''). '</option>';
+				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines)
@@ -392,7 +392,7 @@ class FormProduct
 				elseif ($mode == 2 && $lines->scale == $default) $return .= ' selected';
 				elseif ($mode == 0 && $lines->id == $default) $return .= ' selected';
 				$return .= '>';
-				if ($measuring_style == 'time') $return.= $langs->trans(ucfirst($lines->label));
+				if ($measuring_style == 'time') $return .= $langs->trans(ucfirst($lines->label));
 				else $return .= $langs->trans($lines->label);
 				$return .= '</option>';
 			}
@@ -426,11 +426,11 @@ class FormProduct
 
 		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
-		$out='';
+		$out = '';
 		$productIdArray = array();
-		if (! is_array($objectLines) || ! count($objectLines))
+		if (!is_array($objectLines) || !count($objectLines))
 		{
-			if (! empty($fk_product)) $productIdArray[] = $fk_product;
+			if (!empty($fk_product)) $productIdArray[] = $fk_product;
 		}
 		else
 		{
@@ -515,7 +515,7 @@ class FormProduct
 			// check cache already loaded for product id's
 			foreach ($productIdArray as $productId)
 			{
-				$cacheLoaded = ! empty($this->cache_lot[$productId]) ? true : false;
+				$cacheLoaded = !empty($this->cache_lot[$productId]) ? true : false;
 			}
 		}
 		if ($cacheLoaded)
@@ -528,14 +528,14 @@ class FormProduct
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
 			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
 			if (!empty($productIdList))
 			{
-				$sql.= " WHERE ps.fk_product IN (".$productIdList.")";
+				$sql .= " WHERE ps.fk_product IN (".$productIdList.")";
 			}
-			$sql.= " ORDER BY e.ref, pb.batch";
+			$sql .= " ORDER BY e.ref, pb.batch";
 
 			dol_syslog(get_class($this).'::loadLotStock', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -546,10 +546,10 @@ class FormProduct
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$this->cache_lot[$obj->fk_product][$obj->rowid]['id'] =$obj->rowid;
-					$this->cache_lot[$obj->fk_product][$obj->rowid]['batch']=$obj->batch;
-					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_id']=$obj->fk_entrepot;
-					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_label']=$obj->label;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['id'] = $obj->rowid;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['batch'] = $obj->batch;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_id'] = $obj->fk_entrepot;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_label'] = $obj->label;
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['qty'] = $obj->qty;
 					$i++;
 				}

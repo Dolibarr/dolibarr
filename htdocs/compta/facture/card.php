@@ -986,7 +986,7 @@ if (empty($reshook))
 					$object->entity = $originentity;
 				}
 				$object->socid = GETPOST('socid', 'int');
-				$object->number = $_POST['ref'];
+				$object->ref = $_POST['ref'];
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'none'));
@@ -1166,7 +1166,7 @@ if (empty($reshook))
 			{
 				$object->socid = GETPOST('socid', 'int');
 				$object->type            = $_POST['type'];
-				$object->number          = $_POST['ref'];
+				$object->ref             = $_POST['ref'];
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public = trim(GETPOST('note_public', 'none'));
@@ -1216,7 +1216,7 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
-				$object->number = $_POST['ref'];
+				$object->ref = $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'none'));
@@ -3282,11 +3282,11 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="2"', 'cols'=>2);
+	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="2"', 'cols' => '2');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 
 	// Template to use by default

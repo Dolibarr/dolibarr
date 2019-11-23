@@ -33,15 +33,15 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	//require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'compta', 'admin', 'other'));
@@ -104,19 +104,19 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('invoicereccard','globalcard'));
+$hookmanager->initHooks(array('invoicereccard', 'globalcard'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label('facture_rec');
 
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
+$permissiondellink = $user->rights->facture->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
-$arrayfields=array(
+$arrayfields = array(
 	'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
 	'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
@@ -137,10 +137,10 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -151,8 +151,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -160,7 +160,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if (GETPOST('cancel', 'alpha')) $action='';
+	if (GETPOST('cancel', 'alpha')) $action = '';
 
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
@@ -168,24 +168,24 @@ if (empty($reshook))
 	// Do we click on purge search criteria ?
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 	{
-		$search_ref='';
-		$search_societe='';
-		$search_montant_ht='';
-		$search_montant_vat='';
-		$search_montant_ttc='';
-		$search_payment_mode='';
-		$search_payment_term='';
-		$search_day='';
-		$search_year='';
-		$search_month='';
-		$search_day_date_when='';
-		$search_year_date_when='';
-		$search_month_date_when='';
-		$search_recurring='';
-		$search_frequency='';
-		$search_unit_frequency='';
-		$search_status='';
-		$search_array_options=array();
+		$search_ref = '';
+		$search_societe = '';
+		$search_montant_ht = '';
+		$search_montant_vat = '';
+		$search_montant_ttc = '';
+		$search_payment_mode = '';
+		$search_payment_term = '';
+		$search_day = '';
+		$search_year = '';
+		$search_month = '';
+		$search_day_date_when = '';
+		$search_year_date_when = '';
+		$search_month_date_when = '';
+		$search_recurring = '';
+		$search_frequency = '';
+		$search_unit_frequency = '';
+		$search_status = '';
+		$search_array_options = array();
 	}
 
 	// Mass actions
@@ -247,22 +247,22 @@ if ($search_societe)              $sql .= natural_search('s.nom', $search_societ
 if ($search_montant_ht != '')     $sql .= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '')    $sql .= natural_search('f.tva', $search_montant_vat, 1);
 if ($search_montant_ttc != '')    $sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
-if (! empty($search_payment_mode) && $search_payment_mode != '-1')   $sql .= natural_search('f.fk_mode_reglement', $search_payment_mode, 1);
-if (! empty($search_payment_term) && $search_payment_term != '-1')   $sql .= natural_search('f.fk_cond_reglement', $search_payment_term, 1);
+if (!empty($search_payment_mode) && $search_payment_mode != '-1')   $sql .= natural_search('f.fk_mode_reglement', $search_payment_mode, 1);
+if (!empty($search_payment_term) && $search_payment_term != '-1')   $sql .= natural_search('f.fk_cond_reglement', $search_payment_term, 1);
 if ($search_recurring == '1')     $sql .= ' AND f.frequency > 0';
 if ($search_recurring == '0')     $sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 if ($search_frequency != '')      $sql .= natural_search('f.frequency', $search_frequency, 1);
 if ($search_unit_frequency != '') $sql .= ' AND f.frequency > 0'.natural_search('f.unit_frequency', $search_unit_frequency);
 if ($search_status != '' && $search_status >= -1)
 {
-	if ($search_status == 0) $sql.= ' AND frequency = 0 AND suspended = 0';
-	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
-	if ($search_status == -1) $sql.= ' AND suspended = 1';
+	if ($search_status == 0) $sql .= ' AND frequency = 0 AND suspended = 0';
+	if ($search_status == 1) $sql .= ' AND frequency != 0 AND suspended = 0';
+	if ($search_status == -1) $sql .= ' AND suspended = 1';
 }
-$sql.=dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
-$sql.=dolSqlDateFilter('f.date_last_gen', $search_day_date_when, $search_month_date_when, $search_year_date_when);
+$sql .= dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
+$sql .= dolSqlDateFilter('f.date_last_gen', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -276,43 +276,43 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($socid)                     $param.='&socid='.urlencode($socid);
-	if ($search_day)                $param.='&search_day='.urlencode($search_day);
-	if ($search_month)              $param.='&search_month='.urlencode($search_month);
-	if ($search_year)               $param.='&search_year=' .urlencode($search_year);
-	if ($search_day_date_when)      $param.='&search_day_date_when='.urlencode($search_day_date_when);
-	if ($search_month_date_when)    $param.='&search_month_date_when='.urlencode($search_month_date_when);
-	if ($search_year_date_when)     $param.='&search_year_date_when=' .urlencode($search_year_date_when);
-	if ($search_ref)                $param.='&search_ref=' .urlencode($search_ref);
-	if ($search_societe)            $param.='&search_societe=' .urlencode($search_societe);
-	if ($search_montant_ht != '')   $param.='&search_montant_ht=' .urlencode($search_montant_ht);
-	if ($search_montant_vat != '')  $param.='&search_montant_vat='.urlencode($search_montant_vat);
-	if ($search_montant_ttc != '')  $param.='&search_montant_ttc='.urlencode($search_montant_ttc);
-	if ($search_payment_mode != '') $param.='&search_payment_mode='.urlencode($search_payment_mode);
-	if ($search_payment_type != '') $param.='&search_payment_type='.urlencode($search_payment_type);
-	if ($search_recurring != '' && $search_recurrning != '-1')    $param.='&search_recurring='  .urlencode($search_recurring);
-	if ($search_frequency > 0)        $param.='&search_frequency='  .urlencode($search_frequency);
-	if ($search_unit_frequency != '') $param.='&search_unit_frequency='.urlencode($search_unit_frequency);
-	if ($search_status != '')		$param.='&search_status='.urlencode($search_status);
-	if ($option)                    $param.="&option=".urlencode($option);
-	if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($socid)                     $param .= '&socid='.urlencode($socid);
+	if ($search_day)                $param .= '&search_day='.urlencode($search_day);
+	if ($search_month)              $param .= '&search_month='.urlencode($search_month);
+	if ($search_year)               $param .= '&search_year='.urlencode($search_year);
+	if ($search_day_date_when)      $param .= '&search_day_date_when='.urlencode($search_day_date_when);
+	if ($search_month_date_when)    $param .= '&search_month_date_when='.urlencode($search_month_date_when);
+	if ($search_year_date_when)     $param .= '&search_year_date_when='.urlencode($search_year_date_when);
+	if ($search_ref)                $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_societe)            $param .= '&search_societe='.urlencode($search_societe);
+	if ($search_montant_ht != '')   $param .= '&search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_montant_vat != '')  $param .= '&search_montant_vat='.urlencode($search_montant_vat);
+	if ($search_montant_ttc != '')  $param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($search_payment_mode != '') $param .= '&search_payment_mode='.urlencode($search_payment_mode);
+	if ($search_payment_type != '') $param .= '&search_payment_type='.urlencode($search_payment_type);
+	if ($search_recurring != '' && $search_recurrning != '-1')    $param .= '&search_recurring='.urlencode($search_recurring);
+	if ($search_frequency > 0)        $param .= '&search_frequency='.urlencode($search_frequency);
+	if ($search_unit_frequency != '') $param .= '&search_unit_frequency='.urlencode($search_unit_frequency);
+	if ($search_status != '')		$param .= '&search_status='.urlencode($search_status);
+	if ($option)                    $param .= "&option=".urlencode($option);
+	if ($optioncss != '')           $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+	$massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
-	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	//$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -661,7 +661,7 @@ if ($resql)
 			{
 				print "&nbsp;";
 			}
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 			print "</td>";
 
 			print "</tr>\n";
@@ -671,8 +671,8 @@ if ($resql)
 	}
 	else
 	{
-		$colspan=1;
-		foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 

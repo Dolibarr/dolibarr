@@ -678,19 +678,12 @@ else
 		print_liste_field_titre("LineRecord", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
-		$i = 1;
 
+		$i = 1;
         if ($num > 0)
         {
     		while ($objp = $db->fetch_object($resql))
     		{
-    			//$account_id = $objp->bid; FIXME not used
-
-    			// FIXME $accounts[$objp->bid] is a label
-    			/*if (! isset($accounts[$objp->bid]))
-    				$accounts[$objp->bid]=0;
-    			$accounts[$objp->bid] += 1;*/
-
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';
     			print '<td align="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>'; // Date operation
@@ -751,6 +744,15 @@ else
         }
 
 		print "</table>";
+
+		// Cheque denormalized data nbcheque is similar to real number of cheque
+		if ($num > 0 && $i < ($object->nbcheque + 1)) {
+			// Show warning that some records were removed.
+			$langs->load("errors");
+			print info_admin($langs->trans("WarningSomeBankTransactionByChequeWereRemovedAfter"), 0, 0, 'warning');
+			// TODO Fix data ->nbcheque and ->amount
+		}
+
 		print "</div>";
 	}
 	else

@@ -864,7 +864,7 @@ if ($action == 'create')
             print "</td></tr>\n";
 
             // Other attributes
-            $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
+            $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'cols' => '3', 'socid'=>$socid);
             $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $recept, $action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
@@ -875,7 +875,7 @@ if ($action == 'create')
 				if ($object->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $object->array_options);
 				}
-				print $object->showOptionals($extrafields, 'edit');
+				print $object->showOptionals($extrafields, 'edit', $parameters);
 			}
 
             // Incoterms
@@ -1180,9 +1180,7 @@ if ($action == 'create')
 
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
-					print '</tr>';
 				}
 
                 $indiceAsked++;
@@ -1989,7 +1987,7 @@ elseif ($id || $ref)
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch_optionals($lines[$i]->id);
-				print '<tr class="oddeven">';
+
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
 					print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
@@ -1998,7 +1996,6 @@ elseif ($id || $ref)
 				{
 					print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
 				}
-				print '</tr>';
 			}
 		}
 

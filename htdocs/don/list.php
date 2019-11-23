@@ -55,11 +55,11 @@ if (!$user->rights->don->lire) accessforbidden();
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_all="";
-    $search_ref="";
-	$search_company="";
-	$search_name="";
-	$search_amount="";
+	$search_all = "";
+    $search_ref = "";
+	$search_company = "";
+	$search_name = "";
+	$search_amount = "";
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -111,9 +111,9 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql.= natural_search('d.amount', $search_amount, 1);
+if ($search_amount) $sql .= natural_search('d.amount', $search_amount, 1);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -127,7 +127,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -189,7 +189,7 @@ if ($resql)
     print '<td class="liste_titre left">';
     print '&nbsp;';
     print '</td>';
-    if (! empty($conf->projet->enabled))
+    if (!empty($conf->projet->enabled))
     {
         print '<td class="liste_titre right">';
         print '&nbsp;';
@@ -245,16 +245,16 @@ if ($resql)
         }
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
-		if (! empty($conf->projet->enabled))
+		if (!empty($conf->projet->enabled))
 		{
 			print "<td>";
 			if ($objp->pid)
 			{
-				$projectstatic->id=$objp->pid;
-				$projectstatic->ref=$objp->ref;
-				$projectstatic->id=$objp->pid;
-				$projectstatic->public=$objp->public;
-				$projectstatic->title=$objp->title;
+				$projectstatic->id = $objp->pid;
+				$projectstatic->ref = $objp->ref;
+				$projectstatic->id = $objp->pid;
+				$projectstatic->public = $objp->public;
+				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
 			}
 			else print '&nbsp;';

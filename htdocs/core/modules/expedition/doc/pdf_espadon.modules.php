@@ -117,27 +117,27 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	public function __construct($db = 0)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = "espadon";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
 		$this->type = 'pdf';
-		$formatarray=pdf_getFormat();
+		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
-		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
-		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
-		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
+		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
+		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
+		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
+		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
 		$this->option_logo = 1;
 
 		// Get source company
-		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 
 		$this->tabTitleHeight = 5; // default height
 	}
@@ -157,13 +157,13 @@ class pdf_espadon extends ModelePdfExpedition
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user,$conf,$langs,$hookmanager;
+		global $user, $conf, $langs, $hookmanager;
 
 		$object->fetch_thirdparty();
 
-		if (! is_object($outputlangs)) $outputlangs=$langs;
+		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
@@ -194,27 +194,27 @@ class pdf_espadon extends ModelePdfExpedition
                     {
                         if ($obj['photo_vignette'])
                         {
-                            $filename=$obj['photo_vignette'];
+                            $filename = $obj['photo_vignette'];
                         }
                         else
                         {
-                            $filename=$obj['photo'];
+                            $filename = $obj['photo'];
                         }
                     }
                     else
                     {
-                        $filename=$obj['photo'];
+                        $filename = $obj['photo'];
                     }
 
                     $realpath = $dir.$filename;
                     break;
                 }
 
-                if ($realpath) $realpatharray[$i]=$realpath;
+                if ($realpath) $realpatharray[$i] = $realpath;
             }
         }
 
-        if (count($realpatharray) == 0) $this->posxpicture=$this->posxweightvol;
+        if (count($realpatharray) == 0) $this->posxpicture = $this->posxweightvol;
 
 		if ($conf->expedition->dir_output)
 		{
@@ -222,20 +222,20 @@ class pdf_espadon extends ModelePdfExpedition
 			if ($object->specimen)
 			{
 				$dir = $conf->expedition->dir_output."/sending";
-				$file = $dir . "/SPECIMEN.pdf";
+				$file = $dir."/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->expedition->dir_output."/sending/" . $expref;
-				$file = $dir . "/" . $expref . ".pdf";
+				$dir = $conf->expedition->dir_output."/sending/".$expref;
+				$file = $dir."/".$expref.".pdf";
 			}
 
-			if (! file_exists($dir))
+			if (!file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
@@ -271,14 +271,14 @@ class pdf_espadon extends ModelePdfExpedition
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
                 }
 
 				$pdf->Open();
-				$pagenb=0;
+				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -288,21 +288,21 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
-				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
 				$pdf->AddPage();
-				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
-				$pdf->MultiCell(0, 3, '');		// Set interline to 3
+				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -588,7 +588,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
 						$pdf->AddPage();
-						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
@@ -619,31 +619,31 @@ class pdf_espadon extends ModelePdfExpedition
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
 				    $this->error = $hookmanager->error;
 				    $this->errors = $hookmanager->errors;
 				}
 
-				if (! empty($conf->global->MAIN_UMASK))
+				if (!empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;	// No error
+				return 1; // No error
 			}
 			else
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$langs->transnoentities("ErrorConstantNotDefined", "EXP_OUTPUTDIR");
+			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "EXP_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -663,9 +663,9 @@ class pdf_espadon extends ModelePdfExpedition
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf,$mysoc;
+		global $conf, $mysoc;
 
-        $sign=1;
+        $sign = 1;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -682,29 +682,29 @@ class pdf_espadon extends ModelePdfExpedition
 		if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED)) $largcol2 = ($this->posxqtyordered - $this->posxweightvol);
 		else $largcol2 = ($this->posxqtytoship - $this->posxweightvol);
 
-		$useborder=0;
+		$useborder = 0;
 		$index = 0;
 
-		$totalWeighttoshow='';
-		$totalVolumetoshow='';
+		$totalWeighttoshow = '';
+		$totalVolumetoshow = '';
 
 		// Load dim data
-		$tmparray=$object->getTotalWeightVolume();
-		$totalWeight=$tmparray['weight'];
-		$totalVolume=$tmparray['volume'];
-		$totalOrdered=$tmparray['ordered'];
-		$totalToShip=$tmparray['toship'];
+		$tmparray = $object->getTotalWeightVolume();
+		$totalWeight = $tmparray['weight'];
+		$totalVolume = $tmparray['volume'];
+		$totalOrdered = $tmparray['ordered'];
+		$totalToShip = $tmparray['toship'];
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth)
 		{
-		    $object->trueVolume=price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
-		    $object->volume_units=$object->size_units * 3;
+		    $object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
+		    $object->volume_units = $object->size_units * 3;
 		}
 
-		if ($totalWeight!='') $totalWeighttoshow=showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
-		if ($totalVolume!='') $totalVolumetoshow=showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
-		if ($object->trueWeight) $totalWeighttoshow=showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
-		if ($object->trueVolume) $totalVolumetoshow=showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+		if ($totalWeight != '') $totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
+		if ($totalVolume != '') $totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
+		if ($object->trueWeight) $totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+		if ($object->trueVolume) $totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 
 
 
@@ -768,8 +768,8 @@ class pdf_espadon extends ModelePdfExpedition
 		global $conf;
 
 		// Force to disable hidetop and hidebottom
-		$hidebottom=0;
-		if ($hidetop) $hidetop=-1;
+		$hidebottom = 0;
+		if ($hidetop) $hidetop = -1;
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -810,7 +810,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		$langs->load("orders");
 
@@ -819,7 +819,7 @@ class pdf_espadon extends ModelePdfExpedition
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if($object->statut==0 && (! empty($conf->global->SHIPPING_DRAFT_WATERMARK)) )
+		if ($object->statut == 0 && (!empty($conf->global->SHIPPING_DRAFT_WATERMARK)))
 		{
             		pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SHIPPING_DRAFT_WATERMARK);
 		}
@@ -876,7 +876,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (! empty($conf->barcode->enabled))
+		if (!empty($conf->barcode->enabled))
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
@@ -953,30 +953,30 @@ class pdf_espadon extends ModelePdfExpedition
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur='';
+			$carac_emetteur = '';
 		 	// Add internal contact of origin element if defined
-			$arrayidcontact=array();
-			if (! empty($origin) && is_object($object->$origin)) $arrayidcontact=$object->$origin->getIdContact('internal', 'SALESREPFOLL');
+			$arrayidcontact = array();
+			if (!empty($origin) && is_object($object->$origin)) $arrayidcontact = $object->$origin->getIdContact('internal', 'SALESREPFOLL');
 		 	if (is_array($arrayidcontact) && count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user(reset($arrayidcontact));
-		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
 		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
-			$posx=$this->marge_gauche;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posx = $this->marge_gauche;
+			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->page_largeur - $this->marge_droite - 80;
 
-			$hautcadre=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
-			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
+			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
+			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
 
 			// Show sender frame
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx, $posy-5);
+			$pdf->SetXY($posx, $posy - 5);
 			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("Sender").":", 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
@@ -1060,7 +1060,7 @@ class pdf_espadon extends ModelePdfExpedition
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'SHIPPING_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
@@ -1081,13 +1081,13 @@ class pdf_espadon extends ModelePdfExpedition
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
 	    $this->defaultTitlesFieldsStyle = array(
 	        'align' => 'C', // R,C,L
-	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    /*
@@ -1108,7 +1108,7 @@ class pdf_espadon extends ModelePdfExpedition
 	     );
 	     */
 
-	    $rank=0; // do not use negative rank
+	    $rank = 0; // do not use negative rank
 	    $this->cols['desc'] = array(
 	        'rank' => $rank,
 	        'width' => false, // only for desc
@@ -1118,7 +1118,7 @@ class pdf_espadon extends ModelePdfExpedition
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
@@ -1128,19 +1128,19 @@ class pdf_espadon extends ModelePdfExpedition
 	    $rank = $rank + 10;
 	    $this->cols['photo'] = array(
 	        'rank' => $rank,
-	        'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+	        'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 	        'status' => false,
 	        'title' => array(
 	            'textkey' => 'Photo',
 	            'label' => ' '
 	        ),
 	        'content' => array(
-	            'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	            'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'border-left' => false, // remove left line separator
 	    );
 
-	    if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto))
+	    if (!empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto))
 	    {
 	        $this->cols['photo']['status'] = true;
 	    }
@@ -1161,7 +1161,7 @@ class pdf_espadon extends ModelePdfExpedition
 	    $this->cols['subprice'] = array(
 	        'rank' => $rank,
 	        'width' => 19, // in mm
-	        'status' => !empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)?1:0,
+	        'status' => !empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT) ? 1 : 0,
 	        'title' => array(
 	            'textkey' => 'PriceUHT'
 	        ),
@@ -1172,7 +1172,7 @@ class pdf_espadon extends ModelePdfExpedition
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
-	        'status' => !empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)?1:0,
+	        'status' => !empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT) ? 1 : 0,
 	        'title' => array(
 	            'textkey' => 'TotalHT'
 	        ),
@@ -1183,7 +1183,7 @@ class pdf_espadon extends ModelePdfExpedition
 	    $this->cols['qty_asked'] = array(
 	        'rank' => $rank,
 	        'width' => 30, // in mm
-	        'status' => empty($conf->global->SHIPPING_PDF_HIDE_ORDERED)?1:0,
+	        'status' => empty($conf->global->SHIPPING_PDF_HIDE_ORDERED) ? 1 : 0,
 	        'title' => array(
 	            'textkey' => 'QtyOrdered'
 	        ),
@@ -1208,7 +1208,7 @@ class pdf_espadon extends ModelePdfExpedition
 	    );
 
 
-	    $parameters=array(
+	    $parameters = array(
 	        'object' => $object,
 	        'outputlangs' => $outputlangs,
 	        'hidedetails' => $hidedetails,
@@ -1216,7 +1216,7 @@ class pdf_espadon extends ModelePdfExpedition
 	        'hideref' => $hideref
 	    );
 
-	    $reshook=$hookmanager->executeHooks('defineColumnField', $parameters, $this);    // Note that $object may have been modified by hook
+	    $reshook = $hookmanager->executeHooks('defineColumnField', $parameters, $this); // Note that $object may have been modified by hook
 	    if ($reshook < 0)
 	    {
 	        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

@@ -111,6 +111,8 @@ if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'testhtml')   $
  * View
  */
 
+$form = new Form($db);
+
 $linuxlike=1;
 if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
 if (preg_match('/^mac/i', PHP_OS)) $linuxlike=0;
@@ -139,8 +141,6 @@ $listofmethods['swiftmailer']='Swift Mailer socket library';
 
 if ($action == 'edit')
 {
-	$form=new Form($db);
-
 	if ($conf->use_javascript_ajax)
 	{
 		print "\n".'<script type="text/javascript" language="javascript">';
@@ -251,7 +251,7 @@ if ($action == 'edit')
 
 	dol_fiche_head($head, 'common', '', -1);
 
-	print $langs->trans("EMailsDesc")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
 
 
@@ -315,7 +315,7 @@ if ($action == 'edit')
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && ! $user->entity))
 		{
-			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $mainserver . '">';
+			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $mainserver . '" autocomplete="off">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_sav" name="MAIN_MAIL_SMTP_SERVER_sav" value="' . $mainserver . '">';
 			print '<span id="smtp_server_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 		}
@@ -388,7 +388,7 @@ if ($action == 'edit')
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . $mainsmtppw . '">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . $mainsmtppw . '" autocomplete="off">';
 		}
 		else
 		{

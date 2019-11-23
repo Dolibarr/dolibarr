@@ -61,17 +61,17 @@ $projectstatic = new Project($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
  */
 
-if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
+if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
 {
-	$error=0;
+	$error = 0;
 
 	if (empty($taskref))
 	{
@@ -83,16 +83,16 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
-	if (! $error)
+	if (!$error)
 	{
 		$object->fetch($id, $ref);
         $object->oldcopy = clone $object;
 
-		$tmparray=explode('_', $_POST['task_parent']);
-		$task_parent=$tmparray[1];
-		if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
+		$tmparray = explode('_', $_POST['task_parent']);
+		$task_parent = $tmparray[1];
+		if (empty($task_parent)) $task_parent = 0; // If task_parent is ''
 
-		$object->ref = $taskref?$taskref:GETPOST("ref", 'alpha', 2);
+		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
@@ -105,9 +105,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		if (! $error)
+		if (!$error)
 		{
-			$result=$object->update($user);
+			$result = $object->update($user);
 			if ($result < 0)
 			{
 			    setEventMessages($object->error, $object->errors, 'errors');
@@ -116,7 +116,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	}
 	else
 	{
-		$action='edit';
+		$action = 'edit';
 	}
 }
 
@@ -124,35 +124,35 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 {
 	if ($object->fetch($id, $ref) >= 0)
 	{
-		$result=$projectstatic->fetch($object->fk_project);
+		$result = $projectstatic->fetch($object->fk_project);
 		$projectstatic->fetch_thirdparty();
 
 		if ($object->delete($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject?'&withproject=1':''));
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 			exit;
 		}
 		else
 		{
 		    setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
+			$action = '';
 		}
 	}
 }
 
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
-if (! empty($project_ref) && ! empty($withproject))
+if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch('', $project_ref) > 0)
 	{
-		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		$tasksarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($tasksarray) > 0)
 		{
-			$id=$tasksarray[0]->id;
+			$id = $tasksarray[0]->id;
 		}
 		else
 		{
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}
 }
@@ -171,11 +171,11 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 	}
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
+	$result = $object->generateDocument($object->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
+        $action = '';
 	}
 }
 
@@ -184,13 +184,13 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	if ($object->fetch($id, $ref) >= 0 )
+	if ($object->fetch($id, $ref) >= 0)
 	{
 		$langs->load("other");
-		$upload_dir =	$conf->projet->dir_output;
-		$file =	$upload_dir	. '/' .	GETPOST('file');
+		$upload_dir = $conf->projet->dir_output;
+		$file = $upload_dir.'/'.GETPOST('file');
 
-		$ret=dol_delete_file($file);
+		$ret = dol_delete_file($file);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
@@ -207,49 +207,49 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	if ($object->fetch($id, $ref) > 0)
 	{
-		$res=$object->fetch_optionals();
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+		$res = $object->fetch_optionals();
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
-		$result=$projectstatic->fetch($object->fk_project);
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
-		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+		$result = $projectstatic->fetch($object->fk_project);
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
+		if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
 
-		$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
+		$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
 
-		if (! empty($withproject))
+		if (!empty($withproject))
 		{
 			// Tabs for project
-			$tab='tasks';
-			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'), 0, '', '');
+			$tab = 'tasks';
+			$head = project_prepare_head($projectstatic);
+			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
-			$param=($mode=='mine'?'&mode=mine':'');
+			$param = ($mode == 'mine' ? '&mode=mine' : '');
 
 			// Project card
 
             $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-            $morehtmlref='<div class="refidno">';
+            $morehtmlref = '<div class="refidno">';
             // Title
-            $morehtmlref.=$projectstatic->title;
+            $morehtmlref .= $projectstatic->title;
             // Thirdparty
             if ($projectstatic->thirdparty->id > 0)
             {
-                $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $projectstatic->thirdparty->getNomUrl(1, 'project');
+                $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
             }
-            $morehtmlref.='</div>';
+            $morehtmlref .= '</div>';
 
             // Define a complementary filter for search of next/prev ref.
-            if (! $user->rights->projet->all->lire)
+            if (!$user->rights->projet->all->lire)
             {
                 $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+                $projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
             }
 
             dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -265,23 +265,23 @@ if ($id > 0 || ! empty($ref))
             print $langs->trans("Usage");
             print '</td>';
             print '<td>';
-            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+            if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
             {
-            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
             	$htmltext = $langs->trans("ProjectFollowOpportunity");
             	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
             	print '<br>';
             }
             if (empty($conf->global->PROJECT_HIDE_TASKS))
             {
-            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
             	$htmltext = $langs->trans("ProjectFollowTasks");
             	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
             	print '<br>';
             }
-            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
             {
-            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
             	$htmltext = $langs->trans("ProjectBillTimeDescription");
             	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
             	print '<br>';
@@ -297,10 +297,10 @@ if ($id > 0 || ! empty($ref))
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
             $start = dol_print_date($projectstatic->date_start, 'day');
-            print ($start?$start:'?');
+            print ($start ? $start : '?');
             $end = dol_print_date($projectstatic->date_end, 'day');
             print ' - ';
-            print ($end?$end:'?');
+            print ($end ? $end : '?');
             if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
@@ -329,7 +329,7 @@ if ($id > 0 || ! empty($ref))
             print '</td></tr>';
 
             // Categories
-            if($conf->categorie->enabled) {
+            if ($conf->categorie->enabled) {
                 print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id, 'project', 1);
                 print "</td></tr>";
@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
-		$head=task_prepare_head($object);
+		$head = task_prepare_head($object);
 
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{
@@ -414,7 +414,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
-			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
+			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin ? 0 : 1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
 			// Date start
@@ -424,7 +424,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print $form->selectDate($object->date_end?$object->date_end:-1, 'datee', 1, 1, 0, '', 1, 0);
+			print $form->selectDate($object->date_end ? $object->date_end : -1, 'datee', 1, 1, 0, '', 1, 0);
 			print '</td></tr>';
 
 			// Planned workload
@@ -444,8 +444,8 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Other options
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 			if (empty($reshook))
 			{
@@ -468,8 +468,8 @@ if ($id > 0 || ! empty($ref))
 			/*
 			 * Fiche tache en mode visu
 			 */
-			$param=($withproject?'&withproject=1':'');
-			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>':'';
+			$param = ($withproject ? '&withproject=1' : '');
+			$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>' : '';
 
 			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
@@ -478,29 +478,29 @@ if ($id > 0 || ! empty($ref))
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
 			}
 
-			if (! GETPOST('withproject') || empty($projectstatic->id))
+			if (!GETPOST('withproject') || empty($projectstatic->id))
 			{
 			    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+			    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
 			}
-			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+			else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
-			$morehtmlref='';
+			$morehtmlref = '';
 
 			// Project
 			if (empty($withproject))
 			{
-			    $morehtmlref.='<div class="refidno">';
-			    $morehtmlref.=$langs->trans("Project").': ';
-			    $morehtmlref.=$projectstatic->getNomUrl(1);
-			    $morehtmlref.='<br>';
+			    $morehtmlref .= '<div class="refidno">';
+			    $morehtmlref .= $langs->trans("Project").': ';
+			    $morehtmlref .= $projectstatic->getNomUrl(1);
+			    $morehtmlref .= '<br>';
 
 			    // Third party
-			    $morehtmlref.=$langs->trans("ThirdParty").': ';
+			    $morehtmlref .= $langs->trans("ThirdParty").': ';
 			    if (!empty($projectstatic->thirdparty)) {
-                    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+                    $morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
 			    }
-			    $morehtmlref.='</div>';
+			    $morehtmlref .= '</div>';
 			}
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
@@ -515,7 +515,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
 			if ($object->fk_task_parent > 0)
 			{
-				$tasktmp=new Task($db);
+				$tasktmp = new Task($db);
 				$tasktmp->fetch($object->fk_task_parent);
 				print $tasktmp->getNomUrl(1);
 			}
@@ -524,10 +524,10 @@ if ($id > 0 || ! empty($ref))
 			// Date start - Date end
 			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
 			$start = dol_print_date($object->date_start, 'dayhour');
-    		print ($start?$start:'?');
+    		print ($start ? $start : '?');
 			$end = dol_print_date($object->date_end, 'dayhour');
     		print ' - ';
-    		print ($end?$end:'?');
+    		print ($end ? $end : '?');
     		if ($object->hasDelay()) print img_warning("Late");
 			print '</td></tr>';
 
@@ -564,8 +564,8 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
 			if ($object->planned_workload != '')
 			{
-				$tmparray=$object->getSummaryOfTimeSpent();
-				if ($tmparray['total_duration'] > 0 && ! empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
+				$tmparray = $object->getSummaryOfTimeSpent();
+				if ($tmparray['total_duration'] > 0 && !empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
 			}
 			else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
@@ -573,8 +573,8 @@ if ($id > 0 || ! empty($ref))
 
 			// Other attributes
 			$cols = 3;
-			$parameters=array('socid'=>$socid);
-			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			$parameters = array('socid'=>$socid);
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			print '</table>';
 
@@ -614,7 +614,7 @@ if ($id > 0 || ! empty($ref))
 				// Delete
 				if ($user->rights->projet->supprimer)
 				{
-				    if (! $object->hasChildren() && ! $object->hasTimeSpent())
+				    if (!$object->hasChildren() && !$object->hasTimeSpent())
 				    {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
 				    }
@@ -637,18 +637,18 @@ if ($id > 0 || ! empty($ref))
 			/*
 			 * Documents generes
 			 */
-			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
-			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
-			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed=($user->rights->projet->lire);
-			$delallowed=($user->rights->projet->creer);
+			$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+			$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = ($user->rights->projet->lire);
+			$delallowed = ($user->rights->projet->creer);
 
 			print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			// List of actions on element
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
 

@@ -259,8 +259,9 @@ if (empty($reshook))
 			{
 				$supplier = new Fournisseur($db);
 				$result = $supplier->fetch($id_fourn);
-				if (isset($_POST['ref_fourn_price_id']))
-					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+				if (GETPOSTISSET('ref_fourn_price_id')) {
+					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
+				}
 
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");

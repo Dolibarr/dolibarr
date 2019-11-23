@@ -75,7 +75,7 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
@@ -418,10 +418,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (function_exists('imap_open'))
 	{
 		$connectstringserver = $object->getConnectStringIMAP();
-		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $object->login, $object->password);
+		try {
+			if ($sourcedir) {
+				//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+				$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+			}
+			if ($targetdir) {
+				//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
+			}
+
+			$connection = imap_open($connectstringsource, $object->login, $object->password);
+		}
+		catch(Exception $e)
+		{
+			print $e->getMessage();
+		}
+
+		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	}
 	else
 	{
@@ -509,11 +524,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         else { jQuery("#rulevalue").prop("disabled", false); }
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
-	$noparam = array();
+	/*$noparam = array();
 	foreach ($arrayoftypes as $key => $value)
 	{
 	    if ($value['noparam']) $noparam[] = $key;
-	}
+	}*/
 	print '})';
 	print '</script>'."\n";
 

@@ -3911,9 +3911,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	}
 
 	if (empty($dolibarr_main_prod)) print $out;
-	else
+	else	// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 	{
-		print 'This website is currently temporarly offline. This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		print 'This website is currently temporarly offline.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
@@ -4275,7 +4275,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		}
 	}
 
-	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit); // output the div and ul for previous/last completed with page numbers into $pagelist
+	if ($savlimit || $morehtmlright) {
+		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit); // output the div and ul for previous/last completed with page numbers into $pagelist
+	}
 
 	print '</td>';
 
@@ -4302,7 +4304,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
-	if ((int) $limit >= 0 && empty($hideselectlimit))
+	if ((int) $limit > 0 && empty($hideselectlimit))
 	{
 		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
@@ -4317,7 +4319,6 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 		$tmpkey = $conf->liste_limit.':'.$conf->liste_limit;
 		if (!in_array($tmpkey, $tmpchoice)) $tmpchoice[] = $tmpkey;
 		asort($tmpchoice, SORT_NUMERIC);
-		$found = false;
 		foreach ($tmpchoice as $val)
 		{
 			$selected = '';
@@ -4329,7 +4330,6 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				if ((int) $key == (int) $limit)
 				{
 					$selected = ' selected="selected"';
-					$found = true;
 				}
 				print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
 			}
@@ -5212,16 +5212,18 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	if ($idprodfournprice > 0)
 	{
-		if (!class_exists('ProductFournisseur'))
+		if (!class_exists('ProductFournisseur')) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		}
 		$prodprice = new ProductFournisseur($db);
 		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
 		return $prodprice->fourn_tva_npr;
 	}
 	elseif ($idprod > 0)
 	{
-		if (!class_exists('Product'))
+		if (!class_exists('Product')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		}
 		$prod = new Product($db);
 		$prod->fetch($idprod);
 		return $prod->tva_npr;
