@@ -371,7 +371,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
     }
-  print ' ApplePAY, GooglePAY & MicrosoftPAY //TODO: put docs here for settings';
+	print ' ApplePAY, GooglePAY & MicrosoftPAY //TODO: put docs here for settings';
 	print '</td></tr>';
 }
 
@@ -400,7 +400,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
     }
-  print ' &nbsp; '.$langs->trans("ExampleOnlyForNLCustomers");
+	print ' &nbsp; '.$langs->trans("ExampleOnlyForNLCustomers");
 	print '</td></tr>';
 }
 
