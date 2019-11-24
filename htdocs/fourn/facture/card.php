@@ -2643,7 +2643,7 @@ else
 		if ($calculationrule == 'totalofround') $calculationrulenum=1;
 		else  $calculationrulenum=2;
 
-		if ($object->getVentilExportCompta() != 0) {
+		if ($object->getVentilExportCompta() == 0) {
 			$s=$langs->trans("ReCalculate").' ';
 			$s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
 			$s.=' / ';
