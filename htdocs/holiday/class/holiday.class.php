@@ -304,12 +304,31 @@ class Holiday extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
 
-			if (!$notrigger)
+			if ($this->id)
 			{
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_CREATE', $user);
-				if ($result < 0) { $error++; }
-				// End call triggers
+				// update ref
+				$initialref = '(PROV'.$this->id.')';
+				if (!empty($this->ref)) $initialref = $this->ref;
+
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
+				if ($this->db->query($sql))
+				{
+					$this->ref = $initialref;
+
+					if (!$error)
+					{
+						$result = $this->insertExtraFields();
+						if ($result < 0) $error++;
+					}
+
+					if (!$error && !$notrigger)
+					{
+						// Call trigger
+						$result = $this->call_trigger('HOLIDAY_CREATE', $user);
+						if ($result < 0) { $error++; }
+						// End call triggers
+					}
+				}
 			}
 		}
 
