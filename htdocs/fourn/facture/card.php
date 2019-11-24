@@ -906,7 +906,7 @@ if (empty($reshook))
 
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
-								
+
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
@@ -2643,7 +2643,7 @@ else
 		if ($calculationrule == 'totalofround') $calculationrulenum=1;
 		else  $calculationrulenum=2;
 
-		if (empty($object->getVentilExportCompta())) {
+		if ($object->getVentilExportCompta() != 0) {
 			$s=$langs->trans("ReCalculate").' ';
 			$s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
 			$s.=' / ';
