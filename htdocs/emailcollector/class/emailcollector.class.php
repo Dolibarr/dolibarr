@@ -1122,10 +1122,16 @@ class EmailCollector extends CommonObject
 
                 $this->db->begin();
 
+
                 // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
 
                 dol_syslog("** Process email - msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+
+                // Decode $overview[0]->subject
+                if (function_exists('mb_decode_mimeheader')) {
+                	$overview[0]->subject = mb_decode_mimeheader($overview[0]->subject);
+                }
 
                 // Parse IMAP email structure
                 global $htmlmsg, $plainmsg, $charset, $attachments;

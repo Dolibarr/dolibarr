@@ -356,7 +356,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref        Ref object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -421,12 +421,17 @@ class Holiday extends CommonObject
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_type = $obj->fk_type;
 				$this->entity = $obj->entity;
+
+				$this->fetch_optionals();
+
+				$result = 1;
+			}
+			else {
+				$result = 0;
 			}
 			$this->db->free($resql);
 
-			$this->fetch_optionals();
-
-			return 1;
+			return $result;
 		}
 		else
 		{
