@@ -352,12 +352,7 @@ class Stripe extends CommonObject
 
 		if (is_object($object))
 		{
-			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change someting on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed.
-			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay), Stripe will
-			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
-			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
-			/*
+
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
     		$sql.= " WHERE pi.fk_facture = " . $object->id;
@@ -393,7 +388,7 @@ class Stripe extends CommonObject
     					$this->error = $e->getMessage();
     				}
     			}
-    		}*/
+    		}
 		}
 
 		if (empty($paymentintent))
@@ -549,11 +544,10 @@ class Stripe extends CommonObject
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
-	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @return 	\Stripe\SetupIntent|null 			        Stripe SetupIntent or null if not found and failed to create
 	 */
-	public function getSetupIntent($description, $object, $customer, $key, $status, $usethirdpartyemailforreceiptemail = 0, $confirmnow = false)
+	public function getSetupIntent($description = null, $object = null, $customer = null, $key = null, $status, $confirmnow = false)
 	{
 		global $conf;
 
@@ -576,24 +570,21 @@ class Stripe extends CommonObject
 				$metadata['dol_id'] = $object->id;
 				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
 			}
-
+      
+      // list of payment method types 
+      $paymentmethodtypes = array("card");
+      if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] .= "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+      // iDEAL not supported with setupIntent
+      
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
-				"payment_method_types" => array("card"),
-				"description" => $description,
+				"payment_method_types" => $paymentmethodtypes,
 				"usage" => "off_session",
 				"metadata" => $metadata
 			);
 			if (!is_null($customer)) $dataforintent["customer"] = $customer;
-			// payment_method =
-			// payment_method_types = array('card')
-			//var_dump($dataforintent);
-
-			if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
-			{
-				$dataforintent["receipt_email"] = $object->thirdparty->email;
-			}
-
+      if (!is_null($description)) $dataforintent["description"] = $description;
+            
 			try {
 				// Force to use the correct API key
 				global $stripearrayofkeysbyenv;
@@ -608,49 +599,6 @@ class Stripe extends CommonObject
 					$setupintent = \Stripe\SetupIntent::create($dataforintent, array("stripe_account" => $key));
 				}
 				//var_dump($setupintent->id);
-
-				// Store the setup intent
-				/*if (is_object($object))
-				{
-					$setupintentalreadyexists = 0;
-					// Check that payment intent $setupintent->id is not already recorded.
-					$sql = "SELECT pi.rowid";
-					$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
-					$sql.= " WHERE pi.entity IN (".getEntity('societe').")";
-					$sql.= " AND pi.ext_payment_site = '" . $service . "'";
-					$sql.= " AND pi.ext_payment_id = '".$this->db->escape($setupintent->id)."'";
-
-					dol_syslog(get_class($this) . "::getPaymentIntent search if payment intent already in prelevement_facture_demande", LOG_DEBUG);
-					$resql = $this->db->query($sql);
-					if ($resql) {
-						$num = $this->db->num_rows($resql);
-						if ($num)
-						{
-							$obj = $this->db->fetch_object($resql);
-							if ($obj) $setupintentalreadyexists++;
-						}
-					}
-					else dol_print_error($this->db);
-
-					// If not, we create it.
-					if (! $setupintentalreadyexists)
-					{
-						$now=dol_now();
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
-						$resql = $this->db->query($sql);
-						if (! $resql)
-						{
-							$error++;
-							$this->error = $this->db->lasterror();
-							dol_syslog(get_class($this) . "::PaymentIntent failed to insert paymentintent with id=".$setupintent->id." into database.");
-						}
-					}
-				}
-				else
-				{
-					$_SESSION["stripe_setup_intent"] = $setupintent;
-				}*/
 			}
 			catch (Exception $e)
 			{
@@ -930,8 +878,8 @@ class Stripe extends CommonObject
 				{
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
-						"currency" => "$currency",
-                        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+            "currency" => "$currency",
+            "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -941,7 +889,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-					    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+            "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
