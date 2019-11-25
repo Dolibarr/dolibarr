@@ -352,7 +352,6 @@ class Stripe extends CommonObject
 
 		if (is_object($object))
 		{
-
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
     		$sql.= " WHERE pi.fk_facture = " . $object->id;
@@ -570,12 +569,12 @@ class Stripe extends CommonObject
 				$metadata['dol_id'] = $object->id;
 				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
 			}
-      
-      // list of payment method types 
-      $paymentmethodtypes = array("card");
-      if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] .= "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-      // iDEAL not supported with setupIntent
-      
+
+			// list of payment method types
+			$paymentmethodtypes = array("card");
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] .= "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			// iDEAL not supported with setupIntent
+
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
 				"payment_method_types" => $paymentmethodtypes,
@@ -583,8 +582,8 @@ class Stripe extends CommonObject
 				"metadata" => $metadata
 			);
 			if (!is_null($customer)) $dataforintent["customer"] = $customer;
-      if (!is_null($description)) $dataforintent["description"] = $description;
-            
+			if (!is_null($description)) $dataforintent["description"] = $description;
+
 			try {
 				// Force to use the correct API key
 				global $stripearrayofkeysbyenv;
@@ -878,8 +877,8 @@ class Stripe extends CommonObject
 				{
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
-            "currency" => "$currency",
-            "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+					"currency" => "$currency",
+					"statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -889,7 +888,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-            "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+					"statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
