@@ -158,7 +158,7 @@ if ($action == 'other')
 	}
 
 	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
 	if ($value) {
 		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 		$resql = $db->query($sql_test);
