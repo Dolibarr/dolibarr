@@ -74,6 +74,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_SUMUP".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
         $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
@@ -151,6 +152,13 @@ if (! empty($conf->banque->enabled))
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
 	if (! empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse})) $atleastonefound++;
 	print '</td></tr>';
+	if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+		print '<tr class="oddeven"><td>' . $langs->trans("CashDeskBankAccountForSumup") . '</td>';
+		print '<td>';
+		$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP' . $terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_SUMUP' . $terminaltouse, 0, "courant=1", 1);
+		if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP' . $terminaltouse})) $atleastonefound++;
+		print '</td></tr>';
+	}
 
 	foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;	// Already managed before

@@ -176,6 +176,35 @@ else print "var received=0;";
 			else location.reload();
 		});
 	}
+
+	function ValidateSumup() {
+		<?php  $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
+        var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
+        var amountpayed = $("#change1").val();
+        if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
+            amountpayed = <?php echo $invoice->total_ttc; ?>;
+        }
+
+        // Starting sumup app
+        window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo dolibarr_get_const($db, "TAKEPOS_SUMUP_AFFILIATE")?>&app-id=<?php echo dolibarr_get_const($db, "TAKEPOS_SUMUP_APPID")?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
+
+        var loop = window.setInterval(function () {
+            $.ajax('/takepos/smpcb.php?status').done(function (data) {
+                console.log(data);
+                if (data === "SUCCESS") {
+                    parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay=CB&amount=" + amountpayed + "&invoiceid=" + invoiceid, function () {
+                        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+                        parent.$.colorbox.close();
+                        //parent.setFocusOnSearchField();	// This does not have effect
+                    });
+                    clearInterval(loop);
+                } else if (data === "FAILED") {
+                    parent.$.colorbox.close();
+                    clearInterval(loop);
+                }
+            });
+        }, 2500);
+    }
 </script>
 
 <div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
@@ -269,6 +298,13 @@ while($i < count($paiements)){
     <?php
 	$i=$i+1;
 }
+
+if($conf->global->TAKEPOS_ENABLE_SUMUP && !empty(dolibarr_get_const($db,"CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"]))) {
+	?>
+	<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>
+	<?php
+}
+
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
     $newclass = $class.($button["class"]?" ".$button["class"]:"");
