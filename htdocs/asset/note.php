@@ -46,7 +46,7 @@ $hookmanager->initHooks(array('assetnote')); // Note that conf->hooks_modules co
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'asset', $id);
 

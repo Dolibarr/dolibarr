@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,44 +30,54 @@
 // $backtopage may be defined
 // $triggermodname may be defined
 
-if (! empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit;	// For backward compatibility
+if (!empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit; // For backward compatibility
 
 if ($cancel)
 {
 	/*var_dump($cancel);
 	var_dump($backtopage);exit;*/
-	if (! empty($backtopage))
+	if (!empty($backtopage))
 	{
 		header("Location: ".$backtopage);
 		exit;
 	}
-	$action='';
+	$action = '';
 }
 
 // Action to add record
-if ($action == 'add' && ! empty($permissiontoadd))
+if ($action == 'add' && !empty($permissiontoadd))
 {
 	foreach ($object->fields as $key => $val)
 	{
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
+		if ($object->fields[$key]['type'] == 'duration') {
+			if (GETPOST($key.'hour') == '' && GETPOST($key.'min') == '') continue; // The field was not submited to be edited
+		}
+		else {
+			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
+		}
+		// Ignore special fields
+		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
 
 		// Set value to insert
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'none');
-		} elseif ($object->fields[$key]['type']=='date') {
+		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
-		} elseif ($object->fields[$key]['type']=='datetime') {
+		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+		} elseif ($object->fields[$key]['type'] == 'duration') {
+			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-			$value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
-		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
-		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
+		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value = ''; // This is an implicit foreign key field
+		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') $value = ''; // This is an explicit foreign key field
 
-		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '' && ! is_null($val['default']) && $val['default'] == '(PROV)')
+		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
+		$object->$key = $value;
+		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)')
 		{
 		    $object->$key = '(PROV)';
 		}
@@ -108,8 +118,16 @@ if ($action == 'update' && !empty($permissiontoadd))
 {
 	foreach ($object->fields as $key => $val)
 	{
-		if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue; // Ignore special fields
+		// Check if field was submited to be edited
+		if ($object->fields[$key]['type'] == 'duration') {
+			if (!GETPOSTISSET($key.'hour') || !GETPOSTISSET($key.'min')) continue; // The field was not submited to be edited
+		}
+		else {
+			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
+		}
+		// Ignore special fields
+		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+
 		// Set value to update
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'none');
@@ -117,6 +135,12 @@ if ($action == 'update' && !empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type'] == 'duration') {
+			if (GETPOST($key.'hour', 'int') != '' || GETPOST($key.'min', 'int') != '') {
+				$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
+			} else {
+				$value = '';
+			}
 		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
 			$value = price2num(GETPOST($key));
 		} else {

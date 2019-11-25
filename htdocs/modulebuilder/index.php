@@ -2480,7 +2480,7 @@ elseif (! empty($module))
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder">';
 							print '<tr class="liste_titre">';
-							print '<th class="liste_titre">'.$langs->trans("Property");
+							print '<th>'.$langs->trans("Property");
 							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
 							print '</th>';
 							print '<th>';

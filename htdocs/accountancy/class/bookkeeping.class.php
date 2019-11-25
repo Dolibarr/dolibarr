@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,16 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class BookKeeping extends CommonObject
 {
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'accountingbookkeeping';
@@ -67,7 +57,14 @@ class BookKeeping extends CommonObject
 	 */
 	public $id;
 
+    /**
+     * @var string Date of source document, in db date NOT NULL
+     */
 	public $doc_date;
+
+    /**
+     * @var int Deadline for payment
+     */
 	public $date_lim_reglement;
 
     /**
@@ -119,9 +116,25 @@ class BookKeeping extends CommonObject
      * @var string label operation
      */
     public $label_operation;
+
+    /**
+     * @var float FEC:Debit
+     */
 	public $debit;
+
+    /**
+     * @var float FEC:Credit
+     */
 	public $credit;
+
+    /**
+     * @var float FEC:Amount (Not necessary)
+     */
 	public $montant;
+
+    /**
+     * @var string FEC:Sens (Not necessary)
+     */
 	public $sens;
 
 	/**
@@ -129,16 +142,30 @@ class BookKeeping extends CommonObject
      */
 	public $fk_user_author;
 
+    /**
+     * @var string key for import
+     */
 	public $import_key;
+
+    /**
+     * @var string code journal
+     */
 	public $code_journal;
+
+    /**
+     * @var string label journal
+     */
 	public $journal_label;
+
+    /**
+     * @var int accounting transaction id
+     */
 	public $piece_num;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
-
 
 
 	/**
@@ -198,13 +225,13 @@ class BookKeeping extends CommonObject
 			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
+			$this->debit = (float) $this->debit;
 		}
 		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
+			$this->credit = (float) $this->credit;
 		}
 		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
+			$this->montant = (float) $this->montant;
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -221,8 +248,8 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
-		if (empty($this->debit)) $this->debit = 0;
-		if (empty($this->credit)) $this->credit = 0;
+		if (empty($this->debit)) $this->debit = 0.0;
+		if (empty($this->credit)) $this->credit = 0.0;
 
 		// Check parameters
 		if (($this->numero_compte == "") || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')

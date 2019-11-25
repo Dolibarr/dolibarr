@@ -180,7 +180,7 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if (empty($reshook))
 {
-	print $object->showOptionals($extrafields, 'edit');
+	print $object->showOptionals($extrafields, 'edit', $parameters);
 }
 
 print '</table>';

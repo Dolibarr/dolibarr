@@ -1957,13 +1957,14 @@ class ExtraFields
 	 *
 	 * @param   string	$key            Key of attribute
 	 * @param	string	$object			Object
+	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object)
+	public function showSeparator($key, $object, $colspan = 2)
 	{
 		global $langs;
 
-		$out = '<tr id="trextrafieldseparator'.$key.'" class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
+		$out = '<tr id="trextrafieldseparator'.$key.'" class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="'.$colspan.'"><strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong></td></tr>';
 

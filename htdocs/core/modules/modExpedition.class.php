@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
  */
 class modExpedition extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -133,7 +132,9 @@ class modExpedition extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = array(
+			0=>array('file'=>'box_shipments.php','enabledbydefaulton'=>'Home'),
+		);
 
 		// Permissions
 		$this->rights = array();
@@ -187,7 +188,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1101;
-		$this->rights[$r][1] = 'Lire les bons de livraison';
+		$this->rights[$r][1] = 'Read delivery receipts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'livraison';
@@ -195,7 +196,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1102;
-		$this->rights[$r][1] = 'Creer modifier les bons de livraison';
+		$this->rights[$r][1] = 'Create/modify delivery receipts';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'livraison';
@@ -203,7 +204,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1104;
-		$this->rights[$r][1] = 'Valider les bons de livraison';
+		$this->rights[$r][1] = 'Validate delivery receipts';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'livraison_advance';
@@ -211,7 +212,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1109;
-		$this->rights[$r][1] = 'Supprimer les bons de livraison';
+		$this->rights[$r][1] = 'Delete delivery receipts';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'livraison';

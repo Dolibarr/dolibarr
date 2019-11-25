@@ -698,10 +698,7 @@ if ($resql)
 		print '<td>&nbsp;</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
 		print '<td>'.$langs->trans("Numero").'</td>';
-		//if (! $search_account > 0)
-		//{
-			print '<td class=right>'.$langs->trans("BankAccount").'</td>';
-		//}
+		print '<td class=right>'.$langs->trans("BankAccount").'</td>';
 		print '<td class=right>'.$langs->trans("Debit").'</td>';
 		print '<td class=right>'.$langs->trans("Credit").'</td>';
 		/*if (! empty($conf->accounting->enabled))
@@ -824,19 +821,21 @@ if ($resql)
 	$moreforfilter = '';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('DateOperationShort').' : ';
-	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout == 'phone' ? ' centpercent' : '').' inline-block">'.$langs->trans('From').' ';
+	$moreforfilter .= $langs->trans('DateOperationShort').' :';
+	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
+	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From').' ';
 	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout == 'phone' ? ' centpercent' : '').' inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
-	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout == 'phone' ? ' centpercent' : '').' inline-block">'.$langs->trans('From').' ';
+	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
+	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From').' ';
 	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout == 'phone' ? ' centpercent' : '').' inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
 	$moreforfilter .= '</div>';
 
 	if (!empty($conf->categorie->enabled))

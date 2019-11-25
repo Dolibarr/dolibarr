@@ -1115,7 +1115,7 @@ if ($action == 'create')
     print $hookmanager->resPrint;
     if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 
 	print '</table>';
@@ -1437,7 +1437,7 @@ if ($id > 0)
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print $form->selectcontacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
+			print $form->selectcontacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -1519,7 +1519,7 @@ if ($id > 0)
         print $hookmanager->resPrint;
         if (empty($reshook))
 		{
-			print $object->showOptionals($extrafields, 'edit');
+			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
 		print '</table>';

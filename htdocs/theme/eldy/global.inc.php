@@ -293,7 +293,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-top: 0;
 	margin-left: 5px;
 	margin-right: 5px;
-    	font-family: <?php print $fontlist ?>;
+	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	padding: 4px 14px;
 	text-align: center;
@@ -529,7 +529,9 @@ body[class*="colorblind-"] .text-success{
 
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
-.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off { 
+	font-size: 1.5em; vertical-align: text-bottom; 
+}
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -809,7 +811,7 @@ table[summary="list_of_modules"] .fa-cog {
 
 .img-skinthumb {
 	width: 160px;
-	height: 120px;
+	height: 100px;
 }
 
 
@@ -1263,7 +1265,6 @@ div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
 div.fichecenter {
-	/* margin-top: 10px; */
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
@@ -1630,18 +1631,6 @@ li.tmenusel::after, li.tmenu:hover::after{
 	border-width: 0px 6px 5px 6px;
 	border-color:  transparent transparent #ffffff transparent;
 }
-/*
-// Add a bottom arrow
-li.tmenusel::before, li.tmenu:hover::before{
-	content: "";
-	position:absolute;
-	top:0px;
-	left:0;
-	width: 100%;
-	height: 2px;
-	background: #fff;
-}*/
-
 
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
@@ -2120,9 +2109,9 @@ img.login, img.printer, img.entity {
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
-	border-radius: 0.725em;
-	width: 1.45em;
-    height: 1.45em;
+	border-radius: 0.72em;
+	width: 1.4em;
+    height: 1.4em;
     background-size: contain;
     vertical-align: middle;
 }
@@ -2431,6 +2420,11 @@ div.popuptab {
 	padding-left: 5px;
 	padding-right: 5px;
 }
+
+/* ============================================================================== */
+/* Buttons for actions                                                            */
+/* ============================================================================== */
+
 div.tabsAction {
     margin: 20px 0em 30px 0em;
     padding: 0em 0em;
@@ -3113,7 +3107,9 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
     border-bottom: unset;
 }
 
-
+div.liste_titre {
+	padding-left: 3px;
+}
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
@@ -3246,7 +3242,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     min-height: 40px;
     padding-right: 0px;
     padding-left: 0px;
-    /*padding-bottom: 25px;*/
     padding-bottom: 10px;
 }
 .ficheaddleft div.boxstats, .ficheaddright div.boxstats {
@@ -3380,9 +3375,6 @@ span.dashboardlineok {
 }
 span.dashboardlineko {
 	color: #FFF;
-	/*color: #8c4446 ! important;
-	padding-left: 1px;*/
-
 	font-size: 80%;
 }
 .dashboardlinelatecoin {
@@ -4493,7 +4485,6 @@ td.gminorheading {
 .ecmfiletree {
 	width: 99%;
 	height: 99%;
-	/* background: #FFF; */
 	padding-left: 2px;
 	font-weight: normal;
 }
@@ -5962,6 +5953,11 @@ div.tabsElem a.tab {
 	.text-plus-circle {
 	   display: none;
 	}
+
+	table.table-fiche-title .col-title div.titre{
+		line-height: unset;
+	}
+
 }
 
 <?php

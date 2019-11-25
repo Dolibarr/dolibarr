@@ -50,3 +50,5 @@ BomAndBomLines=Bills Of Material and lines
 BOMLine=Line of BOM
 WarehouseForProduction=Warehouse for production
 CreateMO=Create MO
+ToConsume=A consommer
+Manufactured=Fabriqué

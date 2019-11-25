@@ -2684,12 +2684,13 @@ class Product extends CommonObject
     /**
      *  Charge tableau des stats expedition client pour le produit/service
      *
-     * @param  int    $socid           Id societe pour filtrer sur une societe
-     * @param  string $filtrestatut    Id statut pour filtrer sur un statut
-     * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
-     * @return array                   Tableau des stats
+     * @param   int         $socid                  Id societe pour filtrer sur une societe
+     * @param   string      $filtrestatut           Id statut pour filtrer sur un statut
+     * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
+     * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
+     * @return  int         <0 if KO, >0 if OK (Tableau des stats)
      */
-    public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
+    public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $filterShipmentStatus = '')
     {
         // phpcs:enable
         global $conf,$user;
@@ -2719,6 +2720,7 @@ class Product extends CommonObject
         if ($filtrestatut <> '') {
             $sql.= " AND c.fk_statut in (".$filtrestatut.")";
         }
+        if (!empty($filterShipmentStatus)) $sql.= " AND e.fk_statut IN (" . $filterShipmentStatus . ")";
 
         $result = $this->db->query($sql);
         if ($result ) {
@@ -4680,7 +4682,14 @@ class Product extends CommonObject
 		}
 		if (!empty($conf->expedition->enabled))
 		{
-			$result = $this->load_stats_sending(0, '1,2', 1);
+            require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+            $filterShipmentStatus = '';
+            if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+                $filterShipmentStatus = Expedition::STATUS_VALIDATED  . ',' . Expedition::STATUS_CLOSED;
+            } elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+                $filterShipmentStatus = Expedition::STATUS_CLOSED;
+            }
+			$result = $this->load_stats_sending(0, '1,2', 1, $filterShipmentStatus);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}

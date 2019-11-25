@@ -825,14 +825,26 @@ if ($action == 'addcontainer')
 
 	if (!$error)
 	{
-		$res = $objectpage->create($user);
-		if ($res <= 0)
-		{
+		$pageid = $objectpage->create($user);
+		if ($pageid <= 0) {
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 			$action = 'createcontainer';
 		}
+		else {
+			// If there is no home page yet, this new page will be set as the home page
+			if (empty($object->fk_default_home)) {
+				$object->fk_default_home = $pageid;
+				$res = $object->update($user);
+				if ($res <= 0)
+				{
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 	}
+
 	if (!$error)
 	{
 		if (!empty($objectpage->content))
@@ -1398,7 +1410,7 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
-		$objectpage->fk_page = GETPOST('pageidfortranslation', 'int');
+		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
@@ -2891,7 +2903,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
-		print '<label for="checkboxcreatefromfetching"><span class="opacitymedium">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
+		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<tr><td class="titlefield">';
@@ -2912,7 +2924,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatemanually" value="checkboxcreatemanually"'.(GETPOST('radiocreatefrom') == 'checkboxcreatemanually' ? ' checked' : '').'> ';
-		print '<label for="checkboxcreatemanually"><span class="opacitymedium">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
+		print '<label for="checkboxcreatemanually"><span class="opacitymediumxx">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 	}
 
@@ -3015,7 +3027,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td>';
 	print $langs->trans('Language');
 	print '</td><td>';
-	print $formadmin->select_language($pagelang ? $pagelang : $langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
+	print $formadmin->select_language($pagelang ? $pagelang : $langs->defaultlang, 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Translation of
@@ -3034,17 +3046,23 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$num_rows = $db->num_rows($resql);
 			if ($num_rows > 0)
 			{
-				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
+				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span>';
 				$i = 0;
+				$tmppage = new WebsitePage($db);
+				$tmpstring = '';
 				while ($obj = $db->fetch_object($resql))
 				{
-					$tmppage = new WebsitePage($db);
-					$tmppage->fetch($obj->rowid);
-					if ($i > 0) print ' - ';
-					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')<br>';
-					$translatedby++;
-					$i++;
+					$result = $tmppage->fetch($obj->rowid);
+					if ($result > 0) {
+						if ($i > 0) $tmpstring .= '<br>';
+						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$translatedby++;
+						$i++;
+					}
 				}
+				if ($i > 1) print '<br>';
+				else print ' ';
+				print $tmpstring;
 			}
 		}
 		else dol_print_error($db);
@@ -3059,10 +3077,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		}
 		elseif ($result > 0)
 		{
-			$translationof = 0;
-			//$translationof = $sourcepage->id;
+			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', $translationof, 1, $action, 'minwidth300');
+			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			if ($translationof > 0) {
+				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+			}
 		}
 	}
 	print '</td></tr>';

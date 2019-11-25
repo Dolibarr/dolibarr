@@ -264,12 +264,12 @@ class modEmailCollector extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf, $user;
 		//$this->_load_tables('/dav/sql/');
 
 		// Create extrafields
-		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-
+		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		//$extrafields = new ExtraFields($this->db);
 		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
@@ -277,6 +277,60 @@ class modEmailCollector extends DolibarrModules
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 
 		$sql = array();
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Requets', 'Example to collect ticket requests', 'This collector will scan your mailbox to find emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email informations. You can use this collector if you provide some support by email, so your ticket request will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from the ticket, you may also see answers of your customers or partners directly on the ticket view.', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleA3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
+				$sqlforexampleA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'to', 'support@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleA4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleA4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'ticket', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sql[] = $sqlforexampleA1;
+				$sql[] = $sqlforexampleA2;
+				$sql[] = $sqlforexampleA3;
+				$sql[] = $sqlforexampleA4;
+			}
+		} else dol_print_error($this->db);
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$sqlforexampleB1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses', 'Example to collect any email responses', 'This collector will scan your mailbox to find all emails that are an answer of an email sent from your application. An event with the email response will be recorded at the good place (Module Agenda must be enabled). For example, if your send a commercial proposal, order or invoice by email and your customer answers your email, the system will automatically find the answer and add it into your ERP.', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleB2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleB2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses' and entity = ".$conf->entity."), 'withtrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleB3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleB3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses' and entity = ".$conf->entity."), 'recordevent', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sql[] = $sqlforexampleB1;
+				$sql[] = $sqlforexampleB2;
+				$sql[] = $sqlforexampleB3;
+			}
+		} else dol_print_error($this->db);
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Leads', 'Example to collect leads', 'This collector will scan your mailbox to find emails that match some rules and create automatically a lead (Module Project must be enabled) with the email informations. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>Note: With this initial example, the title of the lead is generated including the email. If the thirdparty can''t be found in database (new customer), the lead will be attached to the thirdparty with ID 1.', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
+				$sqlforexampleC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'to', 'sales@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
+				$sqlforexampleC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'project', 'tmp_aaa=EXTRACT:HEADER:^From:(.*);description=EXTRACT:BODY:(.*);title=SET:Lead or message by __tmp_aaa__ receivied by email;socid=SETIFEMPTY:1', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sql[] = $sqlforexampleC1;
+				$sql[] = $sqlforexampleC2;
+				$sql[] = $sqlforexampleC3;
+				$sql[] = $sqlforexampleC4;
+			}
+		} else dol_print_error($this->db);
 
 		return $this->_init($sql, $options);
 	}
