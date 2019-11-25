@@ -168,7 +168,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print "</div>\n";
 
-		print dol_fiche_end();
+		dol_fiche_end();
 
 		$modulepart = 'expedition';
 		$permission = $user->rights->expedition->creer;
