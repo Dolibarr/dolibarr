@@ -299,7 +299,7 @@ while($i < count($paiements)){
 	$i=$i+1;
 }
 
-if($conf->global->TAKEPOS_ENABLE_SUMUP && !empty(dolibarr_get_const($db,"CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"]))) {
+if($conf->global->TAKEPOS_ENABLE_SUMUP && !empty(dolibarr_get_const($db, "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"]))) {
 	?>
 	<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>
 	<?php
