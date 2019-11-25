@@ -1128,8 +1128,21 @@ class EmailCollector extends CommonObject
 
                 dol_syslog("** Process email - msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
 
-                // Decode $overview[0]->subject
-                if (function_exists('mb_decode_mimeheader')) {
+                // Decode $overview[0]->subject according to RFC2047
+                // Can use also imap_mime_header_decode($str)
+                // Can use also mb_decode_mimeheader($str)
+                // Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
+                if (function_exists('imap_mime_header_decode')) {
+                	$elements = imap_mime_header_decode($overview[0]->subject);
+                	$newstring = '';
+                	if (! empty($elements)) {
+	                	for ($i = 0; $i < count($elements); $i++) {
+	                		$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
+	                	}
+	                	$overview[0]->subject = $newstring;
+                	}
+                }
+                elseif (function_exists('mb_decode_mimeheader')) {
                 	$overview[0]->subject = mb_decode_mimeheader($overview[0]->subject);
                 }
 
