@@ -799,6 +799,8 @@ elseif ($id > 0 || !empty($ref))
 
 	if (count($tasksarray) > 0)
 	{
+		usort($tasksarray, 'sortTasks');
+
 	    // Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0));
@@ -842,3 +844,34 @@ elseif ($id > 0 || !empty($ref))
 // End of page
 llxFooter();
 $db->close();
+
+/**
+ * Compare two Task by progress and end date (task->progress and task->date_end) and return the sorting order
+ * @param    $left    Task    The left task to compare
+ * @param    $right   Task    The right task to compare
+ * @return            int     The sorting order (-1, 0, 1)
+ */
+function sortTasks($left, $right)
+{
+	if ($left->progress == $right->progress)
+	{
+		if ($left->date_end == $right->date_end)
+		{
+			return 0;
+		}
+
+		return ($left->date_end < $right->date_end) ? -1 : 1;
+	}
+
+	if ($left->date_end == $right->date_end)
+	{
+		if ($left->progress == $right->progress)
+		{
+			return 0;
+		}
+
+		return ($left->progress < $right->progress) ? -1 : 1;
+	}
+
+	return ($left->progress < $right->progress) ? -1 : 1;
+}
