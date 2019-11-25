@@ -846,32 +846,32 @@ llxFooter();
 $db->close();
 
 /**
- * Compare two Task by progress and end date (task->progress and task->date_end) and return the sorting order
- * @param    $left    Task    The left task to compare
- * @param    $right   Task    The right task to compare
- * @return            int     The sorting order (-1, 0, 1)
+ * Compare two Task by progress and end date (task->progress and task->date_end) and retur the sorting order
+ * @param     Task    $left    The left task to compare
+ * @param     Task    $right   The right task to compare
+ * @return    int              The sorting order (-1, 0, 1)
  */
 function sortTasks($left, $right)
 {
-	if ($left->progress == $right->progress)
-	{
-		if ($left->date_end == $right->date_end)
-		{
-			return 0;
-		}
+    if ($left->progress == $right->progress)
+    {
+        if ($left->date_end == $right->date_end)
+        {
+            return 0;
+        }
 
-		return ($left->date_end < $right->date_end) ? -1 : 1;
-	}
+        return ($left->date_end < $right->date_end) ? -1 : 1;
+    }
 
-	if ($left->date_end == $right->date_end)
-	{
-		if ($left->progress == $right->progress)
-		{
-			return 0;
-		}
+    if ($left->date_end == $right->date_end)
+    {
+        if ($left->progress == $right->progress)
+        {
+            return 0;
+        }
 
-		return ($left->progress < $right->progress) ? -1 : 1;
-	}
+        return ($left->progress < $right->progress) ? -1 : 1;
+    }
 
-	return ($left->progress < $right->progress) ? -1 : 1;
+    return ($left->progress < $right->progress) ? -1 : 1;
 }
