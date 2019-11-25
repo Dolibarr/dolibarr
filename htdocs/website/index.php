@@ -825,14 +825,26 @@ if ($action == 'addcontainer')
 
 	if (!$error)
 	{
-		$res = $objectpage->create($user);
-		if ($res <= 0)
-		{
+		$pageid = $objectpage->create($user);
+		if ($pageid <= 0) {
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 			$action = 'createcontainer';
 		}
+		else {
+			// If there is no home page yet, this new page will be set as the home page
+			if (empty($object->fk_default_home)) {
+				$object->fk_default_home = $pageid;
+				$res = $object->update($user);
+				if ($res <= 0)
+				{
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 	}
+
 	if (!$error)
 	{
 		if (!empty($objectpage->content))
@@ -2891,7 +2903,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
-		print '<label for="checkboxcreatefromfetching"><span class="opacitymedium">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
+		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<tr><td class="titlefield">';
@@ -2912,7 +2924,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatemanually" value="checkboxcreatemanually"'.(GETPOST('radiocreatefrom') == 'checkboxcreatemanually' ? ' checked' : '').'> ';
-		print '<label for="checkboxcreatemanually"><span class="opacitymedium">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
+		print '<label for="checkboxcreatemanually"><span class="opacitymediumxx">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 	}
 
@@ -3015,7 +3027,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td>';
 	print $langs->trans('Language');
 	print '</td><td>';
-	print $formadmin->select_language($pagelang ? $pagelang : $langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
+	print $formadmin->select_language($pagelang ? $pagelang : $langs->defaultlang, 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Translation of

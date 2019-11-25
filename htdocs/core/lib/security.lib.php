@@ -422,7 +422,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if (! empty($objectid) && $objectid > 0)
 	{
 		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
-		return $ok ? 1 : accessforbidden();
+		$params=array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
 	}
 
 	return 1;
@@ -660,13 +661,14 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
  *	Show a message to say access is forbidden and stop program
  *	Calling this function terminate execution of PHP.
  *
- *	@param	string	$message			    Force error message
- *	@param	int		$printheader		    Show header before
- *  @param  int		$printfooter         Show footer after
- *  @param  int		$showonlymessage     Show only message parameter. Otherwise add more information.
+ *	@param	string		$message			Force error message
+ *	@param	int			$printheader		Show header before
+ *  @param  int			$printfooter        Show footer after
+ *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  array|null  $params         	Send params
  *  @return	void
  */
-function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0)
+function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
     global $conf, $db, $user, $langs, $hookmanager;
     if (! is_object($langs))
@@ -697,7 +699,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
-		$parameters = array('message'=>$message);
+		$parameters = array('message'=>$message, 'params'=>$params);
 		$reshook=$hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;
 		if (empty($reshook))
