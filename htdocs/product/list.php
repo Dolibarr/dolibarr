@@ -174,6 +174,8 @@ $arrayfields = array(
 	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(!empty($conf->service->enabled) && (string) $type == '1')),
     'p.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled))),
     'p.length'=>array('label'=>$langs->trans("Length"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE))),
+    'p.width'=>array('label'=>$langs->trans('Width'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE))),
+    'p.height'=>array('label'=>$langs->trans('Height'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE))),
     'p.surface'=>array('label'=>$langs->trans("Surface"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE))),
     'p.volume'=>array('label'=>$langs->trans("Volume"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME))),
     'cu.label'=>array('label'=>$langs->trans("DefaultUnitToShow"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_USE_UNITS))),
@@ -289,7 +291,7 @@ $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p
 $sql .= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock,';
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units,';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.height, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units,';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ' p.fk_unit, cu.label as cu_label,';
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
@@ -378,7 +380,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql .= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp, p.stock,';
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.height, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ', p.fk_unit, cu.label';
 
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
@@ -630,6 +632,18 @@ if ($resql)
 	    print '<td class="liste_titre">';
 	    print '</td>';
 	}
+    // Width
+    if (!empty($arrayfields['p.width']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+    // Height
+    if (!empty($arrayfields['p.height']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
 	// Surface
 	if (!empty($arrayfields['p.surface']['checked']))
 	{
@@ -768,6 +782,8 @@ if ($resql)
     }
 	if (!empty($arrayfields['p.weight']['checked']))  print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER["PHP_SELF"], "p.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.length']['checked']))  print_liste_field_titre($arrayfields['p.length']['label'], $_SERVER["PHP_SELF"], "p.length", "", $param, '', $sortfield, $sortorder, 'center ');
+    if (!empty($arrayfields['p.width']['checked']))   print_liste_field_titre($arrayfields['p.width']['label'], $_SERVER['PHP_SELF'], 'p.width', '', $param, '', $sortfield, $sortorder, 'center ');
+    if (!empty($arrayfields['p.height']['checked']))  print_liste_field_titre($arrayfields['p.height']['label'], $_SERVER['PHP_SELF'], 'p.height', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.surface']['checked'])) print_liste_field_titre($arrayfields['p.surface']['label'], $_SERVER["PHP_SELF"], "p.surface", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.volume']['checked']))  print_liste_field_titre($arrayfields['p.volume']['label'], $_SERVER["PHP_SELF"], "p.volume", "", $param, '', $sortfield, $sortorder, 'center ');
     if (!empty($arrayfields['cu.label']['checked']))  print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
@@ -985,6 +1001,22 @@ if ($resql)
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
 		}
+        // Width
+        if (!empty($arrayfields['p.width']['checked']))
+        {
+            print '<td align="center">';
+            print $obj->width;
+            print '</td>';
+            if (!$i) $totalarray['nbfield']++;
+        }
+        // Height
+        if (!empty($arrayfields['p.height']['checked']))
+        {
+            print '<td align="center">';
+            print $obj->height;
+            print '</td>';
+            if (!$i) $totalarray['nbfield']++;
+        }
 		// Surface
 		if (!empty($arrayfields['p.surface']['checked']))
 		{
