@@ -630,7 +630,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 
 		$db->free($resql);
 	} else {
-		print dol_print_error($db);
+		dol_print_error($db);
 	}
 }
 
