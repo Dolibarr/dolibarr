@@ -283,7 +283,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300 maxwidth150onsmartphone" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Sens
@@ -296,7 +296,7 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100" value="'.$amount.'">';
+	print '<input name="amount" id="amount" class="minwidth100 maxwidth150onsmartphone" value="'.$amount.'">';
 	print '</td></tr>';
 
 	// Bank
@@ -321,7 +321,7 @@ if ($action == 'create')
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
-		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
     // Project
@@ -358,13 +358,13 @@ if ($action == 'create')
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
         print '<td>';
-		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
+		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
         print '</td></tr>';
 	}
 	else // For external software
 	{
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
-		print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code" value="'.$accountancy_code.'">';
+		print '<td><input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
 		print '</td></tr>';
 	}
 
@@ -379,14 +379,14 @@ if ($action == 'create')
         }
         else
         {
-            print '<input type="text" class="maxwidth200" name="subledger_account" value="'.$subledger_account.'">';
+            print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
     }
     else // For external software
     {
         print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
-        print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="subledger_account" value="'.$subledger_account.'">';
+        print '<td><input class="minwidth100 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
         print '</td></tr>';
     }
 

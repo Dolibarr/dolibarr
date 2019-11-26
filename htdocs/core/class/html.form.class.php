@@ -6521,6 +6521,7 @@ class Form
 			elseif ($addjscombo == 2)
 			{
 				// Add other js lib
+				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({

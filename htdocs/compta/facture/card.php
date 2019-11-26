@@ -1216,7 +1216,7 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
-				$object->ref                = $_POST['ref'];
+				$object->ref = $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'none'));

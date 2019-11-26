@@ -667,20 +667,54 @@ class EmailCollector extends CommonObject
     /**
      * Return the connectstring to use with IMAP connection function
      *
+     * @param	int		$ssl		Add /ssl tag
+     * @param	int		$norsh		Add /norsh to connectstring
      * @return string
      */
-    public function getConnectStringIMAP()
+    public function getConnectStringIMAP($ssl = 1, $norsh = 0)
     {
+    	global $conf;
+
         // Connect to IMAP
         $flags = '/service=imap'; // IMAP
-        $flags .= '/ssl'; // '/tls'
+        if ($ssl) $flags .= '/ssl'; // '/tls'
         $flags .= '/novalidate-cert';
         //$flags.='/readonly';
         //$flags.='/debug';
+        if ($norsh || ! empty($conf->global->IMPA_FORCE_NORSH)) $flags .= '/norsh';
 
         $connectstringserver = '{'.$this->host.':993'.$flags.'}';
 
         return $connectstringserver;
+    }
+
+    /**
+     * Convert str to UTF-7 imap default mailbox names
+     *
+     * @param 	string $str			String to encode
+     * @return 	string				Encode string
+     */
+    public function getEncodedUtf7($str)
+    {
+    	if (function_exists('mb_convert_encoding')) {
+	    	// change spaces by entropy because mb_convert fail with spaces
+	    	$str=preg_replace("/ /", "xyxy", $str);
+	    	// if mb_convert work
+	    	if ($str = mb_convert_encoding($str, "UTF-7")) {
+	    		// change characters
+	    		$str=preg_replace("/\+A/", "&A", $str);
+	    		// change to spaces again
+	    		$str=preg_replace("/xyxy/", " ", $str);
+	    		return $str;
+	    	} else {
+	    		// print error and return false
+	    		$this->error = "error: is not possible to encode this string '".$str."'";
+	     		return false;
+	    	}
+    	}
+    	else {
+    		return $str;
+    	}
     }
 
     /**
@@ -854,7 +888,7 @@ class EmailCollector extends CommonObject
 
         dol_syslog("EmailCollector::doCollectOneCollector start", LOG_DEBUG);
 
-        $langs->loadLangs(array("project", "companies", "mails", "errors", "ticket"));
+        $langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda"));
 
         $error = 0;
         $this->output = '';
@@ -1060,7 +1094,6 @@ class EmailCollector extends CommonObject
                 // If there is a filter on trackid
                 if ($searchfilterdoltrackid > 0)
                 {
-                    //if (empty($headers['X-Dolibarr-TRACKID'])) continue;
                     if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
@@ -1074,7 +1107,6 @@ class EmailCollector extends CommonObject
                         $nbemailprocessed++;
                         continue;
                     }
-                    //if (! empty($headers['X-Dolibarr-TRACKID']) continue;
                 }
 
                 $thirdpartystatic = new Societe($this->db);
@@ -1090,10 +1122,29 @@ class EmailCollector extends CommonObject
 
                 $this->db->begin();
 
+
                 // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
 
                 dol_syslog("** Process email - msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+
+                // Decode $overview[0]->subject according to RFC2047
+                // Can use also imap_mime_header_decode($str)
+                // Can use also mb_decode_mimeheader($str)
+                // Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
+                if (function_exists('imap_mime_header_decode')) {
+                	$elements = imap_mime_header_decode($overview[0]->subject);
+                	$newstring = '';
+                	if (! empty($elements)) {
+	                	for ($i = 0; $i < count($elements); $i++) {
+	                		$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
+	                	}
+	                	$overview[0]->subject = $newstring;
+                	}
+                }
+                elseif (function_exists('mb_decode_mimeheader')) {
+                	$overview[0]->subject = mb_decode_mimeheader($overview[0]->subject);
+                }
 
                 // Parse IMAP email structure
                 global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -1459,78 +1510,85 @@ class EmailCollector extends CommonObject
                     // Create event
                     elseif ($operation['type'] == 'recordevent')
                     {
-                        if ($projectstatic->id > 0)
-                        {
-                            if ($projectfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
-                        }
-                        if ($thirdpartystatic->id > 0)
-                        {
-                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
-                        }
-                        if ($contactstatic->id > 0)
-                        {
-                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
-                        }
+                    	$alreadycreated = 0;
+                    	// TODO Check if $msg ID already in database for $conf->entity
 
-                        $description = $descriptiontitle;
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $descriptionmeta);
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $messagetext);
 
-                        $descriptionfull = $description;
-                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
+                    	if (! $alreadycreated)
+                    	{
+	                        if ($projectstatic->id > 0)
+	                        {
+	                            if ($projectfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
+	                        }
+	                        if ($thirdpartystatic->id > 0)
+	                        {
+	                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+	                        }
+	                        if ($contactstatic->id > 0)
+	                        {
+	                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+	                        }
 
-                        // Insert record of emails sent
-                        $actioncomm = new ActionComm($this->db);
-                        $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-                        $actioncomm->code        = 'AC_'.$actioncode;
-                        $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
-                        $actioncomm->note_private= $descriptionfull;
-                        $actioncomm->fk_project  = $projectstatic->id;
-                        $actioncomm->datep       = $date;
-                        $actioncomm->datef       = $date;
-                        $actioncomm->percentage  = -1;   // Not applicable
-                        $actioncomm->socid       = $thirdpartystatic->id;
-                        $actioncomm->contactid   = $contactstatic->id;
-	                    $actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
-                        $actioncomm->authorid    = $user->id;   // User saving action
-                        $actioncomm->userownerid = $user->id;	// Owner of action
-                        // Fields when action is an email (content should be added into note)
-                        $actioncomm->email_msgid = $msgid;
-                        $actioncomm->email_from  = $fromstring;
-                        $actioncomm->email_sender= $sender;
-                        $actioncomm->email_to    = $to;
-                        $actioncomm->email_tocc  = $sendtocc;
-                        $actioncomm->email_tobcc = $sendtobcc;
-                        $actioncomm->email_subject = $subject;
-                        $actioncomm->errors_to   = '';
+	                        $description = $descriptiontitle;
+	                        $description = dol_concatdesc($description, "-----");
+	                        $description = dol_concatdesc($description, $descriptionmeta);
+	                        $description = dol_concatdesc($description, "-----");
+	                        $description = dol_concatdesc($description, $messagetext);
 
-                        if (! in_array($fk_element_type, array('societe','contact','project','user')))
-                        {
-                            $actioncomm->fk_element  = $fk_element_id;
-                            $actioncomm->elementtype = $fk_element_type;
-                        }
+	                        $descriptionfull = $description;
+	                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+	                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
-                        //$actioncomm->extraparams = $extraparams;
+	                        // Insert record of emails sent
+	                        $actioncomm = new ActionComm($this->db);
+	                        $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+	                        $actioncomm->code        = 'AC_'.$actioncode;
+	                        $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
+	                        $actioncomm->note_private= $descriptionfull;
+	                        $actioncomm->fk_project  = $projectstatic->id;
+	                        $actioncomm->datep       = $date;
+	                        $actioncomm->datef       = $date;
+	                        $actioncomm->percentage  = -1;   // Not applicable
+	                        $actioncomm->socid       = $thirdpartystatic->id;
+	                        $actioncomm->contactid   = $contactstatic->id;
+		                    $actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
+	                        $actioncomm->authorid    = $user->id;   // User saving action
+	                        $actioncomm->userownerid = $user->id;	// Owner of action
+	                        // Fields when action is an email (content should be added into note)
+	                        $actioncomm->email_msgid = $msgid;
+	                        $actioncomm->email_from  = $fromstring;
+	                        $actioncomm->email_sender= $sender;
+	                        $actioncomm->email_to    = $to;
+	                        $actioncomm->email_tocc  = $sendtocc;
+	                        $actioncomm->email_tobcc = $sendtobcc;
+	                        $actioncomm->email_subject = $subject;
+	                        $actioncomm->errors_to   = '';
 
-                        // Overwrite values with values extracted from source email
-                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
+	                        if (! in_array($fk_element_type, array('societe','contact','project','user')))
+	                        {
+	                            $actioncomm->fk_element  = $fk_element_id;
+	                            $actioncomm->elementtype = $fk_element_type;
+	                        }
 
-                        if ($errorforthisaction)
-                        {
-                            $errorforactions++;
-                        }
-                        else
-                        {
-                            $result = $actioncomm->create($user);
-                            if ($result <= 0)
-                            {
-                                $errorforactions++;
-                                $this->errors = $actioncomm->errors;
-                            }
-                        }
+	                        //$actioncomm->extraparams = $extraparams;
+
+	                        // Overwrite values with values extracted from source email
+	                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
+
+	                        if ($errorforthisaction)
+	                        {
+	                            $errorforactions++;
+	                        }
+	                        else
+	                        {
+	                            $result = $actioncomm->create($user);
+	                            if ($result <= 0)
+	                            {
+	                                $errorforactions++;
+	                                $this->errors = $actioncomm->errors;
+	                            }
+	                        }
+                    	}
                     }
                     // Create event
                     elseif ($operation['type'] == 'project')

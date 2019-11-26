@@ -2459,10 +2459,10 @@ elseif ($id || $ref)
 					if (!empty($conf->productbatch->enabled)) $colspan++;
 					if (!empty($conf->stock->enabled)) $colspan++;
 
-					$lines[$i]->fetch_optionals($lines[$i]->id);
+					$line = $lines[$i];
+					$line->fetch_optionals($line->id);
 
-					print '<tr class="oddeven">';
-					if ($action == 'editline' && $lines[$i]->id == $line_id)
+					if ($action == 'editline' && $line->id == $line_id)
 					{
 						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
 					}
@@ -2470,7 +2470,6 @@ elseif ($id || $ref)
 					{
 						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
 					}
-					print '</tr>';
 				}
 			}
 		}

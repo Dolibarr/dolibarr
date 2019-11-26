@@ -43,7 +43,7 @@ $type='contract';
 
 if (empty($conf->global->HOLIDAY_ADDON))
 {
-    $conf->global->HOLIDAY_ADDON='mod_holiday_madona';
+    $conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';
 }
 
 
