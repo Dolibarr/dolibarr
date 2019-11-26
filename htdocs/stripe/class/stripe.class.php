@@ -543,10 +543,11 @@ class Stripe extends CommonObject
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
+	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @return 	\Stripe\SetupIntent|null 			        Stripe SetupIntent or null if not found and failed to create
 	 */
-	public function getSetupIntent($description = null, $object = null, $customer = null, $key = null, $status, $confirmnow = false)
+	public function getSetupIntent($description = null, $object = null, $customer = null, $key = null, $status, $usethirdpartyemailforreceiptemail = 0, $confirmnow = false)
 	{
 		global $conf;
 
@@ -572,7 +573,7 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] .= "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
 			// iDEAL not supported with setupIntent
 
 			$dataforintent = array(
