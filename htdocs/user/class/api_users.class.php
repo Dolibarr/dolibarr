@@ -449,13 +449,13 @@ class Users extends DolibarrApi
 	 *
 	 * Return an array with group informations
 	 * 
-	 * @url	GET /groups/{id}
+	 * @url	GET /groups/{group}
 	 *
 	 * @param 	int 	$id ID of group
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
 	 * @return  array               Array of User objects
 	 */
-    public function infoGroups($id, $load_members = 0)
+    public function infoGroups($group, $load_members = 0)
     {
 	    global $db, $conf;
 
@@ -464,7 +464,7 @@ class Users extends DolibarrApi
 	    }
 
 	            $group_static = new UserGroup($this->db);
-	            $result = $group_static->fetch($id, '', $load_members); 
+	            $result = $group_static->fetch($group, '', $load_members); 
 
 		if (!$result)
 		{
