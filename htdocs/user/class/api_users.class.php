@@ -363,12 +363,12 @@ class Users extends DolibarrApi
 
 		return 1;
 	}
-	
+
 	/**
 	 * List Groups
 	 *
 	 * Return an array with a list of Groups
-	 * 
+	 *
 	 * @url	GET /groups
 	 *
 	 * @param string	$sortfield	Sort field
@@ -443,12 +443,12 @@ class Users extends DolibarrApi
 	    }
 	    return $obj_ret;
 	}
-  
+
 	/**
 	 * Get properties of an user object
 	 *
 	 * Return an array with group informations
-	 * 
+	 *
 	 * @url	GET /groups/{group}
 	 *
 	 * @param 	int 	$id ID of group
@@ -464,13 +464,13 @@ class Users extends DolibarrApi
 	    }
 
 	            $group_static = new UserGroup($this->db);
-	            $result = $group_static->fetch($group, '', $load_members); 
+	            $result = $group_static->fetch($group, '', $load_members);
 
 		if (!$result)
 		{
 			throw new RestException(404, 'Group not found');
 		}
-    
+
 	    return $this->_cleanObjectDatas($group_static);
 	}
 
