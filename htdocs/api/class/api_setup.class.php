@@ -1326,7 +1326,7 @@ class Setup extends DolibarrApi
 
     	return $list;
     }
-	
+
     /**
      * Get properties of company
      *
