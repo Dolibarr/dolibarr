@@ -350,7 +350,7 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object))
+		if (is_object($object) && $conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND)
 		{
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
