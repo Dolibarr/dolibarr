@@ -642,7 +642,7 @@ if ($resql)
 			print '</td>';
 			// Warning
 			$warnornote = '';
-			if ($obj->fk_statut == 1 && $db->jdate($obj->date_valid) < ($now - $conf->supplier_proposal->warning_delay)) $warnornote .= img_warning($langs->trans("Late"));
+			//if ($obj->fk_statut == 1 && $db->jdate($obj->date_valid) < ($now - $conf->supplier_proposal->warning_delay)) $warnornote .= img_warning($langs->trans("Late"));
 			if (!empty($obj->note_private))
 			{
 				$warnornote .= ($warnornote ? ' ' : '');
