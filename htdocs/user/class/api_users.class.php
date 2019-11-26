@@ -363,6 +363,116 @@ class Users extends DolibarrApi
 
 		return 1;
 	}
+	
+	/**
+	 * List Groups
+	 *
+	 * Return an array with a list of Groups
+	 * 
+	 * @url	GET /groups
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int		$limit		Limit for list
+	 * @param int		$page		Page number
+	 * @param string   	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @return  array               Array of User objects
+	 */
+    public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '')
+    {
+	    global $db, $conf;
+
+	    $obj_ret = array();
+
+		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
+	        throw new RestException(401, "You are not allowed to read list of groups");
+	    }
+
+	    // case of external user, $societe param is ignored and replaced by user's socid
+	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+
+	    $sql = "SELECT t.rowid";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as t";
+	    $sql .= ' WHERE t.entity IN ('.getEntity('user').')';
+	    if ($group_ids) $sql .= " AND t.rowid IN (".$group_ids.")";
+	    // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+	    $sql .= $db->order($sortfield, $sortorder);
+	    if ($limit) {
+	        if ($page < 0)
+	        {
+	            $page = 0;
+	        }
+	        $offset = $limit * $page;
+
+	        $sql .= $db->plimit($limit + 1, $offset);
+	    }
+
+	    $result = $db->query($sql);
+
+	    if ($result)
+	    {
+	        $i = 0;
+	        $num = $db->num_rows($result);
+	        $min = min($num, ($limit <= 0 ? $num : $limit));
+	        while ($i < $min)
+	        {
+	            $obj = $db->fetch_object($result);
+	            $group_static = new UserGroup($this->db);
+	            if ($group_static->fetch($obj->rowid)) {
+	                $obj_ret[] = $this->_cleanObjectDatas($group_static);
+	            }
+	            $i++;
+	        }
+	    }
+	    else {
+	        throw new RestException(503, 'Error when retrieve Group list : '.$db->lasterror());
+	    }
+	    if (!count($obj_ret)) {
+	        throw new RestException(404, 'No Group found');
+	    }
+	    return $obj_ret;
+	}
+  
+	/**
+	 * Get properties of an user object
+	 *
+	 * Return an array with group informations
+	 * 
+	 * @url	GET /groups/{id}
+	 *
+	 * @param 	int 	$id ID of group
+	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
+	 * @return  array               Array of User objects
+	 */
+    public function infoGroups($id, $load_members = 0)
+    {
+	    global $db, $conf;
+
+		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
+	        throw new RestException(401, "You are not allowed to read groups");
+	    }
+
+	            $group_static = new UserGroup($this->db);
+	            $result = $group_static->fetch($id, '', $load_members); 
+
+		if (!$result)
+		{
+			throw new RestException(404, 'Group not found');
+		}
+    
+	    return $this->_cleanObjectDatas($group_static);
+	}
 
 	/**
 	 * Delete account
