@@ -469,4 +469,6 @@
 	<rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 	<rule ref="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket" />
 	<rule ref="PSR2.Classes.PropertyDeclaration.VarUsed" />
+	<rule ref="PSR12.Operators.OperatorSpacing.NoSpaceAfter" />
+	<rule ref="PSR12.Operators.OperatorSpacing.NoSpaceBefore" />
 </ruleset>
