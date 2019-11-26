@@ -33,8 +33,9 @@ TicketDictSeverity=Ticket - Severities
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Request for assistance
-TicketTypeShortPROJET=Project
+TicketTypeShortISSUE=Request for assistance
+TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortPROJECT=Project
 TicketTypeShortOTHER=Other
 
 TicketSeverityShortLOW=Low
