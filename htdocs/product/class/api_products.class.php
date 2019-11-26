@@ -965,8 +965,8 @@ class Products extends DolibarrApi
     /**
      * Delete attributes by id.
      *
-     * @param  int $id ID of Attribute
-     * @return int
+     * @param  int $id 	ID of Attribute
+     * @return int		Result of deletion
      *
      * @throws RestException
      * @throws 401
@@ -981,12 +981,13 @@ class Products extends DolibarrApi
 
         $prodattr = new ProductAttribute($this->db);
         $prodattr->id = (int) $id;
-        $result = $prodattr->delete();
+        $result = $prodattr->delete(DolibarrApiAccess::$user);
 
-        if ($result > 0) {
-            return 1;
+        if ($result <= 0) {
+        	throw new RestException(500, "Error deleting attribute");
         }
-        throw new RestException(500, "Error deleting attribute");
+
+        return $result;
     }
 
     /**
@@ -1485,8 +1486,8 @@ class Products extends DolibarrApi
     /**
      * Delete product variants.
      *
-     * @param  int $id ID of Variant
-     * @return int
+     * @param  int $id 	ID of Variant
+     * @return int		Result of deletion
      *
      * @throws RestException
      * @throws 401
@@ -1502,12 +1503,11 @@ class Products extends DolibarrApi
         $prodcomb = new ProductCombination($this->db);
         $prodcomb->id = (int) $id;
         $result = $prodcomb->delete(DolibarrApiAccess::$user);
-        return $result;
-        if ($result > 0)
+        if ($result <= 0)
         {
-            return 1;
+        	throw new RestException(500, "Error deleting variant");
         }
-        throw new RestException(500, "Error deleting variant");
+        return $result;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

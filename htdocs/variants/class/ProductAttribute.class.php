@@ -174,9 +174,10 @@ class ProductAttribute
 	/**
 	 * Deletes a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function delete()
+	public function delete($user = null)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 
