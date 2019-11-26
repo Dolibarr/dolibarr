@@ -419,14 +419,14 @@ class FormTicket
 
         if ($withdolfichehead) dol_fiche_end();
 
-        print '<br><center>';
+		print '<div class="center">';
         print '<input class="button" type="submit" name="add" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
 
         if ($this->withcancel) {
-            print " &nbsp; &nbsp; ";
+            print " &nbsp; &nbsp; &nbsp;";
             print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"" . $langs->trans("Cancel") . "\">";
         }
-        print "</center>\n";
+		print '</div>';
 
         print "</form>\n";
         print "<!-- End form TICKET -->\n";
