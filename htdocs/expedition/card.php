@@ -2443,10 +2443,10 @@ elseif ($id || $ref)
 				// Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines)>0) {
 					$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
-					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($lines[$i]->id);
-					print '<tr class="oddeven">';
-					if ($action == 'editline' && $lines[$i]->id == $line_id)
+					$line = $lines[$i];
+					$line->fetch_optionals($line->id);
+
+					if ($action == 'editline' && $line->id == $line_id)
 					{
 						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 					}
@@ -2454,7 +2454,6 @@ elseif ($id || $ref)
 					{
 						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 					}
-					print '</tr>';
 				}
 			}
 		}
