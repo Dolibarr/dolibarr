@@ -546,7 +546,7 @@ class Stripe extends CommonObject
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @return 	\Stripe\SetupIntent|null 			        Stripe SetupIntent or null if not found and failed to create
 	 */
-	public function getSetupIntent($description = null, $object = null, $customer = null, $key = null, $status, $confirmnow = false)
+	public function getSetupIntent($description = '', $object = null, $customer = null, $key = null, $status, $confirmnow = false)
 	{
 		global $conf;
 
