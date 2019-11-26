@@ -56,7 +56,7 @@ class box_task extends ModeleBoxes
      */
     public function __construct($db, $param = '')
     {
-        global $user, $langs;
+        global $conf, $user, $langs;
 
         // Load translation files required by the page
         $langs->loadLangs(array('boxes', 'projects'));
@@ -64,7 +64,7 @@ class box_task extends ModeleBoxes
         $this->boxlabel = "Tasks";
         $this->db = $db;
 
-        $this->hidden = !($user->rights->projet->lire);
+        $this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
     }
 
 	/**
