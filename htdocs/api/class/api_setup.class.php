@@ -1326,7 +1326,21 @@ class Setup extends DolibarrApi
 
     	return $list;
     }
+	
+    /**
+     * Get properties of company
+     *
+     * @url	GET /company
+     *
+     * @return  array|mixed Data without useless information
+     *
+     */
+    public function getCompany()
+    {
+        global $mysoc;
 
+        return $this->_cleanObjectDatas($mysoc);
+    }
 
     /**
      * Do a test of integrity for files and setup.
