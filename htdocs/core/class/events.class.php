@@ -53,7 +53,14 @@ class Events // extends CommonObject
 	 */
 	public $error='';
 
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
+
+    /**
+	 * @var string Type
+	 */
 	public $type;
 
 	/**
@@ -63,8 +70,14 @@ class Events // extends CommonObject
 
 	public $dateevent;
 
+	/**
+	 * @var string IP
+	 */
 	public $ip;
 
+	/**
+	 * @var string User agent
+	 */
 	public $user_agent;
 
 	/**
@@ -179,7 +192,7 @@ class Events // extends CommonObject
     public function update($user = null, $notrigger = 0)
 	{
 		// Clean parameters
-		$this->id=trim($this->id);
+		$this->id = (int) $this->id;
 		$this->type=trim($this->type);
 		$this->description=trim($this->description);
 
@@ -234,7 +247,7 @@ class Events // extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
+				$this->id = $obj->rowid;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->type = $obj->type;
 				$this->entity = $obj->entity;
