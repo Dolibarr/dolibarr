@@ -241,7 +241,7 @@ $head = modulehelp_prepare_head($objMod);
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-$moduledir=substr($modNameLoaded[get_class($objMod)],0, -13);
+$moduledir=substr($modNameLoaded[get_class($objMod)], 0, -13);
 
 
 print '<div class="centpercent">';
