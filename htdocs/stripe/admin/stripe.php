@@ -111,11 +111,15 @@ if ($action == 'setvalue' && $user->admin)
 
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0)
+	if (!$result > 0) {
 		$error++;
-	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0)
-		$error++;
+	}
+	if (empty($conf->use_javascript_ajax)) {
+		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!$result > 0) {
+			$error++;
+		}
+	}
 
 	if (!$error) {
 		$db->commit();
@@ -452,7 +456,7 @@ print '</table>';
 
 dol_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 

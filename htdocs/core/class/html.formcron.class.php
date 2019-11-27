@@ -64,6 +64,7 @@ class FormCron extends Form
         global $langs;
 
         $langs->load('cron@cron');
+        $out = '';
         if (!empty($readonly)) {
             if ($selected=='command') {
                 $out= $langs->trans('CronType_command');

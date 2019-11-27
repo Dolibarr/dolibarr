@@ -1136,7 +1136,8 @@ class EmailCollector extends CommonObject
                 	$elements = imap_mime_header_decode($overview[0]->subject);
                 	$newstring = '';
                 	if (! empty($elements)) {
-	                	for ($i = 0; $i < count($elements); $i++) {
+                        $num = count($elements);
+	                	for ($i = 0; $i < $num; $i++) {
 	                		$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
 	                	}
 	                	$overview[0]->subject = $newstring;

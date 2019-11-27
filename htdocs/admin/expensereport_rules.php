@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Mikael Carlavan         <contact@mika-carl.fr>
  * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 
 $apply_to = GETPOST('apply_to');
-$fk_user = GETPOST('fk_user');
-$fk_usergroup = GETPOST('fk_usergroup');
+$fk_user = GETPOST('fk_user', 'int');
+$fk_usergroup = GETPOST('fk_usergroup', 'int');
 
 $fk_c_type_fees = GETPOST('fk_c_type_fees');
 $code_expense_rules_type = GETPOST('code_expense_rules_type');
@@ -97,11 +97,11 @@ if ($action == 'save')
 		$object->setValues($_POST);
 
 		if($apply_to=='U'){
-			$object->fk_user=$fk_user;
+			$object->fk_user = (int) $fk_user;
 			$object->fk_usergroup=0;
 			$object->is_for_all=0;
 		}elseif($apply_to=='G'){
-			$object->fk_usergroup=$fk_usergroup;
+			$object->fk_usergroup = (int) $fk_usergroup;
 			$object->fk_user=0;
 			$object->is_for_all=0;
 		}elseif($apply_to=='A'){

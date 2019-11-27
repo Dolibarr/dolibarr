@@ -267,6 +267,7 @@ class Holiday extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
+		$sql .= "ref,";
 		$sql .= "fk_user,";
 		$sql .= "date_create,";
 		$sql .= "description,";
@@ -279,6 +280,7 @@ class Holiday extends CommonObject
 		$sql .= "fk_user_create,";
 		$sql .= "entity";
 		$sql .= ") VALUES (";
+		$sql .= "'(PROV)',";
 		$sql .= "'".$this->db->escape($this->fk_user)."',";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";

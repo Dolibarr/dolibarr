@@ -6,9 +6,184 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 11.0.0 compared to 10.0.0 *****
 For Users:
 
+NEW: Module BOM is now stable (Module MO - Manufacturing Order is still in development).
+NEW: A nicer dashboard for opened elements on Home page.
+NEW: Add task widget and add task progress bar
+NEW: Accountancy - Can add specific widget in this accountancy area.
+NEW: Accountancy - Add export model LDCompta V9 & higher
+NEW: Accountancy - Add permission on export, delete operations in ledger
+NEW: Add 2 hidden options to set the default sorting (sort and order) on document page.
+NEW: add ability to edit price without tax before adding a line of a predefined product.
+NEW: Add a tab to setup "Opening hours" of company (information only).
+NEW: Add attendee to ical export + cleanup.
+NEW: Add bank data of users into the expense report exports.
+NEW: add clone customers prices in clone product or service.
+NEW: Add column of module source and POS terminal in the invoice list.
+NEW: Add column last modification date into the table of targets for emailing.
+NEW: Add column VAT rate in product list
+NEW: add constant DISPATCH_FORCE_QTY_INPUT
+NEW: Add constant MAIN_DISABLE_GLOBAL_WORKBOARD to disable workboard in home page
+NEW: add country code in import product model
+NEW: Add 'Direct Cash Payment' button in TakePOS
+NEW: Add odt support to supplier orders
+NEW: Add experimental SumUp payment to TakePOS (need to set a hidden constant)
+NEW: Add feature to search a string into website containers
+NEW: Add GET and POST /supplierinvoices/payments REST API endpoints.
+NEW: Show progress bar for declared progression of tasks.
+NEW: Add hidden option to update supplier buying price during receptions.
+NEW: Add hidden option PROPOSAL_SHOW_INVOICED_AMOUNT (not reliable if one invoice is done on several order or several proposal)
+NEW: Add hidden option SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT for add possibility to update supplier buying price in the reception on a supplier order
+NEW: Add hidden option THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER to copy extrafields from third party to order.
+NEW: Add hidden options to send by email even for object with draft status.
+NEW: Add last change date in page "Other setup". Can sort page on name/date.
+NEW: Add link to export targets of an emailings into a CSV file.
+NEW: Add link to the public interface on the ticket card.
+NEW: Add location into event tooltip. Use full day for fullday events
+NEW: add MAIN_LANGUAGES_ALLOWED constant to limit languages displayed.
+NEW: add MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS constant.
+NEW: add mass actions in shipment list.
+NEW: add minimum stock filter in load warehoues for product form.
+NEW: add name_alias in fields to search all
+NEW: add new rule fetchidfromcodeandlabel for categories import
+NEW: add office phone for salespresentatives
+NEW: add office phone & job on user tooltips
+NEW: Add option MAIN_PDF_FORCE_FONT_SIZE
+NEW: Add option MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS
+NEW: Add option multiselect for developers on the selector of language.
+NEW: Add option WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL
+NEW: Add pagination on list of object of a category
+NEW: add parent category id or label in import category module
+NEW: add parent id or ref column in warehouse import
+NEW: Can set the Address/Contact by default on third parties.
+NEW: Add search into template
+NEW: Add shipment widget
+NEW: add socialnetworks dictionary
+NEW: Add statistics on product into contracts
+NEW: Add status of warehouse in tooltip of a warehouse.
+NEW: add supplier's product list
+NEW: add units fields in buying price tab of product card
+NEW: Add units in select products lines
+NEW: Add upload document on account statement
+NEW: Add widgets for BOMs and MOs
+NEW: Amount invoiced column in proposal list
+NEW: Ask the new label and new dates in confirm popup when cloning tax
+NEW: auto set closing date and user on invoice
+NEW: Avoid wrap between picto and text on getNomUrl
+NEW: Balance Stripe connect account for supplier
+NEW: Bank Add an option for colorize background color of debit or credit movement
+NEW: Beautify the select box of warehouses
+NEW: birthday widget for member
+NEW: Widgets uses fiscal year
+NEW: Can change supplier when cloning a Purchase Order
+NEW: can choose lines while creating order from origin
+NEW: Can crop/resize image attached on a bank record
+NEW: Can defined a position of numbering submodules for thirdparties
+NEW: Can edit date or RUM mandate.
+NEW: Can edit link to the translation page in website module
+NEW: Can edit the price of predefined product during adding in documents
+NEW: Can enter price tax incl on vendor proposal and purchase orders
+NEW: Can filter on description on bank account transaction lists.
+NEW: Can filter on label on invoice in accounting vendor binding pages
+NEW: Can load multilang translation in same step than fetch_lines
+NEW: Can restrict access using DAV module to some host IPs only
+NEW: Can restrict API usage to some IP only
+NEW: Can select website templates from available default templates with a preview.
+NEW: Can set a filter on object linked in modulebuilder.
+NEW: Can set a squarred icon on your company setup
+NEW: can specify hour start end for selectDate and step for minutes
+NEW: Categories/Tags are also available on warehouses
+NEW: Check if a resource is in use in an event
+NEW: Code for extrafields uses the new array $extrafields->attributes
+NEW: Compute column value from others columns in import module
+NEW: Copy linked categories on product clone process.
+NEW: Default for Stripe is STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION
+NEW: Digitaria model for numbering accountancy thirdparty
+NEW: Display membership in takepos if member linked to the thirdparty
+NEW: Display supplier in objectline if defined
+NEW: Add default duration of subscriptions on members type
+NEW: Email template for Takepos (to send invoice)
+NEW: Expense request and holiday validator fields
+NEW: Export ledger table in Charlemagne format
+NEW: Export livre Charlemagne
+NEW: Extend option ORDER_ADD_ORDERS_WITH_PARENT_PROD_IF_INCDEC for all virtual product stats (renamed into PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)
+NEW: FCKeditor setup for tickets
+NEW: GeoIP v2 support is natively provided -> So IPv6 is supported
+NEW: List by closing date on order list and proposal list
+NEW: Look and feel v11: Some setup pages are by default direclty in edit mode.
+NEW: Management of retained warranty on situation invoices
+NEW: Mass email action on invoice list use billing contact if exists
+NEW: more living colors for charts and option for "color bind" people
+NEW: Supports multiple payments in a TakePOS sale
+NEW: multiselect with checkbox in categories/tags search for product list
+NEW: Option to allow to create members from third-party
+NEW: Platform compliance with Stripe Connect
+NEW: print / send email form in TakePOS
+NEW: Public holidays are now in a dictionary table (no more hard coded per country)
+NEW: Better performance by reducing the $companystatic calls on some pages.
+NEW: Replace the "info" tab on contract with the more complete "agenda" tab.
+NEW: Save user of last modification in donation record.
+NEW: Show html combo list instead input text for extrafields typed as list.
+NEW: Show POS application and the terminal used on invoice card.
+NEW: Add categories/tags for stocks.
+NEW: Support Net Measure in product's card.php
+NEW: Extrafields separator can be collapsed or not
+NEW: Extrafields support on Leave requests.
+NEW: Extrafields support on Salaries.
+NEW: Extrafields support in Product supplier prices.
+NEW: Add extrafields for warehouses
+NEW: Add extrafields in export of expense report (and holiday)
+NEW: The integrity checker now show also the expected size of files.
+NEW: The order method in purchase order is now mandatory when recording an order.
+NEW: update / delete stripe account for supplier
+NEW: Use the gender of member for picto in member lists.
+NEW: Use the squarre logo as favicon of pages
+NEW: VAT list - Add date start & date end in filters
+NEW: widget box for supplier orders awaiting reception
+NEW: Update translations
+NEW: #4301
 
-For Developers:
+For Developers or integrators:
 
+NEW: Add a manifest.json.php file for web app.
+NEW: Removed deprecated code that create linked object from ->origin
+NEW: experimental zapier for dolibarr
+NEW: Accountancy - Add hook bookkeepinglist on general ledger
+NEW: Can update product type with the update method.
+NEW: add API shipment mode dictionnary
+NEW: Add API to get Country by code and iso
+NEW: Add API to get objects by ref, ref_ext, ...
+NEW: Add anonymous telemetry
+NEW: Add a category to a contact in API
+NEW: Add fk projet on stock movement
+NEW: Add hidden option to set fields for the quick search on products.
+NEW: add hook on commongeneratedocument
+NEW: Add hook on fileupload.class.php to enable modules to override…
+NEW: Add hooks on index pages
+NEW: adding 'formObjectOptions' hooks loading at card.php of adherents module
+NEW: Add method getStructuredData for website
+NEW: Add payments GET and POST REST API endpoints for supplierinvoices.
+NEW: Add POST /bankaccounts/transfer REST API endpoint.
+NEW: add "printBucktrackInfo" hook, an external module can add info
+NEW: Add trigger DIRECT_DEBIT_ORDER_CREATE on widthdraw is missing
+NEW: API to post documents for "product" and Delete document
+NEW: add new function "setEntity()" and better compatibility with Multicompany
+NEW: Can add a button "Create" after combo of object with modulebuilder.
+NEW: contacts type dictionnary in api_setup.class.php
+NEW: Look and feel v11: Introduce CSS "trforbreak"
+NEW: list of measuring units API
+NEW: get social networks  dictionary by API
+NEW: Get thirdparty's salesrepresentatives by API
+NEW: get user connected informations in REST API
+NEW: mode for list thirdparty API (add easy filter for supplier only)
+NEW: purchase_prices API
+NEW: Provides more complete demo data
+NEW: Module builder can generate CSS of JS file.
+NEW: Use a dedicated css for the pencil to edit a field.
+NEW: multilangs in fetch_lines
+NEW: Add more complete info for triggers actioncom
+NEW: add multicurrency rate at currency list API
+NEW: Update jquery library to 3.4.1
+NEW: Upgrade ACE editor to v1.4.6
 
 WARNING:
 
@@ -30,6 +205,8 @@ Following changes may create regressions for some external modules, but were nec
 * All properties 'type_libelle' were renamed into 'type_label'.
 * Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
 * The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
+
+
 
 ***** ChangeLog for 10.0.3 compared to 10.0.2 *****
 IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.

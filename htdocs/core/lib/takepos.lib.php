@@ -38,6 +38,14 @@ function takepos_prepare_head()
 	$head[$h][2] = 'setup';
 	$h++;
 
+	if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
+		$head[$h][1] = $langs->trans("Receipt");
+		$head[$h][2] = 'receipt';
+		$h++;
+	}
+
 	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
 	for ($i = 1; $i <= $numterminals; $i++)
 	{
