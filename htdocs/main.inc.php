@@ -2551,6 +2551,7 @@ if (!function_exists("llxFooter"))
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
+		// You can use &forceping=1 in parameters to force the ping.
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
@@ -2560,6 +2561,8 @@ if (!function_exists("llxFooter"))
 			{
 				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
 				{
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
 					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
@@ -2580,7 +2583,8 @@ if (!function_exists("llxFooter"))
 			    					  entity: "<?php echo (int) $conf->entity; ?>",
 			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
 			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
-			    					  php_version: "<?php echo phpversion(); ?>"
+			    					  php_version: "<?php echo phpversion(); ?>",
+			    					  os_version: "<?php echo version_os('smr'); ?>"
 			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");

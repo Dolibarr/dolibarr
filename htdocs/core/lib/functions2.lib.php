@@ -1569,7 +1569,7 @@ function dol_print_reduction($reduction, $langs)
  */
 function version_os($option = '')
 {
-	if ($option) $osversion = php_uname($option);
+	if ($option == 'smr') $osversion = php_uname('s').' '.php_uname('m').' '.php_uname('r');
 	else $osversion = php_uname();
     return $osversion;
 }
