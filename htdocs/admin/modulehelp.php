@@ -241,7 +241,7 @@ $head = modulehelp_prepare_head($objMod);
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-$moduledir=strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
+$moduledir=substr($modNameLoaded[get_class($objMod)],0, -13);
 
 
 print '<div class="centpercent">';
@@ -348,7 +348,7 @@ if ($mode == 'feature')
     $text.='<br><br>';
 
     $text.='<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
+	$sqlfiles = dol_dir_list($moduledir.'/sql/', 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
     if (count($sqlfiles) > 0)
     {
     	$text.=$langs->trans("Yes").' (';
@@ -379,7 +379,7 @@ if ($mode == 'feature')
     $text.='<br>';
 
     $text.='<br><strong>'.$langs->trans("AddData").':</strong> ';
-    $filedata = dol_buildpath($moduledir.'/sql/data.sql');
+    $filedata = $moduledir.'/sql/data.sql';
     if (dol_is_file($filedata))
     {
         $text.=$langs->trans("Yes").' ('.$moduledir.'/sql/data.sql'.')';
@@ -451,10 +451,10 @@ if ($mode == 'feature')
     }
     require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
     $interfaces = new Interfaces($db);
-    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$moduledir:'').'/core/triggers'));
+    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$objMod->code:'').'/core/triggers'));
 	foreach($triggers as $triggercursor)
 	{
-		if ($triggercursor['module'] == $moduledir)
+		if ($triggercursor['module'] == $objMod->code)
 		{
 			$yesno='Yes';
 			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
