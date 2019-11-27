@@ -445,13 +445,13 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object
+	 * Get properties of an group object
 	 *
 	 * Return an array with group informations
 	 *
 	 * @url	GET /groups/{group}
 	 *
-	 * @param 	int 	$id ID of group
+	 * @param 	int 	$group ID of group
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
 	 * @return  array               Array of User objects
 	 */
