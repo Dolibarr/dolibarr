@@ -150,9 +150,7 @@ if ($result)
 	$newcardbutton='';
 	if (! empty($user->rights->salaries->write))
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/salaries/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSalaryPayment').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -234,14 +232,24 @@ if ($result)
 
         // Ref
 		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+
 		// Employee
 		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+
 		// Label payment
         print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+
 		// Date payment
         print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+		if (! $i) $totalarray['nbfield']++;
+
 		// Account
     	if (! empty($conf->banque->enabled))
 	    {
@@ -267,22 +275,26 @@ if ($result)
 	        }
 	        else print '&nbsp;';
 	        print '</td>';
+			if (! $i) $totalarray['nbfield']++;
 	    }
-        // Amount
-        print '<td class="right">'.price($obj->amount).'</td>';
-        print '<td></td>';
-        print "</tr>\n";
 
-        $total = $total + $obj->amount;
+        // Amount
+        print '<td class="nowrap right">'.price($obj->amount).'</td>';
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalttcfield';
+		$totalarray['val']['totalttcfield'] += $obj->amount;
+
+        print '<td></td>';
+
+		if (! $i) $totalarray['nbfield']++;
+
+        print "</tr>\n";
 
         $i++;
     }
 
-    $colspan=5;
-    if (! empty($conf->banque->enabled)) $colspan++;
-    print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td class="liste_total right">'.price($total)."</td>";
-	print "<td></td></tr>";
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
     print "</table>";
     print '</div>';
