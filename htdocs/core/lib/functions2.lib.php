@@ -1564,11 +1564,13 @@ function dol_print_reduction($reduction, $langs)
  * 	Return OS version.
  *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
  *
- * 	@return		string			OS version
+ *  @param 		string		$option 	Option string
+ * 	@return		string					OS version
  */
-function version_os()
+function version_os($option = '')
 {
-    $osversion = php_uname();
+	if ($option) $osversion = php_uname($option);
+	else $osversion = php_uname();
     return $osversion;
 }
 
