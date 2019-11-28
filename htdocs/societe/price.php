@@ -263,7 +263,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<tr>';
 		print '<td>'.$langs->trans('Product').'</td>';
 		print '<td>';
-		print $form->select_produits('', 'prodid', '', 0);
+		$form->select_produits('', 'prodid', '', 0);
 		print '</td>';
 		print '</tr>';
 
