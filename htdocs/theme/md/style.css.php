@@ -2127,7 +2127,7 @@ form#login {
 	border-radius: 4px;
 	border:solid 1px rgba(80,80,80,.4);
 
-	border-top:solid 1px f8f8f8;
+	border-top:solid 1px #f8f8f8;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
 	border: none;

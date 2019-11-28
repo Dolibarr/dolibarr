@@ -781,7 +781,7 @@ if ($resql)
     		print $reception->getNomUrl(1);
     		$filename = dol_sanitizeFileName($reception->ref);
     		$filedir = $conf->reception->dir_output.'/'.dol_sanitizeFileName($reception->ref);
-    		$urlsource = $_SERVER['PHP_SELF'].'?id='.$reception->rowid;
+    		$urlsource = $_SERVER['PHP_SELF'].'?id='.$reception->id;
     		print $formfile->getDocumentsLink($reception->element, $filename, $filedir);
     		print "</td>\n";
 

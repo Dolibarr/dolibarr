@@ -7029,7 +7029,7 @@ abstract class CommonObject
 
 						if ($nbbyrow > 0)
 						{
-							if ($nbphoto == 1) $return .= '<table class="valigntop center centpercent" style="border: 0; padding: 2; border-spacing: 2px; border-collapse: separate;">';
+							if ($nbphoto == 1) $return .= '<table class="valigntop center centpercent" style="border: 0; padding: 2px; border-spacing: 2px; border-collapse: separate;">';
 
 							if ($nbphoto % $nbbyrow == 1) $return .= '<tr class="center valignmiddle" style="border: 1px">';
 							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">';

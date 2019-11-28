@@ -394,7 +394,7 @@ if (! empty($id) || ! empty($ref))
 				}
 			}
 			$listofvariantselected .= '</div>';
-			//print dol_fiche_end();
+			//dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
@@ -602,7 +602,7 @@ if (! empty($id) || ! empty($ref))
 			print '</table>';
 		}
 
-		print dol_fiche_end();
+		dol_fiche_end();
         ?>
 
 		<div style="text-align: center">
