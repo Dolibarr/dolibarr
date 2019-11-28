@@ -82,6 +82,8 @@ if ($id > 0 || !empty($ref))
 }
 $modulepart = 'produit';
 
+$permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
 
 /*
  * Actions
@@ -233,7 +235,6 @@ if ($object->id)
 
     dol_fiche_end();
 
-    $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
