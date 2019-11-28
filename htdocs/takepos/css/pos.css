@@ -93,6 +93,10 @@ div.wrapper2{
 	background-color:#fff;
 }
 
+img.imgwrapper {
+    max-width: 100%;
+}
+
 button:active{
     background:black;
 	color: white;
