@@ -26,7 +26,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -84,7 +84,7 @@ class EmailSenderProfile extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>-1, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>1),
@@ -167,8 +167,8 @@ class EmailSenderProfile extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
 	}
 
 	/**
@@ -244,7 +244,7 @@ class EmailSenderProfile extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -255,11 +255,11 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public function fetchLines()
 	{
-		$this->lines=array();
+		$this->lines = array();
 
 		// Load lines with object EmailSenderProfileLine
 
-		return count($this->lines)?1:0;
+		return count($this->lines) ? 1 : 0;
 	}
 
 	/**
@@ -301,19 +301,19 @@ class EmailSenderProfile extends CommonObject
 		$result = '';
 		$companylink = '';
 
-        $label=$this->label;
+        $label = $this->label;
 
-        $url='';
+        $url = '';
 		//$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
 
 		$linkstart = '';
-		$linkend='';
+		$linkend = '';
 
 		if ($withpicto) {
-			$result.=($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
-			if ($withpicto != 2) $result.=' ';
+			$result .= ($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
+			if ($withpicto != 2) $result .= ' ';
 		}
-		$result.= $linkstart . $this->label . $linkend;
+		$result .= $linkstart.$this->label.$linkend;
 		return $result;
 	}
 
@@ -381,10 +381,10 @@ class EmailSenderProfile extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql.= ' fk_user_creat, fk_user_modif';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql.= ' WHERE t.rowid = '.$id;
-		$result=$this->db->query($sql);
+		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' WHERE t.rowid = '.$id;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
@@ -395,7 +395,7 @@ class EmailSenderProfile extends CommonObject
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation   = $cuser;
+					$this->user_creation = $cuser;
 				}
 
 				if ($obj->fk_user_valid)
@@ -409,7 +409,7 @@ class EmailSenderProfile extends CommonObject
 				{
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture   = $cluser;
+					$this->user_cloture = $cluser;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);

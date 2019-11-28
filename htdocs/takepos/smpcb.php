@@ -1,11 +1,11 @@
 <?php
     require '../main.inc.php';
 
-if(isset($_GET['status'])) {
+if (isset($_GET['status'])) {
 	die(strtoupper($_SESSION['SMP_CURRENT_PAYMENT']));
 }
 
-if($_GET['smp-status']) {
+if ($_GET['smp-status']) {
 	print '<html lang="en">
 <head>
     <meta charset="utf-8">
