@@ -3971,7 +3971,7 @@ class Form
 		if ($type === Categorie::TYPE_BANK_LINE)
 		{
 			// TODO Move this into common category feature
-			$categids = array();
+			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
 			$sql .= " WHERE entity = ".$conf->entity;
