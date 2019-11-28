@@ -171,9 +171,7 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
-		$newcardbutton .= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton .= '</a>';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -267,15 +265,16 @@ if ($resql)
 			print '<tr class="oddeven">';
 
 			// Ref
-			print '<td width="60">';
-			print $chargesociale_static->getNomUrl(1, '20');
-			print '</td>';
+			print "<td>".$chargesociale_static->getNomUrl(1, '20')."</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 
 			// Label
-			print '<td>'.dol_trunc($obj->label, 42).'</td>';
+			print "<td>".dol_trunc($obj->label, 42)."</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 
 			// Type
-			print '<td>'.$obj->type_label.'</td>';
+			print "<td>".$obj->type_label."</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 
 			// Date end period
 			print '<td align="center">';
@@ -287,20 +286,25 @@ if ($resql)
 			{
 				print '&nbsp;';
 			}
-			print '</td>';
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 
 			// Amount
-			print '<td class="right" width="100">'.price($obj->amount).'</td>';
+			print '<td class="nowrap right">'.price($obj->amount).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalttcfield';
 			$totalarray['val']['totalttcfield'] += $obj->amount;
 
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+			if (! $i) $totalarray['nbfield']++;
 
 			print '<td class="nowrap right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+			if (! $i) $totalarray['nbfield']++;
 
 			print '<td></td>';
+
+			if (! $i) $totalarray['nbfield']++;
 
 			print '</tr>';
 			$i++;

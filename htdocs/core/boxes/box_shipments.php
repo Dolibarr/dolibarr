@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_shipments extends ModeleBoxes
 {
-    public $boxcode="lastcustomershipments";
-    public $boximg="sending";
-    public $boxlabel="BoxLastCustomerShipments";
+    public $boxcode = "lastcustomershipments";
+    public $boximg = "sending";
+    public $boxlabel = "BoxLastCustomerShipments";
     public $depends = array("expedition");
 
 	/**
@@ -58,9 +58,9 @@ class box_shipments extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->expedition->lire);
+        $this->hidden = !($user->rights->expedition->lire);
     }
 
     /**
@@ -88,26 +88,26 @@ class box_shipments extends ModeleBoxes
         if ($user->rights->expedition->lire)
         {
             $sql = "SELECT s.nom as name";
-            $sql.= ", s.rowid as socid";
-            $sql.= ", s.code_client";
-            $sql.= ", s.logo, s.email";
-            $sql.= ", e.ref, e.tms";
-            $sql.= ", e.rowid";
-            $sql.= ", e.ref_customer";
-            $sql.= ", e.fk_statut";
-            $sql.= ", e.fk_user_valid";
-            $sql.= ", c.ref as commande_ref";
-            $sql.= ", c.rowid as commande_id";
-            $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-            $sql.= " WHERE e.entity = ".$conf->entity;
-            if (! empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) $sql.=" AND e.fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND sc.fk_user = " .$user->id;
-            else $sql.= " ORDER BY e.date_delivery, e.ref DESC ";
-            $sql.= $this->db->plimit($max, 0);
+            $sql .= ", s.rowid as socid";
+            $sql .= ", s.code_client";
+            $sql .= ", s.logo, s.email";
+            $sql .= ", e.ref, e.tms";
+            $sql .= ", e.rowid";
+            $sql .= ", e.ref_customer";
+            $sql .= ", e.fk_statut";
+            $sql .= ", e.fk_user_valid";
+            $sql .= ", c.ref as commande_ref";
+            $sql .= ", c.rowid as commande_id";
+            $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+            $sql .= " WHERE e.entity = ".$conf->entity;
+            if (!empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) $sql .= " AND e.fk_statut = 1";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND sc.fk_user = ".$user->id;
+            else $sql .= " ORDER BY e.date_delivery, e.ref DESC ";
+            $sql .= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
             if ($result) {
@@ -122,8 +122,8 @@ class box_shipments extends ModeleBoxes
                     $shipmentstatic->ref = $objp->ref;
                     $shipmentstatic->ref_customer = $objp->ref_customer;
 
-                    $orderstatic->id= $objp->commande_id;
-                    $orderstatic->ref=$objp->commande_ref;
+                    $orderstatic->id = $objp->commande_id;
+                    $orderstatic->ref = $objp->commande_ref;
 
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
@@ -157,7 +157,7 @@ class box_shipments extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedShipments"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedShipments"));
 
                 $this->db->free($result);
             } else {
