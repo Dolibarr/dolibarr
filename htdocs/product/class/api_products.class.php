@@ -1373,13 +1373,13 @@ class Products extends DolibarrApi
         }
 
         $prodcomb = new ProductCombination($this->db);
-      
+
         $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
         if ($result > 0)
         {
-          return $result;
+			return $result;
         } else {
-          throw new RestException(500, "Error creating new product variant");
+			throw new RestException(500, "Error creating new product variant");
         }
     }
 
