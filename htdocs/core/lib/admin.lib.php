@@ -702,9 +702,9 @@ function modulehelp_prepare_head($object)
 		$h++;
 	}
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'modulehelp_admin');
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'modulehelp_admin', 'remove');
 
 
     return $head;
