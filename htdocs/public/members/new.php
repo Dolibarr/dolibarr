@@ -729,7 +729,7 @@ dol_fiche_end();
 
 // Save
 print '<div class="center">';
-print '<input type="submit" value="'.$langs->trans("Save").'" id="submitsave" class="button">';
+print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
 if (!empty($backtopage))
 {
     print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button">';

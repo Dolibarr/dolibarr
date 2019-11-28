@@ -625,28 +625,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		// Close / Cancel
     		if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
     		{
-    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=close">' . $langs->trans("Disable") . '</a>';
+    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
     		}
 
     		// Re-open
     		if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
     		{
-    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen">' . $langs->trans("ReOpen") . '</a>';
+    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen">'.$langs->trans("ReOpen").'</a>';
     		}
 
     		// Create MO
     		if ($conf->mrp->enabled)
     		{
-	    		if ($object->status == $object::STATUS_VALIDATED && ! empty($user->rights->mrp->write))
+	    		if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write))
 	    		{
-	    			print '<a class="butAction" href="' . DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("CreateMO") . '</a>';
+	    			print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>';
 	    		}
     		}
 
     		// Clone
     		if ($permissiontoadd)
     		{
-    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&object=bom">' . $langs->trans("ToClone") . '</a>';
+    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom">'.$langs->trans("ToClone").'</a>';
     		}
 
     		/*

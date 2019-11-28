@@ -81,7 +81,10 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
-
+	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
+		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
 	if ($conf->global->TAKEPOS_ORDER_NOTES == 1)
 	{
 		$extrafields = new ExtraFields($db);
@@ -241,6 +244,20 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
 print "</td></tr>\n";
 
+// Sumup options
+if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SumupAffiliate");
+	print '<td colspan="2">';
+	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
+	print "</td></tr>\n";
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SumupAppId");
+	print '<td colspan="2">';
+	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
+	print "</td></tr>\n";
+}
+
 // Custom Receipt
 print '<tr class="oddeven"><td>';
 print $langs->trans('CustomReceipt');
@@ -254,17 +271,17 @@ print $langs->trans('EmailTemplate');
 print '<td colspan="2">';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 $formmail = new FormMail($db);
-$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1);	// We set lang=null to get in priority record with no lang
+$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1); // We set lang=null to get in priority record with no lang
 //$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
-$arrayofmessagename=array();
+$arrayofmessagename = array();
 if (is_array($formmail->lines_model)) {
-    foreach($formmail->lines_model as $modelmail) {
+    foreach ($formmail->lines_model as $modelmail) {
         //var_dump($modelmail);
-        $moreonlabel='';
-        if (! empty($arrayofmessagename[$modelmail->label])) {
-            $moreonlabel=' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+        $moreonlabel = '';
+        if (!empty($arrayofmessagename[$modelmail->label])) {
+            $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
         }
-        $arrayofmessagename[$modelmail->label]=$langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+        $arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
     }
 }
 //var_dump($arraydefaultmessage);

@@ -171,40 +171,40 @@ class Products extends DolibarrApi
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         $sql = "SELECT t.rowid, t.ref, t.ref_ext";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product as t";
         if ($category > 0) {
-            $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
+            $sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
         }
-        $sql.= ' WHERE t.entity IN ('.getEntity('product').')';
+        $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
         // Select products of given category
         if ($category > 0) {
-            $sql.= " AND c.fk_categorie = ".$db->escape($category);
-            $sql.= " AND c.fk_product = t.rowid ";
+            $sql .= " AND c.fk_categorie = ".$db->escape($category);
+            $sql .= " AND c.fk_product = t.rowid ";
         }
         if ($mode == 1) {
             // Show only products
-            $sql.= " AND t.fk_product_type = 0";
+            $sql .= " AND t.fk_product_type = 0";
         } elseif ($mode == 2) {
             // Show only services
-            $sql.= " AND t.fk_product_type = 1";
+            $sql .= " AND t.fk_product_type = 1";
         }
         // Add sql filters
         if ($sqlfilters) {
-            if (! DolibarrApi::_checkFilters($sqlfilters)) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
+        $sql .= $db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $db->plimit($limit + 1, $offset);
         }
 
         $result = $db->query($sql);
@@ -216,7 +216,7 @@ class Products extends DolibarrApi
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
-                if($product_static->fetch($obj->rowid)) {
+                if ($product_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
@@ -225,7 +225,7 @@ class Products extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
-        if(! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No product found');
         }
         return $obj_ret;
@@ -239,13 +239,13 @@ class Products extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->product->$field = $value;
         }
         if ($this->product->create(DolibarrApiAccess::$user) < 0) {
@@ -271,22 +271,22 @@ class Products extends DolibarrApi
     {
         global $conf;
 
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
         $result = $this->product->fetch($id);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         $oldproduct = dol_clone($this->product, 0);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') { continue;
             }
             $this->product->$field = $value;
@@ -300,7 +300,7 @@ class Products extends DolibarrApi
         $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
 
         // If price mode is 1 price per product
-        if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ)) {
+        if ($result > 0 && !empty($conf->global->PRODUCT_PRICE_UNIQ)) {
             // We update price only if it was changed
             $pricemodified = false;
             if ($this->product->price_base_type != $oldproduct->price_base_type) { $pricemodified = true;
@@ -359,15 +359,15 @@ class Products extends DolibarrApi
      */
     public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
         $result = $this->product->fetch($id);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -392,11 +392,11 @@ class Products extends DolibarrApi
      */
     public function getSubproducts($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -430,11 +430,11 @@ class Products extends DolibarrApi
      */
     public function addSubproducts($id, $subproduct_id, $qty, $incdec = 1)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -462,11 +462,11 @@ class Products extends DolibarrApi
      */
     public function delSubproducts($id, $subproduct_id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -493,7 +493,7 @@ class Products extends DolibarrApi
      */
     public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
     {
-        if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+        if (!DolibarrApiAccess::$user->rights->categorie->lire) {
             throw new RestException(401);
         }
 
@@ -525,7 +525,7 @@ class Products extends DolibarrApi
     {
         global $conf;
 
-        if (! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -534,7 +534,7 @@ class Products extends DolibarrApi
         }
 
         $result = $this->product->fetch($id);
-        if (! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
@@ -567,7 +567,7 @@ class Products extends DolibarrApi
     {
         global $conf;
 
-        if (! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -576,12 +576,12 @@ class Products extends DolibarrApi
         }
 
         $result = $this->product->fetch($id);
-        if (! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
         if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 			$prodcustprice = new Productcustomerprice($this->db);
 			$filter = array();
 			$filter['t.fk_product'] .= $id;
@@ -589,7 +589,7 @@ class Products extends DolibarrApi
 			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
         }
 
-        if ( empty($prodcustprice->lines)) {
+        if (empty($prodcustprice->lines)) {
             throw new RestException(404, 'Prices not found');
         }
 
@@ -609,7 +609,7 @@ class Products extends DolibarrApi
     {
         global $conf;
 
-        if (! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -618,7 +618,7 @@ class Products extends DolibarrApi
         }
 
         $result = $this->product->fetch($id);
-        if (! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
@@ -627,7 +627,7 @@ class Products extends DolibarrApi
         }
 
         return array(
-        'prices_by_qty'=>$this->product->prices_by_qty[0],                // 1 if price by quantity was activated for the product
+        'prices_by_qty'=>$this->product->prices_by_qty[0], // 1 if price by quantity was activated for the product
         'prices_by_qty_list'=>$this->product->prices_by_qty_list[0]
         );
     }
@@ -648,15 +648,15 @@ class Products extends DolibarrApi
      */
     public function deletePurchasePrice($id, $priceid)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
         $result = $this->product->fetch($id);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $resultsupplier = 0;
@@ -691,45 +691,45 @@ class Products extends DolibarrApi
     	$obj_ret = array();
     	$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
     	$sql = "SELECT t.rowid, t.ref, t.ref_ext";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."product as t";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."product as t";
     	if ($category > 0) {
-    		$sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
+    		$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
     	}
-    	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
+    	$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
 
-    	$sql.= ' WHERE t.entity IN ('.getEntity('product').')';
+    	$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
     	if ($supplier > 0) {
-    		$sql.= " AND s.fk_soc = ".$db->escape($supplier);
+    		$sql .= " AND s.fk_soc = ".$db->escape($supplier);
     	}
-    	$sql.= " AND s.fk_product = t.rowid ";
+    	$sql .= " AND s.fk_product = t.rowid ";
     	// Select products of given category
     	if ($category > 0) {
-    		$sql.= " AND c.fk_categorie = ".$db->escape($category);
-    		$sql.= " AND c.fk_product = t.rowid ";
+    		$sql .= " AND c.fk_categorie = ".$db->escape($category);
+    		$sql .= " AND c.fk_product = t.rowid ";
     	}
     	if ($mode == 1) {
     		// Show only products
-    		$sql.= " AND t.fk_product_type = 0";
+    		$sql .= " AND t.fk_product_type = 0";
     	} elseif ($mode == 2) {
     		// Show only services
-    		$sql.= " AND t.fk_product_type = 1";
+    		$sql .= " AND t.fk_product_type = 1";
     	}
     	// Add sql filters
     	if ($sqlfilters) {
-    		if (! DolibarrApi::_checkFilters($sqlfilters)) {
+    		if (!DolibarrApi::_checkFilters($sqlfilters)) {
     			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
     		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
     	}
-    	$sql.= $db->order($sortfield, $sortorder);
+    	$sql .= $db->order($sortfield, $sortorder);
     	if ($limit) {
     		if ($page < 0) {
     			$page = 0;
     		}
     		$offset = $limit * $page;
-    		$sql.= $db->plimit($limit + 1, $offset);
+    		$sql .= $db->plimit($limit + 1, $offset);
     	}
     	$result = $db->query($sql);
     	if ($result) {
@@ -740,7 +740,7 @@ class Products extends DolibarrApi
     		{
     			$obj = $db->fetch_object($result);
     			$product_static = new Product($db);
-    			if($product_static->fetch($obj->rowid)) {
+    			if ($product_static->fetch($obj->rowid)) {
     				$obj_ret[] = $this->_cleanObjectDatas($product_static);
     			}
     			$i++;
@@ -749,7 +749,7 @@ class Products extends DolibarrApi
     	else {
     		throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
     	}
-    	if(! count($obj_ret)) {
+    	if (!count($obj_ret)) {
     		throw new RestException(404, 'No product found');
     	}
     	return $obj_ret;
@@ -814,7 +814,7 @@ class Products extends DolibarrApi
      */
     public function getAttributes()
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -836,14 +836,14 @@ class Products extends DolibarrApi
      */
     public function getAttributeById($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
         $prodattr = new ProductAttribute($this->db);
         $result = $prodattr->fetch((int) $id);
 
-        if($result < 0) {
+        if ($result < 0) {
             throw new RestException(404, "Attribute not found");
         }
 
@@ -863,11 +863,11 @@ class Products extends DolibarrApi
      */
     public function getAttributesByRef($ref)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
-        $sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '". trim($ref) ."' AND entity IN (".getEntity('product').")";
+        $sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
 
         $query = $this->db->query($sql);
 
@@ -900,7 +900,7 @@ class Products extends DolibarrApi
      */
     public function addAttributes($ref, $label)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -930,7 +930,7 @@ class Products extends DolibarrApi
      */
     public function putAttributes($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -943,7 +943,7 @@ class Products extends DolibarrApi
             throw new RestException(500, "Error fetching attribute");
         }
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'rowid') { continue;
             }
             $prodattr->$field = $value;
@@ -965,8 +965,8 @@ class Products extends DolibarrApi
     /**
      * Delete attributes by id.
      *
-     * @param  int $id ID of Attribute
-     * @return int
+     * @param  int $id 	ID of Attribute
+     * @return int		Result of deletion
      *
      * @throws RestException
      * @throws 401
@@ -975,18 +975,19 @@ class Products extends DolibarrApi
      */
     public function deleteAttributes($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
 
         $prodattr = new ProductAttribute($this->db);
         $prodattr->id = (int) $id;
-        $result = $prodattr->delete();
+        $result = $prodattr->delete(DolibarrApiAccess::$user);
 
-        if ($result > 0) {
-            return 1;
+        if ($result <= 0) {
+        	throw new RestException(500, "Error deleting attribute");
         }
-        throw new RestException(500, "Error deleting attribute");
+
+        return $result;
     }
 
     /**
@@ -1002,7 +1003,7 @@ class Products extends DolibarrApi
      */
     public function getAttributeValueById($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -1043,11 +1044,11 @@ class Products extends DolibarrApi
      */
     public function getAttributeValueByRef($id, $ref)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
-        $sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."' AND fk_product_attribute = ". (int) $id ." AND entity IN (".getEntity('product').")";
+        $sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '".trim($ref)."' AND fk_product_attribute = ".(int) $id." AND entity IN (".getEntity('product').")";
 
         $query = $this->db->query($sql);
 
@@ -1084,11 +1085,11 @@ class Products extends DolibarrApi
      */
     public function deleteAttributeValueByRef($id, $ref)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '". trim($ref) ."' AND fk_product_attribute = ". (int) $id;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '".trim($ref)."' AND fk_product_attribute = ".(int) $id;
 
         if ($this->db->query($sql)) {
             return 1;
@@ -1110,7 +1111,7 @@ class Products extends DolibarrApi
      */
     public function getAttributeValues($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -1131,7 +1132,7 @@ class Products extends DolibarrApi
      */
     public function getAttributeValuesByRef($ref)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -1139,7 +1140,7 @@ class Products extends DolibarrApi
 
         $sql = 'SELECT ';
         $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
-        $sql .= "WHERE v.fk_product_attribute = ( SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '". strtoupper(trim($ref)) ."' LIMIT 1)";
+        $sql .= "WHERE v.fk_product_attribute = ( SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".strtoupper(trim($ref))."' LIMIT 1)";
 
         $query = $this->db->query($sql);
 
@@ -1171,7 +1172,7 @@ class Products extends DolibarrApi
      */
     public function addAttributeValue($id, $ref, $value)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -1204,7 +1205,7 @@ class Products extends DolibarrApi
      */
     public function putAttributeValue($id, $request_data)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -1217,7 +1218,7 @@ class Products extends DolibarrApi
             throw new RestException(500, "Error fetching attribute value");
         }
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'rowid') { continue;
             }
             $objectval->$field = $value;
@@ -1249,7 +1250,7 @@ class Products extends DolibarrApi
      */
     public function deleteAttributeValueById($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
 
@@ -1275,7 +1276,7 @@ class Products extends DolibarrApi
      */
     public function getVariants($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
@@ -1303,12 +1304,12 @@ class Products extends DolibarrApi
      */
     public function getVariantsByProdRef($ref)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
         $result = $this->product->fetch('', $ref);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
@@ -1344,7 +1345,7 @@ class Products extends DolibarrApi
      */
     public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = false)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -1367,18 +1368,19 @@ class Products extends DolibarrApi
         }
 
         $result = $this->product->fetch((int) $id);
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
         $prodcomb = new ProductCombination($this->db);
-		$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
-		if ($result > 0)
-		{
-			return $result;
-		} else {
-			throw new RestException(500, "Error creating new product variant");
-		}
+      
+        $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
+        if ($result > 0)
+        {
+          return $result;
+        } else {
+          throw new RestException(500, "Error creating new product variant");
+        }
     }
 
     /**
@@ -1401,7 +1403,7 @@ class Products extends DolibarrApi
      */
     public function addVariantByProductRef($ref, $weight_impact, $price_impact, $price_impact_is_percent, $features)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -1424,12 +1426,12 @@ class Products extends DolibarrApi
         }
 
         $result = $this->product->fetch('', trim($ref));
-        if(! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
         $prodcomb = new ProductCombination($this->db);
-        if (! $prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $features))
+        if (!$prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $features))
         {
             $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);
             if ($result > 0)
@@ -1457,14 +1459,14 @@ class Products extends DolibarrApi
      */
     public function putVariant($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
         $prodcomb = new ProductCombination($this->db);
         $prodcomb->fetch((int) $id);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'rowid') { continue;
             }
             $prodcomb->$field = $value;
@@ -1481,8 +1483,8 @@ class Products extends DolibarrApi
     /**
      * Delete product variants.
      *
-     * @param  int $id ID of Variant
-     * @return int
+     * @param  int $id 	ID of Variant
+     * @return int		Result of deletion
      *
      * @throws RestException
      * @throws 401
@@ -1491,19 +1493,18 @@ class Products extends DolibarrApi
      */
     public function deleteVariant($id)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
 
         $prodcomb = new ProductCombination($this->db);
         $prodcomb->id = (int) $id;
         $result = $prodcomb->delete(DolibarrApiAccess::$user);
-        return $result;
-        if ($result > 0)
+        if ($result <= 0)
         {
-            return 1;
+        	throw new RestException(500, "Error deleting variant");
         }
-        throw new RestException(500, "Error deleting variant");
+        return $result;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

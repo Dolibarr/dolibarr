@@ -167,7 +167,7 @@ if ($object->id)
 	print "</table>\n";
     print '</div>';
 
-	print dol_fiche_end();
+	dol_fiche_end();
 
 
 

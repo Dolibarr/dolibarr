@@ -25,16 +25,16 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php';	// Load $user and permissions
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require '../main.inc.php'; // Load $user and permissions
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
@@ -50,16 +50,16 @@ if ($invoiceid > 0)
 }
 else
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)
     {
         $invoiceid = $obj->rowid;
     }
-    if (! $invoiceid)
+    if (!$invoiceid)
     {
-        $invoiceid=0; // Invoice does not exist yet
+        $invoiceid = 0; // Invoice does not exist yet
     }
     else
     {
@@ -84,8 +84,8 @@ if ($resql) {
         if ($paycode == 'CB')  $paycode = 'CB';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-        $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
+        $accountname = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
+		if (!empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
 	}
 }
 ?>
@@ -171,21 +171,50 @@ else print "var received=0;";
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
 		    if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) parent.$.colorbox.close();
 			else location.reload();
 		});
 	}
+
+	function ValidateSumup() {
+		<?php  $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
+        var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
+        var amountpayed = $("#change1").val();
+        if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
+            amountpayed = <?php echo $invoice->total_ttc; ?>;
+        }
+
+        // Starting sumup app
+        window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo dolibarr_get_const($db, "TAKEPOS_SUMUP_AFFILIATE")?>&app-id=<?php echo dolibarr_get_const($db, "TAKEPOS_SUMUP_APPID")?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
+
+        var loop = window.setInterval(function () {
+            $.ajax('/takepos/smpcb.php?status').done(function (data) {
+                console.log(data);
+                if (data === "SUCCESS") {
+                    parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount=" + amountpayed + "&invoiceid=" + invoiceid, function () {
+                        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+                        parent.$.colorbox.close();
+                        //parent.setFocusOnSearchField();	// This does not have effect
+                    });
+                    clearInterval(loop);
+                } else if (data === "FAILED") {
+                    parent.$.colorbox.close();
+                    clearInterval(loop);
+                }
+            });
+        }, 2500);
+    }
 </script>
 
 <div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
 <center>
 <div class="paymentbordline paymentbordlinetotal">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('TotalTTC');?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
+<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
 <div class="paymentbordline paymentbordlineremain">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('RemainToPay');?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></font></span></center>
+<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
 <?php } ?>
 <div class="paymentbordline paymentbordlinereceived">
@@ -241,11 +270,11 @@ $numpad = $conf->global->TAKEPOS_NUMPAD;
 <?php } else {
     $button = array_pop($action_buttons);
     ?>
-	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"]; ?>"><span <?php echo $button["span"]; ?>><?php echo $button["text"]; ?></span></button>
 <?php } ?>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "1"; else print "0.10";?>);"><?php if ($numpad==0) print "1"; else print "0.10";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "2"; else print "0.20";?>);"><?php if ($numpad==0) print "2"; else print "0.20";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "3"; else print "0.50";?>);"><?php if ($numpad==0) print "3"; else print "0.50";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "1"; else print "0.10"; ?>);"><?php if ($numpad == 0) print "1"; else print "0.10"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "2"; else print "0.20"; ?>);"><?php if ($numpad == 0) print "2"; else print "0.20"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "3"; else print "0.50"; ?>);"><?php if ($numpad == 0) print "3"; else print "0.50"; ?></button>
 <?php if (count($paiements) > 2) {
     $paycode = $paiements[2]->code;
     if ($paycode == 'LIQ') $paycode = 'cash';
@@ -256,24 +285,31 @@ $numpad = $conf->global->TAKEPOS_NUMPAD;
 <?php } else {
     $button = array_pop($action_buttons);
     ?>
-	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"]; ?>"><span <?php echo $button["span"]; ?>><?php echo $button["text"]; ?></span></button>
 <?php } ?>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "0"; else print "0.01";?>);"><?php if ($numpad==0) print "0"; else print "0.01";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'000'"; else print "0.02";?>);"><?php if ($numpad==0) print "000"; else print "0.02";?></button>
-<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'.'"; else print "0.05";?>);"><?php if ($numpad==0) print "."; else print "0.05";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "0"; else print "0.01"; ?>);"><?php if ($numpad == 0) print "0"; else print "0.01"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "'000'"; else print "0.02"; ?>);"><?php if ($numpad == 0) print "000"; else print "0.02"; ?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad == 0) print "'.'"; else print "0.05"; ?>);"><?php if ($numpad == 0) print "."; else print "0.05"; ?></button>
 <?php
-$i=3;
-while($i < count($paiements)){
+$i = 3;
+while ($i < count($paiements)) {
     ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[$i]->code); ?></button>
     <?php
-	$i=$i+1;
+	$i = $i + 1;
 }
-$class=($i==3)?"calcbutton3":"calcbutton2";
-foreach($action_buttons as $button){
-    $newclass = $class.($button["class"]?" ".$button["class"]:"");
+
+if ($conf->global->TAKEPOS_ENABLE_SUMUP && !empty(dolibarr_get_const($db, "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"]))) {
+	?>
+	<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>
+	<?php
+}
+
+$class = ($i == 3) ? "calcbutton3" : "calcbutton2";
+foreach ($action_buttons as $button) {
+    $newclass = $class.($button["class"] ? " ".$button["class"] : "");
     ?>
-	<button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+	<button type="button" class="<?php echo $newclass; ?>" onclick="<?php echo $button["function"]; ?>"><span <?php echo $button["span"]; ?>><?php echo $button["text"]; ?></span></button>
     <?php
 }
 ?>

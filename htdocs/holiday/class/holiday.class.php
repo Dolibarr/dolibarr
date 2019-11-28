@@ -267,6 +267,7 @@ class Holiday extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
+		$sql .= "ref,";
 		$sql .= "fk_user,";
 		$sql .= "date_create,";
 		$sql .= "description,";
@@ -279,6 +280,7 @@ class Holiday extends CommonObject
 		$sql .= "fk_user_create,";
 		$sql .= "entity";
 		$sql .= ") VALUES (";
+		$sql .= "'(PROV)',";
 		$sql .= "'".$this->db->escape($this->fk_user)."',";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";
@@ -304,12 +306,31 @@ class Holiday extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
 
-			if (!$notrigger)
+			if ($this->id)
 			{
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_CREATE', $user);
-				if ($result < 0) { $error++; }
-				// End call triggers
+				// update ref
+				$initialref = '(PROV'.$this->id.')';
+				if (!empty($this->ref)) $initialref = $this->ref;
+
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
+				if ($this->db->query($sql))
+				{
+					$this->ref = $initialref;
+
+					if (!$error)
+					{
+						$result = $this->insertExtraFields();
+						if ($result < 0) $error++;
+					}
+
+					if (!$error && !$notrigger)
+					{
+						// Call trigger
+						$result = $this->call_trigger('HOLIDAY_CREATE', $user);
+						if ($result < 0) { $error++; }
+						// End call triggers
+					}
+				}
 			}
 		}
 
@@ -337,7 +358,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref        Ref object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -402,12 +423,17 @@ class Holiday extends CommonObject
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_type = $obj->fk_type;
 				$this->entity = $obj->entity;
+
+				$this->fetch_optionals();
+
+				$result = 1;
+			}
+			else {
+				$result = 0;
 			}
 			$this->db->free($resql);
 
-			$this->fetch_optionals();
-
-			return 1;
+			return $result;
 		}
 		else
 		{

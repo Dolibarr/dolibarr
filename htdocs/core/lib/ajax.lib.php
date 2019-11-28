@@ -326,7 +326,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
  *	@param	string	$message	Message of dialog box
  *	@param	int		$w			Width of dialog box
  *	@param	int		$h			height of dialog box
- *	@return	void
+ *	@return	string
  */
 function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
