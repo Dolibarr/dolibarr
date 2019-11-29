@@ -628,7 +628,7 @@ if ($resql)
 	if (!empty($arrayfields['ava.rowid']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectAvailabilityDelay($search_availability, 'search_availability', '', 1);
+		$form->selectAvailabilityDelay($search_availability, 'search_availability', '', 1);
 		print ajax_combobox('search_availability');
 		print '</td>';
 	}

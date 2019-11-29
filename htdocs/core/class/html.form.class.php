@@ -3971,7 +3971,7 @@ class Form
 		if ($type === Categorie::TYPE_BANK_LINE)
 		{
 			// TODO Move this into common category feature
-			$categids = array();
+			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
 			$sql .= " WHERE entity = ".$conf->entity;
@@ -6521,6 +6521,7 @@ class Form
 			elseif ($addjscombo == 2)
 			{
 				// Add other js lib
+				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({

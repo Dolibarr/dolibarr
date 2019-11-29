@@ -36,34 +36,34 @@ $ref    = GETPOST('ref', 'alpha');
 $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder");
-$page = GETPOST("page");
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-if (! $sortfield) $sortfield="a.datep,a.id";
-if (! $sortorder) $sortorder="DESC";
-$offset = $limit * $page ;
+if (!$sortfield) $sortfield = "a.datep,a.id";
+if (!$sortorder) $sortorder = "DESC";
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode', 'array', 3);
-	if (! count($actioncode)) $actioncode='0';
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
-$search_agenda_label=GETPOST('search_agenda_label');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 // Security check
 $id = GETPOST("id", 'int');
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result=restrictedArea($user, 'projet', $id, '');
+$result = restrictedArea($user, 'projet', $id, '');
 
 if (!$user->rights->projet->lire)	accessforbidden();
 
@@ -149,20 +149,20 @@ dol_fiche_end();
 
 // Actions buttons
 
-$out='';
-$permok=$user->rights->agenda->myactions->create;
+$out = '';
+$permok = $user->rights->agenda->myactions->create;
 if ($permok)
 {
-    $out.='&projectid='.$object->id;
+    $out .= '&projectid='.$object->id;
 }
 
 
 //print '<div class="tabsAction">';
-$morehtmlcenter='';
-if (! empty($conf->agenda->enabled))
+$morehtmlcenter = '';
+if (!empty($conf->agenda->enabled))
 {
-    $addActionBtnRight = ! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create);
-    $morehtmlcenter.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+    $addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
+    $morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }
 
 //print '</div>';

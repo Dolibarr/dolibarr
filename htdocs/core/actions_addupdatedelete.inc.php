@@ -75,6 +75,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value = ''; // This is an implicit foreign key field
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') $value = ''; // This is an explicit foreign key field
 
+		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
 		$object->$key = $value;
 		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)')
 		{

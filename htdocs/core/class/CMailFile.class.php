@@ -626,6 +626,7 @@ class CMailFile
 				}
 
 				// Force parameters
+				//dol_syslog("CMailFile::sendfile conf->global->".$keyforsmtpserver."=".$conf->global->$keyforsmtpserver." cpnf->global->".$keyforsmtpport."=".$conf->global->$keyforsmtpport, LOG_DEBUG);
 				if (!empty($conf->global->$keyforsmtpserver)) ini_set('SMTP', $conf->global->$keyforsmtpserver);
 				if (!empty($conf->global->$keyforsmtpport))   ini_set('smtp_port', $conf->global->$keyforsmtpport);
 
@@ -776,7 +777,7 @@ class CMailFile
 					else
 					{
 						if (empty($this->error)) $this->error = $result;
-						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>".$this->error, LOG_ERR);
 						$res = false;
 					}
 				}

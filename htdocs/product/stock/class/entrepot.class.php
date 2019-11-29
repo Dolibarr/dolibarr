@@ -53,9 +53,13 @@ class Entrepot extends CommonObject
 	/**
 	 * @var string	Label
 	 * @deprecated
+     * @see $label
 	 */
 	public $libelle;
 
+	/**
+	 * @var string  Label
+	 */
 	public $label;
 
 	/**
@@ -64,6 +68,10 @@ class Entrepot extends CommonObject
 	public $description;
 
 	public $statut;
+
+    /**
+	 * @var string Place
+	 */
 	public $lieu;
 
 	/**
@@ -82,11 +90,13 @@ class Entrepot extends CommonObject
 	public $town;
 
 	/**
-     * @var int ID
+     * @var int ID of parent
      */
 	public $fk_parent;
 
-	// List of short language codes for status
+	/**
+     * @var array List of short language codes for status
+     */
 	public $statuts = array();
 
 	/**

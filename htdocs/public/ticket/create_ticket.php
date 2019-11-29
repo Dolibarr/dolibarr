@@ -53,7 +53,6 @@ $extrafields = new ExtraFields($db);
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-
 /*
  * Actions
  */
@@ -358,7 +357,7 @@ if ($action != "infos_success") {
     $formticket->withfile = 2;
     $formticket->action = 'create_ticket';
 
-    $formticket->param = array('returnurl' => $_SERVER['PHP_SELF']);
+    $formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
     if (empty($defaultref)) {
         $defaultref = '';
