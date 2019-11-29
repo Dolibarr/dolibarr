@@ -167,8 +167,10 @@ else print "var received=0;";
 	{
 		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var amountpayed = $("#change1").val();
-		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
+		if (amountpayed > <?php echo $invoice->total_ttc; ?> ) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
+		} else if ( amountpayed == 0) {
+			amountpayed = <?php echo $invoice->getRemainToPay() ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
