@@ -46,6 +46,10 @@ if ($action=="getProducts") {
     $object = new Categorie($db);
     $result=$object->fetch($category);
     $prods = $object->getObjectsInCateg("product");
+    function sort_by_ref($a, $b) {
+        return strcmp($a->ref, $b->ref);
+    }
+    usort($prods, "sort_by_ref");
     echo json_encode($prods);
 }
 elseif ($action=="search" && $term != '') {
