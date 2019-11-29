@@ -40,6 +40,7 @@ function image_format_supported($file)
     $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg';   // See also into product.class.php
 
     // Case filename is not a format image
+    $reg = array();
     if (! preg_match('/('.$regeximgext.')$/i', $file, $reg)) return -1;
 
     // Case filename is a format image but not supported by this PHP
@@ -51,6 +52,7 @@ function image_format_supported($file)
     if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
     if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
     if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
+    if (strtolower($reg[1]) == '.svg')  $imgfonction = 'imagecreatefromsvg';	// Never available
     if ($imgfonction)
     {
         if (! function_exists($imgfonction))
@@ -279,7 +281,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			imagepng($imgThumb, $imgThumbName, $newquality);
 			break;
 		case 4:	// Bmp
-			image2wbmp($imgThumb, $imgThumbName);
+			imagewbmp($imgThumb, $imgThumbName);
 			break;
 	}
 
@@ -582,7 +584,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
             // Not supported by PHP GD
 			break;
 		case IMAGETYPE_WBMP:    // 15
-			image2wbmp($imgThumb, $imgThumbName);
+			imagewbmp($imgThumb, $imgThumbName);
 			break;
 	}
 

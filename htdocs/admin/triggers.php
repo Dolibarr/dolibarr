@@ -28,8 +28,8 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$sortfield='file';
-$sortorder='ASC';
+$sortfield = 'file';
+$sortorder = 'ASC';
 
 
 /*
@@ -61,9 +61,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
-print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'active', "", $param, 'align="center"', $sortfield, $sortorder, '', 1)."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
 print '</tr>';
 
 foreach ($triggers as $trigger)
@@ -73,8 +73,8 @@ foreach ($triggers as $trigger)
 	print '<td class="tdtop">'.$trigger['file'].'</td>';
 	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
 	print '<td class="tdtop">';
-	$text=$trigger['info'];
-	$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+	$text = $trigger['info'];
+	$text .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
 	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
 	print $form->textwithpicto('', $text);
 	print '</td>';

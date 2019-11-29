@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class box_task extends ModeleBoxes
 {
-    public $boxcode="projettask";
-    public $boximg="object_projecttask";
+    public $boxcode = "projettask";
+    public $boximg = "object_projecttask";
     public $boxlabel;
     public $depends = array("projet");
 
@@ -42,7 +42,7 @@ class box_task extends ModeleBoxes
     public $db;
 
     public $param;
-    public $enabled = 1;		// enable because fixed ;-).
+    public $enabled = 1; // enable because fixed ;-).
 
     public $info_box_head = array();
     public $info_box_contents = array();
@@ -56,15 +56,15 @@ class box_task extends ModeleBoxes
      */
     public function __construct($db, $param = '')
     {
-        global $user, $langs;
+        global $conf, $user, $langs;
 
         // Load translation files required by the page
         $langs->loadLangs(array('boxes', 'projects'));
 
-        $this->boxlabel="Tasks";
+        $this->boxlabel = "Tasks";
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->projet->lire);
+        $this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
     }
 
 	/**
@@ -77,32 +77,32 @@ class box_task extends ModeleBoxes
 	{
 		global $conf, $user, $langs;
 
-		$this->max=$max;
+		$this->max = $max;
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
         $projectstatic = new Project($this->db);
-		$taskstatic=new Task($this->db);
-		$form= new Form($this->db);
-        $cookie_name='boxfilter_task';
-        $boxcontent='';
+		$taskstatic = new Task($this->db);
+		$form = new Form($this->db);
+        $cookie_name = 'boxfilter_task';
+        $boxcontent = '';
 
         $textHead = $langs->trans("CurentlyOpenedTasks");
 
-        $filterValue='all';
-        if(in_array(GETPOST($cookie_name), array('all','im_project_contact','im_task_contact'))){
+        $filterValue = 'all';
+        if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
             $filterValue = GETPOST($cookie_name);
         }
-        elseif(!empty($_COOKIE[$cookie_name])){
+        elseif (!empty($_COOKIE[$cookie_name])) {
             $filterValue = $_COOKIE[$cookie_name];
         }
 
 
-        if($filterValue == 'im_task_contact'){
-            $textHead.= ' : '.$langs->trans("WhichIamLinkedTo");
+        if ($filterValue == 'im_task_contact') {
+            $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
         }
-        elseif($filterValue == 'im_project_contact'){
-            $textHead.= ' : '.$langs->trans("WhichIamLinkedToProject");
+        elseif ($filterValue == 'im_project_contact') {
+            $textHead .= ' : '.$langs->trans("WhichIamLinkedToProject");
         }
 
 
@@ -135,7 +135,7 @@ class box_task extends ModeleBoxes
 					});
 					</script>';
             // set cookie by js
-            $boxcontent.='<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+            $boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
             $this->info_box_contents[0][] = array(
                 'tr'=>'class="nohover showiffilter'.$this->boxcode.' hideobject"',
                 'td' => 'class="nohover"',
@@ -144,43 +144,43 @@ class box_task extends ModeleBoxes
 
 
             $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
-			$sql.= ", p.rowid project_id, p.ref project_ref, p.title project_title";
+			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
 
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
-			$sql.= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
 
-            if($filterValue === 'im_task_contact') {
-                $sql .= " JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '" . $user->id . "' )";
-                $sql .= " JOIN " . MAIN_DB_PREFIX . "c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
+            if ($filterValue === 'im_task_contact') {
+                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '".$user->id."' )";
+                $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
             }
-            elseif($filterValue === 'im_project_contact') {
-                $sql .= " JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '" . $user->id . "' )";
-                $sql .= " JOIN " . MAIN_DB_PREFIX . "c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
+            elseif ($filterValue === 'im_project_contact') {
+                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '".$user->id."' )";
+                $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
             }
 
-			$sql.= " WHERE ";
-			$sql.= " pt.entity = ".$conf->entity;
-			$sql.= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
-			$sql.= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
-            $sql.= " AND p.usage_task = 1 ";
+			$sql .= " WHERE ";
+			$sql .= " pt.entity = ".$conf->entity;
+			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
+			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
+            $sql .= " AND p.usage_task = 1 ";
 
 
-			$sql.= " ORDER BY pt.datee ASC, pt.dateo ASC";
-			$sql.= $this->db->plimit($max, 0);
+			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
+			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			$i = 1;
 			if ($result) {
 				$num = $this->db->num_rows($result);
                 while ($objp = $this->db->fetch_object($result)) {
-                    $taskstatic->id=$objp->rowid;
-                    $taskstatic->ref=$objp->ref;
-                    $taskstatic->label=$objp->label;
+                    $taskstatic->id = $objp->rowid;
+                    $taskstatic->ref = $objp->ref;
+                    $taskstatic->label = $objp->label;
                     $taskstatic->progress = $objp->progress;
                     $taskstatic->fk_statut = $objp->fk_statut;
                     $taskstatic->date_end = $objp->datee;
-                    $taskstatic->planned_workload= $objp->planned_workload;
-                    $taskstatic->duration_effective= $objp->duration_effective;
+                    $taskstatic->planned_workload = $objp->planned_workload;
+                    $taskstatic->duration_effective = $objp->duration_effective;
 
                     $projectstatic->id = $objp->project_id;
                     $projectstatic->ref = $objp->project_ref;

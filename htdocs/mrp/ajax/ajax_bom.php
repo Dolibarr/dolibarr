@@ -22,15 +22,15 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../../main.inc.php';	// Load $user and permissions
+require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 $idbom = GETPOST('idbom', 'alpha');
@@ -42,7 +42,7 @@ $action = GETPOST('action', 'alpha');
  */
 
 $object = new BOM($db);
-$result=$object->fetch($idbom);
+$result = $object->fetch($idbom);
 if ($result > 0)
 {
 	// We remove properties we don't need in answer

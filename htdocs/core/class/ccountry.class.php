@@ -40,15 +40,15 @@ class Ccountry // extends CommonObject
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
 
-	public $element='ccountry';			//!< Id that identify managed objects
-	public $table_element='c_country';	//!< Name of table without prefix where object is stored
+	public $element = 'ccountry'; //!< Id that identify managed objects
+	public $table_element = 'c_country'; //!< Name of table without prefix where object is stored
 
     /**
 	 * @var int ID
@@ -65,7 +65,7 @@ class Ccountry // extends CommonObject
 
 	public $active;
 
-	public $fields=array(
+	public $fields = array(
 		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
 	);
 
@@ -91,43 +91,43 @@ class Ccountry // extends CommonObject
     public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->code_iso)) $this->code_iso=trim($this->code_iso);
-		if (isset($this->label)) $this->label=trim($this->label);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->code_iso)) $this->code_iso = trim($this->code_iso);
+		if (isset($this->label)) $this->label = trim($this->label);
+		if (isset($this->active)) $this->active = trim($this->active);
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
-		$sql.= "rowid,";
-		$sql.= "code,";
-		$sql.= "code_iso,";
-		$sql.= "label,";
-		$sql.= "active";
-        $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
-		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
-		$sql.= " ".(! isset($this->code_iso)?'NULL':"'".$this->db->escape($this->code_iso)."'").",";
-		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'")."";
-		$sql.= ")";
+		$sql .= "rowid,";
+		$sql .= "code,";
+		$sql .= "code_iso,";
+		$sql .= "label,";
+		$sql .= "active";
+        $sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
+		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
+		$sql .= " ".(!isset($this->code_iso) ? 'NULL' : "'".$this->db->escape($this->code_iso)."'").",";
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
 
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
@@ -144,13 +144,13 @@ class Ccountry // extends CommonObject
         // Commit or rollback
         if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -205,7 +205,7 @@ class Ccountry // extends CommonObject
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+      	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -221,13 +221,13 @@ class Ccountry // extends CommonObject
     public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->code_iso)) $this->code_iso=trim($this->code_iso);
-		if (isset($this->label)) $this->label=trim($this->label);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->code_iso)) $this->code_iso = trim($this->code_iso);
+		if (isset($this->label)) $this->label = trim($this->label);
+		if (isset($this->active)) $this->active = trim($this->active);
 
 
 		// Check parameters
@@ -235,21 +235,21 @@ class Ccountry // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
-		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
-		$sql.= " code_iso=".(isset($this->code_iso)?"'".$this->db->escape($this->code_iso)."'":"null").",";
-		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
-		$sql.= " active=".(isset($this->active)?$this->active:"null")."";
-        $sql.= " WHERE rowid=".$this->id;
+		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
+		$sql .= " code_iso=".(isset($this->code_iso) ? "'".$this->db->escape($this->code_iso)."'" : "null").",";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
@@ -266,13 +266,13 @@ class Ccountry // extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -292,20 +292,20 @@ class Ccountry // extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_country";
-		$sql.= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
@@ -322,13 +322,13 @@ class Ccountry // extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{

@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -49,7 +49,7 @@ if ($user->socid)
 {
 	$socid = $user->socid;
 }
-$result=restrictedArea($user, 'commande', $id, '');
+$result = restrictedArea($user, 'commande', $id, '');
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -76,10 +76,10 @@ $object = new Commande($db);
 if ($object->fetch($id))
 {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->commande->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->commande->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 }
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -90,7 +90,7 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	if ($object->fetch($id, $ref))
 	{
@@ -174,13 +174,13 @@ if ($id > 0 || ! empty($ref))
 
 		print "</div>\n";
 
-		print dol_fiche_end();
+		dol_fiche_end();
 
 		$modulepart = 'commande';
 		$permission = $user->rights->commande->creer;
 		$permtoedit = $user->rights->commande->creer;
-		$param = '&id=' . $object->id.'&entity=' . (! empty($object->entity)?$object->entity:$conf->entity);
-		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+		$param = '&id='.$object->id.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
+		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	}
 	else
 	{

@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'other'));
@@ -59,8 +59,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 $object = new SupplierProposal($db);
 $object->fetch($id, $ref);
@@ -68,7 +68,7 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
-	include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 
@@ -163,8 +163,8 @@ if ($object->id > 0)
 	$modulepart = 'supplier_proposal';
 	$permission = $user->rights->supplier_proposal->creer;
 	$permtoedit = $user->rights->supplier_proposal->creer;
-	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

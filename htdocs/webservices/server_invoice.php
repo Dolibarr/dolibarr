@@ -322,7 +322,7 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 				{
 					//var_dump($line); exit;
 					$linesresp[]=array(
-						'id'=>$line->rowid,
+						'id'=>$line->id,
 						'type'=>$line->product_type,
                                                 'desc'=>dol_htmlcleanlastbr($line->desc),
                                                 'total_net'=>$line->total_ht,
@@ -458,17 +458,17 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 			    	foreach($invoice->lines as $line)
 			    	{
 			    		$linesresp[]=array(
-	    					'id'=>$line->rowid,
-	    					'type'=>$line->product_type,
-	    					'total_net'=>$line->total_ht,
-	    					'total_vat'=>$line->total_tva,
-	    					'total'=>$line->total_ttc,
+			    			'id'=>$line->id,
+			    			'type'=>$line->product_type,
+			    			'total_net'=>$line->total_ht,
+			    			'total_vat'=>$line->total_tva,
+			    			'total'=>$line->total_ttc,
 			    			'vat_rate'=>$line->tva_tx,
 			    			'qty'=>$line->qty,
-                                                'unitprice'=> $line->subprice,
-                                                'date_start'=> $line->date_start?dol_print_date($line->date_start, 'dayrfc'):'',
-                                                'date_end'=> $line->date_end?dol_print_date($line->date_end, 'dayrfc'):'',
-                                                'product_id'=>$line->fk_product,
+			    			'unitprice'=> $line->subprice,
+			    			'date_start'=> $line->date_start?dol_print_date($line->date_start, 'dayrfc'):'',
+			    			'date_end'=> $line->date_end?dol_print_date($line->date_end, 'dayrfc'):'',
+			    			'product_id'=>$line->fk_product,
 			    			'product_ref'=>$line->product_ref,
 			    			'product_label'=>$line->product_label,
 			    			'product_desc'=>$line->product_desc,

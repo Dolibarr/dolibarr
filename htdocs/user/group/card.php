@@ -304,7 +304,7 @@ if ($action == 'create')
     print "</td></tr>\n";
 
 	// Other attributes
-    $parameters = array('object' => $object, 'colspan' => ' colspan="2"');
+    $parameters = array('object' => $object);
     $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     if (empty($reshook))

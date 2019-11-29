@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$id=GETPOST('id', 'intcomma');
-$ref=GETPOST('ref', 'alpha');
+$id = GETPOST('id', 'intcomma');
+$ref = GETPOST('ref', 'alpha');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
@@ -64,43 +64,43 @@ $langs->loadlangs(array('users', 'projects'));
  * View
  */
 
-$form=new Form($db);
-$formother=new FormOther($db);
-$userstatic=new User($db);
-$companystatic=new Societe($db);
-$contactstatic=new Contact($db);
+$form = new Form($db);
+$formother = new FormOther($db);
+$userstatic = new User($db);
+$companystatic = new Societe($db);
+$contactstatic = new Contact($db);
 $task = new Task($db);
 
-$arrayofcss=array('/includes/jsgantt/jsgantt.css');
+$arrayofcss = array('/includes/jsgantt/jsgantt.css');
 
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 {
-	$arrayofjs=array(
+	$arrayofjs = array(
 	'/includes/jsgantt/jsgantt.js',
 	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
 	);
 }
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
-$title=$langs->trans("Gantt");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=($object->ref?$object->ref.' '.$object->name.' - ':'').$langs->trans("Gantt");
-$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+$title = $langs->trans("Gantt");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = ($object->ref ? $object->ref.' '.$object->name.' - ' : '').$langs->trans("Gantt");
+$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
-if (($id > 0 && is_numeric($id)) || ! empty($ref))
+if (($id > 0 && is_numeric($id)) || !empty($ref))
 {
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite  = $object->restrictedProjectArea($user, 'write');
+	$userWrite = $object->restrictedProjectArea($user, 'write');
 	//$userDelete = $object->restrictedProjectArea($user,'delete');
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-    $tab='tasks';
+    $tab = 'tasks';
 
-    $head=project_prepare_head($object);
-    dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+    $head = project_prepare_head($object);
+    dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
-    $param=($mode=='mine'?'&mode=mine':'');
+    $param = ($mode == 'mine' ? '&mode=mine' : '');
 
 
 
@@ -108,21 +108,21 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref='<div class="refidno">';
+    $morehtmlref = '<div class="refidno">';
     // Title
-    $morehtmlref.=$object->title;
+    $morehtmlref .= $object->title;
     // Thirdparty
     if ($object->thirdparty->id > 0)
     {
-        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+        $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
     }
-    $morehtmlref.='</div>';
+    $morehtmlref .= '</div>';
 
     // Define a complementary filter for search of next/prev ref.
-    if (! $user->rights->projet->all->lire)
+    if (!$user->rights->projet->all->lire)
     {
         $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+        $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
     }
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -171,10 +171,10 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
-	print ($start?$start:'?');
+	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
 	print ' - ';
-	print ($end?$end:'?');
+	print ($end ? $end : '?');
 	if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
 
@@ -185,7 +185,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 
     // Other attributes
     $cols = 2;
-    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
     print '</table>';
 
@@ -210,7 +210,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     }
 
     // Categories
-    if($conf->categorie->enabled) {
+    if ($conf->categorie->enabled) {
         print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
         print $form->showCategories($object->id, 'project', 1);
         print "</td></tr>";
@@ -346,18 +346,18 @@ if (count($tasksarray)>0)
 		//if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers);
         $tasks[$taskcursor]['task_resources'] = $s;
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
-        $tasks[$taskcursor]['note']=$task->note_public;
+        $tasks[$taskcursor]['note'] = $task->note_public;
 		$taskcursor++;
 	}
 
 	// Search parent to set task_parent_alternate_id (requird by ganttchart)
-	foreach($tasks as $tmpkey => $tmptask)
+	foreach ($tasks as $tmpkey => $tmptask)
 	{
-		foreach($tasks as $tmptask2)
+		foreach ($tasks as $tmptask2)
 		{
 			if ($tmptask2['task_id'] == $tmptask['task_parent'])
 			{
-				$tasks[$tmpkey]['task_parent_alternate_id']=$tmptask2['task_alternate_id'];
+				$tasks[$tmpkey]['task_parent_alternate_id'] = $tmptask2['task_alternate_id'];
 				break;
 			}
 		}
@@ -366,14 +366,14 @@ if (count($tasksarray)>0)
 
 	print "\n";
 
- 	if (! empty($conf->use_javascript_ajax))
+ 	if (!empty($conf->use_javascript_ajax))
 	{
 	    //var_dump($_SESSION);
 
 		// How the date for data are formated (format used bu jsgantt)
-	    $dateformatinput='yyyy-mm-dd';
+	    $dateformatinput = 'yyyy-mm-dd';
 	    // How the date for data are formated (format used by dol_print_date)
-	    $dateformatinput2='standard';
+	    $dateformatinput2 = 'standard';
 	    //var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
 

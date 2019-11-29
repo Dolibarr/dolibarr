@@ -86,12 +86,12 @@ class ProductAttribute
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->ref = $result->ref;
-		$this->label = $result->label;
-		$this->rang = $result->rang;
+		$this->id = $obj->rowid;
+		$this->ref = $obj->ref;
+		$this->label = $obj->label;
+		$this->rang = $obj->rang;
 
 		return 1;
 	}
@@ -174,9 +174,10 @@ class ProductAttribute
 	/**
 	 * Deletes a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function delete()
+	public function delete($user = null)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 

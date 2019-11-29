@@ -269,4 +269,46 @@ class modHoliday extends DolibarrModules
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
 	}
+
+	/**
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
+
+		// Permissions
+		$this->remove($options);
+
+		//ODT template
+		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/holiday';
+		$dest=$dirodt.'/template_order.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src, $dest, 0, 0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
+        */
+
+		$sql = array(
+		//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".$conf->entity,
+		//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".$conf->entity.")"
+		);
+
+		return $this->_init($sql, $options);
+	}
 }

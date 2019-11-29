@@ -97,3 +97,6 @@ BoxSuspenseAccount=Count accountancy operation with suspense account
 BoxTitleSuspenseAccount=Number of unallocated lines
 NumberOfLinesInSuspenseAccount=Number of line in suspense account
 SuspenseAccountNotDefined=Suspense account isn't defined
+BoxLastCustomerShipments=Last customer shipments
+BoxTitleLastCustomerShipments=Latest %s customer shipments
+NoRecordedShipments=No recorded customer shipment

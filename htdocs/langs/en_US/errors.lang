@@ -248,3 +248,4 @@ WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translatio
 WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report
 WarningProjectClosed=Project is closed. You must re-open it first.
+WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list. 

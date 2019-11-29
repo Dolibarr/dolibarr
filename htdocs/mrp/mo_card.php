@@ -47,8 +47,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/mrp/class/mo.class.php');
-dol_include_once('/mrp/lib/mrp_mo.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -65,6 +66,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
 $object = new Mo($db);
+$objectbom = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('mocard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -87,8 +89,18 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+if (GETPOST('fk_bom', 'int'))
+{
+	$objectbom->fetch(GETPOST('fk_bom', 'int'));
+
+	$_POST['fk_product'] = $objectbom->fk_product;
+	$_POST['qty'] = $objectbom->qty;
+	$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
+	$_POST['note_private'] = $objectbom->note_private;
+}
+
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mrp', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
@@ -97,6 +109,7 @@ $permissionnote = $user->rights->mrp->write; // Used by the include of actions_s
 $permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
 /*
@@ -116,9 +129,10 @@ if (empty($reshook))
     $backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
     if (empty($backtopage) || ($cancel && empty($id))) {
-    	//var_dump($backurlforlist);exit;
-    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    	else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
+    	if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+	    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
+    	}
     }
     $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -208,29 +222,52 @@ if ($action == 'create')
      	$(document).ready(function () {
 			jQuery('#fk_bom').change(function() {
 				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
-
-				$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
-					console.log(data);
-					if (typeof data.rowid != "undefined") {
-						console.log("New BOM loaded, we set values in form");
-						$('#qty').val(data.qty);
-						$("#fk_product").val(data.fk_product);
-						$('#fk_product').trigger('change'); // Notify any JS components that the value changed
-						$('#note_private').val(data.description);
-						$('#note_private').trigger('change'); // Notify any JS components that the value changed
-						if (typeof CKEDITOR != "undefined") {
-							if (typeof CKEDITOR.instances != "undefined") {
-								if (typeof CKEDITOR.instances.note_private != "undefined") {
-									console.log(CKEDITOR.instances.note_private);
-									CKEDITOR.instances.note_private.setData(data.description);
+				if (jQuery('#fk_bom').val() > 0)
+				{
+					// Redirect to page with fk_bom set
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&fk_bom='+jQuery('#fk_bom').val();
+					/*
+					$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
+						console.log(data);
+						if (typeof data.rowid != "undefined") {
+							console.log("New BOM loaded, we set values in form");
+							$('#qty').val(data.qty);
+							$("#fk_product").val(data.fk_product);
+							$('#fk_product').trigger('change'); // Notify any JS components that the value changed
+							$('#note_private').val(data.description);
+							$('#note_private').trigger('change'); // Notify any JS components that the value changed
+							$('#fk_warehouse').val(data.fk_warehouse);
+							$('#fk_warehouse').trigger('change'); // Notify any JS components that the value changed
+							if (typeof CKEDITOR != "undefined") {
+								if (typeof CKEDITOR.instances != "undefined") {
+									if (typeof CKEDITOR.instances.note_private != "undefined") {
+										console.log(CKEDITOR.instances.note_private);
+										CKEDITOR.instances.note_private.setData(data.description);
+									}
 								}
 							}
+						} else {
+							console.log("Failed to get BOM");
 						}
-					} else {
-						console.log("Failed to get BOM");
-					}
-				});
+					});*/
+				}
+				else if (jQuery('#fk_bom').val() < 0) {
+					// Redirect to page with all fields defined except fk_bom set
+					console.log(jQuery('#fk_product').val());
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&qty='+jQuery('#qty').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
+					/*
+					$('#qty').val('');
+					$("#fk_product").val('');
+					$('#fk_product').trigger('change'); // Notify any JS components that the value changed
+					$('#note_private').val('');
+					$('#note_private').trigger('change'); // Notify any JS components that the value changed
+					$('#fk_warehouse').val('');
+					$('#fk_warehouse').trigger('change'); // Notify any JS components that the value changed
+					*/
+				}
  	        });
+
+			//jQuery('#fk_bom').trigger('change');
 		})
 	</script>
 	<?php
@@ -240,6 +277,20 @@ if ($action == 'create')
 	print '&nbsp; ';
 	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
+
+	if (GETPOST('fk_bom', 'int') > 0) {
+		print load_fiche_titre($langs->trans("ToConsume"));
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+
+		$object->lines = $objectbom->lines;
+
+		$object->printOriginLinesList('', array());
+
+		print '</table>';
+		print '</div>';
+	}
 
 	print '</form>';
 }
@@ -322,7 +373,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		 }*/
 
 		$formquestion = array();
-		if (!empty($conf->bom->enabled))
+		if (!empty($conf->mrp->enabled))
 		{
 			$langs->load("mrp");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -493,9 +544,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		if ($user->rights->bom->write && $object->status == MO::STATUS_VALIDATED)
+    		// Back to draft
+    		if ($object->status == $object::STATUS_VALIDATED)
     		{
-    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    		if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    		}
     		}
 
             // Modify
@@ -509,16 +564,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Validate
-    		if ($user->rights->mrp->write && $object->status == MO::STATUS_DRAFT)
+    		if ($object->status == $object::STATUS_DRAFT)
     		{
-    		    if (is_array($object->lines) && count($object->lines) > 0)
-    		    {
-    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-    		    }
-    		    else
-    		    {
-    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
-    		    }
+	    		if ($permissiontoadd)
+	    		{
+	    		    if (is_array($object->lines) && count($object->lines) > 0)
+	    		    {
+	    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+	    		    }
+	    		    else
+	    		    {
+	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    		    }
+	    		}
     		}
 
     		// Clone

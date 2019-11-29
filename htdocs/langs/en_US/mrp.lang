@@ -49,3 +49,6 @@ DisableStockChangeHelp=When this flag is set, there is no stock change on this p
 BomAndBomLines=Bills Of Material and lines
 BOMLine=Line of BOM
 WarehouseForProduction=Warehouse for production
+CreateMO=Create MO
+ToConsume=A consommer
+Manufactured=Fabriqué

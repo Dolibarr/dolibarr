@@ -88,15 +88,16 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == Mo::STATUS_DRAFT) ? 1 : 0);
+//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mrp', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && $object->status == 0);
+$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
 /*
@@ -131,6 +132,12 @@ if (empty($reshook))
     // Actions when printing a doc from card
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+    // Actions to send emails
+    $trigger_name = 'MO_SENTBYMAIL';
+    $autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
+    $trackid = 'mo'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
     // Action to move up and down lines of object
     //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
@@ -142,12 +149,6 @@ if (empty($reshook))
     {
     	$object->setProject(GETPOST('projectid', 'int'));
     }
-
-    // Actions to send emails
-    $trigger_name = 'MO_SENTBYMAIL';
-    $autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
-    $trackid = 'mo'.$object->id;
-    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -158,6 +159,7 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 llxHeader('', $langs->trans('Mo'), '');
@@ -182,7 +184,8 @@ jQuery(document).ready(function() {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals();
+	$res = $object->fetch_thirdparty();
+	$res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
 	dol_fiche_head($head, 'production', $langs->trans("MO"), -1, $object->picto);
@@ -243,26 +246,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
 	    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	    if ($user->rights->mrp->write)
+	    if ($permissiontoadd)
 	    {
 	        if ($action != 'classify')
 	            $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
             if ($action == 'classify') {
-                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+            	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
                 $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref .= $formproject->select_projects($object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
             } else {
-                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            	$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_soc, $object->fk_project, 'none', 0, 0, 0, 1);
 	        }
 	    } else {
 	        if (!empty($object->fk_project)) {
@@ -283,10 +286,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak = 'qty';
+	$keyforbreak = 'fk_warehouse';
 	unset($object->fields['fk_project']);
 	unset($object->fields['fk_soc']);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
@@ -324,14 +327,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	}
 
     	print '<div class="div-table-responsive-no-min">';
-    	if (!empty($object->lines) && $object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline')
+    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
     	{
     	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
     	}
 
     	if (!empty($object->lines))
     	{
-    		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+    		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/mrp/tpl');
     	}
 
     	// Form to add new line
@@ -340,14 +343,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    if ($action != 'editline')
     	    {
     	        // Add products/services form
-    	        $object->formAddObjectLine(1, $mysoc, $soc);
+    	    	$object->formAddObjectLine(1, $mysoc, $soc, '/mrp/tpl');
 
     	        $parameters = array();
     	        $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     	    }
     	}
 
-    	if (!empty($object->lines) && $object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline')
+    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
     	{
     	    print '</table>';
     	}
