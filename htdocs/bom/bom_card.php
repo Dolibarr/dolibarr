@@ -146,6 +146,11 @@ if (empty($reshook))
 			$error++;
 		}
 
+		if ($object->fk_product == $idprod) {
+		    setEventMessages($langs->trans('TheProductXIsAlreadyTheProductToProduce'), null, 'errors');
+		    $error++;
+		}
+
 		if (!$error)
 		{
     		$bomline = new BOMLine($db);
