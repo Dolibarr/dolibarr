@@ -207,6 +207,29 @@ Following changes may create regressions for some external modules, but were nec
 * The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
 
 
+***** ChangeLog for 10.0.4 compared to 10.0.3 *****
+FIX: The pdf templates were using the large logo making PDF too large (and edition of proposal, order, invoice VERY slow)
+FIX: #12258
+FIX: #12319 Restore feature ACCOUNTANCY_AUTOFILL_ACCOUNT_WITH_GENERIC.
+FIX: #12356
+FIX: #12372
+FIX: #12385
+FIX: Advisory ID: usd20190053
+FIX: Advisory ID: usd20190067
+FIX: Avoid fatal error when creating thumb from PDF
+FIX: compatibility with Multicompany
+FIX: display job of contact list
+FIX: Extrafields missing in export of expense report
+FIX: Hook getAccessForbiddenMessage was missing parameters
+FIX: limit 20 prevent to see all products/services
+FIX: Search on leave request ref
+FIX: security check. A user can see holiday with link without permissions
+FIX: Set unpaid of expense report
+FIX: shipping extrafields line
+FIX: the SELECT examine more than MAX_JOIN_SIZE rows #12305
+FIX: triggers: directories read with opendir() never closed
+FIX: we need to be able to recalculate tva only if invoice not in accountancy
+FIX: wrong invoice id for fetchObjetctLinked
 
 ***** ChangeLog for 10.0.3 compared to 10.0.2 *****
 IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
