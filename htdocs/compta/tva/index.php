@@ -39,6 +39,7 @@ $year=GETPOST("year","int");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
+	if($conf->global->SOCIETE_FISCAL_MONTH_START > date('m')) $year_current--;
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
