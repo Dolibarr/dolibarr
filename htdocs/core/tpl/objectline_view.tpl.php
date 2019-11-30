@@ -137,6 +137,8 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			if (! empty($line->label)) {
 				$text.= ' <strong>'.$line->label.'</strong>';
 				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+			} elseif (strpos($line->description, '(DEPOSIT)') === 0) {
+				echo $text.' '.str_replace('(DEPOSIT)', $langs->trans("Deposit"), $line->description);;
 			} else {
 				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
