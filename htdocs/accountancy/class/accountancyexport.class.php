@@ -39,19 +39,18 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 class AccountancyExport
 {
 	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
-    public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
-	public static $EXPORT_TYPE_CONFIGURABLE = 10;		// CSV
-	public static $EXPORT_TYPE_CEGID = 2;
-	public static $EXPORT_TYPE_COALA = 3;
-	public static $EXPORT_TYPE_BOB50 = 4;
-	public static $EXPORT_TYPE_CIEL = 5;
-	public static $EXPORT_TYPE_QUADRATUS = 6;
-	public static $EXPORT_TYPE_EBP = 7;
-	public static $EXPORT_TYPE_COGILOG = 8;
-	public static $EXPORT_TYPE_AGIRIS = 9;
-	public static $EXPORT_TYPE_FEC = 11;
-	public static $EXPORT_TYPE_OPENCONCERTO = 12;
-	public static $EXPORT_TYPE_SAGE50_SWISS = 13;
+	public static $EXPORT_TYPE_CONFIGURABLE = 1;		// CSV
+	public static $EXPORT_TYPE_AGIRIS = 10;
+	public static $EXPORT_TYPE_EBP = 15;
+	public static $EXPORT_TYPE_CEGID = 20;
+	public static $EXPORT_TYPE_COGILOG = 25;
+	public static $EXPORT_TYPE_COALA = 30;
+	public static $EXPORT_TYPE_BOB50 = 35;
+	public static $EXPORT_TYPE_CIEL = 40;
+	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
+	public static $EXPORT_TYPE_QUADRATUS = 60;
+	public static $EXPORT_TYPE_OPENCONCERTO = 100;
+	public static $EXPORT_TYPE_FEC = 1000;
 
 
 	/**
@@ -94,8 +93,7 @@ class AccountancyExport
 	{
 		global $langs;
 
-		return array (
-			//self::$EXPORT_TYPE_NORMAL => $langs->trans('Modelcsv_normal'),
+		$listofexporttypes = array(
 			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
 			self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
 			self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
@@ -106,9 +104,13 @@ class AccountancyExport
 			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
             self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
-			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
+			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 		);
+
+		ksort($listofexporttypes, SORT_NUMERIC);
+
+		return $listofexporttypes;
 	}
 
 	/**
@@ -120,7 +122,6 @@ class AccountancyExport
 	private static function getFormatCode($type)
 	{
 		$formatcode = array (
-			//self::$EXPORT_TYPE_NORMAL => 'csv',
 			self::$EXPORT_TYPE_CONFIGURABLE => 'csv',
 			self::$EXPORT_TYPE_CEGID => 'cegid',
 			self::$EXPORT_TYPE_COALA => 'coala',
@@ -131,8 +132,8 @@ class AccountancyExport
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
+            self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
 			self::$EXPORT_TYPE_FEC => 'fec',
-                        self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
 		);
 
 		return $formatcode[$type];
@@ -149,13 +150,13 @@ class AccountancyExport
 
 		return array (
 			'param' => array(
-				/*self::$EXPORT_TYPE_NORMAL => array(
-					'label' => $langs->trans('Modelcsv_normal'),
+				self::$EXPORT_TYPE_CONFIGURABLE => array(
+					'label' => $langs->trans('Modelcsv_configurable'),
 					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
 					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
 					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
 					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
-				),*/
+				),
 				self::$EXPORT_TYPE_CEGID => array(
 					'label' => $langs->trans('Modelcsv_CEGID'),
 				),
@@ -182,25 +183,18 @@ class AccountancyExport
 				self::$EXPORT_TYPE_AGIRIS => array(
 					'label' => $langs->trans('Modelcsv_agiris'),
 				),
-				self::$EXPORT_TYPE_CONFIGURABLE => array(
-					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
-					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
+                self::$EXPORT_TYPE_OPENCONCERTO => array(
+                    'label' => $langs->trans('Modelcsv_openconcerto'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
+				self::$EXPORT_TYPE_SAGE50_SWISS => array(
+					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
-                self::$EXPORT_TYPE_OPENCONCERTO => array(
-                    'label' => $langs->trans('Modelcsv_openconcerto'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-                ),
-                                self::$EXPORT_TYPE_SAGE50_SWISS => array(
-                                    'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
-                                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-                                ),
 			),
 			'cr'=> array (
 				'1' => $langs->trans("Unix"),
@@ -233,11 +227,9 @@ class AccountancyExport
 
 
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
-			case self::$EXPORT_TYPE_NORMAL :
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
-			case self::$EXPORT_TYPE_NORMAL :
 			case self::$EXPORT_TYPE_CEGID :
 				$this->exportCegid($TData);
 				break;
@@ -282,7 +274,6 @@ class AccountancyExport
 	 * Export format : CEGID
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCegid($objectLines)
@@ -308,7 +299,6 @@ class AccountancyExport
 	 * Export format : COGILOG
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCogilog($objectLines)
@@ -342,7 +332,6 @@ class AccountancyExport
 	 * Export format : COALA
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCoala($objectLines)
@@ -370,7 +359,6 @@ class AccountancyExport
 	 * Export format : BOB50
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportBob50($objectLines)
@@ -409,7 +397,6 @@ class AccountancyExport
 	 * Export format : CIEL
 	 *
 	 * @param array $TData data
-	 *
 	 * @return void
 	 */
 	public function exportCiel(&$TData)
@@ -450,7 +437,6 @@ class AccountancyExport
 	 * Export format : Quadratus
 	 *
 	 * @param array $TData data
-	 *
 	 * @return void
 	 */
 	public function exportQuadratus(&$TData)
@@ -534,7 +520,6 @@ class AccountancyExport
 	 * Export format : EBP
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportEbp($objectLines)
@@ -571,7 +556,6 @@ class AccountancyExport
 	 * Export format : Agiris Isacompta
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportAgiris($objectLines)
@@ -612,7 +596,6 @@ class AccountancyExport
      * Export format : OpenConcerto
      *
      * @param array $objectLines data
-     *
      * @return void
      */
     public function exportOpenConcerto($objectLines)
@@ -642,15 +625,16 @@ class AccountancyExport
     }
 
 	/**
-	 * Export format : Configurable
+	 * Export format : Configurable CSV
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportConfigurable($objectLines)
 	{
 		global $conf;
+
+		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
 			$tab = array();
@@ -659,15 +643,14 @@ class AccountancyExport
 			$tab[] = $line->piece_num;
 			$tab[] = $date;
 			$tab[] = $line->doc_ref;
-			$tab[] = $line->label_operation;
+			$tab[] = preg_match('/'.$separator.'/', $line->label_operation) ? "'".$line->label_operation."'" : $line->label_operation;
 			$tab[] = length_accountg($line->numero_compte);
 			$tab[] = length_accounta($line->subledger_account);
-			$tab[] = price($line->debit);
-			$tab[] = price($line->credit);
-			$tab[] = price($line->montant);
+			$tab[] = price2num($line->debit);
+			$tab[] = price2num($line->credit);
+			$tab[] = price2num($line->montant);
 			$tab[] = $line->code_journal;
 
-			$separator = $this->separator;
 			print implode($separator, $tab) . $this->end_line;
 		}
 	}
@@ -676,7 +659,6 @@ class AccountancyExport
 	 * Export format : FEC
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportFEC($objectLines)
@@ -918,9 +900,10 @@ class AccountancyExport
     }
 
 	/**
+	 * trunc
 	 *
-	 * @param string	$str 	data
-	 * @param integer 	$size 	data
+	 * @param string	$str 	String
+	 * @param integer 	$size 	Data to trunc
 	 * @return string
 	 */
 	public static function trunc($str, $size)
@@ -929,10 +912,11 @@ class AccountancyExport
 	}
 
 	/**
+	 * toAnsi
 	 *
-	 * @param unknown $str Original string to encode and optionaly truncate
-	 * @param integer $size truncate string after $size characters
-     * @return string String encoded in Windows-1251 charset
+	 * @param string	$str 		Original string to encode and optionaly truncate
+	 * @param integer 	$size 		Truncate string after $size characters
+     * @return string 				String encoded in Windows-1251 charset
 	 */
 	public static function toAnsi($str, $size = -1)
     {

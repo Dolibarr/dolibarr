@@ -170,9 +170,23 @@ elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 
 if ($action == 'maj_pattern')
 {
-	dolibarr_set_const($db, "USER_PASSWORD_PATTERN", GETPOST("pattern"), 'chaine', 0, '', $conf->entity);
-	header("Location: security.php");
-	exit;
+    $pattern = GETPOST("pattern");
+    $explodePattern = explode(';', $pattern);
+
+    $patternInError = false;
+    if ($explodePattern[0] < 1 || $explodePattern[4] < 0) {
+        $patternInError = true;
+    }
+
+    if ($explodePattern[0] < $explodePattern[1] + $explodePattern[2] + $explodePattern[3]) {
+        $patternInError = true;
+    }
+
+    if (!$patternInError) {
+	    dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
+	    header("Location: security.php");
+	    exit;
+    }
 }
 
 
@@ -278,13 +292,6 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 
 
 	$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
-	/*$this->length2 = $tabConf[0];
-	$this->NbMaj = $tabConf[1];
-	$this->NbNum = $tabConf[2];
-	$this->NbSpe = $tabConf[3];
-	$this->NbRepeat = $tabConf[4];
-	$this->WithoutAmbi = $tabConf[5];
-	*/
 	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -350,6 +357,13 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 	print '	}';
 
 	print '	function valuePossible(){';
+	print '		var fields = ["#minlenght", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
+	print '		for(var i = 0 ; i < fields.length ; i++){';
+	print '		    if($(fields[i]).val() < $(fields[i]).attr("min")){';
+	print '		        return false;';
+	print '		    }';
+	print '		}';
+	print '		';
 	print '		var length = parseInt($("#minlenght").val());';
 	print '		var length_mini = parseInt($("#NbMajMin").val()) + parseInt($("#NbNumMin").val()) + parseInt($("#NbSpeMin").val());';
 	print '		return length >= length_mini;';

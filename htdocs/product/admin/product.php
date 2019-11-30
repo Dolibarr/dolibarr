@@ -245,12 +245,12 @@ if ($action == 'set')
 	if (! $res > 0) $error++;
 }
 
-if ($action == 'other')
-{
-    $value = GETPOST('activate_units', 'alpha');
-    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-}
+//if ($action == 'other')
+//{
+//    $value = GETPOST('activate_units', 'alpha');
+//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+//	if (! $res > 0) $error++;
+//}
 
 if ($action)
 {
@@ -556,7 +556,14 @@ if (! empty($conf->fournisseur->enabled)) $rowspan++;
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("PricingRule").'</td>';
+if (empty($conf->multicompany->enabled))
+{
+	print '<td>'.$langs->trans("PricingRule").'</td>';
+}
+else
+{
+	print '<td>'.$form->textwithpicto($langs->trans("PricingRule"), $langs->trans("SamePriceAlsoForSharedCompanies"), 1).'</td>';
+}
 print '<td width="60" class="right">';
 $current_rule = 'PRODUCT_PRICE_UNIQ';
 if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRICES';
@@ -564,10 +571,6 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUI
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
-if ( empty($conf->multicompany->enabled))
-{
-    print $langs->trans("SamePriceAlsoForSharedCompanies");
-}
 print '</td><td rowspan="'.$rowspan.'" class="nohover right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

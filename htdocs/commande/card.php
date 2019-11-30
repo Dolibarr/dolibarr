@@ -659,7 +659,7 @@ if (empty($reshook))
 		}
 
 		$qty = GETPOST('qty' . $predef);
-		$remise_percent = GETPOST('remise_percent' . $predef);
+		$remise_percent = (GETPOST('remise_percent'.$predef) != '' ? GETPOST('remise_percent'.$predef) : 0);
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -1519,11 +1519,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if ($element == 'order' || $element == 'commande') {
 				$element = $subelement = 'commande';
 			}
-			if ($element == 'propal') {
+			elseif ($element == 'propal') {
 				$element = 'comm/propal';
 				$subelement = 'propal';
 			}
-			if ($element == 'contract') {
+			elseif ($element == 'contract') {
 				$element = $subelement = 'contrat';
 			}
 
@@ -2116,7 +2116,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		if ($soc->outstanding_limit)
 		{
@@ -2454,7 +2454,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
+		print '</div>';	// Close fichecenter
 
 		print '<div class="clearboth"></div><br>';
 
@@ -2591,7 +2591,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 							}
 						} else {
 							$langs->load("errors");
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")) . '">' . $langs->trans('CreateShipment') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Shipment"))) . '">' . $langs->trans('CreateShipment') . '</a></div>';
 						}
 					}
 				}

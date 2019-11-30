@@ -60,6 +60,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+
 DROP TABLE llx_cotisation;
 ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
 ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
@@ -93,6 +95,8 @@ ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, ent
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
 ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
+
+UPDATE llx_subscription as s SET fk_type = (SELECT fk_adherent_type FROM llx_adherent as a where a.rowid = s.fk_adherent) where fk_type IS NULL; 
 
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
@@ -174,14 +178,14 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','y', 'time', 1);
 
 UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
-UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg' WHERE code = 'KG';
-UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g' WHERE code = 'G';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg', scale = 0 WHERE code = 'KG';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g', scale = -3 WHERE code = 'G';
 UPDATE llx_c_units SET unit_type = 'time' WHERE code IN ('S','H','D');
 UPDATE llx_c_units SET unit_type = 'size' WHERE code IN ('M','LM');
-UPDATE llx_c_units SET label = 'SizeUnitm' WHERE code IN ('M');
-UPDATE llx_c_units SET active = 0 WHERE code IN ('LM');
-UPDATE llx_c_units SET unit_type = 'surface' WHERE code IN ('M2');
-UPDATE llx_c_units SET unit_type = 'volume' WHERE code IN ('M3','L');
+UPDATE llx_c_units SET label = 'SizeUnitm', scale = 0 WHERE code IN ('M');
+UPDATE llx_c_units SET active = 0, scale = 0 WHERE code IN ('LM');
+UPDATE llx_c_units SET unit_type = 'surface', scale = 0 WHERE code IN ('M2');
+UPDATE llx_c_units SET unit_type = 'volume', scale = 0 WHERE code IN ('M3','L');
 UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
 UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
 UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
@@ -201,6 +205,9 @@ ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
+
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
 
 CREATE TABLE llx_bom_bom(
@@ -248,12 +255,13 @@ CREATE TABLE llx_bom_bomline(
 	import_key varchar(14), 
 	qty double(24,8) NOT NULL, 
 	efficiency double(8,4) NOT NULL DEFAULT 1,
-	rank integer NOT NULL
+	position integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL;
 
 create table llx_bom_bomline_extrafields
 (
@@ -319,6 +327,9 @@ ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
 
+
+-- VMYSQL4.3 ALTER TABLE llx_holiday MODIFY COLUMN ref varchar(30) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref DROP NOT NULL;
 
 
 create table llx_reception
@@ -390,3 +401,9 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
+
+-- Use special_code=3 in Takepos
+-- VMYSQL4.1 UPDATE llx_facturedet AS fd LEFT JOIN llx_facture AS f ON f.rowid = fd.fk_facture SET fd.special_code = 4 WHERE f.module_source = 'takepos' AND fd.special_code = 3;
+
+UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
+

@@ -148,6 +148,7 @@ print '
 				/* Set handler to add page_y param on output (click on href links or submit button) */
 				jQuery(".reposition").click(function() {
 					var page_y = $(document).scrollTop();
+
 					if (page_y > 0)
 					{
 						if (this.href)
@@ -157,7 +158,7 @@ print '
 						}
 						else
 						{
-							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update form field page_y with value "+page_y);
+							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field page_y with value "+page_y);
 							jQuery("input[type=hidden][name=page_y]").val(page_y);
 						}
 					}

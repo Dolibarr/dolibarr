@@ -28,7 +28,7 @@ namespace test\unit;
  * Class BillOfMaterialsTest
  * @package Testbillofmaterials
  */
-class BOMTest extends \PHPUnit_Framework_TestCase
+class BOMTest extends \PHPUnit\Framework\TestCase
 {
 	/**
 	 * Global test setup

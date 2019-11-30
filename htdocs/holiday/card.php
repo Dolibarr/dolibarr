@@ -44,10 +44,6 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
-// Protection if external user
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'holiday', $id, 'holiday');
-
 $now=dol_now();
 
 // Load translation files required by the page
@@ -55,17 +51,39 @@ $langs->load("holiday");
 
 $childids = $user->getAllChildIds(1);
 
+$morefilter = 'AND employee = 1';
+if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+
+$error = 0;
+
+$object = new Holiday($db);
+if (($id > 0) || $ref)
+{
+    $object->fetch($id, $ref);
+
+    // Check current user can read this leave request
+    $canread = 0;
+    if (! empty($user->rights->holiday->read_all)) $canread=1;
+    if (! empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
+
 $cancreate = 0;
 if (! empty($user->rights->holiday->write_all)) $cancreate=1;
 if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate=1;
 
 $candelete = 0;
 if (! empty($user->rights->holiday->delete)) $candelete=1;
+if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
 
-$morefilter = 'AND employee = 1';
-if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+// Protection if external user
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
-$error = 0;
+
 
 /*
  * Actions
@@ -79,7 +97,6 @@ if (GETPOST('cancel', 'alpha'))
 // If create a request
 if ($action == 'create')
 {
-	$object = new Holiday($db);
 
     // If no right to create a request
     if (! $cancreate)
@@ -91,6 +108,8 @@ if ($action == 'create')
 
     if (! $error)
     {
+        $object = new Holiday($db);
+
     	$db->begin();
 
 	    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
@@ -105,7 +124,7 @@ if ($action == 'create')
 	    elseif ($starthalfday == 'afternoon') $halfday=-1;
 	    elseif ($endhalfday == 'morning') $halfday=1;
 
-	    $valideur = GETPOST('valideur');
+	    $valideur = GETPOST('valideur', 'int');
 	    $description = trim(GETPOST('description'));
 
     	// If no type
@@ -200,7 +219,6 @@ if ($action == 'create')
 
 if ($action == 'update' && GETPOSTISSET('savevalidator') && ! empty($user->rights->holiday->approve))
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     $object->oldcopy = dol_clone($object);
@@ -246,7 +264,6 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         exit;
     }
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
 	// If under validation
@@ -255,8 +272,8 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         // If this is the requestor or has read/write rights
         if ($cancreate)
         {
-            $valideur = $_POST['valideur'];
-            $description = trim($_POST['description']);
+            $valideur = GETPOST('valideur', 'int');
+            $description = trim(GETPOST('description', 'none'));
 
             // If no start date
             if (empty($_POST['date_debut_'])) {
@@ -330,7 +347,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 
 	$db->begin();
 
-	$object = new Holiday($db);
 	$object->fetch($id);
 
     // If this is a rough draft, approved, canceled or refused
@@ -364,7 +380,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 // Action validate (+ send email for approval)
 if ($action == 'confirm_send')
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si brouillon et créateur
@@ -469,7 +484,6 @@ if ($action == 'confirm_send')
 // Approve leave request
 if ($action == 'confirm_valid')
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
@@ -583,7 +597,6 @@ if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes')
 {
 	if (! empty($_POST['detail_refuse']))
     {
-        $object = new Holiday($db);
         $object->fetch($id);
 
         // Si statut en attente de validation et valideur = utilisateur
@@ -683,7 +696,6 @@ if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
 {
 	$error = 0;
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
     $oldstatus = $object->statut;
@@ -714,7 +726,6 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
 	$error = 0;
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
@@ -1125,6 +1136,7 @@ else
                 	if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) $edit = true;
 
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">'."\n";
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
                 }
@@ -1288,7 +1300,8 @@ else
                     if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
                     else
                     {
-                        $s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), ($user->admin ? '' : array($user->id)), 0, $include_users);
+                    	$arrayofvalidatorstoexclude = (($user->admin || ($user->id != $userRequest->id))? '' : array($user->id));	// Nobody if we are admin or if we are not the user of the leave.
+                    	$s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), $arrayofvalidatorstoexclude, 0, $include_users);
                     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
                     }
                     if ($action == 'editvalidator')
@@ -1391,9 +1404,10 @@ else
 
                 if (! $edit)
                 {
-		            print '<div class="tabsAction">';
+                	// Buttons for actions
 
-                    // Boutons d'actions
+                	print '<div class="tabsAction">';
+
 		            if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
@@ -1424,7 +1438,7 @@ else
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
                     }
-                    if ($user->rights->holiday->delete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
+                    if ($candelete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
                     {
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }

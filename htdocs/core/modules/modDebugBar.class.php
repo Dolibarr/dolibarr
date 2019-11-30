@@ -16,7 +16,7 @@
  */
 
 /**
- * 	\defgroup   debugbar     Debug bar
+ * 	\defgroup   debugbar     Module Debug bar
  *  \brief      debugbar module descriptor.
  *
  *  \file       htdocs/core/modules/modDebugBar.class.php

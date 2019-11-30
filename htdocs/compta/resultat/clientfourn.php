@@ -130,21 +130,6 @@ $AccCat = new AccountancyCategory($db);
  * View
  */
 
-$months = array(
-	$langs->trans("JanuaryMin"),
-	$langs->trans("FebruaryMin"),
-	$langs->trans("MarchMin"),
-	$langs->trans("AprilMin"),
-	$langs->trans("MayMin"),
-	$langs->trans("JuneMin"),
-	$langs->trans("JulyMin"),
-	$langs->trans("AugustMin"),
-	$langs->trans("SeptemberMin"),
-	$langs->trans("OctoberMin"),
-	$langs->trans("NovemberMin"),
-	$langs->trans("DecemberMin"),
-);
-
 llxHeader();
 
 $form=new Form($db);
@@ -1147,11 +1132,11 @@ else
 		            while ($i < $num) {
 		                $obj = $db->fetch_object($result);
 
-		                $amount += $obj->amount;
-		                $total_ht += $obj->amount;
-		                $total_ttc += $obj->amount;
-		                $subtotal_ht += $obj->amount;
-		                $subtotal_ttc += $obj->amount;
+		                $amount += -$obj->amount;
+		                $total_ht += -$obj->amount;
+		                $total_ttc += -$obj->amount;
+		                $subtotal_ht += -$obj->amount;
+		                $subtotal_ttc += -$obj->amount;
 
 		                $i++;
 		            }

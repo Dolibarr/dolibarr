@@ -120,7 +120,7 @@ if ($id > 0)
             if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
             {
                 $langs->load("errors");
-                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
             }
             else
             {
@@ -161,7 +161,7 @@ if ($id > 0)
         	if (empty($url))
         	{
         	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
         	}
         	else
         	{

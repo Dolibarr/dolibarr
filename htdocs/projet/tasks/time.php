@@ -959,6 +959,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<!-- table to add time spent -->'."\n";
             if (! empty($id)) print '<input type="hidden" name="taskid" value="'.$id.'">';
 
+            print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -1002,7 +1003,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				else $userid = $contactsofproject[0];
 
 				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+				print $form->select_dolusers((GETPOST('userid', 'int')?GETPOST('userid', 'int'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}
 			else
 			{
@@ -1044,6 +1045,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '</td></tr>';
 
 			print '</table>';
+			print '</div>';
 
 			print '<br>';
 		}

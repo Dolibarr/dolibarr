@@ -376,7 +376,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 
-		print '<td class="right">';
+		print '<td class="nowrap right">';
 		print price($objp->price);
 		print '</td>';
 

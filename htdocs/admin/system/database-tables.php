@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/admin/system/database-tables.php
- *	\brief      Page d'infos des tables de la base
+ *	\brief      Page with information on database tables
  */
 
 require '../../main.inc.php';
@@ -134,7 +134,7 @@ else
 				print '<td align="right">'.$obj->Auto_increment.'</td>';
 				print '<td align="right">'.$obj->Check_time.'</td>';
 				print '<td align="right">'.$obj->Collation;
-				if (isset($obj->Collation) && ($obj->Collation == "utf8mb4_general_ci" || $obj->Collation == "utf8mb4_unicode_ci"))
+				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci"))))
 				{
 				    print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
 				}

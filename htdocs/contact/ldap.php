@@ -80,11 +80,11 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
+$form = new Form($db);
+
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
-
-$form = new Form($db);
 
 $head = contact_prepare_head($object);
 

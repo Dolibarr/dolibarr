@@ -48,19 +48,17 @@ $sortorder = GETPOST("sortorder", 'alpha');
 $max=3;
 
 
-
 /*
  * View
  */
 
 $companystatic=new Societe($db);
 $projectstatic=new Project($db);
-$userstatic=new User($db);
 $form=new Form($db);
 $formfile=new FormFile($db);
 
 $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
 llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
@@ -74,14 +72,15 @@ $titleall=$langs->trans("AllAllowedProjects");
 if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
 else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
 
-
 $morehtml='';
-$morehtml.='<form name="projectform">';
+$morehtml.='<form name="projectform" method="POST">';
+$morehtml.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $morehtml.='<SELECT name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml.='</form>';
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
 
@@ -164,7 +163,6 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-
 // Last modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
 $sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
@@ -179,6 +177,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
@@ -242,9 +241,12 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
+
+
+$companystatic=new Societe($db);    // We need a clean new object for next loop because current one has some properties set.
 
 
 // Open project per thirdparty
@@ -259,7 +261,7 @@ $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " WHERE p.entity IN (".getEntity('project', $conf->entity).")";
+$sql.= " WHERE p.entity IN (".getEntity('project').")";
 $sql.= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
 if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";

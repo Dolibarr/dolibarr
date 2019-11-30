@@ -54,7 +54,7 @@ class modHoliday extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "hr";
-		$this->module_position = '30';
+		$this->module_position = '42';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -202,14 +202,21 @@ class modHoliday extends DolibarrModules
 		$this->export_permission[$r]=array(array("holiday","read_all"));
 		$this->export_fields_array[$r]=array(
 			'd.rowid'=>"LeaveId",'d.fk_type'=>'TypeOfLeaveId','t.code'=>'TypeOfLeaveCode','t.label'=>'TypeOfLeaveLabel','d.fk_user'=>'UserID',
-			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.halfday'=>'HalfDay',
+			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.halfday'=>'HalfDay','none.num_open_days'=>'NbUseDaysCP',
 			'd.date_valid'=>'DateApprove','d.fk_validator'=>"UserForApprovalID",'ua.lastname'=>"UserForApprovalLastname",'ua.firstname'=>"UserForApprovalFirstname",
 			'ua.login'=>"UserForApprovalLogin",'d.description'=>'Description','d.statut'=>'Status'
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'd.rowid'=>"Numeric",'t.code'=>'Text', 't.label'=>'Text','d.fk_user'=>'Numeric',
+			'u.lastname'=>'Text','u.firstname'=>'Text','u.login'=>"Text",'d.date_debut'=>'Date','d.date_fin'=>'Date','none.num_open_days'=>'NumericCompute',
+			'd.date_valid'=>'Date','d.fk_validator'=>"Numeric",'ua.lastname'=>"Text",'ua.firstname'=>"Text",
+			'ua.login'=>"Text",'d.description'=>'Text','d.statut'=>'Numeric'
 		);
 		$this->export_entities_array[$r]=array(
 			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ua.lastname'=>'user','ua.firstname'=>'user','ua.login'=>'user'
 		);
 		$this->export_alias_array[$r]=array('d.rowid'=>"idholiday");
+		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
 		$this->export_dependencies_array[$r]=array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

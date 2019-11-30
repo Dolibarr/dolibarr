@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');					// id of record
 $mode = GETPOST('mode', 'aZ09');		 		// '' or 'tmp'
@@ -346,6 +347,8 @@ if ($action == 'create')
 	}
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" name="create_mvt" method="POST">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="confirm_create">' . "\n";
 	print '<input type="hidden" name="next_num_mvt" value="' . $next_num_mvt . '">' . "\n";
 	print '<input type="hidden" name="mode" value="_tmp">' . "\n";
@@ -441,7 +444,8 @@ if ($action == 'create')
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
 			print '<form name="setdate" action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
-			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
@@ -464,7 +468,8 @@ if ($action == 'create')
 		print '</td><td>';
 		if ($action == 'editjournal') {
 			print '<form name="setjournal" action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
-			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
@@ -487,7 +492,8 @@ if ($action == 'create')
 		print '</td><td>';
 		if ($action == 'editdocref') {
 			print '<form name="setdocref" action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
-			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
@@ -583,6 +589,8 @@ if ($action == 'create')
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
+			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="doc_date" value="' . $object->doc_date . '">' . "\n";
 			print '<input type="hidden" name="doc_type" value="' . $object->doc_type . '">' . "\n";
 			print '<input type="hidden" name="doc_ref" value="' . $object->doc_ref . '">' . "\n";
@@ -626,7 +634,7 @@ if ($action == 'create')
 						}
 						else
 						{
-							print '<input type="text" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . (GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation). '"></td>';
@@ -641,8 +649,8 @@ if ($action == 'create')
 						print '<td>' . $accountingaccount->getNomUrl(0, 1, 1, '', 0) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
 						print '<td>' . $line->label_operation. '</td>';
-						print '<td class="right">' . price($line->debit) . '</td>';
-						print '<td class="right">' . price($line->credit) . '</td>';
+						print '<td class="nowrap right">' . price($line->debit) . '</td>';
+						print '<td class="nowrap right">' . price($line->credit) . '</td>';
 
 						print '<td class="center">';
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
@@ -675,7 +683,7 @@ if ($action == 'create')
 					print $formaccounting->select_account('', 'accountingaccount_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 					// use setup of keypress to select thirdparty and this hang browser on large database.
 					if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
@@ -683,7 +691,7 @@ if ($action == 'create')
 					}
 					else
 					{
-						print '<input type="text" name="subledger_account" value="">';
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';

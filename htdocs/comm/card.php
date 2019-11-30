@@ -478,7 +478,7 @@ if ($object->id > 0)
         print '</td><td>';
         if ($action == 'editshipping')
         {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id');
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
         }
         else
         {
@@ -694,7 +694,7 @@ if ($object->id > 0)
             if ($num > 0)
             {
             	print '<div class="div-table-responsive-no-min">';
-            	print '<table class="noborder" width="100%">';
+            	print '<table class="noborder centpercent lastrecordtable">';
 
                 print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' <span class="badge">'.$num.'</span></a></td>';
@@ -779,7 +779,7 @@ if ($object->id > 0)
 				$db->free($resql2);
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></a></td>';
@@ -855,7 +855,7 @@ if ($object->id > 0)
         	$num = $db->num_rows($resql);
             if ($num > 0) {
             	print '<div class="div-table-responsive-no-min">';
-            	print '<table class="noborder" width="100%">';
+            	print '<table class="noborder centpercent lastrecordtable">';
 
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
@@ -919,7 +919,7 @@ if ($object->id > 0)
 			if ($num >0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num<=$MAXLIST?"":$MAXLIST)).'</td>';
@@ -989,7 +989,7 @@ if ($object->id > 0)
 			if ($num > 0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td>';
@@ -1062,7 +1062,7 @@ if ($object->id > 0)
 			if ($num > 0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").' <span class="badge">'.$num.'</span></a></td>';
@@ -1167,7 +1167,7 @@ if ($object->id > 0)
 			if ($num > 0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';

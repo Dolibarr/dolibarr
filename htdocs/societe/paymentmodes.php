@@ -481,7 +481,7 @@ if (empty($reshook))
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
 		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
 	}
-	https://dashboard.stripe.com/search?query=risk_level%3Ahighest&account=acct_1CVGWQLYhjvFj9Sz
+	
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->societe->creer;
@@ -637,6 +637,16 @@ if (empty($reshook))
 		elseif ($action == 'deletecard' && $source)
 		{
 			try {
+				if (preg_match('/pm_/', $source))
+					{
+            		$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
+					if ($payment_method)
+				    {
+					  $payment_method->detach();
+				    }
+				}
+				else
+				{
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				$card=$cu->sources->retrieve("$source");
 				if ($card)
@@ -644,6 +654,7 @@ if (empty($reshook))
 					// $card->detach();  Does not work with card_, only with src_
 					if (method_exists($card, 'detach')) $card->detach();
 					else $card->delete();
+				}
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -811,7 +822,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<br>';
 
 	// List of Stripe payment modes
-	if (! (empty($conf->stripe->enabled)))
+	if (! (empty($conf->stripe->enabled)) && $object->client)
 	{
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
@@ -1173,11 +1184,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print "</table>";
 		print "</div>";
+		print '<br>';
 	}
 
-
 	// List of bank accounts
-	print '<br>';
 
     $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
@@ -1197,8 +1207,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("BIC");
 		if (! empty($conf->prelevement->enabled))
 		{
-			print print_liste_field_titre("RUM");
-			print print_liste_field_titre("WithdrawMode");
+			print_liste_field_titre("RUM");
+			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "orders"));
+$langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
 if (!$user->admin)
 accessforbidden();
@@ -494,20 +494,16 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-$var=false;
 
-//if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-//{
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
-	print $langs->trans("IfSetToYesDontForgetPermission");
-	print '</td><td>';
-	print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
-	print '</td><td class="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td></tr>\n";
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
+print $langs->trans("IfSetToYesDontForgetPermission");
+print '</td><td>';
+print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 
-//}
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
@@ -563,6 +559,26 @@ else
 print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+// Option to add a quality/validation step, on products, after reception.
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
+print '<td></td>';
+print '<td class="center">';
+if ($conf->reception->enabled)
+{
+	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
+}
+else
+{
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
+	}
+}
+print "</td>\n</tr>\n";
 
 print '</table><br>';
 

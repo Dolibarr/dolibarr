@@ -17,7 +17,6 @@ AccountAccountingShort=Rekening
 AccountAccountingSuggest=Voorgesteld boekhoudkundige rekening
 CreateMvts=Nieuwe transactie maken
 UpdateMvts=Wijzigen van een transactie
-WriteBookKeeping=Wegschrijven van transacties naar grootboek.
 Processing=Verwerken
 EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn

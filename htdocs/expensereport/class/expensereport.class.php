@@ -572,8 +572,8 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6, paid=1";
-        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
+        $sql.= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -1132,11 +1132,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
-
 				if ($result < 0) {
 					$error++;
 				}
@@ -1152,15 +1151,20 @@ class ExpenseReport extends CommonObject
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
+			    	// Now we rename also files into index
+			    	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
+			    	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+			    	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {
@@ -1230,10 +1234,10 @@ class ExpenseReport extends CommonObject
 
         $this->date_debut = $this->db->jdate($objp->date_debut);
 
-        if ($this->fk_statut != 2)
+        if ($this->fk_statut != self::STATUS_VALIDATED)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 2";
+            $sql.= " SET fk_statut = ".self::STATUS_VALIDATED;
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_save_from_refuse sql=".$sql, LOG_DEBUG);
@@ -1268,11 +1272,12 @@ class ExpenseReport extends CommonObject
 
         // date approval
         $this->date_approve = $now;
-        if ($this->fk_statut != 5) {
-            $this->db->begin();
+        if ($this->fk_statut != self::STATUS_APPROVED)
+        {
+			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".$fuser->id.",";
             $sql.= " date_approve='".$this->db->idate($this->date_approve)."'";
             $sql.= ' WHERE rowid = '.$this->id;
             if ($this->db->query($sql))
@@ -1329,10 +1334,10 @@ class ExpenseReport extends CommonObject
 		$error = 0;
 
         // date de refus
-        if ($this->fk_statut != 99)
+		if ($this->fk_statut != self::STATUS_REFUSED)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".$fuser->id.",";
             $sql.= " date_refuse='".$this->db->idate($now)."',";
             $sql.= " detail_refuse='".$this->db->escape($details)."',";
             $sql.= " fk_user_approve = NULL";
@@ -1393,12 +1398,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
 
-        if ($this->fk_c_deplacement_statuts != 5)
+		if ($this->paid)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 5";
+            $sql.= " SET paid = 0, fk_statut = ".self::STATUS_APPROVED;
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -1455,12 +1460,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
         $this->date_cancel = $this->db->idate(gmmktime());
-        if ($this->fk_statut != ExpenseReport::STATUS_CANCELED)
+        if ($this->fk_statut != self::STATUS_CANCELED)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = ".ExpenseReport::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
+            $sql.= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
             $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
             $sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
             $sql.= ' WHERE rowid = '.$this->id;

@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CategorieTest extends PHPUnit_Framework_TestCase
+class CategorieTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;

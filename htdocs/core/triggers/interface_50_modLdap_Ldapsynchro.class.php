@@ -621,7 +621,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				if ($result <= 0)
+				{
+					$this->errors[]="ErrorLDAP ".$ldap->error;
+				}
 			}
 		}
 		elseif ($action == 'MEMBER_NEW_PASSWORD')
@@ -644,7 +647,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$result=$ldap->update($dn, $info, $user, $olddn);
 					}
 
-					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+					if ($result <= 0)
+					{
+						$this->errors[] = "ErrorLDAP ".$ldap->error;
+					}
 				}
 			}
 		}
@@ -668,7 +674,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$result=$ldap->update($dn, $info, $user, $olddn);
 					}
 
-					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+					if ($result <= 0)
+					{
+						$this->errors[] = "ErrorLDAP ".$ldap->error;
+					}
 				}
 			}
 		}
@@ -721,7 +730,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				if ($result <= 0)
+				{
+					$this->errors[] = "ErrorLDAP ".$ldap->error;
+				}
 			}
 		}
 
@@ -747,7 +759,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->add($dn, $info, $user);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				if ($result <= 0)
+				{
+					$this->errors[] = "ErrorLDAP ".$ldap->error;
+				}
 			}
 		}
 		elseif ($action == 'MEMBER_TYPE_MODIFY')
@@ -788,7 +803,9 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->update($dn, $info, $user, $olddn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				if ($result <= 0) {
+					$this->errors[] = "ErrorLDAP ".$ldap->error;
+				}
 			}
 		}
 		elseif ($action == 'MEMBER_TYPE_DELETE')
@@ -807,7 +824,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->delete($dn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				if ($result <= 0)
+				{
+					$this->errors[] = "ErrorLDAP ".$ldap->error;
+				}
 			}
 		}
 

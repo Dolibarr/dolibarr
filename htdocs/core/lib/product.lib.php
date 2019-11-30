@@ -127,7 +127,7 @@ function product_prepare_head($object)
             $h++;
         }
     }
-    
+
     // Tab to link resources
     if (!empty($conf->resource->enabled))
     {
@@ -481,39 +481,81 @@ function show_stats_for_company($product, $socid)
 }
 
 /**
+ *	Return translation label of a unit key.
+ *  Function kept for backward compatibility.
+ *
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ *	@return	string	   			         Unit string
+ * 	@see	measuringUnitString() formproduct->selectMeasuringUnits()
+ */
+function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $use_short_label = 0)
+{
+	return measuringUnitString($unit, $measuring_style, $scale, $use_short_label);
+}
+
+/**
  *	Return translation label of a unit key
  *
  *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *	@return	string	   			         Unit string
- * 	@see	formproduct->selectMeasuringUnits
+ * 	@see	formproduct->selectMeasuringUnits()
  */
-function measuring_units_string($unit, $measuring_style = '')
+function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
 {
 	global $langs, $db;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-	$measuringUnits= new CUnits($db);
-	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.rowid' => $unit,
-			't.unit_type' => $measuring_style,
-			't.active' => 1
-	));
+	global $measuring_unit_cache;
 
-	if ($result<0) {
-		return -1;
-	} else {
-		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
-			return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
-		} else {
-			return '';
+	if (empty($measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label]))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$measuringUnits= new CUnits($db);
+
+		if ($scale !== '')
+		{
+			$arrayforfilter = array(
+				't.scale' => $scale,
+				't.unit_type' => $measuring_style,
+				't.active' => 1
+			);
 		}
+		else
+		{
+			$arrayforfilter = array(
+				't.rowid' => $unit,
+				't.unit_type' => $measuring_style,
+				't.active' => 1
+			);
+		}
+		$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
+
+		if ($result < 0) {
+			return -1;
+		} else {
+			if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
+				if ($use_short_label) $labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
+				else $labeltoreturn = $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+			} else {
+				$labeltoreturn = '';
+			}
+			$measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label] = $labeltoreturn;
+			return $labeltoreturn;
+		}
+	}
+	else {
+		return $measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label];
 	}
 }
 
 /**
- *	Transform a given unit into the square of that unit, if known
+ *	Transform a given unit scale into the square of that unit, if known.
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
  * 	@see	formproduct->selectMeasuringUnits
  */
@@ -531,9 +573,9 @@ function measuring_units_squared($unit)
 
 
 /**
- *	Transform a given unit into the cube of that unit, if known
+ *	Transform a given unit scale into the cube of that unit, if known
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
  * 	@see	formproduct->selectMeasuringUnits
  */

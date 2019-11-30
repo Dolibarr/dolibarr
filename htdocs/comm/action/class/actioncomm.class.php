@@ -676,7 +676,7 @@ class ActionComm extends CommonObject
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
-                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+                $this->fk_project			= $obj->fk_project;		// To have fetch_projet method working
 
                 $this->societe->id			= $obj->fk_soc;			// deprecated
                 //$this->contact->id			= $obj->fk_contact;		// deprecated
@@ -1286,8 +1286,10 @@ class ActionComm extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		{
             $option = 'nolink';
+		}
 
         $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility

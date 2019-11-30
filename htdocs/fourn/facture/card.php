@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2019	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
@@ -831,6 +831,8 @@ if (empty($reshook))
 				// Auto calculation of date due if not filled by user
 				if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
 
+				$object->fetch_thirdparty();
+
 				// If creation from another object of another module
 				if (! $error && $_POST['origin'] && $_POST['originid'])
 				{
@@ -1414,58 +1416,61 @@ if (empty($reshook))
 		$resteapayer = $object->total_ttc - $totalpaye;
 
 		// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
-		//$ventilExportCompta = $object->getVentilExportCompta();
+		$ventilExportCompta = $object->getVentilExportCompta();
 
-	    // On verifie si aucun paiement n'a ete effectue
-	    if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0)
-	    {
-            $idwarehouse = GETPOST('idwarehouse');
+		if (! $ventilExportCompta)
+		{
+		    // On verifie si aucun paiement n'a ete effectue
+			if ($resteapayer == price2num($object->total_ttc, 'MT', 1) && $object->statut == FactureFournisseur::STATUS_VALIDATED)
+		    {
+	            $idwarehouse = GETPOST('idwarehouse');
 
-            $object->fetch_thirdparty();
+	            $object->fetch_thirdparty();
 
-            $qualified_for_stock_change=0;
-            if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
-            {
-                $qualified_for_stock_change=$object->hasProductsOrServices(2);
-            }
-            else
-            {
-                $qualified_for_stock_change=$object->hasProductsOrServices(1);
-            }
+	            $qualified_for_stock_change=0;
+	            if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	            {
+	                $qualified_for_stock_change=$object->hasProductsOrServices(2);
+	            }
+	            else
+	            {
+	                $qualified_for_stock_change=$object->hasProductsOrServices(1);
+	            }
 
-            // Check parameters
-            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
-            {
-                $langs->load("stocks");
-                if (! $idwarehouse || $idwarehouse == -1)
-                {
-                    $error++;
-                    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
-                    $action='';
-                }
-            }
+	            // Check parameters
+	            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+	            {
+	                $langs->load("stocks");
+	                if (! $idwarehouse || $idwarehouse == -1)
+	                {
+	                    $error++;
+	                    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+	                    $action='';
+	                }
+	            }
 
-            $object->setDraft($user, $idwarehouse);
+	            $object->setDraft($user, $idwarehouse);
 
-			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-			{
-				$outputlangs = $langs;
-				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-				if (! empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
+				// Define output language
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$model=$object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) dol_print_error($db, $result);
 				}
-				$model=$object->modelpdf;
-				$ret = $object->fetch($id); // Reload to get new records
 
-				$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result < 0) dol_print_error($db, $result);
+				$action='';
 			}
-
-			$action='';
 		}
 	}
 
@@ -2219,6 +2224,7 @@ else
 			elseif($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 			elseif($object->type == FactureFournisseur::TYPE_DEPOSIT) $type_fac = 'Deposit';
 			$text = $langs->trans('ConfirmConvertToReducSupplier', strtolower($langs->transnoentities($type_fac)));
+			$text .= '<br>'.$langs->trans('ConfirmConvertToReducSupplier2');
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 		}
 
@@ -2661,11 +2667,14 @@ else
 		else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
 		if ($calculationrule == 'totalofround') $calculationrulenum=1;
 		else  $calculationrulenum=2;
-		$s=$langs->trans("ReCalculate").' ';
-		$s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
-		$s.=' / ';
-		$s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
-		print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+		// Show link for "recalculate"
+		if ($object->getVentilExportCompta() == 0) {
+			$s = $langs->trans("ReCalculate").' ';
+			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+			$s .= ' / ';
+			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+		}
 		print '</div></td></tr>';
 
 		// Amount Local Taxes
@@ -3019,7 +3028,7 @@ else
 		if ($action != 'presend')
 		{
 			/*
-             * Boutons actions
+             * Buttons actions
              */
 
 			print '<div class="tabsAction">';
@@ -3029,11 +3038,20 @@ else
 																									  // modified by hook
 			if (empty($reshook))
 			{
-
 			    // Modify a validated invoice with no payments
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a></div>';
+					// We check if lines of invoice are not already transfered into accountancy
+					$ventilExportCompta = $object->getVentilExportCompta();	// Should be 0 since the sum of payments are zero. But we keep the protection.
+
+					if ($ventilExportCompta == 0)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Modify') . '</span></div>';
+					}
 				}
 
 				$discount = new DiscountAbsolute($db);
@@ -3042,7 +3060,7 @@ else
 	 	 		// Reopen a standard paid invoice
 				if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT
 					|| ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && empty($discount->id)))
-					&& ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+					&& ($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED))				// A paid invoice (partially or completely)
 				{
 					if (! $facidnext && $object->close_code != 'replaced' && $user->rights->fournisseur->facture->creer)	// Not replaced by another invoice
 					{
@@ -3105,7 +3123,7 @@ else
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() == 0) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">' . $langs->trans('ConvertToReduc') . '</a></div>';
 					}
 					// For deposit invoice
 					if ($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->paye == 1 && $resteapayer == 0 && $user->rights->fournisseur->facture->creer && empty($discount->id))

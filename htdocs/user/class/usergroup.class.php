@@ -552,13 +552,13 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
 		{
-			// Le fichier de ce module est deja charge
+			// Rights for this module are already loaded, so we leave
 			return;
 		}
 
 		if (! empty($this->all_permissions_are_loaded))
 		{
-			// Si les permissions ont deja ete chargees, on quitte
+			// We already loaded all rights for this group, so we leave
 			return;
 		}
 
@@ -618,7 +618,7 @@ class UserGroup extends CommonObject
 		}
 		else
 		{
-		    // Si module defini, on le marque comme charge en cache
+			// If module defined, we flag it as loaded into cache
 		    $this->_tab_loaded[$moduletag]=1;
 		}
 
@@ -867,7 +867,6 @@ class UserGroup extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
 
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
 
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("Group") . '</u><br>';
@@ -957,7 +956,7 @@ class UserGroup extends CommonObject
     public function _load_ldap_info()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf;
 
 		$info=array();
 

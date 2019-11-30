@@ -412,7 +412,7 @@ $titlepicto='title_setup';
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
-print $langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'</span><br><br>';
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')

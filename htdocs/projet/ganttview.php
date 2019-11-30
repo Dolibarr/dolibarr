@@ -132,7 +132,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -166,7 +166,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     // Description
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -204,9 +204,9 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 	}
 }
 
-$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-tasks', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id);
+$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-tasks paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id);
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'title_generic.png');

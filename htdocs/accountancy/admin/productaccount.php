@@ -238,7 +238,7 @@ elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA')
 }
 else
 {
-    $sql.=" p.accountancy_code_sell_intra = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
+    $sql.=" p.accountancy_code_sell_export = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
 }
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
@@ -323,7 +323,7 @@ if ($result)
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 
-	print $langs->trans("InitAccountancyDesc") . '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc") . '</span><br>';
 	print '<br>';
 
     // Select mode
@@ -462,7 +462,7 @@ if ($result)
     		// print '<td class="left">' . $obj->description . '</td>';
     		// TODO: we shoul set a user defined value to adjust user square / wide screen size
     		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
-    		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
+    		print '<td>' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		}
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT')

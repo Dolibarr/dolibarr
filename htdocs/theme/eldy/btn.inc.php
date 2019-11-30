@@ -5,13 +5,14 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 
 div.divButAction {
     margin-bottom: 1.4em;
 }
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
     margin-bottom: 1.4em !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
@@ -68,7 +69,7 @@ a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
 span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
 a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
 span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover {
-	padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none;
+	padding-<?php echo $left; ?>: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none;
 }
 
 .butAction:hover   {

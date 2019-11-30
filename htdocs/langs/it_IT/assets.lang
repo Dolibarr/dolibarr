@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Cespiti
+NewAsset = Nuovo cespite
+AccountancyCodeAsset = Codice contabilità (cespite)
+AccountancyCodeDepreciationAsset = Codice contabilità (conto ammortamento cespite)
+AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
+NewAssetType=Nuovo tipo cespite
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Tipo di cespite
+AssetsLines=Cespiti
+DeleteType=Elimina
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Visualizza la scheda dei tipi
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Cespiti
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Descrizione espiti
+
+#
+# Admin page
+#
+AssetsSetup = Configurazione cespiti
+Settings = Impostazioni
+AssetsSetupPage = Pagina configurazione cespiti
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=Tipo di cespite
+AssetsTypeId=Id tipo di cespite
+AssetsTypeLabel=Etichetta tipo di cespite
+AssetsTypes=Tipi di cespite
+
+#
+# Menu
+#
+MenuAssets = Cespiti
+MenuNewAsset = Nuovo cespite
+MenuTypeAssets = Tipi di cespite
+MenuListAssets = Elenco
+MenuNewTypeAssets = Nuovo
+MenuListTypeAssets = Elenco
+
+#
+# Module
+#
+NewAssetType=Nuovo tipo cespite
+NewAsset=Nuovo cespite

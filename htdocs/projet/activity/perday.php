@@ -515,7 +515,7 @@ $moreforfilter='';
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
-$includeonly='hierachyme';
+$includeonly='hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
 $moreforfilter.='</div>';
@@ -588,27 +588,27 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
-print '<td>'.$langs->trans("Task").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("Project").'</th>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("ThirdParty").'</th>';
+print '<th>'.$langs->trans("Task").'</th>';
 // TASK fields
 $extrafieldsobjectkey='projet_task';
 $extrafieldsobjectprefix='efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (! empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
+    print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (! empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
+    print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</td>';
-print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</th>';
+print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
@@ -645,8 +645,8 @@ if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['after
 elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
 elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-print '<td class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
-print '<td class="center">'.$langs->trans("Note").'</td>';
+print '<th class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</th>';
+print '<th class="center">'.$langs->trans("Note").'</th>';
 //print '<td class="center"></td>';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 

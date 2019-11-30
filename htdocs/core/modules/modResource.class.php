@@ -55,7 +55,7 @@ class modResource extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
-		$this->module_position = '20';
+		$this->module_position = '16';
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -313,7 +313,7 @@ class modResource extends DolibarrModules
 	 *
 	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-	private function loadTables()
+	protected function loadTables()
 	{
 		return $this->_load_tables('/resource/sql/');
 	}

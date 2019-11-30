@@ -28,7 +28,7 @@ AliasNames=سایر اسامی (نام تجاری، علامت‌تجاری و �
 AliasNameShort=سایر اسامی
 Companies=شرکت
 CountryIsInEEC=کشور مربوطه داخل جامعۀ اقتصادی اروپاست
-PriceFormatInCurrentLanguage=شکل مبالغ در زبان کنونی
+PriceFormatInCurrentLanguage=چگونگی نمایش قیمت در زبان و واحدپولی فعلی
 ThirdPartyName=نام شخص‌سوم
 ThirdPartyEmail=رایانامۀ شخص‌سوم
 ThirdParty=شخص‌سوم
@@ -54,6 +54,7 @@ Firstname=نام
 PostOrFunction=مرتبۀ شغلی
 UserTitle=عنوان
 NatureOfThirdParty=طبیعت شخص‌سوم
+NatureOfContact=Nature of Contact
 Address=نشانی
 State=ایالت / استان
 StateShort=استان
@@ -287,6 +288,7 @@ SupplierAbsoluteDiscountAllUsers=تخفیف مطلق فروشندگان(وارد
 SupplierAbsoluteDiscountMy=تخفیف مطلق فروشندگان(واردشدۀ خودشما)
 DiscountNone=هیچ‌یک
 Vendor=فروشنده
+Supplier=فروشنده
 AddContact=ساخت طرف‌تماس
 AddContactAddress=ساخت طرف‌تماس/نشانی
 EditContact=ویرایش طرف‌تماس

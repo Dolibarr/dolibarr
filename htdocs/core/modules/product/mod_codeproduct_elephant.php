@@ -214,6 +214,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$now=dol_now();
 
+		if (! empty($conf->global->PRODUCT_ELEPHANT_ADD_WHERE))
+		{
+			$where = ' AND ('.dol_string_nospecial(dol_string_unaccent($conf->global->PRODUCT_ELEPHANT_ADD_WHERE), '_', array(',', '@', '"', "|", ";", ":")).')';
+		}
+
 		$numFinal=get_next_value($db, $mask, 'product', $field, $where, '', $now);
 
 		return  $numFinal;

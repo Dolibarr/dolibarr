@@ -309,8 +309,10 @@ if ($action == 'delbookkeeping') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: list.php");
-		exit();
+
+		// Make a redirect to avoid to launch the delete later after a back button
+		header("Location: list.php".($param?'?'.$param:''));
+		exit;
 	}
 }
 if ($action == 'delbookkeepingyearconfirm') {
@@ -334,14 +336,14 @@ if ($action == 'delbookkeepingyearconfirm') {
 		{
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
-		Header("Location: list.php");
+
+		// Make a redirect to avoid to launch the delete later after a back button
+		header("Location: list.php".($param?'?'.$param:''));
 		exit;
 	}
 	else
 	{
 		setEventMessages("NoRecordDeleted", null, 'warnings');
-		Header("Location: list.php");
-		exit;
 	}
 }
 if ($action == 'delmouvconfirm') {
@@ -358,7 +360,7 @@ if ($action == 'delmouvconfirm') {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
-		Header("Location: list.php?noreset=1".($param?'&'.$param:''));
+		header("Location: list.php?noreset=1".($param?'&'.$param:''));
 		exit;
 	}
 }
@@ -481,7 +483,7 @@ if ($action == 'delbookkeepingyear') {
 			'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
 	print $formconfirm;
 }
 
@@ -510,7 +512,7 @@ if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
 } else {
     $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 }
-$newcardbutton.= $langs->trans("IncludeDocsAlreadyExported");
+$newcardbutton.= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
 $newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
 
@@ -581,7 +583,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))
 	}
 	else
 	{
-		print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
 	}
 	print '</div>';
 	print '<div class="nowrap">';
@@ -594,7 +596,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))
 	}
 	else
 	{
-		print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
 	}
 	print '</div>';
 	print '</td>';
@@ -761,7 +763,7 @@ if ($num > 0)
 		// Amount debit
 		if (! empty($arrayfields['t.debit']['checked']))
 		{
-			print '<td class="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
+			print '<td class="nowrap right">' . ($line->debit ? price($line->debit) : ''). '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
 			$totalarray['totaldebit'] += $line->debit;
@@ -770,7 +772,7 @@ if ($num > 0)
 		// Amount credit
 		if (! empty($arrayfields['t.credit']['checked']))
 		{
-			print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+			print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
 			$totalarray['totalcredit'] += $line->credit;
@@ -817,8 +819,8 @@ if ($num > 0)
 		// Action column
 		print '<td class="nowraponall center">';
         if(empty($line->date_export)) {
-		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
-		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
+		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . urlencode($line->piece_num) . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
+		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . urlencode($line->piece_num) . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
         }
         print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -841,8 +843,8 @@ if ($num > 0)
 					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				}
-				elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="right">'.price($totalarray['totaldebit']).'</td>';
-				elseif ($totalarray['totalcreditfield'] == $i) print '<td class="right">'.price($totalarray['totalcredit']).'</td>';
+				elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="nowrap right">'.price($totalarray['totaldebit']).'</td>';
+				elseif ($totalarray['totalcreditfield'] == $i) print '<td class="nowrap right">'.price($totalarray['totalcredit']).'</td>';
 				else print '<td></td>';
 		}
 		print '</tr>';
@@ -853,10 +855,12 @@ print "</table>";
 print '</div>';
 
 // TODO Replace this with mass delete action
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
-print '</div>';
-
+if ($user->rights->mouvements->creer)
+{
+	print '<div class="tabsAction tabsActionNoBottom">' . "\n";
+	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
+	print '</div>';
+}
 
 print '</form>';
 

@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Varlıklar
+NewAsset = Yeni varlık
+AccountancyCodeAsset = Muhasebe kodu (varlık)
+AccountancyCodeDepreciationAsset = Muhasebe kodu (amortisman varlık hesabı)
+AccountancyCodeDepreciationExpense = Muhasebe kodu (amortisman gideri hesabı)
+NewAssetType=Yeni varlık türü
+AssetsTypeSetup=Varlık türü ayarları
+AssetTypeModified=Varlık türü değiştirildi
+AssetType=Varlık türü
+AssetsLines=Varlıklar
+DeleteType=Sil
+DeleteAnAssetType=Bir varlık türü sil
+ConfirmDeleteAssetType=Bu varlık türünü silmek istediğinizden emin misiniz?
+ShowTypeCard='%s' türünü göster
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Varlıklar
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Varlık açıklaması
+
+#
+# Admin page
+#
+AssetsSetup = Varlık kurulumu
+Settings = Ayarlar
+AssetsSetupPage = Varlık kurulum sayfası
+ExtraFieldsAssetsType = Tamamlayıcı öznitelikler (Varlık türü)
+AssetsType=Varlık türü
+AssetsTypeId=Varlık türü ID'si
+AssetsTypeLabel=Varlık türü etiketi
+AssetsTypes=Varlık türleri
+
+#
+# Menu
+#
+MenuAssets = Varlıklar
+MenuNewAsset = Yeni varlık
+MenuTypeAssets = Varlık türleri
+MenuListAssets = Liste
+MenuNewTypeAssets = Yeni
+MenuListTypeAssets = Liste
+
+#
+# Module
+#
+NewAssetType=Yeni varlık türü
+NewAsset=Yeni varlık

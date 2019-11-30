@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'hrm'));
+$langs->loadLangs(array('users', 'holiday', 'hrm'));
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -61,6 +61,18 @@ if ($user->societe_id > 0)	// Protection if external user
 }
 $result = restrictedArea($user, 'holiday', $id, '');
 $id = GETPOST('id', 'int');
+// If we are on the view of a specific user
+if ($id > 0)
+{
+    $canread=0;
+    if ($id == $user->id) $canread=1;
+    if (! empty($user->rights->holiday->read_all)) $canread=1;
+    if (! empty($user->rights->holiday->read) && in_array($id, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -104,6 +116,7 @@ $search_type         = GETPOST('search_type', 'int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	'cp.ref'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname'
@@ -185,10 +198,7 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 $order = $db->order($sortfield, $sortorder).$db->plimit($limit + 1, $offset);
 
 // Ref
-if(!empty($search_ref))
-{
-    $filter.= " AND cp.rowid = ".(int) $db->escape($search_ref);
-}
+if (!empty($search_ref)) $filter.= natural_search("cp.ref", $search_ref);
 // Start date
 $filter.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date
@@ -218,7 +228,6 @@ if (!empty($sall))
 }
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',', $childids).')';
-
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -319,11 +328,12 @@ if ($id > 0)		// For user tab
 
 	dol_fiche_end();
 
+	// Buttons for actions
+
 	print '<div class="tabsAction">';
 
 	$canedit=(($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
 
-	// Boutons d'actions
 	if ($canedit)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';

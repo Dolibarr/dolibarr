@@ -130,13 +130,13 @@ if ($action=='install')
     }
     else
     {
-        if (! preg_match('/\.zip$/i', $original_file))
+        if (! $error && ! preg_match('/\.zip$/i', $original_file))
         {
             $langs->load("errors");
             setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage", $original_file), null, 'errors');
             $error++;
         }
-    	if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i', $original_file))
+    	if (! $error && ! preg_match('/^(module[a-zA-Z0-9]*|theme)_.*\-([0-9][0-9\.]*)\.zip$/i', $original_file))
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'module_*-x.y*.zip'), null, 'errors');
@@ -180,13 +180,13 @@ if ($action=='install')
             {
                 // Now we move the dir of the module
                 $modulename=preg_replace('/module_/', '', $original_file);
-                $modulename=preg_replace('/\-[\d]+\.[\d]+.*$/', '', $modulename);
+                $modulename=preg_replace('/\-([0-9][0-9\.]*)\.zip$/i', '', $modulename);
                 // Search dir $modulename
-                $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename;
+                $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename;		// Example .../mymodule
                 //var_dump($modulenamedir);
                 if (! dol_is_dir($modulenamedir))
                 {
-                    $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename;
+                	$modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename;	// Example .../htdocs/mymodule
                     //var_dump($modulenamedir);
                     if (! dol_is_dir($modulenamedir))
                     {
@@ -197,8 +197,14 @@ if ($action=='install')
 
                 if (! $error)
                 {
+                	// TODO Make more test
+                }
+
+                // Now we install the module
+                if (! $error)
+                {
                     //var_dump($dirins);
-                    @dol_delete_dir_recursive($dirins.'/'.$modulename);
+                    @dol_delete_dir_recursive($dirins.'/'.$modulename);	// delete the zip file
                     dol_syslog("Uncompress of module file is a success. We copy it from ".$modulenamedir." into target dir ".$dirins.'/'.$modulename);
                     $result=dolCopyDir($modulenamedir, $dirins.'/'.$modulename, '0444', 1);
                     if ($result <= 0)
@@ -900,7 +906,8 @@ if ($mode == 'marketplace')
 
 	    ?>
 	            <form method="POST" class="centpercent" id="searchFormList" action="<?php echo $dolistore->url ?>">
-	            	<input type="hidden" name="mode" value="marketplace" />
+					<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken'] ?>">
+	            	<input type="hidden" name="mode" value="marketplace">
 	                <div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
 	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 	                </div>
@@ -1026,15 +1033,35 @@ if ($mode == 'deploy')
 
 			print $langs->trans("YouCanSubmitFile");
 
-			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
-			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			$max=$conf->global->MAIN_UPLOAD_DOC;		// In Kb
+			$maxphp=@ini_get('upload_max_filesize');	// In unknown
 			if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
 			if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
 			if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
 			if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
-			// Now $max and $maxphp are in Kb
+			$maxphp2=@ini_get('post_max_size');			// In unknown
+			if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+			if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+			if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+			if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+			// Now $max and $maxphp and $maxphp2 are in Kb
 			$maxmin = $max;
-			if ($maxphp > 0) $maxmin=min($max, $maxphp);
+			$maxphptoshow = $maxphptoshowparam = '';
+			if ($maxphp > 0)
+			{
+				$maxmin=min($max, $maxphp);
+				$maxphptoshow = $maxphp;
+				$maxphptoshowparam = 'upload_max_filesize';
+			}
+			if ($maxphp2 > 0)
+			{
+				$maxmin=min($max, $maxphp2);
+				if ($maxphp2 < $maxphp)
+				{
+					$maxphptoshow = $maxphp2;
+					$maxphptoshowparam = 'post_max_size';
+				}
+			}
 
 			if ($maxmin > 0)
 			{
@@ -1062,7 +1089,7 @@ if ($mode == 'deploy')
 			    {
 			        $langs->load('other');
 			        print ' ';
-			        print info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphp), 1);
+			        print info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow, $maxphptoshowparam), 1);
 			    }
 			}
 			else

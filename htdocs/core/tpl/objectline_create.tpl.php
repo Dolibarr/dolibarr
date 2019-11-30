@@ -38,7 +38,6 @@ if (empty($object) || ! is_object($object)) {
     exit;
 }
 
-
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
 {
@@ -110,7 +109,9 @@ if ($nolinesbefore) {
 	{
 	?>
 		<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
-	<?php } ?>
+	<?php
+	}
+	?>
 	<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
@@ -137,22 +138,20 @@ if ($nolinesbefore) {
 		print '<td class="linecolcycleref2 right"></td>';
 	}
     if (! empty($usemargins))
-
 	{
-		if (!empty($user->rights->margins->creer)) {
-		?>
-		<td class="margininfos linecolmargin1 right">
-		<?php
+		if (empty($user->rights->margins->creer)) {
+			$colspan++;
 		}
-		else $colspan++;
-
-		if ($conf->global->MARGIN_TYPE == "1")
-			echo $langs->trans('BuyingPrice');
-		else
-			echo $langs->trans('CostPrice');
-		echo '</td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		else {
+			print '<td class="margininfos linecolmargin1 right">';
+			if ($conf->global->MARGIN_TYPE == "1")
+				echo $langs->trans('BuyingPrice');
+			else
+				echo $langs->trans('CostPrice');
+			echo '</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		}
 	}
 	?>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -246,15 +245,35 @@ if ($nolinesbefore) {
 
 		if (empty($senderissupplier))
 		{
+			$statustoshow = 1;
 			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 			}
 			else
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
+
+			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
+			{
+				?>
+	            <script type="text/javascript">
+	                $(document).ready(function(){
+		                	// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
+		                	$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+								console.log('focus on a select2');
+								if ($(this).attr('aria-labelledby') == 'select2-idprod-container')
+								{
+									console.log('open combo');
+			                	  	$('#idprod').select2('open');
+								}
+		                	});
+	                });
+	            </script>
+	            <?php
+		    }
 		}
 		else
 		{
@@ -277,21 +296,24 @@ if ($nolinesbefore) {
 		    }
 
 		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
-            ?>
-            <script type="text/javascript">
 
-                $(document).ready(function(){
-
-                        $(document).on('keypress',function(e) {
-                            if ($('input:focus').length == 0) {
-                                $('#idprodfournprice').select2('open');
-                            }
-                        });
-
-
-                });
-            </script>
-            <?php
+		    if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
+		    {
+			    ?>
+	            <script type="text/javascript">
+	                $(document).ready(function(){
+		                	// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
+		                	$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+								//console.log('focus on a select2');
+								if ($(this).attr('aria-labelledby') == 'select2-idprodfournprice-container')
+								{
+			                	  	$('#idprodfournprice').select2('open');
+								}
+		                	});
+	                });
+	            </script>
+	            <?php
+		    }
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';
@@ -351,7 +373,7 @@ if ($nolinesbefore) {
 	{
 		$coldisplay++;
         ?>
-		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat right"><?php
@@ -415,20 +437,16 @@ if ($nolinesbefore) {
 	{
 		if (!empty($user->rights->margins->creer)) {
 		    $coldisplay++;
-		?>
-		<td class="nobottom margininfos linecolmargin right">
-			<!-- For predef product -->
-			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
-			<?php } ?>
-			<!-- For free product -->
-			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
-		</td>
-		<?php
-		}
-
-		if ($user->rights->margins->creer)
-		{
+			?>
+			<td class="nobottom margininfos linecolmargin right">
+				<!-- For predef product -->
+				<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
+				<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp" style="display: none;"></select>
+				<?php } ?>
+				<!-- For free product -->
+				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
+			</td>
+			<?php
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
 				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate", 'alpha', 2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';

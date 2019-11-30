@@ -325,8 +325,8 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
 		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
 		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
-		$sql.= ", ".$this->weight_units;
-		$sql.= ", ".$this->size_units;
+		$sql.= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
+		$sql.= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
@@ -602,7 +602,7 @@ class Expedition extends CommonObject
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
 				$this->libelle_incoterms    = $obj->libelle_incoterms;
-
+								
 				$this->db->free($result);
 
 				if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
@@ -813,13 +813,18 @@ class Expedition extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// in order not to lose the attached files
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->expedition->dir_output.'/sending/'.$oldref;
 				$dirdest = $conf->expedition->dir_output.'/sending/'.$newref;
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -1149,10 +1154,11 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 *  @param  int  $notrigger Disable triggers
-	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *  @param  int  $notrigger 			Disable triggers
+     *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function delete($notrigger = 0)
+	public function delete($notrigger = 0, $also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 
@@ -1184,7 +1190,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT)
+		if (! $error && $conf->stock->enabled &&
+			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
+			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -1371,6 +1379,7 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
+		$this->lines=array();
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";

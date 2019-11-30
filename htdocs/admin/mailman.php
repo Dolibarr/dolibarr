@@ -158,8 +158,10 @@ $head = mailmanspip_admin_prepare_head();
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
 
-    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
+    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
 
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
@@ -227,14 +229,21 @@ else
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="testsubscribe">';
+
     print $langs->trans("TestSubscribe").'<br>';
     print $langs->trans("EMail").' <input type="email" class="flat" name="testsubscribeemail" value="'.GETPOST('testsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
+
     print '</form>';
+
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="testunsubscribe">';
+
     print $langs->trans("TestUnSubscribe").'<br>';
     print $langs->trans("EMail").' <input type="email" class="flat" name="testunsubscribeemail" value="'.GETPOST('testunsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
+
     print '</form>';
 }
 

@@ -23,6 +23,7 @@
 
 define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
+define('USEDOLIBARREDITOR', 1);
 
 header('X-XSS-Protection:0');
 
@@ -213,11 +214,11 @@ $htmlheadercontentdefault.='-->'."\n";
  */
 
 // Protections
-if ($action == 'updatesource' && (GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')))
+if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') ||  GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 {
-    $action = 'preview';    // To avoid to update another page or another site when we click on button to select another site or page.
+    $action = 'preview';    // To avoid to make an action on another page or another site when we click on button to select another site or page.
 }
-if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
+if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
     $pageid=0;
     if ($action == 'addsite') $action = 'preview';
@@ -288,7 +289,7 @@ if ($action == 'addsite')
 {
 	$db->begin();
 
-    if (GETPOST('virtualhost', 'alpha') && ! preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
+	if (GETPOST('virtualhost', 'alpha') && ! preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
     {
         $error++;
         setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
@@ -364,6 +365,7 @@ if ($action == 'addcontainer')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		//if (! preg_match('/^http/', $urltograb) && ! preg_match('/^file/', $urltograb))
 		if (! preg_match('/^http/', $urltograb))
 		{
 			$error++;
@@ -377,6 +379,7 @@ if ($action == 'addcontainer')
 			// Clean url to grab, so url can be
 			// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
 			$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
+			//$urltograbwithoutdomainandparam = preg_replace('/^file:\/\/[^\/]+\/?/i', '', $urltograb);
 			$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
 			if (empty($urltograbwithoutdomainandparam) && ! preg_match('/\/$/', $urltograb))
 			{
@@ -967,14 +970,16 @@ if ($action == 'updatecss')
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent.= "ob_start();\n";
+    		$csscontent.= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
     		$csscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
     		$csscontent.= "header('Content-type: text/css');\n";
+    		$csscontent.= "}\n";
     		$csscontent.= "// END PHP ?>\n";
 
     		$csscontent.= GETPOST('WEBSITE_CSS_INLINE', 'none');
 
     		$csscontent.= "\n".'<?php // BEGIN PHP'."\n";
-    		$csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    		$csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
     		$csscontent.= "// END PHP ?>"."\n";
 
     		dol_syslog("Save css content into ".$filecss);
@@ -1007,7 +1012,7 @@ if ($action == 'updatecss')
     		$jscontent.= GETPOST('WEBSITE_JS_INLINE', 'none');
 
     		$jscontent.= "\n".'<?php // BEGIN PHP'."\n";
-    		$jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    		$jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
     		$jscontent.= "// END PHP ?>"."\n";
 
     		dol_syslog("Save js content into ".$filejs);
@@ -1040,7 +1045,7 @@ if ($action == 'updatecss')
     		$robotcontent.= GETPOST('WEBSITE_ROBOT', 'none');
 
     		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
-    	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
     	    $robotcontent.= "// END PHP ?>"."\n";*/
 
     		dol_syslog("Save file robot into ".$filerobot);
@@ -1088,7 +1093,6 @@ if ($action == 'updatecss')
        			$error++;
        			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
        		}
-
 
     		// Message if no error
     		if (! $error)
@@ -1600,6 +1604,11 @@ if ($action == 'exportsite')
 		readfile($fileofzip);
 		exit;
 	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
 }
 
 // Import site
@@ -2064,7 +2073,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 					array('type' => 'checkbox', 'name' => 'delete_also_js', 'label' => $langs->trans("DeleteAlsoJs"), 'value' => 0),
 					array('type' => 'checkbox', 'name' => 'delete_also_medias', 'label' => $langs->trans("DeleteAlsoMedias"), 'value' => 0),
-					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2079,7 +2088,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite")  ,'value'=> 'copy_of_'.$object->ref),
 				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
-				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2093,7 +2102,7 @@ if (! GETPOST('hide_websitemenu'))
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'az09') ? GETPOST('newlang', 'az09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
@@ -2799,7 +2808,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if ($action != 'createcontainer')
 	{
 	    print '<tr><td>';
-	    print $langs->trans('LastModificationAuthor');
+	    print $langs->trans('UserModif');
 	    print '</td><td>';
 	    if ($pageusermodifid > 0)
 	    {
@@ -2949,6 +2958,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// Ouput page under the Dolibarr top menu
 		$objectpage->fetch($pageid);
+
 		$jscontent = @file_get_contents($filejs);
 
 		$out = '<!-- Page content '.$filetpl.' : Div with (Htmlheader/Style of page from database + CSS Of website from file + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
@@ -2963,6 +2973,25 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.="\n<html><head>\n";
 		$out.="<!-- htmlheader/style of page from database -->\n";
 		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
+
+		$out.="<!-- htmlheader/style of website from files -->\n";
+		// TODO Keep only the <link> or the <script> tags
+		/*
+		$htmlheadercontent = @file_get_contents($filehtmlheader);
+		$dom = new DOMDocument;
+		@$dom->loadHTML($htmlheadercontent);
+		$styles = $dom->getElementsByTagName('link');
+		$scripts = $dom->getElementsByTagName('script');
+		foreach($styles as $stylescursor)
+		{
+			$out.=$stylescursor;
+		}
+		foreach($scripts as $scriptscursor)
+		{
+			$out.=$scriptscursor;
+		}
+		*/
+
 		$out.="</head>\n";
 		$out.="\n<body>";
 
@@ -3009,7 +3038,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
 		if (! empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 		{
-			define('USEDOLIBARREDITOR', 1);
 			//var_dump($filetpl);
 			$filephp = $filetpl;
 			ob_start();

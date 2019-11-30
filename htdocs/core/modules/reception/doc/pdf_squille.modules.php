@@ -121,15 +121,7 @@ class pdf_squille extends ModelePdfReception
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("propal");
-		$outputlangs->load("deliveries");
-        $outputlangs->load("receptions");
-		$outputlangs->load("productbatch");
+		$outputlangs->loadLangs(array("main","dict","companies","bills","products","propal","deliveries","receptions","productbatch","sendings"));
 
 		$nblignes = count($object->lines);
 
@@ -459,12 +451,12 @@ class pdf_squille extends ModelePdfReception
 					$weighttxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->weight)
 					{
-					    $weighttxt=round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuring_units_string($object->lines[$i]->product->weight_units, "weight");
+						$weighttxt=round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->product->weight_units);
 					}
 					$voltxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->volume)
 					{
-					    $voltxt=round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuring_units_string($object->lines[$i]->product->volume_units?$object->lines[$i]->product->volume_units:0, "volume");
+						$voltxt=round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->product->volume_units?$object->lines[$i]->product->volume_units:0);
 					}
 
 					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt, 0, 0, false, true, 'C');
@@ -592,6 +584,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -604,7 +597,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param	int			$totalOrdered	Total ordered
 	 *	@return int							Position pour suite
 	 */
-	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -695,6 +688,7 @@ class pdf_squille extends ModelePdfReception
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -707,7 +701,7 @@ class pdf_squille extends ModelePdfReception
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -777,6 +771,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -786,7 +781,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1028,6 +1023,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1037,7 +1033,7 @@ class pdf_squille extends ModelePdfReception
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

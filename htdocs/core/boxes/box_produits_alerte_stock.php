@@ -179,12 +179,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 	               	}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => $price,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap"',
+                        'td' => 'class="right"',
                         'text' => $price_base_type,
                     );
 

@@ -972,7 +972,10 @@ class ExtraFields
 
 		$out='';
 
-		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
+		if (! preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
+		{
+			$keyprefix = $keyprefix.'options_';
+		}
 
 		if (! empty($extrafieldsobjectkey))
 		{
@@ -1408,7 +1411,7 @@ class ExtraFields
                         // current object id can be use into filter
                         if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
                             $InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
-                        } elseif (preg_match("#^.*list.php$#", $_SERVER["DOCUMENT_URI"])) {
+                        } elseif (preg_match("#^.*list.php$#", $_SERVER["PHP_SELF"])) {
                             // Pattern for word=$ID$
                             $word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
@@ -1442,13 +1445,13 @@ class ExtraFields
                                     $InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
                                 } else {
                                     if (!empty($matchCondition[1])) {
-                                        $boolCond = (($matchCondition[1] == "AND") ? ' AND 1 ' : ' OR 0 ');
+                                        $boolCond = (($matchCondition[1] == "AND") ? ' AND TRUE ' : ' OR FALSE ');
                                         $InfoFieldList[4] = str_replace($matchCondition[0], $boolCond . $matchCondition[3], $InfoFieldList[4]);
                                     } elseif (!empty($matchCondition[3])) {
-                                        $boolCond = (($matchCondition[3] == "AND") ? ' 1 AND ' : ' 0 OR');
+                                        $boolCond = (($matchCondition[3] == "AND") ? ' TRUE AND ' : ' FALSE OR');
                                         $InfoFieldList[4] = str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
                                     } else {
-                                        $InfoFieldList[4] = 1;
+                                        $InfoFieldList[4] = " TRUE ";
                                     }
                                 }
 
@@ -1554,7 +1557,7 @@ class ExtraFields
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
 		}
 		elseif ($type == 'password')
 		{
@@ -1624,6 +1627,8 @@ class ExtraFields
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
+		//if ($computed) $value =		// $value is already calculated into $value before calling this method
+		
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -2003,7 +2008,7 @@ class ExtraFields
 					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
 				    if ((! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
 				        || (! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
-						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
+				        || (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 						$nofillrequired++;

@@ -97,6 +97,12 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+if (empty($local))
+{
+	accessforbidden('Parameter localTaxType is missing');
+	exit;
+}
+
 
 
 /*
@@ -122,9 +128,10 @@ foreach ($listofparams as $param)
 
 llxHeader('', $langs->trans("LocalTaxReport"), '', '', 0, 0, '', '', $morequerystring);
 
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-$fsearch.='  <input type="hidden" name="localTaxType" value="'.$local.'">';
+$fsearch = '<!-- hidden fields for form -->';
+$fsearch.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.= '<input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch.= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 
 $name=$langs->transcountry($local==1?"LT1ReportByQuarters":"LT2ReportByQuarters", $mysoc->country_code);
 $calcmode='';
@@ -161,7 +168,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 }
 */
-if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.=$langs->trans("ThisIsAnEstimatedValue");
 
 // Customers invoices
 $elementcust=$langs->trans("CustomersInvoices");
@@ -186,15 +193,14 @@ if ($mysoc->tva_assuj) {
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
-
 if($local==1){
-	$vatcust=$langs->transcountry("LocalTax1", $mysoc->country_code);
-	$vatsup=$langs->transcountry("LocalTax1", $mysoc->country_code);
-	$vatexpensereport=$langs->transcountry("LocalTax1", $mysoc->country_code);
+	$vatcust=$langs->transcountry("LT1", $mysoc->country_code);
+	$vatsup=$langs->transcountry("LT1", $mysoc->country_code);
+	$vatexpensereport=$langs->transcountry("LT1", $mysoc->country_code);
 }else{
-	$vatcust=$langs->transcountry("LocalTax2", $mysoc->country_code);
-	$vatsup=$langs->transcountry("LocalTax2", $mysoc->country_code);
-	$vatexpensereport=$langs->transcountry("LocalTax2", $mysoc->country_code);
+	$vatcust=$langs->transcountry("LT2", $mysoc->country_code);
+	$vatsup=$langs->transcountry("LT2", $mysoc->country_code);
+	$vatexpensereport=$langs->transcountry("LT2", $mysoc->country_code);
 }
 
 // VAT Received and paid

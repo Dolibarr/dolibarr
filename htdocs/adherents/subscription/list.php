@@ -142,7 +142,7 @@ $accountstatic=new Account($db);
 $now=dol_now();
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut, d.fk_adherent_type as type,";
 $sql.= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql.= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql.= " c.fk_bank as bank, c.note,";
@@ -225,11 +225,11 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($statut != '')    $param.="&statut=".urlencode($statut);
-if ($search_type) $param.="&search_type=".urlencode($search_type);
+if ($search_type)     $param.="&search_type=".urlencode($search_type);
 if ($date_select)     $param.="&date_select=".urlencode($date_select);
 if ($search_lastname) $param.="&search_lastname=".urlencode($search_lastname);
 if ($search_login)    $param.="&search_login=".urlencode($search_login);
-if ($search_acount)   $param.="&search_account=".urlencode($search_account);
+if ($search_account)  $param.="&search_account=".urlencode($search_account);
 if ($search_amount)   $param.="&search_amount=".urlencode($search_amount);
 if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -298,33 +298,33 @@ if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 if (! empty($arrayfields['d.ref']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="4"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 }
 
 // Type
 if (! empty($arrayfields['d.fk_type']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'" size="7">';
+	print '<input class="flat maxwidth50" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 	print'</td>';
 }
 
 if (! empty($arrayfields['d.lastname']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="7"></td>';
+	print '<input class="flat maxwidth75" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 }
 
 if (! empty($arrayfields['d.firstname']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'" size="12"></td>';
+	print '<input class="flat maxwidth75" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
 
 if (! empty($arrayfields['d.login']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+	print '<input class="flat maxwidth75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
 
 if (! empty($arrayfields['t.libelle']['checked']))
@@ -409,23 +409,23 @@ if (! empty($arrayfields['d.login']['checked']))
 }
 if (! empty($arrayfields['t.libelle']['checked']))
 {
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.note", $param, "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.bank']['checked']))
 {
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $pram, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['c.dateadh']['checked']))
 {
-	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
 }
 if (! empty($arrayfields['c.datef']['checked']))
 {
-	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
 }
 if (! empty($arrayfields['d.amount']['checked']))
 {
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "c.subscription", $param, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "c.subscription", $param, "", '', $sortfield, $sortorder, 'right ');
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -457,9 +457,11 @@ while ($i < min($num, $limit))
 	$adherent->statut=$obj->statut;
 	$adherent->login=$obj->login;
 	$adherent->photo=$obj->photo;
+	$adherent->typeid=$obj->type;
 
+	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
     $adht = new AdherentType($db);
-	$adht->fetch($obj->fk_type);
+    $adht->fetch($typeid);
 
 	print '<tr class="oddeven">';
 
@@ -473,7 +475,10 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['d.fk_type']['checked']))
 	{
         print '<td>';
-        if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
+        if ($typeid > 0)
+        {
+        	print $adht->getNomUrl(1);
+        }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}

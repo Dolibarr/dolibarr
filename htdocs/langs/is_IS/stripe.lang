@@ -1,30 +1,28 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Eftirfarandi vefslóðir eru að bjóða upp síðu til viðskiptavina til að framkvæma greiðslu á Dolibarr mótmæla
 PaymentForm=Greiðsla mynd
-WelcomeOnPaymentPage=Velkomin á netinu greiðsluþjónustu okkar
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Þessi skjár leyfa þér að gera á netinu greiðslu til %s.
 ThisIsInformationOnPayment=Þetta eru upplýsingar um greiðslu að gera
 ToComplete=Til að ljúka
 YourEMail=Netfang til staðfestingar greiðslu
-STRIPE_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=Lánveitandi
 PaymentCode=Greiðsla kóða
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=Næsti
 ToOfferALinkForOnlinePayment=Slóð fyrir %s greiðslu
-ToOfferALinkForOnlinePaymentOnOrder=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir röð
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
 ToOfferALinkForOnlinePaymentOnInvoice=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir reikning
 ToOfferALinkForOnlinePaymentOnContractLine=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir samning línu
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir ókeypis upphæð
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir aðild áskrift
 YouCanAddTagOnUrl=Þú getur einnig bætt við url stika <b>& tag = <i>gildi</i></b> til allir af þessir URL (einungis fyrir frjáls greiðslu) til að bæta tag þína eigin greiðslu athugasemd.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
-YourPaymentHasBeenRecorded=Þessi síða staðfestir að greiðsla hefur verið skráð. Þakka þér.
-YourPaymentHasNotBeenRecorded=Þú greiðsla hefur ekki verið skráð og viðskipti hefur verið aflýst. Þakka þér.
 AccountParameter=Skráningin breytur
 UsageParameter=Notkun breytur
 InformationToFindParameters=Hjálp til að finna %s upplýsingar reiknings þíns
@@ -42,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Import Stripe payments
-ExampleOfTestCreditCard=Example of credit card for test: %s (valid), %s (error CVC), %s (expired), %s (charge fails)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -63,3 +61,9 @@ ConfirmDeleteCard=Are you sure you want to delete this Credit or Debit card?
 CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

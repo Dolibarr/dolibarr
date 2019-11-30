@@ -393,7 +393,7 @@ abstract class ModeleAccountancyCode
  *  @param  int			$hidedesc       Hide description
  *  @param  int			$hideref        Hide ref
  *	@return int        					<0 if KO, >0 if OK
- *  @deprecated Use the new function generateDocument of Facture class
+ *  @deprecated Use the new function generateDocument of Objects class
  *  @see Societe::generateDocument()
  */
 function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)

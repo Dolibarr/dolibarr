@@ -190,7 +190,7 @@ else print "var received=0;";
 </div>
 <?php } ?>
 <div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></center>
+    <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></span></center>
 </div>
 <div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></font></span></center>
@@ -225,7 +225,7 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
 ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[0]->label); ?></button>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[0]->code); ?></button>
 <?php } else { ?>
 <button type="button" class="calcbutton2"><?php echo $langs->trans("NoPaimementModesDefined");?></button>
 <?php } ?>
@@ -238,7 +238,7 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
 ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[1]->label); ?></button>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[1]->code); ?></button>
 <?php } else {
 $button = array_pop($action_buttons);
 ?>
@@ -253,7 +253,7 @@ $button = array_pop($action_buttons);
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
 ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[2]->label); ?></button>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[2]->code); ?></button>
 <?php } else { ?>
 <?php
 $button = array_pop($action_buttons);
@@ -267,7 +267,7 @@ $button = array_pop($action_buttons);
 $i=3;
 while($i < count($paiements)){
 ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans($paiements[$i]->label); ?></button>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[$i]->code); ?></button>
 <?php
 	$i=$i+1;
 }

@@ -262,24 +262,29 @@ class PriceParser
             return -1;
         }
 
-        //Get the supplier min
-        $productFournisseur = new ProductFournisseur($this->db);
-        $supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
+		//Get the supplier min price
+		$productFournisseur = new ProductFournisseur($this->db);
+		$res = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
+		if ($res < 1) {
+			$this->error_parser = array(25, null);
+			return -1;
+		}
+		$supplier_min_price = $productFournisseur->fourn_unitprice;
 
-        //Accessible values by expressions
-        $extra_values = array_merge($extra_values, array(
-            "supplier_min_price" => $supplier_min_price,
-        ));
+		//Accessible values by expressions
+		$extra_values = array_merge($extra_values, array(
+			"supplier_min_price" => $supplier_min_price,
+		));
 
-        //Parse the expression and return the price, if not error occurred check if price is higher than min
-        $result = $this->parseExpression($product, $price_expression->expression, $extra_values);
-        if (empty($this->error_parser)) {
-            if ($result < $product->price_min) {
-                $result = $product->price_min;
-            }
-        }
-        return $result;
-    }
+		//Parse the expression and return the price, if not error occurred check if price is higher than min
+		$result = $this->parseExpression($product, $price_expression->expression, $extra_values);
+		if (empty($this->error_parser)) {
+			if ($result < $product->price_min) {
+				$result = $product->price_min;
+			}
+		}
+		return $result;
+	}
 
     /**
      *	Calculates supplier product price based on product supplier price and associated expression

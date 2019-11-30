@@ -403,9 +403,13 @@ class DoliDBSqlite3 extends DoliDB
      */
     public function query($query, $usesavepoint = 0, $type = 'auto')
     {
+    	global $conf;
+
         $ret=null;
+
         $query = trim($query);
-        $this->error = 0;
+
+        $this->error = '';
 
         // Convert MySQL syntax to SQLite syntax
         if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
@@ -449,7 +453,12 @@ class DoliDBSqlite3 extends DoliDB
         }
         //print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-        dol_syslog('sql='.$query, LOG_DEBUG);
+        if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+        {
+        	$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+        	dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+        }
+        if (empty($query)) return false;    // Return false = error if empty request
 
         // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
         try {
@@ -481,7 +490,8 @@ class DoliDBSqlite3 extends DoliDB
                     $errormsg .= ' ('.$this->lasterrno.')';
                 }
 
-                dol_syslog($errormsg, LOG_ERR);
+                if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);	// Log of request was not yet done previously
+                dol_syslog(get_class($this)."::query SQL Error message: ".$errormsg, LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;

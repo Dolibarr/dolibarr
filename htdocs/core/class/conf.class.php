@@ -226,10 +226,7 @@ class Conf
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
             foreach ($filesList as $file) {
                 $file=dol_sanitizeFileName($file);
-                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
-                foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=$value;
-                }
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";	// This file can run code like setting $this->global->XXX vars.
             }
         }
 
@@ -490,7 +487,10 @@ class Conf
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
         // By default, suppliers objects can be linked to all projects
-        $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+        if (! isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+
+        // By default we enable feature to bill time spent
+        if (! isset($this->global->PROJECT_BILL_TIME_SPENT)) $this->global->PROJECT_BILL_TIME_SPENT = 1;
 
         // MAIN_HTML_TITLE
         if (! isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';

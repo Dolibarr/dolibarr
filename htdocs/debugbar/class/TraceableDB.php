@@ -7,7 +7,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  *
  * Used to log queries into DebugBar
  */
-
 class TraceableDB extends DoliDB
 {
 	/**
@@ -144,7 +143,7 @@ class TraceableDB extends DoliDB
 	 */
 	public static function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return $this->db->convertSQLFromMysql($line);
+		return self::$db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -275,10 +274,10 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 * Annulation d'une transaction et retour aux anciennes valeurs
+	 *	Cancel a transaction and go back to initial data values
 	 *
-	 * @param	string $log Add more log to default log line
-	 * @return  int                1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	string			$log		Add more log to default log line
+	 * 	@return	resource|int         		1 if cancelation is ok or transaction not open, 0 if error
 	 */
 	public function rollback($log = '')
 	{
@@ -334,9 +333,9 @@ class TraceableDB extends DoliDB
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
-			'is_success'    => $resql,
-			'error_code'    => ! $resql ? $this->db->lasterrno() : null,
-			'error_message' => ! $resql ? $this->db->lasterror() : null
+			'is_success'    => $resql ? true : false,
+			'error_code'    => $resql ? null : $this->db->lasterrno(),
+			'error_message' => $resql ? null : $this->db->lasterror()
 		);
 	}
 

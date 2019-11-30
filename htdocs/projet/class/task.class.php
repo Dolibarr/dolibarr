@@ -48,7 +48,11 @@ class Task extends CommonObject
 	public $fk_element='fk_task';
 
 	public $picto = 'task';
-	protected $childtables=array('projet_task_time');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array('projet_task_time');
 
 	/**
      * @var int ID parent task
@@ -748,21 +752,21 @@ class Task extends CommonObject
 		$sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
 		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
-    $sql.= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
-    if (!empty($extrafields->attributes['projet']['label']))
-    {
-        foreach ($extrafields->attributes['projet']['label'] as $key => $val) $sql.=($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key.' as options_'.$key : '');
-    }
-    if (!empty($extrafields->attributes['projet_task']['label']))
-    {
-        foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql.=($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key.' as options_'.$key : '');
-    }
+		$sql.= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
+		if (!empty($extrafields->attributes['projet']['label']))
+		{
+			foreach ($extrafields->attributes['projet']['label'] as $key => $val) $sql.=($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key.' as options_'.$key : '');
+		}
+		if (!empty($extrafields->attributes['projet_task']['label']))
+		{
+			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql.=($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key.' as options_'.$key : '');
+		}
 		if ($includebilltime)
 		{
-		    $sql.=", SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
+			$sql.=", SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
 		}
 
-    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as efp ON (p.rowid = efp.fk_object)";
 

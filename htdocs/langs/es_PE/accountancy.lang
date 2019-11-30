@@ -19,7 +19,6 @@ Binding=Vinculación a cuentas
 CustomersVentilation=Fijación de la factura del cliente
 CreateMvts=Crear nueva transacción
 UpdateMvts=Modificación de una transacción
-WriteBookKeeping=Periodizar transacción en Libro Mayor
 InvoiceLines=Líneas de facturas para enlazar
 InvoiceLinesDone=Líneas de facturas vinculadas
 IntoAccount=Vincular la línea con la cuenta de contabilidad

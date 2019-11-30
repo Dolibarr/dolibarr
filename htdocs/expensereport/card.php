@@ -64,6 +64,8 @@ $comments=GETPOST('comments', 'none');
 $fk_c_type_fees=GETPOST('fk_c_type_fees', 'int');
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'int');
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -110,6 +112,18 @@ $permissionedit = $user->rights->expensereport->creer; 		// Used by the include 
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
+
+if ($object->id > 0)
+{
+    // Check current user can read this expense report
+    $canread = 0;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 
 /*
@@ -982,6 +996,62 @@ if (empty($reshook))
     	}
     }
 
+    if ($action == 'set_unpaid' && $id > 0 && $user->rights->expensereport->to_paid)
+    {
+    	$object = new ExpenseReport($db);
+    	$object->fetch($id);
+
+    	$result = $object->set_unpaid($user);
+
+    	if ($result > 0)
+    	{
+    		// Define output language
+    		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    		{
+    			$outputlangs = $langs;
+    			$newlang = '';
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    			if (! empty($newlang)) {
+    				$outputlangs = new Translate("", $conf);
+    				$outputlangs->setDefaultLang($newlang);
+    			}
+    			$model=$object->modelpdf;
+    			$ret = $object->fetch($id); // Reload to get new records
+
+    			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		}
+    	}
+    }
+
+    if ($action == 'set_unpaid' && $id > 0 && $user->rights->expensereport->to_paid)
+    {
+    	$object = new ExpenseReport($db);
+    	$object->fetch($id);
+
+    	$result = $object->set_unpaid($user);
+
+    	if ($result > 0)
+    	{
+    		// Define output language
+    		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    		{
+    			$outputlangs = $langs;
+    			$newlang = '';
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    			if (! empty($newlang)) {
+    				$outputlangs = new Translate("", $conf);
+    				$outputlangs->setDefaultLang($newlang);
+    			}
+    			$model=$object->modelpdf;
+    			$ret = $object->fetch($id); // Reload to get new records
+
+    			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		}
+    	}
+    }
+
     if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
     {
     	$object = new ExpenseReport($db);
@@ -1665,7 +1735,7 @@ else
 
 				if ($action == 'cancel')
 				{
-					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>'<strong>'.$langs->trans("Comment").'</strong>','name'=>"detail_cancel",'size'=>"50",'value'=>""));
+					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>'<strong>'.$langs->trans("Comment").'</strong>','name'=>"detail_cancel",'value'=>""));
 					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 				}
 
@@ -1676,7 +1746,7 @@ else
 
 				if ($action == 'refuse')		// Deny
 				{
-					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'value'=>""));
 					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Deny"), '', "confirm_refuse", $array_input, "yes", 1);
 				}
 
@@ -1944,7 +2014,7 @@ else
 				if ($resql)
 				{
 				    $num = $db->num_rows($resql);
-				    $i = 0; $total = 0;
+				    $i = 0; $totalpaid = 0;
 				    while ($i < $num)
 				    {
 				        $objp = $db->fetch_object($resql);
@@ -2244,7 +2314,7 @@ else
 						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						    print '</a>';
-						    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+						    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 						    {
 						        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 						        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
@@ -2375,7 +2445,7 @@ else
 
 				    $nbFiles = $nbLinks = 0;
 				    $arrayoffiles = array();
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
 				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -2392,7 +2462,7 @@ else
 				    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				    print '</a>';
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
 				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
@@ -2427,7 +2497,7 @@ else
 					print '<tr class="liste_titre">';
 					print '<td></td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
-					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td class="center">'.$langs->trans('Type').'</td>';
 					print '<td>'.$langs->trans('Description').'</td>';
@@ -2455,7 +2525,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 
@@ -2648,8 +2718,8 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 
-	// If status is Appoved
-	// --------------------
+	// If status is Approved
+	// ---------------------
 
 	if ($user->rights->expensereport->approve && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
 	{
@@ -2693,9 +2763,15 @@ if ($action != 'create' && $action != 'edit')
 	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 
+	if ($user->rights->expensereport->to_paid && $object->paid && $object->fk_statut == ExpenseReport::STATUS_CLOSED)
+	{
+		// Set unpaid
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=set_unpaid&id='.$object->id.'">'.$langs->trans('ClassifyUnPaid').'</a></div>';
+	}
+
 	// Clone
 	if ($user->rights->expensereport->creer) {
-	    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=clone">' . $langs->trans("ToClone") . '</a></div>';
+	    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone">' . $langs->trans("ToClone") . '</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */

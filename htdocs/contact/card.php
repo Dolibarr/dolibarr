@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
@@ -80,6 +80,14 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'ro
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard','globalcard'));
 
+if ($id > 0) $object->fetch($id);
+
+if (! ($object->id > 0) && $action == 'view')
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
 
 /*
  *	Actions
@@ -179,7 +187,7 @@ if (empty($reshook))
         $object->socid			= GETPOST("socid", 'int');
         $object->lastname		= GETPOST("lastname", 'alpha');
         $object->firstname		= GETPOST("firstname", 'alpha');
-        $object->civility_id	= GETPOST("civility_id", 'alpha');
+		$object->civility_code	= GETPOST("civility_code", 'alpha');
         $object->poste			= GETPOST("poste", 'alpha');
         $object->address		= GETPOST("address", 'alpha');
         $object->zip			= GETPOST("zipcode", 'alpha');
@@ -191,6 +199,7 @@ if (empty($reshook))
         $object->facebook		= GETPOST("facebook", 'alpha');
         $object->linkedin		= GETPOST("linkedin", 'alpha');
         $object->email			= GETPOST("email", 'alpha');
+        $object->no_email       = GETPOST("no_email", "int");
         $object->phone_pro		= GETPOST("phone_pro", 'alpha');
         $object->phone_perso	= GETPOST("phone_perso", 'alpha');
         $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
@@ -230,6 +239,22 @@ if (empty($reshook))
 				// Categories association
 				$contcats = GETPOST('contcats', 'array');
 				$object->setCategories($contcats);
+
+				// Add mass emailing flag into table mailing_unsubscribe
+				if (GETPOST('no_email', 'int') && $object->email)
+				{
+					$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$db->escape($object->email)."'";
+					$resql=$db->query($sql);
+					if ($resql)
+					{
+						$obj=$db->fetch_object($resql);
+						if (empty($obj->nb))
+						{
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$db->escape($object->email)."', ".$db->escape(getEntity('mailing', 0)).", '".$db->idate(dol_now())."')";
+							$resql=$db->query($sql);
+						}
+					}
+				}
 			}
         }
 
@@ -349,7 +374,7 @@ if (empty($reshook))
             $object->socid			= GETPOST("socid", 'int');
             $object->lastname		= GETPOST("lastname", 'alpha');
             $object->firstname		= GETPOST("firstname", 'alpha');
-            $object->civility_id	= GETPOST("civility_id", 'alpha');
+            $object->civility_code	= GETPOST("civility_code", 'alpha');
             $object->poste			= GETPOST("poste", 'alpha');
 
             $object->address		= GETPOST("address", 'alpha');
@@ -359,6 +384,7 @@ if (empty($reshook))
             $object->country_id		= GETPOST("country_id", 'int');
 
             $object->email			= GETPOST("email", 'alpha');
+            $object->no_email       = GETPOST("no_email", "int");
             $object->skype			= GETPOST("skype", 'alpha');
             $object->twitter		= GETPOST("twitter", 'alpha');
             $object->facebook		= GETPOST("facebook", 'alpha');
@@ -384,6 +410,35 @@ if (empty($reshook))
     				// Categories association
     				$categories = GETPOST('contcats', 'array');
     				$object->setCategories($categories);
+
+    				$no_email = GETPOST('no_email', 'int');
+
+    				// Update mass emailing flag into table mailing_unsubscribe
+    				if (GETPOSTISSET('no_email') && $object->email)
+    				{
+    					if ($no_email)
+	    				{
+	    					$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$db->escape($object->email)."'";
+	    					$resql=$db->query($sql);
+	    					if ($resql)
+	    					{
+	    						$obj=$db->fetch_object($resql);
+	    						$noemail = $obj->nb;
+	    						if (empty($noemail))
+	    						{
+	    							$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$db->escape($object->email)."', ".$db->escape(getEntity('mailing', 0)).", '".$db->idate(dol_now())."')";
+	    							$resql=$db->query($sql);
+	    						}
+	    					}
+	    				}
+	    				else
+	    				{
+	    					$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$db->escape($object->email)."' AND entity = ".$db->escape(getEntity('mailing', 0));
+	    					$resql=$db->query($sql);
+	    				}
+
+	    				$object->no_email = $no_email;
+    				}
 
     				$object->old_lastname='';
     				$object->old_firstname='';
@@ -572,8 +627,8 @@ else
             }
 
             // Civility
-            print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOST("civility_id", 'alpha')?GETPOST("civility_id", 'alpha'):$object->civility_id);
+            print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+            print $formcompany->select_civility(GETPOSTISSET("civility_code")?GETPOST("civility_code", 'alpha'):$object->civility_code, 'civility_code');
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -871,8 +926,8 @@ else
             }
 
             // Civility
-            print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility_id"])?GETPOST("civility_id"):$object->civility_id);
+            print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+            print $formcompany->select_civility(GETPOSTISSET("civility_code")?GETPOST("civility_code", "aZ09"):$object->civility_code, 'civility_code');
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';

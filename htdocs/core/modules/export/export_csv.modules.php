@@ -261,6 +261,9 @@ class ExportCsv extends ModeleExports
 		}
 
 		$this->col=0;
+
+		$reg=array();
+
 		foreach($array_selected_sorted as $code => $value)
 		{
 			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);

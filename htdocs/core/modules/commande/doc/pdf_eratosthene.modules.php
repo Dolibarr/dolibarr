@@ -855,7 +855,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
-	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
+	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
 	}
 
@@ -868,7 +868,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
+	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1054,7 +1054,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 	    global $conf,$mysoc;
 
@@ -1300,6 +1300,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1313,7 +1314,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1352,6 +1353,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1362,8 +1365,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
 	{
+		// phpcs:enable
 		global $conf,$langs,$hookmanager;
 
 		// Translations
@@ -1390,9 +1394,15 @@ class pdf_eratosthene extends ModelePDFCommandes
 		// Logo
 		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 			if ($this->emetteur->logo)
 			{
+				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
+				{
+					$logo=$conf->mycompany->dir_output.'/logos/thumbs/'.$this->emetteur->logo_small;
+				}
+				else {
+					$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+				}
 				if (is_readable($logo))
 				{
 				    $height=pdf_getHeightForLogo($logo);
@@ -1564,6 +1574,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1573,8 +1585,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
+		// phpcs:enable
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

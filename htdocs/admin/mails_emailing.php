@@ -493,7 +493,8 @@ else
     }
 
 
-	// Boutons actions
+    // Buttons for actions
+
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

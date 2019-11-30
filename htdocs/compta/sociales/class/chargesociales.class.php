@@ -317,7 +317,7 @@ class ChargeSociales extends CommonObject
         $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
         $sql.= ", periode='".$this->db->idate($this->periode)."'";
         $sql.= ", amount='".price2num($this->amount, 'MT')."'";
-		$sql.= ", fk_projet='".$this->db->escape($this->fk_project)."'";
+        $sql.= ", fk_projet=".($this->fk_project>0?$this->db->escape($this->fk_project):"NULL");
         $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 

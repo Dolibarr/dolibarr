@@ -43,6 +43,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("propal");
 
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {

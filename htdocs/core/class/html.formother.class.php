@@ -422,7 +422,7 @@ class FormOther
         	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
         		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
         	} else {
-        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('user')."))";
+        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
         		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
         	}
         }
@@ -445,7 +445,7 @@ class FormOther
             	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
             		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
             	} else {
-            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('user')."))";
+            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
             	}
             }
             else
@@ -747,7 +747,7 @@ class FormOther
 			        } ); });
 	             </script>';
             }
-            $out.= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss?' '.$morecss:'').'" type="text" value="'.$set_color.'" />';
+            $out.= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss?' '.$morecss:'').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
         }
         else  // In most cases, this is not used. We used instead function with no specific list of colors
         {

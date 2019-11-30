@@ -39,6 +39,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("orders");
 
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
@@ -79,8 +81,8 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
     	<td class="right"><?php echo price($total); ?></td>
     	<td class="right"></td>
     	<td class="right"></td>

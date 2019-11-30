@@ -1,0 +1,294 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Supportsedler
+Module56000Desc=Supportseddel-system for problemer eller forespørsel om service
+
+Permission56001=Se supportsedler
+Permission56002=Endre supportsedler
+Permission56003=Slett supportsedler
+Permission56004=Administrer supportsedler
+Permission56005=Se billetter til alle tredjeparter (ikke effektive for eksterne brukere, alltid begrenset til tredjepart de er avhengige av)
+
+TicketDictType=Billett - Typer
+TicketDictCategory=Billett - Grupper
+TicketDictSeverity=Billett - Alvorlighetsgrader
+TicketTypeShortBUGSOFT=Programvarefeil
+TicketTypeShortBUGHARD=Hardwarefeil
+TicketTypeShortCOM=Prisforespørsel
+TicketTypeShortINCIDENT=Be om hjelp
+TicketTypeShortPROJET=Prosjekt
+TicketTypeShortOTHER=Annet
+
+TicketSeverityShortLOW=Lav
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Høy
+TicketSeverityShortBLOCKING=Kritisk / Blokkering
+
+ErrorBadEmailAddress=Felt '%s' er feil
+MenuTicketMyAssign=Mine supportsedler
+MenuTicketMyAssignNonClosed=Mine åpne supportsedler
+MenuListNonClosed=Åpne supportsedler
+
+TypeContact_ticket_internal_CONTRIBUTOR=Bidragsyter
+TypeContact_ticket_internal_SUPPORTTEC=Tilordnet bruker
+TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hendelsessporing
+TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragsyter
+
+OriginEmail=Epostkilde
+Notify_TICKET_SENTBYMAIL=Send billettmelding via e-post
+
+# Status
+NotRead=Ikke lest
+Read=Les
+Assigned=Tildelt
+InProgress=Pågår
+NeedMoreInformation=Venter på informasjon
+Answered=Besvarte
+Waiting=Venter
+Closed=Lukket
+Deleted=Slettede
+
+# Dict
+Type=Type
+Category=Analytisk kode
+Severity=Alvorlighetsgrad
+
+# Email templates
+MailToSendTicketMessage=Å sende epost fra supportseddel-melding
+
+#
+# Admin page
+#
+TicketSetup=Oppsett av supportseddel-modul
+TicketSettings=Aktiva oppsettside
+TicketSetupPage=
+TicketPublicAccess=Et offentlig grensesnitt som ikke krever identifikasjon er tilgjengelig på følgende nettadresse
+TicketSetupDictionaries=Typen av billett, alvorlighetsgrad og analytiske koder kan konfigureres fra ordbøker
+TicketParamModule=Oppsett av modulvariabler
+TicketParamMail=Epostoppsett
+TicketEmailNotificationFrom=Varslings epost fra
+TicketEmailNotificationFromHelp=Brukes som eksempel i svar på supportseddel
+TicketEmailNotificationTo=Notifikasjons-epost til
+TicketEmailNotificationToHelp=Send e-postvarsler til denne adressen.
+TicketNewEmailBodyLabel=Tekstmelding sendt etter å ha opprettet en billett
+TicketNewEmailBodyHelp=Teksten som er angitt her, vil bli satt inn i epostbekreftelsen for opprettelsen av en ny supportseddel fra det offentlige grensesnittet. Informasjon om konsultasjon av supportseddelen blir automatisk lagt til.
+TicketParamPublicInterface=Oppsett av offentlig grensesnitt
+TicketsEmailMustExist=Krever en eksisterende epostadresse for å opprette en supportseddel
+TicketsEmailMustExistHelp=I det offentlige grensesnittet må epostadressen allerede finnes i databasen for å kunne opprette en ny supportseddel.
+PublicInterface=Offentlig grensesnitt
+TicketUrlPublicInterfaceLabelAdmin=Alternativ nettadresse for offentlig grensesnitt
+TicketUrlPublicInterfaceHelpAdmin=Det er mulig å definere et alias til webserveren og dermed gjøre tilgjengelig det offentlige grensesnittet med en annen nettadresse (serveren må fungere som en proxy på denne nye nettadressen)
+TicketPublicInterfaceTextHomeLabelAdmin=Velkommentekst for det offentlige grensesnittet
+TicketPublicInterfaceTextHome=Du kan opprette en supportseddel eller se eksisterende fra sporingsidentifikasjonen.
+TicketPublicInterfaceTextHomeHelpAdmin=Teksten som er legges her, vises på hjemmesiden til det offentlige grensesnittet.
+TicketPublicInterfaceTopicLabelAdmin=Grensesnitt tittel
+TicketPublicInterfaceTopicHelp=Denne teksten vises som tittelen på det offentlige grensesnittet.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Hjelpetekst til meldingsoppføringen
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Denne teksten vises over brukerens område for melding.
+ExtraFieldsTicket=Ekstra attributter
+TicketCkEditorEmailNotActivated=HTML-editor er ikke aktivert. Vennligst sett inn FCKEDITOR_ENABLE_MAIL innhold til 1 for å aktivere.
+TicketsDisableEmail=Ikke send epost ved opprettelse av supportseddel eller melding
+TicketsDisableEmailHelp=Som standard sendes epost når nye supportsedler eller meldinger opprettes. Aktiver dette alternativet for å deaktivere * alle * epostvarsler
+TicketsLogEnableEmail=Aktiver logg via epost
+TicketsLogEnableEmailHelp=Ved hver endring sendes en epost ** til hver kontakt ** som er knyttet til supportseddelen.
+TicketParams=Parametre
+TicketsShowModuleLogo=Vis modulens logo i det offentlige grensesnittet
+TicketsShowModuleLogoHelp=Aktiver dette alternativet for å skjule modullogoen på sidene i det offentlige grensesnittet
+TicketsShowCompanyLogo=Vis logoen til firmaet i det offentlige grensesnittet
+TicketsShowCompanyLogoHelp=Aktiver dette alternativet for å skjule logoen til hovedselskapet på sidene i det offentlige grensesnittet
+TicketsEmailAlsoSendToMainAddress=Send også melding til hovedadressen
+TicketsEmailAlsoSendToMainAddressHelp=Aktiver dette alternativet for å sende en epost til "Varslings-epost" -adresse (se oppsett under)
+TicketsLimitViewAssignedOnly=Begrens visningen til supportsedler tildelt den nåværende brukeren (ikke effektiv for eksterne brukere, alltid begrenset til den tredjepart de er avhengige av)
+TicketsLimitViewAssignedOnlyHelp=Bare supportsedler som er tildelt den nåværende brukeren, vil være synlige. Gjelder ikke for en bruker med administrasjonsrettigheter.
+TicketsActivatePublicInterface=Aktiver det offentlige grensesnittet
+TicketsActivatePublicInterfaceHelp=Offentlig grensesnitt gjør det mulig for alle besøkende å lage supportsedler.
+TicketsAutoAssignTicket=Tilordne automatisk brukeren som opprettet supportseddelen
+TicketsAutoAssignTicketHelp=Når du lager en supportseddel, kan brukeren automatisk tildeles billetten.
+TicketNumberingModules=Supportseddel nummereringsmodul
+TicketNotifyTiersAtCreation=Varsle tredjepart ved opprettelse
+TicketGroup=Gruppe
+TicketsDisableCustomerEmail=Slå alltid av e-post når en billett er opprettet fra det offentlige grensesnittet
+#
+# Index & list page
+#
+TicketsIndex=Supportsedler - hjem
+TicketList=Liste over supportsedler
+TicketAssignedToMeInfos=Denne siden viser Supportseddel-liste som er tilordnet gjeldende bruker
+NoTicketsFound=Ingen supportseddel funnet
+NoUnreadTicketsFound=Ingen ulest billett funnet
+TicketViewAllTickets=Se alle supportsedler
+TicketViewNonClosedOnly=Se bare åpne supportsedler
+TicketStatByStatus=Supportsedler etter status
+
+#
+# Ticket card
+#
+Ticket=Billett
+TicketCard=Supportseddel-kort
+CreateTicket=Opprett supportseddel
+EditTicket=Endre supportseddel
+TicketsManagement=Administrasjon av supportsedler
+CreatedBy=Laget av
+NewTicket=Ny supportseddel
+SubjectAnswerToTicket=Supportseddel-svar
+TicketTypeRequest=Forespørselstype
+TicketCategory=Analytisk kode
+SeeTicket=Se supportseddel
+TicketMarkedAsRead=Supportseddel merket som lest
+TicketReadOn=Les videre
+TicketCloseOn=Lukket den
+MarkAsRead=Merk supportseddel som lest
+TicketHistory=Supportseddel historikk
+AssignUser=Tilordne til bruker
+TicketAssigned=Supportseddel er nå tildelt
+TicketChangeType=Endre type
+TicketChangeCategory=Endre analytisk kode
+TicketChangeSeverity=Endre alvorlighetsgrad
+TicketAddMessage=Legg til en melding
+AddMessage=Legg til en melding
+MessageSuccessfullyAdded=Supportseddel lagt til
+TicketMessageSuccessfullyAdded=Melding lagt til
+TicketMessagesList=Meldingsliste
+NoMsgForThisTicket=Ingen melding for denne supportseddelen
+Properties=Klassifisering
+LatestNewTickets=Siste %s nyeste supportsedler (ikke lest)
+TicketSeverity=Alvorlighetsgrad
+ShowTicket=Se supportseddel
+RelatedTickets=Relaterte supportsedler
+TicketAddIntervention=Opprett intervensjon
+CloseTicket=Lukk supportseddel
+CloseATicket=Lukk en supportseddel
+ConfirmCloseAticket=Bekreft lukking av supportseddel
+ConfirmDeleteTicket=Vennligst bekreft fjerning av supportseddel
+TicketDeletedSuccess=Supportseddel slettet
+TicketMarkedAsClosed=Supportseddel merket som lukket
+TicketDurationAuto=Beregnet varighet
+TicketDurationAutoInfos=Varighet automatisk beregnet fra relatert intervensjon
+TicketUpdated=Supportseddel oppdatert
+SendMessageByEmail=Send melding via epost
+TicketNewMessage=Ny melding
+ErrorMailRecipientIsEmptyForSendTicketMessage=Mottaker er tom. Ingen epost sendt
+TicketGoIntoContactTab=Vennligst gå inn på "Kontakter" -fanen for å velge
+TicketMessageMailIntro=Introduksjon
+TicketMessageMailIntroHelp=Denne teksten legges bare til i begynnelsen av eposten og vil ikke bli lagret.
+TicketMessageMailIntroLabelAdmin=Introduksjon i meldingen når du sender epost
+TicketMessageMailIntroText=Hei, <br> Et nytt svar ble sendt på en billett som du er kontakt for. Her er meldingen: <br>
+TicketMessageMailIntroHelpAdmin=Denne teksten blir satt inn før teksten til svaret på en supportseddel.
+TicketMessageMailSignature=Signatur
+TicketMessageMailSignatureHelp=Denne teksten er bare lagt til i slutten av eposten og vil ikke bli lagret.
+TicketMessageMailSignatureText= <p> Med vennlig hilsen </p> <p> - </p>
+TicketMessageMailSignatureLabelAdmin=Signatur på svar-epost
+TicketMessageMailSignatureHelpAdmin=Denne teksten vil bli satt inn etter svarmeldingen.
+TicketMessageHelp=Kun denne teksten blir lagret i meldingslisten på supportseddelen.
+TicketMessageSubstitutionReplacedByGenericValues=Substitusjonsvariabler erstattes av generiske verdier.
+TimeElapsedSince=Tid forløpt siden
+TicketTimeToRead=Tid forløpt før lesing
+TicketContacts=Kontakter supportseddel
+TicketDocumentsLinked=Dokumenter knyttet til supportseddel 
+ConfirmReOpenTicket=Bekreft gjenåpning av denne supportseddelen?
+TicketMessageMailIntroAutoNewPublicMessage=En ny melding ble lagt ut på billetten med emnet %s:
+TicketAssignedToYou=Supportseddel tildelt
+TicketAssignedEmailBody=Du har blitt tildelt supportseddel # %s av %s
+MarkMessageAsPrivate=Merk meldingen som privat
+TicketMessagePrivateHelp=Denne meldingen vises ikke til eksterne brukere
+TicketEmailOriginIssuer=Utsteder ved opprettelse av supportsedlene
+InitialMessage=Innledende melding
+LinkToAContract=Lenke til en kontrakt
+TicketPleaseSelectAContract=Velg en kontrakt
+UnableToCreateInterIfNoSocid=Kan ikke opprette en intervensjon når ingen tredjepart er definert
+TicketMailExchanges=Epostutveksling
+TicketInitialMessageModified=Innledende melding endret
+TicketMessageSuccesfullyUpdated=Meldingen ble oppdatert
+TicketChangeStatus=Endre status
+TicketConfirmChangeStatus=Bekreft statusendringen: %s?
+TicketLogStatusChanged=Status endret: %s til %s
+TicketNotNotifyTiersAtCreate=Ikke gi beskjed til firmaet ved opprettelse
+Unread=Ulest
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Billett %s lest av %s
+NoLogForThisTicket=Ingen logg på denne supportseddelen ennå
+TicketLogAssignedTo=Billett %s tildelt %s
+TicketLogPropertyChanged=Billett %s endret: klassifisering fra %s til %s
+TicketLogClosedBy=Billett %s lukket av %s
+TicketLogReopen=Billett %s gjenåpnet
+
+#
+# Public pages
+#
+TicketSystem=Supportseddel-system
+ShowListTicketWithTrackId=Vis supportseddel-liste fra sporings-ID
+ShowTicketWithTrackId=Vis supportseddel fra sporings-ID
+TicketPublicDesc=Du kan opprette en supportseddel eller sjekke fra en eksisterende ID.
+YourTicketSuccessfullySaved=Supportseddelen har blitt lagret!
+MesgInfosPublicTicketCreatedWithTrackId=En ny supportseddel er opprettet med ID %s.
+PleaseRememberThisId=Vennligst ta vare på sporingsnummeret til senere bruk.
+TicketNewEmailSubject=Opprettelse av supportseddel bekreftet
+TicketNewEmailSubjectCustomer=Ny supportseddel
+TicketNewEmailBody=Dette er en automatisk epost for å bekrefte at du har registrert en ny supportseddel .
+TicketNewEmailBodyCustomer=Dette er en automatisk epost for å bekrefte at en ny supportseddel nettopp er opprettet i kontoen din.
+TicketNewEmailBodyInfosTicket=Informasjon for å overvåke supportseddelen
+TicketNewEmailBodyInfosTrackId=Billettsporingsnummer: %s
+TicketNewEmailBodyInfosTrackUrl=Du kan se fremdriften til supportseddelen ved å klikke på lenken over.
+TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremdriften til supportseddelen i det spesifikke grensesnittet ved å klikke på følgende lenke
+TicketEmailPleaseDoNotReplyToThisEmail=Vennligst ikke svar direkte på denne eposten! Bruk koblingen til å svare via grensesnittet.
+TicketPublicInfoCreateTicket=Dette skjemaet gir deg mulighet til å registrere en supportseddel i vårt styringssystem.
+TicketPublicPleaseBeAccuratelyDescribe=Vennligst beskriv problemet nøyaktig. Gi så mye informasjon som mulig slik at vi kan identifisere forespørselen din riktig.
+TicketPublicMsgViewLogIn=Vennligst oppgi supportseddel sporings-ID
+TicketTrackId=Offentlig sporings-ID
+OneOfTicketTrackId=En av sporings-IDene dine
+ErrorTicketNotFound=Billett med sporings-ID %s ikke funnet!
+Subject=Subjekt
+ViewTicket=Vis supportseddel
+ViewMyTicketList=Se min supportseddel-liste
+ErrorEmailMustExistToCreateTicket=Feil: E-postadresse ikke funnet i vår database
+TicketNewEmailSubjectAdmin=Ny supportseddel opprettet
+TicketNewEmailBodyAdmin=<p> Supportseddelen er nettopp opprettet med ID # %s, se informasjon: </p>
+SeeThisTicketIntomanagementInterface=Se supportseddel i administrasjonsgrensesnitt
+TicketPublicInterfaceForbidden=Det offentlige grensesnittet for supportsedlene ble ikke aktivert
+ErrorEmailOrTrackingInvalid=Feil verdi for sporings-ID eller e-post
+OldUser=Gammel bruker
+NewUser=Ny bruker
+NumberOfTicketsByMonth=Antall billetter per måned
+NbOfTickets=Antall billetter
+# notifications
+TicketNotificationEmailSubject=Supportseddel%s oppdatert
+TicketNotificationEmailBody=Dette er en automatisk melding for å varsle deg om at billetten %s nettopp er oppdatert
+TicketNotificationRecipient=Meldingsmottaker
+TicketNotificationLogMessage=Loggmelding
+TicketNotificationEmailBodyInfosTrackUrlinternal=Se supportseddel i grensesnitt
+TicketNotificationNumberEmailSent=Melding sendt til e-post: %s
+
+ActionsOnTicket=Hendelser på billett
+
+#
+# Boxes
+#
+BoxLastTicket=Siste opprettede supportsedler
+BoxLastTicketDescription=Siste %s opprettede supportsedler
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Ingen nylige uleste supportsedler
+BoxLastModifiedTicket=Siste endrede supportsedler
+BoxLastModifiedTicketDescription=Siste %s endrede supportsedler
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Ingen nylig endrede supportsedler

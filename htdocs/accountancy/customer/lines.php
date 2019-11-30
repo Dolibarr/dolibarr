@@ -370,13 +370,14 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">' . $facture_static->getNomUrl(1) . '</td>';
 
+		// Date invoice
 		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
 		// Ref Product
 		print '<td>';
-		if ($product_static->id)
-			print $product_static->getNomUrl(1);
-		if ($objp->product_label) print '<br>'.$objp->product_label;
+		if ($product_static->id > 0) print $product_static->getNomUrl(1);
+		if ($product_static->id > 0 && $objp->product_label) print '<br>';
+		if ($objp->product_label) print $objp->product_label;
 		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
@@ -385,11 +386,17 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="right">' . price($objp->total_ht) . '</td>';
+		print '<td class="nowrap right">' . price($objp->total_ht) . '</td>';
 
 		print '<td class="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
-		print '<td>' . $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')</td>';
+		// Country
+		print '<td>';
+		if ($objp->country_code)
+		{
+			print $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')';
+		}
+		print '</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

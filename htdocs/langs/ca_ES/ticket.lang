@@ -1,0 +1,294 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Tiquets
+Module56000Desc=Sistema de tiquets per a la gestió d'emissió o sol·licitud
+
+Permission56001=Veure tiquets
+Permission56002=Modifica tiquets
+Permission56003=Esborrar tiquets
+Permission56004=Gestiona els tiquets
+Permission56005=Veure els tiquets de tots els tercers (no efectiu per als usuaris externs, sempre estarà limitat al tercer del qual depenen)
+
+TicketDictType=Tiquet - Tipus
+TicketDictCategory=Tiquet - Grups
+TicketDictSeverity=Tiquet - Severitats
+TicketTypeShortBUGSOFT=Disfunció de la lògica
+TicketTypeShortBUGHARD=Disfunció de matèries
+TicketTypeShortCOM=Qüestió comercial
+TicketTypeShortINCIDENT=Sol·licitud d'assistència
+TicketTypeShortPROJET=Projecte
+TicketTypeShortOTHER=Altres
+
+TicketSeverityShortLOW=Baix
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Alt
+TicketSeverityShortBLOCKING=Crucial/Bloqueig
+
+ErrorBadEmailAddress=Camp '%s' incorrecte
+MenuTicketMyAssign=Els meus tiquets
+MenuTicketMyAssignNonClosed=Els meus tiquets oberts
+MenuListNonClosed=Tiquets oberts
+
+TypeContact_ticket_internal_CONTRIBUTOR=Participant
+TypeContact_ticket_internal_SUPPORTTEC=Usuari assignat
+TypeContact_ticket_external_SUPPORTCLI=Contacte de clients / seguiment d'incidents
+TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
+
+OriginEmail=Origen de correu electrònic
+Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
+
+# Status
+NotRead=No llegit
+Read=Llegit
+Assigned=Assignat
+InProgress=En progrés
+NeedMoreInformation=Esperant informació
+Answered=Respost
+Waiting=En espera
+Closed=Tancat
+Deleted=Esborrat
+
+# Dict
+Type=Tipus
+Category=Codi analític
+Severity=Gravetat
+
+# Email templates
+MailToSendTicketMessage=Per enviar un missatge de correu electrònic a partir del tiquet
+
+#
+# Admin page
+#
+TicketSetup=Configuració del mòdul de tiquets
+TicketSettings=Configuració
+TicketSetupPage=
+TicketPublicAccess=Una interfície pública que no necessita identificació està disponible a la següent URL
+TicketSetupDictionaries=El tipus de tiquet, gravetat i codis analítics es poden configurar des dels diccionaris
+TicketParamModule=Configuració del mòdul de variables
+TicketParamMail=Configuració de correu electrònic
+TicketEmailNotificationFrom=Notificació de correu electrònic procedent de
+TicketEmailNotificationFromHelp=S'utilitza en la resposta del tiquet per exemple
+TicketEmailNotificationTo=Notificacions de correu a 
+TicketEmailNotificationToHelp=Enviar notificacions per correu electrònic a aquesta adreça.
+TicketNewEmailBodyLabel=Missatge de text enviat després de crear un bitllet
+TicketNewEmailBodyHelp=El text especificat aquí s'inserirà en el correu electrònic confirmant la creació d'un nou tiquet des de la interfície pública. La informació sobre la consulta del tiquet s'afegeix automàticament.
+TicketParamPublicInterface=Configuració de la interfície pública
+TicketsEmailMustExist=Es requereix una adreça de correu electrònic correcta per crear un tiquet
+TicketsEmailMustExistHelp=A la interfície pública, l'adreça de correu electrònic ja s'hauria d'emplenar a la base de dades per crear un nou tiquet.
+PublicInterface=Interfície pública
+TicketUrlPublicInterfaceLabelAdmin=URL alternativa per a la interfície pública
+TicketUrlPublicInterfaceHelpAdmin=És possible definir un àlies al servidor web i, per tant, posar a disposició la interfície pública amb una altra URL (el servidor ha d'actuar com a proxy en aquest nou URL)
+TicketPublicInterfaceTextHomeLabelAdmin=Text de benvinguda de la interfície pública
+TicketPublicInterfaceTextHome=Podeu crear un tiquet d'assistència o visualitzar existents a partir del seu identificador de traça del tiquet.
+TicketPublicInterfaceTextHomeHelpAdmin=El text definit aquí apareixerà a la pàgina d'inici de la interfície pública.
+TicketPublicInterfaceTopicLabelAdmin=Títol de la interfície
+TicketPublicInterfaceTopicHelp=Aquest text apareixerà com el títol de la interfície pública.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Text d'ajuda a l'entrada del missatge
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Aquest text apareixerà a sobre de l'àrea d'entrada de missatges per a l'usuari.
+ExtraFieldsTicket=Extra atributs
+TicketCkEditorEmailNotActivated=L'editor HTML no està activat. Poseu FCKEDITOR_ENABLE_MAIL contingut a 1 per obtenir-lo.
+TicketsDisableEmail=No enviïs missatges de correu electrònic per a la creació de bitllets o la gravació de missatges
+TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per desactivar totes les (*all*) notificacions per correu electrònic
+TicketsLogEnableEmail=Activa el 'log' (registre d'activitat) per correu electrònic
+TicketsLogEnableEmailHelp=En cada canvi, s'enviarà un correu ** a cada contacte ** associat al tiquet.
+TicketParams=Paràmetres
+TicketsShowModuleLogo=Mostra el logotip del mòdul a la interfície pública
+TicketsShowModuleLogoHelp=Activeu aquesta opció per ocultar el mòdul de logotip a les pàgines de la interfície pública
+TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
+TicketsShowCompanyLogoHelp=Activeu aquesta opció per ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
+TicketsEmailAlsoSendToMainAddress=També envieu notificacions a l'adreça electrònica principal
+TicketsEmailAlsoSendToMainAddressHelp=Activar aquesta opció per enviar un correu electrònic a l'adreça "Correu electrònic de notificació procedent de" (consulteu la configuració a continuació)
+TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
+TicketsLimitViewAssignedOnlyHelp=Només es veuran les entrades assignades a l'usuari actual. No s'aplica a un usuari amb drets de gestió de tiquets.
+TicketsActivatePublicInterface=Activar la interfície pública
+TicketsActivatePublicInterfaceHelp=La interfície pública permet qualsevol visitant per a crear tiquets.
+TicketsAutoAssignTicket=Assigna automàticament l'usuari que va crear el tiquet
+TicketsAutoAssignTicketHelp=Quan es crea un tiquet, l'usuari pot assignar-se automàticament al tiquet.
+TicketNumberingModules=Mòdul de numeració de tiquets
+TicketNotifyTiersAtCreation=Notifica la creació de tercers
+TicketGroup=Grup
+TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
+#
+# Index & list page
+#
+TicketsIndex=Tiquet - inici
+TicketList=Llista de tiquets
+TicketAssignedToMeInfos=Aquesta pàgina mostra la llista de butlletes creada per o assignada a l'usuari actual
+NoTicketsFound=Tiquet no trobat
+NoUnreadTicketsFound=No s’ha trobat cap bitllet sense llegir
+TicketViewAllTickets=Consultar tots els tiquets
+TicketViewNonClosedOnly=Mostra només els tiquets oberts
+TicketStatByStatus=Tiquets per estat
+
+#
+# Ticket card
+#
+Ticket=Tiquet
+TicketCard=Targeta de tiquets
+CreateTicket=Crea un tiquet
+EditTicket=Editar el tiquet
+TicketsManagement=Gestió de tiquets
+CreatedBy=Creat per
+NewTicket=Nou tiquet
+SubjectAnswerToTicket=Resposta de tiquet
+TicketTypeRequest=Tipus de sol·licitud
+TicketCategory=Codi analític
+SeeTicket=Consultar tiquet
+TicketMarkedAsRead=Tiquet ha estat marcat com llegit
+TicketReadOn=Segueix llegint
+TicketCloseOn=Data tancament
+MarkAsRead=Marcar el tiquet com llegit
+TicketHistory=Història del tiquet
+AssignUser=Assignar a usuari
+TicketAssigned=El tiquet s'ha assignat ara
+TicketChangeType=Tipus de canvi
+TicketChangeCategory=Canvia el codi analític
+TicketChangeSeverity=Canviar el nivell de gravetat
+TicketAddMessage=Afegiu un missatge
+AddMessage=Afegiu un missatge
+MessageSuccessfullyAdded=Tiquet afegit
+TicketMessageSuccessfullyAdded=El missatge s'ha afegit correctament
+TicketMessagesList=Llista de missatges
+NoMsgForThisTicket=No hi ha missatges per aquest tiquet
+Properties=Classificació
+LatestNewTickets=Últimes entrades més noves %s (no llegides)
+TicketSeverity=Gravetat
+ShowTicket=Consultar tiquet
+RelatedTickets=Tiquets relacionats
+TicketAddIntervention=Crea intervenció
+CloseTicket=Tanca el tiquet
+CloseATicket=Tanca el tiquet
+ConfirmCloseAticket=Confirma el tancament del tiquet
+ConfirmDeleteTicket=Si us plau, confirmeu l'esborrat del tiquet
+TicketDeletedSuccess=Tiquet esborrat amb èxit
+TicketMarkedAsClosed=Tiquet marcat com tancat
+TicketDurationAuto=Durada calculada
+TicketDurationAutoInfos=Durada calculada automàticament a partir de la intervenció relacionada
+TicketUpdated=Tiquet actualitzat
+SendMessageByEmail=Envia un missatge per correu electrònic
+TicketNewMessage=Mou missatge
+ErrorMailRecipientIsEmptyForSendTicketMessage=El destinatari està buit. Email no enviat
+TicketGoIntoContactTab=Aneu a la pestanya "Contactes" per seleccionar-los
+TicketMessageMailIntro=Introducció
+TicketMessageMailIntroHelp=Aquest text només s'afegeix al principi del correu electrònic i no es desarà.
+TicketMessageMailIntroLabelAdmin=Introducció al missatge en enviar missatges de correu electrònic
+TicketMessageMailIntroText=Hola, <br> S'ha enviat una nova resposta en un tiquet que n'ets contacte. Aquest és el missatge: <br>
+TicketMessageMailIntroHelpAdmin=Aquest text s'inserirà abans del text de la resposta a un tiquet.
+TicketMessageMailSignature=Signatura
+TicketMessageMailSignatureHelp=Aquest text només s'afegeix al final del correu electrònic i no es desarà.
+TicketMessageMailSignatureText=<p>Cordialment,</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=Signatura del correu electrònic de resposta
+TicketMessageMailSignatureHelpAdmin=Aquest text s'inserirà després del missatge de resposta.
+TicketMessageHelp=Només aquest text es guardarà a la llista de missatges de la targeta de tiquet.
+TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitució es reemplacen per valors genèrics.
+TimeElapsedSince=Temps transcorregut des de 
+TicketTimeToRead=Temps transcorregut abans de llegir
+TicketContacts=Tiquet de contactes
+TicketDocumentsLinked=Documents vinculats al tiquet
+ConfirmReOpenTicket=Confirmeu la reobertura d'aquest tiquet?
+TicketMessageMailIntroAutoNewPublicMessage=S'ha publicat un nou missatge al tiquet amb el tema %s :
+TicketAssignedToYou=Tiquet assignat
+TicketAssignedEmailBody=Se us ha assignat el tiquet # %s per %s
+MarkMessageAsPrivate=Marcar el missatge com privat
+TicketMessagePrivateHelp=Aquest missatge no es mostrarà als usuaris externs
+TicketEmailOriginIssuer=Emissor a l'origen dels tiquets
+InitialMessage=Missatge inicial
+LinkToAContract=Enllaç a un contracte
+TicketPleaseSelectAContract=Seleccionar un contracte
+UnableToCreateInterIfNoSocid=No es pot crear una intervenció quan no s'hagi definit cap tercer
+TicketMailExchanges=Intercanvis de correus
+TicketInitialMessageModified=Missatge inicial modificat
+TicketMessageSuccesfullyUpdated=Missatge actualitzat amb èxit
+TicketChangeStatus=Canvi de estatus
+TicketConfirmChangeStatus=Confirmar el canvi d'estatus : %s ?
+TicketLogStatusChanged=Estatus canviat : %s a %s
+TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
+Unread=No llegit
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Entrada %s llegit per %s
+NoLogForThisTicket=Encara no hi ha 'log' per aquest tiquet
+TicketLogAssignedTo=Tiquet %s assignat a %s
+TicketLogPropertyChanged=Tiquet %s modificat: classificació de %s a %s
+TicketLogClosedBy=Tiquet %s tancat per %s
+TicketLogReopen=S'ha obert el tiquet %s
+
+#
+# Public pages
+#
+TicketSystem=Sistema de tiquets
+ShowListTicketWithTrackId=Mostra la llista d'entrades a partir de l'identificador de traça 
+ShowTicketWithTrackId=Mostra tiquets de l'identificador de traça 
+TicketPublicDesc=Podeu crear un tiquet d'assistència o consultar des d'una identificació (ID) existent.
+YourTicketSuccessfullySaved=S'ha desat el tiquet amb èxit!
+MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un nou tiquet amb ID %s.
+PleaseRememberThisId=Guardeu el número de traça que us podríem demanar més tard.
+TicketNewEmailSubject=Confirmació de creació de tiquet
+TicketNewEmailSubjectCustomer=Nou tiquet de suport
+TicketNewEmailBody=Aquest és un correu electrònic automàtic per confirmar que heu registrat un nou tiquet.
+TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per confirmar que un nou tiquet acaba de ser creat al vostre compte.
+TicketNewEmailBodyInfosTicket=Informació per al seguiment del tiquet
+TicketNewEmailBodyInfosTrackId=Traça de tiquet numero: %s
+TicketNewEmailBodyInfosTrackUrl=Podeu veure el progrés del tiquet fent clic a l'enllaç de dalt.
+TicketNewEmailBodyInfosTrackUrlCustomer=Podeu veure el progrés del tiquet a la interfície específica fent clic al següent enllaç
+TicketEmailPleaseDoNotReplyToThisEmail=No respongueu directament a aquest correu electrònic. Utilitzeu l'enllaç per respondre des de la mateixa interfície.
+TicketPublicInfoCreateTicket=Aquest formulari us permet registrar un tiquet de suport al nostre sistema de gestió.
+TicketPublicPleaseBeAccuratelyDescribe=Descrigui amb precisió el problema. Proporcioneu la màxima informació possible per permetre que identifiquem correctament la vostra sol·licitud.
+TicketPublicMsgViewLogIn=Introduïu l'identificador de traça dels tiquets (ID)
+TicketTrackId=ID de seguiment públic
+OneOfTicketTrackId=Un dels vostres ID de seguiment
+ErrorTicketNotFound=No s'ha trobat cap tiquet amb identificació de traça %s.
+Subject=Assumpte
+ViewTicket=Vista del tiquet
+ViewMyTicketList=Veure la meva llista de tiquets
+ErrorEmailMustExistToCreateTicket=Error: adreça de correu electrònic no trobada a la nostra base de dades
+TicketNewEmailSubjectAdmin=S'ha creat un nou tiquet
+TicketNewEmailBodyAdmin=<p>S'ha creat una entrada amb ID #%s, veure informació :</p>
+SeeThisTicketIntomanagementInterface=Consulteu el tiquet a la interfície de gestió
+TicketPublicInterfaceForbidden=La interfície pública de les entrades no estava habilitada
+ErrorEmailOrTrackingInvalid=Valor incorrecte per a identificació de seguiment o correu electrònic
+OldUser=Usuari antic
+NewUser=Nou usuari
+NumberOfTicketsByMonth=Nombre d’entrades mensuals
+NbOfTickets=Nombre d’entrades
+# notifications
+TicketNotificationEmailSubject=Tiquet %s actualitzat
+TicketNotificationEmailBody=Aquest és un missatge automàtic per notificar-vos que el tiquet %s acaba d'estar actualitzat
+TicketNotificationRecipient=Destinatari de la notificació
+TicketNotificationLogMessage=Missatges de 'log' (registre d'activitat)
+TicketNotificationEmailBodyInfosTrackUrlinternal=Veure el tiquet a la interfície
+TicketNotificationNumberEmailSent=Correu electrònic de notificació enviat : %s
+
+ActionsOnTicket=Esdeveniments en tiquets
+
+#
+# Boxes
+#
+BoxLastTicket=Últimes entrades creades
+BoxLastTicketDescription=Últimes entrades creades %s
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=No hi ha tiquets pendents de llegir recents
+BoxLastModifiedTicket=Últims tiquets modificats
+BoxLastModifiedTicketDescription=Últimes entrades modificades %s
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=No hi ha tiquets modificats recentment

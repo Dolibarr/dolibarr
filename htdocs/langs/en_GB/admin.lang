@@ -41,10 +41,14 @@ UMaskExplanation=This parameter allows you to define permissions set by default 
 ListOfDirectories=List of OpenDocument template directories
 ListOfDirectoriesForModelGenODT=List of directories containing template files in OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between each directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 FollowingSubstitutionKeysCanBeUsed=<br>To learn how to create your .odt document templates, before storing them in those directories, read wiki documentation:
+Module600Name=Notifications on business event
 Module50200Name=PayPal
 DictionaryAccountancyJournal=Finance journals
 CompanyZip=Postcode
 LDAPFieldZip=Postcode
 GenbarcodeLocation=Barcode generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
+ListOfNotificationsPerUser=List of automatic notifications per user*
+ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
+ListOfFixedNotifications=List of automatic fixed notifications
 FormatZip=Postcode
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty2=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty4=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

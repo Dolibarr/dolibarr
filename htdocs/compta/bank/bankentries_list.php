@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
@@ -45,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
@@ -366,6 +367,7 @@ $formaccounting = new FormAccounting($db);
 $companystatic=new Societe($db);
 $bankaccountstatic=new Account($db);
 
+$banktransferstatic=new BonPrelevement($db);
 $societestatic=new Societe($db);
 $userstatic=new User($db);
 $chargestatic=new ChargeSociales($db);
@@ -601,12 +603,13 @@ if ($resql)
 	        print $langs->trans("EventualyAddCategory").': ';
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
-	    print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' ';
+	    print '<br><div style="margin-top: 5px;">'.$langs->trans("ThenCheckLinesAndConciliate").' ';
 	    print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 	    // Show last bank statements
 	    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
@@ -615,7 +618,7 @@ if ($resql)
 	    $sql.= " WHERE fk_account=".$object->id." AND num_releve IS NOT NULL";
 	    $sql.= $db->order("num_releve", "DESC");
 	    $sql.= $db->plimit($nbmax+1);
-	    print '<br><br>';
+	    print '<br>';
 	    print $langs->trans("LastAccountStatements").' : ';
 	    $resqlr=$db->query($sql);
 	    if ($resqlr)
@@ -1135,7 +1138,13 @@ if ($resql)
     	    $cachebankaccount=array();
     	    foreach($links as $key=>$val)
     	    {
-    	        if ($links[$key]['type']=='payment')
+    	    	if ($links[$key]['type']=='withdraw')
+    	    	{
+    	    		$banktransferstatic->id=$links[$key]['url_id'];
+    	    		$banktransferstatic->ref=$links[$key]['label'];
+    	    		print ' '.$banktransferstatic->getNomUrl(0);
+    	    	}
+    	    	elseif ($links[$key]['type']=='payment')
     	        {
     	            $paymentstatic->id=$links[$key]['url_id'];
     	            $paymentstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
@@ -1347,7 +1356,7 @@ if ($resql)
     	// Debit
     	if (! empty($arrayfields['b.debit']['checked']))
     	{
-    	    print '<td class="right">';
+    	    print '<td class="nowrap right">';
     	    if ($objp->amount < 0)
     	    {
     	    	print price($objp->amount * -1);
@@ -1361,7 +1370,7 @@ if ($resql)
     	// Credit
     	if (! empty($arrayfields['b.credit']['checked']))
     	{
-    	    print '<td class="right">';
+    	    print '<td class="nowrap right">';
     	    if ($objp->amount > 0)
     	    {
 				print price($objp->amount);

@@ -176,7 +176,6 @@ Dispatch=Despacho
 Dispatched=Enviado
 ToDispatch=Para el despacho
 ThirdPartyMustBeEditAsCustomer=El tercero debe ser definido como un cliente
-InvoiceRef=Factura ref.
 CodeNotDef=No definida
 WarningDepositsNotIncluded=Las facturas de anticipo no se incluyen en esta versión con este módulo de contabilidad.
 DatePaymentTermCantBeLowerThanObjectDate=La fecha del plazo de pago no puede ser inferior a la fecha del objeto.

@@ -62,9 +62,13 @@ class EmailCollector extends CommonObject
     public $fk_element = 'fk_emailcollector';
 
     /**
-     * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
      */
-    protected $childtables=array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
+    protected $childtables=array();
+    /**
+     * @var array	List of child tables. To know object to delete on cascade.
+     */
+    protected $childtablesoncascade=array('emailcollector_emailcollectorfilter','emailcollector_emailcollectoraction');
 
 
     /**
@@ -205,11 +209,11 @@ class EmailCollector extends CommonObject
         // Translate some data of arrayofkeyval
         foreach($this->fields as $key => $val)
         {
-            if (is_array($this->fields['status']['arrayofkeyval']))
+        	if (is_array($val['arrayofkeyval']))
             {
-                foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+            	foreach($val['arrayofkeyval'] as $key2 => $val2)
                 {
-                    $this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+                	$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
                 }
             }
         }

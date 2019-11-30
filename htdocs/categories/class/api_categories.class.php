@@ -86,7 +86,7 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

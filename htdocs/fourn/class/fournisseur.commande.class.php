@@ -551,13 +551,18 @@ class CommandeFournisseur extends CommonOrder
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // We rename directory ($this->ref = ancienne ref, $num = nouvelle ref)
-                    // in order not to lose the attached files
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+                	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
                     $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
-                    if (file_exists($dirsource))
+                    if (! $error && file_exists($dirsource))
                     {
                         dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -1538,7 +1543,7 @@ class CommandeFournisseur extends CommonOrder
 			$desc=trim($desc);
 
 			// Check parameters
-			if ($qty < 1 && ! $fk_product)
+			if ($qty < 0 && ! $fk_product)
 			{
 				$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product"));
 				return -1;
@@ -1817,10 +1822,9 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
-            // Si module stock gere et que incrementation faite depuis un dispatching en stock
+            // If module stock is enabled and the stock increase is done on purchase order dispatching
             if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
-
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
@@ -3506,6 +3510,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
         global $conf,$user;
 
         $error=0;
+
+        $this->db->begin();
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";

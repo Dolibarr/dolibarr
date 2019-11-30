@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Actius
+NewAsset = Nou actiu
+AccountancyCodeAsset = Codi de compte (actius)
+AccountancyCodeDepreciationAsset = Codi de compte (compte d'amortització d'actius)
+AccountancyCodeDepreciationExpense = Codi de compte (compte de despeses d'amortització)
+NewAssetType=Tipus del nou actiu
+AssetsTypeSetup=Configuració de tipus d'actius
+AssetTypeModified=Tipus d'actiu modificat
+AssetType=Tipus d'actiu
+AssetsLines=Actius
+DeleteType=Elimina
+DeleteAnAssetType=Eliminar un tipus d'actiu
+ConfirmDeleteAssetType=¿Està segur que vol eliminar aquest tipus d'actiu?
+ShowTypeCard=Veure tipus '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Actius
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Descripció dels actius
+
+#
+# Admin page
+#
+AssetsSetup = Configuració dels actius
+Settings = Configuració
+AssetsSetupPage = Pàgina de configuració dels actius
+ExtraFieldsAssetsType = Atributs complementaris (Tipus d'actiu)
+AssetsType=Tipus d'actiu
+AssetsTypeId=Id tipus d'actiu
+AssetsTypeLabel=Etiqueta tipus d'actiu
+AssetsTypes=Tipus d'actius
+
+#
+# Menu
+#
+MenuAssets = Actius
+MenuNewAsset = Nou actiu
+MenuTypeAssets = Tipus actiu
+MenuListAssets = Llistat
+MenuNewTypeAssets = Nou
+MenuListTypeAssets = Llistat
+
+#
+# Module
+#
+NewAssetType=Tipus del nou actiu
+NewAsset=Nou actiu

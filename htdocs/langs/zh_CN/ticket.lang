@@ -1,0 +1,294 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=票据
+Module56000Desc=发行或请求管理的票务系统
+
+Permission56001=查看票据
+Permission56002=修改票证
+Permission56003=删除票据
+Permission56004=管理票据
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+
+TicketDictType=Ticket - Types
+TicketDictCategory=Ticket - Groupes
+TicketDictSeverity=Ticket - Severities
+TicketTypeShortBUGSOFT=软件故障
+TicketTypeShortBUGHARD=硬件故障
+TicketTypeShortCOM=商业问题
+TicketTypeShortINCIDENT=请求帮助
+TicketTypeShortPROJET=项目
+TicketTypeShortOTHER=其他
+
+TicketSeverityShortLOW=低
+TicketSeverityShortNORMAL=正常
+TicketSeverityShortHIGH=高
+TicketSeverityShortBLOCKING=临界/阻塞
+
+ErrorBadEmailAddress=字段'%s'不正确
+MenuTicketMyAssign=我的票据
+MenuTicketMyAssignNonClosed=我的有效票据
+MenuListNonClosed=有效票据
+
+TypeContact_ticket_internal_CONTRIBUTOR=捐助
+TypeContact_ticket_internal_SUPPORTTEC=指定用户
+TypeContact_ticket_external_SUPPORTCLI=客户联系/事件跟踪
+TypeContact_ticket_external_CONTRIBUTOR=外部贡献者
+
+OriginEmail=电邮来源
+Notify_TICKET_SENTBYMAIL=Send ticket message by email
+
+# Status
+NotRead=没看过
+Read=阅读
+Assigned=分配
+InProgress=进行中
+NeedMoreInformation=Waiting for information
+Answered=回答
+Waiting=等候
+Closed=关闭
+Deleted=删除
+
+# Dict
+Type=类型
+Category=Analytic code
+Severity=严重
+
+# Email templates
+MailToSendTicketMessage=从票证消息发送电子邮件
+
+#
+# Admin page
+#
+TicketSetup=故障单模块设置
+TicketSettings=设置
+TicketSetupPage=
+TicketPublicAccess=以下网址提供不需要识别的公共接口
+TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
+TicketParamModule=模块变量设置
+TicketParamMail=电子邮件设置
+TicketEmailNotificationFrom=来自的通知电子邮件
+TicketEmailNotificationFromHelp=用于票据消息通过示例回答
+TicketEmailNotificationTo=通知电子邮件至
+TicketEmailNotificationToHelp=向此地址发送电子邮件通知。
+TicketNewEmailBodyLabel=Text message sent after creating a ticket
+TicketNewEmailBodyHelp=此处指定的文本将插入到确认从公共界面创建新票证的电子邮件中。有关票务咨询的信息会自动添加。
+TicketParamPublicInterface=公共界面设置
+TicketsEmailMustExist=需要现有电子邮件地址才能创建故障单
+TicketsEmailMustExistHelp=在公共界面中，电子邮件地址应该已经填入数据库以创建新票证。
+PublicInterface=公共界面
+TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
+TicketPublicInterfaceTextHomeLabelAdmin=公共界面的欢迎文本
+TicketPublicInterfaceTextHome=您可以从其标识符跟踪故障单创建支持凭单或查看现有支持凭证。
+TicketPublicInterfaceTextHomeHelpAdmin=此处定义的文本将显示在公共界面的主页上。
+TicketPublicInterfaceTopicLabelAdmin=界面标题
+TicketPublicInterfaceTopicHelp=此文本将显示为公共界面的标题。
+TicketPublicInterfaceTextHelpMessageLabelAdmin=帮助文本到消息条目
+TicketPublicInterfaceTextHelpMessageHelpAdmin=此文本将显示在用户的消息输入区域上方。
+ExtraFieldsTicket=额外的属性
+TicketCkEditorEmailNotActivated=HTML编辑器未激活。请将FCKEDITOR_ENABLE_MAIL内容设置为1以获取它。
+TicketsDisableEmail=不要发送电子邮件以创建故障单或邮件记录
+TicketsDisableEmailHelp=默认情况下，会在创建新故障单或消息时发送电子邮件。启用此选项可禁用* all *电子邮件通知
+TicketsLogEnableEmail=通过电子邮件启用日志
+TicketsLogEnableEmailHelp=每次更改时，都会向与该票证相关联的每个联系人**发送一封电子邮件。
+TicketParams=PARAMS
+TicketsShowModuleLogo=在公共界面中显示模块的徽标
+TicketsShowModuleLogoHelp=启用此选项可在公共界面的页面中隐藏徽标模块
+TicketsShowCompanyLogo=在公共界面中显示公司的徽标
+TicketsShowCompanyLogoHelp=启用此选项可在公共界面的页面中隐藏主公司的徽标
+TicketsEmailAlsoSendToMainAddress=同时向主电子邮件地址发送通知
+TicketsEmailAlsoSendToMainAddressHelp=启用此选项可向“通知电子邮件地址”发送电子邮件（请参阅下面的设置）
+TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
+TicketsLimitViewAssignedOnlyHelp=仅显示分配给当前用户的票证。不适用于具有票证管理权限的用户。
+TicketsActivatePublicInterface=激活公共接口
+TicketsActivatePublicInterfaceHelp=公共接口允许任何访问者创建票证。
+TicketsAutoAssignTicket=自动分配创建故障单的用户
+TicketsAutoAssignTicketHelp=创建故障单时，可以自动将用户分配给故障单。
+TicketNumberingModules=票据编号模块
+TicketNotifyTiersAtCreation=Notify third party at creation
+TicketGroup=组
+TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+#
+# Index & list page
+#
+TicketsIndex=票据 - 首页
+TicketList=票据清单
+TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
+NoTicketsFound=没有找到票据
+NoUnreadTicketsFound=No unread ticket found
+TicketViewAllTickets=查看所有票据
+TicketViewNonClosedOnly=仅查看有效票据
+TicketStatByStatus=票据按状态
+
+#
+# Ticket card
+#
+Ticket=Ticket
+TicketCard=票据卡
+CreateTicket=创建票证
+EditTicket=编辑票证
+TicketsManagement=票据管理
+CreatedBy=制作：
+NewTicket=新票据
+SubjectAnswerToTicket=票据应答
+TicketTypeRequest=请求类型
+TicketCategory=Analytic code
+SeeTicket=查看票据
+TicketMarkedAsRead=票据已标记为已读
+TicketReadOn=请继续阅读
+TicketCloseOn=截止日期
+MarkAsRead=将票证标记为已读
+TicketHistory=票务历史
+AssignUser=分配给用户
+TicketAssigned=现在分配了票证
+TicketChangeType=改变类型
+TicketChangeCategory=Change analytic code
+TicketChangeSeverity=改变严重程度
+TicketAddMessage=添加消息
+AddMessage=添加消息
+MessageSuccessfullyAdded=新增票据
+TicketMessageSuccessfullyAdded=消息已成功添加
+TicketMessagesList=消息列表
+NoMsgForThisTicket=此票证没有消息
+Properties=分类
+LatestNewTickets=最新%s最新票据（未读）
+TicketSeverity=严重
+ShowTicket=看票
+RelatedTickets=相关票据
+TicketAddIntervention=创建干预
+CloseTicket=关票据
+CloseATicket=关票据
+ConfirmCloseAticket=确认票据关闭
+ConfirmDeleteTicket=请确认删除票据
+TicketDeletedSuccess=票证已成功删除
+TicketMarkedAsClosed=票据标记为已关闭
+TicketDurationAuto=计算的持续时间
+TicketDurationAutoInfos=持续时间根据干预相关计算
+TicketUpdated=票据已更新
+SendMessageByEmail=通过电子邮件发送消息
+TicketNewMessage=新消息
+ErrorMailRecipientIsEmptyForSendTicketMessage=收件人是空的。没有电子邮件发送
+TicketGoIntoContactTab=请进入“联系人”标签以选择它们
+TicketMessageMailIntro=介绍
+TicketMessageMailIntroHelp=此文本仅在电子邮件的开头添加，不会保存。
+TicketMessageMailIntroLabelAdmin=发送电子邮件时的消息简介
+TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=此文本将在对票证的响应文本之前插入。
+TicketMessageMailSignature=签名
+TicketMessageMailSignatureHelp=此文本仅在电子邮件末尾添加，不会保存。
+TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=回复电子邮件的签名
+TicketMessageMailSignatureHelpAdmin=该文本将在响应消息后插入。
+TicketMessageHelp=只有此文本将保存在故障单卡的消息列表中。
+TicketMessageSubstitutionReplacedByGenericValues=替换变量由通用值替换。
+TimeElapsedSince=Time elapsed since
+TicketTimeToRead=Time elapsed before read
+TicketContacts=联系票
+TicketDocumentsLinked=与票证相关的文件
+ConfirmReOpenTicket=确认重新打开此票？
+TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
+TicketAssignedToYou=机票已分配
+TicketAssignedEmailBody=您已获得%s的票据＃%s
+MarkMessageAsPrivate=将邮件标记为私有
+TicketMessagePrivateHelp=此消息不会显示给外部用户
+TicketEmailOriginIssuer=发行人在门票的原产地
+InitialMessage=初步讯息
+LinkToAContract=链接到合同
+TicketPleaseSelectAContract=选择合同
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
+TicketMailExchanges=邮件交流
+TicketInitialMessageModified=修改了初始消息
+TicketMessageSuccesfullyUpdated=消息已成功更新
+TicketChangeStatus=改变状态
+TicketConfirmChangeStatus=Confirm the status change: %s ?
+TicketLogStatusChanged=Status changed: %s to %s
+TicketNotNotifyTiersAtCreate=不在创建时通知公司
+Unread=Unread
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Ticket %s read by %s
+NoLogForThisTicket=暂无此日志
+TicketLogAssignedTo=Ticket %s assigned to %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Ticket %s closed by %s
+TicketLogReopen=Ticket %s re-opened
+
+#
+# Public pages
+#
+TicketSystem=票务系统
+ShowListTicketWithTrackId=从曲目ID显示票证列表
+ShowTicketWithTrackId=从曲目ID显示票证
+TicketPublicDesc=您可以创建支持服务单或从现有ID进行检查。
+YourTicketSuccessfullySaved=票据已成功保存！
+MesgInfosPublicTicketCreatedWithTrackId=已创建ID为%s的新故障单。
+PleaseRememberThisId=请保留我们稍后可能会问你的跟踪号码。
+TicketNewEmailSubject=票据创建确认
+TicketNewEmailSubjectCustomer=新支持票
+TicketNewEmailBody=这是一封自动电子邮件，用于确认您已注册新票证。
+TicketNewEmailBodyCustomer=这是一封自动发送的电子邮件，用于确认刚刚在您的帐户中创建了新的故障单。
+TicketNewEmailBodyInfosTicket=用于监控故障单的信息
+TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
+TicketNewEmailBodyInfosTrackUrl=您可以通过单击上面的链接查看故障单的进度。
+TicketNewEmailBodyInfosTrackUrlCustomer=您可以通过单击以下链接查看特定界面中故障单的进度
+TicketEmailPleaseDoNotReplyToThisEmail=请不要直接回复此电子邮件！使用该链接回复界面。
+TicketPublicInfoCreateTicket=此表单允许您在我们的管理系统中记录支持服务单。
+TicketPublicPleaseBeAccuratelyDescribe=请准确描述问题。提供尽可能多的信息，以便我们正确识别您的请求。
+TicketPublicMsgViewLogIn=请输入故障单跟踪ID
+TicketTrackId=Public Tracking ID
+OneOfTicketTrackId=One of your tracking ID
+ErrorTicketNotFound=Ticket with tracking ID %s not found!
+Subject=主题
+ViewTicket=查看票证
+ViewMyTicketList=查看我的票证清单
+ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
+TicketNewEmailSubjectAdmin=新票已创建
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
+SeeThisTicketIntomanagementInterface=请参阅管理界面中的票证
+TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
+ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
+OldUser=Old user
+NewUser=新建用户
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
+# notifications
+TicketNotificationEmailSubject=票据%s已更新
+TicketNotificationEmailBody=这是一条自动消息，通知您刚刚更新了机票%s
+TicketNotificationRecipient=通知收件人
+TicketNotificationLogMessage=记录消息
+TicketNotificationEmailBodyInfosTrackUrlinternal=查看票证到界面
+TicketNotificationNumberEmailSent=Notification email sent: %s
+
+ActionsOnTicket=Events on ticket
+
+#
+# Boxes
+#
+BoxLastTicket=最新创建的票据
+BoxLastTicketDescription=最新%s创建票据
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=没有最近未读的票据
+BoxLastModifiedTicket=最新修改的票据
+BoxLastModifiedTicketDescription=最新%s改装票据
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=没有最近修改的票据

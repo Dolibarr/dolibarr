@@ -49,6 +49,7 @@ if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL))
 	llxHeader();
 	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
+	exit;
 }
 
 if (! empty($keyforcontent))

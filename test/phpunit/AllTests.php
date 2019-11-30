@@ -75,7 +75,7 @@ class AllTests
     public static function suite()
     {
 
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
+        $suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';
         //$suite->addTestSuite('CoreTest');

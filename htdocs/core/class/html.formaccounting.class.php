@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/class/html.formaccounting.class.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *	\brief      File of class with all html predefined components
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
@@ -392,7 +392,7 @@ class FormAccounting extends Form
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->code_compta_fournisseur)) {
+				if ($obj->code_compta_fournisseur != "") {
 					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
 				}
 			}

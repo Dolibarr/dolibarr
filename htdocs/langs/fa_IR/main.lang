@@ -28,6 +28,7 @@ NoTemplateDefined=برای این نوع رایانامه قالبی وجود ن
 AvailableVariables=متغیرهای موجود برای جایگزینی 
 NoTranslation=بدون ترجمه
 Translation=ترجمه
+EmptySearchString=Enter a non empty search string
 NoRecordFound=هیچ ردیفی پیدا نشد
 NoRecordDeleted=هیچ ردیفی حذف نشد
 NotEnoughDataYet=دادۀ کافی وجود ندارد
@@ -371,6 +372,7 @@ Percentage=درصد
 Total=جمع‌کل
 SubTotal=جمع جزء
 TotalHTShort=جمع‌کل (بدون م)
+TotalHT100Short=جمع 100 %% (بدون‌مالیات)
 TotalHTShortCurrency=جمع‌کل (بدون مالیات در واحد پولی)
 TotalTTCShort=جمع‌کل (با مالیات)
 TotalHT=جمع‌کل (بدون مالیت)
@@ -402,7 +404,7 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
-LT1GC=Additionnal cents
+LT1GC=خرده‌های-cent اضافی 
 VATRate=نرخ مالیات
 VATCode=کد نرخ مالیات
 VATNPR=NPR نرخ مالیات
@@ -444,6 +446,7 @@ ContactsAddressesForCompany=طرف‌های‌تماس/نشانی‌های ای�
 AddressesForCompany=نشانی‌های این شخص‌سوم
 ActionsOnCompany=روی‌دادهای مربوط به این شخص سوم
 ActionsOnContact=روی‌دادهای مربوط به این طرف‌تماس/نشانی
+ActionsOnContract=روی‌دادهای مربوط به این قرارداد
 ActionsOnMember=روی‌دادهای مربوط به این عضو
 ActionsOnProduct=روی‌دادهای مربوط به این محصول
 NActionsLate=%s دیرتر
@@ -643,14 +646,13 @@ SendAcknowledgementByMail=ارسال رایانامۀ تائید
 SendMail=ارسال رایانامه
 Email=رایانامه
 NoEMail=بدون رایانامه
-Email=رایانامه
 AlreadyRead=قبلا خوانده شده
 NotRead=خوانده نشده
 NoMobilePhone=بدون تلفن‌همراه
 Owner=مالک
 FollowingConstantsWillBeSubstituted=مثادیر ثابت مقابل با مقدار متناظر جایگزن خواهد شد
 Refresh=تازه‌کردن
-BackToList=بازگشت به فرهست
+BackToList=بازگشت به فهرست
 GoBack=بازگشت
 CanBeModifiedIfOk=در صورت معتبر بودن قابل تغییر است
 CanBeModifiedIfKo=در صورت معتبر بودن قابل تغییر نیست
@@ -671,7 +673,6 @@ Method=روش
 Receive=دریافت
 CompleteOrNoMoreReceptionExpected=کامل‌شده یا در انتظار چیز دیگری نیست
 ExpectedValue=مقدار مورد انتظار
-CurrentValue=مقدار کنونی
 PartialWoman=جزئی
 TotalWoman=کل
 NeverReceived=هرگز دریافت نشده
@@ -704,6 +705,7 @@ DateOfSignature=تاریخ امضا
 HidePassword=نمایش دستور با گذرواژۀ پنهان
 UnHidePassword=نمایش دستور و گذرواژۀ واقعی
 Root=ریشه
+RootOfMedias=Root of public medias (/medias)
 Informations=اطلاعات
 Page=صفحه
 Notes=یادداشت‌ها
@@ -760,6 +762,7 @@ LinkToSupplierProposal=پیوند به پیشنهاد فروشنده
 LinkToSupplierInvoice=پیوند به صورت‌حساب فروشنده
 LinkToContract=پیوند به قرارداد
 LinkToIntervention=پیوند به واسطه‌گری
+LinkToTicket=اتصال به برگۀ پشتیبانی
 CreateDraft=ساخت پیش‌نویس
 SetToDraft=بازگشت به پیش‌نویس
 ClickToEdit=کلیک برای ویرایش
@@ -834,6 +837,7 @@ RelatedObjects=اشیاء مربوطه
 ClassifyBilled=طبقه‌بندی صورت‌شده‌ها
 ClassifyUnbilled=طبقه‌بندی صورت‌نشده‌ها
 Progress=پیش‌روی
+ProgressShort=پیشرفت
 FrontOffice=بخش‌مشتریان
 BackOffice=بخش‌مدیران
 View=نما
@@ -842,6 +846,11 @@ Exports=صادرات
 ExportFilteredList=فهرست گزینشی صادرا
 ExportList=فهرست صادرات
 ExportOptions=گزینه‌های صادرکردن
+IncludeDocsAlreadyExported=دربرگرفتن مستنداتی که قبلا صادر شده‌اند
+ExportOfPiecesAlreadyExportedIsEnable=دربرگیری بخش‌هائی که قبلا صادر شده‌اند فعال است
+ExportOfPiecesAlreadyExportedIsDisable=دربرگیری بخش‌هائی که قبلا صادر شده‌اند غیر فعال است
+AllExportedMovementsWereRecordedAsExported=همۀ جابه‌جائی‌های صادر شده به عنوان صادرشده ثبت شد
+NotAllExportedMovementsCouldBeRecordedAsExported=همۀ جابه‌جائی‌های صادرشده نمی‌توانند به‌عنوان صادرشده ثبت شوند
 Miscellaneous=متفرقه
 Calendar=تقویم
 GroupBy=گروه‌بندی توسط...
@@ -854,7 +863,7 @@ Download=دریافت
 DownloadDocument=دریافت سن
 ActualizeCurrency=به‌روز‌رسانی نرخ واحدپولی
 Fiscalyear=سال مالی
-ModuleBuilder=واحد ساز
+ModuleBuilder=واحدساز و برنامه‌ساز
 SetMultiCurrencyCode=تنظیم واحدپولی
 BulkActions=کنش‌های گروهی
 ClickToShowHelp=برای نمایش راهنما کلیک کنید
@@ -942,7 +951,7 @@ SearchIntoContracts=قراردادها
 SearchIntoCustomerShipments=حمل‌ونقل مشتریان
 SearchIntoExpenseReports=گزارش‌هزینه‌ها
 SearchIntoLeaves=ترک
-SearchIntoTickets=Tickets
+SearchIntoTickets=برگه‌های پشتیبانی
 CommentLink=نظرات
 NbComments=تعداد نظرات
 CommentPage=محل نظرات
@@ -967,6 +976,17 @@ YouAreCurrentlyInSandboxMode=شما فعلا در حالت "شن‌بازی" %s 
 Inventory=انبار
 AnalyticCode=کد Analytic
 TMenuMRP=MRP
-ShowMoreInfos=Show More Infos
-NoFilesUploadedYet=Please upload a document first
-SeePrivateNote=See private note
+ShowMoreInfos=نمایش اطلاعات بیشتر
+NoFilesUploadedYet=لطفا ابتدا یک سند بالاگذاری نمائید
+SeePrivateNote=ملاحظۀ یادداشت خصوصی
+PaymentInformation=اطلاعات پرداخت
+ValidFrom=معتبر از
+ValidUntil=معتبر تا
+NoRecordedUsers=کاربری نیست
+ToClose=To close
+ToProcess=برای پردازش
+ToApprove=To approve
+GlobalOpenedElemView=Global view
+NoArticlesFoundForTheKeyword=No article found for the keyword '<strong>%s</strong>'
+NoArticlesFoundForTheCategory=No article found for the category
+ToAcceptRefuse=To accept | refuse

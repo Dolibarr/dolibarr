@@ -243,7 +243,7 @@ else
 	print '</table>';
 
 
-	// Boutons actions
+	// Buttons for actions
 
 	print '<div class="tabsAction">';
 

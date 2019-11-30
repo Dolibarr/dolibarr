@@ -159,7 +159,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
-    print '<body id="mainbody" class="publicnewticketform" style="margin-top: 10px;">';
+    print '<body id="mainbody" class="publicnewticketform">';
 
     if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || ! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
         print '<center>';
@@ -185,5 +185,5 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	print '</center><br>';
     }
 
-    print '<div style="margin-left: 50px; margin-right: 50px;">';
+    print '<div class="ticketlargemargin">';
 }

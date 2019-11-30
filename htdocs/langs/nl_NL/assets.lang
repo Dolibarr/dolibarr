@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Bezittingen
+NewAsset = Nieuw bezit
+AccountancyCodeAsset = Grootboekrekening (bezittingen)
+AccountancyCodeDepreciationAsset = Grootboekrekening (Afschrijving grootboekrekening)
+AccountancyCodeDepreciationExpense = Grootboekrekening (Afschrijving kosten grootboekrekening)
+NewAssetType=Nieuw soort bezittingen
+AssetsTypeSetup=Instelling van het bezittings-soort
+AssetTypeModified=Soort bezitting gewijzigd
+AssetType=Soort bezit
+AssetsLines=Bezittingen
+DeleteType=Verwijderen
+DeleteAnAssetType=Een soort bezitting verwijderen
+ConfirmDeleteAssetType=Weet u zeker dat u deze bezittings-soort wilt verwijderen?
+ShowTypeCard=Toon type "%s"
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Bezittingen
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Omschrijving bezit
+
+#
+# Admin page
+#
+AssetsSetup = Bezittingen instellen
+Settings = Instellingen
+AssetsSetupPage = Bezittingen instellingenpagina
+ExtraFieldsAssetsType = Aanvullende attributen (Soort bezit)
+AssetsType=Soort bezit
+AssetsTypeId=Id soort bezit
+AssetsTypeLabel=Label soort bezit
+AssetsTypes=Soort bezit
+
+#
+# Menu
+#
+MenuAssets = Bezittingen
+MenuNewAsset = Nieuw bezit
+MenuTypeAssets = Soort bezit
+MenuListAssets = Lijstoverzicht
+MenuNewTypeAssets = Nieuw
+MenuListTypeAssets = Lijstoverzicht
+
+#
+# Module
+#
+NewAssetType=Nieuw soort bezittingen
+NewAsset=Nieuw bezit

@@ -12,7 +12,7 @@ YourEMail=E-Mail de confirmación de pago
 STRIPE_PAYONLINE_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
 Creditor=Beneficiario
 PaymentCode=Código de pago
-StripeDoPayment=Pague con Tarjeta de Crédito o Débito (Stripe)
+StripeDoPayment=Pagar con Stripe
 YouWillBeRedirectedOnStripe=Se le redirigirá a la página de Stripe protegida para indicar la información de su tarjeta de crédito
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pago %s
@@ -40,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock para usar para la disminución de stock cuando se realiza el pago en línea <br> (TODO Cuando la opción para disminuir stock se realiza en una acción en la factura y el pago en línea se genera la factura?)
 StripeLiveEnabled=Stripe live activado (de lo contrario en modo test/sandbox)
 StripeImportPayment=Importar pagos Stripe
-ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para pruebas: %s(válido),%s (error CVC), %s (caducada), %s (la carga falla)
+ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para pruebas: %s=> válida,%s => error CVC, %s => caducada, %s => la carga falla
 StripeGateways=Pasarelas de Stripe
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca _...)
@@ -63,3 +63,7 @@ CreateCardOnStripe=Crea una tarjeta en Stripe
 ShowInStripe=Mostrar en Stripe
 StripeUserAccountForActions=Cuenta de usuario para usar en algunos e-mails de notificación de eventos Stripe (pagos de Stripe)
 StripePayoutList=Lista de pagos de Stripe
+ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo de prueba)
+ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo real)
+PaymentWillBeRecordedForNextPeriod=El pago se registrará para el próximo período.
+ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo ...</a>

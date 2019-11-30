@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Active
+NewAsset = Activ nou
+AccountancyCodeAsset = Cod contabil (activ)
+AccountancyCodeDepreciationAsset = Cod contabil (contul de activ al deprecierii)
+AccountancyCodeDepreciationExpense = Cod contabil (cont de cheltuieli de amortizare)
+NewAssetType=Tip de activ nou
+AssetsTypeSetup=Setarea tipului de activ
+AssetTypeModified=Tipul activului a fost modificat
+AssetType=Tipul activului
+AssetsLines=Active
+DeleteType=Şterge
+DeleteAnAssetType=Ștergeți un tip de activ
+ConfirmDeleteAssetType=Sigur doriți să ștergeți acest tip de activ?
+ShowTypeCard=Arată tipul ' %s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Active
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Descrierea activelor
+
+#
+# Admin page
+#
+AssetsSetup = Configurarea activelor
+Settings = Configurări
+AssetsSetupPage = Pagină de configurare a activelor
+ExtraFieldsAssetsType = Atribute complementare (tipul de activ)
+AssetsType=Tipul activului
+AssetsTypeId=ID de tip activ
+AssetsTypeLabel=Eticheta de tip activ
+AssetsTypes=Tipuri de active
+
+#
+# Menu
+#
+MenuAssets = Bunuri
+MenuNewAsset = Activ nou
+MenuTypeAssets = Tip activ
+MenuListAssets = Lista
+MenuNewTypeAssets = Nou
+MenuListTypeAssets = Lista
+
+#
+# Module
+#
+NewAssetType=Tip de activ nou
+NewAsset=Activ nou

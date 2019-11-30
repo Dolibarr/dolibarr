@@ -88,7 +88,7 @@ if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcon
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY';	// Name of trigger action code to execute when we modify record
 
-if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
+if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1))
 {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
@@ -235,7 +235,14 @@ if ($action=="create" || $action=="start")
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 		$terminaltouse = $terminalid;
-		if ($terminaltouse == '1') $terminaltouse = '';
+
+		if ($terminaltouse == '1' && $posmodule=='cashdesk') $terminaltouse = '';
+
+		if ($posmodule=='cashdesk' && $terminaltouse != '' && $terminaltouse != '1') {
+			$terminaltouse = '';
+			setEventMessages($langs->trans("OnlyTerminal1IsAvailableForCashDeskModule"), null, 'errors');
+			$error++;
+		}
 
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach($arrayofpaymentmode as $key => $val)
@@ -247,7 +254,7 @@ if ($action=="create" || $action=="start")
 			}
 
 			// Get the bank account dedicated to this point of sale module/terminal
-			$vartouse=CASHDESK_ID_BANKACCOUNT_CASH.$terminaltouse;
+			$vartouse='CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = $conf->global->$vartouse;			// This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
 			// Hook to get the good bank id according to posmodule and posnumber.
 			// @TODO add hook here
@@ -271,7 +278,7 @@ if ($action=="create" || $action=="start")
 			}
 			else
 			{
-			    setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminalid), null, 'errors');
+				setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminaltouse), null, 'errors');
 			    $error++;
 			}
 		}

@@ -516,7 +516,7 @@ class ImportXlsx extends ModeleImports
                                 {
                                     if (empty($newval)) $newval='0';
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchscalefromcodeunits')
                                 {
                                 	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
                                 	$class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -536,17 +536,18 @@ class ImportXlsx extends ModeleImports
                                 		}
                                 		$classinstance=new $class($this->db);
                                 		// Try the fetch from code or ref
-                                		call_user_func_array(array($classinstance, $method), array('', $units, '', $newval));
-                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->code;
-                                		//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
-                                		if ($classinstance->code != '')	// id may be 0, it is a found value
-                                		{
-                                			$newval=$classinstance->code;
-                                		}
-                                		else
-                                		{
-                                			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                			else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                        call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
+                                        $scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
+                                        $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$scaleorid;
+                                        //print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
+                                        if ($classinstance->id > 0)	// we found record
+                                        {
+                                        	$newval = $scaleorid ? $scaleorid : 0;
+                                        }
+                                        else
+                                        {
+                                        	if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                        	else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
                                 			$this->errors[$error]['type']='FOREIGNKEY';
                                 			$errorforthistable++;
                                 			$error++;
@@ -621,16 +622,25 @@ class ImportXlsx extends ModeleImports
 						    // Test regexp
 							if (! empty($objimport->array_import_regex[0][$val]) && ($newval != ''))
 							{
-								// If test is "Must exist in a field@table"
-								if (preg_match('/^(.*)@(.*)$/', $objimport->array_import_regex[0][$val], $reg))
+								// If test is "Must exist in a field@table or field@table:..."
+								if (preg_match('/^(.+)@([^:]+)(:.+)?$/', $objimport->array_import_regex[0][$val], $reg))
 								{
 									$field=$reg[1];
 									$table=$reg[2];
+									$filter=!empty($reg[3])?substr($reg[3], 1):'';
+
+									$cachekey = $field.'@'.$table;
+									if(! empty($filter)) $cachekey.= ':'.$filter;
 
 									// Load content of field@table into cache array
-									if (! is_array($this->cachefieldtable[$field.'@'.$table])) // If content of field@table not already loaded into cache
+									if (! is_array($this->cachefieldtable[$cachekey])) // If content of field@table not already loaded into cache
 									{
 										$sql="SELECT ".$field." as aliasfield FROM ".$table;
+										if(! empty($filter))
+										{
+											$sql.= ' WHERE ' . $filter;
+										}
+
 										$resql=$this->db->query($sql);
 										if ($resql)
 										{
@@ -639,7 +649,7 @@ class ImportXlsx extends ModeleImports
 											while ($i < $num)
 											{
 												$obj=$this->db->fetch_object($resql);
-												if ($obj) $this->cachefieldtable[$field.'@'.$table][]=$obj->aliasfield;
+												if ($obj) $this->cachefieldtable[$cachekey][]=$obj->aliasfield;
 												$i++;
 											}
 										}
@@ -650,15 +660,18 @@ class ImportXlsx extends ModeleImports
 									}
 
 									// Now we check cache is not empty (should not) and key is into cache
-									if (! is_array($this->cachefieldtable[$field.'@'.$table]) || ! in_array($newval, $this->cachefieldtable[$field.'@'.$table]))
+									if (! is_array($this->cachefieldtable[$cachekey]) || ! in_array($newval, $this->cachefieldtable[$cachekey]))
 									{
-										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $table);
+										$tableforerror = $table;
+										if(! empty($filter)) $tableforerror.= ':'.$filter;
+										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
 										$this->errors[$error]['type']='FOREIGNKEY';
 									    $errorforthistable++;
 										$error++;
 									}
-								} elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
-								    // If test is just a static regex
+								}
+								// If test is just a static regex
+								elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
 								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
 									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type']='REGEX';
@@ -688,20 +701,32 @@ class ImportXlsx extends ModeleImports
     				// Loop on each hidden fields to add them into listfields/listvalues
 				    foreach($objimport->array_import_fieldshidden[0] as $key => $val)
     				{
-    				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
+    				    if (! preg_match('/^'.preg_quote($alias, '/').'\./', $key)) continue;    // Not a field of current table
     				    if ($val == 'user->id')
     				    {
-    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
+    				        $listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				        $listvalues[] = $user->id;
     				    }
     				    elseif (preg_match('/^lastrowid-/', $val))
     				    {
     				        $tmp=explode('-', $val);
     				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
-							$keyfield = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
+							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				        $listfields[] = $keyfield;
                             $listvalues[] = $lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
+    				    }
+    				    elseif (preg_match('/^const-/', $val))
+    				    {
+    				    	$tmp=explode('-', $val, 2);
+    				    	$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+    				    	$listvalues[] = "'".$tmp[1]."'";
+    				    }
+    				    else
+    				    {
+    				    	$this->errors[$error]['lib']='Bad value of profile setup '.$val.' for array_import_fieldshidden';
+    				    	$this->errors[$error]['type']='Import profile setup';
+    				    	$error++;
     				    }
     				}
 				}
@@ -755,7 +780,7 @@ class ImportXlsx extends ModeleImports
 									$error++;
 								}
 							} else {
-								// We have a last INSERT ID. Check if we have a row referencing this foreign key.
+								// We have a last INSERT ID (got by previous pass), so we check if we have a row referencing this foreign key.
 								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.

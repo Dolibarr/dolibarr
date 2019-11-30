@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,6 +279,12 @@ if ($action == 'edit')	// Edit
     print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0, 1);
     print '</td></tr>';
+
+	//Invert sender and recipient
+
+	print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td>';
+	print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT))?$conf->global->MAIN_INVERT_SENDER_RECIPIENT:0, 1);
+	print '</td></tr>';
 
  	// Place customer adress to the ISO location
 

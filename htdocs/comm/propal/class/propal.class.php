@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2019 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
@@ -1063,7 +1063,7 @@ class Propal extends CommonObject
                 	$ret = $this->add_object_linked();
                 	if (! $ret)	dol_print_error($this->db);
                 }
-
+				
                 /*
                  *  Insertion du detail des produits dans la base
                  *  Insert products detail in database
@@ -1330,9 +1330,9 @@ class Propal extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-				$parameters=array('objFrom'=>$this,'clonedObj'=>$clonedObj);
+				$parameters=array('objFrom'=>$this,'clonedObj'=>$object);
 				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $clonedObj, $action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 		}
@@ -1739,9 +1739,9 @@ class Propal extends CommonObject
 	 */
     public function valid($user, $notrigger = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -1808,14 +1808,18 @@ class Propal extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// Rename of propal directory ($this->ref = old ref, $num = new ref)
-				// to  not lose the linked files
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'propale/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
 				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
-
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 					if (@rename($dirsource, $dirdest))
@@ -3502,7 +3506,7 @@ class Propal extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Proposal"));
 			return "";
 		}
 	}

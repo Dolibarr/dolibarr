@@ -174,9 +174,9 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		// Force reload of setup for the current entity
-		if ($line->entity != $conf->entity)
+		if ((empty($line->entity)?1:$line->entity) != $conf->entity)
 		{
-		    dol_syslog("cron_run_jobs.php we work on another entity so we reload user and conf", LOG_DEBUG);
+			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload user and conf", LOG_DEBUG);
 		    echo " -> we change entity so we reload user and conf";
 
 		    $conf->entity = (empty($line->entity)?1:$line->entity);

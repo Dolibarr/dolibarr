@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/security.php
- *       \brief      This ajax component is used to generated has keys for security purposes
+ *       \brief      This ajax component is used to generated hash keys for security purposes
  *                   like key to use into URL to protect them.
  */
 

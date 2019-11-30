@@ -790,7 +790,7 @@ class Website extends CommonObject
 	/**
 	 * Generate a zip with all data of web site.
 	 *
-	 * @return  string						Path to file with zip
+	 * @return  string						Path to file with zip or '' if error
 	 */
 	public function exportWebSite()
 	{
@@ -957,9 +957,18 @@ class Website extends CommonObject
 		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
 
 		dol_delete_file($fileglob, 0);
-		dol_compress_file($filedir, $filename, 'zip');
+		$result = dol_compress_file($filedir, $filename, 'zip');
 
-		return $filename;
+		if ($result > 0)
+		{
+			return $filename;
+		}
+		else
+		{
+			global $errormsg;
+			$this->error = $errormsg;
+			return '';
+		}
 	}
 
 

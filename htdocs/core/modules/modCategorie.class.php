@@ -425,8 +425,8 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cp'=>MAIN_DB_PREFIX.'categorie_product');
-			$this->import_fields_array[$r]=array('cp.fk_categorie'=>"Category*",'cp.fk_product'=>"Product*"
-			);
+			$this->import_fields_array[$r]=array('cp.fk_categorie'=>"Category*",'cp.fk_product'=>"Product*");
+			$this->import_regex_array[$r]=array('cp.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=0');
 
 			$this->import_convertvalue_array[$r]=array(
 					'cp.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
@@ -444,7 +444,10 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
-			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_soc'=>"ThirdParty*"
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_soc'=>"ThirdParty*");
+			$this->import_regex_array[$r]=array(
+				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=2',
+				'cs.fk_soc'=>'rowid@'.MAIN_DB_PREFIX.'societe:client>0'
 			);
 
 			$this->import_convertvalue_array[$r]=array(
@@ -463,7 +466,10 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');
-			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_soc'=>"Supplier*"
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_soc'=>"Supplier*");
+			$this->import_regex_array[$r]=array(
+				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=1',
+				'cs.fk_soc'=>'rowid@'.MAIN_DB_PREFIX.'societe:fournisseur>0'
 			);
 
 			$this->import_convertvalue_array[$r]=array(

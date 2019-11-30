@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Majątek
+NewAsset = Nowy majątek
+AccountancyCodeAsset = Kod księgowości (majątek)
+AccountancyCodeDepreciationAsset = Kod księgowości (rachunek aktywów amortyzacyjnych)
+AccountancyCodeDepreciationExpense = Kod księgowości (rachunek kosztów amortyzacji)
+NewAssetType=Nowy typ majątku
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Typ majątku
+AssetsLines=Majątek
+DeleteType=Usuń
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Pokaż typu ' %s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Majątek
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Opis majątku
+
+#
+# Admin page
+#
+AssetsSetup = Ustawienia majątku
+Settings = Ustawienia
+AssetsSetupPage = Strona konfiguracji majątku
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=Typ majątku
+AssetsTypeId=ID typu majątku
+AssetsTypeLabel=Etykieta typu majątku
+AssetsTypes=Typy majątku
+
+#
+# Menu
+#
+MenuAssets = Majątek
+MenuNewAsset = Nowy majątek
+MenuTypeAssets = Typ majątku
+MenuListAssets = Lista
+MenuNewTypeAssets = Nowy
+MenuListTypeAssets = Lista
+
+#
+# Module
+#
+NewAssetType=Nowy typ majątku
+NewAsset=Nowy majątek

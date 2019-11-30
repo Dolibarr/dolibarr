@@ -95,10 +95,9 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+llxHeader();
 
 $head = group_prepare_head($object);
 
@@ -106,7 +105,7 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linback, $user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

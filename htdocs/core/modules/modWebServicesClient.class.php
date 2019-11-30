@@ -41,6 +41,7 @@ class modWebServicesClient extends DolibarrModules
         $this->numero = 2660;
 
         $this->family = "interface";
+        $this->module_position = '26';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable the web service client to call external supplier web services";

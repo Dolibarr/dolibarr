@@ -43,12 +43,6 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var string Name of subtable if this object has sub lines
-	 */
-	//public $table_element_line = 'mymodule_myobjectline';
-	//public $fk_element = 'fk_myobject';
-
-	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
@@ -66,7 +60,7 @@ class MyObject extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
-	const STATUS_DISABLED = 9;
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -171,13 +165,12 @@ class MyObject extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-
 	// If this object has a subtable with lines
 
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'myobjectdet';
+	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
@@ -190,9 +183,14 @@ class MyObject extends CommonObject
 	//public $class_element_line = 'MyObjectline';
 
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('myobjectdet');
+	//protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	//protected $childtablesoncascade=array('mymodule_myobjectdet');
 
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
@@ -227,11 +225,11 @@ class MyObject extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -390,7 +388,7 @@ class MyObject extends CommonObject
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		if ($this->ismultientitymanaged) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
 		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
@@ -698,7 +696,7 @@ class MyObject extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new MyObjectLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -783,5 +781,5 @@ class MyObject extends CommonObject
 class MyObjectLine
 {
 	// To complete with content of an object MyObjectLine
-	// We should have a field rowid, fk_myobject and rank
+	// We should have a field rowid, fk_myobject and position
 }

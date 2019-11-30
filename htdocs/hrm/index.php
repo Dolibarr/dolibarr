@@ -134,6 +134,7 @@ if (! empty($conf->holiday->enabled))
 	{
 		$user_id = $user->id;
 
+        print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
 	    print "<tr ".$bc[0].">";
@@ -152,7 +153,7 @@ if (! empty($conf->holiday->enabled))
 
 	    print '</td>';
 	    print '</tr>';
-	    print '</table><br>';
+	    print '</table></div><br>';
 	}
 	elseif (! is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 	{

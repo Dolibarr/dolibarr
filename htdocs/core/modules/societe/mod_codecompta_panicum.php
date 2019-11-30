@@ -96,8 +96,8 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		$this->code='';
 
 		if (is_object($societe)) {
-			if ($type == 'supplier') $this->code = (! empty($societe->code_compta_fournisseur)?$societe->code_compta_fournisseur:'');
-			else $this->code = (! empty($societe->code_compta)?$societe->code_compta:'');
+			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "")?$societe->code_compta_fournisseur:'');
+			else $this->code = (($societe->code_compta != "")?$societe->code_compta:'');
 		}
 
 		return 0; // return ok

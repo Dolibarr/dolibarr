@@ -2338,7 +2338,7 @@ elseif (! empty($object->id))
 			}*/
 
 			// Modify
-			if ($object->statut == 1)
+			if ($object->statut == CommandeFournisseur::STATUS_VALIDATED)
 			{
 				if ($user->rights->fournisseur->commande->commander)
 				{
@@ -2347,7 +2347,7 @@ elseif (! empty($object->id))
 			}
 
 			// Approve
-			if ($object->statut == 1)
+			if ($object->statut == CommandeFournisseur::STATUS_VALIDATED)
 			{
 				if ($user->rights->fournisseur->commande->approuver)
 				{
@@ -2369,7 +2369,7 @@ elseif (! empty($object->id))
 			// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
 			if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
 			{
-				if ($object->statut == 1)
+				if ($object->statut == CommandeFournisseur::STATUS_VALIDATED)
 				{
 					if ($user->rights->fournisseur->commande->approve2)
 					{
@@ -2390,7 +2390,7 @@ elseif (! empty($object->id))
 			}
 
 			// Refuse
-			if ($object->statut == 1)
+			if ($object->statut == CommandeFournisseur::STATUS_VALIDATED)
 			{
 				if ($user->rights->fournisseur->commande->approuver || $user->rights->fournisseur->commande->approve2)
 				{
@@ -2403,7 +2403,7 @@ elseif (! empty($object->id))
 			}
 
 			// Send
-			if (in_array($object->statut, array(2, 3, 4, 5)))
+			if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED, 3, 4, 5)))
 			{
 				if ($user->rights->fournisseur->commande->commander)
 				{
@@ -2412,7 +2412,7 @@ elseif (! empty($object->id))
 			}
 
 			// Reopen
-			if (in_array($object->statut, array(2)))
+			if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED)))
 			{
 				$buttonshown=0;
 				if (! $buttonshown && $user->rights->fournisseur->commande->approuver)
@@ -2454,7 +2454,7 @@ elseif (! empty($object->id))
 				}
 			}
 
-			if ($object->statut == 2)
+			if ($object->statut == CommandeFournisseur::STATUS_ACCEPTED)
 			{
 				if ($user->rights->fournisseur->commande->commander)
 				{
@@ -2463,6 +2463,15 @@ elseif (! empty($object->id))
 				else
 				{
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("MakeOrder").'</a></div>';
+				}
+			}
+
+			// Classify received (this does not record reception)
+			if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT || $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY)
+			{
+				if ($user->rights->fournisseur->commande->receptionner)
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifyreception#classifyreception">'.$langs->trans("ClassifyReception").'</a></div>';
 				}
 			}
 
@@ -2485,11 +2494,18 @@ elseif (! empty($object->id))
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 				}
-				elseif (!empty($object->linkedObjectsIds['invoice_supplier']))
+				else
 				{
-					if ($user->rights->fournisseur->facture->creer)
+					if (!empty($object->linkedObjectsIds['invoice_supplier']))
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						if ($user->rights->fournisseur->facture->creer)
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NeedAtLeastOneInvoice")).'">'.$langs->trans("ClassifyBilled").'</a>';
 					}
 				}
 			}
@@ -2516,7 +2532,7 @@ elseif (! empty($object->id))
 			}
 
 			// Delete
-			if ($user->rights->fournisseur->commande->supprimer)
+			if (! empty($user->rights->fournisseur->commande->supprimer) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && ! empty($user->rights->fournisseur->commande->creer)))
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
@@ -2583,38 +2599,41 @@ elseif (! empty($object->id))
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
+			if ($action == 'classifyreception')
 			{
-				// Set status to received (action=livraison)
-				print '<!-- form to record supplier order received -->'."\n";
-				print '<form action="card.php?id='.$object->id.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden"	name="action" value="livraison">';
-				print load_fiche_titre($langs->trans("Receive"), '', '');
+				if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == CommandeFournisseur::STATUS_ORDERSENT || $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY))
+				{
+					// Set status to received (action=livraison)
+					print '<!-- form to record purchase order received -->'."\n";
+					print '<form id="classifyreception" action="card.php?id='.$object->id.'" method="post">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden"	name="action" value="livraison">';
+					print load_fiche_titre($langs->trans("Receive"), '', '');
 
-				print '<table class="noborder centpercent">';
-				//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
-				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-				$datepreselected = dol_now();
-				print $form->selectDate($datepreselected, '', 1, 1, '', "commande", 1, 1);
-				print "</td></tr>\n";
+					print '<table class="noborder centpercent">';
+					//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
+					print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
+					$datepreselected = dol_now();
+					print $form->selectDate($datepreselected, '', 1, 1, '', "commande", 1, 1);
+					print "</td></tr>\n";
 
-				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
-				$liv = array();
-				$liv[''] = '&nbsp;';
-				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
-				$liv['par']	= $langs->trans("PartialWoman");
-				$liv['nev']	= $langs->trans("NeverReceived");
-				$liv['can']	= $langs->trans("Canceled");
+					print '<tr><td class="fieldrequired">'.$langs->trans("Delivery")."</td><td>\n";
+					$liv = array();
+					$liv[''] = '&nbsp;';
+					$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
+					$liv['par']	= $langs->trans("PartialWoman");
+					$liv['nev']	= $langs->trans("NeverReceived");
+					$liv['can']	= $langs->trans("Canceled");
 
-				print $form->selectarray("type", $liv);
+					print $form->selectarray("type", $liv);
 
-				print '</td></tr>';
-				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
-				print '<tr><td class="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
-				print "</table>\n";
-				print "</form>\n";
-				print "<br>";
+					print '</td></tr>';
+					print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
+					print '<tr><td class="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
+					print "</table>\n";
+					print "</form>\n";
+					print "<br>";
+				}
 			}
 
 			// List of actions on element

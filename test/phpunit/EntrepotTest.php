@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class EntrepotTest extends PHPUnit_Framework_TestCase
+class EntrepotTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -211,6 +211,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		//$this->assertLessThan(1, 0);
 
         return $localobject->id;
     }
@@ -256,6 +257,8 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $localobject=new Entrepot($db);
+
+        //$this->assertLessThan(1, 0);
 
         return;
     }

@@ -168,71 +168,11 @@ class ActionsTicket
     }
 
     /**
-     * View html list of logs
-     *
-     * @param boolean $show_user Show user who make action
-     * @return void
-     */
-    public function viewTicketLogs($show_user = true)
-    {
-        global $conf, $langs;
-
-        // Load logs in cache
-        $ret = $this->dao->loadCacheLogsTicket();
-
-        if (is_array($this->dao->cache_logs_ticket) && count($this->dao->cache_logs_ticket) > 0) {
-            print '<table class="border" style="width:100%;">';
-
-            print '<tr class="liste_titre">';
-
-            print '<th>';
-            print $langs->trans('DateCreation');
-            print '</th>';
-
-            if ($show_user) {
-                print '<th>';
-                print $langs->trans('User');
-                print '</th>';
-            }
-
-            foreach ($this->dao->cache_logs_ticket as $id => $arraylogs) {
-                print '<tr class="oddeven">';
-                print '<td><strong>';
-                print dol_print_date($arraylogs['datec'], 'dayhour');
-                print '</strong></td>';
-
-                if ($show_user) {
-                    print '<td>';
-                    if ($arraylogs['fk_user_create'] > 0) {
-                        $userstat = new User($this->db);
-                        $res = $userstat->fetch($arraylogs['fk_user_create']);
-                        if ($res) {
-                            print $userstat->getNomUrl(1);
-                        }
-                    }
-                    print '</td>';
-                }
-                print '</tr>';
-                print '<tr class="oddeven">';
-                print '<td colspan="2">';
-                print dol_nl2br($arraylogs['message']);
-
-                print '</td>';
-                print '</tr>';
-            }
-
-            print '</table>';
-        } else {
-            print '<div class="info">' . $langs->trans('NoLogForThisTicket') . '</div>';
-        }
-    }
-
-    /**
      * Show ticket original message
      *
      * @param 	User		$user		User wich display
      * @param 	string 		$action    	Action mode
-     * @param	Ticket	$object		Object ticket
+     * @param	Ticket		$object		Object ticket
      * @return	void
      */
     public function viewTicketOriginalMessage($user, $action, $object)
@@ -280,7 +220,7 @@ class ActionsTicket
 
             //print '<div>' . $object->message . '</div>';
         }
-        if ($user->rights->ticket->manage && $action == 'edit_message_init') {
+        if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
             print '<div class="center">';
             print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
             print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
@@ -289,33 +229,42 @@ class ActionsTicket
         print '</td>';
         print '</tr>';
         print '</table>';
+        print '</div>';
+
+        if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+        	// MESSAGE
+        	print '</form>';
+        }
     }
+
     /**
      * View html list of message for ticket
      *
-     * @param boolean $show_private Show private messages
-     * @param boolean $show_user    Show user who make action
-     * @return void
+     * @param 	boolean 	$show_private 	Show private messages
+     * @param 	boolean 	$show_user    	Show user who make action
+     * @param	Ticket		$object			Object ticket
+     * @return 	void
      */
-    public function viewTicketMessages($show_private, $show_user = true)
+    public function viewTicketMessages($show_private, $show_user, $object)
     {
         global $conf, $langs, $user;
 
         // Load logs in cache
         $ret = $this->dao->loadCacheMsgsTicket();
-        $action = GETPOST('action');
+        if ($ret < 0) dol_print_error($this->dao->db);
 
-        $this->viewTicketOriginalMessage($user, $action);
+        $action = GETPOST('action', 'alpha');
 
-        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-            print load_fiche_titre($langs->trans('TicketMailExchanges'));
+        $this->viewTicketOriginalMessage($user, $action, $object);
 
+        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0)
+        {
             print '<table class="border" style="width:100%;">';
 
             print '<tr class="liste_titre">';
 
             print '<td>';
-            print $langs->trans('DateCreation');
+            print $langs->trans('TicketMessagesList');
             print '</td>';
 
             if ($show_user) {
@@ -335,9 +284,9 @@ class ActionsTicket
                     print '<strong></td>';
                     if ($show_user) {
                         print '<td>';
-                        if ($arraymsgs['fk_user_action'] > 0) {
+                        if ($arraymsgs['fk_user_author'] > 0) {
                             $userstat = new User($this->db);
-                            $res = $userstat->fetch($arraymsgs['fk_user_action']);
+                            $res = $userstat->fetch($arraymsgs['fk_user_author']);
                             if ($res) {
                                 print $userstat->getNomUrl(0);
                             }

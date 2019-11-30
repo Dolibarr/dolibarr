@@ -398,7 +398,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
                 $moreinheader='X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
 
-                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1, '', $moreinheader);
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, '', $moreinheader);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
@@ -478,7 +478,7 @@ if ($rowid > 0)
     print '<div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -490,7 +490,7 @@ if ($rowid > 0)
 	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
-	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+	print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 	print '</tr>';
 
 	// Company
@@ -667,7 +667,7 @@ if ($rowid > 0)
      */
     if ($action != 'addsubscription' && $action != 'create_thirdparty')
     {
-        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
+        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
         $sql.= " c.rowid as crowid, c.subscription,";
         $sql.= " c.datec, c.fk_type as cfk_type,";
         $sql.= " c.dateadh as dateh,";
@@ -705,26 +705,30 @@ if ($rowid > 0)
             print "</tr>\n";
 
             $accountstatic=new Account($db);
+            $adh = new Adherent($db);
             $adht = new AdherentType($db);
 
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
 
+                $adh->id = $objp->rowid;
+                $adh->typeid = $objp->type;
+
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
 
-                if ($objp->cfk_type > 0)
+                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $adh->typeid);
+                if ($typeid > 0)
                 {
-                    $adht->fetch($objp->cfk_type);
+                    $adht->fetch($typeid);
                 }
 
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
                 print '<td class="center">';
-                if ($objp->cfk_type > 0)
-                {
+                if ($typeid > 0) {
                     print $adht->getNomUrl(1);
                 }
                 print '</td>';

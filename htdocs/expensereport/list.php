@@ -47,10 +47,25 @@ $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'expensereportlist';
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', '', '');
+$id = GETPOST('id', 'int');
+// If we are on the view of a specific user
+if ($id > 0)
+{
+    $canread=0;
+    if ($id == $user->id) $canread=1;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($id, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 $diroutputmassaction=$conf->expensereport->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -67,7 +82,6 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
 
-$id = GETPOST('id', 'int');
 
 $sall         = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref   = GETPOST('search_ref', 'alpha');
@@ -263,7 +277,7 @@ $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.tota
 $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut, u.photo";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+foreach ($extrafields->attributes['expensereport']['type'] as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -291,7 +305,6 @@ if ($search_status != '' && $search_status >= 0) $sql.=" AND d.fk_statut IN (".$
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-	$childids = $user->getAllChildIds(1);
 	$sql.= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 // Add where from extra fields
@@ -434,7 +447,7 @@ if ($resql)
 			$canedit=((in_array($user_id, $childids) && $user->rights->expensereport->creer)
 				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
-			// Boutons d'actions
+			// Buttons for actions
 			if ($canedit)
 			{
 				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';

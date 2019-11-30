@@ -350,9 +350,9 @@ if ($result || empty($id))
 					dol_print_error($db, 'Error for calculating graph on key='.$key.' - '.$object->error);
 				}
 			}
-		}
 
-		$mesg = $langs->trans("ChartGenerated");
+			//setEventMessages($langs->trans("ChartGenerated"), null, 'mesgs');
+		}
 	}
 
 	// Show graphs
@@ -388,9 +388,9 @@ if ($result || empty($id))
 			}
 			else
 			{
-			    print $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
+			    $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
 			}
-			$linktoregenerate='<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
+			$linktoregenerate='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
 
 			// Show graph
 			print '<table class="noborder" width="100%">';

@@ -323,7 +323,7 @@ if ($result)
         print '<td>';
         if (! $objp->rappro && ! $bankline->getVentilExportCompta())
         {
-        	print $form->select_comptes($acct->id, 'accountid', 0, '', 0);
+        	$form->select_comptes($acct->id, 'accountid', 0, '', 0);
         }
         else
         {

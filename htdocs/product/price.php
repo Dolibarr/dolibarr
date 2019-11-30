@@ -153,7 +153,7 @@ if (empty($reshook))
 	    $db->begin();
 
 	    $resql = $object->update($object->id, $user);
-	    if (! $resql || $resql < 0)
+	    if ($resql <= 0)
 	    {
 	        $error++;
 	        setEventMessages($object->error, $object->errors, 'errors');
@@ -1711,20 +1711,18 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 		print '</td></tr>';
 
-		// Update all child soc
-		print '<tr><td width="15%">';
-		print $langs->trans('ForceUpdateChildPriceSoc');
-		print '</td>';
-		print '<td>';
-		print '<input type="checkbox" name="updatechildprice" value="1">';
-		print '</td>';
-		print '</tr>';
-
 		print '</table>';
 
 		dol_fiche_end();
 
 		print '<div class="center">';
+
+				// Update all child soc
+		print '<div class="marginbottomonly">';
+		print '<input type="checkbox" name="updatechildprice" value="1"> ';
+		print $langs->trans('ForceUpdateChildPriceSoc');
+		print '</div>';
+		
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -1804,10 +1802,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		// Update all child soc
 		print '<tr><td>';
-		print $langs->trans('ForceUpdateChildPriceSoc');
 		print '</td>';
 		print '<td>';
-		print '<input type="checkbox" name="updatechildprice" value="1">';
 		print '</td>';
 		print '</tr>';
 
@@ -1816,6 +1812,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		dol_fiche_end();
 
 		print '<div class="center">';
+		print '<div class="marginbottomonly">';
+		print '<input type="checkbox" name="updatechildprice" value="1"> ';
+		print $langs->trans('ForceUpdateChildPriceSoc');
+		print "</div>";
+		
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -2162,7 +2163,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				// Action
 				if ($user->rights->produit->supprimer || $user->rights->service->supprimer)
 				{
-					print '<td class="right">';
+					print '<td class="right nowraponall">';
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;id=' . $object->id . '&amp;socid=' . $line->fk_soc . '">';
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';

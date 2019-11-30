@@ -441,13 +441,18 @@ class Livraison extends CommonObject
 						// Rename directory if dir was a temporary ref
 						if (preg_match('/^[\(]?PROV/i', $this->ref))
 						{
-							// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-							// afin de ne pas perdre les fichiers attaches
+							// Now we rename also files into index
+							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
+							$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$resql = $this->db->query($sql);
+							if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 							$oldref = dol_sanitizeFileName($this->ref);
 							$newref = dol_sanitizeFileName($numref);
 							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
 							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
-							if (file_exists($dirsource))
+							if (! $error && file_exists($dirsource))
 							{
 								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 

@@ -1711,7 +1711,7 @@ if ($action == 'create')
 	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 	if (! empty($object->lines))
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
 
 	// Form to add new line
 	if ($object->statut == SupplierProposal::STATUS_DRAFT && $user->rights->supplier_proposal->creer)
@@ -1719,7 +1719,7 @@ if ($action == 'create')
 		if ($action != 'editline')
 		{
 			// Add products/services form
-			$object->formAddObjectLine(1, $soc, $mysoc);
+			$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SecurityTest extends PHPUnit_Framework_TestCase
+class SecurityTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -128,6 +128,24 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
     	print __METHOD__."\n";
+    }
+
+    /**
+     * testSetLang
+     *
+     * @return string
+     */
+    public function testSetLang()
+    {
+    	global $conf;
+    	$conf=$this->savconf;
+
+    	$tmplangs = new Translate('', $conf);
+
+    	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = "' malicious text with quote";
+    	$tmplangs->setDefaultLang('auto');
+    	print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
+    	$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
     }
 
     /**

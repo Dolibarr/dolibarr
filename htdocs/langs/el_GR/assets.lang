@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Πάγια
+NewAsset = Νέα εγγραφή παγίου
+AccountancyCodeAsset = Λογιστικός Κωδικός (Πάγιο)
+AccountancyCodeDepreciationAsset = Λογιστικός κωδικός (λογαριασμού απόσβεσης παγίου)
+AccountancyCodeDepreciationExpense = Λογιστικός κωδικός (λογαριασμός εξόδων απόσβεσης)
+NewAssetType=Νέος τύπος παγίου
+AssetsTypeSetup=Ρύθμιση τύπου παγίου
+AssetTypeModified=Ο τύπος παγίου τροποποιήθηκε
+AssetType=Τύπος παγίου
+AssetsLines=Πάγια
+DeleteType=Διαγραφή
+DeleteAnAssetType=Διαγραφή ενός τύπου παγίου
+ConfirmDeleteAssetType=Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον τύπο παγίου;
+ShowTypeCard=Show type '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Πάγια
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Περιγραφή παγίων
+
+#
+# Admin page
+#
+AssetsSetup = Ρυθμίσεις παγίων
+Settings = Ρυθμίσεις
+AssetsSetupPage = Σελίδα ρυθμίσεων παγίων
+ExtraFieldsAssetsType = Συμπληρωματικά χαρακτηριστικά (τύπος παγίου)
+AssetsType=Τύπος παγίου
+AssetsTypeId=Ταυτότητα τύπου παγίου
+AssetsTypeLabel=Ετικέτα τύπου παγίου
+AssetsTypes=Τύποι παγίων
+
+#
+# Menu
+#
+MenuAssets = Πάγια
+MenuNewAsset = Νέα εγγραφή παγίου
+MenuTypeAssets = Πληκτρολογήστε πάγια
+MenuListAssets = Λίστα
+MenuNewTypeAssets = Νέο
+MenuListTypeAssets = Λίστα
+
+#
+# Module
+#
+NewAssetType=Νέος τύπος παγίου
+NewAsset=Νέα εγγραφή παγίου

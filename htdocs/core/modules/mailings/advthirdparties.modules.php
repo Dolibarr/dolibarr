@@ -88,7 +88,6 @@ class mailing_advthirdparties extends MailingTargets
 
     				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
 
-    				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
@@ -144,7 +143,6 @@ class mailing_advthirdparties extends MailingTargets
 
     				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
-    				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);

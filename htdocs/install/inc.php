@@ -253,27 +253,6 @@ foreach ($handlers as $handler)
 	if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
 }
 
-// Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.4
-{
-    if (get_magic_quotes_gpc())
-    {
-        // Forcing parameter setting magic_quotes_gpc and cleaning parameters
-        // (Otherwise he would have for each position, condition
-        // Reading stripslashes variable according to state get_magic_quotes_gpc).
-        // Off mode (recommended, you just do $db->escape when an insert / update.
-        function stripslashes_deep($value)
-        {
-            return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-        }
-        $_GET     = array_map('stripslashes_deep', $_GET);
-        $_POST    = array_map('stripslashes_deep', $_POST);
-        $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
-        $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-        @set_magic_quotes_runtime(0);
-    }
-}
-
 // Defini objet langs
 $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
@@ -566,11 +545,15 @@ function detect_dolibarr_main_url_root()
 		$dolibarr_main_url_root = $_SERVER["SERVER_URL"] . $_SERVER["DOCUMENT_URI"];
 	} // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
 	else {
-        $proto = ( (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
+		$proto = ((!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || (! empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) ? 'https' : 'http';
 		if (!empty($_SERVER["HTTP_HOST"])) {
 			$serverport = $_SERVER["HTTP_HOST"];
-		} else {
+		}
+		elseif (!empty($_SERVER["SERVER_NAME"])) {
 			$serverport = $_SERVER["SERVER_NAME"];
+		}
+		else {
+			$serverport = 'localhost';
 		}
 		$dolibarr_main_url_root = $proto . "://" . $serverport . $_SERVER["SCRIPT_NAME"];
 	}

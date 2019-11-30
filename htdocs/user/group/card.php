@@ -135,7 +135,7 @@ if (empty($reshook)) {
 			} else {
 				$object->name	= trim(GETPOST("nom", 'nohtml'));
 				$object->nom	= $object->name;	// For backward compatibility
-				$object->note	= trim(GETPOST("note", 'none'));
+				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 
 			$object->name	= trim(GETPOST("group", 'nohtml'));
 			$object->nom	= $object->name;			// For backward compatibility
-			$object->note	= dol_htmlcleanlastbr(GETPOST("note", 'none'));
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -362,7 +362,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
             // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
             if (! empty($conf->mutlicompany->enabled))

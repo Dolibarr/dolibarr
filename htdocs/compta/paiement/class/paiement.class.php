@@ -991,16 +991,16 @@ class Paiement extends CommonObject
     }
 
 	/**
-	 *  Retourne la liste des factures sur lesquels porte le paiement
+	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string	$filter         Critere de filtre
-	 *  @return array					Tableau des id de factures
+	 *  @param	string		$filter         Filter
+	 *  @return int|array					<0 if KO or array of invoice id
 	 */
     public function getBillsArray($filter = '')
     {
-		$sql = 'SELECT fk_facture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE pf.fk_facture = f.rowid AND fk_paiement = '.$this->id;
+		$sql = 'SELECT pf.fk_facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';	// We keep link on invoice to allow use of some filters on invoice
+		$sql.= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1024,6 +1024,40 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
 		}
+    }
+
+    /**
+     *  Return list of amounts of payments.
+     *
+     *  @return int|array					Array of amount of payments
+     */
+    public function getAmountsArray()
+    {
+    	$sql = 'SELECT pf.fk_facture, pf.amount';
+    	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
+    	$sql.= ' WHERE pf.fk_paiement = '.$this->id;
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$i=0;
+    		$num=$this->db->num_rows($resql);
+    		$amounts = array();
+
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			$amounts[$obj->fk_facture]=$obj->amount;
+    			$i++;
+    		}
+
+    		return $amounts;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this).'::getAmountsArray Error '.$this->error.' -', LOG_DEBUG);
+    		return -1;
+    	}
     }
 
 	/**
@@ -1107,7 +1141,7 @@ class Paiement extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice"));
 			return "";
 		}
 	}

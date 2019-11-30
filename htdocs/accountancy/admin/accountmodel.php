@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
@@ -156,17 +156,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	$ok=1;
 	foreach ($listfield as $f => $value)
 	{
-		if ($value == 'country_id' && in_array($tablib[$id], array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp','DictionaryAccountancyCategory','Pcg_version'))) continue;		// For some pages, country is not mandatory
-		if ($value == 'country' && in_array($tablib[$id], array('DictionaryCanton','DictionaryCompanyType','DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
-		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
-		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
-		if ($value == 'color' && empty($_POST['color'])) continue;
-		if ($value == 'formula' && empty($_POST['formula'])) continue;
-		if ((! isset($_POST[$value]) || $_POST[$value]=='')
-			&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy'))  // Fields that are not mandatory
-			&& (! ($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
-			)
-		)
+		if ($value == 'country_id' && in_array($tablib[$id], array('Pcg_version'))) continue;		// For some pages, country is not mandatory
+		if ((! isset($_POST[$value]) || $_POST[$value]==''))
 		{
 			$ok=0;
 			$fieldnamekey=$listfield[$f];
@@ -174,19 +165,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 
 			if ($fieldnamekey == 'pcg_version')  $fieldnamekey='Pcg_version';
 			if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
-			if ($fieldnamekey == 'libelle_facture') $fieldnamekey = 'LabelOnDocuments';
-			if ($fieldnamekey == 'nbjour')   $fieldnamekey='NbOfDays';
-			if ($fieldnamekey == 'decalage') $fieldnamekey='Offset';
-			if ($fieldnamekey == 'module')   $fieldnamekey='Module';
-			if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
-			if ($fieldnamekey == 'note') $fieldnamekey = 'Note';
-			if ($fieldnamekey == 'taux') $fieldnamekey = 'Rate';
-			if ($fieldnamekey == 'type') $fieldnamekey = 'Type';
-			if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
-			if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
-			if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
-			if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
-			if ($fieldnamekey == 'category_type') $fieldnamekey = 'Calculated';
 
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 		}
@@ -196,9 +174,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		$ok=0;
 		setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
 	}
-	if (isset($_POST["code"]))
+	if (isset($_POST["pcg_version"]))
 	{
-		if ($_POST["code"]=='0')
+		if ($_POST["pcg_version"]=='0')
 		{
 			$ok=0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
@@ -211,28 +189,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	}
 	if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
 	{
-		if (in_array($tablib[$id], array('DictionaryCompanyType','DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
-		{
-			$_POST["country"]='';
-		}
-		else
-		{
-			$ok=0;
-			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
-		}
+		$ok=0;
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 	}
-	if (! is_numeric($_POST["code"]))
-	{
-	   	$ok=0;
-	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
-	}
-
-	// Clean some parameters
-	if (isset($_POST["localtax1"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
-	if (isset($_POST["localtax2"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
-	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
-	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"]='';	// If empty, we force to null
-	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
 
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha'))
@@ -461,8 +420,6 @@ $titre=$langs->trans($tablib[$id]);
 $linkback='';
 
 print load_fiche_titre($titre, $linkback, 'title_accountancy');
-
-print "<br>\n";
 
 
 // Confirmation de la suppression de la ligne

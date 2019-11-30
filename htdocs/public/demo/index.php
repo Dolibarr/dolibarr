@@ -97,7 +97,7 @@ if (empty($reshook))
 		),
 	    // All demo profile
 	    array('default'=>'0', 'key'=>'profdemoall','label'=>'ChooseYourDemoProfilMore',
-		'disablemodules'=>'adherent,don,externalsite,mailmanspip',
+		'disablemodules'=>'adherent,don,externalsite,mailmanspip,takepos',
 	    //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
 	    )
@@ -106,13 +106,13 @@ if (empty($reshook))
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','workflow');  // Module we dont want by default
+	$alwaysuncheckedmodules=array('dav','dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','website');  // Module we dont want by default
 	// Not visible
 	$alwayshiddencheckedmodules=array('accounting','api','barcode','blockedlog','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
-									'mailmanspip','notification','oauth','syslog','user','webservices',
+									'mailmanspip','notification','oauth','syslog','user','webservices','workflow',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('ftp','hrm','webservicesclient','websites',
+	$alwayshiddenuncheckedmodules=array('debugbar','emailcollector','ftp','hrm','modulebuilder','webservicesclient','websites',
 	                                // Extended modules
 	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
@@ -336,7 +336,7 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
+        print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 
 
         print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';
@@ -392,10 +392,10 @@ foreach ($demoprofiles as $profilearray)
         		    //if ($modulo == 0) print '<tr>';
                     print '<!-- id='.$val->numero.' -->';
                     print '<div class="nowrap">';
-                    print '<input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
+                    print '<input type="checkbox" class="checkbox" id="id'.$modulekeyname.'" name="'.$modulekeyname.'" value="1" title="'.dol_escape_htmltag($val->getName()).'"';
                     if (in_array($modulekeyname, $alwaysuncheckedmodules)) print ' disabled';
                     if (! in_array($modulekeyname, $alwaysuncheckedmodules)  && (! in_array($modulekeyname, $listofdisabledmodules) || in_array($modulekeyname, $alwayscheckedmodules))) print ' checked';
-                    print '> <div class="inline-block demomaxoveflow">'.$val->getName().'</div><br>';
+                    print '> <label for="id'.$modulekeyname.'" class="inline-block demomaxoveflow" title="'.dol_escape_htmltag($val->getName()).'">'.$val->getName().'</label><br>';
                     print '</div>';
                     //if ($modulo == ($nbcolsmod - 1)) print '</tr>';
                     $j++;

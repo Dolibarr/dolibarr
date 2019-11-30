@@ -37,12 +37,12 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
-$langs->loadLangs(array("bills", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Bar or Restaurant
 
 /**
  * Abort invoice creationg with a given error message
@@ -115,7 +115,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
-	if($invoice->total_ttc<0){
+	if ($invoice->total_ttc < 0) {
 		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
 		$sql.="fk_soc = '".$invoice->socid."' ";
@@ -136,38 +136,49 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
 	{
-	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
+		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+		$conf->global->STOCK_CALCULATE_ON_BILL=1;
+
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
+		$res = $invoice->validate($user, '', $conf->global->$constantforkey);
+
+		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
 	else
 	{
-	    $invoice->validate($user);
+	    $res = $invoice->validate($user);
 	}
-
-	// Add the payment
-	$payment=new Paiement($db);
-	$payment->datepaye = $now;
-	$payment->fk_account = $bankaccount;
-	$payment->amounts[$invoice->id] = $amountofpayment;
-
-	$payment->paiementid=$paiementid;
-	$payment->num_payment=$invoice->ref;
-
-    $payment->create($user);
-	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
 	$remaintopay = $invoice->getRemainToPay();
-	if ($remaintopay == 0)
-	{
-	    dol_syslog("Invoice is paid, so we set it to pay");
-	    $result = $invoice->set_paid($user);
-	    if ($result > 0) $invoice->paye = 1;
-	}
-	else
-	{
-	    dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
-	}
+
+	// Add the payment
+	if ($res >= 0 && $remaintopay > 0) {
+		$payment = new Paiement($db);
+		$payment->datepaye = $now;
+		$payment->fk_account = $bankaccount;
+		$payment->amounts[$invoice->id] = $amountofpayment;
+
+		$payment->paiementid = $paiementid;
+		$payment->num_payment = $invoice->ref;
+
+		$payment->create($user);
+		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+
+		$remaintopay = $invoice->getRemainToPay();	// Recalculate remain to pay after the payment is recorded
+		if ($remaintopay == 0) {
+			dol_syslog("Invoice is paid, so we set it to status Paid");
+			$result = $invoice->set_paid($user);
+			if ($result > 0) $invoice->paye = 1;
+		} else {
+			dol_syslog("Invoice is not paid, remain to pay = " . $remaintopay);
+		}
+	} else {
+		dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+    }
 }
 
 if ($action == 'history')
@@ -184,9 +195,21 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
 
-	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
-	$db->query($sql);
+	if ($invoice->socid <= 0)
+	{
+		$langs->load('errors');
+		dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+	}
+	else
+	{
+		$placeid = $invoice->create($user);
+		if ($placeid < 0)
+		{
+			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+		}
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$db->query($sql);
+	}
 }
 
 if ($action == "addline")
@@ -247,12 +270,30 @@ if ($action == "deleteline") {
 }
 
 if ($action == "delete") {
-    if ($placeid > 0) { //If invoice exists
+	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
-        if ($result > 0)
+
+        if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
         {
-            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
-            $resql = $db->query($sql);
+        	$db->begin();
+
+        	// We delete the lines
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet_extrafields where fk_object = ".$placeid;
+        	$resql1 = $db->query($sql);
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture = ".$placeid;
+            $resql2 = $db->query($sql);
+			$sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$resql3 = $db->query($sql);
+
+            if ($resql1 && $resql2 && $resql3)
+            {
+            	$db->commit();
+            }
+            else
+            {
+            	$db->rollback();
+            }
 
             $invoice->fetch($placeid);
         }
@@ -306,14 +347,14 @@ if ($action == "order" and $placeid != 0)
     $catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
     foreach($invoice->lines as $line)
     {
-        if ($line->special_code == "3") { continue;
+        if ($line->special_code == "4") { continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
         $result = array_intersect($catsprinter1, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
+            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='4' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer1.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
@@ -323,14 +364,14 @@ if ($action == "order" and $placeid != 0)
 
     foreach($invoice->lines as $line)
     {
-        if ($line->special_code == "3") { continue;
+        if ($line->special_code == "4") { continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
         $result = array_intersect($catsprinter2, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
+            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='4' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer2.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
@@ -355,7 +396,7 @@ if ($action=="valid" || $action=="history")
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
@@ -499,7 +540,7 @@ print '<br>'.$sectionwithinvoicelink;
 print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolht right nowraponall">' . $langs->trans('TotalTTCShort') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0)
@@ -512,7 +553,7 @@ if ($placeid > 0)
             $htmlforlines = '';
 
             $htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-            if ($line->special_code == "3") {
+            if ($line->special_code == "4") {
                 $htmlforlines.= ' order';
             }
             $htmlforlines.= '" id="' . $line->id . '">';
@@ -563,8 +604,17 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
-    print '<p style="font-size:120%;" class="right">';
+    print '<!-- Show customer --><p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
+
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	{
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouse = new Entrepot($db);
+		$warehouse->fetch($conf->global->$constantforkey);
+		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
+	}
     print '</p>';
 }
 

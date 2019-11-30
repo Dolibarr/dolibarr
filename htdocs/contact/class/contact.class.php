@@ -79,39 +79,25 @@ class Contact extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
 	);
 
-	public $civility_id;      // In fact we store civility_code
+	public $civility_id;      	// In fact we store civility_code
 	public $civility_code;
-  public $civility;
+	public $civility;
 	public $address;
 	public $zip;
 	public $town;
 
-	/**
-	 * @deprecated
-	 * @see $state_id
-	 */
-	public $fk_departement;
-	/**
-	 * @deprecated
-	 * @see $state_code
-	 */
-	public $departement_code;
-	/**
-	 * @deprecated
-	 * @see $state
-	 */
-	public $departement;
 	public $state_id;	        	// Id of department
-	public $state_code;		    // Code of department
+	public $state_code;		    	// Code of department
 	public $state;			        // Label of department
 
     public $poste;                 // Position
 
 	public $socid;					// fk_soc
-	public $statut;				// 0=inactif, 1=actif
+	public $statut;					// 0=inactif, 1=actif
 
 	public $code;
 	public $email;
+	public $no_email;			  // 1 = contact has globaly unsubscribe of all mass emailings
 	public $skype;
 	public $photo;
 	public $jabberid;
@@ -339,13 +325,13 @@ class Contact extends CommonObject
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		if (empty($this->statut)) $this->statut = 0;
-
+		if (empty($this->civility_code) && ! is_numeric($this->civility_id)) $this->civility_code = $this->civility_id;   // For backward compatibility
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
+		$sql .= "  civility='".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
@@ -398,6 +384,7 @@ class Contact extends CommonObject
 
 			if (! $error && $this->user_id > 0)
 			{
+				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
 				$usermustbemodified = 0;
@@ -498,6 +485,7 @@ class Contact extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -507,7 +495,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -520,12 +508,13 @@ class Contact extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -1214,11 +1203,12 @@ class Contact extends CommonObject
 	public function getCivilityLabel()
 	{
 		global $langs;
-		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civilite_id)?$this->civilite_id:''));
+		$code=($this->civility_code ? $this->civility_code : (! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:'')));
 		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+
+		$langs->load("dict");
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
 
 	/**

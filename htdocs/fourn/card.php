@@ -85,10 +85,7 @@ if (empty($reshook))
 		$result=$object->fetch($id);
    		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
 	    $result=$object->update($object->id, $user, 1, 0, 1);
-	    if ($result < 0)
-	    {
-	        $mesg=join(',', $object->errors);
-	    }
+	    if ($result < 0)	setEventMessages($object->error, $object->errors, 'errors');
 	}
 	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
@@ -469,7 +466,7 @@ if ($object->id > 0)
 
         $num = $db->num_rows($query);
 
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent lastrecordtable">';
         print '<tr class="liste_titre'.(($num == 0) ? ' nobottom':'').'">';
         print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
         print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductReferencesOfSupplier").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
@@ -541,7 +538,7 @@ if ($object->id > 0)
 
 	        if ($num > 0)
 	        {
-	            print '<table class="noborder" width="100%">';
+	            print '<table class="noborder centpercent lastrecordtable">';
 
 	            print '<tr class="liste_titre">';
 	            print '<td colspan="3">';
@@ -605,8 +602,9 @@ if ($object->id > 0)
 		$sql2.= ' WHERE c.fk_soc = s.rowid';
 		$sql2.= " AND c.entity IN (".getEntity('commande_fournisseur').")";
 		$sql2.= ' AND s.rowid = '.$object->id;
-		// Show orders with status validated, shipping started and delivered (well any order we can bill)
-		$sql2.= " AND c.fk_statut IN (5)";
+		// Show orders with status validated, shipping started and delivered (even if any order we can bill).
+		//$sql2.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";
+		$sql2.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";	//  Must match filter in htdocs/fourn/orderstoinvoice.php
 		$sql2.= " AND c.billed = 0";
 		// Find order that are not already invoiced
 		// just need to check received status because we have the billed status now
@@ -644,7 +642,7 @@ if ($object->id > 0)
 
 			if ($num > 0)
 			{
-			    print '<table class="noborder" width="100%">';
+			    print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
@@ -717,7 +715,7 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
-			    print '<table class="noborder" width="100%">';
+			    print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';
@@ -826,7 +824,7 @@ if ($object->id > 0)
 		{
 			if (! empty($orders2invoice) && $orders2invoice > 0)
 			{
-				if ($object->status == 1)
+				if ($object->status == 1)		// Company is open
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
@@ -835,7 +833,7 @@ if ($object->id > 0)
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 			}
-			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')').'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 		}
 
     	// Add action

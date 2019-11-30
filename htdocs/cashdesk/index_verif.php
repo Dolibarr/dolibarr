@@ -79,16 +79,6 @@ if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_
 }
 
 
-/*
-if (! empty($_POST['txtUsername']) && ! empty($conf->banque->enabled) && (empty($conf_fkaccount_cash) && empty($conf_fkaccount_cheque) && empty($conf_fkaccount_cb)))
-{
-	$langs->load("errors");
-	$retour=$langs->trans("ErrorModuleSetupNotComplete");
-    header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
-    exit;
-}
-*/
-
 // Check password
 $auth = new Auth($db);
 $retour = $auth->verif($username, $password);
