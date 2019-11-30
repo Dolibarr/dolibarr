@@ -52,7 +52,7 @@ function societe_prepare_head(Societe $object)
 
     if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
-	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire)
 		{
 		    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;	// TODO
