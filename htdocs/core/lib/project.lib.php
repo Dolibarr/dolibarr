@@ -2088,14 +2088,15 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     }
 
 
-
     $out .= '</span>';
     $out .= '    <div class="progress sm '.$spaced.'">';
     $diffval = doubleval($task->progress) - doubleval($progressCalculated);
     if ($diffval >= 0) {
     	// good
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
-    	$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+    	if(!empty($task->progress)) {
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: ' . doubleval($progressCalculated / $task->progress * 100) . '%" title="' . doubleval($progressCalculated) . '%"></div>';
+		}
     	$out .= '        </div>';
     }
     else
