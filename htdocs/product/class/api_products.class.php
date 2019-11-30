@@ -631,7 +631,7 @@ class Products extends DolibarrApi
         'prices_by_qty_list'=>$this->product->prices_by_qty_list[0]
         );
     }
-    
+
     /**
      * Add purchase prices for a product.
      *
@@ -670,29 +670,29 @@ class Products extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
-        
+
         $result = $this->productsupplier->fetch($id);
         if (!$result) {
             throw new RestException(404, 'Product not found');
         }
-        
+
         if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        
+
         $result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
         if ($result <= 0) {
             throw new RestException(500, "Error adding supplier to product : ".$this->db->lasterror());
         }
-        
+
         $fourn = new Fournisseur($this->db);
         $result = $fourn->fetch($fourn_id);
         if ($result <= 0) {
             throw new RestException(404, 'Supplier not found');
         }
-        
+
         $result = $this->productsupplier->update_buyprice($qty, $buyprice, DolibarrApiAccess::$user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges, $remise_percent, $remise, $newnpr, $delivery_time_days, $supplier_reputation, $localtaxes_array, $newdefaultvatcode, $multicurrency_buyprice, $multicurrency_price_base_type, $multicurrency_tx, $multicurrency_code, $desc_fourn, $barcode, $fk_barcode_type);
-        
+
         if ($result <= 0) {
             throw new RestException(500, "Error updating buy price : ".$this->db->lasterror());
         }
