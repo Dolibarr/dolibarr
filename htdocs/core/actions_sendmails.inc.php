@@ -43,7 +43,7 @@ if (GETPOST('addfile','alpha'))
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir_tmp = $vardir.'/temp';             // TODO Add $keytoavoidconflict in upload_dir path
 
-	dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, $trackid, 0);
+	dol_add_file_process($upload_dir_tmp, 1, 0, 'addedfile', '', null, $trackid, 0);
 	$action='presend';
 }
 
@@ -468,7 +468,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$mesg='<div class="error">';
 					if ($mailfile->error)
 					{
-						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+						$mesg.=$langs->transnoentities('ErrorFailedToSendMail',dol_escape_htmltag($from),dol_escape_htmltag($sendto));
 						$mesg.='<br>'.$mailfile->error;
 					}
 					else

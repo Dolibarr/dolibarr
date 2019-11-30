@@ -245,7 +245,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			// We ask to move a qty
 			if (GETPOST($qty) != 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
-					dol_syslog('No dispatch for line ' . $key . ' as no warehouse choosed');
+					dol_syslog('No dispatch for line ' . $key . ' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse') . ', ' . $langs->transnoentities('Line') . ' ' . ($numline);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
 					$error ++;
@@ -282,7 +282,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			// We ask to move a qty
 			if (GETPOST($qty) > 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
-					dol_syslog('No dispatch for line ' . $key . ' as no warehouse choosed');
+					dol_syslog('No dispatch for line ' . $key . ' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse') . ', ' . $langs->transnoentities('Line') . ' ' . ($numline) . '-' . ($reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
 					$error ++;

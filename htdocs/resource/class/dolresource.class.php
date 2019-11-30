@@ -530,13 +530,13 @@ class Dolresource extends CommonObject
     	if ($limit) $sql.= $this->db->plimit($limit, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
+        $this->lines=array();
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$this->lines=array();
     			while ($obj = $this->db->fetch_object($resql))
     			{
     				$line = new Dolresource($this->db);
@@ -829,6 +829,8 @@ class Dolresource extends CommonObject
 	    $sql .= ' ORDER BY resource_type';
 
 	    dol_syslog(get_class($this)."::getElementResources", LOG_DEBUG);
+
+        $resources = array();
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
@@ -879,7 +881,7 @@ class Dolresource extends CommonObject
     {
     	global $langs;
 
-    	if (count($this->cache_code_type_resource)) return 0;    // Cache deja charge
+    	if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0;    // Cache deja charge
 
     	$sql = "SELECT rowid, code, label, active";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";

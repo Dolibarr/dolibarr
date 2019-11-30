@@ -761,7 +761,7 @@ class FormFile
 					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
-					$out.= ' target="_blank">';
+					$out.= '>';
 					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]);
 					$out.= dol_trunc($file["name"], 150);
 					$out.= '</a>'."\n";
@@ -1757,7 +1757,7 @@ class FormFile
 				print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
 				print '</td>';
 				print '<td>';
-				print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
+				print $langs->trans('Label') . ': <input type="text" name="label" value="' . dol_escape_htmltag($link->label) . '">';
 				print '</td>';
 				print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
 				print '<td align="right"></td>';
@@ -1771,7 +1771,7 @@ class FormFile
 				print '<td>';
 				print img_picto('', 'object_globe').' ';
 				print '<a data-ajax="false" href="' . $link->url . '" target="_blank">';
-				print $link->label;
+				print dol_escape_htmltag($link->label);
 				print '</a>';
 				print '</td>'."\n";
 				print '<td align="right"></td>';

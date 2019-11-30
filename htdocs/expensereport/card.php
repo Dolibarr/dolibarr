@@ -62,6 +62,8 @@ $comments=GETPOST('comments','none');
 $fk_c_type_fees=GETPOST('fk_c_type_fees','int');
 $socid = GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('socid_id','int');
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $id=GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -105,7 +107,17 @@ $permissionnote = $user->rights->expensereport->creer; 		// Used by the include 
 $permissiondellink = $user->rights->expensereport->creer; 	// Used by the include of actions_dellink.inc.php
 $permissionedit = $user->rights->expensereport->creer; 		// Used by the include of actions_lineupdown.inc.php
 
-
+if ($object->id > 0)
+{
+    // Check current user can read this expense report
+    $canread = 0;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 
 /*
@@ -952,6 +964,34 @@ if (empty($reshook))
     	else
     	{
     		setEventMessages("NOT_AUTHOR", '', 'errors');
+    	}
+    }
+
+    if ($action == 'set_unpaid' && $id > 0 && $user->rights->expensereport->to_paid)
+    {
+    	$object = new ExpenseReport($db);
+    	$object->fetch($id);
+
+    	$result = $object->set_unpaid($user);
+
+    	if ($result > 0)
+    	{
+    		// Define output language
+    		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    		{
+    			$outputlangs = $langs;
+    			$newlang = '';
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    			if (! empty($newlang)) {
+    				$outputlangs = new Translate("", $conf);
+    				$outputlangs->setDefaultLang($newlang);
+    			}
+    			$model=$object->modelpdf;
+    			$ret = $object->fetch($id); // Reload to get new records
+
+    			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		}
     	}
     }
 
@@ -1892,7 +1932,7 @@ else
 				if ($resql)
 				{
 				    $num = $db->num_rows($resql);
-				    $i = 0; $total = 0;
+				    $i = 0; $totalpaid = 0;
 				    while ($i < $num)
 				    {
 				        $objp = $db->fetch_object($resql);
@@ -2337,8 +2377,8 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 
-	// If status is Appoved
-	// --------------------
+	// If status is Approved
+	// ---------------------
 
 	if ($user->rights->expensereport->approve && $object->fk_statut == 5)
 	{
@@ -2382,9 +2422,15 @@ if ($action != 'create' && $action != 'edit')
 	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 
+	if ($user->rights->expensereport->to_paid && $object->paid && $object->fk_statut == ExpenseReport::STATUS_CLOSED)
+	{
+		// Set unpaid
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=set_unpaid&id='.$object->id.'">'.$langs->trans('ClassifyUnPaid').'</a></div>';
+	}
+
 	// Clone
 	if ($user->rights->expensereport->creer) {
-	    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=clone">' . $langs->trans("ToClone") . '</a></div>';
+	    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone">' . $langs->trans("ToClone") . '</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */

@@ -374,9 +374,9 @@ class FormOther
      *  @param	string	$morecss		More CSS
      *  @return string					Html combo list code
      */
-    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1,$morecss='')
+    function select_salesrepresentatives($selected, $htmlname, $user, $showstatus=0, $showempty=1, $morecss='')
     {
-        global $conf,$langs;
+        global $conf, $langs;
         $langs->load('users');
 
         $out = '';
@@ -398,17 +398,44 @@ class FormOther
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
+
+        if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        {
+        	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+        		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
+        	} else {
+        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('user')."))";
+        		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
+        	}
+        }
+        else
+        {
+        	$sql_usr.= " WHERE u.entity IN (".getEntity('user').")";
+        }
+
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_soc = ".$user->societe_id;
+        if (! empty($user->socid)) $sql_usr.=" AND u.fk_soc = ".$user->socid;
         // Add existing sales representatives of thirdparty of external user
-        if (empty($user->rights->user->user->lire) && $user->societe_id)
+        if (empty($user->rights->user->user->lire) && $user->socid)
         {
             $sql_usr.=" UNION ";
             $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
-            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
+
+            if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+            {
+            	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+            		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
+            	} else {
+            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('user')."))";
+            	}
+            }
+            else
+            {
+            	$sql_usr.= " WHERE u2.entity IN (".getEntity('user').")";
+            }
+
+            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
         }
 	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;

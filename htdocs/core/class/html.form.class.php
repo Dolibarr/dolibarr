@@ -1785,6 +1785,15 @@ class Form
 
 		$price_level = (! empty($price_level) ? $price_level : 0);
 
+		if(strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))){
+			if(!empty($conf->product->enabled) && empty($conf->service->enabled)){
+				$filtertype = '0';
+			}
+			elseif(empty($conf->product->enabled) && !empty($conf->service->enabled)){
+				$filtertype = '1';
+			}
+		}
+
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';

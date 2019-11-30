@@ -3727,7 +3727,7 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
-		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		if ($mode == 'supplier') {
@@ -3754,7 +3754,11 @@ class Societe extends CommonObject
 				$tmpobject=new Facture($this->db);
 			}
 			while($obj=$this->db->fetch_object($resql)) {
-				$tmpobject->id=$obj->rowid;
+                $tmpobject->id=$obj->rowid;
+
+
+
+
 				if ($obj->fk_statut != 0                                           // Not a draft
 					&& ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
@@ -3771,8 +3775,14 @@ class Societe extends CommonObject
 					$paiement = $tmpobject->getSommePaiement();
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
 					$deposits = $tmpobject->getSumDepositsUsed();
+
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
+				
+                //if credit note is converted but not used
+                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
+
+
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}

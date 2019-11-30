@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2018  Alexandre Spangaro       <aspangaro@zendsi.com>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,7 @@ if ($user->societe_id > 0)
 llxHeader('', $langs->trans("AccountancyArea"));
 
 print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy');
+dol_fiche_head();
 
 $step = 0;
 
@@ -165,6 +167,7 @@ else
 {
 	print $langs->trans("Module10Desc")."<br>\n";
 }
+dol_fiche_end();
 
 llxFooter();
 $db->close();

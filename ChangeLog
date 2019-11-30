@@ -2,6 +2,125 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 8.0.6 compared to 8.0.5 *****
+FIX: #11244
+FIX: #11316
+FIX: Add missing end date of subscription in export
+FIX: A user may read holiday and expense report without permissions
+FIX: better syntax
+FIX: condition
+FIX: confirmation of mass email sending + option MAILING_NO_USING_PHPMAIL
+FIX: crabe pdf: bad detailed VAT for situation invoices, in situations S2 and above
+FIX: default value for duration of validity can be set from generic
+FIX: do not include disabled modules tpl
+FIX: do not include tpl from disabled modules
+FIX: Error management when MAILING_NO_USING_PHPMAIL is set
+FIX: Even with permission, can't validate leave once validator defined.
+FIX: extrafield list search: SQL error when field is multiselect
+FIX: if last char of customercode is accent making the truncate of first
+FIX: in edit mode, dictionary inputs do not escape the string inside the 'value' attribute, causing errors if there are any double quotes
+FIX: invalid link on user.fk_user
+FIX: invoice class: bad SQL request if product type not set
+FIX: mail presend: can overwrite a file previously uploaded
+FIX: mail presend: can overwrite a file previously uploaded (Issue #11056)
+FIX: mass send mail
+FIX: missing compatibility with multicompany transverse mode
+FIX: modulebuilder: hardcoded llx_
+FIX: Not showing Contract and Project columns on ficheinter list
+FIX: remove isolated transaction commit
+FIX: security (a user can read leave or holiday of other without perm.
+FIX: situation invoices: bad detailed VAT in situations following the first one
+FIX: situation invoices: block progress percentage change for discount lines
+FIX: syntax error
+FIX: try to use WHERE EXISTS instead DISTINCT
+FIX: use dol_sanitizeFileName() function to remove double spaces in filenames, as well as done on document.php when we want to download pdf
+FIX: var name
+FIX: we need to fetch fourn invoice with ref in current entity
+FIX: Wrong stock movement on supplier credit notes
+
+***** ChangeLog for 8.0.5 compared to 8.0.4 *****
+FIX: #10381
+FIX: #10460 compatibility with MariaDB 10.4
+FIX: #11025
+FIX: Accountancy - Add transaction with multicompany use all the time 1st entity
+FIX: Accountancy - Format EBP import
+FIX: actioncomm export: ORDER BY clause is in wrong export property + event type filter does not work
+FIX: actioncomm: sort events by date after external calendars and hook
+FIX: action list: add printFieldListSelect and printFieldListWhere hooks
+FIX: add fk_unit on addline action
+FIX: avoid php warning
+FIX: bad sql request
+FIX: better method
+FIX: better test
+FIX: better test on fetch
+FIX: broken external authentication module feature and avoid warning
+FIX: Can not create contract with numbering module without autogen rule
+FIX: can't add lines on invoices
+FIX: Can't generate invoice pdf
+FIX: Can't insert if there is extrafields mandatory on another entity.
+FIX: Can't insert if there is extrafields mandatory on another entity. FIX: Can't set default value of extrafield of type varchar
+FIX: Check for old picture name if the new one was not found
+FIX: Civility not saved when creating a member.
+FIX: $conf->fournisseur->commande->enabled doesn't exist, we must use $conf->fournisseur->enabled
+FIX: could not create several superadmin in transversal mode
+FIX: credit note can have negative value
+FIX: Default value on sales representative on third party creation
+FIX: Don't show journal:getNomUrl without data
+FIX: Erreur dans le Total
+FIX: error messages not displayed
+FIX: expedition: reset status on rollback + replace hardcoded status with const
+FIX: Fix PHP warning "count(): Parameter must be an array..."
+FIX: fk_default_warehouse missing in group by
+FIX: function sendEmailsReminder isn't completely developed, then MAIN_FEATURES_LEVEL must be 2 to "use" it
+FIX: holidays get natural_search if search params are set only
+FIX: if empty error message, we just see "error" displayed
+FIX: if(!method_exists(dol_loginfunction))
+FIX: If we build one invoice for several orders, we must put the ref of order on the line to not lose information.
+FIX: in fact expensereport must be in $check array
+FIX: Interface regression for bind people. Fix option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: line edit template: keep fk_parent_line
+FIX: Loan impossible to account
+FIX: Mark credit note as available for credit note in other currency
+FIX: missing access security checking with multicompany
+FIX: missing entity filter and wrong var name
+FIX: missing entity filter in function "build_filterField()" (export)
+FIX: Missing field in import/export of users
+FIX: missing hook completeTabsHead in margins module
+FIX: missing $ismultientitymanaged for previous/next ref
+FIX: Missing province in export of invoice
+FIX: multicompany compatibility
+FIX: must fetch member in current entity
+FIX: need an order by in case we found other invoice with same number but not same date
+FIX: need to round with 2 decimals to avoid movements not correctly balanced
+FIX: no need to test anything to display documents tabs on expense report
+FIX: positive values creating diff on addline rounding
+FIX: problem with multicompany transverse mode
+FIX: Product accountancey sell intra code must be visible if main feature level 1
+FIX: project_title for display of getNomUrl()
+FIX: quick search for supplier orders
+FIX: Remane of project
+FIX: same thing here
+FIX: Selection of email recipient with option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: several hooks in shipping/delivery cards
+FIX: shipping default warehouse if only one warehouse
+FIX: SQL injection on rowid of dict.php
+FIX: 'statut' is ignored when updating a user with the REST API.
+FIX: supplier invoice payment total dont care about deposit or credit
+FIX: supplier invoice product stats total ht is line total not invoice total
+FIX: The minimum amount filter does not work in the VAT report per customer
+FIX: Total per day shows 00:00 if the total time spent is equal to 12:00
+FIX: Update/delete currency on same languages
+FIX: [URGENT] broken feature, "$usercancreate" is for Dolibarr 9
+FIX: useless join
+FIX: we need to keep originline special_code
+FIX: we want to be able to reopen fourn credit note
+FIX: when 2 extra fields are mandatory in 2 different entities
+FIX: when we add a payment on an invoice which already has payments with credit note or deposit amount, and then we get an excess received, discount amount must be $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
+FIX: when we create deposit with multi tva, we mustn't add line if amount = 0 (example when we have a 100% reduc on one of origin invoice line)
+FIX: wrong redirect link on holiday refuse
+FIX: wrong test enabled
+FIX: Wrong variable name
+FIX: XSS
 
 ***** ChangeLog for 8.0.4 compared to 8.0.3 *****
 FIX: #10030 better german chart

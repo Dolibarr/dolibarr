@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +41,11 @@ $result=restrictedArea($user,'produit|service');
 
 
 $action=GETPOST('action','alpha');
-$sref=GETPOST("sref");
-$snom=GETPOST("snom");
+$sref=GETPOST("sref", 'alpha');
+$snom=GETPOST("snom", 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type=GETPOST("type","int");
-$search_barcode=GETPOST("search_barcode");
+$search_barcode=GETPOST("search_barcode", 'alpha');
 $catid=GETPOST('catid','int');
 $toolowstock=GETPOST('toolowstock');
 $tosell = GETPOST("tosell");

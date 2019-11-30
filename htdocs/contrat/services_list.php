@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +47,9 @@ if (! $sortorder) $sortorder="ASC";
 
 $mode = GETPOST("mode");
 $filter=GETPOST("filter");
-$search_name=GETPOST("search_name");
-$search_contract=GETPOST("search_contract");
-$search_service=GETPOST("search_service");
+$search_name=GETPOST("search_name", 'alpha');
+$search_contract=GETPOST("search_contract", 'alpha');
+$search_service=GETPOST("search_service", 'alpha');
 $search_status=GETPOST("search_status","alpha");
 $statut=GETPOST('statut')?GETPOST('statut'):1;
 $search_product_category=GETPOST('search_product_category','int');

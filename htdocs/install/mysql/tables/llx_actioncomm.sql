@@ -29,7 +29,7 @@ create table llx_actioncomm
   datep2			datetime,						-- date end
 
   fk_action			integer,						-- type of action (optional link with id in llx_c_actioncomm or null)
-  code				varchar(32) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
+  code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
   
   datec				datetime,						-- date creation
   tms				timestamp,						-- date modification

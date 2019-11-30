@@ -383,13 +383,19 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 if (GETPOST('disablemodules','alpha'))  $_SESSION["disablemodules"]=GETPOST('disablemodules','alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
-	$disabled_modules=explode(',',$_SESSION["disablemodules"]);
+    $modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
+
+    $disabled_modules=explode(',',$_SESSION["disablemodules"]);
 	foreach($disabled_modules as $module)
 	{
 		if ($module)
 		{
-			if (empty($conf->$module)) $conf->$module=new stdClass();
+			if (empty($conf->$module)) $conf->$module=new stdClass();    // To avoid warnings
 			$conf->$module->enabled=false;
+			foreach($modulepartkeys as $modulepartkey)
+			{
+			    unset($conf->modules_parts[$modulepartkey][$module]);
+			}
 			if ($module == 'fournisseur')		// Special case
 			{
 				$conf->supplier_order->enabled=0;

@@ -359,6 +359,7 @@ class FormMail extends Form
 			if ($this->param['models'] != 'none')
 			{
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+
 				if ($result < 0)
 				{
 					setEventMessages($this->error, $this->errors, 'errors');
@@ -991,7 +992,6 @@ class FormMail extends Form
 					$defaultmessage=preg_replace("/^(<br>)+/","",$defaultmessage);
 					$defaultmessage=preg_replace("/^\n+/","",$defaultmessage);
 				}
-
 				$out.= '<tr>';
 				$out.= '<td valign="top">';
 				$out.=$form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');

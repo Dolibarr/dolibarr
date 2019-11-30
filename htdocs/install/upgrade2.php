@@ -691,8 +691,8 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
         $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
-        $sql.= " LEFT JOIN llx_paiement_facture as pf ON pf.fk_paiement = p.rowid";
-        $sql.= " LEFT JOIN llx_bank_url as bu2 ON (bu.fk_bank=bu2.fk_bank AND bu2.type = 'company')";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON (bu.fk_bank=bu2.fk_bank AND bu2.type = 'company')";
         $sql.= " WHERE pf.rowid IS NULL AND (p.rowid=bu.url_id AND bu.type='payment') AND bu.fk_bank = b.rowid";
         $sql.= " AND b.rappro = 1";
         $sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
@@ -818,8 +818,8 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
         $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
-        $sql.= " LEFT JOIN llx_paiement_facture as pf ON pf.fk_paiement = p.rowid";
-        $sql.= " LEFT JOIN llx_bank_url as bu2 ON (bu.fk_bank = bu2.fk_bank AND bu2.type = 'company')";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON (bu.fk_bank = bu2.fk_bank AND bu2.type = 'company')";
         $sql.= " WHERE pf.rowid IS NULL AND (p.fk_bank = bu.fk_bank AND bu.type = 'payment') AND bu.fk_bank = b.rowid";
         $sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
 
@@ -1135,7 +1135,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
 
-    $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
+    $sql="update ".MAIN_DB_PREFIX."contrat set date_contrat=tms where date_contrat is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1144,7 +1144,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     else
     print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
-    $sql="update llx_contrat set datec=tms where datec is null";
+    $sql="update ".MAIN_DB_PREFIX."contrat set datec=tms where datec is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1235,7 +1235,7 @@ function migrate_contracts_date3($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
 
-    $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
+    $sql="update ".MAIN_DB_PREFIX."contrat set datec=date_contrat where datec is null or datec > date_contrat";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date3");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1262,7 +1262,7 @@ function migrate_contracts_open($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationReopeningContracts')."</b><br>\n";
 
-    $sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
+    $sql = "SELECT c.rowid as cref FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
     $sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
     dolibarr_install_syslog("upgrade2::migrate_contracts_open");
     $resql = $db->query($sql);
@@ -1995,7 +1995,7 @@ function migrate_modeles($db,$langs,$conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('crabe','invoice')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2008,7 +2008,7 @@ function migrate_modeles($db,$langs,$conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('einstein','order')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('einstein','order')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2021,7 +2021,7 @@ function migrate_modeles($db,$langs,$conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }

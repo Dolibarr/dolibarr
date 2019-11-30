@@ -309,12 +309,12 @@ if (empty($reshook)) {
 		{
 			$error = 0;
 
-			if (!$_POST["lastname"]) {
+			if (! GETPOST("lastname", 'alpha')) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
 			}
-			if (!$_POST["login"]) {
+			if (! GETPOST("login", 'alpha')) {
 				setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;

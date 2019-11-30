@@ -530,7 +530,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
         $sql.= ' f.datef as df, f.fk_soc as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
+		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
 		// Can pay invoices of all child of parent company
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
@@ -817,7 +817,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (! GETPOST('action','aZ09'))
 {
-    if ($page == -1) $page = 0 ;
+    if (empty($page) || $page == -1) $page = 0 ;
     $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
     $offset = $limit * $page ;
 

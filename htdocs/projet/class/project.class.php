@@ -338,7 +338,7 @@ class Project extends CommonObject
                 		if (file_exists($olddir))
                 		{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res=@rename($olddir, $newdir);
 							if (! $res)
                 			{
 							    $langs->load("errors");
@@ -537,7 +537,7 @@ class Project extends CommonObject
 		}
         elseif ($type == 'project_task')
 		{
-			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
+			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt WHERE pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'project_task_time')	// Case we want to duplicate line foreach user
 		{
@@ -723,10 +723,10 @@ class Project extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      * 		Delete tasks with no children first, then task with children recursively
-     *  
+     *
      *  	@param     	User		$user		User
      *		@return		int				<0 if KO, 1 if OK
      */
@@ -754,7 +754,7 @@ class Project extends CommonObject
         {
             if (count($this->lines)) $this->deleteTasks($this->lines);
         }
-        
+
         return 1;
     }
 

@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,9 +73,9 @@ $pagenext = $page + 1;
 
 $search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
-$search_ref=GETPOST("search_ref");
-$search_label=GETPOST("search_label");
-$search_societe=GETPOST("search_societe");
+$search_ref=GETPOST("search_ref",'alpha');
+$search_label=GETPOST("search_label",'alpha');
+$search_societe=GETPOST("search_societe",'alpha');
 $search_year=GETPOST("search_year");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
@@ -709,8 +710,8 @@ while ($i < min($num,$limit))
 		// Title
 		if (! empty($arrayfields['p.title']['checked']))
 		{
-			print '<td class="tdoverflowmax100">';
-			print dol_trunc($obj->title,80);
+			print '<td class="tdoverflowmax200">';
+			print dol_trunc($obj->title, 80);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

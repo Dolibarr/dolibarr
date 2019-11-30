@@ -468,7 +468,8 @@ if (empty($reshook))
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 	{
-	    $result = $object->delete();
+	    $also_update_stock = GETPOST('alsoUpdateStock', 'alpha') ?: 0;
+	    $result = $object->delete($also_update_stock);
 	    if ($result > 0)
 	    {
 	        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
@@ -551,6 +552,7 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	elseif ($action == 'classifyclosed')
@@ -561,6 +563,7 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	/*
@@ -1648,7 +1651,26 @@ else if ($id || $ref)
 		// Confirm deleteion
 		if ($action == 'delete')
 		{
-			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
+		    $formquestion = array();
+		    if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+		        $formquestion = array(
+                        array(
+                            'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
+                            'name' => 'alsoUpdateStock',
+                            'type' => 'checkbox',
+                            'value' => 0
+                        ),
+                    );
+            }
+		    $formconfirm=$form->formconfirm(
+			    $_SERVER['PHP_SELF'].'?id='.$object->id,
+                $langs->trans('DeleteSending'),
+                $langs->trans("ConfirmDeleteSending",$object->ref),
+                'confirm_delete',
+                $formquestion,
+                0,
+                1
+            );
 		}
 
 		// Confirmation validation

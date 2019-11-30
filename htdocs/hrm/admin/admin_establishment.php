@@ -54,7 +54,7 @@ $sortfield     = GETPOST("sortfield");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="e.rowid";
 
-if ($page == -1) {
+if (empty($page) || $page == -1) {
 	$page = 0 ;
 }
 

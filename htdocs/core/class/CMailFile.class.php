@@ -517,6 +517,31 @@ class CMailFile
 				return true;
 			}
 
+			$sendingmode = $this->sendmode;
+			if ($this->context == 'emailing' && ! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
+			{
+			    // List of sending methods
+			    $listofmethods=array();
+			    $listofmethods['mail']='PHP mail function';
+			    //$listofmethods['simplemail']='Simplemail class';
+			    $listofmethods['smtps']='SMTP/SMTPS socket library';
+
+			    // EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
+			    // You ensure that every user is using its own SMTP server when using the mass emailing module.
+			    $linktoadminemailbefore='';
+			    $linktoadminemailend='';
+			    $this->error = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
+			    $this->errors[] = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
+			    $this->error .= '<br>'.$langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
+			    $this->errors[] = $langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
+			    if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS))
+			    {
+			        $this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+			        $this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+			    }
+                return false;
+			}
+
 			// Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
 			if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)) $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL=10;
 			$tmparray1 = explode(',', $this->addr_to);

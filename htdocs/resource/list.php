@@ -97,8 +97,7 @@ if (empty($arch)) $arch = 0;
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page");
-$page = is_numeric($page) ? $page : 0;
-$page = $page == -1 ? 0 : $page;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;

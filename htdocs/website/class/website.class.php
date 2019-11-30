@@ -844,8 +844,10 @@ class Website extends CommonObject
 		}
 		foreach($listofpages as $pageid => $objectpageold)
 		{
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keyword, status, date_creation, tms, lang, import_key, grabbed_from, content)';
-			$line.= " VALUES(";
+		    // Warning: We must keep llx_ here. It is a generic SQL.
+		    $line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keyword, status, date_creation, tms, lang, import_key, grabbed_from, content)';
+
+		    $line.= " VALUES(";
 			$line.= $objectpageold->newid."+__MAXROWID__, ";
 			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."+__MAXROWID__" : "null").", ";
 			$line.= "__WEBSITE_ID__, ";

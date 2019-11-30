@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects','users','companies'));
 
+$hookmanager->initHooks(array('timesheetperdaycard'));
+
 $action=GETPOST('action','aZ09');
 $mode=GETPOST("mode",'alpha');
 $id=GETPOST('id','int');

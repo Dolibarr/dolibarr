@@ -157,7 +157,7 @@ $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
-if ($prev_id) $sql.= " AND p.rowid=".$prev_id;
+if ($object->id) $sql.= " AND p.rowid=".$object->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= $db->order($sortfield,$sortorder);
 

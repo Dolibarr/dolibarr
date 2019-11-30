@@ -716,8 +716,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
-    else if ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
-    else $valueforccc=$objsoc->code_client;
+    else if ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=dol_string_unaccent($objsoc->code_fournisseur);
+    else $valueforccc=dol_string_unaccent($objsoc->code_client);
 
     $sharetable = $table;
     if ($table == 'facture' || $table == 'invoice') $sharetable = 'invoicenumber'; // for getEntity function
@@ -965,6 +965,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // Define $maskLike
     $maskLike = dol_string_nospecial($mask);
     $maskLike = str_replace("%","_",$maskLike);
+
     // Replace protected special codes with matching number of _ as wild card caracter
     $maskLike = preg_replace('/\{yyyy\}/i','____',$maskLike);
     $maskLike = preg_replace('/\{yy\}/i','__',$maskLike);
@@ -1140,7 +1141,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         // Now we replace the refclient
         if ($maskrefclient)
         {
-            //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
+            //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode."\n<br>";exit;
             $maskrefclient_maskbefore='{'.$maskrefclient.'}';
             $maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter,dol_strlen($maskrefclient_maskcounter),"0",STR_PAD_LEFT);
             $numFinal = str_replace($maskrefclient_maskbefore,$maskrefclient_maskafter,$numFinal);
@@ -1250,6 +1251,10 @@ function check_value($mask,$value)
     if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
     if ($maskraz >= 0)
     {
+        if ($maskraz == 99) {
+            $maskraz = date('m');
+            $resetEveryMonth = true;
+        }
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg

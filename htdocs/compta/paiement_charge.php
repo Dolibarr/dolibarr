@@ -71,7 +71,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
 		$error++;
         $action = 'create';
 	}
-    if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
+    if (! empty($conf->banque->enabled) && ! ($_POST["accountid"] > 0))
     {
         setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), null, 'errors');
         $error++;

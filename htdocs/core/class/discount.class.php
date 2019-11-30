@@ -91,7 +91,7 @@ class DiscountAbsolute
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
-        $sql.= " WHERE sr.entity = " . $conf->entity;
+	$sql.= " WHERE sr.entity IN (".getEntity('invoice').")";
         if ($rowid) $sql.= " AND sr.rowid=".$rowid;
         if ($fk_facture_source) $sql.= " AND sr.fk_facture_source=".$fk_facture_source;
         if ($fk_invoice_supplier_source) $sql.= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
@@ -547,6 +547,49 @@ class DiscountAbsolute
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
             $sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
             $sql.= ' AND (f.type = 2 OR f.type = 0)';	// Find discount coming from credit note or excess paid
+        }
+        else
+        {
+            $this->error=get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
+            dol_print_error($this->error);
+            return -1;
+        }
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($multicurrency) return $obj->multicurrency_amount;
+			else return $obj->amount;
+        }
+        else
+        {
+            $this->error = $this->db->lasterror();
+            return -1;
+        }
+    }
+    /**
+     *    	Return amount (with tax) of all converted amount for this credit note
+     *
+     *	@param		CommonInvoice	  $invoice	    	Object invoice
+	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
+     *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
+     */
+    function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency=0)
+    {
+        dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
+
+        if ($invoice->element == 'facture' || $invoice->element == 'invoice')
+        {
+            $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
+            $sql.= ' WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = '.$invoice->id;
+        }
+        else if ($invoice->element == 'invoice_supplier')
+        {
+            $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
+            $sql.= ' WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = '.$invoice->id;
         }
         else
         {

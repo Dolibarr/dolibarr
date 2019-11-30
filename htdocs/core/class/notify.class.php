@@ -329,6 +329,7 @@ class Notify
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
 		$sql.= " AND n.fk_soc = s.rowid";
+		$sql.= " AND c.statut = 1";
 		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
 		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
 		$sql .= " AND s.rowid = ".$object->socid;
@@ -342,6 +343,7 @@ class Notify
 		$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
 		$sql.= " ".MAIN_DB_PREFIX."notify_def as n";
 		$sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+		$sql.= " AND c.statut = 1";
 		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
 		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
 
