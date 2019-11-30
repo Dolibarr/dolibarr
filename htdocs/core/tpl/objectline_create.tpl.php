@@ -236,9 +236,9 @@ if ($nolinesbefore) {
 				{
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 				}
-			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
-			{
-				?>
+				if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
+				{
+					?>
 				<script type="text/javascript">
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
@@ -252,32 +252,32 @@ if ($nolinesbefore) {
 						});
 					});
 				</script>
-			<?php
-			}
+					<?php
+				}
 			}
 			else
 			{
-			// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
-			if ($senderissupplier != 2)
-			{
-				$ajaxoptions=array(
+				// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
+				if ($senderissupplier != 2)
+				{
+					$ajaxoptions=array(
 					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
 					'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
-				);
-				$alsoproductwithnosupplierprice=0;
-			}
-			else
-			{
-				$ajaxoptions = array(
+					);
+					$alsoproductwithnosupplierprice=0;
+				}
+				else
+				{
+					$ajaxoptions = array(
 					'update' => array('remise_percent' => 'discount')			// html id tags that will be edited with each ajax json response key
-				);
-				$alsoproductwithnosupplierprice=1;
-			}
-			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth500');
-			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
-			{
-			?>
+					);
+					$alsoproductwithnosupplierprice=1;
+				}
+				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth500');
+				if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
+				{
+					?>
 				<script type="text/javascript">
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
@@ -290,8 +290,8 @@ if ($nolinesbefore) {
 						});
 					});
 				</script>
-				<?php
-			}
+					<?php
+				}
 			}
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
@@ -341,15 +341,15 @@ if ($nolinesbefore) {
 		echo '</td>';
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 		{
-		$coldisplay++;
-		?>
+			$coldisplay++;
+			?>
 	<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
-<?php }
-print '<td class="nobottom linecolvat right">';
-$coldisplay++;
-if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
-else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx", 'alpha', 2):-1), $seller, $buyer, 0, 0, '', false, 1);
-?>
+        <?php }
+		print '<td class="nobottom linecolvat right">';
+		$coldisplay++;
+		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
+		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx", 'alpha', 2):-1), $seller, $buyer, 0, 0, '', false, 1);
+		?>
 	</td>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
@@ -436,7 +436,7 @@ if (is_object($objectline)) {
 }
 if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
-?>
+	?>
 
 <tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
 	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
@@ -478,28 +478,28 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 		print '</script>';
 		print '</td>';
 		print "</tr>\n";
-		}
+}
 		print "<script>\n";
-		if (! empty($usemargins) && $user->rights->margins->creer)
-		{
-			?>
+if (! empty($usemargins) && $user->rights->margins->creer)
+{
+	?>
 
 			/* Some js test when we click on button "Add" */
 			jQuery(document).ready(function() {
-			<?php
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+	<?php
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
 				$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 				});
 				<?php
-			}
-			if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+	}
+	if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
 				$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
 				});
 				<?php
-			}
-			?>
+	}
+	?>
 			});
 
 			/* TODO This does not work for number with thousand separator that is , */
@@ -548,8 +548,8 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 			}
 
 			<?php
-		}
-		?>
+}
+?>
 
 		/* JQuery for product free or predefined select */
 		jQuery(document).ready(function() {
