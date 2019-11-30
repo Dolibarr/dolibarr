@@ -509,36 +509,46 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
 function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
 {
 	global $langs, $db;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-	$measuringUnits= new CUnits($db);
+	global $measuring_unit_cache;
 
-	if ($scale !== '')
+	if (empty($measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label]))
 	{
-		$arrayforfilter = array(
-			't.scale' => $scale,
-			't.unit_type' => $measuring_style,
-			't.active' => 1
-		);
-	}
-	else
-	{
-		$arrayforfilter = array(
-			't.rowid' => $unit,
-			't.unit_type' => $measuring_style,
-			't.active' => 1
-		);
-	}
-	$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$measuringUnits= new CUnits($db);
 
-	if ($result<0) {
-		return -1;
-	} else {
-		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
-			if ($use_short_label) return $measuringUnits->records[key($measuringUnits->records)]->short_label;
-			else return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
-		} else {
-			return '';
+		if ($scale !== '')
+		{
+			$arrayforfilter = array(
+				't.scale' => $scale,
+				't.unit_type' => $measuring_style,
+				't.active' => 1
+			);
 		}
+		else
+		{
+			$arrayforfilter = array(
+				't.rowid' => $unit,
+				't.unit_type' => $measuring_style,
+				't.active' => 1
+			);
+		}
+		$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
+
+		if ($result < 0) {
+			return -1;
+		} else {
+			if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
+				if ($use_short_label) $labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
+				else $labeltoreturn = $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+			} else {
+				$labeltoreturn = '';
+			}
+			$measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label] = $labeltoreturn;
+			return $labeltoreturn;
+		}
+	}
+	else {
+		return $measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label];
 	}
 }
 
