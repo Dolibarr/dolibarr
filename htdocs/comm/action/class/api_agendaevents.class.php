@@ -79,7 +79,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(404, 'Agenda Events not found');
         }
 
-        if (! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->ownerid != DolibarrApiAccess::$user->id) {
+        if (! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
             throw new RestException(401, "Insufficient rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
