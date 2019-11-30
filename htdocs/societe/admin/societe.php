@@ -414,7 +414,7 @@ foreach($arrayofmodules as $file => $modCodeTiers)
 	}
 	else
 	{
-		$disabled = (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+		$disabled = (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
 		if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
