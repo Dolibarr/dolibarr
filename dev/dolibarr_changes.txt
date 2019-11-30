@@ -52,6 +52,21 @@ Replace call to serialize_val with no bugged value
 
 TCPDF:
 ------
+* Replace in tcpdf.php:
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+                    unlink($file);
+                }
+            }
+with
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+//                  unlink($file);
+                }
+            }
+
 * To avoid to have QRcode changed because generated with a random mask, replace
 define('QR_FIND_FROM_RANDOM', 2);
 with
