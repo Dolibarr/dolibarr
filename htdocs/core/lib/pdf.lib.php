@@ -1238,6 +1238,9 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified))  $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
+	elseif ($object->type == Facture::TYPE_DEPOSIT && $object->element == 'facture') {
+		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
+	}
 
 	// Description short of product line
 	$libelleproduitservice=$label;
