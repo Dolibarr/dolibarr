@@ -264,7 +264,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * @param 	TCPDF     $pdf				PDF initialized object
  * @param 	string    $htmlcontent		HTML Contect
  * @return 	int							Height
- * @see getStringHeight
+ * @see getStringHeight()
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 {
@@ -1286,7 +1286,6 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$sourceref);
 			// Add date of deposit
 			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.= ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
-
 		}
 		elseif ($desc == '(EXCESS RECEIVED)' && $object->lines[$i]->fk_remise_except)
 		{
