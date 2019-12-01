@@ -633,7 +633,7 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Add purchase prices for a product.
+     * Add/Update purchase prices for a product.
      *
      * @param   int         $id                             ID of Product
      * @param  	float		$qty				            Min quantity for which price is valid
@@ -681,7 +681,7 @@ class Products extends DolibarrApi
         }
 
         $result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
-        if ($result <= 0) {
+        if ($result < 0) {
             throw new RestException(500, "Error adding supplier to product : ".$this->db->lasterror());
         }
 
