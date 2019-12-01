@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -56,30 +56,33 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 			</td>
 			<td class="select_design maxwidthonsmartphone">
 				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
-					<?php
-                        print '<option value="0">'.$top_liste_produits.'</option>'."\n";
+<?php
+print '<option value="0">'.$top_liste_produits.'</option>'."\n";
 
-						$id = $obj_facturation->id();
+$id = $obj_facturation->id();
 
-						// Si trop d'articles ont ete trouves, on n'affiche que les X premiers (defini dans le fichier de configuration) ...
+// Si trop d'articles ont ete trouves, on n'affiche que les X premiers (defini dans le fichier de configuration) ...
 
-						$nbtoshow = $nbr_enreg;
-						if (! empty($conf_taille_listes) && $nbtoshow > $conf_taille_listes) $nbtoshow = $conf_taille_listes;
+$nbtoshow = $nbr_enreg;
+if (! empty($conf_taille_listes) && $nbtoshow > $conf_taille_listes) $nbtoshow = $conf_taille_listes;
 
-						for ($i = 0; $i < $nbtoshow; $i++)
-						{
-							if ( $id == $tab_designations[$i]['rowid'] )
-								$selected = 'selected';
-							else
-								$selected = '';
+for ($i = 0; $i < $nbtoshow; $i++)
+{
+	if ($id == $tab_designations[$i]['rowid']) {
+		$selected = 'selected';
+	} else {
+		$selected = '';
+	}
 
-							$label = $tab_designations[$i]['label'];
+	$label = $tab_designations[$i]['label'];
 
-							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
-							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
-							print '</option>'."\n";
-						}
-					?>
+	print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
+	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) {
+		print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
+	}
+	print '</option>'."\n";
+}
+?>
 				</select>
 			</td>
 			</tr>

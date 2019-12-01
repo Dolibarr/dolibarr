@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -41,7 +41,7 @@ $action=GETPOST('action', 'alpha');
 
 // Security check
 $socid='';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, $origin, $origin_id);
 
 $object = new Expedition($db);
@@ -58,26 +58,26 @@ if ($id > 0 || ! empty($ref))
     }
 
     // Linked documents
-    if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+    if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
     {
-        $objectsrc=new Commande($db);
+        $objectsrc = new Commande($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
-    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+    if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
     {
-        $objectsrc=new Propal($db);
+        $objectsrc = new Propal($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
 }
 
-$permissionnote=$user->rights->expedition->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->expedition->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
@@ -90,7 +90,6 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-
 	$head=shipping_prepare_head($object);
 	dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
 
@@ -110,7 +109,7 @@ if ($id > 0 || ! empty($ref))
         $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
         if (0) {    // Do not change on shipment
             if ($action != 'classify') {
-                $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             }
             if ($action == 'classify') {
                 // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -138,7 +137,7 @@ if ($id > 0 || ! empty($ref))
             }
         }
     }
-    $morehtmlref.='</div>';
+    $morehtmlref .= '</div>';
 
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -146,7 +145,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<div class="underbanner clearboth"></div>';
 
-	$cssclass='titlefield';
+	$cssclass = 'titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();

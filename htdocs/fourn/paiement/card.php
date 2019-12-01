@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -139,7 +139,7 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
 // TODO: get the appropriate permisson
-$permissioncreate = true;
+$permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -184,7 +184,7 @@ if ($result > 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	/*print '<tr>';
 	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -197,7 +197,7 @@ if ($result > 0)
 	print '</td></tr>';
 
 	// Payment mode
-	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_label;
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
 	print $object->num_paiement?' - '.$object->num_paiement:'';
 	print '</td></tr>';
@@ -275,7 +275,7 @@ if ($result > 0)
 		$i = 0;
 		$total = 0;
 		print '<b>'.$langs->trans("Invoices").'</b><br>';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';
@@ -342,7 +342,7 @@ if ($result > 0)
 	print '<div class="tabsAction">';
 	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
-		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
+		if ($user->socid == 0 && $object->statut == 0 && $action == '')
 		{
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
 		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
@@ -351,7 +351,7 @@ if ($result > 0)
 			}
 		}
 	}
-	if ($user->societe_id == 0 && $action == '')
+	if ($user->socid == 0 && $action == '')
 	{
 		if ($user->rights->fournisseur->facture->supprimer)
 		{

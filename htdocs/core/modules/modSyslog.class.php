@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -84,6 +84,10 @@ class modSyslog extends DolibarrModules
 		$this->rights_class = 'syslog';
 
 		// Cronjobs
+		$comment = 'Compress and archive log files. The number of versions to keep is defined into the setup of module. ';
+		$comment.= 'Warning: Main application cron script must be run with same account than your web server to avoid to get log files with different owner than required by web server. ';
+		$comment.= 'Another solution is to set web server Operating System group as the group of directory documents and set GROUP permission "rws" on this directory so log files will always have the group and permissions of the web server Operating System group.';
+
 		$this->cronjobs = array(
 			0 => array(
 				'label' => 'CompressSyslogs',
@@ -92,7 +96,7 @@ class modSyslog extends DolibarrModules
 				'objectname' => 'Utils',
 				'method' => 'compressSyslogs',
 				'parameters' => '',
-				'comment' => 'Compress and archive log files. Warning: batch must be run with same account than your web server to avoid to get log files with different owner than required by web server. Another solution is to set web server Operating System group as the group of directory documents and set GROUP permission "rws" on this directory so log files will always have the group and permissions of the web server Operating System group',
+				'comment' => $comment,
 				'frequency' => 1,
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,

@@ -105,6 +105,7 @@ InitStructureFromExistingTable=Construire la chaîne du tableau de structure d'u
 UseAboutPage=Désactiver la page "à propos de"
 UseDocFolder=Désactiver le dossier de la documentation
 UseSpecificReadme=Utiliser un fichier ReadMe spécifique
+ContentOfREADMECustomized=Remarque: le contenu du fichier README.md a été remplacé par la valeur spécifique définie dans la configuration de ModuleBuilder.
 RealPathOfModule=Chemin réel du dossier du module
 ContentCantBeEmpty=Le contenu du fichier ne peut pas être vide
 WidgetDesc=Vous pouvez générer et éditer ici les widgets qui seront intégrés à votre module.

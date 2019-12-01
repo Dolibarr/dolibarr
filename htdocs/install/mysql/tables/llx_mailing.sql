@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -43,6 +43,7 @@ create table llx_mailing
   date_valid		datetime,                            -- 
   date_appro		datetime,                            -- 
   date_envoi		datetime,                            -- date d'envoi
+  tms				timestamp,  
   fk_user_creat		integer,                             -- user creator
   fk_user_valid		integer,                             -- user validator
   fk_user_appro		integer,                             -- not used

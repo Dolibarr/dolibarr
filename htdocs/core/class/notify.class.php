@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -358,6 +358,7 @@ class Notify
 			$sql.= " ".MAIN_DB_PREFIX."societe as s";
 			$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
 			$sql.= " AND n.fk_soc = s.rowid";
+			$sql.= " AND c.statut = 1";
 			if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
 			else $sql.= " AND a.code = '".$notifcode."'";	// New usage
 			$sql .= " AND s.rowid = ".$object->socid;
@@ -372,6 +373,7 @@ class Notify
 		$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
 		$sql.= " ".MAIN_DB_PREFIX."notify_def as n";
 		$sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+		$sql.= " AND c.statut = 1";
 		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
 		else $sql.= " AND a.code = '".$this->db->escape($notifcode)."'";	// New usage
 
@@ -541,7 +543,12 @@ class Notify
 							'',
 							'',
 							0,
-							-1
+							-1,
+                            '',
+                            '',
+                            '',
+                            '',
+                            'notification'
                         );
 
 						if ($mailfile->sendfile())
@@ -566,7 +573,7 @@ class Notify
 						}
 					}
 					else
-				  {
+				    {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
 					}
 					$i++;
@@ -769,7 +776,12 @@ class Notify
 						'',
 						'',
 						0,
-						1
+						1,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'notification'
 					);
 
 					if ($mailfile->sendfile())

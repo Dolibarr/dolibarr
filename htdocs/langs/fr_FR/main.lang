@@ -412,6 +412,7 @@ DefaultTaxRate=Taux de taxe par défaut
 Average=Moyenne
 Sum=Somme
 Delta=Écart
+StatusToPay=A payer
 RemainToPay=Reste à payer
 Module=Module/Application
 Modules=Modules/Applications

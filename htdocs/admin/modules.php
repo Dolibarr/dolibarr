@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -62,8 +62,6 @@ $dolistore            = new Dolistore(false);
 
 if (! $user->admin)
 	accessforbidden();
-
-$specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional', 4=>'marketplace');
 
 $familyinfo=array(
 	'hr'=>array('position'=>'001', 'label'=>$langs->trans("ModuleFamilyHr")),
@@ -190,7 +188,7 @@ if ($action=='install')
                     //var_dump($modulenamedir);
                     if (! dol_is_dir($modulenamedir))
                     {
-						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>Dir not found: '.$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename.'<br>'.$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename, null, 'errors');
+                    	setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>'.$langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat2", $modulename, 'htdocs/'.$modulename), null, 'errors');
                         $error++;
                     }
                 }
@@ -368,11 +366,8 @@ foreach ($modulesdir as $dir)
 		    					        }
 		    					    }
 		    					    ksort($arrayofnatures);
-		    					}
 
-		    					// Define array $categ with categ with at least one qualified module
-		    					if ($modulequalified > 0)
-		    					{
+			    					// Define array $categ with categ with at least one qualified module
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
@@ -400,7 +395,15 @@ foreach ($modulesdir as $dir)
 		    			                $arrayofwarningsext[$modName]=$objMod->warnings_activation_ext;
 		    			            }
 
-		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
+		    			            $familyposition = $familyinfo[$familykey]['position'];
+		    			            if ($external)
+		    			            {
+		    			            	// TODO Find a solution so modules with their own family are always at end
+		    			            	//var_dump($familyposition);
+		    			            	//$familyposition += 100;
+		    			            }
+
+		    			            $orders[$i]  = $familyposition."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
@@ -460,6 +463,7 @@ asort($orders);
 $nbofactivatedmodules=count($conf->modules);
 $moreinfo=$langs->trans("TotalNumberOfActivatedModules", ($nbofactivatedmodules-1), count($modules));
 if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+
 print load_fiche_titre($langs->trans("ModulesSetup"), $moreinfo, 'title_setup');
 
 // Start to show page
@@ -526,6 +530,7 @@ if ($mode == 'common')
 
     print '<div class="clearboth"></div><br>';
 
+    $object=new stdClass();
     $parameters=array();
     $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -537,14 +542,13 @@ if ($mode == 'common')
     foreach ($orders as $key => $value)
     {
         $tab=explode('_', $value);
-        $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
+        $familykey=$tab[1];
+        $module_position=$tab[2];
 
         $modName = $filename[$key];
     	$objMod  = $modules[$modName];
-    	$dirofmodule = $dirmod[$key];
 
     	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
-    	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
     	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
@@ -659,8 +663,8 @@ if ($mode == 'common')
         //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
-        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, ' width="14px"', 1);
-        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle" width="14px"');
+        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule"', 1);
+        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule"');
         }
         else
         {
@@ -728,7 +732,6 @@ if ($mode == 'common')
         			print '</a>';
         		}
         		else {
-
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
         			print img_picto($langs->trans("Activated"), 'switch_on');
         			print '</a>';
@@ -870,21 +873,23 @@ if ($mode == 'marketplace')
     dol_fiche_head($head, $mode, '', -1);
 
     // Marketplace
-    print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-    print "<tr class=\"liste_titre\">\n";
-    //print '<td>'.$langs->trans("Logo").'</td>';
-    print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
+    print '<tr class="liste_titre">'."\n";
+    print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
+    print '<td></td>';
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
     print '<tr class="oddeven">'."\n";
     $url='https://www.dolistore.com';
-    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+    print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
     print "</table>\n";
+	print '</div>';
 
     dol_fiche_end();
 
@@ -918,19 +923,17 @@ if ($mode == 'marketplace')
 	                    &nbsp;
 					</div>
 	                <div class="divsearchfield right">
-	                <?php
-	                print $previouslink;
-	                print $nextlink;
-	                ?>
-	                </div>
-	            </form>
+	    <?php
+	    print $previouslink;
+	    print $nextlink;
+	    print '</div>';
+	    print '</form>';
 
-	   <?php
 
-	   print '</div></div>';
-	   print '<div class="clearboth"></div>';
+	    print '</div></div>';
+	    print '<div class="clearboth"></div>';
 
-	   ?>
+	    ?>
 
 	        <div id="category-tree-left">
 	            <ul class="tree">

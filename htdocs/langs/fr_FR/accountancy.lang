@@ -296,6 +296,7 @@ Modelcsv_openconcerto=Export pour OpenConcerto (Test)
 Modelcsv_configurable=Export configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export pour Sage 50 Suisse
+Modelcsv_charlemagne=Export vers Charlemagne
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service

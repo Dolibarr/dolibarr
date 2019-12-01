@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ class AccountancySystem
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var int ID
@@ -48,15 +48,34 @@ class AccountancySystem
      */
 	public $fk_pcg_version;
 
+    /**
+     * @var string pcg type
+     */
 	public $pcg_type;
-	public $pcg_subtype;
 
     /**
+     * @var string pcg subtype
+     */
+	public $pcg_subtype;
+
+	/**
+	 * @var string Accountancy System numero
+	 */
+	public $numero;
+
+	/**
      * @var string Accountancy System label
      */
     public $label;
 
+    /**
+     * @var string account number
+     */
 	public $account_number;
+
+    /**
+     * @var string account parent
+     */
 	public $account_parent;
 
 	/**

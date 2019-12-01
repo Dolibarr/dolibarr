@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -149,9 +149,9 @@ class DoliDBSqlite3 extends DoliDB
         {
             if ($type == 'auto')
             {
-              if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
+                if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
             }
 
             if ($type == 'dml')

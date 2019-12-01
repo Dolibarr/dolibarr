@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -25,19 +25,15 @@ if (empty($conf) || ! is_object($conf))
 
 $object = $GLOBALS['objcanvas']->control->object;
 
-?>
 
-<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->
-<?php
+print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->\n";
 
 $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-?>
-
-<?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
-<?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+if ($this->control->tpl['error']) echo $this->control->tpl['error'];
+if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border allwidth">
 
@@ -230,6 +226,5 @@ $result=show_contacts($conf, $langs, $db, $object);
 
 // Projects list
 $result=show_projects($conf, $langs, $db, $object);
-?>
 
-<!-- END PHP TEMPLATE -->
+print "<!-- END PHP TEMPLATE -->\n";

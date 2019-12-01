@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,7 +72,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
@@ -128,7 +128,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		);
 
 
-		$socid=empty($user->societe_id)?0:$user->societe_id;
+		$socid=empty($user->socid)?0:$user->socid;
 		$userid=0;	// No filter on user creation
 
 		$WIDTH=($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'160':'320';
@@ -171,7 +171,6 @@ class box_graph_product_distribution extends ModeleBoxes
 					unset($data1);
 
 					if ($nocolor) $px1->SetDataColor(array(array(220,220,220)));
-					$px1->SetPrecisionY(0);
 					$px1->SetLegend($legend);
 					$px1->setShowLegend(0);
 					$px1->setShowPointValue($showpointvalue);
@@ -182,7 +181,6 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px1->SetYLabel($langs->trans("NumberOfBills"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
-					$px1->SetPrecisionY(0);
 					$px1->SetCssPrefix("cssboxes");
 					//$px1->mode='depth';
 					$px1->SetType(array('pie'));
@@ -231,7 +229,6 @@ class box_graph_product_distribution extends ModeleBoxes
 					unset($data2);
 
 					if ($nocolor) $px2->SetDataColor(array(array(220,220,220)));
-					$px2->SetPrecisionY(0);
 					$px2->SetLegend($legend);
 					$px2->setShowLegend(0);
 					$px2->setShowPointValue($showpointvalue);
@@ -242,7 +239,6 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
-					$px2->SetPrecisionY(0);
 					$px2->SetCssPrefix("cssboxes");
 					//$px2->mode='depth';
 					$px2->SetType(array('pie'));
@@ -292,7 +288,6 @@ class box_graph_product_distribution extends ModeleBoxes
 					unset($data3);
 
 					if ($nocolor) $px3->SetDataColor(array(array(220,220,220)));
-					$px3->SetPrecisionY(0);
 					$px3->SetLegend($legend);
 					$px3->setShowLegend(0);
 					$px3->setShowPointValue($showpointvalue);
@@ -303,7 +298,6 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px3->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px3->SetShading(3);
 					$px3->SetHorizTickIncrement(1);
-					$px3->SetPrecisionY(0);
 					$px3->SetCssPrefix("cssboxes");
 					//$px3->mode='depth';
 					$px3->SetType(array('pie'));

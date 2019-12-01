@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,13 +22,13 @@
  * \brief File to return Ajax response on product list request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
 
 require '../../main.inc.php';
 
@@ -57,9 +57,9 @@ $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 dol_syslog(join(',', $_GET));
 // print_r($_GET);
 
-if (! empty($action) && $action == 'fetch' && ! empty($id))
+if (!empty($action) && $action == 'fetch' && !empty($id))
 {
-	require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 	$outjson = array();
 
@@ -77,11 +77,11 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		$found = false;
 
 		// Price by qty
-		if (! empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))) 		// If we need a particular price related to qty
+		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))) 		// If we need a particular price related to qty
 		{
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "product_price_by_qty ";
-			$sql .= " WHERE rowid=" . $price_by_qty_rowid . "";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty ";
+			$sql .= " WHERE rowid=".$price_by_qty_rowid."";
 
 			$result = $db->query($sql);
 			if ($result) {
@@ -99,14 +99,14 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		}
 
 		// Multiprice
-		if (! $found && isset($price_level) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES))) 		// If we need a particular price
+		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES))) // If we need a particular price
 		                                                                                                           // level (from 1 to 6)
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "product_price ";
-			$sql .= " WHERE fk_product='" . $id . "'";
-			$sql .= " AND entity IN (" . getEntity('productprice') . ")";
-			$sql .= " AND price_level=" . $price_level;
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
+			$sql .= " WHERE fk_product='".$id."'";
+			$sql .= " AND entity IN (".getEntity('productprice').")";
+			$sql .= " AND price_level=".$price_level;
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1";
 
@@ -124,13 +124,12 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		}
 
 		// Price by customer
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && ! empty($socid)) {
-
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);
 
-			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $socid);
+			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
 
 			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 			if ($result) {
@@ -144,21 +143,21 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 			}
 		}
 
-		if (! $found) {
+		if (!$found) {
 			$outprice_ht = price($object->price);
 			$outprice_ttc = price($object->price_ttc);
 			$outpricebasetype = $object->price_base_type;
 			$outtva_tx = $object->tva_tx;
 		}
 
-		$outjson = array('ref' => $outref,'label' => $outlabel,'desc' => $outdesc,'type' => $outtype,'price_ht' => $outprice_ht,'price_ttc' => $outprice_ttc,'pricebasetype' => $outpricebasetype,'tva_tx' => $outtva_tx,'qty' => $outqty,'discount' => $outdiscount);
+		$outjson = array('ref' => $outref, 'label' => $outlabel, 'desc' => $outdesc, 'type' => $outtype, 'price_ht' => $outprice_ht, 'price_ttc' => $outprice_ttc, 'pricebasetype' => $outpricebasetype, 'tva_tx' => $outtva_tx, 'qty' => $outqty, 'discount' => $outdiscount);
 	}
 
 	echo json_encode($outjson);
 }
 else
 {
-	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$langs->load("products");
 	$langs->load("main");
@@ -171,19 +170,19 @@ else
 	    return;
 	}
 
-	$match = preg_grep('/(' . $htmlname . '[0-9]+)/', array_keys($_GET));
+	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
-	$idprod = (! empty($match[0]) ? $match[0] : '');
+	$idprod = (!empty($match[0]) ? $match[0] : '');
 
-	if (GETPOST($htmlname, 'alpha') == '' && (! $idprod || ! GETPOST($idprod, 'alpha')))
+	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha')))
 	{
 		print json_encode(array());
 	    return;
 	}
 
 	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
+	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {  // mode=1: customer

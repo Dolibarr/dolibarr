@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -35,6 +35,10 @@ class mailing_xinputfile extends MailingTargets
     public $desc='EMails from a file';          // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
     public $require_module=array();             // Module mailing actif si modules require_module actifs
     public $require_admin=0;                    // Module mailing actif pour user admin ou non
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='generic';
     public $tooltip='UseFormatFileEmailToTarget';
 
@@ -221,6 +225,6 @@ class mailing_xinputfile extends MailingTargets
 
 		ini_set('auto_detect_line_endings', false);
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 }

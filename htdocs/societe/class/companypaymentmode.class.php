@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -310,7 +310,7 @@ class CompanyPaymentMode extends CommonObject
 		if ($type)  $morewhere.= " AND type = '".$this->db->escape($type)."'";
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 

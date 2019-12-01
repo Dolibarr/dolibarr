@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,7 +88,7 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("MiscellaneousDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
 print "<br>\n";
 
 
@@ -103,7 +103,7 @@ dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="right" width="100">'.$langs->trans("Status").'</td>';

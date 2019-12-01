@@ -152,7 +152,9 @@ $dolibarr_main_db_collation='utf8_unicode_ci';
 
 
 // dolibarr_main_instance_unique_id
-// An ID that is unique for each installation.
+// An secret ID that is unique for each installation.
+// This value is also visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption.
+// To propagate a unique key, you propagate the value concatenated with a string with a hash function. Example: md5('dolibarr'+dolibarr_main_instance_unique_id)
 // Default value: randomly defined during installation
 // Examples:
 // $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';

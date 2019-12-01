@@ -18,3 +18,4 @@ SetHereATitleForLink=Set a name for the bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://URL) or an internal/relative link (/DOLIBARR_ROOT/htdocs/...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
 BookmarksManagement=Bookmarks management
+BookmarksMenuShortCut=Ctrl + shift + m

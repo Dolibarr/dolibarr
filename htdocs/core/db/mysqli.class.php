@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ class DoliDBMysqli extends DoliDB
     const LABEL='MySQL or MariaDB';
     //! Version min database
     const VERSIONMIN='5.0.3';
-	/** @var mysqli_result Resultset of last query */
+	/** @var bool|mysqli_result Resultset of last query */
 	private $_results;
 
     /**
@@ -187,12 +187,12 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Connect to server
 	 *
-	 * @param   string $host database server host
-	 * @param   string $login login
-	 * @param   string $passwd password
-	 * @param   string $name name of database (not used for mysql, used for pgsql)
-	 * @param   integer $port Port of database server
-	 * @return  mysqli  Database access object
+	 * @param   string  $host 	Database server host
+	 * @param   string  $login 	Login
+	 * @param   string  $passwd Password
+	 * @param   string  $name 	Name of database (not used for mysql, used for pgsql)
+	 * @param   integer $port 	Port of database server
+	 * @return  mysqli  		Database access object
 	 * @see close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
@@ -367,10 +367,10 @@ class DoliDBMysqli extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+     *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
      *
      *	@param	mysqli_result	$resultset	Curseur de la requete voulue
-     *	@return int							Nombre de lignes
+     *	@return int							Number of lines
      *	@see    num_rows()
      */
     public function affected_rows($resultset)
