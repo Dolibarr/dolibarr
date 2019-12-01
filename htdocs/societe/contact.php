@@ -88,6 +88,7 @@ if (!empty($canvas))
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
+if(empty($user->rights->societe->contact->lire)) accessforbidden();
 
 
 

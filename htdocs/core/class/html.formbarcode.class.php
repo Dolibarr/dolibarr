@@ -90,7 +90,7 @@ class FormBarCode
         if (!empty($conf->use_javascript_ajax))
         {
             $select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
-            $select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $select_encoder.= '<input type="hidden" name="token" value="'.newToken().'">';
             $select_encoder.= '<input type="hidden" name="action" value="update">';
             $select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
         }
@@ -213,7 +213,7 @@ class FormBarCode
         $out = '';
         if ($htmlname != "none") {
             $out .= '<form method="post" action="' . $page . '">';
-            $out .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+            $out .= '<input type="hidden" name="token" value="' . newToken() . '">';
             $out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
             $out .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             $out .= '<tr><td>';

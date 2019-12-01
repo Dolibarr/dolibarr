@@ -617,7 +617,7 @@ $( document ).ready(function() {
 });
 </script>
 
-<body style="overflow: hidden; background-color:#D1D1D1;">
+<body class="bodytakepos" style="overflow: hidden;">
 <?php
 if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 ?>

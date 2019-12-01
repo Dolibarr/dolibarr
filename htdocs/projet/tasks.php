@@ -520,7 +520,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	else
 	{
 		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -605,7 +605,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	    print $hookmanager->resPrint;
 
-	    if (empty($reshook) && !empty($extrafields[$taskstatic->table_element]['label']))
+	    if (empty($reshook) && !empty($extrafields->attributes[$taskstatic->table_element]['label']))
 		{
 			print $taskstatic->showOptionals($extrafields, 'edit'); // Do not use $object here that is object of project but use $taskstatic
 		}
@@ -664,7 +664,7 @@ elseif ($id > 0 || !empty($ref))
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

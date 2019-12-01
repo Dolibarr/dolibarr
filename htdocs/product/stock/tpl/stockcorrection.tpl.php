@@ -81,7 +81,7 @@ if ($object->element == 'stock')
 {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
-	print $form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 	print ' &nbsp; <select name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';

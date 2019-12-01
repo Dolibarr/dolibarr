@@ -2461,8 +2461,8 @@ class User extends CommonObject
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$linkend = '</a>';
 
-                //Check user's rights to see an other user
-                if ((!$user->rights->user->user->lire && $this->id != $user->id)) $option = 'nolink';
+		//Check user's rights to see an other user
+		if ((!$user->rights->user->user->lire && $this->id != $user->id)) $option = 'nolink';
 
 		if ($option == 'xxx')
 		{

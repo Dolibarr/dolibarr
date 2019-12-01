@@ -355,10 +355,10 @@ else
 
 			$formconfirm = '';
 
-			// Confirm delete third party
+			// Confirm delete warehouse
 			if ($action == 'delete')
 			{
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->libelle), "confirm_delete", '', 0, 2);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", '', 0, 2);
 			}
 
 			// Call Hook formConfirm
@@ -389,10 +389,10 @@ else
         	print '<table class="border centpercent">';
 
 			// Parent entrepot
-			$e = new Entrepot($db);
-			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
+			$parentwarehouse = new Entrepot($db);
+			if(!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
-				print $e->getNomUrl(3);
+				print $parentwarehouse->getNomUrl(3);
 				print '</td></tr>';
 			}
 
@@ -668,7 +668,7 @@ else
 			print '<table class="border centpercent">';
 
 			// Ref
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
 

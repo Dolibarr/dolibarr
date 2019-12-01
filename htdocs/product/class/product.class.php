@@ -385,7 +385,8 @@ class Product extends CommonObject
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
         'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
         'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-        'note_public'   =>array('type'=>'html',            'label'=>'NotePublic',         'enabled'=>1, 'visible'=>0,  'position'=>61),
+        'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1),
+		'note_public'   =>array('type'=>'html',            'label'=>'NotePublic',         'enabled'=>1, 'visible'=>0,  'position'=>61),
         'note'          =>array('type'=>'html',            'label'=>'NotePrivate',         'enabled'=>1, 'visible'=>0,  'position'=>62),
         'datec'         =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
         'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
@@ -4241,7 +4242,7 @@ class Product extends CommonObject
 
         if ($this->type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
             if (! empty($conf->productbatch->enabled)) {
-                   $langs->load("productbatch");
+                $langs->load("productbatch");
                 $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
             }
         }
@@ -4584,12 +4585,12 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *    Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
-     *    This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
-     *    If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
+     * Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
+     * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
+     * If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
      *
-     * @param  string $option '' = Load all stock info, also from closed and internal warehouses,
-     * @return int                   < 0 if KO, > 0 if OK
+     * @param  string $option 		'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+     * @return int                  < 0 if KO, > 0 if OK
      * @see    load_virtual_stock(), loadBatchInfo()
      */
     public function load_stock($option = '')
@@ -4619,7 +4620,8 @@ class Product extends CommonObject
         $sql .= " WHERE w.entity IN (".getEntity('stock').")";
         $sql .= " AND w.rowid = ps.fk_entrepot";
         $sql .= " AND ps.fk_product = ".$this->id;
-        if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) { $sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+        if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
+			$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
         }
 
         dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
@@ -4634,7 +4636,8 @@ class Product extends CommonObject
                     $this->stock_warehouse[$row->fk_entrepot] = new stdClass();
                     $this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
                     $this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
-                    if ((!preg_match('/nobatch/', $option)) && $this->hasbatch()) { $this->stock_warehouse[$row->fk_entrepot]->detail_batch = Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
+                    if ((!preg_match('/nobatch/', $option)) && $this->hasbatch()) {
+						$this->stock_warehouse[$row->fk_entrepot]->detail_batch = Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
                     }
                     $this->stock_reel += $row->reel;
                     $i++;

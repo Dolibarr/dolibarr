@@ -281,7 +281,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			imagepng($imgThumb, $imgThumbName, $newquality);
 			break;
 		case 4:	// Bmp
-			image2wbmp($imgThumb, $imgThumbName);
+			imagewbmp($imgThumb, $imgThumbName);
 			break;
 	}
 
@@ -584,7 +584,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
             // Not supported by PHP GD
 			break;
 		case IMAGETYPE_WBMP:    // 15
-			image2wbmp($imgThumb, $imgThumbName);
+			imagewbmp($imgThumb, $imgThumbName);
 			break;
 	}
 

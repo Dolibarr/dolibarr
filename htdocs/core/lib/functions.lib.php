@@ -6061,49 +6061,49 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'societe')
 			{
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object)?$object->code_client:'');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object)?$object->code_fournisseur:'');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object)?$object->phone:'');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object)?$object->fax:'');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object)?$object->address:'');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object)?$object->zip:'');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object)?$object->town:'');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object)?$object->idprof1:'');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object)?$object->idprof2:'');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object)?$object->idprof3:'');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object)?$object->idprof4:'');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object)?$object->idprof5:'');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object)?$object->idprof6:'');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object)?$object->tva_intra:'');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object)?dol_htmlentitiesbr($object->note_public):'');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object)?dol_htmlentitiesbr($object->note_private):'');
+				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object) ? $object->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object) ? $object->name : '');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object) ? $object->name_alias : '');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object) ? $object->code_client : '');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object) ? $object->code_fournisseur : '');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object) ? $object->email : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object) ? $object->phone : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object) ? $object->fax : '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object) ? $object->address : '');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object) ? $object->zip : '');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object) ? $object->town : '');
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object) ? $object->idprof1 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object) ? $object->idprof2 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object) ? $object->idprof3 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object) ? $object->idprof4 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object) ? $object->idprof5 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object) ? $object->idprof6 : '');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object) ? $object->tva_intra : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object) ?dol_htmlentitiesbr($object->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object) ?dol_htmlentitiesbr($object->note_private) : '');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty)?$object->thirdparty->code_client:'');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty)?$object->thirdparty->code_fournisseur:'');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty)?$object->thirdparty->phone:'');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty)?$object->thirdparty->fax:'');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty)?$object->thirdparty->address:'');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty)?$object->thirdparty->zip:'');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty)?$object->thirdparty->town:'');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof1:'');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof2:'');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof3:'');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof4:'');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof5:'');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof6:'');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->thirdparty->tva_intra:'');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_public):'');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_private):'');
+				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty) ? $object->thirdparty->name : '');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty) ? $object->thirdparty->name_alias : '');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_client : '');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_fournisseur : '');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty) ? $object->thirdparty->email : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty) ? $object->thirdparty->phone : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty) ? $object->thirdparty->fax : '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty) ? $object->thirdparty->address : '');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty) ? $object->thirdparty->zip : '');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty) ? $object->thirdparty->town : '');
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof1 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof2 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof3 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof4 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof5 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof6 : '');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty) ? $object->thirdparty->tva_intra : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty) ?dol_htmlentitiesbr($object->thirdparty->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty) ?dol_htmlentitiesbr($object->thirdparty->note_private) : '');
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
@@ -8472,4 +8472,14 @@ function isAFileWithExecutableContent($filename)
         return true;
     }
     return false;
+}
+
+/**
+ * Return new session token
+ *
+ * @return  string
+ */
+function newToken()
+{
+	return $_SESSION['newtoken'];
 }

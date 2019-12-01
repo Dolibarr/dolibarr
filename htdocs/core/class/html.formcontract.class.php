@@ -183,7 +183,7 @@ class FormContract
         print "\n";
         print '<form method="post" action="'.$page.'">';
         print '<input type="hidden" name="action" value="setcontract">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
         print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         print '</form>';

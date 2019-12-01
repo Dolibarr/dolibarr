@@ -185,7 +185,7 @@ class Form
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
 				$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
-				$ret .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) $ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret .= '<tr><td>';
@@ -825,7 +825,7 @@ class Form
 			{
 				$out .= '<form method="post" action="'.$page.'">';
 				$out .= '<input type="hidden" name="action" value="set_incoterms">';
-				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			}
 
 			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
@@ -3642,7 +3642,7 @@ class Form
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setshippingmethod">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectShippingMethod($selected, $htmlname, '', $addempty);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -3918,7 +3918,7 @@ class Form
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setbankaccount">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
 			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -3971,7 +3971,7 @@ class Form
 		if ($type === Categorie::TYPE_BANK_LINE)
 		{
 			// TODO Move this into common category feature
-			$categids = array();
+			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
 			$sql .= " WHERE entity = ".$conf->entity;
@@ -4256,7 +4256,7 @@ class Form
                     closeOnEscape: false,
                     buttons: {
                         "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
-                        	var options = "&token='.urlencode($_SESSION['newtoken']).'";
+                        	var options = "&token='.urlencode(newToken()).'";
                         	var inputok = '.json_encode($inputok).';
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
                          	if (inputok.length>0) {
@@ -4275,7 +4275,7 @@ class Form
                             $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities("No")).'": function() {
-                        	var options = "&token='.urlencode($_SESSION['newtoken']).'";
+                        	var options = "&token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
                          	if (inputko.length>0) {
@@ -4314,7 +4314,7 @@ class Form
 			if (empty($disableformtag)) $formconfirm .= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
 
 			$formconfirm .= '<input type="hidden" name="action" value="'.$action.'">'."\n";
-			$formconfirm .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+			$formconfirm .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 			$formconfirm .= '<table class="valid centpercent">'."\n";
 
@@ -4382,7 +4382,7 @@ class Form
 			$out .= "\n";
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="classin">';
-			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
 			$out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
@@ -4428,7 +4428,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4463,7 +4463,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setavailability">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
 			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4497,7 +4497,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setdemandreason">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectInputReason($selected, $htmlname, -1, $addempty);
 			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4545,7 +4545,7 @@ class Form
 		{
 			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			$ret .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
@@ -4584,7 +4584,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->select_dolusers($selected, $htmlname, 1, $exclude, 0, $include);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4624,7 +4624,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4658,7 +4658,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencycode">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->selectMultiCurrency($selected, $htmlname, 0);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4689,7 +4689,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" /> ';
 			print '<select name="calculation_mode">';
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
@@ -4737,7 +4737,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<div class="inline-block">';
 			if (!empty($discount_type)) {
 				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
@@ -4829,7 +4829,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$num = $this->select_contacts($societe->id, $selected, $htmlname);
@@ -4881,7 +4881,7 @@ class Form
 		{
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
-			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
 			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
@@ -6940,7 +6940,7 @@ class Form
 					print '<br>';
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
 					print '<input type="hidden" name="action" value="addlink">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="id" value="'.$object->id.'">';
 					print '<input type="hidden" name="addlink" value="'.$key.'">';
 					print '<table class="noborder">';

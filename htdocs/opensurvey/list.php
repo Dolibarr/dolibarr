@@ -413,7 +413,7 @@ while ($i < min($num, $limit))
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
 
-	print'<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
+	print '<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
 	if (! $i) $totalarray['nbfield']++;
 
 	// Extra fields

@@ -646,42 +646,25 @@ class Opensurveysondage extends CommonObject
         // phpcs:enable
         global $langs, $conf;
 
-        //print 'x'.$status.'-'.$billed;
-        if ($mode == 0)
+        if (empty($this->labelStatus) || empty($this->labelStatusShort))
         {
-            if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
-            elseif ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
-            elseif ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
+            global $langs;
+            //$langs->load("mymodule");
+            $this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+            $this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Opened');
+            $this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
+            $this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+            $this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Opened');
+            $this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
         }
-        elseif ($mode == 1)
-        {
-            if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
-            elseif ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
-            elseif ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
+
+        $statusType = 'status'.$status;
+        if ($status == self::STATUS_VALIDATED) {
+            if (0) $statusType = 'status1';
+            else $statusType = 'status4';
         }
-        elseif ($mode == 2)
-        {
-            if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
-            elseif ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'), 'statut1').' '.$langs->trans('Opened');
-            elseif ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'), 'statut6').' '.$langs->trans('Closed');
-        }
-        elseif ($mode == 3)
-        {
-            if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'), 'statut0');
-            elseif ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'), 'statut1');
-            elseif ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'), 'statut6');
-        }
-        elseif ($mode == 4)
-        {
-            if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
-            elseif ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened').$billedtext, 'statut1').' '.$langs->trans('Opened');
-            elseif ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'), 'statut6').' '.$langs->trans('Closed');
-        }
-        elseif ($mode == 5)
-        {
-            if ($status==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('Draft').' </span>'.img_picto($langs->trans('Draft'), 'statut0');
-            elseif ($status==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('Opened').' </span>'.img_picto($langs->trans('Opened'), 'statut1');
-            elseif ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'), 'statut6');
-        }
+        if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+
+        return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 }

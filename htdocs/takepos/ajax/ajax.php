@@ -66,7 +66,24 @@ if ($action == "getProducts") {
     }
 }
 elseif ($action == "search" && $term != '') {
-    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product';
+	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
+	$filteroncategids = '';
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
+		$object = new Categorie($db);
+		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
+		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
+			foreach($arrayofcateg as $val)
+			{
+				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
+			}
+		}
+	}
+
+    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product as p';
+    if ($filteroncategids) {
+    	$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.')';
+    }
     $sql .= ' WHERE entity IN ('.getEntity('product').')';
     $sql .= ' AND tosell = 1';
     $sql .= natural_search(array('ref', 'label', 'barcode'), $term);

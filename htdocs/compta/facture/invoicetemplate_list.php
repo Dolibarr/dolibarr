@@ -317,7 +317,7 @@ if ($resql)
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -374,14 +374,14 @@ if ($resql)
 	{
 		// Payment term
 		print '<td class="liste_titre right">';
-		print $form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
+		$form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 		print "</td>";
 	}
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
 		// Payment mode
 		print '<td class="liste_titre right">';
-		print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
+		$form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
 		print '</td>';
 	}
 	if (! empty($arrayfields['recurring']['checked']))
@@ -487,7 +487,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'], $_SERVER['PHP_SELF'], "f.suspended,f.frequency", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'nomaxwidthsearch ')."\n";
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'nomaxwidthsearch ');
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -550,7 +550,7 @@ if ($resql)
 			if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
 			{
 			    print '<td class="right">';
-			    print $form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
+			    $form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
 			    print '</td>'."\n";
 			    if (! $i) $totalarray['nbfield']++;
 			}
@@ -558,7 +558,7 @@ if ($resql)
 			if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 			{
 			    print '<td class="right">';
-			    print $form->form_modes_reglement('', $objp->fk_mode_reglement, 'none');
+			    $form->form_modes_reglement('', $objp->fk_mode_reglement, 'none');
 			    print '</td>'."\n";
 			    if (! $i) $totalarray['nbfield']++;
 			}

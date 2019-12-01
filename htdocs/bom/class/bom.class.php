@@ -992,7 +992,7 @@ class BOM extends CommonObject
 /**
  * Class for BOMLine
  */
-class BOMLine extends CommonObject
+class BOMLine extends CommonObjectLine
 {
 	/**
 	 * @var string ID to identify managed object
