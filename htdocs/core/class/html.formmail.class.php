@@ -410,7 +410,7 @@ class FormMail extends Form
 
 				$out.= '<a id="formmail" name="formmail"></a>';
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
-				$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+				$out.= '<input type="hidden" name="token" value="'.newToken().'" />';
 				$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
 			}
 			if (! empty($this->withfrom))

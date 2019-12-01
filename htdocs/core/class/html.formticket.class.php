@@ -153,7 +153,7 @@ class FormTicket
         if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
 
         print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="'.$this->action.'">';
         foreach ($this->param as $key => $value) {
         	print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -859,7 +859,7 @@ class FormTicket
 		</script>';
 
         print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="'.$this->action.'">';
         print '<input type="hidden" name="actionbis" value="add_message">';
         foreach ($this->param as $key => $value) {

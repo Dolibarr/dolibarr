@@ -17,7 +17,7 @@ $formresources = new FormResource($db);
 $out  = '<div class="tagtable centpercent noborder borderbottom allwidth nohover">';
 
 $out .= '<form class="tagtr nohover '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
 $out .= '<input type="hidden" name="element_id" value="'.$element_id.'">';
