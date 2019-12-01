@@ -341,6 +341,7 @@ class Notify
 		$object_type = '';
 		$link = '';
 		$num = 0;
+        $error = 0;
 
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
