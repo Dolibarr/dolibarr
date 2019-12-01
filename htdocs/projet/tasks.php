@@ -520,7 +520,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	else
 	{
 		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -664,7 +664,7 @@ elseif ($id > 0 || !empty($ref))
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

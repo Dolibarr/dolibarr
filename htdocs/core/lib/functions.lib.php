@@ -8473,3 +8473,12 @@ function isAFileWithExecutableContent($filename)
     }
     return false;
 }
+
+/**
+ * Return new session token
+ *
+ * @return  string
+ */
+function newToken(){
+	return $_SESSION['newtoken'];
+}

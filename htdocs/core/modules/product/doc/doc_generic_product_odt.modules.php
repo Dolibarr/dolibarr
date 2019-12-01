@@ -117,7 +117,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte.= '<input type="hidden" name="param1" value="PRODUCT_ADDON_PDF_ODT_PATH">';
 		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
