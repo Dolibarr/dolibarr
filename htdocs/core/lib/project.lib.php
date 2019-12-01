@@ -2071,18 +2071,23 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         else {
             if ($task->hasDelay()) $out .= img_warning($langs->trans("Late")).' ';
 
-            $out .= !empty($diff) ? $diff.' ' : '';
+			$url = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$task->id;
 
+            $out .= !empty($diff) ? $diff.' ' : '';
+			$out .= '<a href="'.$url.'" >';
             $out .= '<b title="'.$langs->trans('TimeSpent').'" >';
             if ($task->duration_effective) $out .= convertSecondToTime($task->duration_effective, $timespentoutputformat);
             else $out .= '--:--';
             $out .= '</b>';
+			$out .= '</a>';
 
             $out .= '/';
 
+			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';
             if ($task->planned_workload) $out .= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
             else $out .= '--:--';
+			$out .= '</a>';
         }
         $out .= '    </span>';
     }
