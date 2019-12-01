@@ -78,7 +78,7 @@ ALTER TABLE llx_rights_def ADD COLUMN family_position INTEGER NOT NULL DEFAULT 0
 
 UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND module = 'accounting' AND subperms IS NULL;
 
-ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN duration double(24,8) DEFAULT NULL;
 ALTER TABLE llx_bom_bom ADD COLUMN fk_warehouse integer;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
