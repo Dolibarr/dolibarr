@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "members", "users", "other"));
+$langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
