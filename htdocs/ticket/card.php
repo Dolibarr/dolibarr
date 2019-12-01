@@ -46,6 +46,7 @@ $langs->loadLangs(array("companies","other","ticket"));
 
 // Get parameters
 $id        = GETPOST('id', 'int');
+$socid     = GETPOST('socid', 'int');
 $track_id  = GETPOST('track_id', 'alpha', 3);
 $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
