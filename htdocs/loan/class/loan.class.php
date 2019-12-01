@@ -356,6 +356,7 @@ class Loan extends CommonObject
 		$sql.= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql.= " dateend='".$this->db->idate($this->dateend)."',";
 		$sql.= " nbterm=".$this->nbterm.",";
+		$sql.= " rate=".$this->db->escape($this->rate).",";
 		$sql.= " accountancy_account_capital = '".$this->db->escape($this->account_capital)."',";
 		$sql.= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
