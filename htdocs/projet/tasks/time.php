@@ -853,7 +853,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
     	        print $langs->trans('ServiceToUseOnLines');
     	        print '</td>';
     	        print '<td>';
-    	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
+    	        $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
     	        print '</td>';
     	        print '</tr>';
 	        }

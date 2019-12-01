@@ -605,7 +605,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	    print $hookmanager->resPrint;
 
-	    if (empty($reshook) && !empty($extrafields[$taskstatic->table_element]['label']))
+	    if (empty($reshook) && !empty($extrafields->attributes[$taskstatic->table_element]['label']))
 		{
 			print $taskstatic->showOptionals($extrafields, 'edit'); // Do not use $object here that is object of project but use $taskstatic
 		}

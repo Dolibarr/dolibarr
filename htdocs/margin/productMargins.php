@@ -105,7 +105,7 @@ print '<table class="border centpercent">';
 if ($id > 0) {
     print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
     print '<td class="maxwidthonsmartpone" colspan="4">';
-    print $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
+    $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
     print '</td></tr>';
 
     if (! $sortorder) $sortorder="DESC";
@@ -114,7 +114,7 @@ if ($id > 0) {
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print $form->select_produits('', 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
+	$form->select_produits('', 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
 	print '</td></tr>';
 }
 
