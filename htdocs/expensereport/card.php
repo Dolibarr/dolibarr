@@ -2076,12 +2076,12 @@ else
 					$i = 0;$total = 0;
 
 					print '<tr class="liste_titre">';
-					print '<td style="text-align:center;">'.$langs->trans('LineNb').'</td>';
-					//print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
-					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
+					print '<td class="center">'.$langs->trans('LineNb').'</td>';
+					//print '<td class="center">'.$langs->trans('Piece').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
-					print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
 					print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
 					print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
 					print '<td style="text-align:right;">'.$langs->trans('PriceUTTC').'</td>';
@@ -2106,16 +2106,16 @@ else
 						{
 							print '<tr class="oddeven">';
 
-							print '<td style="text-align:center;">';
+							print '<td class="center">';
 							print $numline;
 							print '</td>';
 
-							/*print '<td style="text-align:center;">';
+							/*print '<td class="center">';
 							print img_picto($langs->trans("Document"), "object_generic");
 							print ' <span>'.$piece_comptable.'</span>';
 							print '</td>';*/
 
-							print '<td style="text-align:center;">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
@@ -2170,7 +2170,9 @@ else
 						{
 								print '<tr class="oddeven">';
 
-								print '<td></td>';
+								print '<td class="center">';
+								print $numline;
+								print '</td>';
 
 								// Select date
 								print '<td class="center">';
@@ -2215,7 +2217,7 @@ else
 
 								// Quantity
 								print '<td style="text-align:right;">';
-								print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+								print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 								print '</td>';
 
 								if ($action != 'editline')
@@ -2224,7 +2226,7 @@ else
 									print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 								}
 
-								print '<td style="text-align:center;">';
+								print '<td class="center">';
 								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
