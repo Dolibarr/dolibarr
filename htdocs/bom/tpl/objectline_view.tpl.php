@@ -72,6 +72,7 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 print $tmpproduct->getNomUrl(1);
+print ' - '.$tmpproduct->label;
 print '</td>';
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
