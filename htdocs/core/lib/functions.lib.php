@@ -8479,6 +8479,7 @@ function isAFileWithExecutableContent($filename)
  *
  * @return  string
  */
-function newToken(){
+function newToken()
+{
 	return $_SESSION['newtoken'];
 }
