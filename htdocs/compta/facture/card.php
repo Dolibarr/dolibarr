@@ -1349,7 +1349,7 @@ if (empty($reshook))
 								if (empty($amount)) continue;
 
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
-								$descline = $langs->trans('Deposit');
+								$descline = '(DEPOSIT)';
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount=='amount') {
 									$descline.= ' ('. price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
