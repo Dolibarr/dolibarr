@@ -510,6 +510,7 @@ class ExportExcel extends ModeleExports
     {
 
         $c = intval($c);
+        $letter = '';
         if ($c <= 0) {
             return '';
         }
