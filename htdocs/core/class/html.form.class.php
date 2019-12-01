@@ -228,6 +228,7 @@ class Form
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
+                    $arraylist = array();
 					foreach ($arraydata as $val)
 					{
 						$tmp = explode(':', $val);
@@ -265,6 +266,7 @@ class Form
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
+                    $arraylist = array();
 					foreach ($arraydata as $val)
 					{
 						$tmp = explode(':', $val);
