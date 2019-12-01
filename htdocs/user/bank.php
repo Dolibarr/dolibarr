@@ -168,7 +168,7 @@ if (empty($account->userid)) $account->userid = $object->id;
 if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
     print '<input type="hidden" name="bankid" value="'.$bankid.'">';
@@ -176,7 +176,7 @@ if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer)
 if ($id && $action == 'create' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }

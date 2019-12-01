@@ -77,7 +77,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
         $tooltip='';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte.= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
 		$texte.= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';

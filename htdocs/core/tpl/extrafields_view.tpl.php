@@ -169,7 +169,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			    print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
-				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
 				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id, $object->table_element);
 

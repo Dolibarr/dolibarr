@@ -342,7 +342,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	}
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
+//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL'))
@@ -355,7 +355,7 @@ if (!defined('NOTOKENRENEWAL'))
 	$_SESSION['newtoken'] = $token;
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
+//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
 //$dolibarr_nocsrfcheck=1;
 // Check token
 //var_dump((! defined('NOCSRFCHECK')).' '.empty($dolibarr_nocsrfcheck).' '.(! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)).' '.$_SERVER['REQUEST_METHOD'].' '.(! GETPOSTISSET('token')));
@@ -2389,7 +2389,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 
 	$ret = '';
 	$ret .= '<form action="'.$urlaction.'" method="post" class="searchform nowraponall tagtr">';
-	$ret .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$ret .= '<input type="hidden" name="mode" value="search">';
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	if ($showtitlebefore) $ret .= '<div class="tagtd left">'.$title.'</div> ';
