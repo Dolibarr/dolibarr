@@ -969,10 +969,10 @@ class Stripe extends CommonObject
 				if (!in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
-        $paymentarray = array(
+				$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-        	"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,
