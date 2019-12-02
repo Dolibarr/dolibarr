@@ -306,35 +306,94 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
  */
 function dolRotateImage($file_path)
 {
-    $exif = @exif_read_data($file_path);
-    if ($exif === false) {
-        return false;
-    }
-    $orientation = intval(@$exif['Orientation']);
-    if (!in_array($orientation, array(3, 6, 8))) {
-        return false;
-    }
-    $image = @imagecreatefromjpeg($file_path);
-    switch ($orientation) {
-        case 3:
-            $image = @imagerotate($image, 180, 0);
-            break;
-        case 6:
-            $image = @imagerotate($image, 270, 0);
-            break;
-        case 8:
-            $image = @imagerotate($image, 90, 0);
-            break;
-        default:
-            return false;
-    }
-    $success = imagejpeg($image, $file_path);
-    // Free up memory (imagedestroy does not delete files):
-    @imagedestroy($image);
-    return $success;
+	return correctExifImageOrientation($file_path, $file_path);
 }
 
 
+/**
+ * Add exif orientation correction for image
+ *
+ * @param $fileSource string
+ * @param $fileDest string | false | null  :  on false return gd img on null , on NULL the raw image stream will be outputted directly
+ * @param $quality int
+ * @return bool true on success or false on failure or gd img if $fileDest is false.
+ */
+function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
+{
+	if (function_exists('exif_read_data') ) {
+		$exif = exif_read_data($fileSource);
+		if($exif && isset($exif['Orientation'])) {
+
+			$infoImg = getimagesize($fileSource); // Get image infos
+
+			$orientation = $exif['Orientation'];
+			if($orientation != 1){
+				$img = imagecreatefromjpeg($fileSource);
+				$deg = 0;
+				switch ($orientation) {
+					case 3:
+						$deg = 180;
+						break;
+					case 6:
+						$deg = 270;
+						break;
+					case 8:
+						$deg = 90;
+						break;
+				}
+				if ($deg) {
+					if($infoImg[2] === 'IMAGETYPE_PNG') // In fact there is no exif on PNG but just in case
+					{
+						imagealphablending($img, false);
+						imagesavealpha($img, true);
+						$img = imagerotate($img, $deg, imageColorAllocateAlpha($img, 0, 0, 0, 127));
+						imagealphablending($img, false);
+						imagesavealpha($img, true);
+					}
+					else{
+						$img = imagerotate($img, $deg, 0);
+					}
+				}
+				// then rewrite the rotated image back to the disk as $fileDest
+				if($fileDest === false){
+					return $img;
+				}
+				else
+				{
+					// In fact there exif is only for JPG but just in case
+					// Create image on disk
+					$image = false;
+
+					switch($infoImg[2])
+					{
+						case IMAGETYPE_GIF:	    // 1
+							$image = imagegif($img, $fileDest);
+							break;
+						case IMAGETYPE_JPEG:    // 2
+							return imagejpeg($img, $fileDest, $quality);
+							break;
+						case IMAGETYPE_PNG:	    // 3
+							$image = imagepng($img, $fileDest, $quality);
+							break;
+						case IMAGETYPE_BMP:	    // 6
+							// Not supported by PHP GD
+							break;
+						case IMAGETYPE_WBMP:    // 15
+							$image = image2wbmp($img, $fileDest);
+							break;
+					}
+
+					// Free up memory (imagedestroy does not delete files):
+					@imagedestroy($img);
+
+					return $image;
+				}
+			} // if there is some rotation necessary
+		} // if have the exif orientation info
+	} // if function exists
+
+	return false;
+}
 
 /**
  *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
@@ -393,6 +452,13 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
+
+	$exif = exif_read_data($filetoread);
+	$ort= false;
+	if($exif && !empty($exif['Orientation'])){
+		$ort = $exif['Orientation'];
+	}
+
 
 	if ($maxWidth  == -1) $maxWidth=$infoImg[0];	// If size is -1, we keep unchanged
 	if ($maxHeight == -1) $maxHeight=$infoImg[1];	// If size is -1, we keep unchanged
@@ -467,6 +533,54 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
         dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
         return 0;
     }
+	$exifAngle = false;
+    if($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)){
+
+		switch($ort)
+		{
+			case 3: // 180 rotate left
+				$exifAngle = 180;
+				break;
+			case 6: // 90 rotate right
+				$exifAngle = -90;
+				// changing sizes
+				$trueImgWidth = $infoImg[1];
+				$trueImgHeight = $infoImg[0];
+				break;
+			case 8:    // 90 rotate left
+				$exifAngle = 90;
+				// changing sizes
+				$trueImgWidth = $infoImg[1]; // Largeur de l'image
+				$trueImgHeight = $infoImg[0]; // Hauteur de l'image
+				break;
+		}
+	}
+
+    if($exifAngle)
+    {
+		$rotated = false;
+
+    	if($infoImg[2] === 'IMAGETYPE_PNG') // In fact there is no exif on PNG but just in case
+    	{
+			imagealphablending($img, false);
+			imagesavealpha($img, true);
+			$rotated = imagerotate($img, $exifAngle, imageColorAllocateAlpha($img, 0, 0, 0, 127));
+			imagealphablending($rotated, false);
+			imagesavealpha($rotated, true);
+		}
+    	else{
+			$rotated = imagerotate($img, $exifAngle, 0);
+		}
+
+    	// replace image with good orientation
+    	if(!empty($rotated)){
+    		$img = $rotated;
+			$imgWidth = $trueImgWidth;
+			$imgHeight = $trueImgHeight;
+		}
+	}
+
+
 
 	// Initialisation des dimensions de la vignette si elles sont superieures a l'original
 	if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
