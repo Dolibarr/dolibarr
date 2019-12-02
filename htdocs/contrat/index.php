@@ -260,7 +260,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftContracts").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftContracts").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 		if ($num)
 		{
 			$companystatic = new Societe($db);
