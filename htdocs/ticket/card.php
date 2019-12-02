@@ -994,7 +994,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td class="titlefield">';
             print $langs->trans('TicketChangeType');
             print '</td><td>';
-            print $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
+            $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
             print '</td>';
             print '</tr>';
             // Group
@@ -1002,7 +1002,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
+            $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
             // Severity
@@ -1010,7 +1010,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeSeverity');
             print '</td><td>';
-            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
+            $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
             print '</td>';
             print '</tr>';
         } else {
