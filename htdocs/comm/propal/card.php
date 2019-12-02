@@ -781,7 +781,7 @@ if (empty($reshook))
 
 	// Actions to send emails
 	$actiontypecode = 'AC_OTH_AUTO';
-	$trigger_name = 'PROPAL_SENTBYMAIL';
+	$triggersendname = 'PROPAL_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROPOSAL_TO';
 	$trackid = 'pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

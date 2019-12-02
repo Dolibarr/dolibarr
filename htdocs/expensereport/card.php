@@ -1411,7 +1411,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Actions to send emails
-    $trigger_name = 'EXPENSEREPORT_SENTBYMAIL';
+    $triggersendname = 'EXPENSEREPORT_SENTBYMAIL';
     $autocopy = 'MAIN_MAIL_AUTOCOPY_EXPENSEREPORT_TO';
     $trackid = 'exp'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

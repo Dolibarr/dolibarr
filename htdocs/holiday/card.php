@@ -872,7 +872,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='HOLIDAY_SENTBYMAIL';
+	$triggersendname = 'HOLIDAY_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
 	$trackid='leav'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
