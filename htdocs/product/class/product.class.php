@@ -1122,31 +1122,19 @@ class Product extends CommonObject
     /**
      *  Delete a product from database (if not used)
      *
-     * @param  User $user      Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+     * @param  User $user      User (object) deleting product
      * @param  int  $notrigger Do not execute trigger
      * @return int                    < 0 if KO, 0 = Not possible, > 0 if OK
      */
     public function delete(User $user, $notrigger = 0)
     {
-        // Deprecation warning
-        if ($id > 0) {
-            dol_syslog(__METHOD__." with parameter is deprecated", LOG_WARNING);
-        }
-
         global $conf, $langs;
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
 
-        // Clean parameters
-        if (empty($id)) {
-            $id = $this->id;
-        } else {
-            $this->fetch($id);
-        }
-
         // Check parameters
-        if (empty($id)) {
+        if (empty($this->id)) {
             $this->error = "Object must be fetched before calling delete";
             return -1;
         }
@@ -1155,14 +1143,15 @@ class Product extends CommonObject
             return 0;
         }
 
-        $objectisused = $this->isObjectUsed($id);
+        $objectisused = $this->isObjectUsed($this->id);
         if (empty($objectisused)) {
             $this->db->begin();
 
             if (!$error && empty($notrigger)) {
                 // Call trigger
                 $result = $this->call_trigger('PRODUCT_DELETE', $user);
-                if ($result < 0) { $error++;
+                if ($result < 0) {
+                    $error++;
                 }
                 // End call triggers
             }
@@ -1172,7 +1161,7 @@ class Product extends CommonObject
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX.'product_batch';
                 $sql .= " WHERE fk_product_stock IN (";
                 $sql .= "SELECT rowid FROM ".MAIN_DB_PREFIX.'product_stock';
-                $sql .= " WHERE fk_product = ".$id.")";
+                $sql .= " WHERE fk_product = ".(int) $this->id.")";
 
                 $result = $this->db->query($sql);
                 if (!$result) {
@@ -1188,7 +1177,7 @@ class Product extends CommonObject
                 {
                     if (!$error) {
                         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-                        $sql .= " WHERE fk_product = ".$id;
+                        $sql .= " WHERE fk_product = ".(int) $this->id;
 
                         $result = $this->db->query($sql);
                         if (!$result) {
@@ -1206,7 +1195,7 @@ class Product extends CommonObject
                 //If it is a parent product, then we remove the association with child products
                 $prodcomb = new ProductCombination($this->db);
 
-                if ($prodcomb->deleteByFkProductParent($user, $id) < 0) {
+                if ($prodcomb->deleteByFkProductParent($user, $this->id) < 0) {
                     $error++;
                     $this->errors[] = 'Error deleting combinations';
                 }
@@ -1221,7 +1210,7 @@ class Product extends CommonObject
             // Delete from product_association
             if (!$error) {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
-                $sql .= " WHERE fk_product_pere = ".$id." OR fk_product_fils = ".$id;
+                $sql .= " WHERE fk_product_pere = ".(int) $this->id." OR fk_product_fils = ".(int) $this->id;
 
                 $result = $this->db->query($sql);
                 if (!$result) {
@@ -1233,7 +1222,7 @@ class Product extends CommonObject
             // Delete product
             if (!$error) {
                 $sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
-                $sqlz .= " WHERE rowid = ".$id;
+                $sqlz .= " WHERE rowid = ".(int) $this->id;
 
                 $resultz = $this->db->query($sqlz);
                 if (!$resultz) {
