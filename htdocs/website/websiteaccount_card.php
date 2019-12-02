@@ -97,7 +97,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'WEBSITEACCOUNT_SENTBYMAIL';
+	$triggersendname = 'WEBSITEACCOUNT_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_WEBSITEACCOUNT_TO';
 	$trackid = 'websiteaccount'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

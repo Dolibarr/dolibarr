@@ -593,7 +593,7 @@ $permissiontoadd = $user->rights->ticket->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 // Actions to send emails
-$trigger_name = 'TICKET_SENTBYMAIL';
+$triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
 $trackid = 'tic'.$object->id;
