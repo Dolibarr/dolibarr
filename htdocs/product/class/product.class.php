@@ -1297,7 +1297,7 @@ class Product extends CommonObject
                 $sql = "SELECT rowid";
                 $sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
                 $sql .= " WHERE fk_product=".$this->id;
-                $sql .= " AND lang='".$key."'";
+                $sql .= " AND lang='".$this->db->escape($key)."'";
 
                 $result = $this->db->query($sql);
 
@@ -1319,7 +1319,8 @@ class Product extends CommonObject
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
                     $sql2 .= " '".$this->db->escape($this->description)."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", '".$this->db->escape($this->other)."'";
+                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
+                        $sql2 .= ", '".$this->db->escape($this->other)."'";
                     }
                     $sql2 .= ")";
                 }
@@ -1333,7 +1334,7 @@ class Product extends CommonObject
                 $sql = "SELECT rowid";
                 $sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
                 $sql .= " WHERE fk_product=".$this->id;
-                $sql .= " AND lang='".$key."'";
+                $sql .= " AND lang='".$this->db->escape($key)."'";
 
                 $result = $this->db->query($sql);
 
@@ -1343,7 +1344,8 @@ class Product extends CommonObject
                     $sql2 .= " SET ";
                     $sql2 .= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", note='".$this->db->escape($this->multilangs["$key"]["other"])."'";
+                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
+                        $sql2 .= ", note='".$this->db->escape($this->multilangs["$key"]["other"])."'";
                     }
                     $sql2 .= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
                 }
@@ -1355,7 +1357,8 @@ class Product extends CommonObject
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["other"])."'";
+                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
+                        $sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["other"])."'";
                     }
                     $sql2 .= ")";
                 }
