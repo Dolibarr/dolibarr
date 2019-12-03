@@ -47,7 +47,7 @@ $arrayofparameters['ThirdParty'] = array(
     'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
 );
-if (! empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
+if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
     $arrayofparameters['Contact'] = array(
         'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
         'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
@@ -56,7 +56,7 @@ if (! empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
         'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
     );
 }
-if (! empty($conf->adherent->enabled)) {
+if (!empty($conf->adherent->enabled)) {
     $arrayofparameters['Member'] = array(
         'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200'),
     );
