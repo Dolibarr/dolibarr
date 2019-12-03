@@ -313,10 +313,10 @@ function dolRotateImage($file_path)
 /**
  * Add exif orientation correction for image
  *
- * @param $fileSource string
- * @param $fileDest string | false | null  :  on false return gd img on null , on NULL the raw image stream will be outputted directly
- * @param $quality int
- * @return bool true on success or false on failure or gd img if $fileDest is false.
+ * @param string $fileSource Full path to source image to rotate
+ * @param string $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
+ * @param int $quality
+ * @return bool : true on success or false on failure or gd img if $fileDest is false.
  */
 function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 {
