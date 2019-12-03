@@ -42,22 +42,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->loadLangs(array("companies","commercial","bills","banks","users"));
-if (! empty($conf->categorie->enabled)) $langs->load("categories");
-if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
-if (! empty($conf->notification->enabled)) $langs->load("mails");
+$langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
+if (!empty($conf->categorie->enabled)) $langs->load("categories");
+if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
+if (!empty($conf->notification->enabled)) $langs->load("mails");
 
-$mesg=''; $error=0; $errors=array();
+$mesg = ''; $error = 0; $errors = array();
 
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel     = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm	= GETPOST('confirm');
-$socid		= GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
-if ($user->socid) $socid=$user->socid;
-if (empty($socid) && $action == 'view') $action='create';
+$socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
+if ($user->socid) $socid = $user->socid;
+if (empty($socid) && $action == 'view') $action = 'create';
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -88,7 +88,7 @@ if (!empty($canvas))
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
-if(empty($user->rights->societe->contact->lire)) accessforbidden();
+if (empty($user->rights->societe->contact->lire)) accessforbidden();
 
 
 
@@ -151,7 +151,7 @@ dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
 dol_fiche_end();
 

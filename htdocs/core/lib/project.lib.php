@@ -2099,8 +2099,8 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if ($diffval >= 0) {
     	// good
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
-    	if(!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: ' . doubleval($progressCalculated / $task->progress * 100) . '%" title="' . doubleval($progressCalculated) . '%"></div>';
+    	if (!empty($task->progress)) {
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
 		}
     	$out .= '        </div>';
     }
