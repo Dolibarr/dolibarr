@@ -84,11 +84,11 @@ if (!empty($extrafields))
 	}
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
-$nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
+$nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 	?>
-	<tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add_') ?> nodrag nodrop">
-		<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<tr class="liste_titre<?php echo (($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_add_') ?> nodrag nodrop">
+		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 			<td class="linecolnum center"></td>
 		<?php } ?>
 		<td class="linecoldescription minwidth500imp">
@@ -124,10 +124,10 @@ if ($nolinesbefore) {
 		<?php
 		// Fields for situation invoice
 		if ($this->situation_cycle_ref) {
-			print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
+			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			print '<td class="linecolcycleref2 right"></td>';
 		}
-		if (! empty($usemargins))
+		if (!empty($usemargins))
 		{
 			if (empty($user->rights->margins->creer)) {
 				$colspan++;
@@ -139,8 +139,8 @@ if ($nolinesbefore) {
 				else
 					echo $langs->trans('CostPrice');
 				echo '</td>';
-				if (! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-				if (! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+				if (!empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 			}
 		}
 		?>
@@ -149,11 +149,11 @@ if ($nolinesbefore) {
 	<?php
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
+<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create'; ?>">
 	<?php
-	$coldisplay=0;
+	$coldisplay = 0;
 	// Adds a line numbering column
-	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 		$coldisplay++;
 		echo '<td class="nobottom linecolnum center"></td>';
 	}
@@ -166,21 +166,21 @@ if ($nolinesbefore) {
 		if (empty($conf->global->MAIN_DISABLE_FREE_LINES))
 		{
 			$freelines = true;
-			$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
+			$forceall = 1; // We always force all type for free lines (module product or service means we use predefined product or service)
 			if ($object->element == 'contrat')
 			{
-				if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
-				elseif (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=3;
+				if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall = -1; // With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
+				elseif (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall = 3;
 			}
 			// Free line
 			echo '<span class="prod_entry_mode_free">';
 			// Show radio free line
-			if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+			if ($forceall >= 0 && (!empty($conf->product->enabled) || !empty($conf->service->enabled)))
 			{
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
-				echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
+				echo (GETPOST('prod_entry_mode') == 'free' ? ' checked' : '');
 				echo '> ';
 				// Show type selector
 				echo $langs->trans("FreeLineOfType");
@@ -198,36 +198,36 @@ if ($nolinesbefore) {
 					echo ' ';
 				}
 			}
-			echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type", 'alpha', 2):-1, 'type', 1, 1, $forceall);
+			echo $form->select_type_of_lines(isset($_POST["type"]) ?GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
 			echo '</span>';
 		}
 		// Predefined product/service
-		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 		{
 			if ($forceall >= 0 && $freelines) echo '<br>';
 			echo '<span class="prod_entry_mode_predef">';
 			echo '<label for="prod_entry_mode_predef">';
-			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
+			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
 			if (empty($senderissupplier))
 			{
-				if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
-				elseif ((empty($conf->product->enabled) && ! empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
+				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
+				elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
 				else echo $langs->trans('PredefinedProductsAndServicesToSell');
 			}
 			else
 			{
-				if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToPurchase');
-				elseif (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
+				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToPurchase');
+				elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
 				else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
 			}
 			echo '</label>';
 			echo ' ';
-			$filtertype='';
-			if (! empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype='1';
+			$filtertype = '';
+			if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype = '1';
 			if (empty($senderissupplier))
 			{
 				$statustoshow = 1;
-				if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
+				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS))
 				{
 					// hide products in closed warehouse, but show products for internal transfer
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
@@ -236,7 +236,7 @@ if ($nolinesbefore) {
 				{
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 				}
-				if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
+				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
 				{
 					?>
 				<script type="text/javascript">
@@ -260,22 +260,22 @@ if ($nolinesbefore) {
 				// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
 				if ($senderissupplier != 2)
 				{
-					$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
-					'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
+					$ajaxoptions = array(
+					'update' => array('qty'=>'qty', 'remise_percent' => 'discount', 'idprod' => 'idprod'), // html id tags that will be edited with which ajax json response key
+					'option_disabled' => 'idthatdoesnotexists', // html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
 					);
-					$alsoproductwithnosupplierprice=0;
+					$alsoproductwithnosupplierprice = 0;
 				}
 				else
 				{
 					$ajaxoptions = array(
 					'update' => array('remise_percent' => 'discount')			// html id tags that will be edited with each ajax json response key
 					);
-					$alsoproductwithnosupplierprice=1;
+					$alsoproductwithnosupplierprice = 1;
 				}
 				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth500');
-				if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
+				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
 				{
 					?>
 				<script type="text/javascript">
@@ -298,21 +298,21 @@ if ($nolinesbefore) {
 		}
 		if (is_object($hookmanager) && empty($senderissupplier))
 		{
-			$parameters=array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
-			$reshook=$hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
+			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
+			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
 			if (!empty($hookmanager->resPrint)) {
 				print $hookmanager->resPrint;
 			}
 		}
-		if (is_object($hookmanager) && ! empty($senderissupplier))
+		if (is_object($hookmanager) && !empty($senderissupplier))
 		{
-			$parameters=array('htmlname'=>'addproduct');
-			$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions', $parameters, $object, $action);
+			$parameters = array('htmlname'=>'addproduct');
+			$reshook = $hookmanager->executeHooks('formCreateProductSupplierOptions', $parameters, $object, $action);
 			if (!empty($hookmanager->resPrint)) {
 				print $hookmanager->resPrint;
 			}
 		}
-		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 			if (!empty($conf->variants->enabled)) {
 				echo '<div id="attributes_box"></div>';
 			}
@@ -320,15 +320,15 @@ if ($nolinesbefore) {
 		}
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$nbrows=ROWS_2;
-		$enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
-		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-		$toolbarname='dolibarr_details';
-		if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-		$doleditor=new DolEditor('dp_desc', GETPOST('dp_desc', 'none'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?100:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
+		$nbrows = ROWS_2;
+		$enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		$toolbarname = 'dolibarr_details';
+		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname = 'dolibarr_notes';
+		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'none'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
-		if (! empty($conf->service->enabled) && $object->element == 'facturerec')
+		if (!empty($conf->service->enabled) && $object->element == 'facturerec')
 		{
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
@@ -343,39 +343,39 @@ if ($nolinesbefore) {
 		{
 			$coldisplay++;
 			?>
-	<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
+	<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo (isset($_POST["fourn_ref"]) ?GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
         <?php }
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
 		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
-		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx", 'alpha', 2):-1), $seller, $buyer, 0, 0, '', false, 1);
+		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"]) ?GETPOST("tva_tx", 'alpha', 2) : -1), $seller, $buyer, 0, 0, '', false, 1);
 		?>
 	</td>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
-		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht", 'alpha', 2):''); ?>">
+		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"]) ?GETPOST("price_ht", 'alpha', 2) : ''); ?>">
 	</td>
 
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluht_currency right">
-			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht", 'alpha', 2):''); ?>">
+			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"]) ?GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
 	<?php }
-	if (! empty($inputalsopricewithtax)) {
+	if (!empty($inputalsopricewithtax)) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluttc right">
-			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc", 'alpha', 2):''); ?>">
+			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"]) ?GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
 	<?php }
 	$coldisplay++;
 	?>
-	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1); ?>">
+	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1); ?>">
 	</td>
 	<?php
-	if($conf->global->PRODUCT_USE_UNITS)
+	if ($conf->global->PRODUCT_USE_UNITS)
 	{
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
@@ -383,13 +383,13 @@ if ($nolinesbefore) {
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
-	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
 	{
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	$coldisplay++;
 	?>
-	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent", 'alpha', 2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"]) ?GETPOST("remise_percent", 'alpha', 2) : $remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
@@ -397,33 +397,33 @@ if ($nolinesbefore) {
 		$coldisplay++;
 		print '<td></td>';
 	}
-	if (! empty($usemargins))
+	if (!empty($usemargins))
 	{
 		if (!empty($user->rights->margins->creer)) {
 			$coldisplay++;
 			?>
 			<td class="nobottom margininfos linecolmargin right">
 				<!-- For predef product -->
-				<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
+				<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
 					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp" style="display: none;"></select>
 				<?php } ?>
 				<!-- For free product -->
-				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
+				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo (isset($_POST["buying_price"]) ?GETPOST("buying_price", 'alpha', 2) : ''); ?>">
 			</td>
 			<?php
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate", 'alpha', 2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"]) ?GETPOST("np_marginRate", 'alpha', 2) : '').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
+			if (!empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : '').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
 	}
-	$coldisplay+=$colspan;
+	$coldisplay += $colspan;
 	?>
 	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
@@ -480,20 +480,20 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 		print "</tr>\n";
 }
 		print "<script>\n";
-if (! empty($usemargins) && $user->rights->margins->creer)
+if (!empty($usemargins) && $user->rights->margins->creer)
 {
 	?>
 
 			/* Some js test when we click on button "Add" */
 			jQuery(document).ready(function() {
 	<?php
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
 				$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 				});
 				<?php
 	}
-	if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+	if (!empty($conf->global->DISPLAY_MARK_RATES)) { ?>
 				$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
 				});

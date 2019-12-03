@@ -657,7 +657,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$trigger_name = 'USER_SENTBYMAIL';
+	$triggersendname = 'USER_SENTBYMAIL';
 	$paramname = 'id'; // Name of param key to open the card
 	$mode = 'emailfromuser';
 	$trackid = 'use'.$id;

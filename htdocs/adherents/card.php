@@ -822,7 +822,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'MEMBER_SENTBYMAIL';
+	$triggersendname = 'MEMBER_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfrommember';
 	$trackid = 'mem'.$object->id;

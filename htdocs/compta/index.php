@@ -170,7 +170,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -257,7 +257,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 		if ($num)
 		{
 			$companystatic = new Societe($db);

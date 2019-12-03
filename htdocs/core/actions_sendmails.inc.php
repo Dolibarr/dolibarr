@@ -26,7 +26,7 @@
 // $id must be defined
 // $paramname may be defined
 // $autocopy may be defined (used to know the automatic BCC to add)
-// $trigger_name must be set (can be '')
+// $triggersendname must be set (can be '')
 // $actiontypecode can be set
 // $object and $uobject may be defined
 
@@ -453,12 +453,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$object->email_subject = $subject;
 						$object->email_msgid = $mailfile->msgid;
 
-						// Call of triggers
-						if (! empty($trigger_name))
+						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprcated)
+						if (! empty($triggersendname) || ! empty($trigger_name))
 						{
     						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     						$interface=new Interfaces($db);
-    						$result=$interface->run_triggers($trigger_name, $object, $user, $langs, $conf);
+    						$result=$interface->run_triggers(empty($triggersendname)?$trigger_name:$triggersendname, $object, $user, $langs, $conf);
 							if ($result < 0) {
     							setEventMessages($interface->error, $interface->errors, 'errors');
     						}

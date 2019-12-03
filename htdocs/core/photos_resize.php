@@ -210,6 +210,17 @@ elseif ($modulepart == 'bom')
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 }
+elseif ($modulepart == 'mrp')
+{
+	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+	$object = new MO($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->$modulepart->dir_output; // By default
+	}
+}
 elseif ($modulepart == 'bank')
 {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -222,7 +233,7 @@ elseif ($modulepart == 'bank')
 	}
 }
 else {
-	print 'Action crop for modulepart = '.$modulepart.' is not supported yet.';
+	print 'Action crop for modulepart = '.$modulepart.' is not supported yet by photos_resize.php.';
 }
 
 if (empty($backtourl))
@@ -237,6 +248,7 @@ if (empty($backtourl))
     elseif (in_array($modulepart, array('ticket')))        $backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('user')))          $backtourl = DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else $backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
