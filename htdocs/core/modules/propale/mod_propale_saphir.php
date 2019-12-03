@@ -64,11 +64,11 @@ class mod_propale_saphir extends ModeleNumRefPropales
      */
 	public function info()
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
