@@ -2148,12 +2148,15 @@ else
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int'))
 						{
 							print '<tr class="oddeven">';
+
 							// Num
 							print '<td class="center">';
 							print $numline;
 							print '</td>';
+
 							// Date
 							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+
 							// Project
 							if (!empty($conf->projet->enabled))
 							{
