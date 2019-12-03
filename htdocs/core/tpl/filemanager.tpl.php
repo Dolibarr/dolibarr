@@ -81,7 +81,7 @@ if ($permtoadd)
 else
 {
     print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png" style="-webkit-filter: opacity(20%);filter: opacity(20%);cursor: not-allowed;">';
+    print '<img class="toolbarbutton disabled" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
 if ($module == 'ecm')
