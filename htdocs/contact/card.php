@@ -482,7 +482,7 @@ if (empty($reshook))
     }
 
     // Actions to send emails
-	$trigger_name = 'CONTACT_SENTBYMAIL';
+	$triggersendname = 'CONTACT_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromcontact';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

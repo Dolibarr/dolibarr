@@ -456,7 +456,7 @@ if (empty($reshook))
 	}
 
 	// Actions to send emails
-	$trigger_name = 'PROJECT_SENTBYMAIL';
+	$triggersendname = 'PROJECT_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;

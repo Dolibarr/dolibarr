@@ -152,8 +152,15 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    {
 	                        $productsupplier->getMultiLangs();
 	                    }
-	                    $line->desc = $productsupplier->description;
-                        if (!empty($conf->global->MAIN_MULTILANGS))
+
+						// if we use supplier description of the products
+						if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+							$desc = $productsupplier->desc_supplier;
+						} else {
+							$desc = $productsupplier->description;
+						}
+	                    $line->desc = $desc;
+                        if (! empty($conf->global->MAIN_MULTILANGS))
                         {
                             // TODO Get desc in language of thirdparty
                         }

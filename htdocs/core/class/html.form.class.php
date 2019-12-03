@@ -228,6 +228,7 @@ class Form
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
+                    $arraylist = array();
 					foreach ($arraydata as $val)
 					{
 						$tmp = explode(':', $val);
@@ -265,6 +266,7 @@ class Form
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
+                    $arraylist = array();
 					foreach ($arraydata as $val)
 					{
 						$tmp = explode(':', $val);
@@ -4869,7 +4871,7 @@ class Form
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param  int     $nooutput       No print output. Return it only.
-	 *  @return	void
+	 *  @return	void|string
 	 */
     public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0)
 	{

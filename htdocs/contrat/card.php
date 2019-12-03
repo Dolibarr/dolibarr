@@ -1002,7 +1002,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'CONTRACT_SENTBYMAIL';
+	$triggersendname = 'CONTRACT_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromcontract';
 	$trackid = 'con'.$object->id;

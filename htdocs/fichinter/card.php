@@ -721,7 +721,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'FICHINTER_SENTBYMAIL';
+	$triggersendname = 'FICHINTER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_FICHINTER_TO';
 	$trackid = 'int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

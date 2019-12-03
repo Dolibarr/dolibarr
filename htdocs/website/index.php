@@ -2124,7 +2124,7 @@ if (!GETPOST('hide_websitemenu'))
 		}
 		elseif (empty($virtualurl))
 		{
-		    $htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
+		    //$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
 		}
 		else
 		{

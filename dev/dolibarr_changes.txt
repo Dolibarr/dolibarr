@@ -67,6 +67,21 @@ with
                 }
             }
 
+* In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
+
+		if (strpos($filename, '://') === false) {
+
+with
+
+        if (strpos($filename, '//') === 0)
+        {
+            // Share folder on a (windows) server
+            // e.g.: "//[MyServerName]/[MySharedFolder]/"
+            //
+            // nothing to change
+        }
+        elseif (strpos($filename, '://') === false)
+
 * To avoid to have QRcode changed because generated with a random mask, replace
 define('QR_FIND_FROM_RANDOM', 2);
 with

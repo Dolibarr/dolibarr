@@ -231,7 +231,19 @@ class Mo extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		$this->db->begin();
+
+		$result = $this->createCommon($user, $notrigger);
+
+		// Insert lines in mrp_production table
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+
+		return $result;
 	}
 
 	/**

@@ -2501,11 +2501,11 @@ class Propal extends CommonObject
 		if ($resql)
 		{
 			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
-			$trigger_name = 'PROPAL_CLOSE_REFUSED';
+			$triggerName = 'PROPAL_CLOSE_REFUSED';
 
 			if ($statut == self::STATUS_SIGNED)
 			{
-				$trigger_name = 'PROPAL_CLOSE_SIGNED';
+				$triggerName = 'PROPAL_CLOSE_SIGNED';
 				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
 
 				// The connected company is classified as a client
@@ -2522,7 +2522,7 @@ class Propal extends CommonObject
 			}
 			if ($statut == self::STATUS_BILLED)	// Why this ?
 			{
-				$trigger_name = 'PROPAL_CLASSIFY_BILLED';
+				$triggerName = 'PROPAL_CLASSIFY_BILLED';
 			}
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -2550,7 +2550,7 @@ class Propal extends CommonObject
 			if (!$notrigger && empty($error))
 			{
 				// Call trigger
-				$result = $this->call_trigger($trigger_name, $user);
+				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}

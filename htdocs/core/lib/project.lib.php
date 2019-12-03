@@ -111,7 +111,7 @@ function project_prepare_head($object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
 		$h++;
 	}
@@ -2071,18 +2071,23 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         else {
             if ($task->hasDelay()) $out .= img_warning($langs->trans("Late")).' ';
 
-            $out .= !empty($diff) ? $diff.' ' : '';
+			$url = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$task->id;
 
+            $out .= !empty($diff) ? $diff.' ' : '';
+			$out .= '<a href="'.$url.'" >';
             $out .= '<b title="'.$langs->trans('TimeSpent').'" >';
             if ($task->duration_effective) $out .= convertSecondToTime($task->duration_effective, $timespentoutputformat);
             else $out .= '--:--';
             $out .= '</b>';
+			$out .= '</a>';
 
             $out .= '/';
 
+			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';
             if ($task->planned_workload) $out .= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
             else $out .= '--:--';
+			$out .= '</a>';
         }
         $out .= '    </span>';
     }
@@ -2094,8 +2099,8 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if ($diffval >= 0) {
     	// good
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
-    	if(!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: ' . doubleval($progressCalculated / $task->progress * 100) . '%" title="' . doubleval($progressCalculated) . '%"></div>';
+    	if (!empty($task->progress)) {
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
 		}
     	$out .= '        </div>';
     }

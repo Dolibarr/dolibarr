@@ -849,7 +849,7 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id = $facid;
-	$trigger_name = 'SHIPPING_SENTBYMAIL';
+	$triggersendname = 'SHIPPING_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromshipment';
 	$trackid = 'shi'.$object->id;

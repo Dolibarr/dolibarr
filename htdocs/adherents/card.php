@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "members", "users", "other"));
+$langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -822,7 +822,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'MEMBER_SENTBYMAIL';
+	$triggersendname = 'MEMBER_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfrommember';
 	$trackid = 'mem'.$object->id;

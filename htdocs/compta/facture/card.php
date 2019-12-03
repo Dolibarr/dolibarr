@@ -2481,7 +2481,7 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id = $facid;
-	$trigger_name = 'BILL_SENTBYMAIL';
+	$triggersendname = 'BILL_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVOICE_TO';
 	$trackid = 'inv'.$object->id;
