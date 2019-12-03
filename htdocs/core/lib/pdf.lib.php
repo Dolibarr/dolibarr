@@ -1232,7 +1232,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 {
 	global $db, $conf, $langs;
 	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	
+
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
 	$desc = (!empty($object->lines[$i]->desc) ? $object->lines[$i]->desc : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
