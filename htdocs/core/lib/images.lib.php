@@ -324,7 +324,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 {
 	if (function_exists('exif_read_data') ) {
 		$exif = exif_read_data($fileSource);
-		if($exif && isset($exif['Orientation'])) {
+		if ($exif && isset($exif['Orientation'])) {
 
 			$infoImg = getimagesize($fileSource); // Get image infos
 
@@ -438,12 +438,12 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
         dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
 	    return 'ErrorBadImageFormat';
 	}
-	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
+	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxWidth';
 	}
-	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
+	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxHeight';
@@ -457,7 +457,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	$exif = exif_read_data($filetoread);
 	$ort= false;
-	if($exif && !empty($exif['Orientation'])){
+	if ($exif && !empty($exif['Orientation'])) {
 		$ort = $exif['Orientation'];
 	}
 
@@ -536,8 +536,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
         return 0;
     }
 	$exifAngle = false;
-    if($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)){
-
+    if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
 		switch($ort)
 		{
 			case 3: // 180 rotate left
