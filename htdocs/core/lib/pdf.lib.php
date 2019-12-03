@@ -1231,7 +1231,6 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 {
 	global $db, $conf, $langs;
-	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
@@ -1283,8 +1282,10 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified))  $note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
-	elseif ($object->type == Facture::TYPE_DEPOSIT && $object->element == 'facture') {
-		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
+	elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
+		if ($object->type == $object::TYPE_DEPOSIT) {
+			$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
+		}
 	}
 
 	// Description short of product line
