@@ -949,7 +949,7 @@ if (!empty($arrayfields['s.import_key']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre center">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';

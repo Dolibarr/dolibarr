@@ -372,6 +372,7 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+	min-width: 54px;
 }
 .valigntop {
 	vertical-align: top;
