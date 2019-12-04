@@ -211,23 +211,23 @@ else print "var received=0;";
 <div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
 <center>
 <div class="paymentbordline paymentbordlinetotal">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
+<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
 <div class="paymentbordline paymentbordlineremain">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></font></span></center>
+<center><span class="takepospay"><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
 <?php } ?>
 <div class="paymentbordline paymentbordlinereceived">
-    <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></span></center>
+    <center><span class="takepospay"><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></span></center>
 </div>
 <div class="paymentbordline paymentbordlinechange">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></font></span></center>
+<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></font></span></center>
 </div>
 </center>
 </div>
 
-<div style="position:absolute; top:33%; left:5%; height:55%; width:91%;">
+<div style="position:absolute; top:33%; left:5%; height:55%; width:91%; display: inline-table;">
 <?php
 $action_buttons = array(
 	array(

@@ -797,7 +797,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 					<div class="description_content" id="catdesc<?php echo $count; ?>"></div>
 				</div>
 				<?php } ?>
-				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>+</div>
+				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>...</div>
 			</div>
 	    <?php
         $count++;
@@ -832,7 +832,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     					<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
     				</div>
     				<?php } ?>
-    				<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>+</div>
+    				<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
     			</div>
         <?php
         $count++;
