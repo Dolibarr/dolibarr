@@ -192,7 +192,7 @@ class DolEditor
             	$out.= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
-							console.log("Run ckeditor");
+							/* console.log("Run ckeditor"); */
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
                             /* should be editor=CKEDITOR.replace but what if serveral editors ? */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
