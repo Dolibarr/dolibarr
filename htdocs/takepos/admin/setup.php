@@ -224,13 +224,13 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
 	print '</td></tr>';
-	
+
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("ProductSupplements");
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
 	print '</td></tr>';
-	
+
 	if ($conf->global->TAKEPOS_SUPPLEMENTS)
 	{
 		print '<tr class="oddeven"><td>';
