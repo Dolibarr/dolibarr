@@ -322,7 +322,7 @@ function dolRotateImage($file_path)
  */
 function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 {
-	if (function_exists('exif_read_data') ) {
+	if (function_exists('exif_read_data')) {
 		$exif = exif_read_data($fileSource);
 		if ($exif && isset($exif['Orientation'])) {
 
@@ -455,12 +455,13 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
-	$exif = exif_read_data($filetoread);
-	$ort= false;
-	if ($exif && !empty($exif['Orientation'])) {
-		$ort = $exif['Orientation'];
+	$ort = false;
+	if (function_exists('exif_read_data')) {
+		$exif = exif_read_data($filetoread);
+		if ($exif && !empty($exif['Orientation'])) {
+			$ort = $exif['Orientation'];
+		}
 	}
-
 
 	if ($maxWidth  == -1) $maxWidth=$infoImg[0];	// If size is -1, we keep unchanged
 	if ($maxHeight == -1) $maxHeight=$infoImg[1];	// If size is -1, we keep unchanged
@@ -535,6 +536,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
         dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
         return 0;
     }
+    
 	$exifAngle = false;
     if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
 		switch($ort)
@@ -557,7 +559,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 	}
 
-    if($exifAngle)
+    if ($exifAngle)
     {
 		$rotated = false;
 
@@ -580,8 +582,6 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$imgHeight = $trueImgHeight;
 		}
 	}
-
-
 
 	// Initialisation des dimensions de la vignette si elles sont superieures a l'original
 	if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
