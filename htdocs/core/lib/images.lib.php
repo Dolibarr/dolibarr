@@ -372,7 +372,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 							$image = imagegif($img, $fileDest);
 							break;
 						case IMAGETYPE_JPEG:    // 2
-							return imagejpeg($img, $fileDest, $quality);
+							$image = imagejpeg($img, $fileDest, $quality);
 							break;
 						case IMAGETYPE_PNG:	    // 3
 							$image = imagepng($img, $fileDest, $quality);
