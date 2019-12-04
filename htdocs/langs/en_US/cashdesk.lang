@@ -77,3 +77,5 @@ InvoiceIsAlreadyValidated=Invoice is already validated
 NoLinesToBill=No lines to bill
 CustomReceipt=Custom Receipt
 ReceiptName=Receipt Name
+ProductSupplements=Product Supplements
+SupplementCategory=Supplement category
