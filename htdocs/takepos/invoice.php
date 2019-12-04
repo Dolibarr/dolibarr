@@ -276,7 +276,7 @@ if ($action == "addline")
     	$price_ttc = $prod->multiprices_ttc[$customer->price_level];
     	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
     }
-	
+
 	if ($conf->global->TAKEPOS_SUPPLEMENTS)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -288,7 +288,7 @@ if ($action == "addline")
 			$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid=$selectedline";
 			$resql = $db->query($sql);
 			$row = $db->fetch_array($resql);
-			if ($row[0]==NULL) $parent_line=$selectedline;
+			if ($row[0]==null) $parent_line=$selectedline;
 			else $parent_line=$row[0]; //If the parent line is already a supplement, add the supplement to the main  product
 		}
 	}
