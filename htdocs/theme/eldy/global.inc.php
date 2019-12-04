@@ -5954,6 +5954,10 @@ div.tabsElem a.tab {
 	table.table-fiche-title .col-title div.titre{
 		line-height: unset;
 	}
+
+	input#addedfile {
+		width: 95%;
+	}
 }
 
 <?php
