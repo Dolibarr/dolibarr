@@ -153,7 +153,7 @@ div.description{
 	text-align:center;
 	
 	padding-top: 30px;
-    background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,1), white);
+    background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
 }
 
 div.catwatermark{
@@ -321,6 +321,8 @@ div.description_content {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 @media screen and (min-width: 892px) {
