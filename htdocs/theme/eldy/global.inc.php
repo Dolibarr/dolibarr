@@ -5951,16 +5951,8 @@ div.tabsElem a.tab {
 		font-size: 12px;
 	}
 
-	.text-plus-circle {
-	   display: none;
-	}
-
 	table.table-fiche-title .col-title div.titre{
 		line-height: unset;
-	}
-
-	.btnTitle-label {
-		display: none;
 	}
 }
 

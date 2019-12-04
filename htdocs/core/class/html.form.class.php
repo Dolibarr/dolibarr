@@ -3550,7 +3550,7 @@ class Form
 
 		$return = '';
 
-		$return .= '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		$return .= '<select class="flat maxwidth75" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")

@@ -6041,10 +6041,6 @@ border-top-right-radius: 6px;
 	table.table-fiche-title .col-title div.titre{
 		line-height: unset;
 	}
-
-	.btnTitle-label {
-		display: none;
-	}
 }
 
 

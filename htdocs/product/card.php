@@ -1023,7 +1023,9 @@ else
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
             print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
-	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+	        print '</td>';
+	        if ($conf->browser->layout == 'phone') print '</tr><tr>';
+	        print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
 	        if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 	        print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
@@ -1052,10 +1054,13 @@ else
             print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
             print '</a>';
             print '</td>';
+            print '</tr>';
+
             // Stock min level
             print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
             print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td>';
+            if ($conf->browser->layout == 'phone') print '</tr><tr>';
             // Stock desired level
             print '<td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
             print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
@@ -1094,9 +1099,9 @@ else
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
             {
                 print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
-                print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
-                print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
-                print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
+                print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
+                print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
+                print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
                 print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ?GETPOST('size_units', 'alpha') : '0', 0, 2);
                 print '</td></tr>';
             }
@@ -1140,8 +1145,10 @@ else
         if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type))
         {
 	        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td>';
+	        if ($conf->browser->layout == 'phone') print '</tr><tr>';
 	        // Origin country
-	        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+	        print '<td>'.$langs->trans("CountryOrigin").'</td>';
+	        print '<td>';
 	        print $form->select_country(GETPOST('country_id', 'int'), 'country_id');
 	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	        print '</td></tr>';
