@@ -1185,7 +1185,7 @@ else
 
         print '</table>';
 
-        print '<br>';
+        print '<hr>';
 
         if (!empty($conf->global->PRODUIT_MULTIPRICES))
         {
@@ -1198,6 +1198,7 @@ else
             print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
             print '</td></tr>';
             print '</table>';
+
             print '<br>';
         }
         else
