@@ -67,6 +67,9 @@ else
     }
 }
 
+$arrayofcss = array('/takepos/css/pos.css');
+$arrayofjs=array();
+
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 $langs->loadLangs(array("main", "bills", "cashdesk"));
