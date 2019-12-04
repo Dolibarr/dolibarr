@@ -821,8 +821,8 @@ class Cronjob extends CommonObject
 		$this->frequency='';
 		$this->status=0;
 		$this->processing=0;
-		$this->fk_user_author='';
-		$this->fk_user_mod='';
+		$this->fk_user_author=0;
+		$this->fk_user_mod=0;
 		$this->note='';
 		$this->nbrun='';
 		$this->maxrun=100;
