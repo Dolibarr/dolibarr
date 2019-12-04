@@ -325,7 +325,6 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 	if (function_exists('exif_read_data') ) {
 		$exif = exif_read_data($fileSource);
 		if ($exif && isset($exif['Orientation'])) {
-
 			$infoImg = getimagesize($fileSource); // Get image infos
 
 			$orientation = $exif['Orientation'];
@@ -357,7 +356,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 					}
 				}
 				// then rewrite the rotated image back to the disk as $fileDest
-				if($fileDest === false){
+				if ($fileDest === false){
 					return $img;
 				}
 				else
