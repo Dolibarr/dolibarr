@@ -178,7 +178,8 @@ else print "var received=0;";
 	}
 
 	function ValidateSumup() {
-		<?php  $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
+		console.log("Launch ValidateSumup");
+		<?php $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
         var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
         var amountpayed = $("#change1").val();
         if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
@@ -186,7 +187,7 @@ else print "var received=0;";
         }
 
         // Starting sumup app
-        window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo dolibarr_get_const($db, "TAKEPOS_SUMUP_AFFILIATE")?>&app-id=<?php echo dolibarr_get_const($db, "TAKEPOS_SUMUP_APPID")?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
+        window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo $conf->global->TAKEPOS_SUMUP_AFFILIATE ?>&app-id=<?php echo $conf->global->TAKEPOS_SUMUP_APPID ?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
 
         var loop = window.setInterval(function () {
             $.ajax('/takepos/smpcb.php?status').done(function (data) {
@@ -299,10 +300,15 @@ while ($i < count($paiements)) {
 	$i = $i + 1;
 }
 
-if ($conf->global->TAKEPOS_ENABLE_SUMUP && !empty(dolibarr_get_const($db, "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"]))) {
-	?>
-	<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>
-	<?php
+$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+	if (!empty($conf->global->$keyforsumupbank)) {
+		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
+	} else {
+		$langs->load("errors");
+		$langs->load("admin");
+		print '<button type="button" class="calcbutton2 disabled" title="'.$langs->trans("SetupNotComplete").'">Sumup</button>';
+	}
 }
 
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";

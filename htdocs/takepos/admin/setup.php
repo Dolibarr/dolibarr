@@ -245,20 +245,6 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
 print "</td></tr>\n";
 
-// Sumup options
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("SumupAffiliate");
-	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
-	print "</td></tr>\n";
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("SumupAppId");
-	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
-	print "</td></tr>\n";
-}
-
 // Custom Receipt
 print '<tr class="oddeven"><td>';
 print $langs->trans('CustomReceipt');
@@ -292,6 +278,32 @@ print "</td></tr>\n";
 
 print '</table>';
 print '</div>';
+
+// Sumup options
+if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+	print '<br>';
+
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SumupAffiliate");
+	print '<td colspan="2">';
+	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
+	print "</td></tr>\n";
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SumupAppId");
+	print '<td colspan="2">';
+	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
+	print "</td></tr>\n";
+
+	print '</table>';
+	print '</div>';
+}
 
 print '<br>';
 
