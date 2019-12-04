@@ -4463,13 +4463,15 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/core/modules/facture/pdf_crabe.modules.php',
         '/core/modules/facture/pdf_oursin.modules.php',
 
-        '/compta/facture/class/api_invoice.class.php',
+    	'/categories/class/api_category.class.php',
+    	'/categories/class/api_deprecated_category.class.php',
+    	'/compta/facture/class/api_invoice.class.php',
         '/commande/class/api_commande.class.php',
         '/user/class/api_user.class.php',
         '/product/class/api_product.class.php',
         '/societe/class/api_contact.class.php',
         '/societe/class/api_thirdparty.class.php',
-        '/support/online.php',
+    	'/support/online.php',
         '/takepos/class/actions_takepos.class.php'
     );
 
