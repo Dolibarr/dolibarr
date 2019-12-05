@@ -7663,7 +7663,8 @@ class Form
 	{
 		global $db, $conf, $langs, $user;
 
-		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
+        $out = '';
+        $sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) $sql .= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
 		$sql .= ' ORDER BY label';
@@ -7752,6 +7753,7 @@ class Form
 	{
 		global $db, $conf, $langs;
 
+        $out = '';
 		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
 		$sql .= ' WHERE entity = '.$conf->entity.' AND active = 1';
 
@@ -7789,6 +7791,7 @@ class Form
 	{
 		global $db, $langs;
 
+        $out = '';
 		$sql = 'SELECT id, code, label FROM '.MAIN_DB_PREFIX.'c_type_fees';
 		$sql .= ' WHERE active = 1';
 
