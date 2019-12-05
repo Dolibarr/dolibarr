@@ -42,7 +42,7 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
 
 - Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you known git):
 
-  git clone https://github.com/dolibarr/dolibarr -b x.y     (where x.y is main version like 3.6, 9.0, ...)
+  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is main version like 3.6, 9.0, ...)
 
 - Set up your web server to use "*dolibarr/htdocs*" as root if your web server does not have an already defined directory to point to.
 
