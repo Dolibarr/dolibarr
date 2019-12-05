@@ -8,9 +8,13 @@ a different place than this directory and just adding a symbolic link here to th
 of the module.
 
 For example on Linux OS: Get the module from the command
+
 `mkdir ~/git; cd ~/git`
+
 `git clone https://git.framasoft.org/p/newmodule/newmodule.git`
+
 Then create the symbolic link
+
 `ln -fs ~/git/newmodule/htdocs /path_to_dolibarr/htdocs/custom/newmodule`
 
 WARNING !!!
