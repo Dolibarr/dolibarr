@@ -1034,6 +1034,8 @@ class User extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 		$type_categ = Categorie::TYPE_USER;
 
 		// Handle single category
@@ -1042,7 +1044,6 @@ class User extends CommonObject
 		}
 
 		// Get current categories
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
 
@@ -1106,9 +1107,9 @@ class User extends CommonObject
 		}
 
 		// If contact, remove link
-		if ($this->contact_id)
+		if ($this->contactid > 0 || $this->contact_id > 0)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".(($this->contactid > 0) ? $this->contactid : $this->contact_id);
 			if (!$error && !$this->db->query($sql))
 			{
 				$error++;

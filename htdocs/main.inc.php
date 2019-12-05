@@ -232,7 +232,7 @@ require_once 'master.inc.php';
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (!empty($conf->debugbar->enabled))
+if (!empty($conf->debugbar->enabled) && ! GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile']))
 {
     global $debugbar;
     include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';

@@ -119,8 +119,19 @@ elseif ($modulepart == 'project')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir = $conf->projet->dir_output; // By default
+        $dir = $conf->project->multidir_output[$object->entity]; // By default
     }
+}
+elseif ($modulepart == 'propal')
+{
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$object = new Propal($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->propal->multidir_output[$object->entity]; // By default
+	}
 }
 elseif ($modulepart == 'holiday')
 {
@@ -243,6 +254,7 @@ if (empty($backtourl))
     elseif (in_array($modulepart, array('holiday')))       $backtourl = DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('member')))        $backtourl = DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('project')))       $backtourl = DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    elseif (in_array($modulepart, array('propal')))        $backtourl = DOL_URL_ROOT."/comm/propal/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('societe')))       $backtourl = DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('tax')))           $backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('ticket')))        $backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);

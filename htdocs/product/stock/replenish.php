@@ -723,7 +723,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
 
 		// Supplier
-		print '<td class="right">'.$form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier).'</td>';
+		print '<td class="right">';
+        $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
+        print '</td>';
 
 		// Fields from hook
 		$parameters = array('objp'=>$objp);

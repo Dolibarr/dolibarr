@@ -181,12 +181,14 @@ function PrintCategories(first) {
 			$("#catdesc"+i).text("");
 			$("#catimg"+i).attr("src","genimg/empty.png");
 			$("#catwatermark"+i).hide();
+			$("#catdiv"+i).attr('class', 'wrapper divempty');
 			continue;
 		}
 		$("#catdivdesc"+i).show();
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
         $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
+		$("#catdiv"+i).attr('class', 'wrapper');
 		$("#catwatermark"+i).show();
 	}
 }
@@ -264,6 +266,7 @@ function LoadProducts(position, issubcat) {
 				$("#proimg"+ishow).attr("title","");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
+				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
 			}
@@ -275,6 +278,7 @@ function LoadProducts(position, issubcat) {
 				$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat", 0);
+				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
 			}
@@ -797,7 +801,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 					<div class="description_content" id="catdesc<?php echo $count; ?>"></div>
 				</div>
 				<?php } ?>
-				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>+</div>
+				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>...</div>
 			</div>
 	    <?php
         $count++;
@@ -832,7 +836,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     					<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
     				</div>
     				<?php } ?>
-    				<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>+</div>
+    				<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
     			</div>
         <?php
         $count++;

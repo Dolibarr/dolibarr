@@ -8372,6 +8372,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     $class = 'btnTitle';
+
     // hidden conf keep during button transition TODO: remove this block
     if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
         $class = 'butActionNew';
@@ -8446,10 +8447,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $tag = (empty($attr['href']) ? 'span' : 'a');
 
-
     $button = '<'.$tag.' '.$compiledAttributes.' >';
     $button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
-    $button .= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
+    $button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
     $button .= '</'.$tag.'>';
 
     // hidden conf keep during button transition TODO: remove this block

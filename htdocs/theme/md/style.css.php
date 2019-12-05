@@ -594,6 +594,7 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+	min-width: 54px;
 }
 
 .valigntop {
@@ -6040,6 +6041,10 @@ border-top-right-radius: 6px;
 	table.table-fiche-title .col-title div.titre{
 		line-height: unset;
 	}
+
+	input#addedfile {
+		width: 95%;
+	}
 }
 
 
@@ -6060,15 +6065,11 @@ border-top-right-radius: 6px;
 
 
 
-<?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php }
-
+<?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
-
 
 
 if (is_object($db)) $db->close();

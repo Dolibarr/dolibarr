@@ -73,6 +73,7 @@ function llxFooter()
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action=GETPOST('action', 'alpha');
@@ -252,11 +253,20 @@ if ($encoding)   header('Content-Encoding: '.$encoding);
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
 if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 else header('Content-Disposition: inline; filename="'.$filename.'"');
-header('Content-Length: ' . dol_filesize($fullpath_original_file));
 // Ajout directives pour resoudre bug IE
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
+$readfile = true;
 
-readfile($fullpath_original_file_osencoded);
+// on view document, can output images with good orientation according to exif infos
+if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_format_supported($fullpath_original_file_osencoded) == 1) {
+	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
+	$readfile = !$imgres;
+}
+
+if($readfile){
+	header('Content-Length: ' . dol_filesize($fullpath_original_file));
+	readfile($fullpath_original_file_osencoded);
+}
 
 if (is_object($db)) $db->close();

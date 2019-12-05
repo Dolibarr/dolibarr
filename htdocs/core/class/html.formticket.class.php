@@ -200,7 +200,7 @@ class FormTicket
 
         // Type
         print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-        $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
+        $this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', '2', 0, 0, 0, 'minwidth150');
         print '</td></tr>';
 
         // Severity
@@ -225,7 +225,7 @@ class FormTicket
                 if ($this->withthreadid > 0) {
                     $subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
                 }
-                print '<input class="text" size="50" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
+                print '<input class="text minwidth300" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
                 print '</td></tr>';
             }
         }
@@ -376,8 +376,8 @@ class FormTicket
             }
 
             $out = '<tr>';
-            $out .= '<td width="180">' . $langs->trans("MailFile") . '</td>';
-            $out .= '<td colspan="2">';
+            $out .= '<td>' . $langs->trans("MailFile") . '</td>';
+            $out .= '<td>';
             // TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
             $out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">' . "\n";
             $out .= '<script type="text/javascript" language="javascript">';

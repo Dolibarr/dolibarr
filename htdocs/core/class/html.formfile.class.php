@@ -1099,7 +1099,7 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'mrp', 'project', 'product', 'produit', 'service', 'societe', 'tax', 'ticket', 'user'))) $disablecrop = 0;
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file

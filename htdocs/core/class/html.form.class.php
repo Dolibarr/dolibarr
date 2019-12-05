@@ -3550,7 +3550,7 @@ class Form
 
 		$return = '';
 
-		$return .= '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		$return .= '<select class="flat maxwidth75" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
@@ -3953,10 +3953,11 @@ class Form
      *                                                          - array (list of categories ids)
 	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
      *    @param	int			            $include			[=0] Removed or 1=Keep only
+     *    @param	string					$morecss			More CSS
 	 *    @return	string
 	 *    @see select_categories()
 	 */
-    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3999,7 +4000,7 @@ class Form
             $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
-		$output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+		$output = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		$outarray = array();
 		if (is_array($cate_arbo))
 		{
