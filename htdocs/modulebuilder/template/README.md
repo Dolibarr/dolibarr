@@ -1,4 +1,4 @@
-# MYMODULE FOR [DOLIBARR ERP CRM]<https://www.dolibarr.org>
+# MYMODULE FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
 ## Features
 
@@ -8,7 +8,7 @@ Description...
 ![Screenshot mymodule](img/screenshot_mymodule.png?raw=true "MyModule"){imgmd}
 -->
 
-Other modules are available on [Dolistore.com]<https://www.dolistore.com>.
+Other modules are available on [Dolistore.com](https://www.dolistore.com>).
 
 ## Translations
 
