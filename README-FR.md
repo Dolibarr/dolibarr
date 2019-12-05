@@ -19,7 +19,7 @@ Si vous avez peu de compétences techniques et que vous souhaitez installer Doli
 - DoliDeb pour Debian ou Ubuntu
 - DoliRpm pour Redhat, Fedora, OpenSuse, Mandriva ou Mageia
 
-Les packages peuvent être téléchargés à partir de [site web officiel] (https://www.dolibarr.org/).
+Les packages peuvent être téléchargés à partir de [site web officiel](https://www.dolibarr.org/).
 
 ### Configuration avancée
 
@@ -27,7 +27,7 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 - Décompressez l'archive .zip téléchargée pour copier le répertoire "dolibarr/htdocs" et tous ses fichiers à la racine du serveur Web ou récupérez-les directement à partir de GitHub (recommandé si vous connaissez git):
 
-  git clone https://github.com/dolibarr/dolibarr -b x.y   (où x.y est la version principale comme 3.6, 9.0, ...)
+  `git clone https://github.com/dolibarr/dolibarr -b x.y`   (où x.y est la version principale comme 3.6, 9.0, ...)
 
 - Configurez votre serveur Web pour qu'il utilise "*dolibarr/htdocs*" en tant que racine si votre serveur Web ne possède pas déjà de répertoire défini vers lequel pointer.
 
@@ -35,18 +35,18 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 - Depuis votre navigateur, allez à la page "install/" de dolibarr
 
-    L’URL dépendra de la façon dont votre configuration Web a été configurée pour pointer vers votre installation de dolibarr. Cela peut ressembler à:
+  L’URL dépendra de la façon dont votre configuration Web a été configurée pour pointer vers votre installation de dolibarr. Cela peut ressembler à:
 
-        http://localhost/dolibarr/htdocs/install/
-        
-    ou
-    
-        http://localhost/dolibarr/install/
-        
-    ou
-    
-    http://yourdolibarrvirtualhost/install/
-   
+  `http://localhost/dolibarr/htdocs/install/`
+
+  ou
+
+  `http://localhost/dolibarr/install/`
+
+  ou
+
+  `http://yourdolibarrvirtualhost/install/`
+
 - Suivez les instructions de l'installateur
 
 ## METTRE A JOUR DOLIBARR
@@ -150,7 +150,6 @@ La documentation utilisateur, développeur et traducteur est disponible sous for
 Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
 <a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
-
 ## CREDITS
 
 Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
@@ -161,9 +160,9 @@ Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/CO
 
 Suivez le projet Dolibarr project sur les réseaux francophones
 
-- Facebook: <https://www.facebook.com/dolibarr.fr>
-- Google+: <https://plus.google.com/+DolibarrFrance>
-- Twitter: <https://www.twitter.com/dolibarr_france>
+- [Facebook](https://www.facebook.com/dolibarr.fr)
+- [Google+](https://plus.google.com/+DolibarrFrance)
+- [Twitter](https://www.twitter.com/dolibarr_france)
 
 ou sur les réseaux anglophones
 
