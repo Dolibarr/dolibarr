@@ -53,7 +53,7 @@ $head = stock_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans("Warehouse"), -1, 'stock');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 $morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
