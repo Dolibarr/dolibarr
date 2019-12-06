@@ -61,9 +61,9 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
-	$amount_ttc_1 = GETPOST('amount_ttc_1');
+	$amount_ttc_1 = GETPOST('amount_ttc_1', 'alpha');
 	$amount_ttc_1 = price2num($amount_ttc_1);
-	$amount_ttc_2 = GETPOST('amount_ttc_2');
+	$amount_ttc_2 = GETPOST('amount_ttc_2', 'alpha');
 	$amount_ttc_2 = price2num($amount_ttc_2);
 
 	$error = 0;
