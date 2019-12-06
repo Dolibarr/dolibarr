@@ -325,7 +325,6 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 	if (function_exists('exif_read_data')) {
 		$exif = exif_read_data($fileSource);
 		if ($exif && isset($exif['Orientation'])) {
-
 			$infoImg = getimagesize($fileSource); // Get image infos
 
 			$orientation = $exif['Orientation'];
@@ -531,12 +530,13 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImg = '.bmp';
 			break;
 	}
+
     if (! is_resource($img))
     {
         dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
         return 0;
     }
-    
+
 	$exifAngle = false;
     if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
 		switch($ort)
