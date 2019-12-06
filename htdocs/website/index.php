@@ -2452,7 +2452,9 @@ if (!GETPOST('hide_websitemenu'))
 		print '<span class="websitehelp">';
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
-			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
+			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
+
+			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url).'<br>';
             if ($conf->browser->layout == 'phone')
             {
                 print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');

@@ -4117,7 +4117,9 @@ class Form
 
 			// Now add questions
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
-			if (!empty($formquestion['text'])) $more .= '<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
+			if (!empty($formquestion['text'])) {
+				$more .= '<div class="tagtr"><div class="tagtd">'.$formquestion['text'].'</div></div>'."\n";
+			}
 			foreach ($formquestion as $key => $input)
 			{
 				if (is_array($input) && !empty($input))
