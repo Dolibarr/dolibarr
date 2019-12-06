@@ -3817,9 +3817,14 @@ elseif ($id > 0 || ! empty($ref))
 
 	if ($object->fk_fac_rec_source > 0)
 	{
-	    $tmptemplate = new FactureRec($db);
-	    $result = $tmptemplate->fetch($object->fk_fac_rec_source);
-	    if ($result > 0) print '. '.$langs->trans("GeneratedFromTemplate", $tmptemplate->ref);
+		$tmptemplate = new FactureRec($db);
+		$result = $tmptemplate->fetch($object->fk_fac_rec_source);
+		if ($result > 0) {
+			print '. '.$langs->trans(
+				"GeneratedFromTemplate",
+				'<a href="'.DOL_MAIN_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$tmptemplate->id.'">'.$tmptemplate->ref.'</a>'
+			);
+		}
 	}
 	print '</td></tr>';
 
