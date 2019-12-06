@@ -4017,6 +4017,11 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 
 .calendarviewcontainertr { height: 100px; }
 
+td.cal_other_month {
+	opacity: 0.8;
+}
+
+
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
