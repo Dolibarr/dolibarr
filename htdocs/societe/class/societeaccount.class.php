@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -79,7 +79,7 @@ class SocieteAccount extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
-		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
+		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
 		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
@@ -121,10 +121,22 @@ class SocieteAccount extends CommonObject
     public $fk_soc;
 
 	public $site;
+
+	/**
+	 * @var integer|string date_last_login
+	 */
 	public $date_last_login;
+
+
 	public $date_previous_login;
 	public $note_private;
+
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+
+
 	public $tms;
 
 	/**

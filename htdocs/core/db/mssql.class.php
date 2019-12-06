@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -220,11 +220,10 @@ class DoliDBMssql extends DoliDB
      */
     public function close()
     {
-        if ($this->db)
-        {
-          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
-          $this->connected=false;
-          return mssql_close($this->db);
+        if ($this->db) {
+            if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
+            $this->connected=false;
+            return mssql_close($this->db);
         }
         return false;
     }
@@ -407,15 +406,15 @@ class DoliDBMssql extends DoliDB
     			// Inserer la date en parametre et le reste de la requete
     			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
     		}
-    	   if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i', $query, $matches))
-    	   {
-    	       //var_dump($query);
-    	       //var_dump($matches);
-    	       //if (stripos($query,'llx_c_departements') !== false) var_dump($query);
-    	       $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
-    	       @mssql_query($sql, $this->db);
-    	       $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
-    	   }
+    	    if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i', $query, $matches))
+    	    {
+    	        //var_dump($query);
+    	        //var_dump($matches);
+    	        //if (stripos($query,'llx_c_departements') !== false) var_dump($query);
+    	        $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
+    	        @mssql_query($sql, $this->db);
+    	        $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
+    	    }
 		}
 		//print "<!--".$query."-->";
 
@@ -527,10 +526,10 @@ class DoliDBMssql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 *	@param	resource	$resultset   Curseur de la requete voulue
-	 *	@return int		    Nombre de lignes
+	 *	@return int		    Number of lines
 	 *	@see    num_rows()
 	 */
     public function affected_rows($resultset)

@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,7 @@ TicketDictSeverity=Ticket - Sévérités
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Question commerciale
-TicketTypeShortINCIDENT=Demande d'assistance
+TicketTypeShortISSUE=Incident ou problem
 TicketTypeShortPROJET=Projet
 TicketTypeShortOTHER=Autre
 

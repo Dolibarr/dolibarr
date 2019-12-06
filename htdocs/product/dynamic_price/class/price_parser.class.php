@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -155,7 +155,7 @@ class PriceParser
 
         //Retrieve all extrafield for product and add it to values
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label('product', true);
+        $extrafields->fetch_name_optionals_label('product', true);
         $product->fetch_optionals();
         if (is_array($extrafields->attributes[$product->table_element]['label']))
 		{
@@ -271,7 +271,7 @@ class PriceParser
 		}
 		$supplier_min_price = $productFournisseur->fourn_unitprice;
 
-		//Accessible values by expressions
+        //Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => $supplier_min_price,
 		));

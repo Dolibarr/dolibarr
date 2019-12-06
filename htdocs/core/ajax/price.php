@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,13 +48,11 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 	if (is_numeric($amount) && $amount != '')
 	{
 		if ($output == 'price_ttc') {
-
 			$price = price2num($amount * (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = $amount;
 			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
 		}
 		elseif ($output == 'price_ht') {
-
 			$price = price2num($amount / (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
 			$return['price_ttc'] = ($tva_tx == 0 ? $price : $amount);

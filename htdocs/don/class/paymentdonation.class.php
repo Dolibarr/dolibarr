@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,6 +83,10 @@ class PaymentDonation extends CommonObject
 	 */
 	public $total;
 
+	public $type_code;
+	public $type_label;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -121,7 +125,7 @@ class PaymentDonation extends CommonObject
 		if (isset($this->amount))			$this->amount=trim($this->amount);
 		if (isset($this->fk_typepayment))   $this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))      $this->num_payment=trim($this->num_payment);
-		if (isset($this->note))				$this->note=trim($this->note);
+		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
@@ -148,7 +152,7 @@ class PaymentDonation extends CommonObject
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -205,11 +209,11 @@ class PaymentDonation extends CommonObject
 		$sql.= " t.amount,";
 		$sql.= " t.fk_typepayment,";
 		$sql.= " t.num_payment,";
-		$sql.= " t.note,";
+		$sql.= " t.note as note_public,";
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+		$sql.= " pt.code as type_code, pt.libelle as type_label,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
@@ -234,13 +238,13 @@ class PaymentDonation extends CommonObject
 				$this->amount			= $obj->amount;
 				$this->fk_typepayment	= $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
-				$this->note				= $obj->note;
+				$this->note_public      = $obj->note_public;
 				$this->fk_bank			= $obj->fk_bank;
 				$this->fk_user_creat	= $obj->fk_user_creat;
 				$this->fk_user_modif	= $obj->fk_user_modif;
 
 				$this->type_code		= $obj->type_code;
-				$this->type_libelle		= $obj->type_libelle;
+				$this->type_label		= $obj->type_label;
 
 				$this->bank_account		= $obj->fk_account;
 				$this->bank_line		= $obj->fk_bank;
@@ -275,7 +279,7 @@ class PaymentDonation extends CommonObject
 		if (isset($this->amount))			$this->amount=trim($this->amount);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
-		if (isset($this->note))				$this->note=trim($this->note);
+		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
@@ -292,7 +296,7 @@ class PaymentDonation extends CommonObject
 		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
 		$sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
 		$sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
-		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+		$sql.= " note=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
 		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
 		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
@@ -441,7 +445,6 @@ class PaymentDonation extends CommonObject
 
 		if (! $error)
 		{
-
 		}
 
 		unset($object->context['createfromclone']);
@@ -475,11 +478,11 @@ class PaymentDonation extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int		$statut        	Id statut
+	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -506,7 +509,7 @@ class PaymentDonation extends CommonObject
 		$this->amount='';
 		$this->fk_typepayment='';
 		$this->num_payment='';
-		$this->note='';
+		$this->note_public='';
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
@@ -634,7 +637,6 @@ class PaymentDonation extends CommonObject
 
 		$result='';
 
-		if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))

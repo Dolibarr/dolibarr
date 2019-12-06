@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -124,7 +124,7 @@ dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
 print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Show permissions lines
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -149,30 +149,30 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
      */
     public function testRestGetUser()
     {
-      global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
 
-      $url = $this->api_url.'/users/123456789?api_key='.$this->api_key;
-      //$addheaders=array('Content-Type: application/json');
+        $url = $this->api_url.'/users/123456789?api_key='.$this->api_key;
+        //$addheaders=array('Content-Type: application/json');
 
-      print __METHOD__." Request GET url=".$url."\n";
-      $result=getURLContent($url, 'GET', '', 1, array());
-      //print __METHOD__." Result for unexisting user: ".var_export($result, true)."\n";
-      print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-      $this->assertEquals($result['curl_error_no'], '');
-      $object=json_decode($result['content'], true);
-      $this->assertNotNull($object, "Parsing of json result must no be null");
-      $this->assertEquals(404, $object['error']['code']);
+        print __METHOD__." Request GET url=".$url."\n";
+        $result=getURLContent($url, 'GET', '', 1, array());
+        //print __METHOD__." Result for unexisting user: ".var_export($result, true)."\n";
+        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+        $this->assertEquals($result['curl_error_no'], '');
+        $object=json_decode($result['content'], true);
+        $this->assertNotNull($object, "Parsing of json result must no be null");
+        $this->assertEquals(404, $object['error']['code']);
 
-      $url = $this->api_url.'/users/1?api_key='.$this->api_key;
+        $url = $this->api_url.'/users/1?api_key='.$this->api_key;
 
-      print __METHOD__." Request GET url=".$url."\n";
-      $result=getURLContent($url, 'GET', '', 1, array());
-      //print __METHOD__." Result for existing user user: ".var_export($result, true)."\n";
-      print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-      $this->assertEquals($result['curl_error_no'], '');
-      $object=json_decode($result['content'], true);
-      $this->assertNotNull($object, "Parsing of json result must no be null");
-      $this->assertEquals(1, $object['statut']);
+        print __METHOD__." Request GET url=".$url."\n";
+        $result=getURLContent($url, 'GET', '', 1, array());
+        //print __METHOD__." Result for existing user user: ".var_export($result, true)."\n";
+        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+        $this->assertEquals($result['curl_error_no'], '');
+        $object=json_decode($result['content'], true);
+        $this->assertNotNull($object, "Parsing of json result must no be null");
+        $this->assertEquals(1, $object['statut']);
     }
 
     /**
@@ -183,52 +183,52 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
     public function testRestCreateUser()
     {
 
-      // attemp to create without mandatory fields :
-      $url = $this->api_url.'/users?api_key='.$this->api_key;
-      $addheaders=array('Content-Type: application/json');
+        // attemp to create without mandatory fields :
+        $url = $this->api_url.'/users?api_key='.$this->api_key;
+        $addheaders=array('Content-Type: application/json');
 
-      $bodyobj = array(
-        "lastname"=>"testRestUser",
-        "password"=>"testRestPassword",
-        "email"=>"test@restuser.com"
-      );
-      $body = json_encode($bodyobj);
+        $bodyobj = array(
+            "lastname"=>"testRestUser",
+            "password"=>"testRestPassword",
+            "email"=>"test@restuser.com"
+        );
+        $body = json_encode($bodyobj);
 
-      print __METHOD__." Request POST url=".$url."\n";
-      $result=getURLContent($url, 'POST', $body, 1, $addheaders);
-      //print __METHOD__." Result for creating incomplete user".var_export($result, true)."\n";
-      print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-      $this->assertEquals($result['curl_error_no'], '');
-      $object=json_decode($result['content'], true);
-      $this->assertNotNull($object, "Parsing of json result must no be null");
-      $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+        print __METHOD__." Request POST url=".$url."\n";
+        $result=getURLContent($url, 'POST', $body, 1, $addheaders);
+        //print __METHOD__." Result for creating incomplete user".var_export($result, true)."\n";
+        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+        $this->assertEquals($result['curl_error_no'], '');
+        $object=json_decode($result['content'], true);
+        $this->assertNotNull($object, "Parsing of json result must no be null");
+        $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
 
-      // create regular user
-      unset($result);
-      $bodyobj = array(
-        "login"=>"testRestLogin".mt_rand(),
-        "lastname"=>"testRestUser",
-        "password"=>"testRestPassword",
-        "email"=>"test@restuser.com"
-      );
-      $body = json_encode($bodyobj);
-      print __METHOD__." Request POST url=".$url."\n";
-      $result=getURLContent($url, 'POST', $body, 1, $addheaders);
-      print __METHOD__." Result code for creating user ".var_export($result, true)."\n";
-      print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-      $this->assertEquals($result['curl_error_no'], '');
-      $resid=json_decode($result['content'], true);
-      $this->assertNotNull($resid, "Parsing of json result must no be null");
-      $this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
+        // create regular user
+        unset($result);
+        $bodyobj = array(
+            "login"=>"testRestLogin".mt_rand(),
+            "lastname"=>"testRestUser",
+            "password"=>"testRestPassword",
+            "email"=>"test@restuser.com"
+        );
+        $body = json_encode($bodyobj);
+        print __METHOD__." Request POST url=".$url."\n";
+        $result=getURLContent($url, 'POST', $body, 1, $addheaders);
+        print __METHOD__." Result code for creating user ".var_export($result, true)."\n";
+        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+        $this->assertEquals($result['curl_error_no'], '');
+        $resid=json_decode($result['content'], true);
+        $this->assertNotNull($resid, "Parsing of json result must no be null");
+        $this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
 
-      // attempt to create duplicated user
-      print __METHOD__." Request POST url=".$url."\n";
-      $result=getURLContent($url, 'POST', $body, 1, $addheaders);
-      //print __METHOD__." Result for creating duplicate user".var_export($result, true)."\n";
-      print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-      $this->assertEquals($result['curl_error_no'], '');
-      $object=json_decode($result['content'], true);
-      $this->assertNotNull($object, "Parsing of json result must no be null");
-      $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+        // attempt to create duplicated user
+        print __METHOD__." Request POST url=".$url."\n";
+        $result=getURLContent($url, 'POST', $body, 1, $addheaders);
+        //print __METHOD__." Result for creating duplicate user".var_export($result, true)."\n";
+        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+        $this->assertEquals($result['curl_error_no'], '');
+        $object=json_decode($result['content'], true);
+        $this->assertNotNull($object, "Parsing of json result must no be null");
+        $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
     }
 }

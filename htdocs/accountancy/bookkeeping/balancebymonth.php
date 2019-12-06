@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -26,11 +26,11 @@
  */
 require '../../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills","compta","accountancy","other"));
+$langs->loadLangs(array("bills", "compta", "accountancy", "other"));
 
 // Filter
 $year = GETPOST("year", 'int');
@@ -49,17 +49,17 @@ if ($year == 0) {
 
 llxHeader('', $langs->trans("Bookkeeping"));
 
-$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
+$textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';
 
-print load_fiche_titre($langs->trans("AccountBalanceByMonth") . ' ' . $textprevyear . ' ' . $langs->trans("Year") . ' ' . $year_start . ' ' . $textnextyear);
+print load_fiche_titre($langs->trans("AccountBalanceByMonth").' '.$textprevyear.' '.$langs->trans("Year").' '.$year_start.' '.$textnextyear);
 
-$sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
-$sql .= " , " . MAIN_DB_PREFIX . "facture as f";
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet as fd";
+$sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE fd.fk_code_ventilation = 0";
 $sql .= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 
-dol_syslog('accountancy/bookkeeping/balancebymonth.php:: $sql=' . $sql);
+dol_syslog('accountancy/bookkeeping/balancebymonth.php:: $sql='.$sql);
 $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
@@ -70,12 +70,12 @@ if ($result) {
 
 $y = $year_current;
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width=150>' . $langs->trans("Label") . '</td>';
-for($i = 1; $i <= 12; $i++)
+print '<td width=150>'.$langs->trans("Label").'</td>';
+for ($i = 1; $i <= 12; $i++)
 {
-	print '<td class="right">' . $langs->trans("MonthShort".sprintf("%02s", $i)) . '</td>';
+	print '<td class="right">'.$langs->trans("MonthShort".sprintf("%02s", $i)).'</td>';
 }
 print '<td class="center"><strong>'.$langs->trans("Total").'</strong></td>';
 print '</tr>';
@@ -94,9 +94,9 @@ $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=10,bk.montant,0)),2) AS 'Octobre',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=11,bk.montant,0)),2) AS 'Novembre',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=12,bk.montant,0)),2) AS 'Decembre',";
 $sql .= "  ROUND(SUM(bk.montant),2) as 'Total'";
-$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-$sql .= " WHERE bk.doc_date >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= "  AND bk.doc_date <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
+$sql .= " WHERE bk.doc_date >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+$sql .= "  AND bk.doc_date <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 $sql .= " GROUP BY bk.numero_compte";
 
 $resql = $db->query($sql);
@@ -104,27 +104,26 @@ if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
 
-	while ( $i < $num ) {
-
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[1]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[2]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[3]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[4]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[5]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[6]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[7]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[8]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[9]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[10]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[11]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[12]) . '</td>';
-		print '<td class="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
+		print '<tr class="oddeven"><td width="14%">'.length_accountg($row[0]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[1]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[2]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[3]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[4]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[5]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[6]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[7]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[8]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[9]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[10]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[11]).'</td>';
+		print '<td class="right" width="6.5%">'.price($row[12]).'</td>';
+		print '<td class="right" width="8%"><strong>'.price($row[13]).'</strong></td>';
 		print '</tr>';
 
-		$i ++;
+		$i++;
 	}
 	$db->free($resql);
 } else {

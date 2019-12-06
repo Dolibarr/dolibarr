@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -52,7 +52,7 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Get properties of an order object
+     * Get properties of an order object by id
      *
      * Return an array with order informations
      *
@@ -64,26 +64,79 @@ class Orders extends DolibarrApi
      */
     public function get($id, $contact_list = 1)
     {
-		if(! DolibarrApiAccess::$user->rights->commande->lire) {
-			throw new RestException(401);
-		}
+        return $this->_fetch($id, '', '', '', $contact_list);
+    }
 
-        $result = $this->commande->fetch($id);
+    /**
+     * Get properties of an order object by ref
+     *
+     * Return an array with order informations
+     *
+     * @param       string		$ref			Ref of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @url GET    ref/{ref}
+     *
+     * @throws 	RestException
+     */
+    public function getByRef($ref, $contact_list = 1)
+    {
+        return $this->_fetch('', $ref, '', '', $contact_list);
+    }
+
+    /**
+     * Get properties of an order object by ref_ext
+     *
+     * Return an array with order informations
+     *
+     * @param       string		$ref_ext			External reference of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @url GET    ref_ext/{ref_ext}
+     *
+     * @throws 	RestException
+     */
+    public function getByRefExt($ref_ext, $contact_list = 1)
+    {
+        return $this->_fetch('', '', $ref_ext, '', $contact_list);
+    }
+
+    /**
+     * Get properties of an order object
+     *
+     * Return an array with order informations
+     *
+     * @param       int         $id            ID of order
+	 * @param		string		$ref			Ref of object
+	 * @param		string		$ref_ext		External reference of object
+	 * @param		string		$ref_int		Internal reference of other objec
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @throws 	RestException
+     */
+    private function _fetch($id, $ref = '', $ref_ext = '', $ref_int = '', $contact_list = 1)
+    {
+        if(! DolibarrApiAccess::$user->rights->commande->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->commande->fetch($id, $ref, $ref_ext, $ref_int);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		// Add external contacts ids
-		$this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', $contact_list);
-		$this->commande->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->commande);
-	}
-
-
+        // Add external contacts ids
+        $this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', $contact_list);
+        $this->commande->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->commande);
+    }
 
     /**
      * List orders
@@ -94,7 +147,7 @@ class Orders extends DolibarrApi
      * @param string	       $sortorder	        Sort order
      * @param int		       $limit		        Limit for list
      * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of order objects
      *
@@ -107,7 +160,7 @@ class Orders extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+        $socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -312,7 +365,7 @@ class Orders extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array|bool
      */
     public function putLine($id, $lineid, $request_data = null)
     {
@@ -437,7 +490,7 @@ class Orders extends DolibarrApi
         return $this->commande;
     }
 
-   /**
+    /**
 	 * Delete a contact type of given order
 	 *
 	 * @param int    $id             Id of order to update

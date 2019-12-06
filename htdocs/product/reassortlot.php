@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 $langs->loadLangs(array('products', 'stocks', 'productbatch'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 
@@ -233,7 +233,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'products', 0, '', '', $limit);
 
 
 	if (! empty($catid))
@@ -271,7 +271,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
@@ -299,7 +299,7 @@ if ($resql)
     print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	//Line for column titles
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);

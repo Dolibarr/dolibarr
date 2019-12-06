@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -217,7 +217,6 @@ if (empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_ECM_DISABLE
 	$oldvallevel=0;
 	foreach($sqltree as $key => $val)
 	{
-
 		$ecmdirstatic->id=$val['id'];
 		$ecmdirstatic->ref=$val['label'];
 

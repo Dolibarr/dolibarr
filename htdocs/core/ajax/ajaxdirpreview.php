@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -104,7 +104,7 @@ if (empty($url))
 $langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 //print 'xxx'.$upload_dir;
 
@@ -155,8 +155,8 @@ $type='directory';
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! dol_is_dir($upload_dir))
 {
-//	dol_mkdir($upload_dir);
-/*    $langs->load("install");
+    //dol_mkdir($upload_dir);
+    /*$langs->load("install");
     dol_print_error(0,$langs->trans("ErrorDirDoesNotExists",$upload_dir));
     exit;*/
 }
@@ -289,25 +289,49 @@ if ($type == 'directory')
         }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-    	if ($module == 'medias')
-    	{
-    		$useinecm = 6;
-    		$modulepart='medias';
-        	$perm=($user->rights->website->write || $user->rights->emailing->creer);
-        	$title='none';
-    	}
-    	else
-    	{
-    		$useinecm = 5;
-    		$modulepart='ecm';
-        	$perm=$user->rights->ecm->upload;
-        	$title='';	// Use default
-    	}
+        if ($module == 'medias')
+        {
+            $useinecm = 6;
+            $modulepart='medias';
+            $perm=($user->rights->website->write || $user->rights->emailing->creer);
+            $title='none';
+        }
+        elseif($module == 'ecm') // DMS/ECM -> manual structure
+        {
+            if($user->rights->ecm->read)
+            {
+                // Buttons: Preview
+                $useinecm = 2;
+            }
 
-    	// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
-    	// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-    	//var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
+            if($user->rights->ecm->upload)
+            {
+                // Buttons: Preview + Delete
+                $useinecm = 4;
+            }
+
+            if($user->rights->ecm->setup)
+            {
+                // Buttons: Preview + Delete + Edit
+                $useinecm = 5;
+            }
+
+            $perm=$user->rights->ecm->upload;
+            $modulepart='ecm';
+            $title=''; // Use default
+        }
+        else
+        {
+            $useinecm = 5;
+            $modulepart='ecm';
+            $perm=$user->rights->ecm->upload;
+            $title='';  // Use default
+        }
+
+        // When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
+        // When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
+        //var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+        $formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
     }
 }
 

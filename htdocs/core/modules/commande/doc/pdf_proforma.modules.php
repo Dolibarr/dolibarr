@@ -18,14 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_proforma.modules.php
  *	\ingroup    commande
- *	\brief      Fichier de la classe permettant de generer les commandes au modele Proforma
+ *	\brief      File of Class to generate PDF orders with template Proforma
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/doc/pdf_einstein.modules.php';
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les commandes au modele Proforma
+ *	Class to generate PDF orders with template Proforma
  */
 class pdf_proforma extends pdf_einstein
 {

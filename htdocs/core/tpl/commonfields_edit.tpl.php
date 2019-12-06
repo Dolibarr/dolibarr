@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -22,12 +22,12 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
-if (! is_object($form)) $form=new Form($db);
+if (!is_object($form)) $form = new Form($db);
 
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_edit.tpl.php -->
@@ -55,8 +55,8 @@ foreach($object->fields as $key => $val)
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key, 'none'):$object->$key;
 	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
-	else print $object->showInputField($val, $key, $value, '', '', '', 0);
+	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0, $object->table_element);
+	else print $object->showInputField($val, $key, $value, '', '', '', 0, $object->table_element);
 	print '</td>';
 	print '</tr>';
 }

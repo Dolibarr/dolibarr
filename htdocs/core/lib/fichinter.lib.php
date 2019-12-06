@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -51,7 +51,7 @@ function fichinter_prepare_head($object)
 	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('InterventionContact');
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -66,23 +66,24 @@ function fichinter_prepare_head($object)
 	if ($conf->resource->enabled)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
- 		$nbResource = 0;
-		$objectres=new Dolresource($db);
-		if (is_array($objectres->available_resources))
-		{
-	 		foreach ($objectres->available_resources as $modresources => $resources)
-			{
-				$resources=(array) $resources;  // To be sure $resources is an array
-				foreach($resources as $resource_obj)
-				{
-					$linked_resources = $object->getElementResources('fichinter', $object->id, $resource_obj);
-				}
-			}
-		}
+		$objectres = new Dolresource($db);
+		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
+		$nbResource = (is_array($linked_resources)?count($linked_resources):0);
+		// if (is_array($objectres->available_resources))
+		// {
+	 	// 	foreach ($objectres->available_resources as $modresources => $resources)
+		// 	{
+		// 		$resources=(array) $resources;  // To be sure $resources is an array
+		// 		foreach($resources as $resource_obj)
+		// 		{
+		// 			$linked_resources = $object->getElementResources('fichinter', $object->id, $resource_obj);
+		// 		}
+		// 	}
+		// }
 
    		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
-		if ($nbResource > 0) $head[$h][1].= ' <span class="badge">'.$nbResource.'</span>';
+		if ($nbResource > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbResource.'</span>';
 		$head[$h][2] = 'resource';
 		$h++;
 	}
@@ -94,7 +95,7 @@ function fichinter_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
     	$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
     	$head[$h][2] = 'note';
     	$h++;
     }
@@ -106,7 +107,7 @@ function fichinter_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 

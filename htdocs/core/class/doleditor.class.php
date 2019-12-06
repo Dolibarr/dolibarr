@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -157,7 +157,7 @@ class DolEditor
     	$fullpage=false;
     	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
     	{
-    	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
+            $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
     	}
 
     	$found=0;
@@ -192,6 +192,7 @@ class DolEditor
             	$out.= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
+							/* console.log("Run ckeditor"); */
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
                             /* should be editor=CKEDITOR.replace but what if serveral editors ? */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
@@ -225,6 +226,7 @@ class DolEditor
                                                         });
                                                 }
                                             }';
+
             	if ($this->uselocalbrowser)
             	{
                     $out.= ','."\n";
@@ -265,7 +267,7 @@ class DolEditor
 			if ($titlecontent)
 			{
 	            $out.= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
-	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.'">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
 	            $out.= '</div>';
 	            $out.= '<script type="text/javascript" language="javascript">'."\n";
 	            $out.= 'jQuery(document).ready(function() {'."\n";

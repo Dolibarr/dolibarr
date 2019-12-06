@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,10 +49,9 @@ $msg_id = GETPOST('msg_id', 'int');
 $action = GETPOST('action', 'alpha');
 
 $object = new Ticket($db);
-
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
  * Actions
@@ -78,7 +77,6 @@ if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
 
 // Remove file
 if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
-
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory
@@ -150,7 +148,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             $usertoassign = $contacts[0]->id;
         }
 
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        $ret = $extrafields->setOptionalsFromPost(null, $object);
 
         // Generate new ref
         $object->ref = $object->getDefaultRef();
@@ -349,7 +347,7 @@ llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss
 print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action != "infos_success") {
-    $formticket->withfromsocid = isset($socid) ? $socid : $user->societe_id;
+    $formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
     $formticket->withtitletopic = 1;
     $formticket->withcompany = 0;
     $formticket->withusercreate = 1;
@@ -359,7 +357,7 @@ if ($action != "infos_success") {
     $formticket->withfile = 2;
     $formticket->action = 'create_ticket';
 
-    $formticket->param = array('returnurl' => $_SERVER['PHP_SELF']);
+    $formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
     if (empty($defaultref)) {
         $defaultref = '';

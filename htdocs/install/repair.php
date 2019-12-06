@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1297,7 +1297,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 	{
 		$listofmods.=($listofmods?',':'')."'".$val."'";
 	}
-	$sql = 'SELECT id, libelle, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
+	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1310,7 +1310,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 				$obj=$db->fetch_object($resql);
 				if ($obj->id > 0)
 				{
-					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->libelle.'" of module "'.$obj->module.'" to delete';
+					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed')
 					{
 						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;

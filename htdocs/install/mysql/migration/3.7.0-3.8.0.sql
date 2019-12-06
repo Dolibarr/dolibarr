@@ -284,7 +284,7 @@ CREATE TABLE llx_expensereport_det
    total_ttc double(24,8) DEFAULT 0 NOT NULL,
    date date NOT NULL,
    info_bits					integer DEFAULT 0,				-- TVA NPR ou non
-   special_code					integer DEFAULT 0,			    -- code pour les lignes speciales
+   special_code					integer DEFAULT 0,			    -- code for special lines
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14)
 ) ENGINE=innodb;

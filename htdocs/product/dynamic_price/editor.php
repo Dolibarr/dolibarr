@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -177,7 +177,7 @@ print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update')
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Price expression selector
 print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';

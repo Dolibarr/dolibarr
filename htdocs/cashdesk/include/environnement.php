@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // This file initializes more variables to already initialized variables with main.inc.php
@@ -44,7 +44,7 @@ $conf_fkaccount_cb = (! empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))?$_SESSIO
 
 
 // View parameters
-$conf_taille_listes = (empty($conf->global->PRODUIT_LIMIT_SIZE)?1000:$conf->global->PRODUIT_LIMIT_SIZE);	// Nombre max de lignes a afficher dans les listes
+$conf_taille_listes = (empty($conf->global->PRODUIT_LIMIT_SIZE)?1000:$conf->global->PRODUIT_LIMIT_SIZE);	// Number max of lines to show in lists
 $conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
 
 // Add hidden option to force decrease of stock whatever is user setup

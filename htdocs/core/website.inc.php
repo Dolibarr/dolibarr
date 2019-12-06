@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -12,8 +12,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -51,6 +51,14 @@ if (! is_object($websitepage))
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
+
+	if (! defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
+	{
+		$weblangs->load("website");
+		http_response_code(404);
+		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage").'</center>';
+		exit;
+	}
 }
 
 // A lang was forced, so we change weblangs init

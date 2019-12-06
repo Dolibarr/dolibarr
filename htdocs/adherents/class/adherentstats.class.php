@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,6 +37,7 @@ class AdherentStats extends Stats
      */
     public $table_element;
 
+    public $memberid;
     public $socid;
     public $userid;
 
@@ -69,7 +70,7 @@ class AdherentStats extends Stats
 
 		$this->where.= " m.statut != 0";
 		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent').")";
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		//if (!$user->rights->societe->client->voir && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->memberid)
 		{
 			$this->where .= " AND m.rowid = ".$this->memberid;
@@ -82,7 +83,7 @@ class AdherentStats extends Stats
 	 * Return the number of proposition by month for a given year
 	 *
      * @param   int		$year       Year
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      * @return	array				Array of nb each month
 	 */
 	public function getNbByMonth($year, $format = 0)
@@ -91,7 +92,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
 		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
@@ -111,7 +112,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
 		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm', 'DESC');
@@ -123,7 +124,7 @@ class AdherentStats extends Stats
 	 * Return the number of subscriptions by month for a given year
 	 *
      * @param   int		$year       Year
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      * @return	array				Array of amount each month
 	 */
 	public function getAmountByMonth($year, $format = 0)
@@ -132,7 +133,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";

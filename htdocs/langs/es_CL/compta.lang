@@ -54,7 +54,6 @@ LT2CustomerES=Ventas de IRPF
 LT2SupplierES=Compras de IRPF
 LT2CustomerIN=Ventas de SGST
 VATCollected=IVA recaudado
-ToPay=Pagar
 SpecialExpensesArea=Área para todos los pagos especiales
 SocialContribution=Impuesto social o fiscal
 LabelContrib=Contribución de etiqueta

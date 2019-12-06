@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -325,7 +325,7 @@ if (($action=="create") || ($action=="edit"))
 	if ($action=="edit") dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 	else dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
@@ -567,7 +567,7 @@ else
 	// box add_jobs_box
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CronLabel')."</td>";
@@ -638,7 +638,7 @@ else
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CronEvery')."</td>";
@@ -697,7 +697,7 @@ else
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";

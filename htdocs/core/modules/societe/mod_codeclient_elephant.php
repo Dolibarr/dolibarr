@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -35,32 +35,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codeclient_elephant extends ModeleThirdPartyCode
 {
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Elephant';
-
-	/**
 	 * @var string model name
 	 */
-	public $name='Elephant';
+	public $name = 'Elephant';
 
-	public $code_modifiable;				// Code modifiable
+	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalide
 
-	public $code_modifiable_null;			// Code modifiables si il est null
+	public $code_modifiable_null; // Code modifiables si il est null
 
-	public $code_null;						// Code facultatif
+	public $code_null; // Code facultatif
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $searchcode; // String de recherche
 
@@ -96,37 +92,37 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		$langs->load("companies");
 
-		$disabled = ((! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled' : '');
+		$disabled = ((!empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled' : '');
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="COMPANY_ELEPHANT_MASK_CUSTOMER">';
-		$texte.= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
+		$texte .= '<input type="hidden" name="param1" value="COMPANY_ELEPHANT_MASK_CUSTOMER">';
+		$texte .= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4b");
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4b");
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix customers
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
-		$texte.= '</tr>';
+		$texte .= '</tr>';
 
 		// Parametrage du prefix suppliers
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte.= '</tr>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
 	}
@@ -145,47 +141,47 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if ($type == 0 || $type == -1)
 		{
 			$examplecust = $this->getNextValue($objsoc, 0);
-			if (! $examplecust)
+			if (!$examplecust)
 			{
 				$examplecust = $langs->trans('NotConfigured');
 			}
-			if($examplecust=="ErrorBadMask")
+			if ($examplecust == "ErrorBadMask")
 			{
 				$langs->load("errors");
-				$examplecust=$langs->trans($examplecust);
+				$examplecust = $langs->trans($examplecust);
 			}
-			if($examplecust=="ErrorCantUseRazIfNoYearInMask")
+			if ($examplecust == "ErrorCantUseRazIfNoYearInMask")
 			{
 				$langs->load("errors");
-				$examplecust=$langs->trans($examplecust);
+				$examplecust = $langs->trans($examplecust);
 			}
-			if($examplecust=="ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
+			if ($examplecust == "ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
 			{
 				$langs->load("errors");
-				$examplecust=$langs->trans($examplecust);
+				$examplecust = $langs->trans($examplecust);
 			}
 		}
 		if ($type == 1 || $type == -1)
 		{
 			$examplesup = $this->getNextValue($objsoc, 1);
-			if (! $examplesup)
+			if (!$examplesup)
 			{
 				$examplesup = $langs->trans('NotConfigured');
 			}
-			if($examplesup=="ErrorBadMask")
+			if ($examplesup == "ErrorBadMask")
 			{
 				$langs->load("errors");
-				$examplesup=$langs->trans($examplesup);
+				$examplesup = $langs->trans($examplesup);
 			}
-			if($examplesup=="ErrorCantUseRazIfNoYearInMask")
+			if ($examplesup == "ErrorCantUseRazIfNoYearInMask")
 			{
 				$langs->load("errors");
-				$examplesup=$langs->trans($examplesup);
+				$examplesup = $langs->trans($examplesup);
 			}
-			if($examplesup=="ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
+			if ($examplesup == "ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
 			{
 				$langs->load("errors");
-				$examplesup=$langs->trans($examplesup);
+				$examplesup = $langs->trans($examplesup);
 			}
 		}
 
@@ -203,21 +199,21 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// Get Mask value
 		$mask = '';
-		if ($type==0) $mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-		if ($type==1) $mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
-		if (! $mask)
+		if ($type == 0) $mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		if ($type == 1) $mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return '';
 		}
 
-		$field='';$where='';
+		$field = ''; $where = '';
 		if ($type == 0)
 		{
 			$field = 'code_client';
@@ -230,9 +226,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		}
 		else return -1;
 
-		$now=dol_now();
+		$now = dol_now();
 
-		$numFinal=get_next_value($db, $mask, 'societe', $field, $where, '', $now);
+		$numFinal = get_next_value($db, $mask, 'societe', $field, $where, '', $now);
 
 		return  $numFinal;
 	}
@@ -277,32 +273,32 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
 		global $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$result=0;
+		$result = 0;
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
-			$result=0;
+			$result = 0;
 		}
-		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
-			$result=-2;
+			$result = -2;
 		}
 		else
 		{
 			// Get Mask value
 			$mask = '';
-			if ($type==0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER)?'':$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-			if ($type==1) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER)?'':$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
-			if (! $mask)
+			if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+			if ($type == 1) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+			if (!$mask)
 			{
-				$this->error='NotConfigured';
+				$this->error = 'NotConfigured';
 				return -5;
 			}
 
-			$result=check_value($mask, $code);
+			$result = check_value($mask, $code);
 			if (is_string($result))
 			{
 				$this->error = $result;
@@ -329,11 +325,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql.= " WHERE code_fournisseur = '".$code."'";
-		else $sql.= " WHERE code_client = '".$code."'";
-		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
+		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$code."'";
+		else $sql .= " WHERE code_client = '".$code."'";
+		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			if ($db->num_rows($resql) == 0)

@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -40,6 +40,7 @@ function image_format_supported($file)
     $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg';   // See also into product.class.php
 
     // Case filename is not a format image
+    $reg = array();
     if (! preg_match('/('.$regeximgext.')$/i', $file, $reg)) return -1;
 
     // Case filename is a format image but not supported by this PHP
@@ -51,6 +52,7 @@ function image_format_supported($file)
     if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
     if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
     if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
+    if (strtolower($reg[1]) == '.svg')  $imgfonction = 'imagecreatefromsvg';	// Never available
     if ($imgfonction)
     {
         if (! function_exists($imgfonction))
@@ -320,11 +322,9 @@ function dolRotateImage($file_path)
  */
 function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 {
-	if (function_exists('exif_read_data') ) {
-		$exif = @exif_read_data($fileSource); // Of course, suppressing warnings is not a good idea, but there doesn't seem to be a way of avoiding this warning: there's no function to test the validity of the EXIF data without trying to read it and getting the warning.
-
-		if($exif && isset($exif['Orientation'])) {
-
+	if (function_exists('exif_read_data')) {
+		$exif = exif_read_data($fileSource);
+		if ($exif && isset($exif['Orientation'])) {
 			$infoImg = getimagesize($fileSource); // Get image infos
 
 			$orientation = $exif['Orientation'];
@@ -371,7 +371,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 							$image = imagegif($img, $fileDest);
 							break;
 						case IMAGETYPE_JPEG:    // 2
-							return imagejpeg($img, $fileDest, $quality);
+							$image = imagejpeg($img, $fileDest, $quality);
 							break;
 						case IMAGETYPE_PNG:	    // 3
 							$image = imagepng($img, $fileDest, $quality);
@@ -437,12 +437,12 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
         dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
 	    return 'ErrorBadImageFormat';
 	}
-	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
+	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxWidth';
 	}
-	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
+	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxHeight';
@@ -454,12 +454,13 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
-	$exif = @exif_read_data($filetoread); // Of course, suppressing warnings is not a good idea, but there doesn't seem to be a way of avoiding this warning: there's no function to test the validity of the EXIF data without trying to read it and getting the warning.
-	$ort= false;
-	if($exif && !empty($exif['Orientation'])){
+	$ort = false;
+	if (function_exists('exif_read_data')) {
+	$exif = exif_read_data($filetoread);
+		if ($exif && !empty($exif['Orientation'])) {
 		$ort = $exif['Orientation'];
 	}
-
+	}
 
 	if ($maxWidth  == -1) $maxWidth=$infoImg[0];	// If size is -1, we keep unchanged
 	if ($maxHeight == -1) $maxHeight=$infoImg[1];	// If size is -1, we keep unchanged
@@ -529,14 +530,15 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImg = '.bmp';
 			break;
 	}
+
     if (! is_resource($img))
     {
         dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
         return 0;
     }
-	$exifAngle = false;
-    if($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)){
 
+	$exifAngle = false;
+    if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
 		switch($ort)
 		{
 			case 3: // 180 rotate left
@@ -557,7 +559,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 	}
 
-    if($exifAngle)
+    if ($exifAngle)
     {
 		$rotated = false;
 
@@ -580,8 +582,6 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$imgHeight = $trueImgHeight;
 		}
 	}
-
-
 
 	// Initialisation des dimensions de la vignette si elles sont superieures a l'original
 	if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
