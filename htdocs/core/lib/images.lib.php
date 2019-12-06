@@ -323,7 +323,13 @@ function dolRotateImage($file_path)
 function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 {
 	if (function_exists('exif_read_data')) {
-		$exif = exif_read_data($fileSource);
+		try {
+			$exif = exif_read_data($fileSource);
+		}
+		catch (Exception $e) {
+			$exif = false;
+		}
+
 		if ($exif && isset($exif['Orientation'])) {
 			$infoImg = getimagesize($fileSource); // Get image infos
 
@@ -455,11 +461,18 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
 	$ort = false;
-	if (function_exists('exif_read_data')) {
-	$exif = exif_read_data($filetoread);
+	if (function_exists('exif_read_data'))
+	{
+		try {
+			$exif = exif_read_data($filetoread);
+		}
+		catch (Exception $e) {
+			$exif = false;
+		}
+
 		if ($exif && !empty($exif['Orientation'])) {
-		$ort = $exif['Orientation'];
-	}
+			$ort = $exif['Orientation'];
+		}
 	}
 
 	if ($maxWidth  == -1) $maxWidth=$infoImg[0];	// If size is -1, we keep unchanged
