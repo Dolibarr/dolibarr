@@ -1800,10 +1800,10 @@ class User extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Mise a jour en base de la date de derniere connexion d'un utilisateur
-	 *	  Fonction appelee lors d'une nouvelle connexion
+	 *  Mise a jour en base de la date de derniere connexion d'un utilisateur
+	 *  Fonction appelee lors d'une nouvelle connexion
 	 *
-	 *    @return     <0 si echec, >=0 si ok
+	 *  @return int     <0 si echec, >=0 si ok
 	 */
 	public function update_last_login_date()
 	{
@@ -2267,7 +2267,6 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error = $interface->error;
 				dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
