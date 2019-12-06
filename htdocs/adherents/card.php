@@ -1763,7 +1763,7 @@ else
 
 
 		/*
-		 * Hotbar
+		 * Action bar
 		 */
 
 		print '<div class="tabsAction">';
