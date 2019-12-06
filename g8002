@@ -1,0 +1,10 @@
+#!/bin/bash -v
+set -e
+source numcommit
+git push bafbes abb800$numcommit
+git checkout develop
+
+num=$(expr $numcommit + 1 )
+echo 'numcommit='$num >numcommit
+
+#end  

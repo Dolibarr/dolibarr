@@ -1,0 +1,15 @@
+#!/bin/bash -v
+set -e
+git checkout develop
+#pull et màj remotes
+#git remote update
+git pull origin develop
+git fetch d901 master901
+
+#start loop 
+
+source numcommit
+echo 'Commit number =' $numcommit
+
+git checkout -b abb901$numcommit
+git cherry-pick d901/master901
