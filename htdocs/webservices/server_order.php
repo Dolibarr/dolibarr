@@ -444,10 +444,10 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande ?dol_print_date($order->date_commande, 'dayrfc') : '',
-					'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-					'date_validation' => $invoice->date_validation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-					'date_modification' => $invoice->datem ?dol_print_date($invoice->datem, 'dayhourrfc') : '',
+					'date' => $order->date ?dol_print_date($order->date, 'dayrfc') : '',
+					'date_creation' => $order->date_creation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_validation' => $order->date_validation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_modification' => $order->datem ?dol_print_date($order->datem, 'dayhourrfc') : '',
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -476,13 +476,15 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 			else
 			{
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+                $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
 		else
 		{
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+            $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -552,7 +554,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 				if( $socid && ( $socid != $order->socid) )
 				{
 					$error++;
-					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
+					$errorcode='PERMISSION_DENIED';
+                    $errorlabel=$order->socid.' User does not have permission for this request';
 				}
 
 				if(!$error)
