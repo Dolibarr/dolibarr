@@ -25,7 +25,7 @@ define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
 
-header('X-XSS-Protection:0');
+//header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

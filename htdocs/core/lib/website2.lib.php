@@ -123,14 +123,17 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
 	// Add translation reference (main language)
-	$translationof = $objectpage->fk_page;
-	if ($translationof) {
-		$tmppage = new WebsitePage($db);
-		$tmppage->fetch($translationof);
-		if ($tmppage->id > 0) {
-			$tmpshortlangcode = '';
-			if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
-			$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmppage->pageurl.'.php').'" />'."\n";
+	if ($object->isMultiLang()) {
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.($object->fk_default_home == $objectpage->id ? '/' : '/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$translationof = $objectpage->fk_page;
+		if ($translationof) {
+			$tmppage = new WebsitePage($db);
+			$tmppage->fetch($translationof);
+			if ($tmppage->id > 0) {
+				$tmpshortlangcode = '';
+				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+				$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmppage->pageurl.'.php').'" />'."\n";
+			}
 		}
 	}
 	// Add canonical reference

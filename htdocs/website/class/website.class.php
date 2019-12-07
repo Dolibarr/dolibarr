@@ -1162,6 +1162,18 @@ class Website extends CommonObject
 	}
 
 	/**
+	 * Return if web site is a multilanguage web site. Return false if there is only 0 or 1 language.
+	 *
+	 * @return boolean			True if web site is a multilanguage web site
+	 */
+	public function isMultiLang()
+	{
+		// TODO Can edit list of languages of web site. Return false if there is only 0 or 1 language.
+
+		return true;
+	}
+
+	/**
 	 * Component to select language inside a container (Full CSS Only)
 	 *
 	 * @param	array|string	$languagecodes			'auto' to show all languages available for page, or language codes array like array('en_US','fr_FR','de_DE','es_ES')
