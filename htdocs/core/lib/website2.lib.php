@@ -124,7 +124,9 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
+		// Add myself
 		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.($object->fk_default_home == $objectpage->id ? '/' : '/'.$objectpage->pageurl.'.php').'" />'."\n";
+		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
 		if ($translationof) {
 			$tmppage = new WebsitePage($db);
@@ -132,9 +134,30 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 			if ($tmppage->id > 0) {
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
-				$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmppage->pageurl.'.php').'" />'."\n";
+				if ($tmpshortlangcode != $shortlangcode) {
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmppage->pageurl.'.php').'" />'."\n";
+				}
 			}
 		}
+		// Add "has translation pages"
+		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$objectpage->id.($translationof ? ", ".$translationof : "").")";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $db->num_rows($resql);
+			if ($num_rows > 0)
+			{
+				while ($obj = $db->fetch_object($resql))
+				{
+					$tmpshortlangcode = '';
+					if ($obj->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
+					if ($tmpshortlangcode != $shortlangcode) {
+						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : '/'.$obj->pageurl.'.php').'" />'."\n";
+					}
+				}
+			}
+		}
+		else dol_print_error($db);
 	}
 	// Add canonical reference
 	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
