@@ -86,7 +86,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  * @param	WebsitePage	$objectpage			Object websitepage
  * @return	boolean							True if OK
  */
-function dolSavePageContent($filetpl, $object, $objectpage)
+function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 {
 	global $conf;
 
@@ -122,7 +122,19 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+	// Add translation reference (main language)
+	$translationof = $objectpage->fk_page;
+	if ($translationof) {
+		$tmppage = new WebsitePage($db);
+		$tmppage->fetch($translationof);
+		if ($tmppage->id > 0) {
+			$tplcontent .= '<link rel="alternate" hreflang="'.$tmppage->lang.'" href="'.($objectpage->pageurl.'.php').'" />'."\n";
+		}
+	}
+	// Add canonical reference
 	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	// Add manifest.json on homepage
+	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent .= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";

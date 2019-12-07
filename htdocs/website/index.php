@@ -1059,6 +1059,7 @@ if ($action == 'updatecss')
     		if (!$error)
     		{
     		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
+    		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
 
     		    $result = $object->update($user);
         		if ($result < 0)
@@ -2738,10 +2739,9 @@ if ($action == 'editcss')
 	$htmlhelp .= dol_htmlentitiesbr($manifestjsoncontentdefault);
 	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
-
+	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
 	$doleditor = new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
-
 	print '</td></tr>';
 
 	// README.md
