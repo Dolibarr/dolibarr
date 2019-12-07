@@ -2445,7 +2445,7 @@ if (!GETPOST('hide_websitemenu'))
 		{
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 		}
 
 		print '</span>'; // end websitetools
@@ -3343,6 +3343,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<th>'.$langs->trans("Type").'</th>';
 			print '<th>'.$langs->trans("Link").'</th>';
 			print '<th>'.$langs->trans("Description").'</th>';
+			print '<th></th>';
 			print '</tr>';
 
 			foreach ($listofpages['list'] as $answerrecord)
@@ -3357,7 +3358,20 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
 					print '</td>';
-					print '<td class="tdoverflow100">'.$answerrecord->description;
+					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
+					print '<td>';
+					$param = '?action=replacesiteconfirm';
+					$param .= '&optioncontent='.GETPOST('optioncontent');
+					$param .= '&optionmeta='.GETPOST('optionmeta');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
+					$param .= '&searchstring='.$searchkey;
+					$disabled = '';
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					if (empty($user->rights->website->write)) {
+						$disabled = ' disabled';
+						$urltoedithtmlsource = '';
+					}
+					print '<a class="button'.$disabled.'" href="'.$url.'">'.$langs->trans("EditHTMLSource").'</a>';
 					print '</td>';
 					print '</tr>';
 				}
@@ -3387,6 +3401,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '</td>';
 					print '<td class="tdoverflow100">';
 					print '</td>';
+					print '<td></td>';
 					print '</tr>';
 				}
 			}
