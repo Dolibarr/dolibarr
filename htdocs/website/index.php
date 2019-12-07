@@ -3371,7 +3371,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="button'.$disabled.'" href="'.$url.'">'.$langs->trans("EditHTMLSource").'</a>';
+					print '<a class="button'.$disabled.'" href="'.$urltoedithtmlsource.'">'.$langs->trans("EditHTMLSource").'</a>';
 					print '</td>';
 					print '</tr>';
 				}
