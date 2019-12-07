@@ -128,7 +128,9 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		$tmppage = new WebsitePage($db);
 		$tmppage->fetch($translationof);
 		if ($tmppage->id > 0) {
-			$tplcontent .= '<link rel="alternate" hreflang="'.$tmppage->lang.'" href="'.($objectpage->pageurl.'.php').'" />'."\n";
+			$tmpshortlangcode = '';
+			if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+			$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($tmppage->pageurl.'.php').'" />'."\n";
 		}
 	}
 	// Add canonical reference
