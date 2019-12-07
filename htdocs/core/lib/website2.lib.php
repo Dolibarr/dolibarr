@@ -130,7 +130,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		if ($tmppage->id > 0) {
 			$tmpshortlangcode = '';
 			if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
-			$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($tmppage->pageurl.'.php').'" />'."\n";
+			$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : $tmppage->pageurl.'.php').'" />'."\n";
 		}
 	}
 	// Add canonical reference
