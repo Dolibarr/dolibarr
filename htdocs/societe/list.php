@@ -1030,7 +1030,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';
@@ -1220,14 +1220,14 @@ while ($i < min($num, $limit))
 		}
 		if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			if ($s) $s .= " / ";
+			if ($s) $s .= ", ";
 			$companystatic->name = $langs->trans("Prospect");
 	  		$companystatic->name_alias = '';
 			$s .= $companystatic->getNomUrl(0, 'prospect', 0, 1);
 		}
 		if ((!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled)) && $obj->fournisseur)
 		{
-			if ($s) $s .= " / ";
+			if ($s) $s .= ", ";
 			$companystatic->name = $langs->trans("Supplier");
 	  		$companystatic->name_alias = '';
 			$s .= $companystatic->getNomUrl(0, 'supplier', 0, 1);

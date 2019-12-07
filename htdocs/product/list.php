@@ -488,7 +488,7 @@ if ($resql)
 	{
 		$oldtype = $type;
 		$params = array();
-		if ($type === "") $params['forcenohideoftext']=1;
+		if ($type === "") $params['forcenohideoftext'] = 1;
 		if ($type === "") {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', 1, $params);
 			$type = Product::TYPE_SERVICE;
@@ -853,7 +853,7 @@ if ($resql)
 
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = $obj->ref_supplier;		// deprecated
+		$product_static->ref_fourn = $obj->ref_supplier; // deprecated
 		$product_static->ref_supplier = $obj->ref_supplier;
 		$product_static->label = $obj->label;
 		$product_static->type = $obj->fk_product_type;
@@ -886,7 +886,7 @@ if ($resql)
 			{
 				$option = 'nobatch';
 				if (empty($arrayfields['stock_virtual']['checked'])) $option .= ',novirtual';
-				$product_static->load_stock($option);             // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
+				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
 			}
 		}
 

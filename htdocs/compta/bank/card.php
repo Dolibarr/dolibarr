@@ -492,11 +492,11 @@ if ($action == 'create')
 				$content = $object->code_guichet;
 			} elseif ($val == 'BankAccountNumber') {
 				$name = 'number';
-				$sizecss =  'minwidth200';
+				$sizecss = 'minwidth200';
 				$content = $object->number;
 			} elseif ($val == 'BankAccountNumberKey') {
 				$name = 'cle_rib';
-				$sizecss =  'minwidth50';
+				$sizecss = 'minwidth50';
 				$content = $object->cle_rib;
 			}
 
@@ -923,7 +923,7 @@ else
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
 			if (is_array($cats))
 			{
-				foreach($cats as $cat) {
+				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
 			}

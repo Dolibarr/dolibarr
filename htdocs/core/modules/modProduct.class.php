@@ -594,7 +594,7 @@ class modProduct extends DolibarrModules
 			$this->import_fields_array[$r] = array(//field order as per structure of table llx_product_fournisseur_price, without optional fields
 			    'sp.fk_product'=>"ProductOrService*",
                 'sp.fk_soc' => "Supplier*",
-                'sp.ref_fourn' => 'SupplierRef',
+                'sp.ref_fourn' => 'SupplierRef*',
                 'sp.quantity' => "QtyMin*",
                 'sp.tva_tx' => 'VATRate',
                 'sp.default_vat_code' => 'VATCode',
