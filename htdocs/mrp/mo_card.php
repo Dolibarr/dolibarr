@@ -93,10 +93,13 @@ if (GETPOST('fk_bom', 'int'))
 {
 	$objectbom->fetch(GETPOST('fk_bom', 'int'));
 
-	$_POST['fk_product'] = $objectbom->fk_product;
-	$_POST['qty'] = $objectbom->qty;
-	$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
-	$_POST['note_private'] = $objectbom->note_private;
+	if ($action != 'add') {
+		// We force calling parameters if we are not in the submit of creation of MO
+		$_POST['fk_product'] = $objectbom->fk_product;
+		$_POST['qty'] = $objectbom->qty;
+		$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
+		$_POST['note_private'] = $objectbom->note_private;
+	}
 }
 
 // Security check - Protection if external user
@@ -279,7 +282,7 @@ if ($action == 'create')
 	print '</div>';
 
 	if (GETPOST('fk_bom', 'int') > 0) {
-		print load_fiche_titre($langs->trans("ToConsume"));
+		print load_fiche_titre($langs->trans("ToConsume").' ('.$langs->trans("ForAQuantityOf1").')');
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';

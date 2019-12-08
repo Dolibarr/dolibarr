@@ -53,3 +53,4 @@ CreateMO=Create MO
 ToConsume=A consommer
 Manufactured=Fabriqué
 TheProductXIsAlreadyTheProductToProduce=The product to add is already the product to produce.
+ForAQuantityOf1=For a quantity to produce of 1

@@ -44,6 +44,7 @@ if ($cancel)
 	$action = '';
 }
 
+
 // Action to add record
 if ($action == 'add' && !empty($permissiontoadd))
 {

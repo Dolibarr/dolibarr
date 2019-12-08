@@ -7317,7 +7317,7 @@ abstract class CommonObject
 		global $conf;
 
 		$queryarray = array();
-		foreach ($this->fields as $field=>$info)	// Loop on definition of fields
+		foreach ($this->fields as $field => $info)	// Loop on definition of fields
 		{
 			// Depending on field type ('datetime', ...)
 			if ($this->isDate($info))
@@ -7553,6 +7553,8 @@ abstract class CommonObject
 		        {
 		            $error++;
 		            $this->errors[] = $this->db->lasterror();
+		        } else {
+		        	$this->ref = '(PROV'.$this->id.')';
 		        }
 		    }
 		}
