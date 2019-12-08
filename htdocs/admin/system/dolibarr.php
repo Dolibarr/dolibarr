@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -459,7 +460,12 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
-		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
+		if (strpos(strtolower($obj->name), 'password') || strpos(strtolower($obj->name), 'token') || strpos(strtolower($obj->name), 'secret')) {
+			$value = preg_replace('/./i', '*', $obj->value);
+		} else {
+			$value = $obj->value;
+		}
+		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($value).'</td>'."\n";
 		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		print "</tr>\n";
 
