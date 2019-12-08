@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -567,7 +567,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr class="morphy"><td class="titlefield">'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
+    print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
