@@ -172,7 +172,7 @@ class Mo extends CommonObject
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables=array('mrp_production');
+	protected $childtables=array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.

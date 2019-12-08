@@ -621,7 +621,7 @@ abstract class CommonObject
 			$thirdpartyid = $object->fk_soc;
 		}
 
-		$out = '<!-- BEGIN part to show address block -->';
+		$out = '';
 
 		$outdone = 0;
 		$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
@@ -682,7 +682,7 @@ abstract class CommonObject
 			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
 		}
 
-		$out .= '<div style="clear: both;"></div>';
+		if ($out) $out .= '<div style="clear: both;"></div>';
 		$outdone = 0;
 		if (!empty($this->email))
 		{
@@ -695,32 +695,36 @@ abstract class CommonObject
 		    $out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
-		$out .= '<div style="clear: both;">';
+
 		if (!empty($conf->socialnetworks->enabled))
 		{
+			$outsocialnetwork = '';
+
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				foreach ($this->socialnetworks as $key => $value) {
-					$out .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
 					$outdone++;
 				}
 			} else {
-				if ($this->skype) $out .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
+				if ($this->skype) $outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				$outdone++;
-				if ($this->jabberid) $out .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
+				if ($this->jabberid) $outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
 				$outdone++;
-				if ($this->twitter) $out .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
+				if ($this->twitter) $outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
 				$outdone++;
-				if ($this->facebook) $out .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
+				if ($this->facebook) $outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
 				$outdone++;
-				if ($this->linkedin) $out .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+				if ($this->linkedin) $outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
 				$outdone++;
 			}
+
+			if ($outsocialnetwork) {
+				$out .= '<div style="clear: both;">'.$outsocialnetwork.'</div>';
+			}
 		}
-		$out .= '</div>';
 
-		$out .= '<!-- END Part to show address block -->';
-
-		return $out;
+		if ($out) return '<!-- BEGIN part to show address block -->'."\n".$out.'<!-- END Part to show address block -->'."\n";
+		else return '';
 	}
 
 	/**
