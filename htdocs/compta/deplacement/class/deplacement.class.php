@@ -101,6 +101,21 @@ class Deplacement extends CommonObject
 	public $statuts=array();
 	public $statuts_short=array();
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Refunded status
+	 */
+	const STATUS_REFUNDED = 2;
+
     /**
 	 * Constructor
 	 *
