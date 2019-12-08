@@ -4118,7 +4118,7 @@ abstract class CommonObject
 
 		$i = 0;
 
-		print "<tbody>\n";
+		print "<!-- begin printObjectLines() --><tbody>\n";
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield

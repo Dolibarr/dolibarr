@@ -504,9 +504,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
     	{
     	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
+    	    print '<tr><td>TODO...</td></tr>';
     	}
 
-    	if (!empty($object->lines))
+    	/*if (!empty($object->lines))
     	{
     		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/mrp/tpl');
     	}
@@ -522,13 +524,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	        $parameters = array();
     	        $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     	    }
-    	}
+    	} */
 
     	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
     	{
     	    print '</table>';
     	}
     	print '</div>';
+
 
     	print "</form>\n";
 	}
