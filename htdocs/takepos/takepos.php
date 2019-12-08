@@ -606,6 +606,10 @@ function DirectPayment(){
 	});
 }
 
+function FullScreen() {
+	document.documentElement.requestFullscreen();
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -626,7 +630,33 @@ $( document ).ready(function() {
 if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 ?>
 <div class="container">
-	<div class="row1">
+
+<?php
+if ($conf->global->TAKEPOS_HEAD_BAR){
+?>
+	<div class="header">
+		<div class="topnav">
+			<a onclick="TerminalsDialog();">
+			<?php echo $langs->trans("Terminal")." ";
+			if ($_SESSION["takeposterminal"] == "") echo "1"; else echo $_SESSION["takeposterminal"];
+			echo " - ".dol_print_date(dol_now(), "dayhour");
+			?>
+			</a>
+			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
+			<div class="topnav-right">
+				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search");?>" autofocus>
+				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>';"><span class="fas fa-sign-out-alt"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>/user/logout.php';"><span class="fas fa-user"></span></a>
+				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+			</div>
+		</div>
+	</div>
+<?php
+}
+?>
+
+	<div class="row1<?php if ($conf->global->TAKEPOS_HEAD_BAR) print 'withhead';?>">
 
 		<div id="poslines" class="div1">
 		</div>
@@ -763,16 +793,18 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 
-        print '<!-- Show the search input text -->'."\n";
-        print '<div class="margintoponly">';
-		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
-		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
-		print '</div>';
+		if (!$conf->global->TAKEPOS_HEAD_BAR){
+			print '<!-- Show the search input text -->'."\n";
+			print '<div class="margintoponly">';
+			print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+			print '</div>';
+		}
         ?>
 		</div>
 	</div>
 
-	<div class="row2">
+	<div class="row2<?php if ($conf->global->TAKEPOS_HEAD_BAR) print 'withhead';?>">
 
 		<!--  Show categories -->
 		<div class="div4">

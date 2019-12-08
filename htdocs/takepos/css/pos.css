@@ -1,6 +1,6 @@
 html,body {
     box-sizing: border-box;
-	padding:3px;
+	padding:0px;
     margin:0;
     height:100%;
 	width:100%;
@@ -206,10 +206,22 @@ div.paymentbordline
 	height: 34%;
 }
 
+.row1withhead{
+	margin: 0 auto;
+	width: 100%;
+	height: 32%;
+}
+
 .row2{
 	margin: 0 auto;
 	width: 100%;
 	height: 66%;
+}
+
+.row2withhead{
+	margin: 0 auto;
+	width: 100%;
+	height: 63%;
 }
 
 .div1{
@@ -323,6 +335,43 @@ div.description_content {
     overflow: hidden;
     padding-left: 2px;
     padding-right: 2px;
+}
+
+.header{
+	margin: 0 auto;
+	width: 100%;
+	height: 5%;
+	background: rgb(60,70,100);
+}
+
+.topnav{
+	background-color: rgb(60,70,100);
+	overflow: hidden;
+	height: 100%;
+}
+
+.topnav a{
+	float: left;
+	color: #f2f2f2;
+	text-align: center;
+	padding: 6px 16px;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.topnav a:hover{
+	background-color: #ddd;
+	color: black;
+}
+
+.topnav-right{
+	float: right;
+}
+
+.topnav input[type="text"] {
+	background-color: rgb(60,70,100);
+	color: white;
+	float: left;
 }
 
 @media screen and (min-width: 892px) {
