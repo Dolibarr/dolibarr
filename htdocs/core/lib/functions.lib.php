@@ -1251,6 +1251,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                         {
                         	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
                         	{
+                        	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                             	$ret = dol_convert_file($file, 'png', $fileimage);
                             	if ($ret < 0) $error++;
                         	}
