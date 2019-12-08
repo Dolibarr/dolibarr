@@ -230,15 +230,11 @@ function MoreCategories(moreorless) {
 function LoadProducts(position, issubcat) {
 	console.log("LoadProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
-	
-	if (position=="supplements") currentcat="supplements";
-	else
-	{
-		$('#catimg'+position).animate({opacity: '0.5'}, 1);
-		$('#catimg'+position).animate({opacity: '1'}, 100);
-		if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
-		else currentcat=$('#catdiv'+position).data('rowid');
-	}
+
+	$('#catimg'+position).animate({opacity: '0.5'}, 1);
+	$('#catimg'+position).animate({opacity: '1'}, 100);
+	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
+	else currentcat=$('#catdiv'+position).data('rowid');
     if (currentcat == undefined) return;
 	pageproducts=0;
 	ishow=0; //product to show counter
@@ -353,7 +349,7 @@ function ClickProduct(position) {
 		console.log("Click on product at position "+position+" for idproduct "+idproduct);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
+		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct, function() {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
@@ -606,6 +602,10 @@ function DirectPayment(){
 	});
 }
 
+function FullScreen() {
+	document.documentElement.requestFullscreen();
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -626,7 +626,33 @@ $( document ).ready(function() {
 if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 ?>
 <div class="container">
-	<div class="row1">
+
+<?php
+if ($conf->global->TAKEPOS_HEAD_BAR){
+?>
+	<div class="header">
+		<div class="topnav">
+			<a onclick="TerminalsDialog();">
+			<?php echo $langs->trans("Terminal")." ";
+			if ($_SESSION["takeposterminal"] == "") echo "1"; else echo $_SESSION["takeposterminal"];
+			echo " - ".dol_print_date(dol_now(), "dayhour");
+			?>
+			</a>
+			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
+			<div class="topnav-right">
+				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search");?>" autofocus>
+				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>';"><span class="fas fa-sign-out-alt"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>/user/logout.php';"><span class="fas fa-user"></span></a>
+				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+			</div>
+		</div>
+	</div>
+<?php
+}
+?>
+
+	<div class="row1<?php if ($conf->global->TAKEPOS_HEAD_BAR) print 'withhead';?>">
 
 		<div id="poslines" class="div1">
 		</div>
@@ -723,10 +749,6 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
-	if ($conf->global->TAKEPOS_SUPPLEMENTS)
-	{
-	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
-	}
 }
 
 if ($conf->global->TAKEPOSCONNECTOR) {
@@ -766,17 +788,18 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
             elseif ($i > 9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
-
-        print '<!-- Show the search input text -->'."\n";
-        print '<div class="margintoponly">';
-		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
-		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
-		print '</div>';
+		if (!$conf->global->TAKEPOS_HEAD_BAR){
+			print '<!-- Show the search input text -->'."\n";
+			print '<div class="margintoponly">';
+			print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+			print '</div>';
+		}
         ?>
 		</div>
 	</div>
 
-	<div class="row2">
+	<div class="row2<?php if ($conf->global->TAKEPOS_HEAD_BAR) print 'withhead';?>">
 
 		<!--  Show categories -->
 		<div class="div4">
