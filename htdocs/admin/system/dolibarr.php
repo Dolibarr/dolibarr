@@ -460,7 +460,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
-		if (strpos(strtolower($obj->name), 'password') || strpos(strtolower($obj->name), 'token') || strpos(strtolower($obj->name), 'secret')) {
+		if (strpos(strtolower($obj->name), 'password') || strpos(strtolower($obj->name), 'token') || strpos(strtolower($obj->name), 'secret') || strpos(strtolower($obj->name), '_pw')) {
 			$value = preg_replace('/./i', '*', $obj->value);
 		} else {
 			$value = $obj->value;
