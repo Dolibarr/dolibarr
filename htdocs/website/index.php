@@ -1505,17 +1505,25 @@ if ($action == 'updatemeta')
 		if ($result)
 		{
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
-			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-			//exit;
+
+			if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
+			{
+				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
+				//exit;
+				$action = 'preview';
+			}
+			else
+			{
+				$action = 'editmeta';
+			}
 		}
 		else
 		{
 			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
    			//exit;
+			$action = 'preview';
 		}
-
-		$action = 'preview';
 	}
 }
 
@@ -1742,8 +1750,22 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				if ($result)
 				{
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-	   				exit;
+
+					if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
+					{
+						if ($backtopage) {
+							header("Location: ".$backtopage);
+							exit;
+						} else {
+							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
+							exit;
+						}
+					}
+					else
+					{
+						if ($action == 'updatesource') $action = 'editsource';
+						if ($action == 'updatecontent') $action = 'editcontent';
+					}
 				}
 				else
 				{
@@ -2154,7 +2176,7 @@ if (!GETPOST('hide_websitemenu'))
 
 	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm')))
 	{
-		if ($action == 'editcss' && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+		if ($action == 'editcss') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
@@ -2443,6 +2465,7 @@ if (!GETPOST('hide_websitemenu'))
 		}
 		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite')))
 		{
+			if ($action == 'editsource' || $action == 'editmeta') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
@@ -3371,7 +3394,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="button'.$disabled.'" href="'.$urltoedithtmlsource.'">'.$langs->trans("EditHTMLSource").'</a>';
+					print '<a class="'.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 					print '</td>';
 					print '</tr>';
 				}
