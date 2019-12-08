@@ -82,7 +82,10 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_user;
 
-	public $km;
+    /**
+     * @var string km value formatted
+     */
+    public $km;
 
     /**
      * @var int Thirdparty id
