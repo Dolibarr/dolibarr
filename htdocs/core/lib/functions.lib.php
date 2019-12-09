@@ -1435,6 +1435,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 					$fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
 					$relativepathimage = $relativepath.'_preview.png';
 
+
 					// Si fichier PDF existe
 					if (file_exists($file))
 					{
