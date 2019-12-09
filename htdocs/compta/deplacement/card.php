@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 if ($action == 'validate' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    if ($object->statut == 0)
+    if ($object->statut == Deplacement::STATUS_DRAFT)
     {
         $result = $object->setStatut(1);
         if ($result > 0)
@@ -81,9 +81,9 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
 elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    if ($object->statut == 1)
+    if ($object->statut == Deplacement::STATUS_VALIDATED)
     {
-        $result = $object->setStatut(2);
+        $result = $object->setStatut(Deplacement::STATUS_REFUNDED);
         if ($result > 0)
         {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -116,14 +116,14 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
     {
         $error = 0;
 
-        $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        $object->date = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
         $object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
-        $object->type			= GETPOST('type', 'alpha');
-        $object->socid = GETPOST('socid', 'int');
-        $object->fk_user = GETPOST('fk_user', 'int');
+        $object->type = GETPOST('type', 'alpha');
+        $object->socid = (int) GETPOST('socid', 'int');
+        $object->fk_user = (int) GETPOST('fk_user', 'int');
         $object->note_private = GETPOST('note_private', 'alpha');
         $object->note_public	= GETPOST('note_public', 'alpha');
-        $object->statut     	= 0;
+        $object->statut = Deplacement::STATUS_DRAFT;
 
         if (!$object->date)
         {
@@ -178,8 +178,8 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
         $object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
         $object->type			= GETPOST('type', 'alpha');
-        $object->socid = GETPOST('socid', 'int');
-        $object->fk_user = GETPOST('fk_user', 'int');
+        $object->socid = (int) GETPOST('socid', 'int');
+        $object->fk_user = (int) GETPOST('fk_user', 'int');
         $object->note_private = GETPOST('note_private', 'alpha');
         $object->note_public = GETPOST('note_public', 'alpha');
 
@@ -523,7 +523,7 @@ elseif ($id)
 
             print '<div class="tabsAction">';
 
-            if ($object->statut < 2) 	// if not refunded
+            if ($object->statut < Deplacement::STATUS_REFUNDED) 	// if not refunded
             {
 	            if ($user->rights->deplacement->creer)
 	            {
@@ -535,7 +535,7 @@ elseif ($id)
 	            }
             }
 
-            if ($object->statut == 0) 	// if draft
+            if ($object->statut == Deplacement::STATUS_DRAFT) 	// if draft
             {
                 if ($user->rights->deplacement->creer)
                 {
@@ -547,7 +547,7 @@ elseif ($id)
                 }
             }
 
-            if ($object->statut == 1) 	// if validated
+            if ($object->statut == Deplacement::STATUS_VALIDATED) 	// if validated
             {
                 if ($user->rights->deplacement->creer)
                 {
