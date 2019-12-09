@@ -539,7 +539,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
@@ -695,7 +695,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
@@ -897,7 +897,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 
@@ -1073,7 +1073,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 
