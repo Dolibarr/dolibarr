@@ -1764,7 +1764,7 @@ abstract class CommonObject
 	 */
 	function setMulticurrencyCode($code)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyCode('.$code.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_code';
@@ -1806,7 +1806,7 @@ abstract class CommonObject
 	 */
 	function setMulticurrencyRate($rate, $mode=1)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.','.$mode.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_tx';
