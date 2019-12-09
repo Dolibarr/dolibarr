@@ -670,7 +670,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</div>
 		</div>
 	</div>
-<?php
+	<?php
 }
 ?>
 
