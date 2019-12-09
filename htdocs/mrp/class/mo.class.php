@@ -120,7 +120,15 @@ class Mo extends CommonObject
 	public $qty;
 	public $fk_warehouse;
 	public $fk_soc;
+
+	/**
+	 * @var string public note
+	 */
 	public $note_public;
+
+	/**
+	 * @var string private note
+	 */
 	public $note_private;
 
 	/**
@@ -245,7 +253,7 @@ class Mo extends CommonObject
 		// Insert lines in mrp_production table
 		if (! $error && $this->fk_bom > 0)
 		{
-			include_once DOL_DOCULENT_ROOT.'/bom/class/bom.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 			$bom = new Bom($this->db);
 			$bom->fetch($this->fk_bom);
 			if ($bom->id > 0)
