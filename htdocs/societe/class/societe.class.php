@@ -59,16 +59,51 @@ class Societe extends CommonObject
 	 */
 	public $fk_element = 'fk_soc';
 
+    /**
+     * @var string Fields for combobox
+     */
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array("supplier_proposal"=>'SupplierProposal', "propal"=>'Proposal', "commande"=>'Order', "facture"=>'Invoice', "facture_rec"=>'RecurringInvoiceTemplate', "contrat"=>'Contract', "fichinter"=>'Fichinter', "facture_fourn"=>'SupplierInvoice', "commande_fournisseur"=>'SupplierOrder', "projet"=>'Project', "expedition"=>'Shipment', "prelevement_lignes"=>'DirectDebitRecord');
+	protected $childtables = array(
+		"supplier_proposal" => 'SupplierProposal',
+		"propal" => 'Proposal',
+		"commande" => 'Order',
+		"facture" => 'Invoice',
+		"facture_rec" => 'RecurringInvoiceTemplate',
+		"contrat" => 'Contract',
+		"fichinter" => 'Fichinter',
+		"facture_fourn" => 'SupplierInvoice',
+		"commande_fournisseur" => 'SupplierOrder',
+		"projet" => 'Project',
+		"expedition" => 'Shipment',
+		"prelevement_lignes" => 'DirectDebitRecord',
+	);
+
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	protected $childtablesoncascade = array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+	protected $childtablesoncascade = array(
+		"societe_prices",
+		"societe_log",
+		"societe_address",
+		"product_fournisseur_price",
+		"product_customer_price_log",
+		"product_customer_price",
+		"socpeople",
+		"adherent",
+		"societe_account",
+		"societe_rib",
+		"societe_remise",
+		"societe_remise_except",
+		"societe_commerciaux",
+		"categorie",
+		"notify",
+		"notify_def",
+		"actioncomm",
+	);
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -87,8 +122,6 @@ class Societe extends CommonObject
 	 */
 	public $restrictiononfksoc = 1;
 
-
-	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
@@ -123,7 +156,7 @@ class Societe extends CommonObject
 	public $nom;
 
 	/**
-	 * @var string name
+	 * @var string Thirdparty name
 	 */
 	public $name;
 
@@ -133,6 +166,9 @@ class Societe extends CommonObject
 	 */
 	public $name_alias;
 
+    /**
+     * @var int Physical thirdparty not a company
+     */
 	public $particulier;
 
 	/**
@@ -140,7 +176,14 @@ class Societe extends CommonObject
 	 */
 	public $address;
 
+    /**
+     * @var string Zip code of thirdparty
+     */
 	public $zip;
+
+    /**
+     * @var string Town of thirdparty
+     */
 	public $town;
 
 	/**
@@ -154,7 +197,15 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $state_id;
+
+    /**
+     * @var string State code
+     */
 	public $state_code;
+
+    /**
+     * @var string State name
+     */
 	public $state;
 
 	/**
@@ -162,11 +213,14 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $region_code;
+
+    /**
+     * @var string Region name
+     */
 	public $region;
 
 	/**
-	 * State code
-	 * @var string
+	 * @var string State code
 	 * @deprecated Use state_code instead
 	 * @see $state_code
 	 */
@@ -220,25 +274,27 @@ class Societe extends CommonObject
 	 * @deprecated
 	 */
 	public $twitter;
+
 	/**
 	 * Facebook username
 	 * @var string
 	 * @deprecated
 	 */
 	public $facebook;
+
     /**
      * LinkedIn username
      * @var string
 	 * @deprecated
      */
-    public $linkedin;
+	public $linkedin;
+
 	/**
 	 * Webpage
 	 * @var string
 	 */
 	public $url;
 
-	//! barcode
 	/**
 	 * Barcode value
 	 * @var string
@@ -283,9 +339,16 @@ class Societe extends CommonObject
 	 */
 	public $idprof6;
 
+    /**
+     * @var string Prefix comm
+     */
 	public $prefix_comm;
 
+	/**
+	 * @var int Vat concerned
+	 */
 	public $tva_assuj = 1;
+
 	/**
 	 * Intracommunitary VAT ID
 	 * @var string
@@ -298,8 +361,19 @@ class Societe extends CommonObject
 	public $localtax2_assuj;
 	public $localtax2_value;
 
+    /**
+     * @var string Manager
+     */
 	public $managers;
+
+    /**
+     * @var float Capital
+     */
 	public $capital;
+
+	/**
+	 * @var int Type thirdparty
+	 */
 	public $typent_id = 0;
 	public $typent_code;
 	public $effectif;
@@ -317,6 +391,9 @@ class Societe extends CommonObject
      */
 	public $fk_prospectlevel;
 
+	/**
+	 * @var string second name
+	 */
 	public $name_bis;
 
 	//Log data
@@ -326,6 +403,7 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $date_modification;
+
 	/**
 	 * User that made last update
 	 * @var string
@@ -351,11 +429,13 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $client = 0;
+
 	/**
 	 * 0=no prospect, 1=prospect
 	 * @var int
 	 */
 	public $prospect = 0;
+
 	/**
 	 * 0=no supplier, 1=supplier
 	 * @var int
@@ -416,6 +496,7 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $stcomm_id;
+
 	/**
 	 * Status prospect label
 	 * @var int
@@ -427,12 +508,20 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $price_level;
+
+	/**
+	 * @var string outstanding limit
+	 */
 	public $outstanding_limit;
 
 	/**
-	 * Min order amounts
+	 * @var string Min order amount
 	 */
 	public $order_min_amount;
+
+    /**
+     * @var string Supplier min order amount
+     */
 	public $supplier_order_min_amount;
 
 	/**
@@ -440,11 +529,13 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $commercial_id;
+
 	/**
 	 * Id of parent thirdparty (if one)
 	 * @var int
 	 */
 	public $parent;
+
 	/**
 	 * Default language code of thirdparty (en_US, ...)
 	 * @var string
@@ -456,7 +547,11 @@ class Societe extends CommonObject
 	 */
 	public $ref;
 
+	/**
+	 * @var string Internal ref
+	 */
 	public $ref_int;
+
 	/**
 	 * External user reference.
 	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
@@ -485,22 +580,49 @@ class Societe extends CommonObject
 	 */
 	public $webservices_key;
 
+    /**
+     * @var string Logo
+     */
 	public $logo;
+
+    /**
+     * @var string logo small
+     */
 	public $logo_small;
+
+    /**
+     * @var string Logo mini
+     */
 	public $logo_mini;
+
+    /**
+     * @var string Logo squarred
+     */
 	public $logo_squarred;
+
+    /**
+     * @var string Logo squarred small
+     */
 	public $logo_squarred_small;
+
+    /**
+     * @var string Logo squarred mini
+     */
 	public $logo_squarred_mini;
 
-	public $array_options;
-
-	// Incoterms
 	/**
-     * @var int ID
+     * @var int ID Incoterms
      */
 	public $fk_incoterms;
 
+	/**
+	 * @var string Incoterms Location
+	 */
 	public $location_incoterms;
+
+    /**
+     * @var string Incoterm label
+     */
 	public $label_incoterms; //Used into tooltip
 
 	// Multicurrency
@@ -509,11 +631,10 @@ class Societe extends CommonObject
      */
 	public $fk_multicurrency;
 
+    /**
+     * @var string Multicurrency code
+     */
 	public $multicurrency_code;
-
-
-	// END MODULEBUILDER PROPERTIES
-
 
 	/**
 	 *    Constructor
