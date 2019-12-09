@@ -259,10 +259,8 @@ class pdf_azur extends ModelePDFPropales
 					if (!$arephoto)
 					{
 						if ($conf->product->entity != $objphoto->entity) {
-							
 							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
-						}else{
-
+						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
 
