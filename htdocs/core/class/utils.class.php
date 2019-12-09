@@ -586,7 +586,7 @@ class Utils
 	 */
 	function generateDoc($module)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
 		global $dirins;
 
 		$error = 0;
