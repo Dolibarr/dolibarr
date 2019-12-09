@@ -239,7 +239,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
 $sql .= ", s.logo";
-$sql .= ", s.canvas, s.tms as datem, s.status as status";
+$sql .= ", s.canvas, s.tms as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
@@ -279,7 +279,7 @@ if ($result)
             $thirdparty_static->client = $objp->client;
             $thirdparty_static->fournisseur = $objp->fournisseur;
             $thirdparty_static->logo = $objp->logo;
-            $thirdparty_static->datem = $db->jdate($objp->datem);
+            $thirdparty_static->date_modification = $db->jdate($objp->date_modification);
             $thirdparty_static->status = $objp->status;
             $thirdparty_static->code_client = $objp->code_client;
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
@@ -313,7 +313,7 @@ if ($result)
             print '</td>';
             // Last modified date
             print '<td class="right">';
-            print dol_print_date($thirdparty_static->datem, 'day');
+            print dol_print_date($thirdparty_static->date_modification, 'day');
             print "</td>";
             print '<td class="right nowrap">';
             print $thirdparty_static->getLibStatut(3);
