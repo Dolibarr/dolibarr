@@ -70,11 +70,34 @@ $object->fetch($facid);
 }
 </style>
 <center>
-<font size="4">
-<?php echo '<b>'.$mysoc->name.'</b>';?>
-</font>
+<?php
+/** @var $mysoc Societe  */
+
+if ( ! empty($conf->global->TAKEPOS_TICKET_SHOW_LOGO) && $conf->global->TAKEPOS_TICKET_SHOW_LOGO) {
+	if ($mysoc->logo) {
+		if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+			$logo = 'logos/thumbs/' . $mysoc->logo_small;
+		} else {
+			$logo = 'logos/' . $mysoc->logo;
+		}
+		if (is_readable($conf->mycompany->dir_output . DIRECTORY_SEPARATOR . $logo)) {
+			$logo_uri = DOL_URL_ROOT . '/viewimage.php?cache=1&modulepart=mycompany&file=' . urlencode($logo);
+			echo '<img class="img_logo" src="' . $logo_uri . '">';
+			echo '<br>';
+		}
+	}
+}
+
+if (empty($conf->global->TAKEPOS_TICKET_HIDE_COMPANY_NAME) || ! $conf->global->TAKEPOS_TICKET_HIDE_COMPANY_NAME) {
+	?>
+	<font size="4">
+		<?php echo '<b>' . $mysoc->name . '</b>'; ?>
+	</font>
+	<br>
+	<?php
+}
+?>
 </center>
-<br>
 <p class="left">
 <?php
 $substitutionarray=getCommonSubstitutionArray($langs);

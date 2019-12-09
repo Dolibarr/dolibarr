@@ -74,6 +74,8 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_HIDE_COMPANY_NAME", GETPOST('TAKEPOS_TICKET_HIDE_COMPANY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_SHOW_LOGO", GETPOST('TAKEPOS_TICKET_SHOW_LOGO', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -218,6 +220,18 @@ $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('TicketHideCompanyName');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_TICKET_HIDE_COMPANY_NAME", $conf->global->TAKEPOS_TICKET_HIDE_COMPANY_NAME, 1);
+print "</td></tr>\n";
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('TicketShowLogo');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_TICKET_SHOW_LOGO", $conf->global->TAKEPOS_TICKET_SHOW_LOGO, 1);
+print "</td></tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Header"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
