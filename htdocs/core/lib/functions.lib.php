@@ -1582,9 +1582,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	if (method_exists($object, 'getBannerAddress') && $object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories' && $object->element != 'ecm_files')
 	{
-		$morehtmlref .= '<div class="refidno">';
-		$morehtmlref .= $object->getBannerAddress('refaddress', $object);
-		$morehtmlref .= '</div>';
+		$moreaddress = $object->getBannerAddress('refaddress', $object);
+		if ($moreaddress) {
+			$morehtmlref .= '<div class="refidno">';
+			$morehtmlref .= $moreaddress;
+			$morehtmlref .= '</div>';
+		}
 	}
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
 	{
