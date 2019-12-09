@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -431,10 +431,10 @@ class Subscription extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int			$statut      			Id statut
+     *  @param	int			$status      			Id status
      *  @return string      						Label
      */
-    public function LibStatut($statut)
+    public function LibStatut($status)
     {
         // phpcs:enable
         global $langs;

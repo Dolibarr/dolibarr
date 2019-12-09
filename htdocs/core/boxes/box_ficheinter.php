@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,9 +57,9 @@ class box_ficheinter extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->ficheinter->lire);
+	    $this->hidden = ! ($user->rights->ficheinter->lire);
 	}
 
 	/**
@@ -70,12 +70,13 @@ class box_ficheinter extends ModeleBoxes
 	*/
 	public function loadBox($max = 10)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-		$ficheinterstatic=new Fichinter($db);
+		$ficheinterstatic=new Fichinter($this->db);
+		$companystatic = new Societe($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
@@ -85,51 +86,49 @@ class box_ficheinter extends ModeleBoxes
 			$sql.= " f.datec,";
 			$sql.= " f.date_valid as datev,";
 			$sql.= " f.tms as datem,";
-			$sql.= " s.nom as name, s.rowid as socid, s.client";
+			$sql.= " s.nom as name, s.rowid as socid, s.client, s.email as semail";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql.= " WHERE f.fk_soc = s.rowid ";
 			$sql.= " AND f.entity = ".$conf->entity;
-			if (! $user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+			if (! $user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->socid)	$sql.= " AND s.rowid = ".$user->socid;
 			$sql.= " ORDER BY f.tms DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 				$now=dol_now();
 
 				$i = 0;
 
 				while ($i < $num)
 				{
-					$objp = $db->fetch_object($resql);
-					$datec=$db->jdate($objp->datec);
+					$objp = $this->db->fetch_object($resql);
+					$datec = $this->db->jdate($objp->datec);
 
 					$ficheinterstatic->statut=$objp->fk_statut;
 					$ficheinterstatic->id=$objp->rowid;
 					$ficheinterstatic->ref=$objp->ref;
 
+					$companystatic->id = $objp->socid;
+					$companystatic->name = $objp->name;
+					$companystatic->email = $objp->semail;
+
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $ficheinterstatic->getNomUrl(1),
                         'asis' => 1,
 					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="left" width="16"',
-                        'logo' => 'company',
-                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
-                    );
-
-					$this->info_box_contents[$i][] = array(
-                        'td' => '',
-                        'text' => dol_trunc($objp->name, 40),
-                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+                        'text' => $companystatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
 					$this->info_box_contents[$i][] = array(
@@ -139,7 +138,7 @@ class box_ficheinter extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
                         'td' => 'class="nowrap right"',
-                        'text' => $ficheinterstatic->getLibStatut(6),
+                        'text' => $ficheinterstatic->getLibStatut(3),
                         'asis' => 1,
 					);
 
@@ -148,14 +147,14 @@ class box_ficheinter extends ModeleBoxes
 
 				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedInterventions"));
 
-				$db->free($resql);
+				$this->db->free($resql);
 			}
 			else
 			{
 				$this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
 		}

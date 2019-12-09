@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -118,11 +118,11 @@ class ImagesLibTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-   /**
-    * testDolCountNbOfLine
-    *
-    * @return	int
-    */
+    /**
+     * testDolCountNbOfLine
+     *
+     * @return	int
+     */
     public function testgetImageSize()
     {
 		$file=dirname(__FILE__).'/img250x50.jpg';

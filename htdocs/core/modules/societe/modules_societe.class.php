@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -83,18 +83,18 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NoDescription");
     }
 
-    /**     Renvoi nom module
+    /**     Return name of module
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
     public function getNom($langs)
     {
-        return $this->nom;
+        return $this->name;
     }
 
 
-    /**     Renvoi un exemple de numerotation
+    /**     Return an example of numbering
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
@@ -105,10 +105,11 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NoExample");
     }
 
-    /**     Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *      de conflits qui empechera cette numerotation de fonctionner.
+    /**
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
      *
-     *      @return     boolean     false si conflit, true si ok
+     *  @return     boolean     false if conflict, true if ok
      */
     public function canBeActivated()
     {
@@ -261,8 +262,7 @@ abstract class ModeleThirdPartyCode
 
 
 /**
- *		\class		ModeleAccountancyCode
- *		\brief  	Parent class for third parties accountancy code generators
+ *		Parent class for third parties accountancy code generators
  */
 abstract class ModeleAccountancyCode
 {
@@ -298,10 +298,11 @@ abstract class ModeleAccountancyCode
         return $langs->trans("NoExample");
     }
 
-    /**     Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *      de conflits qui empechera cette numerotation de fonctionner.
+    /**
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
      *
-     *      @return     boolean     false si conflit, true si ok
+     *  @return     boolean     false if conflict, true if ok
      */
     public function canBeActivated()
     {
@@ -340,7 +341,7 @@ abstract class ModeleAccountancyCode
         $langs->load("admin");
 
         $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->name.'</b><br>';
         if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
         //$s.='<br>';
         //$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';

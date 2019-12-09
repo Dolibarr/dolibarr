@@ -6,6 +6,25 @@ html,body {
 	width:100%;
 }
 
+.bodytakepos {
+    background-color: #EEE;	
+}
+
+.center {
+	text-align: center;	
+}
+
+button.calcbutton.poscolorblue {
+    background-color: #0066AA;
+}
+
+button.calcbutton2.poscolordelete {
+	background: rgb(255, 188, 185);
+    color: #633;
+    /*background-color: #884444;
+    color: #fff;*/
+}
+
 button.calcbutton {
 	display: inline-block;
 	position: relative;
@@ -15,12 +34,20 @@ button.calcbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
-	height:24%;
+	width: calc(25% - 2px);
+	height: 24%;
 	font-weight: bold;
+    background-color: #8c907e;
+    color: #fff;
+    /* border-color: unset; */
+    border-width: 0;
+    margin: 1px;
 }
 
 button.calcbutton2 {
+    color: #fff;
+    background-color: #5555AA;
+    border-width: 0px;
 	display: inline-block;
 	position: relative;
 	padding: 0;
@@ -29,8 +56,8 @@ button.calcbutton2 {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
-	height:24%;
+	width: calc(25% - 2px);
+	height: 24%;
 	font-weight: bold;
 }
 
@@ -44,8 +71,14 @@ button.calcbutton3 {
 	text-align: center;
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
-	height:24%;
+	width: calc(25% - 2px);
+	height: 24%;
+}
+
+button.actionbutton {
+    background: #EABCA6;
+    border: 2px solid #EEE;
+    min-height: 40px;
 }
 
 button.actionbutton {
@@ -61,6 +94,15 @@ button.actionbutton {
 	height:24%;
 }
 
+.takepospay {
+	font-size: 1.5em;	
+}
+
+.fa.fa-trash:before {
+    font-size: 1.5em;
+}
+
+
 div.wrapper{
 	float:left; /* important */
 	position:relative; /* important(so we can absolutely position the description div */
@@ -68,7 +110,7 @@ div.wrapper{
 	height:25%;
 	margin:0;
 	padding:1px;
-	border: 2px solid #D1D1D1;
+	border: 2px solid #EEE;
 	/*box-shadow: 3px 3px 3px #bbb; */
 	text-align: center;
 	box-sizing: border-box;
@@ -82,11 +124,15 @@ div.wrapper2{
 	height:25%;
 	margin:0;
 	/* padding:1px; */
-	border: 2px solid #D1D1D1;
+	border: 2px solid #EEE;
 	/*box-shadow: 3px 3px 3px #bbb;*/
 	text-align: center;
 	box-sizing: border-box;
 	background-color:#fff;
+}
+
+img.imgwrapper {
+    max-width: 100%;
 }
 
 button:active{
@@ -101,10 +147,13 @@ div.description{
 	width:100%;
 	/* styling below */
 	background-color:black;
-	color:white;
-	opacity:0.8; /* transparency */
-	filter:alpha(opacity=80); /* IE transparency */
+	/*color:white;*/
+	opacity:1; /* transparency */
+	/*filter:alpha(opacity=80); IE transparency */
 	text-align:center;
+	
+	padding-top: 30px;
+    background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
 }
 
 div.catwatermark{
@@ -117,7 +166,7 @@ div.catwatermark{
 	text-align:center;
 	font-size: 20px;
 	display: none;
-	opacity: 0.8;
+	opacity: 0.25;
 }
 
 table.postablelines tr td {
@@ -127,6 +176,14 @@ table.postablelines tr td {
 }
 .posinvoiceline td {
     height: 40px !important;
+}
+
+div.paymentbordline
+{
+	width:50%; 
+	background-color:#888; 
+	border-radius: 8px; 
+	margin-bottom: 4px;
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
@@ -179,6 +236,7 @@ table.postablelines tr td {
 	padding-bottom: 10px;
 	padding-right: 5px;
 	padding-left: 5px;
+	min-height: 180px;
 }
 
 .div3{
@@ -258,6 +316,14 @@ p.description_content{
 	padding:10px;
 	margin:0px;
 }
+div.description_content {
+	display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    padding-left: 2px;
+    padding-right: 2px;
+}
 
 @media screen and (min-width: 892px) {
 	.calcbutton{
@@ -313,11 +379,37 @@ p.description_content{
 	}
 }
 
-@media screen and (max-width: 767px){
+/* For small screens */
+
+@media screen and (max-width: 767px) {
+	div.container {
+		overflow-x: scroll;
+	}
 	div.wrapper {
 		width: 50%;
 	}
 	div.wrapper2 {
 		width: 25%;
 	}
+	
+	div.div1, div.div2, div.div3 {
+		width: 100%;
+	}
+	
+	div.row1 {
+		height: unset;
+	}
+	
+	div.div2 {
+		min-height: unset;
+	}
+	
+	button.calcbutton, button.calcbutton2 {
+	    min-height: 30px;
+	}
+	
+	.takepospay {
+		font-size: 1.2em;	
+	}
+	
 }

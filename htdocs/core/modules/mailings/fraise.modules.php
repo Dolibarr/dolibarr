@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -40,6 +40,10 @@ class mailing_fraise extends MailingTargets
     public $require_admin=0;
 
     public $require_module=array('adherent');
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='user';
 
     /**
@@ -129,7 +133,7 @@ class mailing_fraise extends MailingTargets
         $s.='</select> ';
         $s.=$langs->trans("Type").': ';
         $s.='<select name="filter_type" class="flat">';
-        $sql = "SELECT rowid, libelle, statut";
+        $sql = "SELECT rowid, libelle as label, statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
         $sql.= " WHERE entity IN (".getEntity('member_type').")";
         $sql.= " ORDER BY rowid";
@@ -146,7 +150,7 @@ class mailing_fraise extends MailingTargets
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle, 38, 'middle');
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
                 $s.='</option>';
                 $i++;
             }
@@ -255,9 +259,11 @@ class mailing_fraise extends MailingTargets
         $sql.= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''";     // Note that null != '' is false
         $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
         // Filter on status
-        if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND a.datefin >= '".$this->db->idate($now)."'";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '-1') {
+            $sql.= " AND a.statut=-1";
+        }
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
         if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql.= " AND a.statut=0";
         // Filter on date
         if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
@@ -315,6 +321,6 @@ class mailing_fraise extends MailingTargets
             return -1;
         }
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 }

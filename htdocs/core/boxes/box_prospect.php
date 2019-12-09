@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ class box_prospect extends ModeleBoxes
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $this->enabled=0;	// disabled by this option
 
-		$this->hidden=! ($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
 	}
 
 	/**
@@ -76,11 +76,11 @@ class box_prospect extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
-		$thirdpartystatic=new Client($db);
+		$thirdpartystatic=new Client($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
@@ -94,26 +94,26 @@ class box_prospect extends ModeleBoxes
             $sql.= ", s.logo";
 			$sql.= ", s.fk_stcomm, s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (2, 3)";
 			$sql.= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
 			$sql.= " ORDER BY s.tms DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($resql);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($resql);
+					$datec=$this->db->jdate($objp->datec);
+					$datem=$this->db->jdate($objp->tms);
 					$thirdpartystatic->id = $objp->socid;
                     $thirdpartystatic->name = $objp->name;
                     $thirdpartystatic->email = $objp->email;
@@ -154,12 +154,12 @@ class box_prospect extends ModeleBoxes
                     );
                 }
 
-                $db->free($resql);
+                $this->db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength' => 500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

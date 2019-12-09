@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -232,7 +232,8 @@ class FactureTest extends PHPUnit\Framework\TestCase
 				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
 				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
-				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'
+				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
+                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement'
 			)
 		);
         $this->assertEquals($arraywithdiff, array());    // Actual, Expected
@@ -240,7 +241,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testFactureOther
      *
      * @param   Object $localobject Invoice

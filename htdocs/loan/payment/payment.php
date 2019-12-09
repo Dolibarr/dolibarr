@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,9 +38,9 @@ $last=GETPOST('last');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $loan = new Loan($db);
@@ -198,7 +198,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("DoPayment"));
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="line_id" value="'.$line_id.'">';
@@ -276,7 +276,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("DateDue").'</td>';
 	print '<td class="right">'.$langs->trans("LoanCapital").'</td>';

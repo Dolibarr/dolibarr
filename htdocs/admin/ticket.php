@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -74,7 +74,7 @@ if ($action == 'updateMask') {
 
     dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setvar') {
-    include_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
+    include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
     $notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
     if (!empty($notification_email)) {
@@ -177,7 +177,7 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -186,7 +186,7 @@ $head = ticketAdminPrepareHead();
 
 dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
+print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries").'</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
 dol_fiche_end();
 
@@ -197,30 +197,29 @@ dol_fiche_end();
 
 print load_fiche_titre($langs->trans("TicketNumberingModules"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="100">' . $langs->trans("Name") . '</td>';
-print '<td>' . $langs->trans("Description") . '</td>';
-print '<td>' . $langs->trans("Example") . '</td>';
-print '<td align="center" width="60">' . $langs->trans("Activated") . '</td>';
-print '<td align="center" width="80">' . $langs->trans("ShortInfo") . '</td>';
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
 
 foreach ($dirmodels as $reldir) {
-    $dir = dol_buildpath($reldir . "core/modules/ticket/");
+    $dir = dol_buildpath($reldir."core/modules/ticket/");
 
     if (is_dir($dir)) {
         $handle = opendir($dir);
         if (is_resource($handle)) {
-
             while (($file = readdir($handle)) !== false) {
                 if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
                     $file = $reg[1];
                     $classname = substr($file, 4);
 
-                    include_once $dir . $file . '.php';
+                    include_once $dir.$file.'.php';
 
                     $module = new $file;
 
@@ -234,7 +233,7 @@ foreach ($dirmodels as $reldir) {
                     }
 
                     if ($module->isEnabled()) {
-                        print '<tr class="oddeven"><td>' . $module->name . "</td><td>\n";
+                        print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
                         print $module->info();
                         print '</td>';
 
@@ -242,20 +241,20 @@ foreach ($dirmodels as $reldir) {
                         print '<td class="nowrap">';
                         $tmp = $module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
-                            print '<div class="error">' . $langs->trans($tmp) . '</div>';
+                            print '<div class="error">'.$langs->trans($tmp).'</div>';
                         } elseif ($tmp == 'NotConfigured') {
                             print $langs->trans($tmp);
                         } else {
                             print $tmp;
                         }
 
-                        print '</td>' . "\n";
+                        print '</td>'."\n";
 
                         print '<td align="center">';
-                        if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
+                        if ($conf->global->TICKET_ADDON == 'mod_'.$classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
-                            print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
 
@@ -264,14 +263,14 @@ foreach ($dirmodels as $reldir) {
 
                         // Info
                         $htmltooltip = '';
-                        $htmltooltip .= '' . $langs->trans("Version") . ': <b>' . $module->getVersion() . '</b><br>';
+                        $htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                         $nextval = $module->getNextValue($mysoc, $ticket);
                         if ("$nextval" != $langs->trans("NotAvailable")) { // Keep " on nextval
-                            $htmltooltip .= '' . $langs->trans("NextValue") . ': ';
+                            $htmltooltip .= ''.$langs->trans("NextValue").': ';
                             if ($nextval) {
-                                $htmltooltip .= $nextval . '<br>';
+                                $htmltooltip .= $nextval.'<br>';
                             } else {
-                                $htmltooltip .= $langs->trans($module->error) . '<br>';
+                                $htmltooltip .= $langs->trans($module->error).'<br>';
                             }
                         }
 
@@ -291,16 +290,16 @@ foreach ($dirmodels as $reldir) {
 print '</table><br>';
 
 if (!$conf->use_javascript_ajax) {
-    print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" enctype="multipart/form-data" >';
-    print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+    print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setvarother">';
 }
 
 print load_fiche_titre($langs->trans("TicketParams"));
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Parameter") . '</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td></td>';
 print '<td></td>';
 print "</tr>\n";
@@ -340,7 +339,7 @@ print '</tr>';
 // Also send to main email address
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	print '<tr class="oddeven"><td>' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {
 	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
@@ -378,7 +377,7 @@ print '</tr>';
 }*/
 
 // Auto assign ticket at user who created it
-print '<tr class="oddeven"><td>' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
@@ -401,19 +400,19 @@ if (!$conf->use_javascript_ajax) {
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
-print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" enctype="multipart/form-data" >';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvar">';
 
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans("Email") . '</td>';
+print '<td colspan="3">'.$langs->trans("Email").'</td>';
 print "</tr>\n";
 
 if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
     print '<tr>';
-    print '<td colspan="3"><div class="info">' . $langs->trans("TicketCkEditorEmailNotActivated") . '</div></td>';
+    print '<td colspan="3"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
     print "</tr>\n";
 }
 
@@ -436,18 +435,18 @@ print '</tr>';
 // @TODO Use module notification instead...
 
 // Email de réception des notifications
-print '<tr class="oddeven"><td>' . $langs->trans("TicketEmailNotificationTo") . '</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
-print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="' . (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM) . '" size="20" ></td>';
+print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM).'" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Email d'envoi des notifications
-print '<tr class="oddeven"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
 print '<td class="left">';
-print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
+print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
@@ -455,9 +454,9 @@ print '</tr>';
 
 // Texte d'introduction
 $mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
-print '<tr class="oddeven"><td>' . $langs->trans("TicketMessageMailIntroLabelAdmin") . '</label>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntroLabelAdmin").'</label>';
 print '</td><td>';
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
@@ -467,9 +466,9 @@ print '</td></tr>';
 
 // Texte de signature
 $mail_signature = $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->trans('TicketMessageMailSignatureText');
-print '<tr class="oddeven"><td>' . $langs->trans("TicketMessageMailSignatureLabelAdmin") . '</label>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailSignatureLabelAdmin").'</label>';
 print '</td><td>';
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
@@ -480,7 +479,7 @@ print '</td></tr>';
 print '</table>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

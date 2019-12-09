@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -134,7 +134,6 @@ class modWebsite extends DolibarrModules
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         //$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'website_page as t, '.MAIN_DB_PREFIX.'website as p';
         $this->export_sql_end[$r] .=' WHERE t.fk_website = p.rowid';
@@ -158,7 +157,7 @@ class modWebsite extends DolibarrModules
     	// Remove permissions and default values
     	$this->remove($options);
 
-    	// Copy flags and octicons directoru
+    	// Copy flags and octicons directory
     	$dirarray=array('common/flags', 'common/octicons');
     	foreach($dirarray as $dir)
     	{
@@ -176,6 +175,24 @@ class modWebsite extends DolibarrModules
 	    			$this->error=$langs->trans('ErrorFailToCopyDir', $src, $dest);
 	    			return 0;
 	    		}
+	    	}
+    	}
+
+    	// Website templates
+    	$srcroot=DOL_DOCUMENT_ROOT.'/install/doctemplates/websites';
+    	$destroot=DOL_DATA_ROOT.'/doctemplates/websites';
+
+    	dol_mkdir($destroot);
+
+    	$docs=dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
+    	foreach($docs as $cursorfile) {
+	    	$src=$srcroot.'/'.$cursorfile['name'];
+	    	$dest=$destroot.'/'.$cursorfile['name'];
+
+	    	$result=dol_copy($src, $dest, 0, 1);	// For full zip templates, we overwrite old existing files
+	    	if ($result < 0) {
+	    		$langs->load("errors");
+	    		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 	    	}
     	}
 

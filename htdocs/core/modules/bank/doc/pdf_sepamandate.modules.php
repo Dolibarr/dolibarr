@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -63,7 +63,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->name = "sepamandate";
 		$this->description = $langs->transnoentitiesnoconv("DocumentModelSepaMandate");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -78,11 +78,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-		// Defini position des colonnes
+		// Define column position
 		$this->posxref=$this->marge_gauche;
 	}
 
@@ -109,12 +109,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "withdrawals", "companies", "projects", "bills"));
 
 		if (! empty($conf->bank->dir_output))
 		{
-			//$nblignes = count($object->lines);  // This is set later with array of tasks
+			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 		    // Definition of $dir and $file
 		    if ($object->specimen)
@@ -194,7 +194,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$tab_top_newpage = 40;
                 $tab_height_newpage = 210;
 
-				// Affiche notes
+				// Show notes
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -202,7 +202,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-3, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -374,7 +374,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				/*
-				 * Pied de page
+				 * Footer of the page
 				 */
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -404,7 +404,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -431,7 +431,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+    protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;

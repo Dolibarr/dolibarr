@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -62,7 +62,7 @@ class modSocialNetworks extends DolibarrModules
         $this->dirs = array();
 
         // Config pages
-        $this->config_page_url = array("socialnetworks.php");
+		$this->config_page_url = array(DOL_URL_ROOT.'/admin/dict.php?id=38');
 
         // Dependencies
         $this->hidden = ! empty($conf->global->MODULE_SOCIALNETWORKS_DISABLED);	// A condition to hide module

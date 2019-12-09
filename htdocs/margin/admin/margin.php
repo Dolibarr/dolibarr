@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -119,7 +119,7 @@ $head = marges_admin_prepare_head();
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
 print '<td colspan="2" class="center">'.$langs->trans("Value").'</td>'."\n";

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -262,6 +262,7 @@ class Utils
 			if (GETPOST("disable_fk", "alpha") || $usedefault) $param.=" -K";
 			if (GETPOST("sql_compat", "alpha") && GETPOST("sql_compat", "alpha") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat", "alpha"));
 			if (GETPOST("drop_database", "alpha"))        $param.=" --add-drop-database";
+			if (GETPOST("use_mysql_quick_param", "alpha"))$param.=" --quick";
 			if (GETPOST("sql_structure", "alpha") || $usedefault)
 			{
 				if (GETPOST("drop", "alpha") || $usedefault)	$param.=" --add-drop-table=TRUE";
@@ -804,7 +805,7 @@ class Utils
 
 		dol_include_once('/core/lib/files.lib.php');
 
-		$nbSaves = ! empty($conf->global->SYSLOG_FILE_SAVES) ? intval($conf->global->SYSLOG_FILE_SAVES) : 14;
+		$nbSaves = empty($conf->global->SYSLOG_FILE_SAVES) ? 10 : intval($conf->global->SYSLOG_FILE_SAVES);
 
 		if (empty($conf->global->SYSLOG_FILE)) {
 			$mainlogdir = DOL_DATA_ROOT;
@@ -819,7 +820,6 @@ class Utils
 		$tabfiles[] = array('name' => $mainlog, 'path' => $mainlogdir);
 
 		foreach($tabfiles as $file) {
-
 			$logname = $file['name'];
 			$logpath = $file['path'];
 
@@ -1005,7 +1005,7 @@ class Utils
 				if (GETPOST("nobin_disable_fk")) fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
 				else fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
 
-				$sql='SELECT * FROM '.$table;
+				$sql='SELECT * FROM '.$table;		// Here SELECT * is allowed because we don't have definition of columns to take
 				$result = $db->query($sql);
 				while($row = $db->fetch_row($result))
 				{

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -79,7 +79,7 @@ if ($action == 'add' || GETPOST("modify"))
 		if ($_POST["modify"])
 		{
 			// Supprime boite box_external_rss de definition des boites
-/*	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
+            /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$boxlabel."'";
 	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
 
@@ -89,7 +89,7 @@ if ($action == 'add' || GETPOST("modify"))
 				dol_print_error($db,"sql=$sql");
 				exit;
 	        }
-*/
+            */
 		}
 		else
 		{
@@ -200,7 +200,7 @@ print '<br>';
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
@@ -254,7 +254,7 @@ if ($resql)
 		print "<br>";
 		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print "<tr class=\"liste_titre\">";
@@ -300,7 +300,6 @@ if ($resql)
 		// Logo
 	    if ($result > 0 && empty($rss->error))
 	    {
-
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';

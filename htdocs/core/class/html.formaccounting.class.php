@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,11 +45,11 @@ class FormAccounting extends Form
 	 */
 	public $error='';
 
-   /**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
+    /**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 	    $this->db = $db;
@@ -257,7 +257,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string   $selectid           Preselected id or code of accounting accounts (depends on $select_in)
+	 * @param string   $selectid           Preselected id of accounting accounts (depends on $select_in)
 	 * @param string   $htmlname           Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int      $showempty          1=Add an empty field, 2=Add an empty field+'None' field
 	 * @param array    $event              Event options

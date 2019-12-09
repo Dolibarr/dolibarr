@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -57,13 +57,12 @@ class Login
 	 */
     public function index($login, $password, $entity = '', $reset = 0)
     {
-
 	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 
-		// Authentication mode
-		if (empty($dolibarr_main_authentication))
-			$dolibarr_main_authentication = 'http,dolibarr';
-		$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+	    // TODO Remove the API login. The token must be generated from backoffice only.
+
+	    // Authentication mode
+		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'dolibarr';
 
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser')
@@ -75,6 +74,7 @@ class Login
 				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
 			}
 		}
+
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
@@ -85,7 +85,7 @@ class Login
 		if ($entity == '') $entity=1;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
-		$login = checkLoginPassEntity($login, $password, $entity, $authmode);
+		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');
 		if (empty($login))
 		{
 			throw new RestException(403, 'Access denied');
