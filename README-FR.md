@@ -161,13 +161,11 @@ Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/CO
 Suivez le projet Dolibarr project sur les réseaux francophones
 
 - [Facebook](https://www.facebook.com/dolibarr.fr)
-- [Google+](https://plus.google.com/+DolibarrFrance)
 - [Twitter](https://www.twitter.com/dolibarr_france)
 
 ou sur les réseaux anglophones
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Google+](https://plus.google.com/+DolibarrOrg)
 - [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)

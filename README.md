@@ -187,7 +187,6 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 Follow Dolibarr project on:
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Google+](https://plus.google.com/+DolibarrOrg)
 - [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
