@@ -115,7 +115,7 @@ if ($id > 0)
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         // Login
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))

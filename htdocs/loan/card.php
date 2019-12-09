@@ -439,7 +439,7 @@ if ($id > 0)
 
 		// Loan card
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
 		// Ref loan
