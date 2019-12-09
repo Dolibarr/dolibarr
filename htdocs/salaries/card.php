@@ -146,14 +146,12 @@ if ($action == 'add' && empty($cancel))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: list.php");
-			exit;
+			unset($_POST['fk_user']);
 		}
 		else
 		{
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action = "create";
 		}
 	}
 
