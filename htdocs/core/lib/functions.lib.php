@@ -8135,7 +8135,7 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr = array(
-    	'class'=>'badge badge-status'.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
+    	'class'=>'badge '.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
     );
 
     if (empty($html)) {
@@ -8156,7 +8156,15 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     // Override attr
     if (!empty($params['attr']) && is_array($params['attr'])) {
         foreach ($params['attr']as $key => $value) {
-            $attr[$key] = $value;
+			if ($key == 'class') {
+				$attr['class'] .= ' '.$value;
+			}
+			elseif ($key == 'classOverride') {
+				$attr['class'] = $value;
+			}
+			else {
+				$attr[$key] = $value;
+			}
         }
     }
 
@@ -8262,6 +8270,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     // Use new badge
     elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
+
+		$dolGetBadgeParams['attr']['class'] = 'badge-status';
 
         if ($displayMode == 3) {
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
