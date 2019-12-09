@@ -309,7 +309,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 	}
 	if (!$found)
 	{
-		print 'Access refused by IP protection';
+		print 'Access refused by IP protection. Your detected IP is '.$_SERVER['REMOTE_ADDR'];
 		exit;
 	}
 }

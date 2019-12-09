@@ -194,6 +194,7 @@ if ($action == 'maj_pattern')
 /*
  * View
  */
+
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
@@ -201,7 +202,7 @@ llxHeader('', $langs->trans("Passwords"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("GeneratedPasswordDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("GeneratedPasswordDesc")."</span><br>\n";
 print "<br>\n";
 
 
