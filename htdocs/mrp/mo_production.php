@@ -336,7 +336,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    print '<tr><td>TODO...</td></tr>';
 
     	    //var_dump($object->lines);
-
     	}
 
     	/*if (!empty($object->lines))
