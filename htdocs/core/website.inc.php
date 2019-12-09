@@ -61,6 +61,15 @@ if ($pageid > 0)
 	}
 }
 
+if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
+	header("X-Content-Type-Options: nosniff");
+	/* TODO Manage allow_frames flag on websitepage.
+	if (empty($websitepage->allow_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+		header("X-Frame-Options: SAMEORIGIN");
+	}
+	*/
+}
+
 // A lang was forced, so we change weblangs init
 if (GETPOST('l', 'aZ09')) $weblangs->setDefaultLang(GETPOST('l', 'aZ09'));
 // A lang was forced, so we check to find if we must make a redirect on translation page

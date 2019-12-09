@@ -46,17 +46,17 @@ class mod_contract_magre extends ModelNumRefContracts
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Magre';
+	public $nom = 'Magre';
 
 	/**
 	 * @var string name
 	 */
-	public $name='Magre';
+	public $name = 'Magre';
 
 	/**
 	 * @var int Automatic numbering
 	 */
-	public $code_auto=1;
+	public $code_auto = 1;
 
 	/**
 	 *	Return default description of numbering model
@@ -65,31 +65,31 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
     public function info()
     {
-    	global $conf,$langs, $db;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
 		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcontract" value="'.$conf->global->CONTRACT_MAGRE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcontract" value="'.$conf->global->CONTRACT_MAGRE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '</tr>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
     }

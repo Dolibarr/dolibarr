@@ -101,7 +101,7 @@ if ($id)
     print '<div class="underbanner clearboth"></div>';
 
     print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="fichecenter">';
     print '<table class="border centpercent tableforfield">';

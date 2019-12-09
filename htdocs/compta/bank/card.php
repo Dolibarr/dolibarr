@@ -354,7 +354,7 @@ if ($action == 'create')
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td><input size="30" type="text" class="flat" name="label" value="'.dol_escape_htmltag(GETPOST("label", 'alpha')).'"></td></tr>';
+	print '<td><input type="text" class="flat maxwidth150onsmartphone" name="label" value="'.dol_escape_htmltag(GETPOST("label", 'alpha')).'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
@@ -375,7 +375,7 @@ if ($action == 'create')
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->status, (GETPOST("clos", 'int') != '' ?GETPOST("clos", 'int') : $object->clos));
+	print $form->selectarray("clos", $object->status, (GETPOST("clos", 'int') != '' ?GETPOST("clos", 'int') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Country
@@ -412,7 +412,7 @@ if ($action == 'create')
 	// Tags-Categories
 	if ($conf->categorie->enabled)
 	{
-		print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 
 		$arrayselected = array();
@@ -429,7 +429,7 @@ if ($action == 'create')
 	}
 
 	// Comment
-	print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
+	print '<tr><td>'.$langs->trans("Comment").'</td>';
 	print '<td>';
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -476,31 +476,32 @@ if ($action == 'create')
 
 		// If bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-		print '<td><input size="30" type="text" class="flat" name="bank" value="'.(GETPOST('bank') ?GETPOST('bank', 'alpha') : $object->bank).'"></td>';
+		print '<td><input type="text" class="flat minwidth150" name="bank" value="'.(GETPOST('bank') ?GETPOST('bank', 'alpha') : $object->bank).'"></td>';
 		print '</tr>';
 
 		// Show fields of bank account
+		$sizecss = '';
 		foreach ($object->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
 				$name = 'code_banque';
-				$size = 8;
+				$sizecss = 'minwidth100';
 				$content = $object->code_banque;
 			} elseif ($val == 'DeskCode') {
 				$name = 'code_guichet';
-				$size = 8;
+				$sizecss = 'minwidth100';
 				$content = $object->code_guichet;
 			} elseif ($val == 'BankAccountNumber') {
 				$name = 'number';
-				$size = 18;
+				$sizecss = 'minwidth200';
 				$content = $object->number;
 			} elseif ($val == 'BankAccountNumberKey') {
 				$name = 'cle_rib';
-				$size = 3;
+				$sizecss = 'minwidth50';
 				$content = $object->cle_rib;
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
-			print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.(GETPOST($name) ?GETPOST($name, 'alpha') : $content).'"></td>';
+			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOST($name) ?GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
 		}
 		$ibankey = FormBank::getIBANLabel($object);
@@ -509,22 +510,22 @@ if ($action == 'create')
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
-		print '<td><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOST('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
+		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOST('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
-		print '<td><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
+		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
+		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
 		print (GETPOST('domiciliation') ?GETPOST('domiciliation') : $object->domiciliation);
 		print "</textarea></td></tr>";
 
 		print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-		print '<td><input size="30" type="text" class="flat" name="proprio" value="'.(GETPOST('proprio') ?GETPOST('proprio', 'alpha') : $object->proprio).'">';
+		print '<td><input type="text" class="flat minwidth300" name="proprio" value="'.(GETPOST('proprio') ?GETPOST('proprio', 'alpha') : $object->proprio).'">';
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-		print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
+		print '<textarea class="flat quatrevingtpercent" name="owner_address" rows="'.ROWS_2.'">';
 		print (GETPOST('owner_address') ?GETPOST('owner_address', 'alpha') : $object->owner_address);
 		print "</textarea></td></tr>";
 
@@ -922,7 +923,7 @@ else
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
 			if (is_array($cats))
 			{
-				foreach($cats as $cat) {
+				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
 			}

@@ -46,6 +46,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $id        = GETPOST('id', 'int');
+$socid     = GETPOST('socid', 'int');
 $track_id  = GETPOST('track_id', 'alpha', 3);
 $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
@@ -592,7 +593,7 @@ $permissiontoadd = $user->rights->ticket->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 // Actions to send emails
-$trigger_name = 'TICKET_SENTBYMAIL';
+$triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
 $trackid = 'tic'.$object->id;
@@ -993,7 +994,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td class="titlefield">';
             print $langs->trans('TicketChangeType');
             print '</td><td>';
-            print $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
+            $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
             print '</td>';
             print '</tr>';
             // Group
@@ -1001,7 +1002,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
+            $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
             // Severity
@@ -1009,7 +1010,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeSeverity');
             print '</td><td>';
-            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
+            $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
             print '</td>';
             print '</tr>';
         } else {

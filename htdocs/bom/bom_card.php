@@ -119,7 +119,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'BOM_SENTBYMAIL';
+	$triggersendname = 'BOM_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_BOM_TO';
 	$trackid = 'bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -144,6 +144,11 @@ if (empty($reshook))
 		if (!($idprod > 0)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
 			$error++;
+		}
+
+		if ($object->fk_product == $idprod) {
+		    setEventMessages($langs->trans('TheProductXIsAlreadyTheProductToProduce'), null, 'errors');
+		    $error++;
 		}
 
 		if (!$error)

@@ -50,6 +50,11 @@ class Project extends CommonObject
 	public $table_element_line = 'projet_task';
 
     /**
+	 * @var int    Name of field date
+	 */
+	public $table_element_date;
+
+    /**
 	 * @var int Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_projet';

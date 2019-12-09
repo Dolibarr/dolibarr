@@ -153,7 +153,7 @@ class FormTicket
         if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
 
         print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="'.$this->action.'">';
         foreach ($this->param as $key => $value) {
         	print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -200,7 +200,7 @@ class FormTicket
 
         // Type
         print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-        $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
+        $this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', '2', 0, 0, 0, 'minwidth150');
         print '</td></tr>';
 
         // Severity
@@ -225,7 +225,7 @@ class FormTicket
                 if ($this->withthreadid > 0) {
                     $subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
                 }
-                print '<input class="text" size="50" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
+                print '<input class="text minwidth300" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
                 print '</td></tr>';
             }
         }
@@ -376,33 +376,33 @@ class FormTicket
             }
 
             $out = '<tr>';
-            $out .= '<td width="180">' . $langs->trans("MailFile") . '</td>';
-            $out .= '<td colspan="2">';
+            $out .= '<td>'.$langs->trans("MailFile").'</td>';
+            $out .= '<td>';
             // TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
-            $out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">' . "\n";
+            $out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
             $out .= '<script type="text/javascript" language="javascript">';
             $out .= 'jQuery(document).ready(function () {';
             $out .= '    jQuery(".removedfile").click(function() {';
             $out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
             $out .= '    });';
             $out .= '})';
-            $out .= '</script>' . "\n";
+            $out .= '</script>'."\n";
             if (count($listofpaths)) {
                 foreach ($listofpaths as $key => $val) {
-                    $out .= '<div id="attachfile_' . $key . '">';
-                    $out .= img_mime($listofnames[$key]) . ' ' . $listofnames[$key];
+                    $out .= '<div id="attachfile_'.$key.'">';
+                    $out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
                     if (!$this->withfilereadonly) {
-                        $out .= ' <input type="image" style="border: 0px;" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/delete.png" value="' . ($key + 1) . '" class="removedfile" id="removedfile_' . $key . '" name="removedfile_' . $key . '" />';
+                        $out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
                     }
                     $out .= '<br></div>';
                 }
             } else {
-                $out .= $langs->trans("NoAttachedFiles") . '<br>';
+                $out .= $langs->trans("NoAttachedFiles").'<br>';
             }
             if ($this->withfile == 2) { // Can add other files
-                $out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="' . $langs->trans("Upload") . '" />';
+                $out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
                 $out .= ' ';
-                $out .= '<input type="submit" class="button" id="addfile" name="addfile" value="' . $langs->trans("MailingAddFile") . '" />';
+                $out .= '<input type="submit" class="button" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
             }
             $out .= "</td></tr>\n";
 
@@ -859,7 +859,7 @@ class FormTicket
 		</script>';
 
         print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="'.$this->action.'">';
         print '<input type="hidden" name="actionbis" value="add_message">';
         foreach ($this->param as $key => $value) {

@@ -198,7 +198,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 //$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
-$trigger_name = 'TICKET_SENTBYMAIL';
+$triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
 $trackid = 'tic'.$object->id;

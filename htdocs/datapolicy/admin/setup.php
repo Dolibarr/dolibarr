@@ -39,19 +39,29 @@ if (!$user->admin) accessforbidden();
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$arrayofparameters = array(
+$arrayofparameters = array();
+$arrayofparameters['ThirdParty'] = array(
     'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
     'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
-    'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
-    'DATAPOLICY_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
-    'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200'),
 );
+if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
+    $arrayofparameters['Contact'] = array(
+        'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
+    );
+}
+if (!empty($conf->adherent->enabled)) {
+    $arrayofparameters['Member'] = array(
+        'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200'),
+    );
+}
+
 
 
 /*
@@ -59,44 +69,6 @@ $arrayofparameters = array(
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-
-// if (DOL_VERSION < '7' && $action == 'update') {
-//     foreach ($arrayofparameters as $k => $v) {
-//         $res = dolibarr_set_const($db, $k, GETPOST($k), 'chaine', 0, '', $conf->entity);
-//         if (! $res > 0) $error++;
-//     }
-//     if (! $error)
-//     {
-//         $db->commit();
-//         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-//     }
-//     else
-//     {
-//         $db->rollback();
-//         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
-//     }
-// }
-
-
-$arrayofparameters = array(
-    'ThirdParty' => array(
-        'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
-    ),
-    'Contact' => array(
-        'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
-    ),
-    'Member' => array(
-        'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200'),
-    )
-);
 
 $valTab = array(
     '' => $langs->trans('Never'),
@@ -143,7 +115,7 @@ if ($action == 'edit')
 
     foreach ($arrayofparameters as $title => $tab)
     {
-        print '<tr class="liste_titre"><td class="titlefield" colspan="2">'.$langs->trans($title).'</td></tr>';
+        print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
         foreach ($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';
@@ -174,7 +146,7 @@ if ($action == 'edit')
 
     foreach ($arrayofparameters as $title => $tab)
     {
-        print '<tr class="liste_titre"><td class="titlefield" colspan="2">'.$langs->trans($title).'</td></tr>';
+        print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
         foreach ($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';

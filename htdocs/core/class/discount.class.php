@@ -689,6 +689,11 @@ class DiscountAbsolute
         global $langs;
 
         $result='';
+        $link = '';
+        $linkend = '';
+        $label = '';
+        $picto = '';
+        $ref = '';
 
         if ($option == 'invoice') {
             $facid=! empty($this->discount_type)?$this->fk_invoice_supplier_source:$this->fk_facture_source;
