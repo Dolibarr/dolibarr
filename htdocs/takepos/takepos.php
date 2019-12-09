@@ -633,7 +633,7 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 
 <?php
 if ($conf->global->TAKEPOS_HEAD_BAR){
-?>
+	?>
 	<div class="header">
 		<div class="topnav">
 			<a onclick="TerminalsDialog();">
@@ -652,7 +652,7 @@ if ($conf->global->TAKEPOS_HEAD_BAR){
 			</div>
 		</div>
 	</div>
-<?php
+	<?php
 }
 ?>
 
