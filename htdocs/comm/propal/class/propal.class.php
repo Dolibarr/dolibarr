@@ -1557,7 +1557,7 @@ class Propal extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
 		$sql .= " datep=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
-		$sql .= " fin_validite=".(strval($this->fin_validite)!='' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
+		if (! empty($this->fin_validite)) $sql .= " fin_validite=".(strval($this->fin_validite)!='' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql .= " tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
