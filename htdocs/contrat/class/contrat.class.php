@@ -1298,7 +1298,7 @@ class Contrat extends CommonObject
 		if (isset($this->ref_customer)) $this->ref_customer = trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier = trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext = trim($this->ref_ext);
-		if (isset($this->entity)) $this->entity = (int) $this->entity);
+		if (isset($this->entity)) $this->entity = (int) $this->entity;
 		if (isset($this->statut)) $this->statut = (int) $this->statut;
 		if (isset($this->fk_soc)) $this->fk_soc = (int) $this->fk_soc;
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature = trim($this->fk_commercial_signature);
