@@ -958,18 +958,18 @@ function dol_unescapefile($filename)
  */
 function dolCheckVirus($src_file)
 {
-	global $conf;
+	global $conf, $db;
 
 	if (! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
 		if (! class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
-		$antivir=new AntiVir($db);
+		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
 		{
-			$reterrors=$antivir->errors;
+			$reterrors = $antivir->errors;
 			return $reterrors;
 		}
 	}
@@ -992,7 +992,7 @@ function dolCheckVirus($src_file)
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
- *	@return int       			  		>0 if OK, <0 or string if KO
+ *	@return int|string       			>0 if OK, <0 or string if KO
  *  @see    dol_move
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $nohook=0, $varfiles='addedfile')
