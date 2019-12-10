@@ -188,7 +188,7 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-$description .= $fsearch;
+$description .= ($description ? '<br>' : '').$fsearch;
 if (!empty($conf->global->TAX_REPORT_EXTRA_REPORT))
 {
     $description .= '<br>'
