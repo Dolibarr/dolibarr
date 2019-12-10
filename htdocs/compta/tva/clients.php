@@ -60,10 +60,10 @@ if (empty($year))
 }
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
-// Quarter
+// Set default period if not defined
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-    $q = GETPOST("q");
+	$q = GETPOST("q", "int");
     if (empty($q))
     {
         if (GETPOST("month", 'int')) { $date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), false); $date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), false); }
