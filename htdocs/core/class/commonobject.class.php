@@ -497,7 +497,7 @@ abstract class CommonObject
 			$this->country     =$tmparray['label'];
 		}
 
-        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_cpde)))
+        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_code)))
     	{
     		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
     		$tmparray=getState($this->state_id,'all',0,1);
