@@ -1303,8 +1303,8 @@ class Contrat extends CommonObject
 		if (isset($this->fk_soc)) $this->fk_soc = (int) $this->fk_soc;
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature = trim($this->fk_commercial_signature);
 		if (isset($this->fk_commercial_suivi)) $this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
-		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = trim($this->fk_user_mise_en_service);
-		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = (int) $this->fk_user_cloture);
+		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = (int) $this->fk_user_mise_en_service;
+		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = (int) $this->fk_user_cloture;
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
