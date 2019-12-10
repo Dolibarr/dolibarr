@@ -88,6 +88,7 @@ $pid=GETPOST("search_projectid", "int", 3)?GETPOST("search_projectid", "int", 3)
 $status=GETPOST("search_status", 'alpha')?GETPOST("search_status", 'alpha'):GETPOST("status", 'alpha');
 $type=GETPOST("search_type", 'alpha')?GETPOST("search_type", 'alpha'):GETPOST("type", 'alpha');
 $maxprint=((GETPOST("maxprint", 'int')!='')?GETPOST("maxprint", 'int'):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
 {
@@ -154,6 +155,10 @@ if ($action == 'delete_action')
 {
     $event = new ActionComm($db);
     $event->fetch($actionid);
+    $event->fetch_optionals();
+    $event->fetch_userassigned();
+    $event->oldcopy = clone $event;
+
     $result = $event->delete();
 }
 
@@ -162,6 +167,26 @@ if ($action == 'delete_action')
 /*
  * View
  */
+$parameters = array(
+	'socid' => $socid,
+	'status' => $status,
+	'year' => $year,
+	'month' => $month,
+	'day' => $day,
+	'type' => $type,
+	'maxprint' => $maxprint,
+	'filter' => $filter,
+	'filtert' => $filtert,
+	'showbirthday' => $showbirthday,
+	'canedit' => $canedit,
+	'optioncss' => $optioncss,
+	'actioncode' => $actioncode,
+	'pid' => $pid,
+	'resourceid' => $resourceid,
+	'usergroup' => $usergroup,
+);
+$reshook = $hookmanager->executeHooks('beforeAgendaPerUser', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $form = new Form($db);
 $companystatic = new Societe($db);
