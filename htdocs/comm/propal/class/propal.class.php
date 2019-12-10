@@ -1544,7 +1544,7 @@ class Propal extends CommonObject
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
-		if (isset($this->duree_validite)) $this->fin_validite=$this->date + ($this->duree_validite * 24 * 3600);
+		if (! empty($this->duree_validite)) $this->fin_validite=$this->date + ($this->duree_validite * 24 * 3600);
 
 		// Check parameters
 		// Put here code to add control on parameters values
