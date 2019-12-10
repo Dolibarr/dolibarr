@@ -43,11 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+
+$now = dol_now();
+$current_date = dol_getdate($now);
+if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
+
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year))
 {
-    $year_current = strftime("%Y", dol_now());
+	$year_current = $current_date['year'];
     $year_start = $year_current;
 } else {
     $year_current = $year;
@@ -64,10 +69,27 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
         if (GETPOST("month", 'int')) { $date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), false); $date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), false); }
         else
         {
-            $date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-            if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
+            if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2)	{ // quaterly vat, we take last past complete quarter
+            	$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
+            	$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
+            }
+            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
+            	if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
+            		if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
+            			$year_start--;
+            		}
+            	} else {
+            		if (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) < 6) {	// If perdio started from less than 6 years, we show past year
+            			$year_start--;
+            		}
+            	}
+            	$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
+            	$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
+            }
+            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
+            	$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');
+            	$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
+            }
         }
     }
     else
