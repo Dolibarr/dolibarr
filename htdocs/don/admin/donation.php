@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       htdocs/don/admin/dons.php
- *		\ingroup    donations
- *		\brief      Page to setup the donation module
+ *  \file       htdocs/don/admin/donation.php
+ *  \ingroup    donations
+ *  \brief      Page to setup the donation module
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
