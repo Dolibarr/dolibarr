@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file       htdocs/user/admin/user_extrafields.php
+ *  \file       htdocs/user/admin/group_extrafields.php
  *  \ingroup    user
  *  \brief      Page to setup extra fields of users
  */
