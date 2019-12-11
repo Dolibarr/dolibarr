@@ -587,8 +587,8 @@ if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
 print '</a></td>';
 print '</tr>';
 
-/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 /*
+// Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
