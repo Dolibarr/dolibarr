@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       ticket/class/html.ticket.class.php
+ *       \file       htdocs/core/class/html.formticket.class.php
  *       \ingroup    ticket
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  */

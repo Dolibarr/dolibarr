@@ -20,9 +20,9 @@
  */
 
 /**
- *      \file       htdocs/adherents/admin/adherent_extrafields.php
- *		\ingroup    member
- *		\brief      Page to setup extra fields of members
+ *  \file       htdocs/user/admin/user_extrafields.php
+ *  \ingroup    user
+ *  \brief      Page to setup extra fields of users
  */
 
 require '../../main.inc.php';
