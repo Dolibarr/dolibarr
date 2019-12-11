@@ -166,7 +166,7 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
 // List of validated projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress'));
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array('plannedworkload', 'declaredprogress'));
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
