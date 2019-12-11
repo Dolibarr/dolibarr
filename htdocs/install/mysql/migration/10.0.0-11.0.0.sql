@@ -545,3 +545,6 @@ ALTER TABLE llx_mrp_production ADD INDEX idx_mrp_production_fk_mo (fk_mo);
 ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_ref(ref, entity);
 
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
+
+ALTER TABLE llx_bookmark DROP INDEX uk_bookmark_url;
+ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT; -- change from VARCHAR(255) to allow longer URLs
