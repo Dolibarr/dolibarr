@@ -192,8 +192,6 @@ if ($socid > 0)
     	$cumul_achat = 0;
     	$cumul_vente = 0;
 
-    	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-
     	if ($num > 0)
     	{
     		while ($i < $num /*&& $i < $conf->liste_limit*/)
@@ -216,13 +214,13 @@ if ($socid > 0)
     			print "</td>\n";
     			print "<td class=\"center\">";
     			print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-    			print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td class=\"right\">".price(($objp->type == 2 ? -1 : 1) * $objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td class=\"right\">".$sign.price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+    			print "<td class=\"right\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
+    			print "<td class=\"right\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
+    			print "<td class=\"right\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    			    print "<td class=\"right\">".(($marginRate === '')?'n/a':$sign.price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+    				print "<td class=\"right\">".(($marginRate === '')?'n/a':$sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARK_RATES))
-    			    print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+    				print "<td class=\"right\">".(($markRate === '')?'n/a':price(price2num($markRate, 'MT'))."%")."</td>\n";
     			print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
     			print "</tr>\n";
     			$i++;
@@ -248,13 +246,13 @@ if ($socid > 0)
     	// Total
     	print '<tr class="liste_total">';
     	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
-    	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-    	print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-    	print "<td class=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+    	print "<td class=\"right\">".price(price2num($cumul_vente, 'MT'))."</td>\n";
+    	print "<td class=\"right\">".price(price2num($cumul_achat, 'MT'))."</td>\n";
+    	print "<td class=\"right\">".price(price2num($totalMargin, 'MT'))."</td>\n";
     	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    		print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+    		print "<td class=\"right\">".(($marginRate === '')?'n/a':price(price2num($marginRate, 'MT'))."%")."</td>\n";
     	if (! empty($conf->global->DISPLAY_MARK_RATES))
-    		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+    		print "<td class=\"right\">".(($markRate === '')?'n/a':price(price2num($markRate, 'MT'))."%")."</td>\n";
     	print '<td class="right">&nbsp;</td>';
     	print "</tr>\n";
     }
@@ -277,9 +275,9 @@ else
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price($totalMargin, null, null, null, null, $rounding).'");
-        $("#marginRate").html("'.(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%").'");
-        $("#markRate").html("'.(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%").'");
+        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT')).'");
+        $("#marginRate").html("'.(($marginRate === '')?'n/a':price(price2num($marginRate, 'MT'))."%").'");
+        $("#markRate").html("'.(($markRate === '')?'n/a':price(price2num($markRate, 'MT'))."%").'");
     });
     </script>
 ';
