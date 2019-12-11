@@ -432,7 +432,7 @@ print '</td>';
 print '</tr>';
 */
 
-// @TODO Use module notification instead...
+// @todo Use module notification instead...
 
 // Email de réception des notifications
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';

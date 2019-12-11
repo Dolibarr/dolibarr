@@ -194,7 +194,7 @@ elseif ($modecompta=="BOOKKEEPING")
 	$sql  = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
 	$sql.= " WHERE b.entity = ".$conf->entity;
-	$sql.= " AND b.code_journal = aj.code AND aj.nature = 2" ; // @TODO currently count amount in sale journal, but we need to define a category group for turnover
+	$sql.= " AND b.code_journal = aj.code AND aj.nature = 2" ; // @todo currently count amount in sale journal, but we need to define a category group for turnover
 }
 
 $sql.= " GROUP BY dm";

@@ -44,7 +44,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public $picto = 'email';
 
-	// @TODO Defined also into notify.class.php)
+	// @todo Defined also into notify.class.php)
 	public $listofmanagedevents=array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',

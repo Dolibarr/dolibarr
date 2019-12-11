@@ -248,7 +248,7 @@ if ($action == "create" || $action == "start")
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = $conf->global->$vartouse; // This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
 			// Hook to get the good bank id according to posmodule and posnumber.
-			// @TODO add hook here
+			// @todo add hook here
 
 			if ($bankid > 0)
 			{

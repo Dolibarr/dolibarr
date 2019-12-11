@@ -1280,7 +1280,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 }
 
 // Generate document foreach object according to model linked to object
-// @TODO : propose model selection
+// @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread)
 {
     $db->begin();
