@@ -132,7 +132,7 @@ class Account extends CommonObject
 
 	/**
 	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database
-	 * @var
+	 * @var string
 	 */
 	public $iban;
 
