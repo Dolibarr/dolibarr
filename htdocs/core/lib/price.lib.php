@@ -51,6 +51,7 @@
  *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  double	$multicurrency_tx           Currency rate (1 by default)
  * 		@param  double	$pu_devise					Amount in currency
+ *      @param  string  $multicurrency_code			Value of the foreign currency if multicurrency is used ('EUR', 'USD', ...). It will be used for rounding according to currency.
  *		@return         array [
  *                       0=total_ht,
  *						 1=total_vat, (main vat only)
@@ -82,7 +83,7 @@
  * 						25=multicurrency_total_tax1 for total_ht
  *                      26=multicurrency_total_tax2 for total_ht
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = '', $progress = 100, $multicurrency_tx = 1, $pu_devise = 0)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = '', $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '')
 {
 	global $conf,$mysoc,$db;
 
@@ -185,7 +186,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	// if there's some localtax including vat, we calculate localtaxes (we will add later)
 
-    //If input unit price is 'HT', we need to have the totals with main VAT for a correct calculation
+    // if input unit price is 'HT', we need to have the totals with main VAT for a correct calculation
     if ($price_base_type != 'TTC')
     {
     	$tot_sans_remise_wt = price2num($tot_sans_remise * (1 + ($txtva / 100)), 'MU');
@@ -367,8 +368,31 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// Multicurrency
 	if ($multicurrency_tx != 1)
 	{
+		if ($multicurrency_code) {
+			$savMAIN_MAX_DECIMALS_UNIT = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+			$savMAIN_MAX_DECIMALS_TOT = $conf->global->MAIN_MAX_DECIMALS_TOT;
+			$savMAIN_ROUNDING_RULE_TOT = $conf->global->MAIN_ROUNDING_RULE_TOT;
+
+			// Set parameter for currency accurency according to the value of $multicurrency_code (this is because a foreign currency may have different rounding rules)
+			$keyforforeignMAIN_MAX_DECIMALS_UNIT = 'MAIN_MAX_DECIMALS_UNIT_'.$multicurrency_code;
+			$keyforforeignMAIN_MAX_DECIMALS_TOT = 'MAIN_MAX_DECIMALS_TOT_'.$multicurrency_code;
+			$keyforforeignMAIN_ROUNDING_RULE_TOT = 'MAIN_ROUNDING_RULE_TOT_'.$multicurrency_code;
+			if (! empty($conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT)) {
+				$conf->global->MAIN_MAX_DECIMALS_UNIT = $keyforforeignMAIN_MAX_DECIMALS_UNIT;
+				$conf->global->MAIN_MAX_DECIMALS_TOT = $keyforforeignMAIN_MAX_DECIMALS_TOT;
+				$conf->global->MAIN_ROUNDING_RULE_TOT = $keyforforeignMAIN_ROUNDING_RULE_TOT;
+			}
+		}
+
 		// Recal function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
-		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0);
+		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');
+
+		if ($multicurrency_code) {
+			// Restore setup of currency accurency
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savMAIN_MAX_DECIMALS_UNIT;
+			$conf->global->MAIN_MAX_DECIMALS_TOT = $savMAIN_MAX_DECIMALS_TOT;
+			$conf->global->MAIN_ROUNDING_RULE_TOT = $savMAIN_ROUNDING_RULE_TOT;
+		}
 
 		$result[16] = $newresult[0];
 		$result[17] = $newresult[1];
@@ -381,12 +405,6 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[24] = $newresult[8];
 		$result[25] = $newresult[9];
 		$result[26] = $newresult[10];
-		/*
-		$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
-		$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
-		$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
-		$result[19] = price2num($pu_devise, 'MU');
-		*/
 	}
 	else
 	{
