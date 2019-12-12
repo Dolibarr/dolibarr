@@ -988,7 +988,7 @@ class Societe extends CommonObject
 		dol_syslog(get_class($this)."::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
 		$now = dol_now();
-		
+
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
 		if (! empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name=strtoupper($this->name);
 		// Clean parameters
