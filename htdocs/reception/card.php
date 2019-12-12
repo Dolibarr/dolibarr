@@ -688,7 +688,7 @@ if (empty($reshook))
 
 	// Actions to send emails
 	if (empty($id)) $id = $facid;
-	$trigger_name = 'RECEPTION_SENTBYMAIL';
+	$triggersendname = 'RECEPTION_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromreception';
 	$trackid = 'shi'.$object->id;

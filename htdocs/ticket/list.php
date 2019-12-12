@@ -74,8 +74,8 @@ $pagenext = $page + 1;
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
-if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
-elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
+if ($socid > 0)         $hookmanager->initHooks(array('thirdpartyticket'));
+elseif ($projectid > 0) $hookmanager->initHooks(array('projectticket'));
 else $hookmanager->initHooks(array('ticketlist'));
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -149,6 +149,8 @@ if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters = array();
+if ($socid > 0) $parameters['socid'] = $socid;
+if ($projectid > 0) $parameters['projectid'] = $projectid;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 

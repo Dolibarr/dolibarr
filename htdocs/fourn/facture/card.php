@@ -1497,7 +1497,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'BILL_SUPPLIER_SENTBYMAIL';
+	$triggersendname = 'BILL_SUPPLIER_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
 	$trackid = 'sin'.$object->id;

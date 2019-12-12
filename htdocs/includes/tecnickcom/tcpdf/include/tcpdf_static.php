@@ -1805,21 +1805,33 @@ class TCPDF_STATIC {
 		return $ret;
 	}
 
-	/**
-	 * Wrapper to use fopen only with local files
-	 * @param filename (string) Name of the file to open
-	 * @param $mode (string) 
-	 * @return Returns a file pointer resource on success, or FALSE on error.  
-	 * @public static
-	 */
-	public static function fopenLocal($filename, $mode) {
-		if (strpos($filename, '://') === false) {
-			$filename = 'file://'.$filename;
-		} elseif (stream_is_local($filename) !== true) {
-			return false;
-		}
-		return fopen($filename, $mode);
-	}
+    /**
+     * Wrapper to use fopen only with local files
+     * @param  string $filename The full path to the file to open
+     * @param  string $mode     Acceses type for the file ('r', 'r+', 'w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+' or 'e')
+     * @return resource         Returns a file pointer resource on success, or FALSE on error.
+     * @public static
+     */
+    public static function fopenLocal($filename, $mode)
+    {
+        if (strpos($filename, '//') === 0)
+        {
+            // Share folder on a (windows) server
+            // e.g.: "//[MyServerName]/[MySharedFolder]/"
+            //
+            // nothing to change
+        }
+        elseif (strpos($filename, '://') === false)
+        {
+            $filename = 'file://'.$filename;
+        }
+        elseif (stream_is_local($filename) !== true)
+        {
+            return false;
+        }
+
+        return fopen($filename, $mode);
+    }
 
 	/**
 	 * Check if the URL exist.

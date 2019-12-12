@@ -119,7 +119,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'BOM_SENTBYMAIL';
+	$triggersendname = 'BOM_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_BOM_TO';
 	$trackid = 'bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -144,6 +144,11 @@ if (empty($reshook))
 		if (!($idprod > 0)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
 			$error++;
+		}
+
+		if ($object->fk_product == $idprod) {
+		    setEventMessages($langs->trans('TheProductXIsAlreadyTheProductToProduce'), null, 'errors');
+		    $error++;
 		}
 
 		if (!$error)
@@ -625,28 +630,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		// Close / Cancel
     		if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
     		{
-    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=close">' . $langs->trans("Disable") . '</a>';
+    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
     		}
 
     		// Re-open
     		if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
     		{
-    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen">' . $langs->trans("ReOpen") . '</a>';
+    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen">'.$langs->trans("ReOpen").'</a>';
     		}
 
     		// Create MO
     		if ($conf->mrp->enabled)
     		{
-	    		if ($object->status == $object::STATUS_VALIDATED && ! empty($user->rights->mrp->write))
+	    		if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write))
 	    		{
-	    			print '<a class="butAction" href="' . DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("CreateMO") . '</a>';
+	    			print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>';
 	    		}
     		}
 
     		// Clone
     		if ($permissiontoadd)
     		{
-    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&object=bom">' . $langs->trans("ToClone") . '</a>';
+    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom">'.$langs->trans("ToClone").'</a>';
     		}
 
     		/*
@@ -693,7 +698,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	    $genallowed = $user->rights->bom->read; // If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->bom->write; // If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
+	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('bom'));

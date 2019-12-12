@@ -321,7 +321,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
             	$tmp = explode('.', $val['foreignkey']);
             	if (!empty($tmp[0]) && !empty($tmp[1]))
             	{
-            		$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";
+            		$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES llx_".preg_replace('/^llx_/', '', $tmp[0])."(".$tmp[1].");";
             		$texttoinsert .= "\n";
             	}
             }

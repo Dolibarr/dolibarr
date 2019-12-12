@@ -1582,9 +1582,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	if (method_exists($object, 'getBannerAddress') && $object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories' && $object->element != 'ecm_files')
 	{
-		$morehtmlref .= '<div class="refidno">';
-		$morehtmlref .= $object->getBannerAddress('refaddress', $object);
-		$morehtmlref .= '</div>';
+		$moreaddress = $object->getBannerAddress('refaddress', $object);
+		if ($moreaddress) {
+			$morehtmlref .= '<div class="refidno">';
+			$morehtmlref .= $moreaddress;
+			$morehtmlref .= '</div>';
+		}
 	}
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
 	{
@@ -3081,7 +3084,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt', 'project'=>'sitemap',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
-		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
+		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'object_list'=>'list-alt', 'object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
@@ -6061,49 +6064,49 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'societe')
 			{
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object)?$object->code_client:'');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object)?$object->code_fournisseur:'');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object)?$object->phone:'');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object)?$object->fax:'');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object)?$object->address:'');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object)?$object->zip:'');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object)?$object->town:'');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object)?$object->idprof1:'');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object)?$object->idprof2:'');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object)?$object->idprof3:'');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object)?$object->idprof4:'');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object)?$object->idprof5:'');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object)?$object->idprof6:'');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object)?$object->tva_intra:'');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object)?dol_htmlentitiesbr($object->note_public):'');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object)?dol_htmlentitiesbr($object->note_private):'');
+				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object) ? $object->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object) ? $object->name : '');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object) ? $object->name_alias : '');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object) ? $object->code_client : '');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object) ? $object->code_fournisseur : '');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object) ? $object->email : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object) ? $object->phone : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object) ? $object->fax : '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object) ? $object->address : '');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object) ? $object->zip : '');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object) ? $object->town : '');
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object) ? $object->idprof1 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object) ? $object->idprof2 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object) ? $object->idprof3 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object) ? $object->idprof4 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object) ? $object->idprof5 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object) ? $object->idprof6 : '');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object) ? $object->tva_intra : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object) ?dol_htmlentitiesbr($object->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object) ?dol_htmlentitiesbr($object->note_private) : '');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty)?$object->thirdparty->code_client:'');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty)?$object->thirdparty->code_fournisseur:'');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty)?$object->thirdparty->phone:'');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty)?$object->thirdparty->fax:'');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty)?$object->thirdparty->address:'');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty)?$object->thirdparty->zip:'');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty)?$object->thirdparty->town:'');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof1:'');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof2:'');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof3:'');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof4:'');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof5:'');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty)?$object->thirdparty->idprof6:'');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->thirdparty->tva_intra:'');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_public):'');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty)?dol_htmlentitiesbr($object->thirdparty->note_private):'');
+				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty) ? $object->thirdparty->name : '');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty) ? $object->thirdparty->name_alias : '');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_client : '');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_fournisseur : '');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty) ? $object->thirdparty->email : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty) ? $object->thirdparty->phone : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty) ? $object->thirdparty->fax : '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty) ? $object->thirdparty->address : '');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty) ? $object->thirdparty->zip : '');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty) ? $object->thirdparty->town : '');
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof1 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof2 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof3 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof4 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof5 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof6 : '');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty) ? $object->thirdparty->tva_intra : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty) ?dol_htmlentitiesbr($object->thirdparty->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty) ?dol_htmlentitiesbr($object->thirdparty->note_private) : '');
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
@@ -7896,23 +7899,26 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 
 	$tmpfile = preg_replace('/\.noexe$/', '', $file);
 
-	// Text files
+	// Plain text files
 	if (preg_match('/\.txt$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.rtx$/i', $tmpfile)) { $mime = 'text/richtext'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.csv$/i', $tmpfile)) { $mime = 'text/csv'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.tsv$/i', $tmpfile)) { $mime = 'text/tab-separated-values'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.(cf|conf|log)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.ini$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'ini'; $famime = 'file-text-o'; }
+    if (preg_match('/\.md$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'md'; $famime = 'file-text-o'; }
 	if (preg_match('/\.css$/i', $tmpfile)) { $mime = 'text/css'; $imgmime = 'css.png'; $srclang = 'css'; $famime = 'file-text-o'; }
 	// Certificate files
 	if (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
-	// HTML/XML
+	// XML based (HTML/XML/XAML)
 	if (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) { $mime = 'text/html'; $imgmime = 'html.png'; $srclang = 'html'; $famime = 'file-text-o'; }
 	if (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) { $mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xml'; $famime = 'file-text-o'; }
+    if (preg_match('/\.xaml$/i', $tmpfile)) { $mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xaml'; $famime = 'file-text-o'; }
 	// Languages
 	if (preg_match('/\.bas$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'bas'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(c)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'c'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(cpp)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cpp'; $famime = 'file-code-o'; }
+    if (preg_match('/\.cs$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs';  $famime = 'file-code-o'; }
 	if (preg_match('/\.(h)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'h'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(java|jsp)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'java'; $famime = 'file-code-o'; }
 	if (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o'; }
@@ -8129,7 +8135,7 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr = array(
-    	'class'=>'badge badge-status'.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
+    	'class'=>'badge '.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
     );
 
     if (empty($html)) {
@@ -8150,7 +8156,15 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     // Override attr
     if (!empty($params['attr']) && is_array($params['attr'])) {
         foreach ($params['attr']as $key => $value) {
-            $attr[$key] = $value;
+			if ($key == 'class') {
+				$attr['class'] .= ' '.$value;
+			}
+			elseif ($key == 'classOverride') {
+				$attr['class'] = $value;
+			}
+			else {
+				$attr[$key] = $value;
+			}
         }
     }
 
@@ -8256,6 +8270,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     // Use new badge
     elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
+
+		$dolGetBadgeParams['attr']['class'] = 'badge-status';
 
         if ($displayMode == 3) {
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
@@ -8369,6 +8385,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     $class = 'btnTitle';
+
     // hidden conf keep during button transition TODO: remove this block
     if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
         $class = 'butActionNew';
@@ -8443,10 +8460,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $tag = (empty($attr['href']) ? 'span' : 'a');
 
-
     $button = '<'.$tag.' '.$compiledAttributes.' >';
     $button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
-    $button .= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
+    $button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
     $button .= '</'.$tag.'>';
 
     // hidden conf keep during button transition TODO: remove this block
@@ -8472,4 +8488,14 @@ function isAFileWithExecutableContent($filename)
         return true;
     }
     return false;
+}
+
+/**
+ * Return new session token
+ *
+ * @return  string
+ */
+function newToken()
+{
+	return $_SESSION['newtoken'];
 }

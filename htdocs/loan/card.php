@@ -561,7 +561,7 @@ if ($id > 0)
 		}
 		else
 		{
-			print $object->rate.'%';
+			print price($object->rate).'%';
 		}
 		print '</td></tr>';
 

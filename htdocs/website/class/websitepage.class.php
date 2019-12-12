@@ -74,6 +74,10 @@ class WebsitePage extends CommonObject
 	 * @var string keywords
 	 */
 	public $keywords;
+	/**
+	 * @var string language code ('en', 'fr', 'en-gb', ..)
+	 */
+	public $lang;
 
 	public $htmlheader;
 	public $content;

@@ -71,7 +71,6 @@ $adht = new AdherentType($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
-$errmsgs = array();
 
 $defaultdelay = 1;
 $defaultdelayunit = 'y';
@@ -398,7 +397,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
                 $moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
 
-                $result = $object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1, '', $moreinheader);
+                $result = $object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, '', $moreinheader);
                 if ($result < 0)
                 {
                 	$errmsg = $object->error;
@@ -687,20 +686,19 @@ if ($rowid > 0)
             $subscriptionstatic = new Subscription($db);
 
             $num = $db->num_rows($result);
-            $i = 0;
 
             print '<table class="noborder centpercent">'."\n";
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
-            print '<td class="center">'.$langs->trans("DateCreation").'</td>';
-            print '<td align="center">'.$langs->trans("Type").'</td>';
-            print '<td class="center">'.$langs->trans("DateStart").'</td>';
-            print '<td class="center">'.$langs->trans("DateEnd").'</td>';
-            print '<td class="right">'.$langs->trans("Amount").'</td>';
+            print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
             if (!empty($conf->banque->enabled))
             {
-                print '<td class="right">'.$langs->trans("Account").'</td>';
+                print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
             }
             print "</tr>\n";
 
@@ -708,6 +706,7 @@ if ($rowid > 0)
             $adh = new Adherent($db);
             $adht = new AdherentType($db);
 
+            $i = 0;
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
@@ -766,6 +765,13 @@ if ($rowid > 0)
                 print "</tr>";
                 $i++;
             }
+
+            if (empty($num)) {
+                $colspan = 6;
+                if (!empty($conf->banque->enabled)) $colspan++;
+                print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+            }
+
             print "</table>";
         }
         else
@@ -1002,7 +1008,7 @@ if ($rowid > 0)
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
                     }
-                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription", 0);
+                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 					if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (!empty($conf->product->enabled) || !empty($conf->service->enabled)))
 					{
 						$prodtmp = new Product($db);
@@ -1027,7 +1033,7 @@ if ($rowid > 0)
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
                     }
-                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription", 0);
+                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 					if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (!empty($conf->product->enabled) || !empty($conf->service->enabled)))
 					{
 						$prodtmp = new Product($db);
@@ -1070,9 +1076,9 @@ if ($rowid > 0)
             }
         }
 
-        print '<tr><td colspan="2">&nbsp;</td>';
+        print '<tr><td></td><td></td></tr>';
 
-        print '<tr><td width="30%">'.$langs->trans("SendAcknowledgementByMail").'</td>';
+        print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';
         print '<td>';
         if (!$object->email)
         {
@@ -1117,11 +1123,20 @@ if ($rowid > 0)
             $helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
             $helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
             $helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
-            $helpcontent .= $subjecttosend."\n";
+            if ($subjecttosend) {
+                $helpcontent .= $subjecttosend."\n";
+            } else {
+                $langs->load("errors");
+                $helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
+            }
             $helpcontent .= "<br>";
             $helpcontent .= '<b>'.$langs->trans("MailText").'</b>:<br>';
-            $helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
-
+            if ($texttosend) {
+                $helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
+            } else {
+                $langs->load("errors");
+                $helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
+            }
             print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
         }
         print '</td></tr>';

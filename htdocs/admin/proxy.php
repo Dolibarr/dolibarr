@@ -82,7 +82,7 @@ llxHeader('', $langs->trans("Proxy"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("ProxyDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ProxyDesc")."</span><br>\n";
 print "<br>\n";
 
 

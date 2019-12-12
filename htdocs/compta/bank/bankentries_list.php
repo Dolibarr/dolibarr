@@ -93,7 +93,6 @@ $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
 $num_releve = GETPOST("num_releve", "alpha");
-$cat = GETPOST("cat");
 if (empty($dateop)) $dateop = -1;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -420,6 +419,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $options = array();
 
 $buttonreconcile = '';
+$morehtmlref = '';
 
 if ($id > 0 || !empty($ref))
 {
@@ -458,9 +458,9 @@ if ($id > 0 || !empty($ref))
             if ($user->rights->banque->consolidate) {
             	$newparam = $param;
             	$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
-            	$buttonreconcile = '<a class="butActionNewRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
     }

@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Search User
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
 print '<tr><td>';

@@ -52,7 +52,7 @@ function societe_prepare_head(Societe $object)
 
     if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
-	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire)
 		{
 		    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0; // TODO
@@ -228,7 +228,7 @@ function societe_prepare_head(Societe $object)
 
         $head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
         $head[$h][1] = $title;
-        if ($foundonexternalonlinesystem) $head[$h][1] .= ' <span class="badge">...</span>';
+        if ($foundonexternalonlinesystem) $head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
        	elseif ($nbBankAccount > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;

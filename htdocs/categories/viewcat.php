@@ -372,7 +372,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
-			print $form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1);
+			$form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1);
 			print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';

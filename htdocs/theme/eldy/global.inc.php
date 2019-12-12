@@ -372,6 +372,7 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+	min-width: 54px;
 }
 .valigntop {
 	vertical-align: top;
@@ -529,8 +530,8 @@ body[class*="colorblind-"] .text-success{
 
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
-.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off { 
-	font-size: 1.5em; vertical-align: text-bottom; 
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
+	font-size: 1.5em; vertical-align: text-bottom;
 }
 
 /* Themes for badges */
@@ -1520,6 +1521,7 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
 <?php } ?>
 }
 
@@ -4016,6 +4018,11 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 
 .calendarviewcontainertr { height: 100px; }
 
+td.cal_other_month {
+	opacity: 0.8;
+}
+
+
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
@@ -5950,14 +5957,13 @@ div.tabsElem a.tab {
 		font-size: 12px;
 	}
 
-	.text-plus-circle {
-	   display: none;
-	}
-
 	table.table-fiche-title .col-title div.titre{
 		line-height: unset;
 	}
 
+	input#addedfile {
+		width: 95%;
+	}
 }
 
 <?php

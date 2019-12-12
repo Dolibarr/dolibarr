@@ -66,8 +66,7 @@ llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("DefaultRightsDesc");
-print " ".$langs->trans("OnlyActiveElementsAreShown")."<br><br>\n";
+print '<span class="opacitymedium">'.$langs->trans("DefaultRightsDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br><br>\n";
 
 $db->begin();
 

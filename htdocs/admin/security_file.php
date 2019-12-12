@@ -90,7 +90,7 @@ llxHeader('', $langs->trans("Files"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("SecurityFilesDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("SecurityFilesDesc")."</span><br>\n";
 print "<br>\n";
 
 

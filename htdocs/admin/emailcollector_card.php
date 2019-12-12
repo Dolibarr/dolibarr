@@ -431,7 +431,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
 		}
-		catch(Exception $e)
+		catch (Exception $e)
 		{
 			print $e->getMessage();
 		}

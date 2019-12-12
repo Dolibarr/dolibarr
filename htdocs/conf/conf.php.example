@@ -250,11 +250,11 @@ $dolibarr_main_prod='0';
 $dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
 
 // $dolibarr_main_restrict_ip
-// To restrict access to backoffice to some ip addresses only.
+// To restrict access to backoffice to some ip addresses only. Use a comma to separate values.
 // Note: Pages that does not need login (like public pages, web site) are not protected with this.
 // Default value: ''
 // Examples:
-// $dolibarr_main_restrict_ip='127.0.0.1, 192.168.0.1';
+// $dolibarr_main_restrict_ip='127.0.0.1, ::1, 192.168.0.1';
 //
 $dolibarr_main_restrict_ip='';
 

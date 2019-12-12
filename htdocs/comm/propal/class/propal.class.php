@@ -1544,6 +1544,7 @@ class Propal extends CommonObject
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (! empty($this->duree_validite)) $this->fin_validite=$this->date + ($this->duree_validite * 24 * 3600);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -1555,7 +1556,8 @@ class Propal extends CommonObject
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
-		$sql .= " datep=".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " datep=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
+		if (! empty($this->fin_validite)) $sql .= " fin_validite=".(strval($this->fin_validite)!='' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql .= " tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
@@ -2501,11 +2503,11 @@ class Propal extends CommonObject
 		if ($resql)
 		{
 			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
-			$trigger_name = 'PROPAL_CLOSE_REFUSED';
+			$triggerName = 'PROPAL_CLOSE_REFUSED';
 
 			if ($statut == self::STATUS_SIGNED)
 			{
-				$trigger_name = 'PROPAL_CLOSE_SIGNED';
+				$triggerName = 'PROPAL_CLOSE_SIGNED';
 				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
 
 				// The connected company is classified as a client
@@ -2522,7 +2524,7 @@ class Propal extends CommonObject
 			}
 			if ($statut == self::STATUS_BILLED)	// Why this ?
 			{
-				$trigger_name = 'PROPAL_CLASSIFY_BILLED';
+				$triggerName = 'PROPAL_CLASSIFY_BILLED';
 			}
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -2550,7 +2552,7 @@ class Propal extends CommonObject
 			if (!$notrigger && empty($error))
 			{
 				// Call trigger
-				$result = $this->call_trigger($trigger_name, $user);
+				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}

@@ -77,7 +77,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 // Actions to send emails
 $id=0;
 $actiontypecode='';     // Not an event for agenda
-$trigger_name='';       // Disable triggers
+$triggersendname = '';       // Disable triggers
 $paramname='id';
 $mode='emailfortest';
 $trackid=(($action == 'testhtml')?"testhtml":"test");

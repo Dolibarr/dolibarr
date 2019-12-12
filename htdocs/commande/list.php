@@ -223,7 +223,7 @@ if (empty($reshook))
 	$permissiontoread = $user->rights->commande->lire;
 	$permissiontodelete = $user->rights->commande->supprimer;
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
-	$trigger_name = 'ORDER_SENTBYMAIL';
+	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "members", "users", "other"));
+$langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -822,7 +822,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'MEMBER_SENTBYMAIL';
+	$triggersendname = 'MEMBER_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfrommember';
 	$trackid = 'mem'.$object->id;
@@ -1072,16 +1072,10 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-		//Hooks here
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-      	    print $object->showOptionals($extrafields, 'edit', $parameters);
-		}
 
 		print '<tbody>';
 		print "</table>\n";
+
 		dol_fiche_end();
 
 		print '<div class="center">';
@@ -1769,7 +1763,7 @@ else
 
 
 		/*
-		 * Hotbar
+		 * Action bar
 		 */
 
 		print '<div class="tabsAction">';
