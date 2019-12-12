@@ -1434,7 +1434,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
     $text = $langs->trans("Value");
     print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
     print '</td>';
-    if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+    if (empty($strictw3c)) print '<td class="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
     $label='';
@@ -1600,7 +1600,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
             // Submit
             if (empty($strictw3c))
             {
-            	print '<td align="center">';
+            	print '<td class="center">';
             	print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 	            print "</td>";
             }

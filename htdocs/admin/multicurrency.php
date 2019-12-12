@@ -189,12 +189,12 @@ dol_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurren
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
@@ -206,7 +206,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
 } else {
@@ -220,7 +220,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print '<tr class="oddeven">';
     print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
     } else {
@@ -313,7 +313,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->transnoentitiesnoconv("CurrenciesUsed_help_to_add")).'</td>'."\n";
-print '<td align="center">'.$langs->trans("Rate").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Rate").'</td>'."\n";
 print '</tr>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';

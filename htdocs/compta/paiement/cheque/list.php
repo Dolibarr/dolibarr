@@ -197,7 +197,7 @@ if ($resql)
     		print '</td>';
 
     		// Date
-    		print '<td align="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
+    		print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
 
     		// Bank
     		print '<td>';

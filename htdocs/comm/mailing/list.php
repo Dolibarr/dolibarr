@@ -228,14 +228,14 @@ if ($result)
 		print '<td>'.$obj->titre.'</td>';
 		// Date creation
 
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->datec), 'day');
 		print '</td>';
 
 		// Nb of email
 		if (!$filteremail)
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$nbemail = $obj->nbemail;
 			/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{

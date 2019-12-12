@@ -339,7 +339,7 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
-    print '<td align="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+    print '<td class="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -355,7 +355,7 @@ if ($result)
         print $bprev->getNomUrl(1);
         print "</td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
 

@@ -665,7 +665,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 		}
 		for ($h = $begin_h; $h < $end_h; $h++)
 		{
-			echo '<td align="center">';
+			echo '<td class="center">';
 			print '<small style="font-family: courier">'.sprintf("%02d", $h).'</small>';
 			print "</td>";
 		}

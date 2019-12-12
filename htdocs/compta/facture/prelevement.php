@@ -587,11 +587,11 @@ if ($object->id > 0)
 
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td align="center">'.$langs->trans("User").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
-	print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
+	print '<td class="center">'.$langs->trans("User").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	print '<td>&nbsp;</td>';
-	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
@@ -620,11 +620,11 @@ if ($object->id > 0)
 			print '<tr class="oddeven">';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
-			print '<td align="center">'.price($obj->amount).'</td>';
+			print '<td class="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
 			print '<td>&nbsp;</td>';
 
-			print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
+			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
 
 			print '<td class="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
@@ -672,9 +672,9 @@ if ($object->id > 0)
 
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 
-			print '<td align="center">'.price($obj->amount).'</td>';
+			print '<td class="center">'.price($obj->amount).'</td>';
 
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($obj->fk_prelevement_bons > 0)
 			{
 				$withdrawreceipt = new BonPrelevement($db);
@@ -686,7 +686,7 @@ if ($object->id > 0)
 
 			print '<td>&nbsp;</td>';
 
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
 
 			print '<td>&nbsp;</td>';
 

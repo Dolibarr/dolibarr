@@ -134,7 +134,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= $conf->global->COMPANY_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
         $texte .= '</td>';
-        $texte .= '<td align="center">&nbsp; ';
+        $texte .= '<td class="center">&nbsp; ';
         $texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
         $texte .= '</td>';
         $texte .= '</tr>';

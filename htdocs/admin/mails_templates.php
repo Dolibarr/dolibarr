@@ -571,7 +571,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 	}
 	print '</td>';
 	if ($tmpfieldlist == 'topic') {
-		print '<td align="center" rowspan="' . (count($fieldsforcontent)) . '">';
+		print '<td class="center" rowspan="' . (count($fieldsforcontent)) . '">';
 		if ($action != 'edit') {
 			print '<input type="submit" class="button" name="actionadd" value="' . $langs->trans("Add") . '">';
 		}
@@ -730,7 +730,7 @@ if ($resql)
                 if (empty($reshook)) fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 
                 print '<td></td><td></td><td></td>';
-                print '<td align="center">';
+                print '<td class="center">';
                 print '<input type="hidden" name="page" value="'.$page.'">';
                 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                 print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -874,7 +874,7 @@ if ($resql)
                 $url.='&';
 
                 // Status / Active
-                print '<td align="center" class="nowrap">';
+                print '<td class="center nowrap">';
                 if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                 else print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
                 print "</td>";

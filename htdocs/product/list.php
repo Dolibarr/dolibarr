@@ -964,7 +964,7 @@ if ($resql)
 		// Weight
 		if (!empty($arrayfields['p.weight']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->weight;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -972,7 +972,7 @@ if ($resql)
 		// Length
 		if (!empty($arrayfields['p.length']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->length;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -980,7 +980,7 @@ if ($resql)
 		// Surface
 		if (!empty($arrayfields['p.surface']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->surface;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -988,7 +988,7 @@ if ($resql)
 		// Volume
 		if (!empty($arrayfields['p.volume']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->volume;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;

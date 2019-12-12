@@ -974,7 +974,7 @@ while ($i < min($num, $limit))
 	// Exported operation date
 	if (! empty($arrayfields['t.date_export']['checked']))
 	{
-		print '<td align="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
+		print '<td class="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 

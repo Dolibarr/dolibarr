@@ -213,13 +213,13 @@ while ($i < min($num, $limit))
 	print "</td>\n";
 
 	// Target
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($obj->target == 0) print $langs->trans("BookmarkTargetReplaceWindowShort");
 	if ($obj->target == 1) print $langs->trans("BookmarkTargetNewWindowShort");
 	print "</td>\n";
 
 	// Author
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($obj->fk_user)
 	{
 		$userstatic->id=$obj->fk_user;
@@ -233,7 +233,7 @@ while ($i < min($num, $limit))
 	print "</td>\n";
 
 	// Date creation
-	print '<td align="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
+	print '<td class="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
 
 	// Position
 	print '<td class="right">'.$obj->position."</td>";

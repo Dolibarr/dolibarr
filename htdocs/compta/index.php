@@ -667,10 +667,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="nowrap right">'.price($obj->amount).'</td>';
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
-					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
+					print '<td class="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 
 					$tot_ttc += $obj->amount;

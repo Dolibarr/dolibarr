@@ -995,7 +995,7 @@ SCRIPT;
                             print '</td>';
 
                             // Barcode type
-                            print '<td align="center">';
+                            print '<td class="center">';
                             $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type : 0;
                             $productfourn->fetch_barcode();
                             print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');

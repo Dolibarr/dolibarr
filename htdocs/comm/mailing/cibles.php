@@ -598,7 +598,7 @@ if ($object->fetch($id) >= 0)
 				print '<td>'.$obj->lastname.'</td>';
 				print '<td>'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
-				print '<td align="center">';
+				print '<td class="center">';
                 if (empty($obj->source_id) || empty($obj->source_type))
                 {
                     print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
@@ -649,7 +649,7 @@ if ($object->fetch($id) >= 0)
 				else
 				{
 					// Date sent
-					print '<td align="center">'.$obj->date_envoi.'</td>';
+					print '<td class="center">'.$obj->date_envoi.'</td>';
 
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, $obj->error_text);

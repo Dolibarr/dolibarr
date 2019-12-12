@@ -211,9 +211,9 @@ if ($id > 0 || ! empty($ref))
 					print dol_print_date($db->jdate($objp->date_contrat), 'dayhour')."</td>";
 					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					//print '<td align="right">';
-					print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
-					print '<td align="center">'.($objp->nb_running+$objp->nb_late>0?$objp->nb_running+$objp->nb_late:'').'</td>';
-					print '<td align="center">'.($objp->nb_closed>0?$objp->nb_closed:'').'</td>';
+					print '<td class="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
+					print '<td class="center">'.($objp->nb_running+$objp->nb_late>0?$objp->nb_running+$objp->nb_late:'').'</td>';
+					print '<td class="center">'.($objp->nb_closed>0?$objp->nb_closed:'').'</td>';
 					//$contratstatic->LibStatut($objp->statut,5).'</td>';
 					print "</tr>\n";
 					$i++;

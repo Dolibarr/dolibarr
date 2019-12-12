@@ -1199,7 +1199,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             // Status
             if (!empty($arrayfields['t.statut']['checked']))
             {
-            	print '<td align="center">'.$contactstatic->getLibStatut(5).'</td>';
+            	print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
             }
 
             // Extra fields
@@ -1753,7 +1753,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             }
 
             // Status
-            $out .= '<td class="nowrap" align="center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
+            $out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
 
             // Actions
             $out .= '<td></td>';
@@ -1838,7 +1838,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print '<td>'.$obj->town.'</td>';
 			print '<td>'.$obj->code_client.'</td>';
 
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
 			print img_edit();
 			print '</a></td>';

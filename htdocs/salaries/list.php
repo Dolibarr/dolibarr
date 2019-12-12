@@ -243,7 +243,7 @@ if ($result)
 		if (! $i) $totalarray['nbfield']++;
 
 		// Date payment
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 
         // Type

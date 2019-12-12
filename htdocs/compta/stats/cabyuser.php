@@ -426,7 +426,7 @@ if (count($amount)) {
         print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
         // Other stats
-        print '<td align="center">';
+        print '<td class="center">';
         if (! empty($conf->propal->enabled) && $key>0) {
             print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
         }

@@ -200,7 +200,7 @@ class printing_printgcp extends PrintingDriver
         $html.= '<td>'.$langs->trans('GCP_State').'</td>';
         $html.= '<td>'.$langs->trans('GCP_connectionStatus').'</td>';
         $html.= '<td>'.$langs->trans('GCP_Type').'</td>';
-        $html.= '<td align="center">'.$langs->trans("Select").'</td>';
+        $html.= '<td class="center">'.$langs->trans("Select").'</td>';
         $html.= '</tr>'."\n";
         $list = $this->getlistAvailablePrinters();
         //$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
@@ -215,7 +215,7 @@ class printing_printgcp extends PrintingDriver
             $html.= '<td>'.$langs->trans('STATE_'.$printer_det['connectionStatus']).'</td>';
             $html.= '<td>'.$langs->trans('TYPE_'.$printer_det['type']).'</td>';
             // Defaut
-            $html.= '<td align="center">';
+            $html.= '<td class="center">';
             if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id'])
             {
                 $html.= img_picto($langs->trans("Default"), 'on');

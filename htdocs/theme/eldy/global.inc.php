@@ -2440,7 +2440,7 @@ div.tabsAction > a {
 }
 
 a.tabTitle {
-    color:rgba(0,0,0,.5) !important;
+    color: rgba(0,0,0,0.4) !important;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal !important;

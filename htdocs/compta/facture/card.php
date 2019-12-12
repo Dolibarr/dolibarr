@@ -4382,7 +4382,7 @@ elseif ($id > 0 || !empty($ref))
 	    print '<tr class="liste_titre">';
 	    print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 	    print '<td></td>';
-	    print '<td align="center">'.$langs->trans('Situation').'</td>';
+	    print '<td class="center">'.$langs->trans('Situation').'</td>';
 	    if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	    print '<td class="right">'.$langs->trans('AmountHT').'</td>';
 	    print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
@@ -4423,7 +4423,7 @@ elseif ($id > 0 || !empty($ref))
 	    print '<tr class="oddeven">';
 	    print '<td>'.$object->getNomUrl(1).'</td>';
 	    print '<td></td>';
-	    print '<td align="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
+	    print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
 	    if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	    print '<td class="right">'.price($object->total_ht).'</td>';
 	    print '<td class="right">'.price($object->total_ttc).'</td>';
@@ -4473,7 +4473,7 @@ elseif ($id > 0 || !empty($ref))
 	            print '<tr class="oddeven">';
 	            print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 	            print '<td></td>';
-	            print '<td align="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
+	            print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($next_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($next_invoice->total_ttc).'</td>';
@@ -4570,7 +4570,7 @@ elseif ($id > 0 || !empty($ref))
 					print '</td>';
 				}
 				print '<td class="right">'.price($sign * $objp->amount).'</td>';
-				print '<td align="center">';
+				print '<td class="center">';
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
