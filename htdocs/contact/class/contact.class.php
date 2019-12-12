@@ -376,7 +376,7 @@ class Contact extends CommonObject
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
         if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
-		
+
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
