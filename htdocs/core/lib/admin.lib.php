@@ -254,7 +254,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                 }
                 else
                 {
-                    if (! $silent) print '<tr><td valign="top" colspan="2">';
+                    if (! $silent) print '<tr><td class="tdtop" colspan="2">';
                     if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
                     if (! $silent) print '</tr>';
                     $error++;
@@ -339,7 +339,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                 $cursor=$reg[1];
                 if (empty($listofinsertedrowid[$cursor]))
                 {
-                    if (! $silent) print '<tr><td valign="top" colspan="2">';
+                    if (! $silent) print '<tr><td class="tdtop" colspan="2">';
                     if (! $silent) print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
                     if (! $silent) print '</tr>';
                     $error++;
@@ -396,7 +396,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                 // Is it an error we accept
 				if (! in_array($errno, $okerrors))
 				{
-				    if (! $silent) print '<tr><td valign="top" colspan="2">';
+				    if (! $silent) print '<tr><td class="tdtop" colspan="2">';
 				    if (! $silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
 				    if (! $silent) print '</tr>'."\n";
 				    dol_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);

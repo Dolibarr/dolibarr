@@ -180,7 +180,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
    			{
                 $texte.=$file['name'].'<br>';
    			}
-   			$texte.='<div id="div_'.get_class($this).'">';
+   			$texte.='</div>';
 
 			if ($conf->global->MAIN_SUPPLIER_PROPOSAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
@@ -210,7 +210,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 		$texte.= '</td>';
 
-		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte.= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';
