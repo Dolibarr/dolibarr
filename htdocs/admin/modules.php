@@ -198,20 +198,36 @@ if ($action=='install')
                 	// TODO Make more test
                 }
 
-                // Now we install the module
-                if (! $error)
-                {
-                    //var_dump($dirins);
-                    @dol_delete_dir_recursive($dirins.'/'.$modulename);	// delete the zip file
-                    dol_syslog("Uncompress of module file is a success. We copy it from ".$modulenamedir." into target dir ".$dirins.'/'.$modulename);
-                    $result=dolCopyDir($modulenamedir, $dirins.'/'.$modulename, '0444', 1);
-                    if ($result <= 0)
-                    {
-                        dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$modulenamedir." and ".$dirins.'/'.$modulename, LOG_WARNING);
-                        $langs->load("errors");
-                        setEventMessages($langs->trans("ErrorFailToCopyDir", $modulenamedir, $dirins.'/'.$modulename), null, 'errors');
-                        $error++;
-                    }
+                dol_syslog("Uncompress of module file is a success.");
+
+                $modulenamearrays = array();
+                if (dol_is_file($modulenamedir.'/metapackage.conf')) {
+                	// This is a meta package
+                	$metafile = file_get_contents($modulenamedir.'/metapackage.conf');
+                	$modulenamearrays = explode("\n", $metafile);
+                }
+                $modulenamearrays[$modulename] = $modulename;
+
+                foreach($modulenamearrays as $modulenameval) {
+                	if (strpos($modulenameval, '#') === 0) continue;	// Discard comments
+                	if (strpos($modulenameval, '//') === 0) continue;	// Discard comments
+					if (! trim($modulenameval)) continue;
+
+	                // Now we install the module
+	                if (! $error)
+	                {
+	                    //var_dump($dirins);
+	                    @dol_delete_dir_recursive($dirins.'/'.$modulenameval);	// delete the zip file
+	                    dol_syslog("We copy now directory ".$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval." into target dir ".$dirins.'/'.$modulenameval);
+	                    $result=dolCopyDir($conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval, $dirins.'/'.$modulenameval, '0444', 1);
+	                    if ($result <= 0)
+	                    {
+	                        dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$modulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+	                        $langs->load("errors");
+	                        setEventMessages($langs->trans("ErrorFailToCopyDir", $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval, $dirins.'/'.$modulenameval), null, 'errors');
+	                        $error++;
+	                    }
+	                }
                 }
             }
         }
