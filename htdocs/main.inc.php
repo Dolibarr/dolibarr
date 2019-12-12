@@ -1656,7 +1656,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Link to module builder
 		if (!empty($conf->modulebuilder->enabled))
 		{
-			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_modulebuilder">';
+			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
