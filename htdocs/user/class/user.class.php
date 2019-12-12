@@ -1175,6 +1175,11 @@ class User extends CommonObject
 		global $mysoc;
 
 		// Clean parameters
+		
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname=strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
+		
 		$this->login = trim($this->login);
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
 
@@ -1513,6 +1518,11 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
+		
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname=strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
+		
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->employee    	= $this->employee ? $this->employee : 0;
