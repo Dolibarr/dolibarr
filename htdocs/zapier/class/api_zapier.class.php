@@ -263,15 +263,15 @@ class ZapierApi extends DolibarrApi
         );
     }
 
-    /**
-     * Update hook
-     *
-     * @param int   $id             Id of hook to update
-     * @param array $request_data   Datas
-     * @return int
-     *
-     * @url	PUT /hooks/{id}
-     */
+    // /**
+    //  * Update hook
+    //  *
+    //  * @param int   $id             Id of hook to update
+    //  * @param array $request_data   Datas
+    //  * @return int
+    //  *
+    //  * @url	PUT /hooks/{id}
+    //  */
     /*public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->zapier->write) {

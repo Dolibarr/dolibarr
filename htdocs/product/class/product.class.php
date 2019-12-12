@@ -252,7 +252,7 @@ class Product extends CommonObject
     /**
      * Customs code
      *
-     * @var
+     * @var string
      */
     public $customcode;
 

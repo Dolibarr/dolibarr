@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/compta/bank/various_expenses/card.php
+ *  \file       htdocs/compta/bank/various_payment/card.php
  *  \ingroup    bank
  *  \brief      Page of various expenses
  */
