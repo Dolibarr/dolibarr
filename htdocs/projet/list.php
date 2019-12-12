@@ -702,6 +702,7 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array();
+$totalarray['val'] = array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -858,12 +859,15 @@ while ($i < min($num, $limit))
         // Opp weighted amount
         if (!empty($arrayfields['opp_weighted_amount']['checked']))
         {
+            if (!isset($totalarray['val']['opp_weighted_amount']))  $totalarray['val']['opp_weighted_amount'] = 0;
             print '<td align="right">';
             if ($obj->opp_weighted_amount) {
                 print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
+                $totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
             }
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
         }
 		// Budget
 		if (! empty($arrayfields['p.budget_amount']['checked']))
