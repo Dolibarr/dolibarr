@@ -262,7 +262,10 @@ class ExportExcel2007new extends ModeleExports
         $this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
         $this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 
-		$this->col=0;
+		$this->col=1;
+		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+			$this->col=0;
+		}
 		foreach($array_selected_sorted as $code => $value)
 		{
             $alias=$array_export_fields_label[$code];
@@ -302,7 +305,10 @@ class ExportExcel2007new extends ModeleExports
 		global $conf;
 
 		// Define first row
-		$this->col=0;
+		$this->col=1;
+		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+			$this->col=0;
+		}
 
 		$reg=array();
 

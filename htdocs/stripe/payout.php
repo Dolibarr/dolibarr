@@ -107,7 +107,6 @@ if (! $rowid) {
     print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
 
@@ -205,7 +204,6 @@ if (! $rowid) {
 		print '<td>' . $payout->description . '</td>';
 		// Amount
 		print '<td class="right">' . price(($payout->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
-		print '<td class="right">' . price(($payout->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
 		// Status
 		print "<td class='right'>";
 		if ($payout->status=='paid') {

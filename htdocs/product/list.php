@@ -805,7 +805,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		// Multilangs
-		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+		if (! empty($conf->global->MAIN_MULTILANGS)) // If multilang is enabled
 		{
 			$sql = "SELECT label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
@@ -823,7 +823,8 @@ if ($resql)
 
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = $obj->ref_supplier;
+		$product_static->ref_fourn = $obj->ref_supplier;		// deprecated
+		$product_static->ref_supplier = $obj->ref_supplier;
 		$product_static->label = $obj->label;
 		$product_static->type = $obj->fk_product_type;
 		$product_static->status_buy = $obj->tobuy;
@@ -848,14 +849,16 @@ if ($resql)
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
 
+		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
 		if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 		{
 			if ($obj->fk_product_type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))    // Not a service
 			{
-				$product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
+				$option = 'nobatch';
+				if (empty($arrayfields['stock_virtual']['checked'])) $option .= ',novirtual';
+				$product_static->load_stock($option);             // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
 			}
 		}
-
 
 		print '<tr class="oddeven">';
 
@@ -867,6 +870,7 @@ if ($resql)
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
+
 		// Ref supplier
 		if (! empty($arrayfields['pfp.ref_fourn']['checked']))
 		{
@@ -875,6 +879,7 @@ if ($resql)
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
+
 		// Label
 		if (! empty($arrayfields['p.label']['checked']))
 		{
@@ -917,7 +922,7 @@ if ($resql)
 				print $duration_value;
 				print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
 			}
-			else
+			elseif (! preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
 			{
 				print $obj->duration;
 			}
@@ -1142,6 +1147,7 @@ if ($resql)
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
+
 		// Action
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

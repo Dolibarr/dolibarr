@@ -155,6 +155,8 @@ class pdf_rouget extends ModelePdfExpedition
 			$this->posxtotalht=$this->page_largeur - $this->marge_droite - 20;
 		}
 
+		if(!empty($conf->global->SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME)) $this->posxweightvol = $this->posxqtyordered;
+
 		$this->posxpicture=$this->posxweightvol - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 
         // To work with US executive format
