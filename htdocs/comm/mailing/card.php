@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -763,7 +763,7 @@ if ($action == 'create')
 	print '</br><br>';
 
 	print '<table class="border centpercent">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'], 'bgcolor', '', 0);
 	print '</td></tr>';
@@ -906,6 +906,11 @@ else
 			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			$email = CMailFile::getValidAddress($object->email_from, 2);
+			if (!isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			}
 			print '</td></tr>';
 
 			// Errors to
@@ -913,6 +918,11 @@ else
 			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			$email = CMailFile::getValidAddress($object->email_errorsto, 2);
+			if (!isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			}
 			print '</td></tr>';
 
 			// Nb of distinct emails

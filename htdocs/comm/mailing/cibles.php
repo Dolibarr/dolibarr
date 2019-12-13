@@ -229,6 +229,7 @@ if ($object->fetch($id) >= 0)
 	{
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
+		$nbok = ($nbtry - $nbko);
 
 		$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
 		if ($nbko) $morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
@@ -244,10 +245,39 @@ if ($object->fetch($id) >= 0)
 
 	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
+	$emailarray = CMailFile::getArrayAddress($object->email_from);
+	foreach($emailarray as $email => $name) {
+		if ($name && $name != $email) {
+			print dol_escape_htmltag($name).' &lt;'.$email;
+			print '&gt;';
+			if (!isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			}
+		} else {
+			print dol_print_email($object->email_from, 0, 0, 0, 0, 1);
+		}
+	}
+	//print dol_print_email($object->email_from, 0, 0, 0, 0, 1);
+	//var_dump($object->email_from);
+	print '</td></tr>';
 
 	// Errors to
-	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">';
+	$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
+	foreach($emailarray as $email => $name) {
+		if ($name != $email) {
+			print dol_escape_htmltag($name).' &lt;'.$email;
+			print '&gt;';
+			if (!isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			}
+		} else {
+			print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+		}
+	}
 	print '</td></tr>';
 
 	// Nb of distinct emails
