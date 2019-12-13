@@ -907,7 +907,7 @@ else
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			$email = CMailFile::getValidAddress($object->email_from, 2);
-			if (!isValidEmail($email)) {
+			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadEMail", $email));
 			}
@@ -919,7 +919,7 @@ else
 			print '</td><td>';
 			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			$email = CMailFile::getValidAddress($object->email_errorsto, 2);
-			if (!isValidEmail($email)) {
+			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadEMail", $email));
 			}
