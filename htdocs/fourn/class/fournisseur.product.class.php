@@ -434,11 +434,9 @@ class ProductFournisseur extends Product
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'" . $this->db->escape($fk_barcode_type) . "'");
                 $sql .= ")";
 
-                $idinserted = 0;
-
                 $resql = $this->db->query($sql);
                 if ($resql) {
-                    $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
+                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
                 }
                 else {
                     $error++;
@@ -461,7 +459,6 @@ class ProductFournisseur extends Product
 
                     if (empty($error)) {
                         $this->db->commit();
-						$this->product_fourn_price_id = $idinserted;
                         return $this->product_fourn_price_id;
                     } else {
                         $this->db->rollback();
