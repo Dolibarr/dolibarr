@@ -819,8 +819,8 @@ class Stripe extends CommonObject
 				else $stripefee = round($fee);
         		$paymentarray = array(
 					"amount" => "$stripeamount",
-          "currency" => "$currency",
-          "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				"currency" => "$currency",
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,
