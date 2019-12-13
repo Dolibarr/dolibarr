@@ -285,7 +285,7 @@ class Form
 					}
 					$ret .= $tmpcontent;
 				}
-				else $ret .= $value;
+				else $ret .= dol_escape_htmltag($value);
 
 				if ($formatfunc && method_exists($object, $formatfunc))
 				{
