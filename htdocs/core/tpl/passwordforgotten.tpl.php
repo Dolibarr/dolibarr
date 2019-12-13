@@ -190,7 +190,7 @@ if (! empty($morelogincontent)) {
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
 	</span>
 <?php }else{ ?>
-	<div class="warning" align="center">
+	<div class="warning center">
 	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
 	</div>
 <?php } ?>

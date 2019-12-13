@@ -194,6 +194,7 @@ if ($action == 'maj_pattern')
 /*
  * View
  */
+
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
@@ -201,7 +202,7 @@ llxHeader('', $langs->trans("Passwords"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("GeneratedPasswordDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("GeneratedPasswordDesc")."</span><br>\n";
 print "<br>\n";
 
 
@@ -245,7 +246,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
 foreach ($arrayhandler as $key => $module)
@@ -405,8 +406,8 @@ print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Disable clear password in database

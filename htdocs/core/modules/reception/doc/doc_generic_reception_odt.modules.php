@@ -169,12 +169,12 @@ class doc_generic_reception_odt extends ModelePdfReception
    			{
                 $texte.=$file['name'].'<br>';
    			}
-   			$texte.='<div id="div_'.get_class($this).'">';
+   			$texte.='</div>';
 		}
 
 		$texte.= '</td>';
 
-		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte.= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';

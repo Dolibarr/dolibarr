@@ -1430,8 +1430,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Constant").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedValue").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("Value").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedValue").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("Value").'</td>';
     			$out .= '</tr>'."\n";
 
     			$i = 0;
@@ -1451,8 +1451,8 @@ class Setup extends DolibarrApi
     				$out .= '<tr class="oddeven">';
     				$out .= '<td>'.$i.'</td>'."\n";
     				$out .= '<td>'.$constname.'</td>'."\n";
-    				$out .= '<td align="center">'.$constvalue.'</td>'."\n";
-    				$out .= '<td align="center">'.$valueforchecksum.'</td>'."\n";
+    				$out .= '<td class="center">'.$constvalue.'</td>'."\n";
+    				$out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
     				$out .= "</tr>\n";
     			}
 
@@ -1498,7 +1498,7 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
     			$out .= '</tr>'."\n";
     			$tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
     			if (is_array($tmpfilelist) && count($tmpfilelist))
@@ -1510,7 +1510,7 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
     					$out .= "</tr>\n";
     				}
     			}
@@ -1532,8 +1532,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
     			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
     			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
     			$out .= '</tr>'."\n";
@@ -1547,8 +1547,8 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['md5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -1582,8 +1582,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
     			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
     			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
     			$out .= '</tr>'."\n";
@@ -1597,8 +1597,8 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['md5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";

@@ -4156,6 +4156,11 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	background-size: 24px auto;
 }
 
+td.cal_other_month {
+	opacity: 0.8;
+}
+
+
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
@@ -6071,5 +6076,6 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
+if (! empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
 
 if (is_object($db)) $db->close();

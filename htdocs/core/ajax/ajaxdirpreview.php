@@ -284,7 +284,7 @@ if ($type == 'directory')
         }
         elseif ($section === '0')
         {
-        	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        	if ($module == 'ecm') $textifempty='<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         	else $textifempty = $langs->trans('NoFileFound');
         }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));

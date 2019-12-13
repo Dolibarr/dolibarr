@@ -442,7 +442,7 @@ print $langs->trans('BankColorizeMovementDesc');
 print "</td>";
 // Active
 if ($conf->global->BANK_COLORIZE_MOVEMENT) {
-    print '<td align="center">'."\n";
+    print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement">';
     print img_picto($langs->trans("Enabled"), 'switch_on');
     print '</a>';
@@ -450,7 +450,7 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 }
 else
 {
-    print '<td align="center">'."\n";
+    print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
     print "</td>";
 }

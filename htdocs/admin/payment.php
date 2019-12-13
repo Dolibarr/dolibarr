@@ -175,7 +175,7 @@ foreach ($dirmodels as $reldir)
                             else print $tmp;
                             print '</td>'."\n";
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             //print "> ".$conf->global->PAYMENT_ADDON." - ".$file;
                             if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
                             {
@@ -205,7 +205,7 @@ foreach ($dirmodels as $reldir)
                                 }
                             }
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             print $form->textwithpicto('', $htmltooltip, 1, 0);
 
                             if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors

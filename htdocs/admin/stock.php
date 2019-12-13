@@ -473,7 +473,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	// Example with a yes / no select
 	/*print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
 	} else {
@@ -486,7 +486,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	// Example with a yes / no select
     /*print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
-	print '<td align="center">';
+	print '<td class="center">';
   	if ($conf->use_javascript_ajax) {
   		print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
   	} else {

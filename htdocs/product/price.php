@@ -1350,7 +1350,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		{
 			print '<tr class="oddeven">';
 			print '<td>';
-			print $form->textwithpicto($langs->trans('SellingPrice').' '.$i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			$text = $langs->trans('SellingPrice').' '.$i;
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
 
 			// VAT

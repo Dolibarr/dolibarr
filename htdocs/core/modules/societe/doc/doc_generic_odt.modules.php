@@ -134,7 +134,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= $conf->global->COMPANY_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
         $texte .= '</td>';
-        $texte .= '<td align="center">&nbsp; ';
+        $texte .= '<td class="center">&nbsp; ';
         $texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
         $texte .= '</td>';
         $texte .= '</tr>';
@@ -158,12 +158,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
    			{
                 $texte .= $file['name'].'<br>';
    			}
-   			$texte .= '<div id="div_'.get_class($this).'">';
+   			$texte .= '</div>';
 		}
 
 		$texte .= '</td>';
 
-		$texte .= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte .= '</td>';
 		$texte .= '</tr>';

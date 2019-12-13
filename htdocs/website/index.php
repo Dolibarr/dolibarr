@@ -25,7 +25,7 @@ define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
 
-header('X-XSS-Protection:0');
+//header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -1059,6 +1059,7 @@ if ($action == 'updatecss')
     		if (!$error)
     		{
     		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
+    		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
 
     		    $result = $object->update($user);
         		if ($result < 0)
@@ -1504,17 +1505,25 @@ if ($action == 'updatemeta')
 		if ($result)
 		{
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
-			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-			//exit;
+
+			if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
+			{
+				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
+				//exit;
+				$action = 'preview';
+			}
+			else
+			{
+				$action = 'editmeta';
+			}
 		}
 		else
 		{
 			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
    			//exit;
+			$action = 'preview';
 		}
-
-		$action = 'preview';
 	}
 }
 
@@ -1741,8 +1750,22 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				if ($result)
 				{
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-	   				exit;
+
+					if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
+					{
+						if ($backtopage) {
+							header("Location: ".$backtopage);
+							exit;
+						} else {
+							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
+							exit;
+						}
+					}
+					else
+					{
+						if ($action == 'updatesource') $action = 'editsource';
+						if ($action == 'updatecontent') $action = 'editcontent';
+					}
 				}
 				else
 				{
@@ -2153,7 +2176,7 @@ if (!GETPOST('hide_websitemenu'))
 
 	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm')))
 	{
-		if ($action == 'editcss' && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+		if ($action == 'editcss') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
@@ -2442,9 +2465,10 @@ if (!GETPOST('hide_websitemenu'))
 		}
 		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite')))
 		{
+			if ($action == 'editsource' || $action == 'editmeta') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 		}
 
 		print '</span>'; // end websitetools
@@ -2738,10 +2762,9 @@ if ($action == 'editcss')
 	$htmlhelp .= dol_htmlentitiesbr($manifestjsoncontentdefault);
 	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
-
+	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
 	$doleditor = new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
-
 	print '</td></tr>';
 
 	// README.md
@@ -3343,6 +3366,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<th>'.$langs->trans("Type").'</th>';
 			print '<th>'.$langs->trans("Link").'</th>';
 			print '<th>'.$langs->trans("Description").'</th>';
+			print '<th></th>';
 			print '</tr>';
 
 			foreach ($listofpages['list'] as $answerrecord)
@@ -3357,7 +3381,20 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
 					print '</td>';
-					print '<td class="tdoverflow100">'.$answerrecord->description;
+					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
+					print '<td>';
+					$param = '?action=replacesiteconfirm';
+					$param .= '&optioncontent='.GETPOST('optioncontent');
+					$param .= '&optionmeta='.GETPOST('optionmeta');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
+					$param .= '&searchstring='.$searchkey;
+					$disabled = '';
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					if (empty($user->rights->website->write)) {
+						$disabled = ' disabled';
+						$urltoedithtmlsource = '';
+					}
+					print '<a class="'.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 					print '</td>';
 					print '</tr>';
 				}
@@ -3387,6 +3424,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '</td>';
 					print '<td class="tdoverflow100">';
 					print '</td>';
+					print '<td></td>';
 					print '</tr>';
 				}
 			}

@@ -603,7 +603,7 @@ echo '<td></td>';
 $i=0;
 for ($h = $begin_d; $h < $end_d; $h++)
 {
-	echo '<td align="center">';
+	echo '<td class="center">';
 	print '<small style="font-family: courier">'.sprintf("%02d", $h).'</small>';
 	print "</td>";
 }

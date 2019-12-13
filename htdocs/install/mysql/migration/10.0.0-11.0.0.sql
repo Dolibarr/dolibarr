@@ -534,6 +534,8 @@ CREATE TABLE llx_mrp_production(
 	fk_product integer NOT NULL,
 	fk_warehouse integer,
 	qty integer NOT NULL DEFAULT 1,
+    qty_frozen smallint DEFAULT 0,
+    disable_stock_change smallint DEFAULT 0, 
 	batch varchar(30),
 	role varchar(10),      			-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
@@ -545,6 +547,8 @@ CREATE TABLE llx_mrp_production(
 	import_key varchar(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_mrp_production ADD COLUMN qty_frozen smallint DEFAULT 0;
+ALTER TABLE llx_mrp_production ADD COLUMN disable_stock_change smallint DEFAULT 0;
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_mo FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement FOREIGN KEY (fk_stock_movement) REFERENCES llx_stock_mouvement (rowid);
@@ -552,3 +556,5 @@ ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement F
 ALTER TABLE llx_mrp_production ADD INDEX idx_mrp_production_fk_mo (fk_mo);
 
 ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_ref(ref, entity);
+
+ALTER TABLE llx_website ADD COLUMN use_manifest integer;

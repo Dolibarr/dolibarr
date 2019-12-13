@@ -705,7 +705,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			print '<td class="nowrap right">'.$generic_commande->LibStatut($objp->fk_statut, $objp->billed, 5).'</td>';
 
 			// Checkbox
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input class="flat checkformerge" type="checkbox" name="orders_to_invoice[]" value="'.$objp->rowid.'">';
 			print '</td>';
 

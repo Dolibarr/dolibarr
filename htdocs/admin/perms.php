@@ -66,8 +66,7 @@ llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("DefaultRightsDesc");
-print " ".$langs->trans("OnlyActiveElementsAreShown")."<br><br>\n";
+print '<span class="opacitymedium">'.$langs->trans("DefaultRightsDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br><br>\n";
 
 $db->begin();
 
@@ -179,7 +178,7 @@ if ($result)
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Module").'</td>';
             print '<td>'.$langs->trans("Permission").'</td>';
-            print '<td align="center">'.$langs->trans("Default").'</td>';
+            print '<td class="center">'.$langs->trans("Default").'</td>';
             print '<td align="center">&nbsp;</td>';
             print "</tr>\n";
         }
@@ -194,7 +193,7 @@ if ($result)
         $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
         print '<td>'.$perm_libelle. '</td>';
 
-        print '<td align="center">';
+        print '<td class="center">';
         if ($obj->bydefault == 1)
         {
             print img_picto($langs->trans("Active"), 'tick');

@@ -277,8 +277,6 @@ if ($result)
 	$cumul_achat = 0;
 	$cumul_vente = 0;
 
-	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-
 	if ($num > 0)
 	{
 		while ($i < $num /*&& $i < $conf->liste_limit*/)
@@ -317,13 +315,13 @@ if ($result)
 		   		print "<td>".$companystatic->getNomUrl(1, 'margin')."</td>\n";
 		  	}
 
-			print "<td class=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
-			print "<td class=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
-			print "<td class=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price(price2num($pv, 'MT'))."</td>\n";
+			print "<td class=\"right\">".price(price2num($pa, 'MT'))."</td>\n";
+			print "<td class=\"right\">".price(price2num($marge, 'MT'))."</td>\n";
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+				print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 			if (!empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+				print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 			print "</tr>\n";
 
 			$i++;

@@ -165,8 +165,8 @@ if ($result) {
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("LastMailings", $limit).'</td>';
-    print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-    print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
+    print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+    print '<td class="center">'.$langs->trans("NbOfEMails").'</td>';
     print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
     $num = $db->num_rows($result);
@@ -184,8 +184,8 @@ if ($result) {
 	        print '<tr class="oddeven">';
 	        print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
 	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
-	        print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
-	        print '<td align="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
+	        print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
+	        print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
 	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
             print '</tr>';
 	        $i++;

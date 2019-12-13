@@ -243,8 +243,6 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 	$coldisplay++;
 }
 
-$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-
 // Fields for situation invoices
 if ($this->situation_cycle_ref)
 {
@@ -263,10 +261,10 @@ if ($usemargins && ! empty($conf->margin->enabled) && empty($user->socid))
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
 	<?php }
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
-		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
 	<?php }
     if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
     <?php }
 }
 if ($line->special_code == 3)	{ ?>

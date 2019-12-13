@@ -124,7 +124,6 @@ if ($result)
 }
 
 
-//print '<tr><td width="30%" class="notopnoleft" valign="top">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 

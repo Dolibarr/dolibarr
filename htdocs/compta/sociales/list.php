@@ -277,7 +277,7 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 
 			// Date end period
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($obj->periode)
 			{
 				print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';

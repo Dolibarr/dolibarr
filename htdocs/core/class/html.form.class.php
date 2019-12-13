@@ -4117,7 +4117,9 @@ class Form
 
 			// Now add questions
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
-			if (!empty($formquestion['text'])) $more .= '<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
+			if (!empty($formquestion['text'])) {
+				$more .= '<div class="tagtr"><div class="tagtd">'.$formquestion['text'].'</div></div>'."\n";
+			}
 			foreach ($formquestion as $key => $input)
 			{
 				if (is_array($input) && !empty($input))
@@ -7409,7 +7411,7 @@ class Form
 					if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
 					else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 				}
-				$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+				$ret.='<img alt="Photo" class="photo'.$modulepart.($cssclass?' '.$cssclass:'').' photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
 				if ($addlinktofullsize) $ret.='</a>';
 			}
 			elseif ($altfile && file_exists($dir."/".$altfile))
@@ -7663,7 +7665,8 @@ class Form
 	{
 		global $db, $conf, $langs, $user;
 
-		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
+        $out = '';
+        $sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) $sql .= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
 		$sql .= ' ORDER BY label';
@@ -7752,6 +7755,7 @@ class Form
 	{
 		global $db, $conf, $langs;
 
+        $out = '';
 		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
 		$sql .= ' WHERE entity = '.$conf->entity.' AND active = 1';
 
@@ -7789,6 +7793,7 @@ class Form
 	{
 		global $db, $langs;
 
+        $out = '';
 		$sql = 'SELECT id, code, label FROM '.MAIN_DB_PREFIX.'c_type_fees';
 		$sql .= ' WHERE active = 1';
 

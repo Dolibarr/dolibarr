@@ -230,7 +230,7 @@ if ($id > 0 || ! empty($ref))
 						print $propalstatic->getNomUrl(1);
 						print "</td>\n";
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
-						print '<td align="center">';
+						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->date_valid), 'dayhour') . "</td>";
 						print "<td align=\"center\">" . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->amount) . '</td>' . "\n";
@@ -244,7 +244,7 @@ if ($id > 0 || ! empty($ref))
         		if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
         		else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
         		print '<td colspan="2"></td>';
-        		print '<td align="center">' . $total_qty . '</td>';
+        		print '<td class="center">' . $total_qty . '</td>';
         		print '<td align="right">' . price($total_ht) . '</td>';
         		print '<td></td>';
         		print "</table>";

@@ -145,6 +145,7 @@ NEW: #4301
 For Developers or integrators:
 
 NEW: Add a manifest.json.php file for web app.
+NEW: Support of deployement of metapackages
 NEW: Removed deprecated code that create linked object from ->origin
 NEW: experimental zapier for dolibarr
 NEW: Accountancy - Add hook bookkeepinglist on general ledger
