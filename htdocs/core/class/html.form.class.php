@@ -2095,7 +2095,7 @@ class Form
 		}
 		else
 		{
-		    $selectFieldsGrouped = ", p.stock";
+		    $selectFieldsGrouped = ", ".$db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
 		}
 
 		$sql = "SELECT ";
