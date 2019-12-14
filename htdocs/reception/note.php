@@ -102,7 +102,7 @@ if ($id > 0 || ! empty($ref))
 
 
 	// Reception card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 	// Ref customer reception

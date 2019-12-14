@@ -1976,7 +1976,14 @@ if (empty($reshook))
 			if ($tva_npr)
 				$info_bits |= 0x01;
 
-			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+			$price2num_pu_ht = price2num($pu_ht);
+			$price2num_remise_percent = price2num($remise_percent);
+			$price2num_price_min = price2num($price_min);
+			if (empty($price2num_pu_ht)) $price2num_pu_ht = 0;
+			if (empty($price2num_remise_percent)) $price2num_remise_percent = 0;
+			if (empty($price2num_price_min)) $price2num_price_min = 0;
+
+			if ($usercanproductignorepricemin && (! empty($price_min) && ($price2num_pu_ht * (1 - $price2num_remise_percent / 100) < $price2num_price_min))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {

@@ -1189,7 +1189,7 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright = '';
 			if ($object->statut == 2) $morehtmlright .= ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';

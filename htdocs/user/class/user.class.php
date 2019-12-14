@@ -918,6 +918,7 @@ class User extends CommonObject
 		else
 		{
 			$sql .= " AND gr.entity = ".$conf->entity;
+			$sql .= " AND gu.entity = ".$conf->entity;
 			$sql .= " AND r.entity = ".$conf->entity;
 		}
 		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";

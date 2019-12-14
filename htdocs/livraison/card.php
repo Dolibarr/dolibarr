@@ -436,7 +436,7 @@ else
 			/*
 			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';

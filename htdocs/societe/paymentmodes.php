@@ -1613,7 +1613,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -1719,7 +1719,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -1767,7 +1767,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -1867,7 +1867,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 

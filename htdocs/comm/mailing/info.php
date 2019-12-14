@@ -54,7 +54,7 @@ if ($object->fetch($id) >= 0)
 
 	dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlright='';
 	$nbtry = $nbok = 0;

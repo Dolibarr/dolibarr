@@ -3590,7 +3590,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (!$error)
             {
                 $this->db->commit();
-                return $result;
+                return 1;
             }
             else
             {
