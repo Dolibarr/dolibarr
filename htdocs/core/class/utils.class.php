@@ -586,7 +586,7 @@ class Utils
 	 */
 	function generateDoc($module)
 	{
-		global $conf, $langs, $db;
+		global $conf, $langs;
 		global $dirins;
 
 		$error = 0;
@@ -708,7 +708,7 @@ class Utils
 				$outfile=$dirofmoduletmp.'/out.tmp';
 
 				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
+				$utils = new Utils($this->db);
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
