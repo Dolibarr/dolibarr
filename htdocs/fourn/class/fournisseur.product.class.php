@@ -391,7 +391,6 @@ class ProductFournisseur extends Product
 				return -2;
 			}
         }
-
         else
         {
             dol_syslog(get_class($this) . '::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
@@ -434,6 +433,8 @@ class ProductFournisseur extends Product
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'" . $this->db->escape($fk_barcode_type) . "'");
                 $sql .= ")";
 
+				$this->product_fourn_price_id = 0;
+					
                 $resql = $this->db->query($sql);
                 if ($resql) {
                     $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
