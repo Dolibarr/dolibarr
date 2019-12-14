@@ -18,7 +18,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/cheque/mod_chequereceipts_thyme.php
+ * \file       htdocs/core/modules/cheque/mod_chequereceipt_thyme.php
  * \ingroup    cheque
  * \brief      File containing class for numbering module Thyme
  */
