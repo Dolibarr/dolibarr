@@ -243,7 +243,7 @@ if ($id > 0 || !empty($ref))
                 print '<td class="right">'.price(price2num($cumul_qty, 'MT'))."</td>\n";
                 print '<td class="right">'.price(price2num($totalMargin, 'MT'))."</td>\n";
                 if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-                	print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT')))."</td>\n";
+                	print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
                 if (!empty($conf->global->DISPLAY_MARK_RATES))
                 	print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
                 print '<td class="right">&nbsp;</td>';

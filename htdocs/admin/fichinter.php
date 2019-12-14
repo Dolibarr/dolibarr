@@ -320,7 +320,7 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($conf->global->FICHEINTER_ADDON == $classname)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
@@ -348,7 +348,7 @@ foreach ($dirmodels as $reldir)
                                 $htmltooltip .= $langs->trans($module->error).'<br>';
                             }
                         }
-						print '<td align="center">';
+						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
@@ -486,12 +486,12 @@ foreach ($dirmodels as $reldir)
 		    				$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				print $form->textwithpicto('', $htmltooltip, -1, 0);
 		    				print '</td>';
 
 		    				// Preview
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				if ($module->type == 'pdf')
 		    				{
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'intervention').'</a>';
@@ -587,7 +587,7 @@ print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("UseServicesDurationOnFichinter");
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.($conf->global->FICHINTER_USE_SERVICE_DURATION ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
@@ -603,7 +603,7 @@ print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("UseDurationOnFichinter");
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.($conf->global->FICHINTER_WITHOUT_DURATION ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
@@ -619,7 +619,7 @@ print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("UseDateWithoutHourOnFichinter");
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.($conf->global->FICHINTER_DATE_WITHOUT_HOUR ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';

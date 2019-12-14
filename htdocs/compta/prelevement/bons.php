@@ -156,7 +156,7 @@ if ($result)
 
         print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount)."</td>\n";
 

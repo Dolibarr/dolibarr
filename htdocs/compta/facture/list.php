@@ -1166,7 +1166,7 @@ if ($resql)
 			// Country
 			if (! empty($arrayfields['country.code_iso']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				$tmparray=getCountry($obj->fk_pays, 'all');
 				print $tmparray['label'];
 				print '</td>';
@@ -1175,7 +1175,7 @@ if ($resql)
 			// Type ent
 			if (! empty($arrayfields['typent.code']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				if (! is_array($typenArray) || count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 				print $typenArray[$obj->typent_code];
 				print '</td>';
@@ -1184,7 +1184,7 @@ if ($resql)
 			// Staff
 			if (! empty($arrayfields['staff.code']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				if (! is_array($staffArray) || count($staffArray)==0) $staffArray = $formcompany->effectif_array(1);
 				print $staffArray[$obj->staff_code];
 				print '</td>';

@@ -228,9 +228,9 @@ if ($id > 0 || ! empty($ref))
 	                    print "</td>\n";
 	                    print '<td>'.$societestatic->getNomUrl(1).'</td>';
 	                    print "<td>".$objp->code_client."</td>\n";
-						print '<td align="center">';
+						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
-						print  '<td align="center">'.$objp->qty."</td>\n";
+						print  '<td class="center">'.$objp->qty."</td>\n";
 	                    print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut, $objp->facture, 5).'</td>';
 						print "</tr>\n";
@@ -241,7 +241,7 @@ if ($id > 0 || ! empty($ref))
                 if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
                 else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
                 print '<td colspan="3"></td>';
-                print '<td align="center">'.$total_qty.'</td>';
+                print '<td class="center">'.$total_qty.'</td>';
                 print '<td align="right">'.price($total_ht).'</td>';
                 print '<td></td>';
                 print "</table>";

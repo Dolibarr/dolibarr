@@ -278,7 +278,7 @@ if (empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_ECM_DISABLE
 			print '</td>';
 
 			// Info
-			print '<td align="center">';
+			print '<td class="center">';
 			$userstatic->id=$val['fk_user_c'];
 			$userstatic->lastname=$val['login_c'];
 			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';

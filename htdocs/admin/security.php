@@ -246,7 +246,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
 foreach ($arrayhandler as $key => $module)
@@ -406,8 +406,8 @@ print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Disable clear password in database

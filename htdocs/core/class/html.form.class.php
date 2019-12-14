@@ -285,7 +285,7 @@ class Form
 					}
 					$ret .= $tmpcontent;
 				}
-				else $ret .= $value;
+				else $ret .= dol_escape_htmltag($value);
 
 				if ($formatfunc && method_exists($object, $formatfunc))
 				{
@@ -2097,7 +2097,7 @@ class Form
 		}
 		else
 		{
-		    $selectFieldsGrouped = ", p.stock";
+		    $selectFieldsGrouped = ", ".$db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
 		}
 
 		$sql = "SELECT ";
@@ -7411,7 +7411,7 @@ class Form
 					if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
 					else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 				}
-				$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+				$ret.='<img alt="Photo" class="photo'.$modulepart.($cssclass?' '.$cssclass:'').' photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
 				if ($addlinktofullsize) $ret.='</a>';
 			}
 			elseif ($altfile && file_exists($dir."/".$altfile))

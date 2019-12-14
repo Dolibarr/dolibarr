@@ -879,7 +879,7 @@ if ($resql)
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
@@ -890,7 +890,7 @@ if ($resql)
 		{
 			if (!is_array($typenArray) || empty($typenArray)) $typenArray = $formcompany->typent_array(1);
 
-			print '<td align="center">';
+			print '<td class="center">';
 			print $typenArray[$obj->typent_code];
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -899,7 +899,7 @@ if ($resql)
 		// Date proposal
 		if (!empty($arrayfields['p.date']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), 'day');
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
@@ -910,7 +910,7 @@ if ($resql)
 		{
 			if ($obj->dfv)
 			{
-				print '<td align="center">'.dol_print_date($db->jdate($obj->dfv), 'day');
+				print '<td class="center">'.dol_print_date($db->jdate($obj->dfv), 'day');
 				print '</td>';
 			}
 			else
@@ -924,7 +924,7 @@ if ($resql)
 		{
 			if ($obj->ddelivery)
 			{
-				print '<td align="center">'.dol_print_date($db->jdate($obj->ddelivery), 'day');
+				print '<td class="center">'.dol_print_date($db->jdate($obj->ddelivery), 'day');
 				print '</td>';
 			}
 			else
@@ -936,7 +936,7 @@ if ($resql)
 		// Availability
 		if (! empty($arrayfields['ava.rowid']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$form->form_availability('', $obj->availability, 'none', 1);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

@@ -1062,7 +1062,7 @@ if ($socid > 0)
 					{
 					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td align="center">';
+					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 					print '</td>';
 					print '<td>&nbsp;</td>';

@@ -1020,7 +1020,7 @@ if ($resql)
 		// Country
 		if (! empty($arrayfields['country.code_iso']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$tmparray=getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
@@ -1029,7 +1029,7 @@ if ($resql)
 		// Type ent
 		if (! empty($arrayfields['typent.code']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 			print $typenArray[$obj->typent_code];
 			print '</td>';
@@ -1039,7 +1039,7 @@ if ($resql)
 		// Order date
 		if (! empty($arrayfields['c.date_commande']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -1047,7 +1047,7 @@ if ($resql)
 		// Plannned date of delivery
 		if (! empty($arrayfields['c.date_delivery']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_delivery), 'day');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -1116,7 +1116,7 @@ if ($resql)
 		// Billed
 		if (! empty($arrayfields['c.facture']['checked']))
 		{
-			print '<td align="center">'.yn($obj->billed).'</td>';
+			print '<td class="center">'.yn($obj->billed).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 

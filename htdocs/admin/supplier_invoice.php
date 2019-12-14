@@ -268,7 +268,7 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
@@ -297,7 +297,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print $form->textwithpicto('', $htmltooltip, 1, 0);
                         print '</td>';
 
@@ -395,7 +395,7 @@ foreach ($dirmodels as $reldir)
                     // Active
                     if (in_array($name, $def))
                     {
-                        print '<td align="center">'."\n";
+                        print '<td class="center">'."\n";
                         //if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
                         //{
                             // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
@@ -411,13 +411,13 @@ foreach ($dirmodels as $reldir)
                     }
                     else
                     {
-                        print '<td align="center">'."\n";
+                        print '<td class="center">'."\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         print "</td>";
                     }
 
                     // Default
-                    print '<td align="center">';
+                    print '<td class="center">';
                     if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF == "$name")
                     {
                         //print img_picto($langs->trans("Default"),'on');
@@ -438,10 +438,10 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
                     $htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
                     $htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-                    print '<td align="center">';
+                    print '<td class="center">';
                     print $form->textwithpicto('', $htmltooltip, 1, 0);
                     print '</td>';
-                    print '<td align="center">';
+                    print '<td class="center">';
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
                     print '</td>';
 

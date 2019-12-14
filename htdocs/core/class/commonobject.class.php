@@ -73,7 +73,7 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 

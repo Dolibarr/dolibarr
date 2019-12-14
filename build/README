@@ -36,7 +36,7 @@ Note: Prerequisites to build autoexe DoliWamp package:
 > perl makepack-dolibarrmodule.pl
 
 - To build developper documentation, launch the script
-> perl dolybarr-doxygen-build.pl
+> perl dolibarr-doxygen-build.pl
 
 
 Note: 

@@ -411,7 +411,7 @@ if ($action == "create" || $action == "start")
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans("InitialBankBalance");
+		print '<td class="center">'.$langs->trans("InitialBankBalance");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
 		print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
@@ -422,7 +422,7 @@ if ($action == "create" || $action == "start")
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans("Cash");
+		print '<td class="center">'.$langs->trans("Cash");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
 		$i = 0;
@@ -439,7 +439,7 @@ if ($action == "create" || $action == "start")
 		print '<tr>';
 		// Initial amount
 		print '<td>'.$langs->trans("NbOfInvoices").'</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print '</td>';
 		// Amount per payment type
 		$i = 0;
@@ -457,7 +457,7 @@ if ($action == "create" || $action == "start")
 		print '<tr>';
 		// Initial amount
 		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 		print '</td>';
 		// Amount per payment type
@@ -476,7 +476,7 @@ if ($action == "create" || $action == "start")
 		print '<tr>';
 		print '<td>'.$langs->trans("RealAmount").'</td>';
 		// Initial amount
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash'])).'">';
 		print '</td>';
 		// Amount per payment type
@@ -489,7 +489,7 @@ if ($action == "create" || $action == "start")
 			$i++;
 		}
 		// Save
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
 		print '</td>';

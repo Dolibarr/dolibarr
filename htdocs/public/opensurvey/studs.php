@@ -640,7 +640,7 @@ for ($i=0; $i < $nbcolonnes; $i++)
 if ($object->allow_spy) {
 	// Show line total
 	print '<tr>'."\n";
-	print '<td align="center">'. $langs->trans("Total") .'</td>'."\n";
+	print '<td class="center">'. $langs->trans("Total") .'</td>'."\n";
 	for ($i = 0; $i < $nbcolonnes; $i++)
 	{
 		$showsumfor = isset($sumfor[$i])?$sumfor[$i]:'';

@@ -302,11 +302,11 @@ if ($mode == 'overwrite')
     	print '<td>';
     	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
     	print '</td>';
-    	print '<td align="center">';
+    	print '<td class="center">';
     }
     else
     {*/
-    	print '<td align="center">';
+    	print '<td class="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
     print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
@@ -356,7 +356,7 @@ if ($mode == 'overwrite')
     		}
     		print '</td>';
 
-    		print '<td align="center">';
+    		print '<td class="center">';
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
     			print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';

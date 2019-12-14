@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,6 +197,8 @@ class Fichinter extends CommonObject
 	{
 		global $conf, $langs;
 
+        $error = 0;
+
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
 		// Check parameters
@@ -329,6 +331,8 @@ class Fichinter extends CommonObject
 	 */
     public function update($user, $notrigger = 0)
 	{
+        global $conf;
+
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
 	 	}
@@ -1474,6 +1478,8 @@ class FichinterLigne extends CommonObjectLine
 	{
 		global $langs,$conf;
 
+        $error = 0;
+
 		dol_syslog("FichinterLigne::insert rang=".$this->rang);
 
 		$this->db->begin();
@@ -1570,7 +1576,9 @@ class FichinterLigne extends CommonObjectLine
 	{
 		global $langs,$conf;
 
-		$this->db->begin();
+        $error = 0;
+
+        $this->db->begin();
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";

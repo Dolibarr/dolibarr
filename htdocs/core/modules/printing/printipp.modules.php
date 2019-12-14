@@ -172,7 +172,7 @@ class printing_printipp extends PrintingDriver
         //$html.= '<td>'.$langs->trans('IPP_Device').'</td>';
         $html.= '<td>'.$langs->trans('IPP_Media').'</td>';
         $html.= '<td>'.$langs->trans('IPP_Supported').'</td>';
-        $html.= '<td align="center">'.$langs->trans("Select").'</td>';
+        $html.= '<td class="center">'.$langs->trans("Select").'</td>';
         $html.= "</tr>\n";
         $list = $this->getlistAvailablePrinters();
         foreach ($list as $value) {
@@ -190,7 +190,7 @@ class printing_printipp extends PrintingDriver
             $html.= '<td>'.$printer_det->media_default->_value0.'</td>';
             $html.= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
             // Defaut
-            $html.= '<td align="center">';
+            $html.= '<td class="center">';
             if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
                 $html.= img_picto($langs->trans("Default"), 'on');
             } else {

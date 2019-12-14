@@ -896,7 +896,7 @@ while ($i < min($num, $limit))
 	// No EMail
 	if (! empty($arrayfields['p.no_email']['checked']))
 	{
-		print '<td align="center">'.yn($obj->no_email).'</td>';
+		print '<td class="center">'.yn($obj->no_email).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($conf->socialnetworks->enabled)) {

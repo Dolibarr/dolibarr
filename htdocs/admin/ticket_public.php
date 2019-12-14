@@ -218,7 +218,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
         print $form->selectarray("TICKET_EMAIL_MUST_EXISTS", $arrval, $conf->global->TICKET_EMAIL_MUST_EXISTS);
     }
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketsEmailMustExistHelp"), 1, 'help');
     print '</td>';
     print '</tr>';
@@ -235,7 +235,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     	    print $form->selectarray("TICKET_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKET_SHOW_MODULE_LOGO);
     	}
     	print '</td>';
-    	print '<td align="center">';
+    	print '<td class="center">';
     	print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
     	print '</td>';
     	print '</tr>';
@@ -251,7 +251,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     	print $form->selectarray("TICKET_SHOW_COMPANY_LOGO", $arrval, $conf->global->TICKET_SHOW_COMPANY_LOGO);
     }
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketsShowCompanyLogoHelp"), 1, 'help');
     print '</td>';
     print '</tr>';
@@ -268,7 +268,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     	    print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
     	}
     	print '</td>';
-    	print '<td align="center">';
+    	print '<td class="center">';
     	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
     	print '</td>';
     	print '</tr>';
@@ -310,7 +310,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     print '</td><td>';
     print '<input type="text"   name="TICKET_PUBLIC_INTERFACE_TOPIC" value="'.$conf->global->TICKET_PUBLIC_INTERFACE_TOPIC.'" size="40" ></td>';
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTopicHelp"), 1, 'help');
     print '</td></tr>';
 
@@ -322,7 +322,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     $doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
     $doleditor->Create();
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTextHomeHelpAdmin"), 1, 'help');
     print '</td></tr>';
 
@@ -334,7 +334,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     $doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
     $doleditor->Create();
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTextHelpMessageHelpAdmin"), 1, 'help');
     print '</td></tr>';
 
@@ -348,7 +348,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
         print $form->selectarray("TICKET_DISABLE_CUSTOMER_MAILS", $arrval, $conf->global->TICKET_DISABLE_CUSTOMER_MAILS);
     }
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketsDisableEmailHelp"), 1, 'help');
     print '</td>';
     print '</tr>';
@@ -361,7 +361,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
     $doleditor->Create();
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketNewEmailBodyHelp"), 1, 'help');
     print '</td></tr>';
 
@@ -371,7 +371,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     print '</td><td>';
     print '<input type="text" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$conf->global->TICKET_URL_PUBLIC_INTERFACE.'" size="40" ></td>';
     print '</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
     print '</td></tr>';
 
