@@ -2892,9 +2892,9 @@ class CommandeFournisseur extends CommonOrder
             $resql = $db->query($sql);
             if ($resql)
             {
-                if ($db->num_rows($query))
+                if ($db->num_rows($resql))
                 {
-                    $obj = $db->fetch_object($query);
+                    $obj = $db->fetch_object($resql);
 
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
