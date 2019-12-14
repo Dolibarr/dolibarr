@@ -374,7 +374,7 @@ if (! empty($id) || ! empty($ref))
 	if ($action == 'add' || ($action == 'edit')) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
-			//print dol_fiche_head();
+			// dol_fiche_head();
 			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
@@ -499,7 +499,7 @@ if (! empty($id) || ! empty($ref))
             print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
         }
 
-        print dol_fiche_head();
+        dol_fiche_head();
 
 
 		print '<table class="border" style="width: 100%">';
