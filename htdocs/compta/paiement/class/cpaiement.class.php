@@ -19,7 +19,7 @@
  */
 
 /**
- * \file    htdocs/compat/paiement/class/cpaiement.class.php
+ * \file    htdocs/compta/paiement/class/cpaiement.class.php
  * \ingroup facture
  * \brief   This file is to manage CRUD function of type of payments
  */

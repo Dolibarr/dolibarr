@@ -87,12 +87,9 @@ if ($action != 'create' && $action != 'edit')
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation of an optional field
- /*                                                                            */
-/* ************************************************************************** */
-
+/*
+ * Creation of an optional field
+ */
 if ($action == 'create')
 {
 	print '<br><div id="newattrib"></div>';
@@ -101,11 +98,9 @@ if ($action == 'create')
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition of an optional field                                                */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Edition of an optional field
+ */
 if ($action == 'edit' && ! empty($attrname))
 {
     print "<br>";

@@ -16,18 +16,18 @@
  */
 
 /**
- * 	\defgroup   dav     Module dav
- *  \brief      dav module descriptor.
+ * 	\defgroup   emailcollector     Module emailcollector
+ *  \brief      emailcollector module descriptor.
  *
- *  \file       htdocs/dav/core/modules/modDav.class.php
- *  \ingroup    dav
- *  \brief      Description and activation file for module dav
+ *  \file       htdocs/emailcollector/core/modules/modEmailCollector.class.php
+ *  \ingroup    emailcollector
+ *  \brief      Description and activation file for module emailcollector
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  Description and activation class for module dav
+ *  Description and activation class for module emailcollector
  */
 class modEmailCollector extends DolibarrModules
 {
@@ -108,10 +108,10 @@ class modEmailCollector extends DolibarrModules
 		);
 
 
-		if (! isset($conf->dav) || ! isset($conf->dav->enabled))
+		if (! isset($conf->emailcollector) || ! isset($conf->emailcollector->enabled))
 		{
-			$conf->dav=new stdClass();
-			$conf->dav->enabled=0;
+			$conf->emailcollector=new stdClass();
+			$conf->emailcollector->enabled=0;
 		}
 
 

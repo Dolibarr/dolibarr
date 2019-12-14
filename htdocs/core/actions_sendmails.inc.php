@@ -431,7 +431,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$object->socid			= $sendtosocid;	   // To link to a company
 						$object->sendtoid		= $sendtoid;	   // To link to contact addresses. This is an array.
 						$object->actiontypecode	= $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-						$object->actionmsg		= $actionmsg;      // Long text (@TODO Replace this with $message, we already have details of email in dedicated properties)
+						$object->actionmsg		= $actionmsg;      // Long text (@todo Replace this with $message, we already have details of email in dedicated properties)
 						$object->actionmsg2		= $actionmsg2;     // Short text ($langs->transnoentities('MailSentBy')...);
 
 						$object->trackid        = $trackid;
@@ -444,7 +444,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 							$object->sendtouserid	= $sendtouserid;
 						}
 
-						$object->email_msgid = $mailfile->msgid;	// @TODO Set msgid into $mailfile after sending
+						$object->email_msgid = $mailfile->msgid;	// @todo Set msgid into $mailfile after sending
 						$object->email_from = $from;
 						$object->email_subject = $subject;
 						$object->email_to = $sendto;
