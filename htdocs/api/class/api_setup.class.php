@@ -1286,9 +1286,9 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-        $sql .= " WHERE t.active = ".$active;
-    	if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+        $sql .= " WHERE t.active = ".(int) $active;
+    	// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+    	// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
     	// Add sql filters
     	if ($sqlfilters)
     	{
