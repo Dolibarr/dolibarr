@@ -445,6 +445,7 @@ class ProductFournisseur extends Product
 
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
+					// $this->product_fourn_price_id must be set
                     $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
