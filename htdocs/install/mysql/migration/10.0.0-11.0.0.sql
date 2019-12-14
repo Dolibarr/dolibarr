@@ -548,3 +548,4 @@ ALTER TABLE llx_website ADD COLUMN use_manifest integer;
 
 ALTER TABLE llx_bookmark DROP INDEX uk_bookmark_url;
 ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT; -- change from VARCHAR(255) to allow longer URLs
+ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, title);
