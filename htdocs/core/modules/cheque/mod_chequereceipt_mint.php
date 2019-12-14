@@ -17,12 +17,12 @@
  */
 
 /**
- * \file       htdocs/core/modules/cheque/mod_chequereceipts_mint.php
+ * \file       htdocs/core/modules/cheque/mod_chequereceipt_mint.php
  * \ingroup    cheque
  * \brief      File containing class for numbering module Mint
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/mod_chequereceipt_mint.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php';
 
 /**
  *  Class to manage cheque receipts numbering rules Mint
