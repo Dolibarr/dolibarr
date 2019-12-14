@@ -374,7 +374,7 @@ if ($usevirtualstock)
 	$sqlExpeditionsCli .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
 	$sqlExpeditionsCli .= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sqlExpeditionsCli .= " AND cd.fk_product = p.rowid";
-	$sqlExpeditionsCli .= " AND c.fk_statut IN (1,2))";
+	$sqlExpeditionsCli .= " AND e.fk_statut IN (1,2))";
 
 	$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
 	$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
