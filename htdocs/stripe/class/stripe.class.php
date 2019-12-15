@@ -133,11 +133,11 @@ class Stripe extends CommonObject
 			return null;
 		}
 		$customer = null;
-    
+
 		// Force to use the correct API key
 		global $stripearrayofkeysbyenv;
 		\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
-    
+
 		$sql = "SELECT sa.key_account as key_account, sa.entity"; // key_account is cus_....
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
 		$sql .= " WHERE sa.fk_soc = ".$object->id;
@@ -823,8 +823,8 @@ class Stripe extends CommonObject
 				else $stripefee = round($fee);
         		$paymentarray = array(
 					"amount" => "$stripeamount",
-          "currency" => "$currency",
-          "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				"currency" => "$currency",
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,
