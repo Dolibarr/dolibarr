@@ -108,7 +108,7 @@ a.badge-danger:focus, a.badge-danger:hover {
 
 /* WARNING */
 .badge-warning {
-    color: #212529 !important;
+    color: #fff !important;
     background-color: <?php print $badgeWarning; ?>;
 }
 a.badge-warning.focus, a.badge-warning:focus {

@@ -73,16 +73,16 @@ $fontsizesmaller = '11';
 // text color
 $textSuccess   = '#28a745';
 $colorblind_deuteranopes_textSuccess = '#37de5d';
-$textDanger    = '#dc3545';
-$textWarning   = '#f39c12';
+$textWarning   = '#a37c0d';		// See $badgeWarning
+$textDanger    = '#8c4446';		// See $badgeDanger
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
 // Badges colors
 $badgePrimary   = '#007bff';
 $badgeSecondary = '#999999';
 $badgeSuccess   = '#28a745';
-$badgeDanger    = '#8c4446';
-$badgeWarning   = '#ffc107';
+$badgeWarning   = '#a37c0d';	// See $textWarning
+$badgeDanger    = '#8c4446';	// See $textDanger
 $badgeInfo      = '#17a2b8';
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';

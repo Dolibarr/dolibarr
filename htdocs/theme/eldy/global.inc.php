@@ -1399,7 +1399,7 @@ div.nopadding {
 }
 .pictowarning {
     /* vertical-align: text-bottom; */
-    color: #9f4705;
+    color: <?php echo $badgeWarning ?>;
 }
 .pictomodule {
 	width: 14px;
