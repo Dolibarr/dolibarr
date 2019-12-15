@@ -168,7 +168,7 @@ class Stripe extends CommonObject
 		$sql .= " WHERE sa.fk_soc = ".$object->id;
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
-		$sql .= " AND (sa.site_account IS NULL OR sa.site_account = '' OR sa.site_account = '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."'";
+		$sql .= " AND (sa.site_account IS NULL OR sa.site_account = '' OR sa.site_account = '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."')";
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
 
 		dol_syslog(get_class($this)."::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
