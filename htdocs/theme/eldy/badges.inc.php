@@ -221,12 +221,14 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		print $cssPrefix . ".badge-status" . $statusName . " {\n";
 		print "        color: " . $thisBadgeTextColor . " !important;\n";
-
 		if (in_array($statusName, $TBadgeBorderOnly)) {
 			print "        border-color: " . $thisBadgeBorderColor . ";\n";
 		}
-
 		print "        background-color: " . $thisBadgeBackgroundColor . ";\n";
+		print "}\n";
+
+		print $cssPrefix . ".font-status" . $statusName . " {\n";
+		print "        color: " . $thisBadgeBackgroundColor . " !important;\n";
 		print "}\n";
 
 		print $cssPrefix . ".badge-status" . $statusName . ".focus, " . $cssPrefix . ".badge-status" . $statusName . ":focus {\n";
