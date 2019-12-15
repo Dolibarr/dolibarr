@@ -86,7 +86,8 @@ class SocieteAccount extends CommonObject
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
 		'site' => array('type'=>'varchar(128)', 'label'=>'Site', 'visible'=>-1, 'enabled'=>1, 'position'=>41),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
+		'site_account' => array('type'=>'varchar(128)', 'label'=>'SiteAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'help'=>'A key to identify the account on external web site'),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>43, 'notnull'=>-1, 'index'=>1),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
@@ -121,6 +122,7 @@ class SocieteAccount extends CommonObject
     public $fk_soc;
 
 	public $site;
+	public $site_account;
 
 	/**
 	 * @var integer|string date_last_login
@@ -294,21 +296,22 @@ class SocieteAccount extends CommonObject
 	/**
 	 * Try to find the external customer id of a thirdparty for another site/system.
 	 *
-	 * @param	int		$id			Id of third party
-	 * @param	string	$site		Site (example: 'stripe', '...')
-	 * @param	int		$status		Status (0=test, 1=live)
-	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 * @param	int		$id				Id of third party
+	 * @param	string	$site			Site (example: 'stripe', '...')
+	 * @param	int		$status			Status (0=test, 1=live)
+	 * @param	string	$site_account 	Value to use to identify with account to use on site when site can offer several accounts. For example: 'pk_live_123456' when using Stripe service.
+	 * @return	string					Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 * @see getThirdPartyID()
 	 */
-	public function getCustomerAccount($id, $site, $status = 0)
+	public function getCustomerAccount($id, $site, $status = 0, $site_account = '')
 	{
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
-		$sql.= " WHERE sa.fk_soc = " . $id;
-		$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
-		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
-		//$sql.= " ORDER BY sa.key_account DESC";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql .= " WHERE sa.fk_soc = " . $id;
+		$sql .= " AND sa.entity IN (".getEntity('societe').")";
+		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql .= " AND key_account IS NOT NULL AND key_account <> ''";
+		$sql .= " ORDER BY sa.site_account DESC";	// To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -327,7 +330,7 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
-	* Try to find the thirdparty id for an another site/system external id.
+	* Try to find the thirdparty id from an another site/system external id.
 	*
 	* @param	string	$id			Id of customer in external system (example: 'cu_xxxxxxxxxxxxx', ...)
 	* @param	string	$site		Site (example: 'stripe', '...')

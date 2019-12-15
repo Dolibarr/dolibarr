@@ -125,15 +125,16 @@ class Stripe extends CommonObject
 	/**
 	 * getStripeCustomerAccount
 	 *
-	 * @param	int		$id		Id of third party
-	 * @param	int		$status		Status
-	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 * @param	int		$id				Id of third party
+	 * @param	int		$status			Status
+	 * @param	string	$site_account 	Value to use to identify with account to use on site when site can offer several accounts. For example: 'pk_live_123456' when using Stripe service.
+	 * @return	string					Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 */
-	public function getStripeCustomerAccount($id, $status = 0)
+	public function getStripeCustomerAccount($id, $status = 0, $site_account = '')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
-		return $societeaccount->getCustomerAccount($id, 'stripe', $status); // Get thirdparty cus_...
+		return $societeaccount->getCustomerAccount($id, 'stripe', $status, $site_account); // Get thirdparty cus_...
 	}
 
 

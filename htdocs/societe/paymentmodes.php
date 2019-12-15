@@ -79,9 +79,14 @@ if (!empty($conf->stripe->enabled))
 		$servicestatus = 1;
 	}
 
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['public_key'];
+	//var_dump($site_account);
+
 	$stripe = new Stripe($db);
-	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no network access here)
-	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus); // Get remote Stripe customer 'cus_...' (no network access here)
+	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
+	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 }
 
 

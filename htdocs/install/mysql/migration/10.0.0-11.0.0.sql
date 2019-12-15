@@ -59,6 +59,8 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+ALTER TABLE llx_societe_account ADD COLUMN site_account varchar(128);
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_holiday MODIFY COLUMN ref varchar(30) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref SET NOT NULL;
