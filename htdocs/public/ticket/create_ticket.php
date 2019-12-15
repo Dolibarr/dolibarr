@@ -218,6 +218,8 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
+				$sendtocc = '';
+				$deliveryreceipt = 0;
 
                 $message = dol_nl2br($message);
 
@@ -359,14 +361,19 @@ if ($action != "infos_success") {
 
     $formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
-    if (empty($defaultref)) {
-        $defaultref = '';
-    }
-
     print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
-    print '<div class="info marginleftonly marginrightonly">' . $langs->trans('TicketPublicInfoCreateTicket') . '</div>';
-    $formticket->showForm();
+    if (empty($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)) {
+    	$langs->load("errors");
+    	print '<div class="error">';
+    	print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
+    	print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
+    	print '<div>';
+    }
+    else {
+	    print '<div class="info marginleftonly marginrightonly">' . $langs->trans('TicketPublicInfoCreateTicket') . '</div>';
+    	$formticket->showForm();
+    }
 }
 
 print '</div>';
