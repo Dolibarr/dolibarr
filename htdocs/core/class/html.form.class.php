@@ -100,9 +100,10 @@ class Form
 	 * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
+	 * @param	string	$help			Tooltip help
 	 * @return	string					HTML edit field
 	 */
-    public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id')
+    public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
     {
 		global $conf, $langs;
 
@@ -116,14 +117,22 @@ class Form
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_'.$tmp[0].(!empty($tmp[1]) ? ' '.$tmp[1] : '').'" id="'.$htmlname.'">';
 				if ($fieldrequired) $ret .= '<span class="fieldrequired">';
-				$ret .= $langs->trans($text);
+				if ($help) {
+					$ret .= $this->textwithpicto($langs->trans($text), $help);
+				} else {
+					$ret .= $langs->trans($text);
+				}
 				if ($fieldrequired) $ret .= '</span>';
 				$ret .= '</div>'."\n";
 			}
 			else
 			{
 				if ($fieldrequired) $ret .= '<span class="fieldrequired">';
-				$ret .= $langs->trans($text);
+				if ($help) {
+					$ret .= $this->textwithpicto($langs->trans($text), $help);
+				} else {
+					$ret .= $langs->trans($text);
+				}
 				if ($fieldrequired) $ret .= '</span>';
 			}
 		}
@@ -131,7 +140,11 @@ class Form
 		{
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret .= '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			if ($fieldrequired) $ret .= '<span class="fieldrequired">';
-			$ret .= $langs->trans($text);
+			if ($help) {
+				$ret .= $this->textwithpicto($langs->trans($text), $help);
+			} else {
+				$ret .= $langs->trans($text);
+			}
 			if ($fieldrequired) $ret .= '</span>';
 			if (!empty($notabletag)) $ret .= ' ';
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret .= '</td>';

@@ -81,8 +81,7 @@ if (!empty($conf->stripe->enabled))
 
 	// Force to use the correct API key
 	global $stripearrayofkeysbyenv;
-	$site_account = $stripearrayofkeysbyenv[$servicestatus]['public_key'];
-	//var_dump($site_account);
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
 
 	$stripe = new Stripe($db);
 	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
@@ -848,7 +847,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$permissiontowrite = $user->rights->societe->creer;
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid', 'Publishable key '.$site_account);
 			print '</td><td>';
 			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 			if (!empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
