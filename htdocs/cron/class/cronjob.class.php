@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1306,43 +1306,26 @@ class Cronjob extends CommonObject
 	 */
     public function LibStatut($status, $mode = 0, $processing = 0)
 	{
-        // phpcs:enable
-        global $langs;
-	    $langs->load('users');
+		// phpcs:enable
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
+		{
+			global $langs;
+			$langs->load('users');
 
-	    $moretext = '';
-	    if ($processing) $moretext=' ('.$langs->trans("Running").')';
+			$moretext = '';
+			if ($processing) $moretext=' ('.$langs->trans("Running").')';
 
-	    if ($mode == 0)
-	    {
-	    	if ($status == 1) return $langs->trans('Enabled').$moretext;
-	    	elseif ($status == 0) return $langs->trans('Disabled').$moretext;
-	    }
-	    elseif ($mode == 1)
-	    {
-	    	if ($status == 1) return $langs->trans('Enabled').$moretext;
-	    	elseif ($status == 0) return $langs->trans('Disabled').$moretext;
-	    }
-	    elseif ($mode == 2)
-	    {
-	    	if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut'.($processing?'1':'4'), 'class="pictostatus"').' '.$langs->trans('Enabled').$moretext;
-	    	elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled').$moretext;
-	    }
-	    elseif ($mode == 3)
-	    {
-	    	if ($status == 1) return img_picto($langs->trans('Enabled').$moretext, 'statut'.($processing?'1':'4'), 'class="pictostatus"');
-	    	elseif ($status == 0) return img_picto($langs->trans('Disabled').$moretext, 'statut5', 'class="pictostatus"');
-	    }
-	    elseif ($mode == 4)
-	    {
-	    	if ($status == 1) return img_picto($langs->trans('Enabled').$moretext, 'statut'.($processing?'1':'4'), 'class="pictostatus"').' '.$langs->trans('Enabled').$moretext;
-	    	elseif ($status == 0) return img_picto($langs->trans('Disabled').$moretext, 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled').$moretext;
-	    }
-        elseif ($mode == 5)
-        {
-            if ($status == 1) return $langs->trans('Enabled').$moretext.' '.img_picto($langs->trans('Enabled').$moretext, 'statut'.($processing?'1':'4'), 'class="pictostatus"');
-            elseif ($status == 0) return $langs->trans('Disabled').$moretext.' '.img_picto($langs->trans('Disabled').$moretext, 'statut5', 'class="pictostatus"');
-        }
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Draft').$moretext;
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled').$moretext;
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+		}
+
+		$statusType = 'status4';
+		if ($status == 1 && $processing) $statusType = 'status1';
+		if ($status == 0) $statusType = 'status5';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 }
 
