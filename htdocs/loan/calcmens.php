@@ -18,8 +18,9 @@
  */
 
 /**
- * \file tvi/ajax/list.php
- * \brief File to return datables output
+ *  \file htdocs/loan/calcmens.php
+ *  \ingroup    loan
+ *  \brief File to calculate loan monthly payments
  */
 
 if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal

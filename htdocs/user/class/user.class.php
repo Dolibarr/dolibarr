@@ -918,6 +918,7 @@ class User extends CommonObject
 		else
 		{
 			$sql .= " AND gr.entity = ".$conf->entity;
+			$sql .= " AND gu.entity = ".$conf->entity;
 			$sql .= " AND r.entity = ".$conf->entity;
 		}
 		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
@@ -1175,6 +1176,11 @@ class User extends CommonObject
 		global $mysoc;
 
 		// Clean parameters
+
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname=strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
+
 		$this->login = trim($this->login);
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
 
@@ -1513,6 +1519,11 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
+
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname=strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
+
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->employee    	= $this->employee ? $this->employee : 0;
@@ -1971,7 +1982,7 @@ class User extends CommonObject
 	 *
 	 *  @param	User	$user           Object user that send email
 	 *  @param	string	$password       New password
-	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @TODO Add method 2 = Send link to reset password
+	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
 	public function send_password($user, $password = '', $changelater = 0)

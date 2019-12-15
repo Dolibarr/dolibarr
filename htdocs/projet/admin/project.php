@@ -22,7 +22,7 @@
  */
 
 /**
- *  \file       htdocs/admin/project.php
+ *  \file       htdocs/projet/admin/project.php
  *  \ingroup    project
  *  \brief      Page to setup project module
  */

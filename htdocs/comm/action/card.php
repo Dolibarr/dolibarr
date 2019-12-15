@@ -623,7 +623,7 @@ if (empty($reshook) && $action == 'update')
  */
 if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
-		$object->fetch($id);
+	$object->fetch($id);
     $object->fetch_optionals();
     $object->fetch_userassigned();
     $object->oldcopy = clone $object;

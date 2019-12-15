@@ -693,7 +693,7 @@ if (empty($reshook))
 							if ($lines[$i]->entrepot_id > 0)
 							{
 								// single warehouse shipment line
-								if ($lines[i]->entrepot_id == $lotStock->warehouseid)
+								if ($lines[$i]->entrepot_id == $lotStock->warehouseid)
 								{
 									$lineIdToAddLot = $line_id;
 								}

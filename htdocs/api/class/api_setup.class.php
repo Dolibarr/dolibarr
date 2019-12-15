@@ -1286,9 +1286,9 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-        $sql .= " WHERE t.active = ".$active;
-    	if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+        $sql .= " WHERE t.active = ".(int) $active;
+    	// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+    	// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
     	// Add sql filters
     	if ($sqlfilters)
     	{
@@ -1473,8 +1473,8 @@ class Setup extends DolibarrApi
     			$includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
     			// Defined qualified files (must be same than into generate_filelist_xml.php)
-    			$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-    			$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
+    			$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
+    			$regextoexclude = '('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
     			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
     			// Fill file_list with files in signature, new files, modified files

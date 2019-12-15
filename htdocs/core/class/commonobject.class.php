@@ -73,7 +73,7 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
@@ -577,7 +577,7 @@ abstract class CommonObject
 			$this->country = $tmparray['label'];
 		}
 
-        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_cpde)))
+        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_code)))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
     		$tmparray = getState($this->state_id, 'all', 0, 1);
@@ -1986,7 +1986,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyCode($code)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyCode('.$code.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_code';
@@ -2028,7 +2028,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.','.$mode.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_tx';
@@ -2598,7 +2598,7 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang'; // @TODO Rename 'rang' into 'position'
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
@@ -4883,7 +4883,7 @@ abstract class CommonObject
 
 	/**
 	 *  Build thumb
-	 *  @TODO Move this into files.lib.php
+	 *  @todo Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
@@ -6607,7 +6607,7 @@ abstract class CommonObject
 				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-				// @TODO Add test also on 'enabled' (different than 'list' that is 'visibility')
+				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
 				$enabled = 1;
 
 				$visibility = 1;

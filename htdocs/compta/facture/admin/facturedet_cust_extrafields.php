@@ -86,11 +86,11 @@ if ($action != 'create' && $action != 'edit')
 }
 
 
-/* ************************************************************************** */
-/* */
-/* Creation d'un champ optionnel
-/* */
-/* ************************************************************************** */
+/*
+ *
+ * Creation d'un champ optionnel
+ *
+ */
 
 if ($action == 'create')
 {
@@ -100,11 +100,11 @@ if ($action == 'create')
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/* */
-/* Edition d'un champ optionnel */
-/* */
-/* ************************************************************************** */
+/*
+ *
+ * Edition d'un champ optionnel
+ *
+ */
 if ($action == 'edit' && ! empty($attrname))
 {
     print "<br>";

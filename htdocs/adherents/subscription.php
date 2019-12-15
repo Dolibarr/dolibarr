@@ -898,7 +898,7 @@ if ($rowid > 0)
                     'moreattr' => 'maxlength="128"',
                 );
 			}
-			// @TODO Add other extrafields mandatory for thirdparty creation
+			// @todo Add other extrafields mandatory for thirdparty creation
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrThirdParty"), $langs->trans("ConfirmCreateThirdParty"), "confirm_create_thirdparty", $formquestion, 1);
 		}

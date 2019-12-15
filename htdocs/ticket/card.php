@@ -692,7 +692,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
                  */
                 print '<table class="border centpercent">';
 
-                $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+                $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
                 // Ref
                 print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -820,7 +820,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         $morehtmlref .= '</div>';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php"><strong>'.$langs->trans("BackToList").'</strong></a> ';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php?restore_lastsearch_values=1"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
         dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref);
 

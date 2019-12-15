@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/commande/doc/doc_generic_myobject_odt.modules.php
+ *	\file       htdocs/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
  *	\ingroup    mymodule
  *	\brief      File of class to build ODT documents for myobjects
  */

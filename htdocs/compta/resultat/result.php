@@ -420,7 +420,7 @@ elseif ($modecompta=="BOOKKEEPING")
 				foreach ($cpts as $i => $cpt)    // Loop on each account.
 				{
 					// We make 1 loop for each account because we may want detail per account.
-					// @TODO Optimize to ask a 'group by' account and a filter with account in (..., ...) in request
+					// @todo Optimize to ask a 'group by' account and a filter with account in (..., ...) in request
 
 					// Each month
 					$resultN = 0;

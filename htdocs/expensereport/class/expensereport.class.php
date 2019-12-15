@@ -2712,8 +2712,8 @@ class ExpenseReportLine
 		if (!empty($this->id)) $sql.= ' AND d.rowid <> '.$this->id;
 		$sql .= ' AND d.fk_c_type_fees = '.$rule->fk_c_type_fees;
 		if ($mode == 'day' || $mode == 'EX_DAY') $sql .= ' AND d.date = \''.dol_print_date($this->date, '%Y-%m-%d').'\'';
-		elseif ($mode == 'mon' || $mode == 'EX_MON') $sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\'';    // @TODO DATE_FORMAT is forbidden
-		elseif ($mode == 'year' || $mode == 'EX_YEA') $sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\'';         // @TODO DATE_FORMAT is forbidden
+		elseif ($mode == 'mon' || $mode == 'EX_MON') $sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\'';    // @todo DATE_FORMAT is forbidden
+		elseif ($mode == 'year' || $mode == 'EX_YEA') $sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\'';         // @todo DATE_FORMAT is forbidden
 
 		dol_syslog('ExpenseReportLine::getExpAmount');
 
