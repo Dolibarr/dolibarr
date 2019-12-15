@@ -158,7 +158,7 @@ class SimpleOpenID
          }else{
          $identity = $u['scheme'] . '://' . $u['host'] . $u['path'];
          }
-         //*/
+        */
         $this->openid_url_identity = $a;
     }
 

@@ -19,7 +19,7 @@
  */
 
 /**
- * \file    website/websitepage.class.php
+ * \file    htdocs/website/class/websitepage.class.php
  * \ingroup website
  * \brief   File for the CRUD class of websitepage (Create/Read/Update/Delete)
  */

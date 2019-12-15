@@ -21,7 +21,7 @@
  * 	\defgroup   datapolicy     Module datapolicy
  *  \brief      datapolicy module descriptor.
  *
- *  \file       htdocs/datapolicy/core/modules/modDataPolicy.class.php
+ *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for module DATAPOLICY
  */

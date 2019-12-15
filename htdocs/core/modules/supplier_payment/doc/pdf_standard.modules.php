@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/supplier_payment/doc/pdf_standard.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoice payment file with the standard model
  */

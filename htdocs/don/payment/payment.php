@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/don/payment.php
+ *  \file       htdocs/don/payment/payment.php
  *  \ingroup    donations
  *  \brief      Page to add payment of a donation
  */

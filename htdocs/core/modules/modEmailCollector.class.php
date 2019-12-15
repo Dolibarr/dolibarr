@@ -19,7 +19,7 @@
  * 	\defgroup   emailcollector     Module emailcollector
  *  \brief      emailcollector module descriptor.
  *
- *  \file       htdocs/emailcollector/core/modules/modEmailCollector.class.php
+ *  \file       htdocs/core/modules/modEmailCollector.class.php
  *  \ingroup    emailcollector
  *  \brief      Description and activation file for module emailcollector
  */
