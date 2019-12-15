@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/reception/nosendingte.php
+ *      \file       htdocs/reception/note.php
  *      \ingroup    receptionsending
  *      \brief      Note card reception
  */
