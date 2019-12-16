@@ -122,7 +122,7 @@ dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 
 if ($mode == 'setup' && $user->admin)
 {
-    print $langs->trans("OAuthSetupForLogin")."<br><br>\n";
+    print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
     foreach ($list as $key)
     {
@@ -135,14 +135,17 @@ if ($mode == 'setup' && $user->admin)
         if ($key[0] == 'OAUTH_GITHUB_NAME')
         {
             $OAUTH_SERVICENAME = 'GitHub';
-            $urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?state=user,public_repo&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $state='user,public_repo'; 	// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service)
+            $urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?state='.$state.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://github.com/settings/applications/';
         }
         elseif ($key[0] == 'OAUTH_GOOGLE_NAME')
         {
             $OAUTH_SERVICENAME = 'Google';
-            $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $state='userinfo_email,userinfo_profile,cloud_print'; 	// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service)
+            //$state.=',gmail_full';
+            $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state='.$state.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://security.google.com/settings/security/permissions';
         }

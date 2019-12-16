@@ -88,7 +88,7 @@ $head = oauthadmin_prepare_head();
 dol_fiche_head($head, 'services', '', -1, 'technic');
 
 
-print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
 print '<table class="noborder centpercent">';
 
