@@ -644,7 +644,7 @@ function getFormeJuridiqueLabel($code)
 
 /**
  *  Return list of countries that are inside the EEC (European Economic Community)
- *  TODO Add a field into country dictionary.
+ *  Note: Try to keep this function as a "memory only" function for performance reasons.
  *
  *  @return     array					Array of countries code in EEC
  */
