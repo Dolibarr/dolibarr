@@ -748,10 +748,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
+	 * @param	string		$orderby	field for order
 	 * @return  array|int              -1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
-	public function getObjectsInCateg($type, $onlyids = 0)
+	public function getObjectsInCateg($type, $onlyids = 0, $orderby='')
 	{
 		$objs = array();
 
@@ -763,6 +764,12 @@ class Categorie extends CommonObject
 		$sql .= " WHERE o.entity IN (" . getEntity($obj->element).")";
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
+		if ($orderby) {
+			$prod = new Product($db);
+			if(array_key_exists($orderby, $prod->fields)){
+				$sql .= " ORDER BY $orderby";
+			}
+		}
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);

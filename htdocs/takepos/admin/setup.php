@@ -77,6 +77,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
@@ -211,6 +212,18 @@ print $langs->trans("Paymentnumpad");
 print '<td colspan="2">';
 $array=array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
 print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD)?'0':$conf->global->TAKEPOS_NUMPAD), 0);
+print "</td></tr>\n";
+
+// Sort product
+print '<tr class="oddeven"><td>';
+print $langs->trans("SortProductField");
+print '<td colspan="2">';
+$prod = new Product($db);
+$array = [];
+foreach($prod->fields as $k => $v) {
+	$array[$k]=$k;
+}
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD)?'rowid':$conf->global->TAKEPOS_SORTPRODUCTFIELD), 0);
 print "</td></tr>\n";
 
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
