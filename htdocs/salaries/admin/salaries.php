@@ -17,7 +17,7 @@
  */
 
 /**
- * \file		htdocs/admin/salaries.php
+ * \file		htdocs/salaries/admin/salaries.php
  * \ingroup		Salaries
  * \brief		Setup page to configure salaries module
  */

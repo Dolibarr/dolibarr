@@ -23,7 +23,7 @@ dol_include_once('/zapier/class/hook.class.php');
 
 
 /**
- * \file    htdocs/modulebuilder/template/class/api_zapier.class.php
+ * \file    htdocs/zapier/class/api_zapier.class.php
  * \ingroup zapier
  * \brief   File for API management of hook.
  */

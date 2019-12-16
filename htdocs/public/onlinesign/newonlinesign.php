@@ -21,7 +21,7 @@
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newsign.php
+ *     	\file       htdocs/public/onlinesign/newonlinesign.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
