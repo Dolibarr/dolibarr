@@ -169,8 +169,8 @@ $error = 0;
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('socid'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -207,111 +207,111 @@ if (empty($reshook))
 
     // Must be after the remove filter action, before the export.
     $param = '';
-    $filter = array ();
-    if (! empty($search_date_start)) {
+    $filter = array();
+    if (!empty($search_date_start)) {
         $filter['t.doc_date>='] = $search_date_start;
-        $tmp=dol_getdate($search_date_start);
-        $param .= '&search_date_startmonth=' . $tmp['mon'] . '&search_date_startday=' . $tmp['mday'] . '&search_date_startyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_start);
+        $param .= '&search_date_startmonth='.$tmp['mon'].'&search_date_startday='.$tmp['mday'].'&search_date_startyear='.$tmp['year'];
     }
-    if (! empty($search_date_end)) {
+    if (!empty($search_date_end)) {
         $filter['t.doc_date<='] = $search_date_end;
-        $tmp=dol_getdate($search_date_end);
-        $param .= '&search_date_endmonth=' . $tmp['mon'] . '&search_date_endday=' . $tmp['mday'] . '&search_date_endyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_end);
+        $param .= '&search_date_endmonth='.$tmp['mon'].'&search_date_endday='.$tmp['mday'].'&search_date_endyear='.$tmp['year'];
     }
-    if (! empty($search_doc_date)) {
+    if (!empty($search_doc_date)) {
         $filter['t.doc_date'] = $search_doc_date;
-        $tmp=dol_getdate($search_doc_date);
-        $param .= '&doc_datemonth=' . $tmp['mon'] . '&doc_dateday=' . $tmp['mday'] . '&doc_dateyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_doc_date);
+        $param .= '&doc_datemonth='.$tmp['mon'].'&doc_dateday='.$tmp['mday'].'&doc_dateyear='.$tmp['year'];
     }
-    if (! empty($search_doc_type)) {
+    if (!empty($search_doc_type)) {
         $filter['t.doc_type'] = $search_doc_type;
-        $param .= '&search_doc_type=' . urlencode($search_doc_type);
+        $param .= '&search_doc_type='.urlencode($search_doc_type);
     }
-    if (! empty($search_doc_ref)) {
+    if (!empty($search_doc_ref)) {
         $filter['t.doc_ref'] = $search_doc_ref;
-        $param .= '&search_doc_ref=' . urlencode($search_doc_ref);
+        $param .= '&search_doc_ref='.urlencode($search_doc_ref);
     }
-    if (! empty($search_accountancy_code)) {
+    if (!empty($search_accountancy_code)) {
         $filter['t.numero_compte'] = $search_accountancy_code;
-        $param .= '&search_accountancy_code=' . urlencode($search_accountancy_code);
+        $param .= '&search_accountancy_code='.urlencode($search_accountancy_code);
     }
-    if (! empty($search_accountancy_code_start)) {
+    if (!empty($search_accountancy_code_start)) {
         $filter['t.numero_compte>='] = $search_accountancy_code_start;
-        $param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+        $param .= '&search_accountancy_code_start='.urlencode($search_accountancy_code_start);
     }
-    if (! empty($search_accountancy_code_end)) {
+    if (!empty($search_accountancy_code_end)) {
         $filter['t.numero_compte<='] = $search_accountancy_code_end;
-        $param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+        $param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
     }
-    if (! empty($search_accountancy_aux_code)) {
+    if (!empty($search_accountancy_aux_code)) {
         $filter['t.subledger_account'] = $search_accountancy_aux_code;
-        $param .= '&search_accountancy_aux_code=' . urlencode($search_accountancy_aux_code);
+        $param .= '&search_accountancy_aux_code='.urlencode($search_accountancy_aux_code);
     }
-    if (! empty($search_accountancy_aux_code_start)) {
+    if (!empty($search_accountancy_aux_code_start)) {
         $filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
-        $param .= '&search_accountancy_aux_code_start=' . urlencode($search_accountancy_aux_code_start);
+        $param .= '&search_accountancy_aux_code_start='.urlencode($search_accountancy_aux_code_start);
     }
-    if (! empty($search_accountancy_aux_code_end)) {
+    if (!empty($search_accountancy_aux_code_end)) {
         $filter['t.subledger_account<='] = $search_accountancy_aux_code_end;
-        $param .= '&search_accountancy_aux_code_end=' . urlencode($search_accountancy_aux_code_end);
+        $param .= '&search_accountancy_aux_code_end='.urlencode($search_accountancy_aux_code_end);
     }
-    if (! empty($search_mvt_label)) {
+    if (!empty($search_mvt_label)) {
         $filter['t.label_operation'] = $search_mvt_label;
-        $param .= '&search_mvt_label=' . urlencode($search_mvt_label);
+        $param .= '&search_mvt_label='.urlencode($search_mvt_label);
     }
-    if (! empty($search_direction)) {
+    if (!empty($search_direction)) {
         $filter['t.sens'] = $search_direction;
-        $param .= '&search_direction=' . urlencode($search_direction);
+        $param .= '&search_direction='.urlencode($search_direction);
     }
-    if (! empty($search_ledger_code)) {
+    if (!empty($search_ledger_code)) {
         $filter['t.code_journal'] = $search_ledger_code;
-        $param .= '&search_ledger_code=' . urlencode($search_ledger_code);
+        $param .= '&search_ledger_code='.urlencode($search_ledger_code);
     }
-    if (! empty($search_mvt_num)) {
+    if (!empty($search_mvt_num)) {
         $filter['t.piece_num'] = $search_mvt_num;
-        $param .= '&search_mvt_num=' . urlencode($search_mvt_num);
+        $param .= '&search_mvt_num='.urlencode($search_mvt_num);
     }
-    if (! empty($search_date_creation_start)) {
+    if (!empty($search_date_creation_start)) {
         $filter['t.date_creation>='] = $search_date_creation_start;
-        $tmp=dol_getdate($search_date_creation_start);
-        $param .= '&date_creation_startmonth=' . $tmp['mon'] . '&date_creation_startday=' . $tmp['mday'] . '&date_creation_startyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_creation_start);
+        $param .= '&date_creation_startmonth='.$tmp['mon'].'&date_creation_startday='.$tmp['mday'].'&date_creation_startyear='.$tmp['year'];
     }
-    if (! empty($search_date_creation_end)) {
+    if (!empty($search_date_creation_end)) {
         $filter['t.date_creation<='] = $search_date_creation_end;
-        $tmp=dol_getdate($search_date_creation_end);
-        $param .= '&date_creation_endmonth=' . $tmp['mon'] . '&date_creation_endday=' . $tmp['mday'] . '&date_creation_endyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_creation_end);
+        $param .= '&date_creation_endmonth='.$tmp['mon'].'&date_creation_endday='.$tmp['mday'].'&date_creation_endyear='.$tmp['year'];
     }
-    if (! empty($search_date_modification_start)) {
+    if (!empty($search_date_modification_start)) {
         $filter['t.tms>='] = $search_date_modification_start;
-        $tmp=dol_getdate($search_date_modification_start);
-        $param .= '&date_modification_startmonth=' . $tmp['mon'] . '&date_modification_startday=' . $tmp['mday'] . '&date_modification_startyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_modification_start);
+        $param .= '&date_modification_startmonth='.$tmp['mon'].'&date_modification_startday='.$tmp['mday'].'&date_modification_startyear='.$tmp['year'];
     }
-    if (! empty($search_date_modification_end)) {
+    if (!empty($search_date_modification_end)) {
         $filter['t.tms<='] = $search_date_modification_end;
-        $tmp=dol_getdate($search_date_modification_end);
-        $param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_modification_end);
+        $param .= '&date_modification_endmonth='.$tmp['mon'].'&date_modification_endday='.$tmp['mday'].'&date_modification_endyear='.$tmp['year'];
     }
-    if (! empty($search_date_export_start)) {
+    if (!empty($search_date_export_start)) {
         $filter['t.date_export>='] = $search_date_export_start;
-        $tmp=dol_getdate($search_date_export_start);
-        $param .= '&date_export_startmonth=' . $tmp['mon'] . '&date_export_startday=' . $tmp['mday'] . '&date_export_startyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_export_start);
+        $param .= '&date_export_startmonth='.$tmp['mon'].'&date_export_startday='.$tmp['mday'].'&date_export_startyear='.$tmp['year'];
     }
-    if (! empty($search_date_export_end)) {
+    if (!empty($search_date_export_end)) {
         $filter['t.date_export<='] = $search_date_export_end;
-        $tmp=dol_getdate($search_date_export_end);
-        $param .= '&date_export_endmonth=' . $tmp['mon'] . '&date_export_endday=' . $tmp['mday'] . '&date_export_endyear=' . $tmp['year'];
+        $tmp = dol_getdate($search_date_export_end);
+        $param .= '&date_export_endmonth='.$tmp['mon'].'&date_export_endday='.$tmp['mday'].'&date_export_endyear='.$tmp['year'];
     }
-    if (! empty($search_debit)) {
+    if (!empty($search_debit)) {
         $filter['t.debit'] = $search_debit;
-        $param .= '&search_debit=' . urlencode($search_debit);
+        $param .= '&search_debit='.urlencode($search_debit);
     }
-    if (! empty($search_credit)) {
+    if (!empty($search_credit)) {
         $filter['t.credit'] = $search_credit;
-        $param .= '&search_credit=' . urlencode($search_credit);
+        $param .= '&search_credit='.urlencode($search_credit);
     }
-    if (! empty($search_lettering_code)) {
+    if (!empty($search_lettering_code)) {
         $filter['t.lettering_code'] = $search_lettering_code;
-        $param .= '&search_lettering_code=' . urlencode($search_lettering_code);
+        $param .= '&search_lettering_code='.urlencode($search_lettering_code);
     }
 }
 
@@ -325,7 +325,7 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
-		header("Location: list.php".($param?'?'.$param:''));
+		header("Location: list.php".($param ? '?'.$param : ''));
 		exit;
 	}
 }
@@ -872,125 +872,125 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 
 	// Piece number
-	if (! empty($arrayfields['t.piece_num']['checked']))
+	if (!empty($arrayfields['t.piece_num']['checked']))
 	{
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Document date
-	if (! empty($arrayfields['t.doc_date']['checked']))
+	if (!empty($arrayfields['t.doc_date']['checked']))
 	{
-		print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td class="center">'.dol_print_date($line->doc_date, 'day').'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Document ref
-	if (! empty($arrayfields['t.doc_ref']['checked']))
+	if (!empty($arrayfields['t.doc_ref']['checked']))
 	{
-		print '<td class="nowrap">' . $line->doc_ref . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td class="nowrap">'.$line->doc_ref.'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Account number
-	if (! empty($arrayfields['t.numero_compte']['checked']))
+	if (!empty($arrayfields['t.numero_compte']['checked']))
 	{
-		print '<td>' . length_accountg($line->numero_compte) . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td>'.length_accountg($line->numero_compte).'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Subledger account
-	if (! empty($arrayfields['t.subledger_account']['checked']))
+	if (!empty($arrayfields['t.subledger_account']['checked']))
 	{
-		print '<td>' . length_accounta($line->subledger_account) . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td>'.length_accounta($line->subledger_account).'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Label operation
-	if (! empty($arrayfields['t.label_operation']['checked']))
+	if (!empty($arrayfields['t.label_operation']['checked']))
 	{
-		print '<td>' . $line->label_operation . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td>'.$line->label_operation.'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Amount debit
-	if (! empty($arrayfields['t.debit']['checked']))
+	if (!empty($arrayfields['t.debit']['checked']))
 	{
-		print '<td class="nowrap right">' . ($line->debit ? price($line->debit) : ''). '</td>';
-		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totaldebit';
+		print '<td class="nowrap right">'.($line->debit ? price($line->debit) : '').'</td>';
+		if (!$i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totaldebit';
 		$totalarray['val']['totaldebit'] += $line->debit;
 	}
 
 	// Amount credit
-	if (! empty($arrayfields['t.credit']['checked']))
+	if (!empty($arrayfields['t.credit']['checked']))
 	{
-		print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
-		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalcredit';
+		print '<td class="nowrap right">'.($line->credit ? price($line->credit) : '').'</td>';
+		if (!$i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		$totalarray['val']['totalcredit'] += $line->credit;
 	}
 
 	// Lettering code
-	if (! empty($arrayfields['t.lettering_code']['checked']))
+	if (!empty($arrayfields['t.lettering_code']['checked']))
 	{
-		print '<td class="center">' . $line->lettering_code . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td class="center">'.$line->lettering_code.'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Journal code
-	if (! empty($arrayfields['t.code_journal']['checked']))
+	if (!empty($arrayfields['t.code_journal']['checked']))
 	{
 		$accountingjournal = new AccountingJournal($db);
 		$result = $accountingjournal->fetch('', $line->code_journal);
-		$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">' . $journaltoshow . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+		print '<td class="center">'.$journaltoshow.'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	// Creation operation date
-	if (! empty($arrayfields['t.date_creation']['checked']))
+	if (!empty($arrayfields['t.date_creation']['checked']))
 	{
-		print '<td class="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour').'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Modification operation date
-	if (! empty($arrayfields['t.tms']['checked']))
+	if (!empty($arrayfields['t.tms']['checked']))
 	{
-		print '<td class="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour').'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Exported operation date
-	if (! empty($arrayfields['t.date_export']['checked']))
+	if (!empty($arrayfields['t.date_export']['checked']))
 	{
-		print '<td class="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '<td class="center">'.dol_print_date($line->date_export, 'dayhour').'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Action column
 	print '<td class="nowraponall center">';
 	if (empty($line->date_export)) {
 		if ($user->rights->accounting->mouvements->creer) {
-			print '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
+			print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_edit().'</a>';
 		}
 		if ($user->rights->accounting->mouvements->supprimer) {
-			print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_delete() . '</a>';
+			print '&nbsp;<a href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}
 	}
 	print '</td>';
 
-	if (! $i) $totalarray['nbfield']++;
+	if (!$i) $totalarray['nbfield']++;
 
 	print "</tr>\n";
 

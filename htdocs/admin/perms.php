@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'users', 'other'));
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -43,16 +43,16 @@ if (!$user->admin) accessforbidden();
 if ($action == 'add')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-    $sql.= " WHERE id = ".GETPOST("pid", 'int');
-    $sql.= " AND entity = ".$conf->entity;
+    $sql .= " WHERE id = ".GETPOST("pid", 'int');
+    $sql .= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
 
 if ($action == 'remove')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-    $sql.= " WHERE id = ".GETPOST('pid', 'int');
-    $sql.= " AND entity = ".$conf->entity;
+    $sql .= " WHERE id = ".GETPOST('pid', 'int');
+    $sql .= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
 
@@ -61,7 +61,7 @@ if ($action == 'remove')
  * View
  */
 
-$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+$wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
@@ -78,10 +78,10 @@ foreach ($modulesdir as $dir)
 {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
-	$handle=@opendir(dol_osencode($dir));
+	$handle = @opendir(dol_osencode($dir));
 	if (is_resource($handle))
 	{
-		while (($file = readdir($handle))!==false)
+		while (($file = readdir($handle)) !== false)
 		{
 			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
 			{
@@ -94,7 +94,7 @@ foreach ($modulesdir as $dir)
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 					{
-						foreach($objMod->langfiles as $domain)
+						foreach ($objMod->langfiles as $domain)
 						{
 							$langs->load($domain);
 						}
@@ -102,8 +102,8 @@ foreach ($modulesdir as $dir)
 					// Load all permissions
 					if ($objMod->rights_class)
 					{
-						$ret=$objMod->insert_permissions(0);
-						$modules[$objMod->rights_class]=$objMod;
+						$ret = $objMod->insert_permissions(0);
+						$modules[$objMod->rights_class] = $objMod;
 						//print "modules[".$objMod->rights_class."]=$objMod;";
 					}
 				}
@@ -114,7 +114,7 @@ foreach ($modulesdir as $dir)
 
 $db->commit();
 
-$head=security_prepare_head();
+$head = security_prepare_head();
 
 dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
 
@@ -127,42 +127,42 @@ print '<table class="noborder centpercent">';
 
 // Show permissions lines
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
-$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND entity = ".$conf->entity;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
-$sql.= " ORDER BY r.module, r.id";
+$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " AND entity = ".$conf->entity;
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+$sql .= " ORDER BY r.module, r.id";
 
 $result = $db->query($sql);
 if ($result)
 {
-    $num	= $db->num_rows($result);
-    $i		= 0;
-    $oldmod	= "";
+    $num = $db->num_rows($result);
+    $i = 0;
+    $oldmod = "";
 
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
 
         // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
-        if (! $modules[$obj->module])
+        if (!$modules[$obj->module])
         {
             $i++;
             continue;
         }
 
         // Check if permission we found is inside a module definition. If not, we discard it.
-        $found=false;
-        foreach($modules[$obj->module]->rights as $key => $val)
+        $found = false;
+        foreach ($modules[$obj->module]->rights as $key => $val)
         {
-        	$rights_class=$objMod->rights_class;
+        	$rights_class = $objMod->rights_class;
         	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms))
         	{
-        		$found=true;
+        		$found = true;
         		break;
         	}
         }
-		if (! $found)
+		if (!$found)
 		{
 			$i++;
 			continue;
@@ -171,9 +171,9 @@ if ($result)
         // Break found, it's a new module to catch
         if ($oldmod <> $obj->module)
         {
-        	$oldmod	= $obj->module;
-            $objMod	= $modules[$obj->module];
-            $picto	= ($objMod->picto?$objMod->picto:'generic');
+        	$oldmod = $obj->module;
+            $objMod = $modules[$obj->module];
+            $picto = ($objMod->picto ? $objMod->picto : 'generic');
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Module").'</td>';
@@ -190,8 +190,8 @@ if ($result)
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 		print '</td>';
 
-        $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-        print '<td>'.$perm_libelle. '</td>';
+        $perm_libelle = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->libelle));
+        print '<td>'.$perm_libelle.'</td>';
 
         print '<td class="center">';
         if ($obj->bydefault == 1)
