@@ -277,9 +277,15 @@ class FormAccounting extends Form
 		$out = '';
 
     	$options = array();
+
+    	if ($showempty == 2)
+    	{
+    		$options['0'] = '--- '.$langs->trans("None").' ---';
+    	}
+
 		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{
-		    $options = $this->options_cache[$usecache];
+		    $options = array_merge($options, $this->options_cache[$usecache]);
 		    $selected=$selectid;
 		}
 		else
@@ -333,12 +339,8 @@ class FormAccounting extends Form
     		if ($usecache)
     		{
                 $this->options_cache[$usecache] = $options;
+                unset($this->options_cache[$usecache]['0']);
     		}
-		}
-
-		if ($showempty == 2)
-		{
-			$options['0'] = $langs->trans("None");
 		}
 
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty > 0 ? 1 : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);

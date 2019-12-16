@@ -121,7 +121,7 @@ if (!empty($id)) {
 			print '<input type="hidden" name="action" value="ventil">';
 			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
-			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_setup');
+			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_accountancy');
 
 			dol_fiche_head();
 

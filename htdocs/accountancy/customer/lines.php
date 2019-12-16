@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "compta", "accountancy", "productbatch"));
 
+$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
@@ -389,7 +391,7 @@ if ($result) {
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		print '<td class="center">';
-		print $codecompta.' <a href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print $codecompta.' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a>';
 		print '</td>';
