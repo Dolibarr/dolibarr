@@ -155,7 +155,7 @@ function ordered($product_id)
  * getProducts
  *
  * @param 	int		$order_id		Order id
- * @return	array|array[integer]
+ * @return	array|integer[]
  */
 function getProducts($order_id)
 {
