@@ -675,7 +675,10 @@ class FormFile
 				else
 				{
 				    $tmp=explode(':', $modulepart);
-				    if (! empty($tmp[2])) $submodulepart=$tmp[2];
+					if (! empty($tmp[1])){
+						$modulepart=$tmp[0];
+						$submodulepart=$tmp[1];
+					}
 			        $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
 					$res=include_once $file;
 				}
