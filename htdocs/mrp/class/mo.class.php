@@ -180,12 +180,12 @@ class Mo extends CommonObject
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables=array();
+	protected $childtables = array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	protected $childtablesoncascade=array('mrp_production');
+	protected $childtablesoncascade = array('mrp_production');
 
 	/**
 	 * @var MoLine[]     Array of subtable lines
@@ -251,14 +251,14 @@ class Mo extends CommonObject
 		}
 
 		// Insert lines in mrp_production table
-		if (! $error && $this->fk_bom > 0)
+		if (!$error && $this->fk_bom > 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 			$bom = new Bom($this->db);
 			$bom->fetch($this->fk_bom);
 			if ($bom->id > 0)
 			{
-				foreach($bom->lines as $line)
+				foreach ($bom->lines as $line)
 				{
 					$moline = new MoLine($this->db);
 
@@ -289,7 +289,7 @@ class Mo extends CommonObject
 			}
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$this->db->commit();
 		} else {
 			$this->db->rollback();
@@ -818,9 +818,9 @@ class Mo extends CommonObject
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '<td class="center"></td>';
 		print '</tr>';
-		$i	 = 0;
+		$i = 0;
 
-		if (! empty($this->lines))
+		if (!empty($this->lines))
 		{
 			foreach ($this->lines as $line)
 			{
@@ -828,9 +828,9 @@ class Mo extends CommonObject
 				{
 					if (empty($line->fk_parent_line))
 					{
-						$parameters=array('line'=>$line, 'i'=>$i);
-						$action='';
-						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+						$parameters = array('line'=>$line, 'i'=>$i);
+						$action = '';
+						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
 				}
 				else
@@ -863,12 +863,12 @@ class Mo extends CommonObject
 
 		$this->tpl['id'] = $line->id;
 
-		$this->tpl['label']='';
-		if (! empty($line->fk_product))
+		$this->tpl['label'] = '';
+		if (!empty($line->fk_product))
 		{
 			$productstatic = new Product($this->db);
 			$productstatic->fetch($line->fk_product);
-			$this->tpl['label'].= $productstatic->getNomUrl(1);
+			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		}
 		else
@@ -912,7 +912,7 @@ class MoLine extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 0;
 
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'fk_mo' =>array('type'=>'integer', 'label'=>'Fk mo', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		'position' =>array('type'=>'integer', 'label'=>'Position', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
@@ -976,13 +976,13 @@ class MoLine extends CommonObjectLine
 		// Translate some data of arrayofkeyval
 		if (is_object($langs))
 		{
-			foreach($this->fields as $key => $val)
+			foreach ($this->fields as $key => $val)
 			{
 				if (is_array($val['arrayofkeyval']))
 				{
-					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					foreach ($val['arrayofkeyval'] as $key2 => $val2)
 					{
-						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
 			}

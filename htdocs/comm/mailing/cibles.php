@@ -247,7 +247,7 @@ if ($object->fetch($id) >= 0)
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
-	foreach($emailarray as $email => $name) {
+	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
 			print dol_escape_htmltag($name).' &lt;'.$email;
 			print '&gt;';
@@ -266,7 +266,7 @@ if ($object->fetch($id) >= 0)
 	// Errors to
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
-	foreach($emailarray as $email => $name) {
+	foreach ($emailarray as $email => $name) {
 		if ($name != $email) {
 			print dol_escape_htmltag($name).' &lt;'.$email;
 			print '&gt;';
