@@ -1399,7 +1399,6 @@ class BookKeeping extends CommonObject
 
 		// TODO: In a future we must forbid deletion if record is inside a closed fiscal period.
 
-		print $sql; exit;
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
