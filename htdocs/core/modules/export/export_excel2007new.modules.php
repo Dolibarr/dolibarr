@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/export/export_excelnew.modules.php
+ *	\file       htdocs/core/modules/export/export_excel2007new.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
  */
