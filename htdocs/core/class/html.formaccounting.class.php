@@ -448,10 +448,10 @@ class FormAccounting extends Form
 
 		$out_array = array();
 
-		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
+		$sql = "SELECT DISTINCT date_format(doc_date, '%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
 	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
-		$sql .= " ORDER BY date_format(doc_date,'%Y')";
+		$sql .= " ORDER BY date_format(doc_date, '%Y')";
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 

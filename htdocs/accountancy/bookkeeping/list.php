@@ -104,7 +104,6 @@ $object = new BookKeeping($db);
 $hookmanager->initHooks(array('bookkeepinglist'));
 
 $formaccounting = new FormAccounting($db);
-$formother = new FormOther($db);
 $form = new Form($db);
 
 if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !isset($_POST['begin']) && !isset($_GET['begin']) && !isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export)
@@ -211,57 +210,57 @@ if (empty($reshook))
     if (! empty($search_date_start)) {
         $filter['t.doc_date>='] = $search_date_start;
         $tmp=dol_getdate($search_date_start);
-        $param .= '&search_date_startmonth=' . $tmp['mon'] . '&search_date_startday=' . $tmp['mday'] . '&search_date_startyear=' . $tmp['year'];
+        $param .= '&search_date_startmonth='.urlencode($tmp['mon']).'&search_date_startday='.urlencode($tmp['mday']).'&search_date_startyear='.urlencode($tmp['year']);
     }
     if (! empty($search_date_end)) {
         $filter['t.doc_date<='] = $search_date_end;
         $tmp=dol_getdate($search_date_end);
-        $param .= '&search_date_endmonth=' . $tmp['mon'] . '&search_date_endday=' . $tmp['mday'] . '&search_date_endyear=' . $tmp['year'];
+        $param .= '&search_date_endmonth='.urlencode($tmp['mon']).'&search_date_endday='.urlencode($tmp['mday']).'&search_date_endyear='.urlencode($tmp['year']);
     }
     if (! empty($search_doc_date)) {
         $filter['t.doc_date'] = $search_doc_date;
         $tmp=dol_getdate($search_doc_date);
-        $param .= '&doc_datemonth=' . $tmp['mon'] . '&doc_dateday=' . $tmp['mday'] . '&doc_dateyear=' . $tmp['year'];
+        $param .= '&doc_datemonth='.urlencode($tmp['mon']).'&doc_dateday='.urlencode($tmp['mday']).'&doc_dateyear='.urlencode($tmp['year']);
     }
     if (! empty($search_doc_type)) {
         $filter['t.doc_type'] = $search_doc_type;
-        $param .= '&search_doc_type=' . urlencode($search_doc_type);
+        $param .= '&search_doc_type='.urlencode($search_doc_type);
     }
     if (! empty($search_doc_ref)) {
         $filter['t.doc_ref'] = $search_doc_ref;
-        $param .= '&search_doc_ref=' . urlencode($search_doc_ref);
+        $param .= '&search_doc_ref='.urlencode($search_doc_ref);
     }
     if (! empty($search_accountancy_code)) {
         $filter['t.numero_compte'] = $search_accountancy_code;
-        $param .= '&search_accountancy_code=' . urlencode($search_accountancy_code);
+        $param .= '&search_accountancy_code='.urlencode($search_accountancy_code);
     }
     if (! empty($search_accountancy_code_start)) {
         $filter['t.numero_compte>='] = $search_accountancy_code_start;
-        $param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+        $param .= '&search_accountancy_code_start='.urlencode($search_accountancy_code_start);
     }
     if (! empty($search_accountancy_code_end)) {
         $filter['t.numero_compte<='] = $search_accountancy_code_end;
-        $param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+        $param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
     }
     if (! empty($search_accountancy_aux_code)) {
         $filter['t.subledger_account'] = $search_accountancy_aux_code;
-        $param .= '&search_accountancy_aux_code=' . urlencode($search_accountancy_aux_code);
+        $param .= '&search_accountancy_aux_code='.urlencode($search_accountancy_aux_code);
     }
     if (! empty($search_accountancy_aux_code_start)) {
         $filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
-        $param .= '&search_accountancy_aux_code_start=' . urlencode($search_accountancy_aux_code_start);
+        $param .= '&search_accountancy_aux_code_start='.urlencode($search_accountancy_aux_code_start);
     }
     if (! empty($search_accountancy_aux_code_end)) {
         $filter['t.subledger_account<='] = $search_accountancy_aux_code_end;
-        $param .= '&search_accountancy_aux_code_end=' . urlencode($search_accountancy_aux_code_end);
+        $param .= '&search_accountancy_aux_code_end='.urlencode($search_accountancy_aux_code_end);
     }
     if (! empty($search_mvt_label)) {
         $filter['t.label_operation'] = $search_mvt_label;
-        $param .= '&search_mvt_label=' . urlencode($search_mvt_label);
+        $param .= '&search_mvt_label='.urlencode($search_mvt_label);
     }
     if (! empty($search_direction)) {
         $filter['t.sens'] = $search_direction;
-        $param .= '&search_direction=' . urlencode($search_direction);
+        $param .= '&search_direction='.urlencode($search_direction);
     }
     if (! empty($search_ledger_code)) {
         $filter['t.code_journal'] = $search_ledger_code;
@@ -274,32 +273,32 @@ if (empty($reshook))
     if (! empty($search_date_creation_start)) {
         $filter['t.date_creation>='] = $search_date_creation_start;
         $tmp=dol_getdate($search_date_creation_start);
-        $param .= '&date_creation_startmonth=' . $tmp['mon'] . '&date_creation_startday=' . $tmp['mday'] . '&date_creation_startyear=' . $tmp['year'];
+        $param .= '&date_creation_startmonth=' . urlencode($tmp['mon']) . '&date_creation_startday=' . urlencode($tmp['mday']) . '&date_creation_startyear=' . urlencode($tmp['year']);
     }
     if (! empty($search_date_creation_end)) {
         $filter['t.date_creation<='] = $search_date_creation_end;
         $tmp=dol_getdate($search_date_creation_end);
-        $param .= '&date_creation_endmonth=' . $tmp['mon'] . '&date_creation_endday=' . $tmp['mday'] . '&date_creation_endyear=' . $tmp['year'];
+        $param .= '&date_creation_endmonth=' .urlencode($tmp['mon']) . '&date_creation_endday=' . urlencode($tmp['mday']) . '&date_creation_endyear=' . urlencode($tmp['year']);
     }
     if (! empty($search_date_modification_start)) {
         $filter['t.tms>='] = $search_date_modification_start;
         $tmp=dol_getdate($search_date_modification_start);
-        $param .= '&date_modification_startmonth=' . $tmp['mon'] . '&date_modification_startday=' . $tmp['mday'] . '&date_modification_startyear=' . $tmp['year'];
+        $param .= '&date_modification_startmonth=' . urlencode($tmp['mon']) . '&date_modification_startday=' . urlencode($tmp['mday']) . '&date_modification_startyear=' . urlencode($tmp['year']);
     }
     if (! empty($search_date_modification_end)) {
         $filter['t.tms<='] = $search_date_modification_end;
         $tmp=dol_getdate($search_date_modification_end);
-        $param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
+        $param .= '&date_modification_endmonth=' . urlencode($tmp['mon']) . '&date_modification_endday=' . urlencode($tmp['mday']) . '&date_modification_endyear=' . urlencode($tmp['year']);
     }
     if (! empty($search_date_export_start)) {
         $filter['t.date_export>='] = $search_date_export_start;
         $tmp=dol_getdate($search_date_export_start);
-        $param .= '&date_export_startmonth=' . $tmp['mon'] . '&date_export_startday=' . $tmp['mday'] . '&date_export_startyear=' . $tmp['year'];
+        $param .= '&date_export_startmonth=' . urlencode($tmp['mon']) . '&date_export_startday=' . urlencode($tmp['mday']) . '&date_export_startyear=' . urlencode($tmp['year']);
     }
     if (! empty($search_date_export_end)) {
         $filter['t.date_export<='] = $search_date_export_end;
         $tmp=dol_getdate($search_date_export_end);
-        $param .= '&date_export_endmonth=' . $tmp['mon'] . '&date_export_endday=' . $tmp['mday'] . '&date_export_endyear=' . $tmp['year'];
+        $param .= '&date_export_endmonth=' . urlencode($tmp['mon']) . '&date_export_endday=' . urlencode($tmp['mday']) . '&date_export_endyear=' . urlencode($tmp['year']);
     }
     if (! empty($search_debit)) {
         $filter['t.debit'] = $search_debit;
@@ -330,6 +329,7 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 	}
 }
 if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
+	$delmonth = GETPOST('delmonth', 'int');
 	$delyear = GETPOST('delyear', 'int');
 	if ($delyear == -1) {
 		$delyear = 0;
@@ -339,9 +339,9 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		$deljournal = 0;
 	}
 
-	if (!empty($delyear) || !empty($deljournal))
+	if (!empty($delmonth) || !empty($delyear) || !empty($deljournal))
 	{
-		$result = $object->deleteByYearAndJournal($delyear, $deljournal);
+		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -529,6 +529,8 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
  * View
  */
 
+$formother = new FormOther($db);
+
 $title_page = $langs->trans("Bookkeeping");
 
 // Count total nb of records
@@ -581,9 +583,20 @@ if ($action == 'delbookkeepingyear') {
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
+	$month_array = array();
+	for ($i = 1; $i <= 12; $i++) {
+		$month_array[$i] = $langs->trans("Month".sprintf("%02d", $i));
+	}
 	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
 	$journal_array = $formaccounting->select_journal($deljournal, 'deljournal', '', 1, 1, 1, '', 0, 1);
 
+	$form_question['delmonth'] = array(
+		'name' => 'delmonth',
+		'type' => 'select',
+		'label' => $langs->trans('DelMonth'),
+		'values' => $month_array,
+		'default' => ''
+	);
 	$form_question['delyear'] = array(
 			'name' => 'delyear',
 			'type' => 'select',
@@ -599,7 +612,7 @@ if ($action == 'delbookkeepingyear') {
 			'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 260);
 	print $formconfirm;
 }
 

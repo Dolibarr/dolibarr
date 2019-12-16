@@ -197,6 +197,7 @@ ByPersonalizedAccountGroups=By personalized groups
 ByYear=By year
 NotMatch=Not Set
 DeleteMvt=Delete Ledger lines
+DelMonth=Month to delete
 DelYear=Year to delete
 DelJournal=Journal to delete
 ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
