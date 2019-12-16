@@ -285,7 +285,7 @@ class FormAccounting extends Form
 
 		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{
-		    $options = array_merge($options, $this->options_cache[$usecache]);
+		    $options = $options + $this->options_cache[$usecache];		// We use + instead of array_merge because we don't want to reindex key from 0
 		    $selected=$selectid;
 		}
 		else

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "compta", "accountancy", "other", "trips", "productbatch"));
+$langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "trips", "productbatch"));
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -47,6 +47,7 @@ $toselect = GETPOST('toselect', 'array');
 $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'alpha');
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
@@ -56,8 +57,6 @@ $search_vat = GETPOST('search_vat', 'alpha');
 $search_day = GETPOST("search_day", "int");
 $search_month = GETPOST("search_month", "int");
 $search_year = GETPOST("search_year", "int");
-
-$btn_ventil = GETPOST('ventil', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -123,7 +122,6 @@ if ($massaction == 'ventil') {
     if (!empty($mesCasesCochees)) {
         $msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
         $msg .= '<div class="detail">';
-        $mesCodesVentilChoisis = $codeventil;
         $cpt = 0;
         $ok = 0;
         $ko = 0;
@@ -255,12 +253,8 @@ if ($result) {
 	if ($search_vat)         $param .= '&search_vat='.urlencode($search_vat);
 
 	$arrayofmassactions = array(
-	    'ventil'=>$langs->trans("Ventilate")
-	    //'presend'=>$langs->trans("SendByMail"),
-	    //'builddoc'=>$langs->trans("PDFMerge"),
+	    'ventil' => $langs->trans("Ventilate")
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 
 
@@ -294,7 +288,7 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center nowraponall minwidth100imp">';
    	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
@@ -372,7 +366,7 @@ if ($result) {
 		print '</td>';
 
 		// Current account
-		print '<td>';
+		print '<td class="center">';
 		print length_accountg(html_entity_decode($objp->code_buy));
 		print '</td>';
 
