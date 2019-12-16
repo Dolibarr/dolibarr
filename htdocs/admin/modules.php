@@ -993,10 +993,10 @@ if ($mode == 'deploy')
 		{
 			if ($dirins_ok)
 			{
-				if (! is_writable(dol_osencode($dirins)))
+				if (!is_writable(dol_osencode($dirins)))
 				{
 					$langs->load("errors");
-					$message=info_admin($langs->trans("ErrorFailedToWriteInDir", $dirins));
+					$message=info_admin($langs->trans("ErrorFailedToWriteInDir", $dirins), 0, 0, '1', 'warning');
 					$allowfromweb=0;
 				}
 			}
