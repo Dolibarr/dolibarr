@@ -135,7 +135,7 @@ if (empty($reshook))
     }
     $triggermodname = 'MYMODULE_MYOBJECT_MODIFY'; // Name of trigger action code to execute when we modify record
 
-    // Actions cancel, add, update, delete or clone
+    // Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
     include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
     // Actions when linking object each other
@@ -460,7 +460,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             {
 	            if ($permissiontoadd)
 	            {
-	            	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	            	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 	            }
             }
 
@@ -481,7 +481,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    		{
 	    			if (is_array($object->lines) && count($object->lines) > 0)
 	    			{
-	    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+	    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").'</a>';
 	    			}
 	    			else
 	    			{
