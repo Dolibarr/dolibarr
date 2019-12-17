@@ -677,7 +677,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                     $globalStatsKey = $groupElement['globalStatsKey'];
                     $groupElement['globalStats'] = array();
 
-                    if (in_array($globalStatsKey, $keys))
+                    if (is_array($keys) && in_array($globalStatsKey, $keys))
                     {
                         // get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
                         $keyIndex = array_search($globalStatsKey, $keys);
