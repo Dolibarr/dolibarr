@@ -118,7 +118,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMMANDE_ADDON_PDF_ODT_PATH">';
@@ -177,6 +177,11 @@ class doc_generic_order_odt extends ModelePDFCommandes
    			}
    			$texte .= '</div>';
 		}
+        // Add select to upload a new template file. TODO Copy this feature on other admin pages.
+        $texte.= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+        $texte.= '<input type="hidden" value="COMMANDE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+        $texte.= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+        $texte.= '</div>';
 
 		$texte .= '</td>';
 
