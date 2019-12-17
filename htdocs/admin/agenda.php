@@ -40,6 +40,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $search_event = GETPOST('search_event', 'alpha');
 
 // Get list of triggers available
+$triggers = array();
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype, a.rang as position";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
 $sql .= " ORDER BY a.rang ASC";
@@ -168,6 +169,12 @@ if (!empty($triggers))
 		if ($module == 'member') $module = 'adherent';
 		if ($module == 'project') $module = 'projet';
 		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
+
+		// If 'element' value is myobject@mymodule instead of mymodule
+		$tmparray = explode('@', $module);
+		if (! empty($tmparray[1])) {
+			$module = $tmparray[1];
+		}
 
 		//print 'module='.$module.'<br>';
 		if (!empty($conf->$module->enabled))
