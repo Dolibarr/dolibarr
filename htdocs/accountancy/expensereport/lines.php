@@ -26,17 +26,17 @@
  */
 require '../../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy", "trips", "productbatch"));
 
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $account_parent = GETPOST('account_parent', 'int');
 $changeaccount = GETPOST('changeaccount');
@@ -47,12 +47,12 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
-$search_day=GETPOST("search_day", "int");
-$search_month=GETPOST("search_month", "int");
-$search_year=GETPOST("search_year", "int");
+$search_day = GETPOST("search_day", "int");
+$search_month = GETPOST("search_month", "int");
+$search_year = GETPOST("search_year", "int");
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -60,9 +60,9 @@ if (empty($page) || $page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $offset = $limit * $page;
-if (! $sortfield)
+if (!$sortfield)
 	$sortfield = "erd.date, erd.rowid";
-if (! $sortorder) {
+if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = "DESC";
 	}
@@ -71,7 +71,7 @@ if (! $sortorder) {
 // Security check
 if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->bind->write)
+if (!$user->rights->accounting->bind->write)
 	accessforbidden();
 
 $formaccounting = new FormAccounting($db);
@@ -98,27 +98,27 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
-	if (! (GETPOST('account_parent', 'int') >= 0))
+	if (!(GETPOST('account_parent', 'int') >= 0))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$db->begin();
 
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
+		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
+		$sql1 .= " SET erd.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
+		$sql1 .= ' WHERE erd.rowid IN ('.implode(',', $changeaccount).')';
 
-		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
+		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);
-		if (! $resql1) {
-			$error ++;
+		if (!$resql1) {
+			$error++;
 			setEventMessages($db->lasterror(), null, 'errors');
 		}
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 			setEventMessages($langs->trans('Save'), null, 'mesgs');
 		} else {
@@ -126,7 +126,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 			setEventMessages($db->lasterror(), null, 'errors');
 		}
 
-		$account_parent = '';   // Protection to avoid to mass apply it a second time
+		$account_parent = ''; // Protection to avoid to mass apply it a second time
 	}
 }
 
@@ -138,7 +138,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation") . ' - ' . $langs->trans("Dispatched"));
+llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -164,10 +164,10 @@ $sql = "SELECT er.ref, er.rowid as erid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.vat_src_code, erd.date,";
 $sql .= " aa.label, aa.account_number,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label";
-$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
-$sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql .= " , " . MAIN_DB_PREFIX . "expensereport_det as erd";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
+$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
+$sql .= " , ".MAIN_DB_PREFIX."accounting_account as aa";
+$sql .= " , ".MAIN_DB_PREFIX."expensereport_det as erd";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " WHERE er.rowid = erd.fk_expensereport and er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <> 0 ";
 $sql .= " AND aa.rowid = erd.fk_code_ventilation";
 if (strlen(trim($search_expensereport))) {
@@ -188,8 +188,8 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("erd.tva_tx", price2num($search_vat), 1);
 }
-$sql.=dolSqlDateFilter('erd.date', $search_day, $search_month, $search_year);
-$sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
+$sql .= dolSqlDateFilter('erd.date', $search_day, $search_month, $search_year);
+$sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -215,19 +215,19 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_expensereport) $param .= "&search_expensereport=" . urlencode($search_expensereport);
-	if ($search_label)		$param .= "&search_label=" . urlencode($search_label);
-	if ($search_desc)		$param .= "&search_desc=" . urlencode($search_desc);
-	if ($search_account)	$param .= "&search_account=" . urlencode($search_account);
-	if ($search_vat)		$param .= "&search_vat=" . urlencode($search_vat);
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($search_expensereport) $param .= "&search_expensereport=".urlencode($search_expensereport);
+	if ($search_label)		$param .= "&search_label=".urlencode($search_label);
+	if ($search_desc)		$param .= "&search_desc=".urlencode($search_desc);
+	if ($search_account)	$param .= "&search_account=".urlencode($search_account);
+	if ($search_vat)		$param .= "&search_vat=".urlencode($search_vat);
 	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
 	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
 
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -238,33 +238,33 @@ if ($result) {
 
 	print_barre_liste($langs->trans("ExpenseReportLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
-	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneExpenseReport") . '</span><br>';
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneExpenseReport").'</span><br>';
 
-	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
+	print '<br><div class="inline-block divButAction">'.$langs->trans("ChangeAccount").'<br>';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
+	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("ChangeBinding").'" /></div>';
 
 	$moreforfilter = '';
 
     print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"></td>';
-	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
+	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
 	print '<td class="liste_titre center">';
-   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
+	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
     print '<td class="liste_titre right"></td>';
     print '<td class="liste_titre right">';
-    $searchpicto=$form->showFilterButtons();
+    $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';
 	print "</tr>\n";
@@ -279,29 +279,29 @@ if ($result) {
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('');
-    $checkpicto=$form->showCheckAddButtons();
+    $checkpicto = $form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
 	$expensereport_static = new ExpenseReport($db);
 
-	while ( $i < min($num_lines, $limit) ) {
+	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
-		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
+		$codeCompta = length_accountg($objp->account_number).' - '.$objp->label;
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 
 		print '<tr class="oddeven">';
 
-		print '<td>' . $objp->rowid . '</td>';
+		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Invoice
-		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
+		print '<td>'.$expensereport_static->getNomUrl(1).'</td>';
 
-		print '<td class="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
 
-		print '<td class="tdoverflow">' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
+		print '<td class="tdoverflow">'.($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))).'</td>';
 
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
@@ -309,20 +309,20 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 
-		print '<td class="nowrap right">' . price($objp->total_ht) . '</td>';
+		print '<td class="nowrap right">'.price($objp->total_ht).'</td>';
 
-		print '<td class="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
+		print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
-		print '<td>' . $codeCompta . '</td>';
+		print '<td>'.$codeCompta.'</td>';
 
-		print '<td class="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
+		print '<td class="left"><a href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
 
-		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
+		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
 
 		print "</tr>";
-		$i ++;
+		$i++;
 	}
 
 	print "</table>";
