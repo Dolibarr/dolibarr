@@ -2352,7 +2352,7 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $langs->load("members");
+	        $langs->load("trips");
 
 	        $response = new WorkboardResponse();
 	        if ($option == 'toapprove')
@@ -2409,7 +2409,7 @@ class ExpenseReport extends CommonObject
     {
         global $conf;
 
-        //Only valid members
+        // Only valid expenses reports
         if ($option == 'toapprove' && $this->status != 2) return false;
         if ($option == 'topay' && $this->status != 5) return false;
 
