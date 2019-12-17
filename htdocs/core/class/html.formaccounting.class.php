@@ -24,7 +24,7 @@
  *  \ingroup    Accountancy (Double entries)
  *	\brief      File of class with all html predefined components
  */
-require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
@@ -43,7 +43,7 @@ class FormAccounting extends Form
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
     /**
 	 * Constructor
@@ -73,26 +73,26 @@ class FormAccounting extends Form
 	public function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 
 		$out = '';
 
     	$options = array();
-		if ($usecache && ! empty($this->options_cache[$usecache]))
+		if ($usecache && !empty($this->options_cache[$usecache]))
 		{
 		    $options = $this->options_cache[$usecache];
-		    $selected=$selectid;
+		    $selected = $selectid;
 		}
 		else
 		{
 			$sql = "SELECT rowid, code, label, nature, entity, active";
-			$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
-			$sql.= " WHERE active = 1";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " WHERE active = 1";
+			$sql .= " AND entity = ".$conf->entity;
 			if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
-			$sql.= " ORDER BY code";
+			$sql .= " ORDER BY code";
 
-			dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);
+			dol_syslog(get_class($this)."::select_journal", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
@@ -105,7 +105,7 @@ class FormAccounting extends Form
 			$langs->load('accountancy');
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$label = $obj->code . ' - ' . $langs->trans($obj->label);
+				$label = $obj->code.' - '.$langs->trans($obj->label);
 
     			$select_value_in = $obj->rowid;
 				$select_value_out = $obj->rowid;
@@ -133,7 +133,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, ($disabledajaxcombo?0:1));
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}
@@ -154,7 +154,7 @@ class FormAccounting extends Form
     public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
     {
         // phpcs:enable
-        global $db,$langs,$user,$mysoc;
+        global $db, $langs, $user, $mysoc;
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries))
         {
@@ -162,28 +162,28 @@ class FormAccounting extends Form
             exit;
         }
 
-        if (! empty($mysoc->country_id))
+        if (!empty($mysoc->country_id))
         {
             $sql = "SELECT c.rowid, c.label as type, c.range_account";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
-            $sql.= " WHERE c.active = 1";
-			$sql.= " AND c.category_type = 0";
-            if (empty($allcountries)) $sql.= " AND c.fk_country = ".$mysoc->country_id;
-            $sql.= " ORDER BY c.label ASC";
+            $sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+            $sql .= " WHERE c.active = 1";
+			$sql .= " AND c.category_type = 0";
+            if (empty($allcountries)) $sql .= " AND c.fk_country = ".$mysoc->country_id;
+            $sql .= " ORDER BY c.label ASC";
         }
         else
         {
             $sql = "SELECT c.rowid, c.label as type, c.range_account";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
-            $sql.= " WHERE c.active = 1";
-			$sql.= " AND c.category_type = 0";
-			$sql.= " AND c.fk_country = co.rowid";
-            if (empty($allcountries)) $sql.= " AND co.code = '".$mysoc->country_code."'";
-            $sql.= " ORDER BY c.label ASC";
+            $sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
+            $sql .= " WHERE c.active = 1";
+			$sql .= " AND c.category_type = 0";
+			$sql .= " AND c.fk_country = co.rowid";
+            if (empty($allcountries)) $sql .= " AND co.code = '".$mysoc->country_code."'";
+            $sql .= " ORDER BY c.label ASC";
         }
 
         dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-        $resql=$db->query($sql);
+        $resql = $db->query($sql);
         if ($resql)
         {
             $num = $db->num_rows($resql);
@@ -192,7 +192,7 @@ class FormAccounting extends Form
                 $out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
                 $i = 0;
 
-                if ($useempty) $out.= '<option value="0">&nbsp;</option>';
+                if ($useempty) $out .= '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($resql);
@@ -202,7 +202,7 @@ class FormAccounting extends Form
 					$out .= ' ('.$obj->range_account.')';
                     $i++;
                 }
-                $out .=  '</select>';
+                $out .= '</select>';
                 //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             }
             else
@@ -233,17 +233,17 @@ class FormAccounting extends Form
         // phpcs:enable
 		$options = array();
 
-		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
+		$sql = 'SELECT DISTINCT import_key from '.MAIN_DB_PREFIX.'accounting_bookkeeping';
 	    $sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= ' ORDER BY import_key DESC';
 
-		dol_syslog(get_class($this) . "::select_bookkeeping_importkey", LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_bookkeeping_importkey", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_bookkeeping_importkey " . $this->error, LOG_ERR);
-			return - 1;
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::select_bookkeeping_importkey ".$this->error, LOG_ERR);
+			return -1;
 		}
 
 		while ($obj = $this->db->fetch_object($resql)) {
@@ -272,7 +272,7 @@ class FormAccounting extends Form
         // phpcs:enable
 		global $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 		$out = '';
 
@@ -283,36 +283,36 @@ class FormAccounting extends Form
     		$options['0'] = '--- '.$langs->trans("None").' ---';
     	}
 
-		if ($usecache && ! empty($this->options_cache[$usecache]))
+		if ($usecache && !empty($this->options_cache[$usecache]))
 		{
-		    $options = $options + $this->options_cache[$usecache];		// We use + instead of array_merge because we don't want to reindex key from 0
-		    $selected=$selectid;
+		    $options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
+		    $selected = $selectid;
 		}
 		else
 		{
     		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
     		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
-    		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
-    		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-    		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
+    		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
+    		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+    		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
     		$sql .= " AND aa.active = 1";
     		$sql .= " AND aa.entity=".$conf->entity;
     		$sql .= " ORDER BY aa.account_number";
 
-    		dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
+    		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
     		$resql = $this->db->query($sql);
 
     		if (!$resql) {
-    			$this->error = "Error " . $this->db->lasterror();
-    			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
+    			$this->error = "Error ".$this->db->lasterror();
+    			dol_syslog(get_class($this)."::select_account ".$this->error, LOG_ERR);
     			return -1;
     		}
 
     		$selected = 0;
     		while ($obj = $this->db->fetch_object($resql))
     		{
-    			$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
+    			$label = length_accountg($obj->account_number).' - '.$obj->label;
     			$label = dol_trunc($label, $trunclength);
 
     			$select_value_in = $obj->rowid;
@@ -367,7 +367,7 @@ class FormAccounting extends Form
 		// Auxiliary customer account
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-	    $sql .= " WHERE entity IN (" . getEntity('societe') . ")";
+	    $sql .= " WHERE entity IN (".getEntity('societe').")";
 		$sql .= " ORDER BY code_compta";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
@@ -388,7 +388,7 @@ class FormAccounting extends Form
 		// Auxiliary supplier account
 		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE entity IN (" . getEntity('societe') . ")";
+		$sql .= " WHERE entity IN (".getEntity('societe').")";
 		$sql .= " ORDER BY code_compta_fournisseur";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -408,7 +408,7 @@ class FormAccounting extends Form
         // Auxiliary user account
         $sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
         $sql .= " FROM ".MAIN_DB_PREFIX."user";
-        $sql .= " WHERE entity IN (" . getEntity('user') . ")";
+        $sql .= " WHERE entity IN (".getEntity('user').")";
         $sql .= " ORDER BY accountancy_code";
         dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
         $resql = $this->db->query($sql);
