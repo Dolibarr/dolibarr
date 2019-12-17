@@ -139,8 +139,14 @@ if (empty($reshook))
 	        {
 	            $cursorfacid = substr($key, 7);
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
-	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
-	            if (!empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
+	            if (!empty($amounts[$cursorfacid])) {
+	            	$atleastonepaymentnotnull++;
+	            	if (is_numeric($amounts[$cursorfacid])) {
+	            		$totalpayment = $totalpayment + $amounts[$cursorfacid];
+	            	} else {
+	            		setEventMessages($langs->transnoentities("InputValueIsNotAnNumber", GETPOST($key)), null, 'warnings');
+	            	}
+	            }
 	            $result = $tmpinvoice->fetch($cursorfacid);
 	            if ($result <= 0) dol_print_error($db);
 	            $amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
