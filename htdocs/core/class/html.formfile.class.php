@@ -679,7 +679,7 @@ class FormFile
 						$modulepart=$tmp[0];
 						$submodulepart=$tmp[1];
 					}
-			        $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
+			        $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$submodulepart.'/modules_'.$submodulepart.'.php', 0);
 					$res=include_once $file;
 				}
 				$class='ModelePDF'.ucfirst($submodulepart);
