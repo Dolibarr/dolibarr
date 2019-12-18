@@ -57,6 +57,7 @@ NatureOfThirdParty=Nature of Third party
 NatureOfContact=Nature of Contact
 Address=Address
 State=State/Province
+StateCode=State/Province code
 StateShort=State
 Region=Region
 Region-State=Region - State
