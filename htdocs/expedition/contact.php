@@ -59,6 +59,7 @@ if ($id > 0 || ! empty($ref))
     }
 
     // Linked documents
+    /*
     if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
     {
         $objectsrc=new Commande($db);
@@ -69,13 +70,14 @@ if ($id > 0 || ! empty($ref))
         $objectsrc=new Propal($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
+    */
 }
 
 
 /*
  * Actions
  */
-
+$objectsrc=$object;
 if ($action == 'addcontact' && $user->rights->expedition->creer)
 {
     if ($result > 0 && $id > 0)
@@ -257,7 +259,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Lignes de contacts
 	echo '<br>';
-
+$objectsrc=$object;
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach($dirtpls as $reldir)
