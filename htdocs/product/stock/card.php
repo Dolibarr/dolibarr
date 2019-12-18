@@ -373,12 +373,12 @@ else
 			// Warehouse card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			$morehtmlref='<div class="refidno">';
-			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
-        	$morehtmlref.='</div>';
+			$morehtmlref = '<div class="refidno">';
+			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+        	$morehtmlref .= '</div>';
 
             $shownav = 1;
-            if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -390,7 +390,7 @@ else
 
 			// Parent entrepot
 			$parentwarehouse = new Entrepot($db);
-			if(!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
+			if (!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $parentwarehouse->getNomUrl(3);
 				print '</td></tr>';
@@ -430,8 +430,8 @@ else
 			// Last movement
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -439,10 +439,10 @@ else
 				} else {
 					dol_print_error($db);
 				}
-				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
-					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+					print dol_print_date($lastmovementdate, 'dayhour').' ';
+					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 				} else {
 					print $langs->trans("None");
 				}
