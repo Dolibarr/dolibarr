@@ -41,7 +41,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 <br>
 
 <form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int'); ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="id" value="<?php echo GETPOST('id', 'int'); ?>">
 <input type="hidden" name="action" value="update">

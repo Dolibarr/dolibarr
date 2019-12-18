@@ -2682,7 +2682,7 @@ class ExpenseReportLine
         if (!$error)
         {
             $this->db->commit();
-            return $this->rowid;
+            return $this->id;
         }
         else
         {
@@ -2773,7 +2773,7 @@ class ExpenseReportLine
         else $sql .= ",fk_c_type_fees=null";
         if ($this->fk_project > 0) $sql .= ",fk_projet=".$this->db->escape($this->fk_project);
         else $sql .= ",fk_projet=null";
-        $sql .= " WHERE rowid = ".$this->db->escape($this->rowid);
+        $sql .= " WHERE rowid = ".$this->db->escape($this->rowid ? $this->rowid : $this->id);
 
         dol_syslog("ExpenseReportLine::update sql=".$sql);
 

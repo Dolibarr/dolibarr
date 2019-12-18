@@ -107,36 +107,42 @@ if (($action == "searchfiles" || $action == "dl")) {
 	{
 		$wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
+		// Customer invoices
 		$sql = "SELECT t.rowid as id, t.ref, t.paye as paid, total as total_ht, total_ttc, tva as total_vat, fk_soc, t.datef as date, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 	    $sql .= " WHERE datef between ".$wheretail;
 	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 	    $sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
 	    $sql .= " UNION ALL";
+	    // Vendor invoices
 	    $sql .= " SELECT t.rowid as id, t.ref, paye as paid, total_ht, total_ttc, total_tva as total_vat, fk_soc, datef as date, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 	    $sql .= " WHERE datef between ".$wheretail;
 	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 	    $sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
 	    $sql .= " UNION ALL";
+	    // Expense reports
 	    $sql .= " SELECT t.rowid as id, t.ref, paid, total_ht, total_ttc, total_tva as total_vat, fk_user_author as fk_soc, date_fin as date, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 	    $sql .= " WHERE date_fin between  ".$wheretail;
 	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 	    $sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
 	    $sql .= " UNION ALL";
+	    // Donations
 	    $sql .= " SELECT t.rowid as id, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, 0 as fk_soc, datedon as date, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
 	    $sql .= " WHERE datedon between ".$wheretail;
 	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 	    $sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 	    $sql .= " UNION ALL";
+	    // Paiements of salaries
 	    $sql .= " SELECT t.rowid as id, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, datep as date, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 	    $sql .= " WHERE datep between ".$wheretail;
 	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 	    //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 	    $sql .= " UNION ALL";
+	    // Social contributions
 	    $sql .= " SELECT t.rowid as id, t.libelle as ref, paye as paid, amount as total_ht, amount as total_ttc, 0 as total_tva, 0 as fk_soc, date_creation as date, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 	    $sql .= " WHERE date_creation between ".$wheretail;
@@ -213,10 +219,14 @@ if (($action == "searchfiles" || $action == "dl")) {
 	            if (!empty($upload_dir))
 	            {
 	                $result = true;
+
 	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
 	                //var_dump($upload_dir);
+	                //var_dump($files);
+
 	                if (count($files) < 1)
 	                {
+	                	$nofile = array();
 	                	$nofile['id'] = $objd->id;
 	                	$nofile['date'] = $db->idate($objd->date);
 	                    $nofile['paid'] = $objd->paid;
@@ -231,7 +241,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 	                    $nofile['country_code'] = $objd->country_code;
 	                    $nofile['vatnum'] = $objd->vatnum;
 
-	                    $filesarray[] = $nofile;
+	                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 	                }
 	                else
 	                {
@@ -252,13 +262,22 @@ if (($action == "searchfiles" || $action == "dl")) {
 	                        $file['country_code'] = $objd->country_code;
 	                        $file['vatnum'] = $objd->vatnum;
 
-	                        $file['link'] = $link.$file['name'];
-	                        $file['relpathnamelang'] = $langs->trans($file['item']).'/'.$file['name'];
+	                        // Save record into array (only the first time it is found)
+	                        if (empty($filesarray[$file['item'].'_'.$file['id']])) {
+	                        	$filesarray[$file['item'].'_'.$file['id']] = $file;
+	                        }
 
-	                        $filesarray[] = $file;
+	                        // Add or concat file
+	                        if (empty($filesarray[$file['item'].'_'.$file['id']]['files'])) {
+	                        	$filesarray[$file['item'].'_'.$file['id']]['files'] = array();
+	                        }
+	                        $filesarray[$file['item'].'_'.$file['id']]['files'][] = array('link' => $link.$file['name'], 'name'=>$file['name'], 'ref'=>$file['ref'], 'fullname' => $file['fullname'], 'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name']);
+	                        //var_dump($file['item'].'_'.$file['id']);
+	                        //var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
 	                    }
 	                }
 	            }
+
 	            $i++;
 	        }
 	    }
@@ -316,7 +335,12 @@ if ($result && $action == "dl" && !$error)
     {
         foreach ($filesarray as $key => $file)
         {
-            if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]);
+        	foreach($file['files'] as $filecursor) {
+        		if (file_exists($filecursor["fullname"])) {
+        			$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
+        		}
+        	}
+
             $log .= $file['item'];
             $log .= ','.dol_print_date($file['date'], 'dayrfc');
             $log .= ','.$file['ref'];
@@ -370,8 +394,9 @@ $head[$h][2] = 'AccountancyFiles';
 dol_fiche_head($head, 'AccountancyFiles');
 
 
-print '<form name="searchfiles" action="?action=searchfiles'.$tail.'" method="POST" >'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
+
 print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
 print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
 
@@ -402,7 +427,7 @@ if (!empty($date_start) && !empty($date_stop))
     $param .= '&date_stopyear='.GETPOST('date_stopyear', 'int');
 
     print '<form name="dl" action="?action=dl" method="POST" >'."\n";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
     echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
 
@@ -477,9 +502,11 @@ if (!empty($date_start) && !empty($date_stop))
 
                 // File link
                 print '<td>';
-                if ($data['link'])
+                if (! empty($data['files']))
                 {
-                	print '<a href='.DOL_URL_ROOT.'/'.$data['link'].' target="_blank">'.($data['name'] ? $data['name'] : $data['ref']).'</a>';
+                	foreach($data['files'] as $filecursor) {
+                		print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a><br>';
+                	}
                 }
                 print "</td>\n";
 
