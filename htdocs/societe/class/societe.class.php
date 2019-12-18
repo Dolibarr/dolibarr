@@ -673,7 +673,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) $this->status = 0;
 		$this->name = $this->name ?trim($this->name) : trim($this->nom);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name=strtoupper($this->name);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client))      $this->client = 0;
 		if (empty($this->fournisseur)) $this->fournisseur = 0;
@@ -990,7 +990,7 @@ class Societe extends CommonObject
 		$now = dol_now();
 
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
-		if (! empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name=strtoupper($this->name);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
@@ -1538,7 +1538,7 @@ class Societe extends CommonObject
 				$this->effectif       = $obj->effectif_id ? $obj->effectif : '';
 
 				$this->forme_juridique_code = $obj->forme_juridique_code;
-				$this->forme_juridique     = $obj->forme_juridique_code ? $obj->forme_juridique : '';
+				$this->forme_juridique = $obj->forme_juridique_code ? $obj->forme_juridique : '';
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 

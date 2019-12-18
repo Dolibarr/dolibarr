@@ -195,14 +195,14 @@ if ($action == "correct_stock")
 
         if ($product->hasbatch())
         {
-        	$batch=GETPOST('batch_number');
+        	$batch = GETPOST('batch_number');
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+        	$sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 
-			$result=$product->correct_stock_batch(
+			$result = $product->correct_stock_batch(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
@@ -213,11 +213,11 @@ if ($action == "correct_stock")
 	        	GETPOST('inventorycode'),
 	        	$origin_element,
 	        	$origin_id
-	        );		// We do not change value of stock for a correction
+	        ); // We do not change value of stock for a correction
         }
         else
 		{
-			$result=$product->correct_stock(
+			$result = $product->correct_stock(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
@@ -414,63 +414,63 @@ if ($action == "transfert_stock" && !$cancel)
  * View
  */
 
-$productlot=new ProductLot($db);
-$productstatic=new Product($db);
-$warehousestatic=new Entrepot($db);
-$movement=new MouvementStock($db);
-$userstatic=new User($db);
-$form=new Form($db);
-$formother=new FormOther($db);
-$formproduct=new FormProduct($db);
-if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
+$productlot = new ProductLot($db);
+$productstatic = new Product($db);
+$warehousestatic = new Entrepot($db);
+$movement = new MouvementStock($db);
+$userstatic = new User($db);
+$form = new Form($db);
+$formother = new FormOther($db);
+$formproduct = new FormProduct($db);
+if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
-$sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
-$sql.= " m.batch, m.price,";
-$sql.= " m.type_mouvement,";
-$sql.= " m.fk_projet as fk_project,";
-$sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
-$sql.= " u.login, u.photo, u.lastname, u.firstname";
+$sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
+$sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
+$sql .= " m.batch, m.price,";
+$sql .= " m.type_mouvement,";
+$sql .= " m.fk_projet as fk_project,";
+$sql .= " pl.rowid as lotid, pl.eatby, pl.sellby,";
+$sql .= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
-$sql.= " ".MAIN_DB_PREFIX."product as p,";
-$sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
-$sql.= " WHERE m.fk_product = p.rowid";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+$sql .= " ".MAIN_DB_PREFIX."product as p,";
+$sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
+$sql .= " WHERE m.fk_product = p.rowid";
 if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
-$sql.= " AND m.fk_entrepot = e.rowid";
-$sql.= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
-if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
-$sql.= dolSqlDateFilter('m.datem', 0, $month, $year);
-if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
-if (! empty($search_ref))			$sql.= natural_search('m.rowid', $search_ref, 1);
-if (! empty($search_movement))      $sql.= natural_search('m.label', $search_movement);
-if (! empty($search_inventorycode)) $sql.= natural_search('m.inventorycode', $search_inventorycode);
-if (! empty($search_product_ref))   $sql.= natural_search('p.ref', $search_product_ref);
-if (! empty($search_product))       $sql.= natural_search('p.label', $search_product);
-if ($search_warehouse != '' && $search_warehouse != '-1')          $sql.= natural_search('e.rowid', $search_warehouse, 2);
-if (! empty($search_user))          $sql.= natural_search('u.login', $search_user);
-if (! empty($search_batch))         $sql.= natural_search('m.batch', $search_batch);
-if ($search_qty != '')				$sql.= natural_search('m.value', $search_qty, 1);
-if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql.= natural_search('m.type_mouvement', $search_type_mouvement, 2);
+$sql .= " AND m.fk_entrepot = e.rowid";
+$sql .= " AND e.entity IN (".getEntity('stock').")";
+if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
+$sql .= dolSqlDateFilter('m.datem', 0, $month, $year);
+if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
+if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
+if (!empty($search_movement))      $sql .= natural_search('m.label', $search_movement);
+if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);
+if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
+if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
+if ($search_warehouse != '' && $search_warehouse != '-1')          $sql .= natural_search('e.rowid', $search_warehouse, 2);
+if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
+if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
+if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
+if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.= $db->order($sortfield, $sortorder);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -544,12 +544,12 @@ if ($resql)
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $morehtmlref='<div class="refidno">';
-        $morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
-        $morehtmlref.='</div>';
+        $morehtmlref = '<div class="refidno">';
+        $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+        $morehtmlref .= '</div>';
 
         $shownav = 1;
-        if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -947,53 +947,53 @@ if ($resql)
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['m.datec']['checked'])) {
+	if (!empty($arrayfields['m.datec']['checked'])) {
         print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
     }
-	if (! empty($arrayfields['m.tms']['checked'])) {
+	if (!empty($arrayfields['m.tms']['checked'])) {
         print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
     }
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
     print "</tr>\n";
 
 
-    $arrayofuniqueproduct=array();
+    $arrayofuniqueproduct = array();
 
     while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
 
-        $userstatic->id=$objp->fk_user_author;
-        $userstatic->login=$objp->login;
-        $userstatic->lastname=$objp->lastname;
-        $userstatic->firstname=$objp->firstname;
-        $userstatic->photo=$objp->photo;
+        $userstatic->id = $objp->fk_user_author;
+        $userstatic->login = $objp->login;
+        $userstatic->lastname = $objp->lastname;
+        $userstatic->firstname = $objp->firstname;
+        $userstatic->photo = $objp->photo;
 
-        $productstatic->id=$objp->rowid;
-        $productstatic->ref=$objp->product_ref;
-        $productstatic->label=$objp->produit;
-        $productstatic->type=$objp->type;
-        $productstatic->entity=$objp->entity;
-        $productstatic->status_batch=$objp->tobatch;
+        $productstatic->id = $objp->rowid;
+        $productstatic->ref = $objp->product_ref;
+        $productstatic->label = $objp->produit;
+        $productstatic->type = $objp->type;
+        $productstatic->entity = $objp->entity;
+        $productstatic->status_batch = $objp->tobatch;
 
         $productlot->id = $objp->lotid;
-        $productlot->batch= $objp->batch;
-        $productlot->eatby= $objp->eatby;
-        $productlot->sellby= $objp->sellby;
+        $productlot->batch = $objp->batch;
+        $productlot->eatby = $objp->eatby;
+        $productlot->sellby = $objp->sellby;
 
-        $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->ref=$objp->warehouse_ref;
-        $warehousestatic->libelle=$objp->warehouse_ref;	// deprecated
-        $warehousestatic->label=$objp->warehouse_ref;
-        $warehousestatic->lieu=$objp->lieu;
+        $warehousestatic->id = $objp->entrepot_id;
+        $warehousestatic->ref = $objp->warehouse_ref;
+        $warehousestatic->libelle = $objp->warehouse_ref; // deprecated
+        $warehousestatic->label = $objp->warehouse_ref;
+        $warehousestatic->lieu = $objp->lieu;
         $warehousestatic->fk_parent = $objp->fk_parent;
         $warehousestatic->statut = $objp->statut;
 
-        $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
-		if(!empty($objp->fk_origin)) {
+        $arrayofuniqueproduct[$objp->rowid] = $objp->produit;
+		if (!empty($objp->fk_origin)) {
 			$origin = $movement->get_origin($objp->fk_origin, $objp->origintype);
 		} else {
 			$origin = '';
