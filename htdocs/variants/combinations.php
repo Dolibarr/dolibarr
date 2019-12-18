@@ -288,23 +288,23 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-if (! empty($id) || ! empty($ref))
+if (!empty($id) || !empty($ref))
 {
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-    $showbarcode=empty($conf->barcode->enabled)?0:1;
-    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+    $showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+    if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode = 0;
 
-    $head=product_prepare_head($object);
-    $titre=$langs->trans("CardProduct".$object->type);
-    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+    $head = product_prepare_head($object);
+    $titre = $langs->trans("CardProduct".$object->type);
+    $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
     dol_fiche_head($head, 'combinations', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-    $object->next_prev_filter=" fk_product_type = ".$object->type;
+    $object->next_prev_filter = " fk_product_type = ".$object->type;
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
+    dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
 	print '<div class="fichecenter">';
 
@@ -494,9 +494,9 @@ if (! empty($id) || ! empty($ref))
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
-		print '<input type="hidden" name="action" value="' .  (($valueid > 0) ? "update" : "create") .'">'."\n";
+		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
         if ($valueid > 0) {
-            print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
+            print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
         }
 
         dol_fiche_head();
@@ -518,7 +518,7 @@ if (! empty($id) || ! empty($ref))
 				print '</select>';
 			}
 
-			$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+			$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 			print $form->textwithpicto('', $htmltext);
 			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
 			print $langs->trans("Create");
@@ -780,9 +780,9 @@ if (! empty($id) || ! empty($ref))
     			print '<td class="nowrap center">';
     			if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     			{
-    			    $selected=0;
-    			    if (in_array($prodstatic->id, $arrayofselected)) $selected=1;
-    			    print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected?' checked="checked"':'').'>';
+    			    $selected = 0;
+    			    if (in_array($prodstatic->id, $arrayofselected)) $selected = 1;
+    			    print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
     			}
     			print '</td>';
     			print '</tr>';
