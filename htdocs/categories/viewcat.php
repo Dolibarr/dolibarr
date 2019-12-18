@@ -197,7 +197,7 @@ $head = categories_prepare_head($object,$type);
 
 
 dol_fiche_head($head, 'card', $title, -1, 'category');
-$linkback=(GETPOST('linkback') ? GETPOST('linkback'):DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
+$linkback=(GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$linkback.'\">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter=" type = ".$object->type;
 $object->ref = $object->label;
