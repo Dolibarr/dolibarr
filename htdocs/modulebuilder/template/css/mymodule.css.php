@@ -69,6 +69,13 @@ else header('Cache-Control: no-cache');
 
 ?>
 
+div.mainmenu.mymodule::before {
+    content: "\f249";
+}
+div.mainmenu.mymodule {
+    background-image: none;
+}
+
 .myclasscss {
 	/* ... */
 }
