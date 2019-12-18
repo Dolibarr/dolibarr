@@ -463,7 +463,7 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 $picto = 'calendarweek';
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';

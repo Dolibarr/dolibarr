@@ -521,7 +521,7 @@ if (empty($conf->facture->enabled))
 	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+	print '<input type="hidden" name="token" value="'.newToken().'" />';
 
 	print '<table class="noborder centpercent">';
 
@@ -628,7 +628,7 @@ print "</tr>";
 
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
@@ -639,7 +639,7 @@ print '</form>';
 
 /*
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
 print '<tr class="oddeven"><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
@@ -658,7 +658,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_PROPOSAL_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnProposal"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
@@ -680,7 +680,7 @@ print '</form>';
 
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';

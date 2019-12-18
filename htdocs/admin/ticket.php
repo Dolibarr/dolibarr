@@ -291,7 +291,7 @@ print '</table><br>';
 
 if (!$conf->use_javascript_ajax) {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setvarother">';
 }
 
@@ -403,7 +403,7 @@ print load_fiche_titre($langs->trans("Notification"));
 print '<table class="noborder centpercent">';
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
 
 print '<tr class="liste_titre">';

@@ -464,7 +464,7 @@ if ($rowid > 0)
     if (!empty($conf->societe->enabled)) $rowspan++;
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
@@ -579,7 +579,7 @@ if ($rowid > 0)
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc, 'socid', '', 1);
@@ -905,7 +905,7 @@ if ($rowid > 0)
 
 
         print '<form name="subscription" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="subscription">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';

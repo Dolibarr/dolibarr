@@ -1445,7 +1445,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewTrip"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head('');
@@ -1585,7 +1585,7 @@ else
 			if ($action == 'edit' && ($object->fk_statut < 3 || $object->fk_statut == 99))
 			{
 				print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 
 				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
@@ -1780,7 +1780,7 @@ else
 				                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-				                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 				                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				                $morehtmlref.='</form>';
@@ -2102,7 +2102,7 @@ else
 				if (($object->fk_statut == 0 || $object->fk_statut == 99) && $action != 'editline') $actiontouse = 'addline';
 
 				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="post" >';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';

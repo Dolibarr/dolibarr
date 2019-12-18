@@ -1547,7 +1547,7 @@ if ($action == 'create')
 	if (empty($mode_reglement_id) && !empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID)) $mode_reglement_id = $conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID;
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_supplier_percent.'">';
@@ -1918,7 +1918,7 @@ elseif (!empty($object->id))
         $morehtmlref .= ' : ';
         $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
         $morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
-        $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
         $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', 's.fournisseur=1', '', 0, 0, array(), 0, 'minwidth300');
         $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         $morehtmlref .= '</form>';
@@ -1942,7 +1942,7 @@ elseif (!empty($object->id))
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
@@ -2140,7 +2140,7 @@ elseif (!empty($object->id))
 	if ($action == 'editdate_livraison')
 	{
 		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		$usehourmin = 0;
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin = 1;
@@ -2284,7 +2284,7 @@ elseif (!empty($object->id))
 
 
 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="token" value="'.newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="'.$object->id.'">
@@ -2575,7 +2575,7 @@ elseif (!empty($object->id))
 			print '<!-- form to record supplier order -->'."\n";
 			print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="POST">';
 
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden"	name="action" value="commande">';
 			print load_fiche_titre($langs->trans("ToOrder"), '', '');
 			print '<table class="noborder centpercent">';
@@ -2632,7 +2632,7 @@ elseif (!empty($object->id))
 					// Set status to received (action=livraison)
 					print '<!-- form to record purchase order received -->'."\n";
 					print '<form id="classifyreception" action="card.php?id='.$object->id.'" method="post">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden"	name="action" value="livraison">';
 					print load_fiche_titre($langs->trans("Receive"), '', '');
 
@@ -2708,7 +2708,7 @@ elseif (!empty($object->id))
 				//Table/form header
 				print '<table class="border centpercent">';
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="webservice">';
 				print '<input type="hidden" name="mode" value="check">';
 
@@ -2858,7 +2858,7 @@ elseif (!empty($object->id))
 
 				//Form
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="webservice">';
 				print '<input type="hidden" name="mode" value="send">';
 				print '<input type="hidden" name="ws_user" value="'.$ws_user.'">';

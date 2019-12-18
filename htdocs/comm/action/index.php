@@ -392,7 +392,7 @@ $head = calendars_prepare_head($paramnoaction);
 
 print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);

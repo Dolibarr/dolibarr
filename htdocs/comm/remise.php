@@ -110,7 +110,7 @@ if ($socid > 0)
 	$isSupplier = $object->fournisseur == 1;
 
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 

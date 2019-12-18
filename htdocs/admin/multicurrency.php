@@ -236,7 +236,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_buyPriceInCurrency").'</td>';
 print '<td class="right">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_BUY_PRICE_IN_CURRENCY">';
 print $form->selectyesno("MULTICURRENCY_BUY_PRICE_IN_CURRENCY",$conf->global->MULTICURRENCY_BUY_PRICE_IN_CURRENCY,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -250,7 +250,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_modifyRateApplication").'</td>';
 print '<td class="right">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_MODIFY_RATE_APPLICATION">';
 print $form->selectarray('MULTICURRENCY_MODIFY_RATE_APPLICATION', array('PU_DOLIBARR' => 'PU_DOLIBARR', 'PU_CURRENCY' => 'PU_CURRENCY'), $conf->global->MULTICURRENCY_MODIFY_RATE_APPLICATION);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -266,7 +266,7 @@ print '<br>';
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setapilayer">';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -317,7 +317,7 @@ print '<td class="center">'.$langs->trans("Rate").'</td>'."\n";
 print '</tr>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add_currency">';
 
 print '<tr class="oddeven">';
@@ -343,7 +343,7 @@ foreach ($TCurrency as &$currency)
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
 	print '<td class="right">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';

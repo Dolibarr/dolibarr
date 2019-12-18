@@ -303,7 +303,7 @@ dol_fiche_head($head, 'project', $langs->trans("Projects"), -1, 'project');
 $form=new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setmainoptions">';
 
 print '<table class="noborder centpercent">';
@@ -864,7 +864,7 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 $form=new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
 print '<table class="noborder centpercent">';

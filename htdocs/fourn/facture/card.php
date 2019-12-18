@@ -1717,7 +1717,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($societe->id > 0) print '<input type="hidden" name="socid" value="'.$societe->id.'">'."\n";
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -2394,7 +2394,7 @@ else
                     //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                     $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                    $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                     $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                     $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                     $morehtmlref .= '</form>';
@@ -2987,7 +2987,7 @@ else
          * Lines
          */
 		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';

@@ -454,7 +454,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnDeliveryReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';

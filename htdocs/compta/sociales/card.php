@@ -312,7 +312,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -458,7 +458,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 		}
 
 		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
@@ -481,7 +481,7 @@ if ($id > 0)
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref.='<input type="hidden" name="action" value="classin">';
-					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref.='</form>';

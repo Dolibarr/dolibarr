@@ -492,7 +492,7 @@ if (!empty($id) || !empty($ref))
 		print load_fiche_titre($title);
 
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
         if ($valueid > 0) {
@@ -692,7 +692,7 @@ if (!empty($id) || !empty($ref))
 
 		// List of variants
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="massaction">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

@@ -774,7 +774,7 @@ if (empty($companybankaccount->socid)) $companybankaccount->socid = $object->id;
 if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->societe->creer)
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
 	if ($action == 'editcard') $actionforadd = 'updatecard';
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
@@ -783,7 +783,7 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->soc
 if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights->societe->creer)
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
 	if ($action == 'createcard') $actionforadd = 'addcard';
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
@@ -866,7 +866,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
 				print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
@@ -920,7 +920,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
 			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 			//print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
@@ -1474,7 +1474,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				$out .= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
-				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
 				$out .= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 

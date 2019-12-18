@@ -119,7 +119,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';

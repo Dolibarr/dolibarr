@@ -242,7 +242,7 @@ if ($resql)
     if(! empty($page) && $num <= $nbtotalofrecords) $page = 0;
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
     print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);

@@ -81,7 +81,7 @@ print load_fiche_titre($langs->trans("InvoiceSituation"), '', '');
 $var=0;
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 _updateBtn();
 

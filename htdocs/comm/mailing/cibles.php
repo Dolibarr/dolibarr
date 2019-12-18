@@ -404,7 +404,7 @@ if ($object->fetch($id) >= 0)
 					if ($allowaddtarget)
 					{
 						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
-						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
 					}
 					else
 					{
@@ -518,7 +518,7 @@ if ($object->fetch($id) >= 0)
 		if ($search_other)     $param .= "&search_other=".urlencode($search_other);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
         print '<input type="hidden" name="page" value="'.$page.'">';
@@ -536,7 +536,7 @@ if ($object->fetch($id) >= 0)
 
 		print "\n<!-- Liste destinataires selectionnes -->\n";
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
         print '<input type="hidden" name="page" value="'.$page.'">';

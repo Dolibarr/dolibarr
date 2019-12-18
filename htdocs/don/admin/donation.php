@@ -345,7 +345,7 @@ print '<td></td>';
 print "</tr>\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
 
 print '<tr class="oddeven">';
@@ -381,7 +381,7 @@ print "</td></tr>\n";
 print '</form>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
 print '<tr class="oddeven"><td colspan="2">';

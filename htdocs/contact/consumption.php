@@ -163,7 +163,7 @@ print '<br>';
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $sql_select='';
 if ($type_element == 'fichinter')

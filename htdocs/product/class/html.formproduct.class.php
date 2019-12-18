@@ -300,7 +300,7 @@ class FormProduct
         if ($htmlname != "none") {
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setwarehouse">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
             print $this->selectWarehouses($selected, $htmlname, '', $addempty);

@@ -249,7 +249,7 @@ if ($action == 'create')
 	dol_set_focus('input[name="libelle"]');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -657,7 +657,7 @@ else
 			$langs->trans("WarehouseEdit");
 
 			print '<form action="card.php" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 

@@ -153,7 +153,7 @@ else
 {
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -233,7 +233,7 @@ else
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 
 			print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
 
 			print '<table class="noborder centpercent">'."\n";

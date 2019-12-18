@@ -537,7 +537,7 @@ if ($step == 2 && $datatoexport)
 
     // Combo list of export models
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
@@ -747,7 +747,7 @@ if ($step == 3 && $datatoexport)
 
 	// un formulaire en plus pour recuperer les filtres
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
@@ -1050,7 +1050,7 @@ if ($step == 4 && $datatoexport)
         print $langs->trans("SaveExportModel");
 
 		print '<form class="nocellnopadd" action="export.php" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="add_export_model">';
         print '<input type="hidden" name="step" value="'.$step.'">';
         print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';

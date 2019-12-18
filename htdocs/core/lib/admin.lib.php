@@ -1423,7 +1423,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
     if (!empty($strictw3c) && $strictw3c == 1)
     {
         print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="updateall">';
     }
 
@@ -1485,7 +1485,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
             if (empty($strictw3c))
             {
             	print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-            	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            	print '<input type="hidden" name="token" value="'.newToken().'">';
             }
 
             print '<tr class="oddeven">';

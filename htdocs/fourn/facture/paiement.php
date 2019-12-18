@@ -463,7 +463,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add_paiement">';
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
@@ -887,7 +887,7 @@ if (empty($action) || $action == 'list')
 
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="list">';
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

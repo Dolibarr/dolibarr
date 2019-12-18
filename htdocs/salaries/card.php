@@ -251,7 +251,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'title_accountancy.png');
@@ -397,7 +397,7 @@ if ($id)
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref.='</form>';

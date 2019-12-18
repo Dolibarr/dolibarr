@@ -453,7 +453,7 @@ if ($id)
 	$fieldlist=explode(',', $tabfield[$id]);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
@@ -651,7 +651,7 @@ if ($id)
 				if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
 				{
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 

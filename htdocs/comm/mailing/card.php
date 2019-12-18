@@ -725,7 +725,7 @@ if ($action == 'create')
 {
 	// EMailing in creation mode
 	print '<form name="new_mailing" action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
@@ -1265,7 +1265,7 @@ else
 			print "<br>\n";
 
 			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 

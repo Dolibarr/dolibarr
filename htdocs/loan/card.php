@@ -258,7 +258,7 @@ if ($action == 'create')
 	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	print '<form name="loan" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -418,7 +418,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
@@ -458,7 +458,7 @@ if ($id > 0)
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';

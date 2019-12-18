@@ -59,7 +59,7 @@ if ($pdluoid > 0)
 
 		dol_fiche_head();
 
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 if ($pdluoid)

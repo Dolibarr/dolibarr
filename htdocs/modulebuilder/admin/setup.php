@@ -92,7 +92,7 @@ llxHeader('', $langs->trans("ModulebuilderSetup"));
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('Modulebuilder'), $linkback);

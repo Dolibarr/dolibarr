@@ -220,7 +220,7 @@ if ($defaultvalue)      $param .= '&defaultvalue='.urlencode($defaultvalue);
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -240,7 +240,7 @@ if ($mode == 'mandatory')
 	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
 }
 
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" id="action" name="action" value="">';
 print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($mode).'">';
 

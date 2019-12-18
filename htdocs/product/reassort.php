@@ -212,7 +212,7 @@ if ($resql)
 	llxHeader("", $texte, $helpurl);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';

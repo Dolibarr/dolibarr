@@ -462,7 +462,7 @@ if ($action == 'new')
 
 		$num = $db->num_rows($resql);
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
@@ -581,7 +581,7 @@ else
     if ($action == 'editdate')
     {
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="setdate">';
         print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -608,7 +608,7 @@ else
     if ($action == 'editrefext')
     {
         print '<form name="setrefext" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="setrefext">';
         print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';

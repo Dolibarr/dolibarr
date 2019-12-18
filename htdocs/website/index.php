@@ -1954,7 +1954,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, ''
 
 print "\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 if ($action == 'createsite')
@@ -3291,7 +3291,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	$searchkey = GETPOST('searchstring', 'none');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
 	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 

@@ -800,7 +800,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
        				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
        				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
        				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-       				$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+       				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
        				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
        				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
        				$morehtmlref .= '</form>';
@@ -892,7 +892,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         // Show user list to assignate one if status is "read"
         if (GETPOST('set', 'alpha') == "assign_ticket" && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
             print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$url_page_current.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="assign_user">';
             print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
             print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
@@ -914,7 +914,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print '</td><td colspan="5">';
         if ($user->rights->ticket->write && $action == 'progression') {
             print '<form action="'.$url_page_current.'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="track_id" value="'.$track_id.'">';
             print '<input type="hidden" name="action" value="set_progression">';
             print '<input type="text" class="flat" size="20" name="progress" value="'.$object->progress.'">';
@@ -964,7 +964,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         // Classification of ticket
         print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="change_property">';
         print '<input type="hidden" name="property" value="'.$property['dict'].'">';
         print '<input type="hidden" name="track_id" value="'.$track_id.'">';

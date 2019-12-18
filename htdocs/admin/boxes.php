@@ -327,7 +327,7 @@ print "\n\n".'<!-- Boxes Available -->'."\n";
 print load_fiche_titre($langs->trans("BoxesAvailable"));
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="add">'."\n";
 
 print '<div class="div-table-responsive-no-min">';
@@ -454,7 +454,7 @@ print '<br>';
 print "\n\n".'<!-- Other Const -->'."\n";
 print load_fiche_titre($langs->trans("Other"));
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addconst">';
 print '<table class="noborder centpercent">';
 

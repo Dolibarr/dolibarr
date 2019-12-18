@@ -991,7 +991,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     print load_fiche_titre($title, $newcardbutton, '');
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';

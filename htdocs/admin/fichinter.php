@@ -533,7 +533,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInterventions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
@@ -555,7 +555,7 @@ print '</form>';
 
 //Use draft Watermark
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
@@ -567,7 +567,7 @@ print "</td></tr>\n";
 print '</form>';
 // print products on fichinter
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">';
 print '<tr class="oddeven"><td>';
 print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
@@ -581,7 +581,7 @@ print "</td></tr>\n";
 print '</form>';
 // Use services duration
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_USE_SERVICE_DURATION">';
 print '<tr class="oddeven">';
 print '<td>';
@@ -597,7 +597,7 @@ print '</tr>';
 print '</form>';
 // Use duration
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_WITHOUT_DURATION">';
 print '<tr class="oddeven">';
 print '<td>';
@@ -613,7 +613,7 @@ print '</tr>';
 print '</form>';
 // use date without hour
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_DATE_WITHOUT_HOUR">';
 print '<tr class="oddeven">';
 print '<td>';

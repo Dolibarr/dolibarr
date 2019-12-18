@@ -141,7 +141,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewAsset"), '', 'accountancy');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -174,7 +174,7 @@ if (($id || $ref) && $action == 'edit')
 	print load_fiche_titre($langs->trans("Assets"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';

@@ -3848,7 +3848,7 @@ elseif ($id > 0 || !empty($ref))
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
@@ -4174,7 +4174,7 @@ elseif ($id > 0 || !empty($ref))
         {
             print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
             print '<input type="hidden" name="action" value="setretainedwarranty">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
             print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             print '</form>';
@@ -4206,7 +4206,7 @@ elseif ($id > 0 || !empty($ref))
             //date('Y-m-d',$object->date_lim_reglement)
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
             print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
             $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
             $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
@@ -4247,7 +4247,7 @@ elseif ($id > 0 || !empty($ref))
                 //date('Y-m-d',$object->date_lim_reglement)
                 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
                 print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
-                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="token" value="'.newToken().'">';
                 print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date, '%Y-%m-%d').'" value="'.dol_print_date($defaultDate, '%Y-%m-%d').'" >';
                 print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 print '</form>';
@@ -4794,7 +4794,7 @@ elseif ($id > 0 || !empty($ref))
 			print '<div class="div-table-responsive">';
 
 			print '<form name="updatealllines" id="updatealllines" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'#updatealllines" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 

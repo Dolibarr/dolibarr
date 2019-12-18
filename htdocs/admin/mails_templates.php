@@ -447,7 +447,7 @@ $fieldlist = explode(',', $tabfield[$id]);
 
 // Form to add a new line
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
@@ -593,7 +593,7 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';

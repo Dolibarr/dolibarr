@@ -248,7 +248,7 @@ if ($socid > 0)
 	$head = societe_prepare_head($object);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 

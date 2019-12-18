@@ -549,7 +549,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
-	'<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'.
+	'<input type="hidden" name="token" value="'.newToken().'">'.
 	'<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">'.
 	'<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">'.
 	'<input type="hidden" name="sortfield" value="'.$sortfield.'">'.

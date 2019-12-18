@@ -452,7 +452,7 @@ if ($id > 0 || $ref)
 				}
 
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="save_price">';
 
 				dol_fiche_head();
