@@ -19,7 +19,7 @@ ConfirmDeleteTrip=Bu gider raporunu silmek istediğinizden emin misiniz?
 ListTripsAndExpenses=Giderler raporları listesi
 ListToApprove=Onay bekliyor
 ExpensesArea=Gider raporları alanı
-ClassifyRefunded=Sınıflandırma 'İade edildi'
+ClassifyRefunded='İade Edildi' olarak sınıflandır
 ExpenseReportWaitingForApproval=Onay için yeni bir gider raporu sunulmuştur
 ExpenseReportWaitingForApprovalMessage=Bir gider raporu gönderildi ve onay bekleniyor. <br> - Kullanıcı: %s<br> - Dönem: %s<br>Doğrulamak için buraya tıklayın:%s
 ExpenseReportWaitingForReApproval=Yeniden onay için bir gider raporu gönderildi
@@ -73,23 +73,19 @@ EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
 DefaultCategoryCar=Varsayılan taşıma modu
 DefaultRangeNumber=Varsayılan aralık numarası
-
+UploadANewFileNow=Şimdi yeni bir belge yükle
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=Benzer bir tarih aralığı için başka bir gider raporu bildirdiniz.
 AucuneLigne=Bildirilen hiç gider raporu yok
-
 ModePaiement=Ödeme biçimi
-
 VALIDATOR=Onaylama için sorumlu kişi
 VALIDOR=Onaylayan
 AUTHOR=Kaydeden
 AUTHORPAIEMENT=Ödeyen
 REFUSEUR=Reddeden
 CANCEL_USER=Silen
-
 MOTIF_REFUS=Neden
 MOTIF_CANCEL=Neden
-
 DATE_REFUS=Ret tarihi
 DATE_SAVE=Onay tarihi
 DATE_CANCEL=İptal etme tarihi
@@ -113,8 +109,7 @@ NoTripsToExportCSV=Bu dönem için dışaaktarılacak gider raporu yok.
 ExpenseReportPayment=Gider raporu ödemesi
 ExpenseReportsToApprove=Onaylanacak gider raporları
 ExpenseReportsToPay=Ödenecek gider raporları
-CloneExpenseReport=Gider raporunu kopyala
-ConfirmCloneExpenseReport=Bu gider raporunu kopyalamak istediğinizden emin misiniz?
+ConfirmCloneExpenseReport=Bu gider raporunun kopyasını oluşturmak istediğinizden emin misiniz?
 ExpenseReportsIk=Expense report milles index
 ExpenseReportsRules=Gider raporu kuralları
 ExpenseReportIkDesc=You can modify the calculation of kilometers expense by category and range who they are previously defined. <b>d</b> is the distance in kilometers
@@ -123,13 +118,13 @@ expenseReportOffset=Sapma
 expenseReportCoef=Katsayı
 expenseReportTotalForFive=Example with <u>d</u> = 5
 expenseReportRangeFromTo=from %d to %d
-expenseReportRangeMoreThan=more than %d
+expenseReportRangeMoreThan=%d'dan daha fazla
 expenseReportCoefUndefined=(değer tanımlanmamış)
 expenseReportCatDisabled=Kategori devre dışı - c_exp_tax_cat sözlüğüne bakın
 expenseReportRangeDisabled=Aralık devre dışı - c_exp_tax_range sözlüğüne bakın
 expenseReportPrintExample=offset + (d x coef) = %s
 ExpenseReportApplyTo=Apply to
-ExpenseReportDomain=Domain to apply
+ExpenseReportDomain=Uygulanacak etki alanı
 ExpenseReportLimitOn=Limit on
 ExpenseReportDateStart=Başlama tarihi
 ExpenseReportDateEnd=Bitiş tarihi
@@ -140,7 +135,6 @@ OnExpense=Gider satırı
 ExpenseReportRuleSave=Gider raporu kuralı kaydedildi
 ExpenseReportRuleErrorOnSave=Hata: %s
 RangeNum=Range %d
-
 ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=by day (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 nolimitbyEX_EXP=by line (no limitation)
-
-CarCategory=Category of car
+CarCategory=Otomobilin kategorisi
 ExpenseRangeOffset=Offset amount: %s
-RangeIk=Mileage range
+RangeIk=Kilometre aralığı
+AttachTheNewLineToTheDocument=Satırı yüklenen bir belgeye ekleyin

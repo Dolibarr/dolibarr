@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,31 +27,31 @@
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
 
 require_once '../main.inc.php';
 
-if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
 
 $langs->load("main");
 
-$right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
-$left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
+$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
+$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
 
 /*
  * View
  */
 
-$title=$langs->trans("Info");
+$title = $langs->trans("Info");
 
 // URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head='<!-- Quick access -->'."\n";
-$arrayofjs=array();
-$arrayofcss=array();
+$head = '<!-- Quick access -->'."\n";
+$arrayofjs = array();
+$arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 
@@ -60,39 +60,39 @@ print '<body>'."\n";
 print '<div style="padding: 20px;">';
 //print '<br>';
 
-$nbofsearch=0;
+$nbofsearch = 0;
 
 // Define link to login card
-$appli=constant('DOL_APPLICATION_TITLE');
-if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+$appli = constant('DOL_APPLICATION_TITLE');
+if (!empty($conf->global->MAIN_APPLICATION_TITLE))
 {
-	$appli=$conf->global->MAIN_APPLICATION_TITLE;
+	$appli = $conf->global->MAIN_APPLICATION_TITLE;
 	if (preg_match('/\d\.\d/', $appli))
 	{
-		if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
 	}
-	else $appli.=" ".DOL_VERSION;
+	else $appli .= " ".DOL_VERSION;
 }
-else $appli.=" ".DOL_VERSION;
+else $appli .= " ".DOL_VERSION;
 
-if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
+if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
-$logouttext='';
+$logouttext = '';
 if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 {
 	//$logouthtmltext=$appli.'<br>';
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
 	{
-		$logouthtmltext.=$langs->trans("Logout").'<br>';
+		$logouthtmltext .= $langs->trans("Logout").'<br>';
 
-		$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+		$logouttext .= '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
 		//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
-		$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
-		$logouttext .='</a>';
+		$logouttext .= '<span class="fa fa-sign-out atoplogin"></span>';
+		$logouttext .= '</a>';
 	}
 	else
 	{
-		$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
+		$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 		$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	}
 }
@@ -100,36 +100,36 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 print '<div class="login_block_getinfo">'."\n";
 
 // Add login user link
-$toprightmenu.='<div class="login_block_user">';
+$toprightmenu .= '<div class="login_block_user">';
 
 // Login name with photo and tooltip
-$mode=-1;
-$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-$toprightmenu.=$user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
-$toprightmenu.='</div></div>';
+$mode = -1;
+$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+$toprightmenu .= $user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+$toprightmenu .= '</div></div>';
 
-$toprightmenu.='</div>'."\n";
+$toprightmenu .= '</div>'."\n";
 
-$toprightmenu.='<div class="login_block_other">';
+$toprightmenu .= '<div class="login_block_other">';
 
 // Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
-$parameters=array();
-$result=$hookmanager->executeHooks('printTopRightMenu', $parameters);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$result = $hookmanager->executeHooks('printTopRightMenu', $parameters); // Note that $action and $object may have been modified by some hooks
 if (is_numeric($result))
 {
-	if (empty($result)) $toprightmenu.=$hookmanager->resPrint;		// add
-	else  $toprightmenu=$hookmanager->resPrint;						// replace
+	if (empty($result)) $toprightmenu .= $hookmanager->resPrint; // add
+	else  $toprightmenu = $hookmanager->resPrint; // replace
 }
-else $toprightmenu.=$result;	// For backward compatibility
+else $toprightmenu .= $result; // For backward compatibility
 
 // Link to module builder
-if (! empty($conf->modulebuilder->enabled))
+if (!empty($conf->modulebuilder->enabled))
 {
-	$text ='<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_modulebuilder">';
+	$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
-	$text.='<span class="fa fa-bug atoplogin"></span>';
-	$text.='</a>';
-	$toprightmenu.=@Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
+	$text .= '<span class="fa fa-bug atoplogin"></span>';
+	$text .= '</a>';
+	$toprightmenu .= @Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
 // Link to print main content area
@@ -194,13 +194,13 @@ if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPT
 */
 
 // Logout link
-if (GETPOST('withlogout', 'int')) $toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
+if (GETPOST('withlogout', 'int')) $toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 
-$toprightmenu.='</div>';
+$toprightmenu .= '</div>';
 
 print $toprightmenu;
 
-print "</div>\n";		// end div class="login_block"
+print "</div>\n"; // end div class="login_block"
 
 print '</div>';
 print '</body></html>'."\n";

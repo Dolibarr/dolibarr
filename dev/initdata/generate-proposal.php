@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -176,7 +176,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
     $fuser = new User($db);
     $fuser->fetch(mt_rand(1, 2));
     $fuser->getRights();
-    
+
 	$object->contactid = $contids[$socids[$socid]][0];
 	$object->socid = $socids[$socid];
 	$object->datep = $dates[mt_rand(1, count($dates)-1)];
@@ -200,7 +200,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 			}
 			$xnbp++;
 		}
-		
+
 		$result=$object->valid($fuser);
 		if ($result > 0)
 		{

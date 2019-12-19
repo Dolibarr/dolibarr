@@ -5,6 +5,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 $langs->loadLangs(array('products', 'stocks', 'productbatch'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 
 $action=GETPOST('action', 'alpha');
-$sref=GETPOST("sref");
-$snom=GETPOST("snom");
+$sref=GETPOST("sref", 'alpha');
+$snom=GETPOST("snom", 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type=GETPOST("type", "int");
 $search_barcode=GETPOST("search_barcode", 'alpha');
@@ -226,13 +227,13 @@ if ($resql)
 	llxHeader("", $title, $helpurl, $texte);
 
 	print '<form action="'. $_SERVER["PHP_SELF"] .'" method="post" name="formulaire">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'products', 0, '', '', $limit);
 
 
 	if (! empty($catid))
@@ -270,7 +271,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
@@ -292,13 +293,13 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	//Line for column titles
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
@@ -387,7 +388,7 @@ if ($resql)
 		//print '<td class="right">'.$objp->desiredstock.'</td>';
 
 		// Warehouse
-		print '<td>';
+		print '<td class="nowrap">';
 		if ($objp->fk_entrepot > 0)
 		{
     		print $warehousetmp->getNomUrl(1);
@@ -395,7 +396,7 @@ if ($resql)
 		print '</td>';
 
 		// Lot
-		print '<td class="center">';
+		print '<td class="center nowrap">';
 		if ($product_lot_static->batch)
 		{
 			print $product_lot_static->getNomUrl(1);

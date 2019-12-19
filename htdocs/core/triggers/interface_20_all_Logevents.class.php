@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
- *  Class of triggers for security events
+ *  Class of triggers for security audit events
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
@@ -47,7 +47,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarrr security audit event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
@@ -177,13 +177,13 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		// If not found
-/*
+        /*
         else
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
-*/
+        */
 
 		// Add more information into desc from the context property
 		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];

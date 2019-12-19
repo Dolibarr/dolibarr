@@ -15,7 +15,6 @@ DeleteIntervention=Supprimer intervention
 ValidateIntervention=Valider intervention
 ModifyIntervention=Modifier intervention
 DeleteInterventionLine=Supprimer ligne d'intervention
-CloneIntervention=Cloner intervention
 ConfirmDeleteIntervention=Êtes-vous sûr de vouloir effacer cette intervention ?
 ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention sous la référence <b>%s</b> ?
 ConfirmModifyIntervention=Êtes-vous sûr de vouloir modifier cette intervention ?

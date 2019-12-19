@@ -71,6 +71,8 @@
 UPDATE llx_user set api_key = null where api_key = '';
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
+-- DELETE FROM llx_c_email_templates WHERE label = '(SendAnEMailToMember)';		-- Now it is '(SendingAnEMailToMemner)'
+
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -197,6 +199,13 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 
 -- Fix: delete orphelin actioncomm_resources
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
+
+
+-- Fix link on parent that were removed
+DROP table tmp_user;
+CREATE TABLE tmp_user as (select * from llx_user);
+UPDATE llx_user SET fk_user = NULL where fk_user NOT IN (select rowid from tmp_user);
+
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
@@ -400,6 +409,7 @@ ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (accou
 -- p.tva_tx = 0
 -- where price = 17.5
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
@@ -458,6 +468,12 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
  
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
+-- Note to make all deposit as payed when there is already a discount generated from it.
+--drop table tmp_invoice_deposit_mark_as_available;
+--create table tmp_invoice_deposit_mark_as_available as select * from llx_facture as f where f.type = 3 and f.paye = 0 and f.rowid in (select fk_facture_source from llx_societe_remise_except);
+--update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
 
 
 

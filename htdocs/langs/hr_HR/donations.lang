@@ -1,15 +1,15 @@
 # Dolibarr language file - Source file is en_US - donations
 Donation=Donacija
 Donations=Donacije
-DonationRef=Ref. donacije
+DonationRef=Broj donacije
 Donor=Donator
-AddDonation=Kreiraj donaciju
+AddDonation=Izradi donaciju
 NewDonation=Nova donacija
 DeleteADonation=Obriši donaciju
 ConfirmDeleteADonation=Are you sure you want to delete this donation?
 ShowDonation=Prikaži donaciju
 PublicDonation=Javna donacija
-DonationsArea=Sučelje donacija
+DonationsArea=Donacije
 DonationStatusPromiseNotValidated=Skica obečanja
 DonationStatusPromiseValidated=Ovjeri obečanje
 DonationStatusPaid=Primljene donacije

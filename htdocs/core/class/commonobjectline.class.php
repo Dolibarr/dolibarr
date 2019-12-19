@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * Id of the line
 	 * @var int
 	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 

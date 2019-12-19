@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,7 +24,7 @@
  *      \brief      File to manage no password generation.
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpassword.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
 
 
 /**
@@ -75,10 +75,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->id = "Perso";
 		$this->length = $langs->trans("SetupPerso");
 
-		$this->db=$db;
-		$this->conf=$conf;
-		$this->langs=$langs;
-		$this->user=$user;
+		$this->db = $db;
+		$this->conf = $conf;
+		$this->langs = $langs;
+		$this->user = $user;
 
 		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
 			// default value (8carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
@@ -89,7 +89,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Min = strtolower($this->Maj);
 		$this->Nb = "0123456789";
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
-		$this->Ambi = array("1","I","l","|","O","0");
+		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
 		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 		$this->length2 = $tabConf[0];
@@ -107,7 +107,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 			$this->Spe = str_replace($this->Ambi, "", $this->Spe);
 		}
 
-		$pattern = $this->Min . (! empty($this->NbMaj)?$this->Maj:'') . (! empty($this->NbNum)?$this->Nb:'') . (! empty($this->NbSpe)?$this->Spe:'');
+		$pattern = $this->Min.(!empty($this->NbMaj) ? $this->Maj : '').(!empty($this->NbNum) ? $this->Nb : '').(!empty($this->NbSpe) ? $this->Spe : '');
 		$this->All = str_shuffle($pattern);
 
 		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
@@ -144,24 +144,24 @@ class modGeneratePassPerso extends ModeleGenPassword
 	public function getNewGeneratedPassword()
 	{
 		$pass = "";
-		for ($i=0; $i<$this->NbMaj; $i++) {
+		for ($i = 0; $i < $this->NbMaj; $i++) {
             // Y
 			$pass .= $this->Maj[mt_rand(0, strlen($this->Maj) - 1)];
 		}
 
-		for ($i=0; $i<$this->NbNum; $i++) {
+		for ($i = 0; $i < $this->NbNum; $i++) {
             // X
 			$pass .= $this->Nb[mt_rand(0, strlen($this->Nb) - 1)];
 		}
 
-		for ($i=0; $i<$this->NbSpe; $i++) {
+		for ($i = 0; $i < $this->NbSpe; $i++) {
             // @
 			$pass .= $this->Spe[mt_rand(0, strlen($this->Spe) - 1)];
 		}
 
-		for ($i=strlen($pass);$i<$this->length2; $i++) {
+		for ($i = strlen($pass); $i < $this->length2; $i++) {
             // y
-			$pass .= $this->All[mt_rand(0, strlen($this->All) -1)];
+			$pass .= $this->All[mt_rand(0, strlen($this->All) - 1)];
 		}
 
 		$pass = str_shuffle($pass);
@@ -177,7 +177,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  Validate a password
 	 *
 	 *  @param      string  $password   Password to check
-	 *  @return     int                 0 if KO, >0 if OK
+	 *  @return     bool                false if KO, true if OK
 	 */
 	public function validatePassword($password)
 	{
@@ -187,47 +187,53 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$spe = str_split($this->Spe);
 
 		if (count(array_intersect($password_a, $maj)) < $this->NbMaj) {
-			return 0;
+			return false;
 		}
 
 		if (count(array_intersect($password_a, $num)) < $this->NbNum) {
-			return 0;
+			return false;
 		}
 
 		if (count(array_intersect($password_a, $spe)) < $this->NbSpe) {
-			return 0;
+			return false;
 		}
 
 		if (!$this->consecutiveInterationSameCharacter($password)) {
-			return 0;
+			return false;
 		}
 
-		return 1;
+		return true;
 	}
 
 	/**
-	 *  consecutive iterations of the same character
+	 *  Check the consecutive iterations of the same character. Return false if the number doesn't match the maximum consecutive value allowed.
 	 *
 	 *  @param		string	$password	Password to check
-	 *  @return     int					0 if KO, >0 if OK
+	 *  @return     bool
 	 */
-    public function consecutiveInterationSameCharacter($password)
+    private function consecutiveInterationSameCharacter($password)
     {
 		$last = "";
+
+		if (empty($this->NbRepeat)) return 1;
+
 		$count = 0;
 		$char = str_split($password);
-		foreach($char as $c) {
-			if($c != $last) {
+
+		foreach ($char as $c) {
+			if ($c != $last) {
 				$last = $c;
 				$count = 0;
-			} else {
-				$count++;
+
+				continue;
 			}
 
-			if ($count >= $this->NbRepeat) {
-				return 0;
+            $count++;
+			if ($count > $this->NbRepeat) {
+				return false;
 			}
 		}
-		return 1;
+
+		return true;
 	}
 }

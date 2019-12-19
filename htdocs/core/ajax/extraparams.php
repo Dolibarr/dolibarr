@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       /htdocs/core/ajax/extraparams.php
- *	\brief      File to return Ajax response on set extra parameters of elements
+ *	\brief      File to make Ajax action on setting extra parameters of elements
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal

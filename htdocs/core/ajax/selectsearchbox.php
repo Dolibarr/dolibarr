@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -135,6 +135,10 @@ if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFO
 if (! empty($conf->holiday->enabled) && empty($conf->global->MAIN_SEARCHFORM_HOLIDAY_DISABLED) && $user->rights->holiday->read)
 {
 	$arrayresult['searchintoleaves']=array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue?'&sall='.urlencode($search_boxvalue):''));
+}
+if (! empty($conf->ticket->enabled) && empty($conf->global->MAIN_SEARCHFORM_TICKET_DISABLED) && $user->rights->ticket->read)
+{
+    $arrayresult['searchintotickets']=array('position'=>220, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue?'&sall='.urlencode($search_boxvalue):''));
 }
 
 

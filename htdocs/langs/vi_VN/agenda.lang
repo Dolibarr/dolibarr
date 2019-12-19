@@ -31,14 +31,16 @@ ViewWeek=Xem tuần
 ViewPerUser=Trung bình mỗi người dùng xem
 ViewPerType=Per type view
 AutoActions= Tự động điền
-AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked, only manual actions will be included in logged and visible into agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
-AgendaSetupOtherDesc= Trang này cung cấp tùy chọn để cho phép xuất khẩu các sự kiện Dolibarr của bạn thành một lịch bên ngoài (thunderbird, google lịch, ...)
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Trang này cho phép khai báo các nguồn bên ngoài lịch để xem các sự kiện của họ vào chương trình nghị sự Dolibarr.
 ActionsEvents=Sự kiện mà Dolibarr sẽ tạo ra một hành động trong chương trình nghị sự tự động
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s validated
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Proposal %s signed
 PropalClosedRefusedInDolibarr=Proposal %s refused
 PropalValidatedInDolibarr=Đề nghị xác nhận %s
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Shipment %s validated
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Thứ tự %s xác nhận
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Thứ tự %s đã được phê duyệt
 OrderRefusedInDolibarr=Thứ tự %s từ chối
 OrderBackToDraftInDolibarr=Thứ tự %s trở lại trạng thái soạn thảo
-ProposalSentByEMail=Đề nghị thương mại%s gửi bằng thư điện tử
-ContractSentByEMail=Contract %s sent by EMail
-OrderSentByEMail=Đơn đặt hàng %s gửi Thư điện tử
-InvoiceSentByEMail=Hóa đơn của khách hàng %s gửi Thư điện tử
-SupplierOrderSentByEMail=Để nhà cung cấp %s gửi Thư điện tử
-SupplierInvoiceSentByEMail=Nhà cung cấp hóa đơn %s gửi bằng thư điện tử
-ShippingSentByEMail=Shipment %s sent by EMail
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Shipment %s validated
-InterventionSentByEMail=Can thiệp %s gửi thư điện tử
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
 PROJECT_CREATEInDolibarr=Dự án %s đã được tạo
 PROJECT_MODIFYInDolibarr=Project %s modified
 PROJECT_DELETEInDolibarr=Project %s deleted
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Ngày bắt đầu
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>Logina =%s</b> ​​để hạn chế sản lượng để
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Bận
@@ -110,7 +118,7 @@ DefaultWorkingHours=Mặc định giờ làm việc trong ngày (Ví dụ: 9-18)
 # External Sites ical
 ExportCal=Lịch xuất khẩu
 ExtSites=Nhập lịch bên ngoài
-ExtSitesEnableThisTool=Hiển thị lịch bên ngoài (được định nghĩa vào thiết lập toàn cầu) vào chương trình nghị sự. Không ảnh hưởng đến lịch bên ngoài được xác định bởi người sử dụng.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Số lịch
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL để truy cập tập tin .ical
@@ -121,7 +129,6 @@ AddEvent=Tạo sự kiện
 MyAvailability=Sẵn có của tôi
 ActionType=Event type
 DateActionBegin=Start event date
-CloneAction=Clone event
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Repeat event
 EveryWeek=Every week

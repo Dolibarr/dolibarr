@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -37,7 +37,7 @@ abstract class CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
     /**
      * @var string[]    Array of error strings
@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   User		$user           User
      * @param   Translate	$outputlangs    Language object for output
@@ -74,7 +74,7 @@ abstract class CommonDocGenerator
         // phpcs:enable
         global $conf;
 
-        $logotouse=$conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
+        $logotouse = $conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
 
         return array(
             'myuser_lastname'=>$user->lastname,
@@ -101,7 +101,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Societe		$mysoc			Object thirdparty
      * @param   Translate	$outputlangs    Language object for output
@@ -112,20 +112,20 @@ abstract class CommonDocGenerator
         // phpcs:enable
         global $conf;
 
-        if (empty($mysoc->forme_juridique) && ! empty($mysoc->forme_juridique_code))
+        if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code))
         {
-            $mysoc->forme_juridique=getFormeJuridiqueLabel($mysoc->forme_juridique_code);
+            $mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
         }
-        if (empty($mysoc->country) && ! empty($mysoc->country_code))
+        if (empty($mysoc->country) && !empty($mysoc->country_code))
         {
-        	$mysoc->country=$outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
+        	$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
         }
-        if (empty($mysoc->state) && ! empty($mysoc->state_code))
+        if (empty($mysoc->state) && !empty($mysoc->state_code))
         {
-        	$mysoc->state=getState($mysoc->state_code, 0);
+        	$mysoc->state = getState($mysoc->state_code, 0);
         }
 
-        $logotouse=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+        $logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
 
         return array(
             'mycompany_logo'=>$logotouse,
@@ -161,9 +161,9 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
-     * @param	Object		$object			Object
+     * @param	Societe		$object			Object
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
@@ -172,13 +172,13 @@ abstract class CommonDocGenerator
         // phpcs:enable
         global $conf;
 
-        if (empty($object->country) && ! empty($object->country_code))
+        if (empty($object->country) && !empty($object->country_code))
         {
-        	$object->country=$outputlangs->transnoentitiesnoconv("Country".$object->country_code);
+        	$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
         }
-        if (empty($object->state) && ! empty($object->state_code))
+        if (empty($object->state) && !empty($object->state_code))
         {
-        	$object->state=getState($object->state_code, 0);
+        	$object->state = getState($object->state_code, 0);
         }
 
         $array_thirdparty = array(
@@ -221,18 +221,18 @@ abstract class CommonDocGenerator
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
-        	$extralabels = $extrafields->fetch_name_optionals_label('societe', true);
+        	$extrafields->fetch_name_optionals_label($object->table_element, true);
         	$object->fetch_optionals();
 
-        	foreach($extrafields->attribute_label as $key=>$label)
+        	foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
         	{
-        		if($extrafields->attribute_type[$key] == 'price')
+        		if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
         		{
         			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
         		}
-        		elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+        		elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select' || $extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox')
         		{
-        			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+        			$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
         		}
         		$array_thirdparty = array_merge($array_thirdparty, array ('company_options_'.$key => $object->array_options ['options_' . $key]));
 			}
@@ -242,7 +242,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Define array with couple subtitution key => subtitution value
+	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
@@ -295,18 +295,18 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
+		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
-		foreach($extrafields->attribute_label as $key => $label)
+		foreach($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 		{
-			if ($extrafields->attribute_type[$key] == 'price')
+			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
 			{
 				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
-			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select' || $extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox')
 			{
-				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
+				$object->array_options['options_' . $key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_' . $key]];
 			}
 			$array_contact = array_merge($array_contact, array($array_key.'_options_' . $key => $object->array_options['options_'. $key]));
 		}
@@ -316,7 +316,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
@@ -326,7 +326,7 @@ abstract class CommonDocGenerator
         // phpcs:enable
     	global $conf;
 
-    	$now=dol_now('gmt');	// gmt
+    	$now = dol_now('gmt'); // gmt
     	$array_other = array(
     	    // Date in default language
     	    'current_date'=>dol_print_date($now, 'day', 'tzuser'),
@@ -341,7 +341,7 @@ abstract class CommonDocGenerator
     	);
 
 
-    	foreach($conf->global as $key => $val)
+    	foreach ($conf->global as $key => $val)
     	{
     		if (preg_match('/(_pass|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
     		else $newval = $val;
@@ -366,12 +366,12 @@ abstract class CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$sumpayed=$sumdeposit=$sumcreditnote='';
-		$already_payed_all=0;
-		$remain_to_pay=0;
+		$sumpayed = $sumdeposit = $sumcreditnote = '';
+		$already_payed_all = 0;
+		$remain_to_pay = 0;
 		if ($object->element == 'facture')
 		{
-			$invoice_source=new Facture($this->db);
+			$invoice_source = new Facture($this->db);
 			if ($object->fk_facture_source > 0)
 			{
 				$invoice_source->fetch($object->fk_facture_source);
@@ -379,44 +379,44 @@ abstract class CommonDocGenerator
 			$sumpayed = $object->getSommePaiement();
 			$sumdeposit = $object->getSumDepositsUsed();
 			$sumcreditnote = $object->getSumCreditNotesUsed();
-			$already_payed_all=$sumpayed + $sumdeposit + $sumcreditnote;
-			$remain_to_pay=$sumpayed - $sumdeposit - $sumcreditnote;
+			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
+			$remain_to_pay = $sumpayed - $sumdeposit - $sumcreditnote;
 		}
 
 		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
 
-		$resarray=array(
+		$resarray = array(
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
 		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>(! empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
-		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
+		$array_key.'_ref_customer'=>(!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+		$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
         $array_key.'_hour'=>dol_print_date($date, 'hour'),
 		$array_key.'_date'=>dol_print_date($date, 'day'),
 		$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc'),
-		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement, 'day'):''),
-	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite, 'day'):''),
+		$array_key.'_date_limit'=>(!empty($object->date_lim_reglement) ?dol_print_date($object->date_lim_reglement, 'day') : ''),
+	    $array_key.'_date_end'=>(!empty($object->fin_validite) ?dol_print_date($object->fin_validite, 'day') : ''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
-		$array_key.'_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification, 'day'):''),
-		$array_key.'_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation, 'dayhour'):''),
-		$array_key.'_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison, 'day'):''),
-		$array_key.'_date_close'=>(! empty($object->date_cloture)?dol_print_date($object->date_cloture, 'dayhour'):''),
+		$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day') : ''),
+		$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour') : ''),
+		$array_key.'_date_delivery_planed'=>(!empty($object->date_livraison) ?dol_print_date($object->date_livraison, 'day') : ''),
+		$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour') : ''),
 
 		$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
-		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
+		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
 		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
-		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):($object->cond_reglement_doc?$object->cond_reglement_doc:$object->cond_reglement)),
+		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
 
 		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
-		$array_key.'_total_vat_locale'=>(! empty($object->total_vat)?price($object->total_vat, 0, $outputlangs):price($object->total_tva, 0, $outputlangs)),
+		$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
 		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
 
 		$array_key.'_total_ht'=>price2num($object->total_ht),
-		$array_key.'_total_vat'=>(! empty($object->total_vat)?price2num($object->total_vat):price2num($object->total_tva)),
+		$array_key.'_total_vat'=>(!empty($object->total_vat) ?price2num($object->total_vat) : price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
@@ -432,7 +432,7 @@ abstract class CommonDocGenerator
 
 		$array_key.'_note_private'=>$object->note,
 		$array_key.'_note_public'=>$object->note_public,
-		$array_key.'_note'=>$object->note_public,			// For backward compatibility
+		$array_key.'_note'=>$object->note_public, // For backward compatibility
 
 		// Payments
 		$array_key.'_already_payed_locale'=>price($sumpayed, 0, $outputlangs),
@@ -445,7 +445,7 @@ abstract class CommonDocGenerator
 		$array_key.'_already_payed_all_locale'=>price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
 		$array_key.'_already_payed_all'=> price2num($already_payed_all, 'MT'),
 
-		// Remain to pay with all know infrmation (except open direct debit requests)
+		// Remain to pay with all know information (except open direct debit requests)
 		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $remain_to_pay, 'MT'), 0, $outputlangs),
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
 		);
@@ -459,9 +459,9 @@ abstract class CommonDocGenerator
 		}
 
 		// Fetch project information if there is a project assigned to this object
-		if ($object->element != "project" && ! empty($object->fk_project) && $object->fk_project > 0)
+		if ($object->element != "project" && !empty($object->fk_project) && $object->fk_project > 0)
 		{
-			if (! is_object($object->project))
+			if (!is_object($object->project))
 			{
 				$object->fetch_projet();
 			}
@@ -479,7 +479,7 @@ abstract class CommonDocGenerator
 			$totalUp = 0;
 			foreach ($object->lines as $line)
 			{
-			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
+			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
 				$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
@@ -497,19 +497,27 @@ abstract class CommonDocGenerator
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
 			if (method_exists($object, 'getTotalDiscount')) {
-				$resarray['object_total_discount'] = round(100 / $totalUp * $object->getTotalDiscount(), 2);
+				$totalDiscount = $object->getTotalDiscount();
+			} else {
+				$totalDiscount = 0;
+			}
+			if (!empty($totalUp) && !empty($totalDiscount)) {
+				$resarray['object_total_discount'] = round(100 / $totalUp * $totalDiscount, 2);
 				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
+			} else {
+				$resarray['object_total_discount'] = '';
+				$resarray['object_total_discount_locale'] = '';
 			}
 		}
 
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
-			$extrafieldkey=$object->element;
+			$extrafieldkey = $object->element;
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+			$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -531,7 +539,7 @@ abstract class CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$resarray= array(
+		$resarray = array(
 			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
@@ -546,7 +554,7 @@ abstract class CommonDocGenerator
 			'line_total_up'=>price2num($line->subprice * $line->qty),
 			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
 			'line_qty'=>$line->qty,
-			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
+			'line_discount_percent'=>($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht'=>price2num($line->total_ht),
 			'line_price_ttc'=>price2num($line->total_ttc),
 			'line_price_vat'=>price2num($line->total_tva),
@@ -577,24 +585,47 @@ abstract class CommonDocGenerator
 		{
 		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
 		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'));
-		}
+        }
 
 		// Retrieve extrafields
 		$extrafieldkey=$line->element;
 		$array_key="line";
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+
+        // Check if the current line belongs to a supplier order
+        if (get_class($line) == 'CommandeFournisseurLigne')
+        {
+            // Add the product supplier extrafields to the substitutions
+            $extrafields->fetch_name_optionals_label("product_fournisseur_price");
+            $extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
+            $columns = "";
+            foreach ($extralabels as $key => $value)
+                $columns .= "$key, ";
+
+            if ($columns != "")
+            {
+                $columns = substr($columns, 0, strlen($columns) - 2);
+                $resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '" . $line->ref_supplier . "'");
+                if ($this->db->num_rows($resql) > 0) {
+                    $resql = $this->db->fetch_object($resql);
+
+                    foreach ($extralabels as $key => $value)
+                        $resarray['line_product_supplier_'.$key] = $resql->{$key};
+                }
+            }
+        }
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
 		{
 			$tmpproduct = new Product($this->db);
 			$result = $tmpproduct->fetch($line->fk_product);
-			foreach($tmpproduct->array_options as $key=>$label)
+			foreach ($tmpproduct->array_options as $key=>$label)
 				$resarray["line_product_".$key] = $label;
 		}
 
@@ -616,9 +647,9 @@ abstract class CommonDocGenerator
     	global $conf;
 		dol_include_once('/core/lib/product.lib.php');
 		$object->list_delivery_methods($object->shipping_method_id);
-		$calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
 
-    	$array_shipment=array(
+    	$array_shipment = array(
 	    	$array_key.'_id'=>$object->id,
 	    	$array_key.'_ref'=>$object->ref,
 	    	$array_key.'_ref_ext'=>$object->ref_ext,
@@ -635,18 +666,18 @@ abstract class CommonDocGenerator
 	    	$array_key.'_tracking_number'=>$object->tracking_number,
 	    	$array_key.'_tracking_url'=>$object->tracking_url,
 	    	$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
-	    	$array_key.'_weight'=>$object->trueWeight.' '.measuring_units_string($object->weight_units, 'weight'),
-	    	$array_key.'_width'=>$object->trueWidth.' '.measuring_units_string($object->width_units, 'size'),
-	    	$array_key.'_height'=>$object->trueHeight.' '.measuring_units_string($object->height_units, 'size'),
-	    	$array_key.'_depth'=>$object->trueDepth.' '.measuring_units_string($object->depth_units, 'size'),
-	    	$array_key.'_size'=>$calculatedVolume.' '.measuring_units_string(0, 'volume'),
+    		$array_key.'_weight'=>$object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
+    		$array_key.'_width'=>$object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
+    		$array_key.'_height'=>$object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
+    		$array_key.'_depth'=>$object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
+	    	$array_key.'_size'=>$calculatedVolume.' '.measuringUnitString(0, 'volume'),
     	);
 
     	// Add vat by rates
     	foreach ($object->lines as $line)
     	{
-    		if (empty($array_shipment[$array_key.'_total_vat_'.$line->tva_tx])) $array_shipment[$array_key.'_total_vat_'.$line->tva_tx]=0;
-    		$array_shipment[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+    		if (empty($array_shipment[$array_key.'_total_vat_'.$line->tva_tx])) $array_shipment[$array_key.'_total_vat_'.$line->tva_tx] = 0;
+    		$array_shipment[$array_key.'_total_vat_'.$line->tva_tx] += $line->total_tva;
     	}
 
     	// Retrieve extrafields
@@ -654,7 +685,7 @@ abstract class CommonDocGenerator
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('expedition', true);
+    		$extrafields->fetch_name_optionals_label('expedition', true);
     		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
@@ -693,10 +724,10 @@ abstract class CommonDocGenerator
 	    	'line_price_ht'=>price($line->total_ht),
 	    	'line_price_ttc'=>price($line->total_ttc),
 	    	'line_price_vat'=>price($line->total_tva),
-	    	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuring_units_string($line->weight_units, 'weight'),
-	    	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuring_units_string($line->length_units, 'size'),
-	    	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuring_units_string($line->surface_units, 'surface'),
-	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
+        	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
+        	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
+        	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
+        	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
     	);
 
         // Retrieve extrafields
@@ -704,7 +735,7 @@ abstract class CommonDocGenerator
         $array_key = "line";
         require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+        $extrafields->fetch_name_optionals_label($extrafieldkey, true);
         $line->fetch_optionals();
 
         $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
@@ -715,7 +746,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Object		$object    		Dolibarr Object
      * @param   Translate	$outputlangs    Language object for output
@@ -727,7 +758,7 @@ abstract class CommonDocGenerator
         // phpcs:enable
         $array_other = array();
         if (!empty($object)) {
-            foreach($object as $key => $value) {
+            foreach ($object as $key => $value) {
                 if (!empty($value)) {
                     if (!is_array($value) && !is_object($value)) {
                         $array_other['object_'.$key] = $value;
@@ -757,20 +788,30 @@ abstract class CommonDocGenerator
     {
         // phpcs:enable
 		global $conf;
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
 		{
-			if($extrafields->attribute_type[$key] == 'price')
+			if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
 			{
 				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
 				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
 			{
-				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+				$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
 			}
-			elseif($extrafields->attribute_type[$key] == 'date')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
+				$valArray=explode(',', $object->array_options['options_'.$key]);
+				$output=array();
+				foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
+					if  (in_array($keyopt, $valArray)) {
+						$output[]=$valopt;
+					}
+				}
+				$object->array_options['options_'.$key] = implode(', ', $output);
+			}
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
 			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
@@ -788,7 +829,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'datetime')
+			elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
 			{
 				$datetime = $object->array_options['options_'.$key];
 				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
@@ -797,12 +838,12 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'link')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
 			{
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")
 				{
-					$param = $extrafields->attribute_param[$key];
+					$param = $extrafields->attributes[$object->table_element]['param'][$key];
 					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
 					$InfoFieldList = explode(":", $param_list[0]);
 					$classname=$InfoFieldList[0];
@@ -821,7 +862,7 @@ abstract class CommonDocGenerator
 				}
 			}
 
-			$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+			$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}
 
 		return $array_to_fill;
@@ -842,15 +883,15 @@ abstract class CommonDocGenerator
 	 */
     public function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
     {
-        if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
-        $pdf->line($x+$l, $y, $x+$l, $y+$h);
-        if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
-        $pdf->line($x, $y+$h, $x, $y);
+        if (empty($hidetop) || $hidetop == -1) $pdf->line($x, $y, $x + $l, $y);
+        $pdf->line($x + $l, $y, $x + $l, $y + $h);
+        if (empty($hidebottom)) $pdf->line($x + $l, $y + $h, $x, $y + $h);
+        $pdf->line($x, $y + $h, $x, $y);
     }
 
 
     /**
-     *  uasort callback function to Sort colums fields
+     *  uasort callback function to Sort columns fields
      *
      *  @param	array			$a    			PDF lines array fields configs
      *  @param	array			$b    			PDF lines array fields configs
@@ -858,8 +899,8 @@ abstract class CommonDocGenerator
      */
     public function columnSort($a, $b)
     {
-        if(empty($a['rank'])){ $a['rank'] = 0; }
-        if(empty($b['rank'])){ $b['rank'] = 0; }
+        if (empty($a['rank'])) { $a['rank'] = 0; }
+        if (empty($b['rank'])) { $b['rank'] = 0; }
         if ($a['rank'] == $b['rank']) {
             return 0;
         }
@@ -889,7 +930,7 @@ abstract class CommonDocGenerator
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
 
-        // Array witdh
+        // Array width
         $arrayWidth = $this->page_largeur-$this->marge_droite-$this->marge_gauche;
 
         // Count flexible column
@@ -897,10 +938,10 @@ abstract class CommonDocGenerator
         $countFlexCol = 0;
         foreach ($this->cols as $colKey =>& $colDef)
         {
-            if(!$this->getColumnStatus($colKey)) continue; // continue if desable
+            if(!$this->getColumnStatus($colKey)) continue; // continue if disabled
 
             if(!empty($colDef['scale'])){
-                // In case of column widht is defined by percentage
+                // In case of column width is defined by percentage
                 $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100);
             }
 
@@ -915,25 +956,25 @@ abstract class CommonDocGenerator
         foreach ($this->cols as $colKey =>& $colDef)
         {
             // setting empty conf with default
-            if(!empty($colDef['title'])){
+            if (!empty($colDef['title'])) {
                 $colDef['title'] = array_replace($this->defaultTitlesFieldsStyle, $colDef['title']);
             }
-            else{
+            else {
                 $colDef['title'] = $this->defaultTitlesFieldsStyle;
             }
 
             // setting empty conf with default
-            if(!empty($colDef['content'])){
+            if (!empty($colDef['content'])) {
                 $colDef['content'] = array_replace($this->defaultContentsFieldsStyle, $colDef['content']);
             }
-            else{
+            else {
                 $colDef['content'] = $this->defaultContentsFieldsStyle;
             }
 
-            if($this->getColumnStatus($colKey))
+            if ($this->getColumnStatus($colKey))
             {
                 // In case of flexible column
-                if(empty($colDef['width'])){
+                if (empty($colDef['width'])) {
                     $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
                 }
 
@@ -979,7 +1020,7 @@ abstract class CommonDocGenerator
      */
     public function getColumnRank($colKey)
     {
-        if(!isset($this->cols[$colKey]['rank'])) return -1;
+        if (!isset($this->cols[$colKey]['rank'])) return -1;
         return  $this->cols[$colKey]['rank'];
     }
 
@@ -998,22 +1039,22 @@ abstract class CommonDocGenerator
         $rank = -1;
 
         // try to get rank from target column
-        if(!empty($targetCol)){
+        if (!empty($targetCol)) {
             $rank = $this->getColumnRank($targetCol);
-            if($rank>=0 && $insertAfterTarget){ $rank++; }
+            if ($rank >= 0 && $insertAfterTarget) { $rank++; }
         }
 
         // get rank from new column definition
-        if($rank<0 && !empty($defArray['rank'])){
+        if ($rank < 0 && !empty($defArray['rank'])) {
             $rank = $defArray['rank'];
         }
 
         // error: no rank
-        if($rank<0){ return -1; }
+        if ($rank < 0) { return -1; }
 
         foreach ($this->cols as $colKey =>& $colDef)
         {
-            if( $rank <= $colDef['rank'])
+            if ($rank <= $colDef['rank'])
             {
                 $colDef['rank'] = $colDef['rank'] + 1;
             }
@@ -1039,16 +1080,16 @@ abstract class CommonDocGenerator
     {
         global $hookmanager;
 
-        $parameters=array(
+        $parameters = array(
             'curY' => &$curY,
             'columnText' => $columnText,
             'colKey' => $colKey
         );
-        $reshook=$hookmanager->executeHooks('printStdColumnContent', $parameters, $this);    // Note that $action and $object may have been modified by hook
+        $reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
         if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
         if (!$reshook)
         {
-            if(empty($columnText)) return;
+            if (empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
             $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
@@ -1064,9 +1105,58 @@ abstract class CommonDocGenerator
      */
     public function getColumnStatus($colKey)
     {
-        if( !empty($this->cols[$colKey]['status'])){
+        if (!empty($this->cols[$colKey]['status'])) {
             return true;
         }
         else  return  false;
+    }
+
+    /**
+     * Print standard column content
+     *
+     * @param PDF	    $pdf            Pdf object
+     * @param float     $tab_top        Tab top position
+     * @param float     $tab_height     Default tab height
+     * @param Translate $outputlangs    Output language
+     * @param int       $hidetop        Hide top
+     * @return float                    Height of col tab titles
+     */
+    public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
+    {
+        global $hookmanager;
+
+        foreach ($this->cols as $colKey => $colDef) {
+            $parameters = array(
+                'colKey' => $colKey,
+                'pdf' => $pdf,
+                'outputlangs' => $outputlangs,
+                'tab_top' => $tab_top,
+                'tab_height' => $tab_height,
+                'hidetop' => $hidetop
+            );
+
+            $reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this); // Note that $object may have been modified by hook
+            if ($reshook < 0) {
+                setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            } elseif (empty($reshook)) {
+                if (!$this->getColumnStatus($colKey)) continue;
+
+                // get title label
+                $colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
+
+                // Add column separator
+                if (!empty($colDef['border-left'])) {
+                    $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+                }
+
+                if (empty($hidetop)) {
+                    $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
+                    $textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
+                    $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top + $colDef['title']['padding'][2], $this->tabTitleHeight);
+                }
+            }
+        }
+        return $this->tabTitleHeight;
     }
 }

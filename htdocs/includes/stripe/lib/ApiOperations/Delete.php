@@ -13,7 +13,7 @@ trait Delete
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return \Stripe\ApiResource The deleted resource.
+     * @return static The deleted resource.
      */
     public function delete($params = null, $opts = null)
     {

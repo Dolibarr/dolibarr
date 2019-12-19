@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -417,6 +417,7 @@ class MultiCurrency extends CommonObject
 		else
 		{
 			$this->rate = null;
+			$this->errors=$currencyRate->errors;
 			return -1;
 		}
 	}
@@ -492,10 +493,10 @@ class MultiCurrency extends CommonObject
 	 /**
 	 * Get id of currency from code
 	 *
-	 * @param DoliDB	$db		object db
-	 * @param string	$code	code value search
+	 * @param  DoliDB	$db		    object db
+	 * @param  string	$code	   code value search
 	 *
-	 * @return 0 if not found, >0 if OK
+	 * @return int                 0 if not found, >0 if OK
 	 */
     public static function getIdFromCode(&$db, $code)
     {
@@ -512,9 +513,9 @@ class MultiCurrency extends CommonObject
 	 /**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB	$db		object db
-	 * @param string	$code	code value search
-	 * @param date		$date_document	date from document (propal, order, invoice, ...)
+	 * @param DoliDB	$db		        Object db
+	 * @param string	$code	        Code value search
+	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
 	 *
 	 * @return 	array	[0] => id currency
 	 *					[1] => rate
@@ -603,9 +604,9 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->MULTICURRENCY_ALTERNATE_SOURCE))
+		if ($conf->currency != $conf->global->MULTICURRENCY_APP_SOURCE)
 		{
-			$alternate_source = 'USD'.$conf->global->MULTICURRENCY_ALTERNATE_SOURCE;
+		    $alternate_source = 'USD'.$conf->currency;
 			if (!empty($TRate->{$alternate_source}))
 			{
 				$coef = $TRate->USDUSD / $TRate->{$alternate_source};
@@ -626,14 +627,22 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Sync rates from api
 	 *
-	 * @param 	array 	$response 	array of reponse from api to sync dolibarr rates
+	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
+	 * @param   int     $addifnotfound      Add if not found
      * @return  void
 	 */
-	public static function syncRates($response)
+	public static function syncRates($key, $addifnotfound = 0)
 	{
 		global $conf, $db, $langs;
 
-        $ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
+		$urlendpoint = 'http://apilayer.net/api/live?access_key='.$key;
+		//$urlendpoint.='&format=1';
+		$urlendpoint.=(empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '' : '&source='.$conf->global->MULTICURRENCY_APP_SOURCE);
+
+		dol_syslog("Call url endpoint ".$urlendpoint);
+
+		// TODO Use getURLContent() function instead.
+        $ch = curl_init($urlendpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
         curl_close($ch);
@@ -654,7 +663,7 @@ class MultiCurrency extends CommonObject
 					{
 						$obj->updateRate($rate);
 					}
-					else
+					elseif ($addifnotfound)
 					{
 						self::addRateFromDolibarr($code, $rate);
 					}
@@ -663,6 +672,7 @@ class MultiCurrency extends CommonObject
 		}
 		else
 		{
+		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 		}
 	}
@@ -709,7 +719,7 @@ class CurrencyRate extends CommonObjectLine
 	public $rate;
 
 	/**
-	 * @var date Date synchronisation
+	 * @var integer    Date synchronisation
 	 */
 	public $date_sync;
 

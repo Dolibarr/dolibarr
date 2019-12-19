@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2012-20113	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019		Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +50,8 @@ $modules = array(
 'DETAILS' => 'FCKeditorForProductDetails',
 'USERSIGN' => 'FCKeditorForUserSignature',
 'MAILING' => 'FCKeditorForMailing',
-'MAIL' => 'FCKeditorForMail'
+'MAIL' => 'FCKeditorForMail',
+'TICKET' => 'FCKeditorForTicket'
 );
 // Conditions pour que l'option soit proposee
 $conditions = array(
@@ -58,7 +60,8 @@ $conditions = array(
 'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->supplier_proposal->enabled) || ! empty($conf->fournisseur->enabled)),
 'USERSIGN' => 1,
 'MAILING' => ! empty($conf->mailing->enabled),
-'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled))
+'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)),
+'TICKET' => ! empty($conf->ticket->enabled)
 );
 // Picto
 $picto = array(
@@ -67,7 +70,8 @@ $picto = array(
 'DETAILS' => 'product',
 'USERSIGN' => 'user',
 'MAILING' => 'email',
-'MAIL' => 'email'
+'MAIL' => 'email',
+'TICKET' => 'ticket'
 );
 
 
@@ -109,7 +113,7 @@ if (GETPOST('save', 'alpha'))
 	} else {
 		$error ++;
 	}
-	
+
 	$fckeditor_test = GETPOST('formtestfield');
     if (! empty($fckeditor_test)) {
 		if (! dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
@@ -145,7 +149,7 @@ if (empty($conf->use_javascript_ajax))
 }
 else
 {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
     print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
@@ -156,7 +160,7 @@ else
     {
         // Si condition non remplie, on ne propose pas l'option
         if (! $conditions[$const]) continue;
-        
+
         print '<tr class="oddeven">';
         print '<td width="16">'.img_object("", $picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
@@ -181,12 +185,13 @@ else
 	print '<br>'."\n";
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    
+    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+
 	// Skins
     show_skin(null, 1);
     print '<br>'."\n";
-    
-    $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','dolibarr_readonly','Full');
+
+    $listofmodes=array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
     $linkstomode='';
     foreach($listofmodes as $newmode)
     {
@@ -200,10 +205,19 @@ else
     $linkstomode.='';
 	print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
-    $uselocalbrowser=true;
-    $readonly=($mode=='dolibarr_readonly'?1:0);
-    $editor=new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
-    $editor->Create();
+    if ($mode != 'Full_inline')
+    {
+        $uselocalbrowser=true;
+        $readonly=($mode=='dolibarr_readonly'?1:0);
+        $editor=new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
+        $editor->Create();
+    }
+    else
+    {
+        print '<div style="border: 1px solid #888;" contenteditable="true">';
+        print $conf->global->FCKEDITOR_TEST;
+        print '</div>';
+    }
     print '<br><div class="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
     print '<div id="divforlog"></div>';
     print '</form>'."\n";

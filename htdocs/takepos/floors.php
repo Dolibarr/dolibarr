@@ -12,7 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/takepos/floors.php
+ *	\ingroup    takepos
+ *	\brief      Page to edit floors and tables.
  */
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -35,7 +41,9 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
-$place = GETPOST('place', 'int');
+
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -63,7 +71,7 @@ if ($action=="updatename")
 {
     $newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
     if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
-    $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' where rowid='".$place."'");
+    $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
 }
 
 if ($action=="add")
@@ -107,7 +115,7 @@ function updateplace(idplace, left, top) {
 		url: "floors.php",
 		data: { action: "update", left: left, top: top, place: idplace }
 		}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo $floor;?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';
 	});
 }
 
@@ -119,7 +127,7 @@ function updatename(rowid) {
 		url: "floors.php",
 		data: { action: "updatename", place: rowid, newname: after }
 		}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo $floor;?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';
 		});
 	}
 
@@ -131,7 +139,7 @@ function LoadPlace(place){
 $( document ).ready(function() {
 	$.getJSON('./floors.php?action=getTables&floor=<?php echo $floor; ?>', function(data) {
         $.each(data, function(key, val) {
-			<?php if ($mode=="edit"){?>
+			<?php if ($mode == "edit") {?>
 			$('body').append('<div class="tablediv" contenteditable onblur="updatename('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
 			$( "#tablename"+val.rowid ).draggable(
 				{
@@ -149,8 +157,7 @@ $( document ).ready(function() {
 			$('#'+val.label).draggable().bind('click', function(){
 				$(this).focus();
 			})
-			<?php }
-			else {?>
+			<?php } else {?>
 			$('body').append('<div class="tablediv" onclick="LoadPlace('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
 			<?php } ?>
 		});
@@ -160,13 +167,13 @@ $( document ).ready(function() {
 </script>
 </head>
 <body style="overflow: hidden">
-<?php if ($user->admin){?>
+<?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
-<?php if ($mode=="edit"){?>
+    <?php if ($mode=="edit"){?>
 <a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor;?>';"><?php echo $langs->trans("AddTable"); ?></a>
-<?php } else { ?>
+    <?php } else { ?>
 <a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor;?>';"><?php echo $langs->trans("Edit"); ?></a>
-<?php } ?>
+    <?php } ?>
 </div>
 <?php }
 ?>
@@ -174,8 +181,8 @@ $( document ).ready(function() {
 <div style="position: absolute; left: 25%; bottom: 8%; width:50%; height:3%;">
     <center>
     <h1>
-    <?php if ($floor>1) { ?>
-    <img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor>1) { $floor--; echo $floor; $floor++;} else echo "1"; ?>';">
+    <?php if ($floor > 1) { ?>
+    <img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) { $floor--; echo $floor; $floor++; } else echo "1"; ?>';">
     <?php } ?>
     <span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>
     <img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++; echo $floor; ?>';">

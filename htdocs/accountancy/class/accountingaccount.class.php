@@ -17,12 +17,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/accountancy/class/accountingaccount.class.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *  \brief      File of class to manage accounting accounts
  */
 
@@ -151,12 +151,13 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Load record in memory
 	 *
-	 * @param 	int 	$rowid 				   Id
-	 * @param 	string 	$account_number 	   Account number
-	 * @param 	int 	$limittocurrentchart   1=Do not load record if it is into another accounting system
-	 * @return 	int                            <0 if KO, 0 if not found, Id of record if OK and found
+	 * @param 	int 	       $rowid 				    Id
+	 * @param 	string 	       $account_number 	        Account number
+	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active char of account
+	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
+	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
 	 */
-	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0)
+    public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
 	{
 		global $conf;
 
@@ -173,6 +174,9 @@ class AccountingAccount extends CommonObject
 			}
 			if (! empty($limittocurrentchart)) {
 				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';
+			}
+			if (! empty($limittoachartaccount)) {
+			    $sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
 
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
@@ -233,16 +237,8 @@ class AccountingAccount extends CommonObject
 			$this->pcg_subtype = trim($this->pcg_subtype);
 		if (isset($this->account_number))
 			$this->account_number = trim($this->account_number);
-		if (isset($this->account_parent))
-			$this->account_parent = trim($this->account_parent);
 		if (isset($this->label))
 			$this->label = trim($this->label);
-		if (isset($this->account_category))
-			$this->account_category = trim($this->account_category);
-		if (isset($this->fk_user_author))
-			$this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->active))
-			$this->active = trim($this->active);
 
 		if (empty($this->pcg_type) || $this->pcg_type == '-1')
 		{
@@ -411,7 +407,6 @@ class AccountingAccount extends CommonObject
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
-
 			$this->db->begin();
 
 			// if (! $error) {
@@ -643,11 +638,11 @@ class AccountingAccount extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param  int     $statut     Id statut
+	 *  @param  int     $status     Id status
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -655,34 +650,33 @@ class AccountingAccount extends CommonObject
 
 		if ($mode == 0)
 		{
-			$prefix='';
-			if ($statut == 1) return $langs->trans('Enabled');
-			elseif ($statut == 0) return $langs->trans('Disabled');
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 1)
 		{
-			if ($statut == 1) return $langs->trans('Enabled');
-			elseif ($statut == 0) return $langs->trans('Disabled');
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 }

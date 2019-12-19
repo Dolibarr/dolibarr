@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,9 +57,10 @@ class FormAdmin
 	 *  @param		string		$morecss		Add more css styles
 	 *  @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
      *  @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
+     *  @param		int			$multiselect	Make the combo a multiselect
      *  @return		string						Return HTML select string with list of languages
      */
-    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0)
+    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -70,8 +71,8 @@ class FormAdmin
 
 		$out='';
 
-		$out.= '<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
-		if ($showempty)
+		$out.= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect?'[]':'').'"'.($disabled?' disabled':'').'>';
+		if ($showempty && ! $multiselect)
 		{
 			$out.= '<option value="0"';
 			if ($selected == '') $out.= ' selected';

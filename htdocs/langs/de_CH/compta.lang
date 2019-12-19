@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - compta
 FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
-PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Geschäftspartner verbunden
+PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch mit keinem Geschäftspartner verbunden
 Balance=Bilanz
 LT2SummaryES=EKSt. Übersicht
 VATCollected=Erhobene MwSt.
@@ -29,5 +29,4 @@ Pcg_subtype=PCG Subtyp
 InvoiceLinesToDispatch=versandbereite Rechnungszeilen
 ToCreateAPredefinedInvoice=Um eine Rechnungsvorlage zu erstellen, erstellen Sie eine Standard-Rechnung und klicken dann (ohne Freigabe) auf den Knopf "%s".
 CalculationRuleDesc=Zur Berechnung der Gesamt-MwSt. gibt es zwei Methoden: <br>Methode 1 rundet die Steuer in jeder Zeile und addiert zum Schluss. <br>Methode 2 summiert alle Steuer-Zeilen und rundet am Ende. <br>Das endgültige Ergebnis kann sich in wenigen Cent unterscheiden. Standardmodus ist <b>Modus %s.</b>
-CalculationRuleDescSupplier=Gemäss Ihrem Lieferanten, wählen Sie die  geeignete Methode, um die gleiche Berechnungsregel anzuwenden um das selbe Ergebnis wie Ihr Lieferant zu bekommen.
 LinkedFichinter=Mit einem Eingriff verknüpfen

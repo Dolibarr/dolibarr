@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,7 +73,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
         $result=dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-        
+
 
     if (! $error)
   	{
@@ -113,7 +113,7 @@ $head[$h][2] = 'payboxaccount';
 $h++;
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'payboxaccount', '', -1);
@@ -121,7 +121,7 @@ dol_fiche_head($head, 'payboxaccount', '', -1);
 print $langs->trans("PayBoxDesc")."<br>\n";
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -151,7 +151,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_HMAC_KEY").'</span></td><td>';
 print '<input size="100" type="text" name="PAYBOX_HMAC_KEY" value="'.dol_decode($conf->global->PAYBOX_HMAC_KEY).'">';
-print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
+print '<br>'.$langs->trans("Example").': 1A2B3C4D5E6F';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -181,7 +181,8 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
+print '<br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
+print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/';
 print '</td></tr>';
 
 
@@ -196,7 +197,7 @@ if (! empty($conf->banque->enabled))
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
 

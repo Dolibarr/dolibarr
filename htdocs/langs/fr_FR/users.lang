@@ -109,3 +109,4 @@ UserLogoff=Déconnexion de l'utilisateur
 UserLogged=Utilisateur connecté
 DateEmployment=Date d'embauche
 DateEmploymentEnd=Date de fin d'emploi
+CantDisableYourself=Vous ne pouvez pas désactiver votre propre compte utilisateur

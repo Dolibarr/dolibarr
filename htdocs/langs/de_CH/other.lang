@@ -1,12 +1,16 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=Nr
-MessageKO=Nachrichtenseite für abgebrochene Zahlung
+ToolsDesc=Alle Werkzeuge, die nicht in anderen Menüeinträgen enthalten sind, werden hier gruppiert. <br> Alle Werkzeuge können über das linke Menü aufgerufen werden.
 Notify_COMPANY_SENTBYMAIL=Von Geschäftspartner-Karte gesendete Mails
 Notify_FICHEINTER_VALIDATE=Eingriff freigegeben
 Notify_FICHINTER_ADD_CONTACT=Kontakt zu Einsatz hinzugefügt
 Notify_FICHINTER_SENTBYMAIL=Service per E-Mail versendet
 TotalSizeOfAttachedFiles=Gesamtgrösse der angehängten Dateien/Dokumente
 MaxSize=Maximalgrösse
+PredefinedMailContentContract=__(Hallo)__\n\n\n__(Mit freundlichen Grüssen)__\n\n__USER_SIGNATURE__
+PredefinedMailContentThirdparty=__ (Hallo) __ __ (Mit freundlichen Grüssen) __ __USER_SIGNATURE__
+PredefinedMailContentContact=__ (Hallo) __ __ (Mit freundlichen Grüssen) __ __USER_SIGNATURE__
+PredefinedMailContentUser=__ (Hallo) __ __ (Mit freundlichen Grüssen) __ __USER_SIGNATURE__
 ChooseYourDemoProfil=Bitte wählen Sie das Demo-Profil das Ihrem Einsatzgebiet am ehesten entspricht
 ModifiedById=Letzte Änderung durch User
 ModifiedByLogin=Letzte Änderung durch Userlogin

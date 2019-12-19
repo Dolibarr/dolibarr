@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -153,13 +153,15 @@ llxHeader("", "", $langs->trans("CardProduct".$product->type));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
 
-print $langs->trans("DynamicPriceDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DynamicPriceDesc").'</span><br>';
 print '<br>';
 
 //Global variables table
-if ($action != 'create_updater' && $action != 'edit_updater') {
-    print $langs->trans("GlobalVariables");
-    print '<table summary="listofattributes" class="noborder" width="100%">';
+if ($action != 'create_updater' && $action != 'edit_updater')
+{
+    print load_fiche_titre($langs->trans("GlobalVariables"), '', '');
+
+    print '<table summary="listofattributes" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Variable").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
@@ -204,7 +206,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 if ($action == 'create_variable' || $action == 'edit_variable') {
     //Form
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<input type="hidden" name="selection" value="'.$selection.'">';
 
@@ -236,9 +238,11 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 }
 
 // Updaters table
-if ($action != 'create_variable' && $action != 'edit_variable') {
-    print $langs->trans("GlobalVariableUpdaters");
-    print '<table summary="listofattributes" class="noborder" width="100%">';
+if ($action != 'create_variable' && $action != 'edit_variable')
+{
+    print load_fiche_titre($langs->trans("GlobalVariableUpdaters"), '', '');
+
+    print '<table summary="listofattributes" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("VariableToUpdate").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
@@ -274,7 +278,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
     }
     else
     {
-    	print '<tr colspan="7"><td class="opacitymedium">';
+    	print '<tr><td colspan="7" class="opacitymedium">';
     	print $langs->trans("None");
     	print '</td></tr>';
     }
@@ -293,7 +297,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 if ($action == 'create_updater' || $action == 'edit_updater') {
     //Form
     print '<form id="updaterform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<input type="hidden" name="selection" value="'.$selection.'">';
 

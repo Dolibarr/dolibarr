@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-moduloppsett
-StripeDesc=Modul for å tilby en online betalingsside som godtar betalinger med kreditt-/debetkort via <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Dette kan brukes til å la kundene utføre betalinger eller for betaling på et bestemt Dolibarr-objekt (faktura, bestilling, ...)
+StripeDesc=Tilby kundene en Stripe online betalingsside for betalinger med kredittkort/debetkort via <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Dette kan brukes til å la kundene dine foreta ad hoc-betalinger eller for betalinger knyttet til et bestemt Dolibarr-objekt (faktura, bestilling, ...)
 StripeOrCBDoPayment=Betal med kredittkort eller Stripe
 FollowingUrlAreAvailableToMakePayments=Følgende nettadresser er tilgjengelige for kundene til å foreta betalinger for Dolibarr objekter
 PaymentForm=Betalingskjema
-WelcomeOnPaymentPage=Velkommen på våre elektroniske betalingstjenester
+WelcomeOnPaymentPage=Velkommen til vår online betalingstjeneste
 ThisScreenAllowsYouToPay=I detteskjermbildet kan du foreta en online betaling til %s.
 ThisIsInformationOnPayment=Betalingsinformasjon
 ToComplete=For å fullføre
 YourEMail=E-post for betalingsbekreftelsen
-STRIPE_PAYONLINE_SENDEMAIL=E-post-varsel etter en betaling (vellykket eller ikke)
+STRIPE_PAYONLINE_SENDEMAIL=Epostvarsling etter betalingsforsøk (vellykket eller feilet)
 Creditor=Kreditor
 PaymentCode=Betalingskode
-StripeDoPayment=Betal med kredit- eller debet-kort (Stripe)
+StripeDoPayment=Betal med stripe
 YouWillBeRedirectedOnStripe=Du blir omdirigert til en sikret Stripeside for å legge inn kredittkortinformasjon
 Continue=Neste
 ToOfferALinkForOnlinePayment=URL for %s betaling
-ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby et %s brukergrensesnitt for online betaling av kundeordre
+ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby et %s online betalingsgrensesnitt for en salgsordre
 ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby et %s brukergrensesnitt for online betaling av kundefaktura
 ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby et %s brukergrensesnitt for online betaling av en kontraktlinje
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby et %s brukergrensesnitt for online betaling av et fribeløp beløp
@@ -40,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook-nøkkel
 ONLINE_PAYMENT_WAREHOUSE=Lager som skal brukes for lagernedskrivning når nettbasert betaling er utført<br> (TODO Når alternativet for å redusere lagerbeholdningen gjøres på en faktura handling, og online betaling genererer fakturaen?)
 StripeLiveEnabled=Stripe live aktivert (ellers test/sandbox modus)
 StripeImportPayment=Importer Stripe-betalinger
-ExampleOfTestCreditCard=Eksempel på kredittkort for test: %s (gyldig), %s (feil CVC), %s (utløpt), %s (belastning mislykkes)
+ExampleOfTestCreditCard=Eksempel på kredittkort for test: %s => gyldig, %s => feil CVC, %s => utløpt, %s => belastning mislykket
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca. _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca. _...)
@@ -61,3 +61,9 @@ ConfirmDeleteCard=Er du sikker på at du vil slette dette Kreditt- eller debetko
 CreateCustomerOnStripe=Opprett kunde på Stripe
 CreateCardOnStripe=Lag kort på Stripe
 ShowInStripe=Vis i Stripe
+StripeUserAccountForActions=Brukerkonto til bruk for e-postvarsling av noen Stripe-hendelser (Stripe-utbetalinger)
+StripePayoutList=Liste over Stripe utbetalinger
+ToOfferALinkForTestWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (test-modus)
+ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (live-modus)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - mrp
+BOMsSetup=Einstellungen Modul Materiallisten (BOM)
+ProductBOMHelp=Herzustellendes Produkt dieser Materialliste
+BOMsModelModule=Vorlage für Materiallisten - Dokumente

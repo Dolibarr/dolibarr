@@ -12,13 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/compta/localtax/class/localtax.class.php
  *      \ingroup    tax
- *      \author		Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
@@ -97,9 +96,6 @@ class Localtax extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
-		$this->fk_user_modif=trim($this->fk_user_modif);
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(";
@@ -121,9 +117,9 @@ class Localtax extends CommonObject
 		$sql.= " '".$this->db->escape($this->amount)."',";
 		$sql.= " '".$this->db->escape($this->label)."',";
 		$sql.= " '".$this->db->escape($this->note)."',";
-		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
-		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
-		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
+		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : (int) $this->fk_bank).",";
+		$sql.= " ".((int) $this->fk_user_creat).",";
+		$sql.= " ".((int) $this->fk_user_modif);
 		$sql.= ")";
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -173,9 +169,6 @@ class Localtax extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
-		$this->fk_user_modif=trim($this->fk_user_modif);
 
 		$this->db->begin();
 
@@ -188,9 +181,9 @@ class Localtax extends CommonObject
 		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
-		$sql.= " fk_bank=".$this->fk_bank.",";
-		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
-		$sql.= " fk_user_modif=".$this->fk_user_modif;
+		$sql.= " fk_bank=".(int) $this->fk_bank.",";
+		$sql.= " fk_user_creat=".(int) $this->fk_user_creat.",";
+		$sql.= " fk_user_modif=".(int) $this->fk_user_modif;
 		$sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -299,7 +292,6 @@ class Localtax extends CommonObject
 		if ($result < 0) return -1;
 		// End call triggers
 
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -324,6 +316,8 @@ class Localtax extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+	    global $user;
+
 		$this->id=0;
 
 		$this->tms='';
@@ -333,9 +327,9 @@ class Localtax extends CommonObject
 		$this->amount='';
 		$this->label='';
 		$this->note='';
-		$this->fk_bank='';
-		$this->fk_user_creat='';
-		$this->fk_user_modif='';
+		$this->fk_bank=0;
+		$this->fk_user_creat=$user->id;
+		$this->fk_user_modif=$user->id;
 	}
 
 
@@ -347,7 +341,6 @@ class Localtax extends CommonObject
      */
     public function solde($year = 0)
     {
-
         $reglee = $this->localtax_sum_reglee($year);
 
         $payee = $this->localtax_sum_payee($year);
@@ -528,7 +521,7 @@ class Localtax extends CommonObject
         $sql.= "'".$this->db->idate($this->datev)."'," . $this->amount;
         if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.=", '".$user->id."', NULL";
+        $sql.=", ".((int) $user->id).", NULL";
         $sql.= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);

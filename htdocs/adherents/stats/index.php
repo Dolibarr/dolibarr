@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,10 +35,10 @@ $userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 
@@ -56,9 +56,10 @@ $langs->loadLangs(array("companies","members"));
 
 $form=new Form($db);
 
-llxHeader();
+$title = $langs->trans("SubscriptionsStatistics");
+llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+print load_fiche_titre($title, '', 'members');
 
 $dir=$conf->adherent->dir_temp;
 
@@ -81,7 +82,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
-    $px1->SetPrecisionY(0);
     $i=$startyear;
     while ($i <= $endyear)
     {
@@ -96,7 +96,6 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfSubscriptions"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NbOfSubscriptions"));
 
@@ -116,7 +115,6 @@ $mesg = $px2->isGraphKo();
 if (! $mesg)
 {
     $px2->SetData($data);
-    $px2->SetPrecisionY(0);
     $i=$startyear;
     while ($i <= $endyear)
     {
@@ -131,7 +129,6 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfSubscriptions"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfSubscriptions"));
 
@@ -148,11 +145,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 /*print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 print '<tr><td>'.$langs->trans("Member").'</td><td>';
-$filter='s.client in (1,2,3)';
-print $form->select_company($id,'memberid',$filter,1);
+print $form->select_company($id,'memberid','',1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
@@ -215,7 +211,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -155,7 +155,7 @@ class PriceParser
 
         //Retrieve all extrafield for product and add it to values
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label('product', true);
+        $extrafields->fetch_name_optionals_label('product', true);
         $product->fetch_optionals();
         if (is_array($extrafields->attributes[$product->table_element]['label']))
 		{
@@ -262,24 +262,29 @@ class PriceParser
             return -1;
         }
 
-        //Get the supplier min
-        $productFournisseur = new ProductFournisseur($this->db);
-        $supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
+		//Get the supplier min price
+		$productFournisseur = new ProductFournisseur($this->db);
+		$res = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
+		if ($res < 1) {
+			$this->error_parser = array(25, null);
+			return -1;
+		}
+		$supplier_min_price = $productFournisseur->fourn_unitprice;
 
         //Accessible values by expressions
-        $extra_values = array_merge($extra_values, array(
-            "supplier_min_price" => $supplier_min_price,
-        ));
+		$extra_values = array_merge($extra_values, array(
+			"supplier_min_price" => $supplier_min_price,
+		));
 
-        //Parse the expression and return the price, if not error occurred check if price is higher than min
-        $result = $this->parseExpression($product, $price_expression->expression, $extra_values);
-        if (empty($this->error_parser)) {
-            if ($result < $product->price_min) {
-                $result = $product->price_min;
-            }
-        }
-        return $result;
-    }
+		//Parse the expression and return the price, if not error occurred check if price is higher than min
+		$result = $this->parseExpression($product, $price_expression->expression, $extra_values);
+		if (empty($this->error_parser)) {
+			if ($result < $product->price_min) {
+				$result = $product->price_min;
+			}
+		}
+		return $result;
+	}
 
     /**
      *	Calculates supplier product price based on product supplier price and associated expression
@@ -300,7 +305,7 @@ class PriceParser
         }
 
         //Get the product data (use ignore_expression to avoid possible recursion)
-        $product_supplier->fetch($product_supplier->id, '', '', 1);
+        $product_supplier->fetch($product_supplier->id, '', '', '', 1);
 
         //Accessible values by expressions
         $extra_values = array_merge($extra_values, array(

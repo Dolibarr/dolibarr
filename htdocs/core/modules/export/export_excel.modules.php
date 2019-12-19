@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/modules/export/export_excel.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
- *	\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
@@ -33,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class ExportExcel extends ModeleExports
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -46,7 +45,7 @@ class ExportExcel extends ModeleExports
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -76,7 +75,7 @@ class ExportExcel extends ModeleExports
 		$this->db = $db;
 
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 95';            // Label of driver
+		$this->label='Excel 95 (old library)';            // Label of driver
 		$this->desc = $langs->trans('Excel95FormatDesc');
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';            // Picto
@@ -345,6 +344,8 @@ class ExportExcel extends ModeleExports
 		// Define first row
 		$this->col=0;
 
+		$reg=array();
+
 		foreach($array_selected_sorted as $code => $value)
 		{
 			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
@@ -509,6 +510,7 @@ class ExportExcel extends ModeleExports
     {
 
         $c = intval($c);
+        $letter = '';
         if ($c <= 0) {
             return '';
         }

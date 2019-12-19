@@ -13,35 +13,62 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/takepos/takepos.php
+ *	\ingroup    takepos
+ *	\brief      Main TakePOS screen
  */
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php';	// Load $user and permissions
+require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = GETPOST('place', 'int');
-if ($place=="") $place="0";
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
+$setterminal = GETPOST('setterminal', 'int');
 
-$langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
+if ($setterminal > 0)
+{
+	$_SESSION["takeposterminal"] = $setterminal;
+}
+
+$_SESSION["urlfrom"] = '/takepos/takepos.php';
+
+$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
 $categorie = new Categorie($db);
 
-$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?16:$conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?32:$conf->global->TAKEPOS_NB_MAXPRODUCT);;
+$maxcategbydefaultforthisdevice = 16;
+$maxproductbydefaultforthisdevice = 32;
+if ($conf->browser->layout == 'phone')
+{
+    $maxcategbydefaultforthisdevice = 8;
+    $maxproductbydefaultforthisdevice = 16;
+	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
+	if ($_SESSION["takeposterminal"] != "" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1)
+	{
+		$_SESSION["basiclayout"] = 1;
+		header("Location: phone.php?mobilepage=invoice");
+		exit;
+	}
+}
+$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
+$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
 
 
 /*
@@ -49,9 +76,9 @@ $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?32:$conf->global->TAK
  */
 
 // Title
-$title='TakePOS - Dolibarr '.DOL_VERSION;
-if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title='TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-$head='<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
@@ -63,15 +90,15 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">
 <?php
-$categories = $categorie->get_full_arbo('product', 0, (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0));
+$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
-//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 
 // Search root category to know its level
-$levelofrootcategory=0;
+//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
+$levelofrootcategory = 0;
 if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 {
-    foreach($categories as $key => $categorycursor)
+    foreach ($categories as $key => $categorycursor)
     {
         if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
         {
@@ -84,7 +111,7 @@ $levelofmaincategories = $levelofrootcategory + 1;
 
 $maincategories = array();
 $subcategories = array();
-foreach($categories as $key => $categorycursor)
+foreach ($categories as $key => $categorycursor)
 {
     if ($categorycursor['level'] == $levelofmaincategories)
     {
@@ -107,15 +134,61 @@ var currentcat;
 var pageproducts=0;
 var pagecategories=0;
 var pageactions=0;
-var place="<?php echo $place;?>";
+var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
+
+/*
+var app = this;
+app.hasKeyboard = false;
+this.keyboardPress = function() {
+    app.hasKeyboard = true;
+    $(window).unbind("keyup", app.keyboardPress);
+    localStorage.hasKeyboard = true;
+    console.log("has keyboard!")
+}
+$(window).on("keyup", app.keyboardPress)
+if(localStorage.hasKeyboard) {
+    app.hasKeyboard = true;
+    $(window).unbind("keyup", app.keyboardPress);
+    console.log("has keyboard from localStorage")
+}
+*/
+
+function ClearSearch() {
+	console.log("ClearSearch");
+	$("#search").val('');
+	<?php if ($conf->browser->layout == 'classic') { ?>
+	setFocusOnSearchField();
+	<?php } ?>
+}
+
+// Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
+function setFocusOnSearchField() {
+	console.log("Call setFocusOnSearchField in page takepos.php");
+	<?php if ($conf->browser->layout == 'classic') { ?>
+		console.log("has keyboard from localStorage, so we can force focus on search field");
+		$("#search").focus();
+	<?php } ?>
+}
+
 function PrintCategories(first) {
+	console.log("PrintCategories");
 	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
-		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined") break;
+		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined")
+		{
+			$("#catdivdesc"+i).hide();
+			$("#catdesc"+i).text("");
+			$("#catimg"+i).attr("src","genimg/empty.png");
+			$("#catwatermark"+i).hide();
+			$("#catdiv"+i).attr('class', 'wrapper divempty');
+			continue;
+		}
+		$("#catdivdesc"+i).show();
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
         $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
+		$("#catdiv"+i).attr('class', 'wrapper');
 		$("#catwatermark"+i).show();
 	}
 }
@@ -139,31 +212,38 @@ function MoreCategories(moreorless) {
 	}
 	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
 		if (typeof (categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]) == "undefined") {
+			$("#catdivdesc"+i).hide();
 			$("#catdesc"+i).text("");
 			$("#catimg"+i).attr("src","genimg/empty.png");
 			$("#catwatermark"+i).hide();
 			continue;
 		}
+		$("#catdivdesc"+i).show();
 		$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
         $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
+
+	ClearSearch();
 }
 
-function LoadProducts(position, issubcat=false) {
+// LoadProducts
+function LoadProducts(position, issubcat) {
+	console.log("LoadProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
 	$('#catimg'+position).animate({opacity: '0.5'}, 1);
 	$('#catimg'+position).animate({opacity: '1'}, 100);
 	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
 	else currentcat=$('#catdiv'+position).data('rowid');
-    if (currentcat==undefined) return;
+    if (currentcat == undefined) return;
 	pageproducts=0;
 	ishow=0; //product to show counter
 
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
+			$("#prodivdesc"+ishow).show();
 			$("#prodesc"+ishow).text(val.label);
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
@@ -174,24 +254,31 @@ function LoadProducts(position, issubcat=false) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat);
-
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
+		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
+		console.log(data);
 		while (ishow < maxproduct) {
 			//console.log("ishow"+ishow+" idata="+idata);
-			//console.log(data[idata]);
+			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
+				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("title","");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
+				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {		// Only show products with status=1 (for sell)
+				var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>'+data[idata]['ref'];
+				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
-				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
-				$("#prodiv"+ishow).data("iscat",0);
+				$("#proimg"+ishow).attr("title", titlestring);
+				$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata]['id']);
+				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
+				$("#prodiv"+ishow).data("iscat", 0);
+				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
 			}
@@ -199,9 +286,12 @@ function LoadProducts(position, issubcat=false) {
 			idata++; //Next data everytime
 		}
 	});
+
+	ClearSearch();
 }
 
 function MoreProducts(moreorless) {
+	console.log("MoreProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
 	if (moreorless=="more"){
@@ -215,7 +305,7 @@ function MoreProducts(moreorless) {
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
 	}
-	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[(maxproduct * pageproducts)]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -227,6 +317,7 @@ function MoreProducts(moreorless) {
 
 		while (ishow < maxproduct) {
 			if (typeof (data[idata]) == "undefined") {
+				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
@@ -234,6 +325,7 @@ function MoreProducts(moreorless) {
 			}
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
+				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -244,9 +336,12 @@ function MoreProducts(moreorless) {
 			idata++; //Next data everytime
 		}
 	});
+
+	ClearSearch();
 }
 
 function ClickProduct(position) {
+	console.log("ClickProduct");
     $('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat')==1){
@@ -259,19 +354,30 @@ function ClickProduct(position) {
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
 		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct, function() {
-			$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
+
+	ClearSearch();
 }
 
 function deleteline() {
+	console.log("Delete line");
 	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
+	ClearSearch();
 }
 
 function Customer() {
-	$.colorbox({href:"customers.php?nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
+	console.log("Open box to select the thirdparty place="+place);
+	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
+}
+
+function History()
+{
+    console.log("Open box to select the history");
+    $.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
 function CloseBill() {
@@ -281,61 +387,83 @@ function CloseBill() {
 }
 
 function Floors() {
-	$.colorbox({href:"floors.php?place="+place, width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors");?>"});
+	console.log("Open box to select floor");
+	$.colorbox({href:"floors.php?place="+place, width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors"); ?>"});
 }
 
 function FreeZone() {
-	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone");?>"});
+	console.log("Open box to enter a free product");
+	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
 }
 
 function TakeposOrderNotes() {
-	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes");?>"});
+	console.log("Open box to order notes");
+	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes"); ?>"});
 }
 
 function Refresh() {
+	console.log("Refresh");
 	$("#poslines").load("invoice.php?place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
-function Search() {
-	$("#poslines").load("invoice.php?action=search&place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-	});
+function New() {
+	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
+	console.log("New with place = <?php echo $place; ?>, js place="+place);
+	var r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
+	if (r == true) {
+    	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
+    		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+    	});
+		ClearSearch();
+	}
 }
 
 function Search2() {
+	console.log("Search2 Call ajax search to replace products");
 	pageproducts=0;
-	$.getJSON('./ajax.php?action=search&term='+$('#search').val(), function(data) {
-		for (i = 0; i < 30; i++) {
+	jQuery(".wrapper2 .catwatermark").hide();
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
+		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 			if (typeof (data[i]) == "undefined"){
 				$("#prodesc"+i).text("");
 				$("#proimg"+i).attr("src","genimg/empty.png");
                 $("#prodiv"+i).data("rowid","");
 				continue;
 			}
-			$("#prodesc"+i).text(data[parseInt(i)]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
-			$("#prodiv"+i).data("rowid",data[i]['rowid']);
-			$("#prodiv"+i).data("iscat",0);
+			var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>'+data[i]['ref'];
+			$("#prodesc"+i).text(data[i]['label']);
+			$("#prodivdesc"+i).show();
+			$("#proimg"+i).attr("title", titlestring);
+			$("#proimg"+i).attr("src", "genimg/?query=pro&id="+data[i]['rowid']);
+			$("#prodiv"+i).data("rowid", data[i]['rowid']);
+			$("#prodiv"+i).data("iscat", 0);
 		}
 	});
 }
 
-function Edit(number){
+function Edit(number) {
+
+	if (typeof(selectedtext) == "undefined") return;	// We click on an action on the number pad but there is no line selected
+
     var text=selectedtext+"<br> ";
+
     if (number=='c'){
         editnumber="";
         Refresh();
         return;
     }
     else if (number=='qty'){
+    	console.log("Edit "+number);
         if (editaction=='qty' && editnumber!=""){
             $("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
                 editnumber="";
-                $('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+                //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#qty").html("<?php echo $langs->trans("Qty"); ?>");
             });
+
+            setFocusOnSearchField();
             return;
         }
         else {
@@ -343,12 +471,15 @@ function Edit(number){
         }
     }
     else if (number=='p'){
+    	console.log("Edit "+number);
         if (editaction=='p' && editnumber!=""){
             $("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
                 editnumber="";
-                $('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+                //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#price").html("<?php echo $langs->trans("Price"); ?>");
             });
+
+            ClearSearch();
             return;
         }
         else {
@@ -356,12 +487,15 @@ function Edit(number){
         }
     }
     else if (number=='r'){
+    	console.log("Edit "+number);
         if (editaction=='r' && editnumber!=""){
             $("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
                 editnumber="";
-                $('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+                //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
             });
+
+            ClearSearch();
             return;
         }
         else {
@@ -393,23 +527,34 @@ function Edit(number){
 }
 
 function TakeposPrintingOrder(){
+	console.log("TakeposPrintingOrder");
 	$("#poslines").load("invoice.php?action=order&place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function TakeposPrintingTemp(){
+	console.log("TakeposPrintingTemp");
 	$("#poslines").load("invoice.php?action=temp&place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function OpenDrawer(){
+	console.log("OpenDrawer");
 	$.ajax({
-			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
-			data: "opendrawer"
-		});
+		type: "POST",
+		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
+		data: "opendrawer"
+	});
+}
+
+function DolibarrOpenDrawer() {
+	console.log("DolibarrOpenDrawer");
+	$.ajax({
+		type: "GET",
+		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=opendrawer&term='.$_SESSION["takeposterminal"]; ?>",
+	});
 }
 
 function MoreActions(totalactions){
@@ -429,15 +574,57 @@ function MoreActions(totalactions){
 	}
 }
 
+// Popup to select the terminal to use
+function TerminalsDialog()
+{
+    jQuery("#dialog-info").dialog({
+	    resizable: false,
+	    height: <?php echo 180 + round($conf->global->TAKEPOS_NUM_TERMINALS / 3 * 20); ?>,
+	    width: <?php echo ($conf->dol_optimize_smallscreen ? 316 : 400); ?>,
+	    modal: true,
+	    buttons: {
+			'<?php echo dol_escape_js($langs->trans("Terminal")) ?> 1': function() {
+				location.href='takepos.php?setterminal=1';
+			}
+			<?php
+			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+			{
+				print ",
+				'".dol_escape_js($langs->trans("Terminal"))." ".$i."': function() {
+					location.href='takepos.php?setterminal=".$i."';
+				}
+				";
+			}
+			?>
+	    }
+	});
+}
+
+function DirectPayment(){
+	console.log("DirectPayment");
+	$("#poslines").load("invoice.php?place"+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
 	Refresh();
+	<?php
+	//IF NO TERMINAL SELECTED
+	if ($_SESSION["takeposterminal"] == "")
+	{
+		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
+		else print "TerminalsDialog();";
+	}
+	?>
 });
 </script>
 
-<body style="overflow: hidden; background-color:#D1D1D1;">
-
+<body class="bodytakepos" style="overflow: hidden;">
+<?php
+if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+?>
 <div class="container">
 	<div class="row1">
 
@@ -459,75 +646,93 @@ $( document ).ready(function() {
 			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r');"><?php echo $langs->trans("ReductionShort"); ?></button>
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
 			<button type="button" class="calcbutton" onclick="Edit('.');">.</button>
-			<button type="button" class="calcbutton" onclick="Edit('c');">C</button>
-			<button type="button" class="calcbutton2" id="delete" style="color: red;" onclick="deleteline();"><b>X</b></button>
+			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c');">C</button>
+			<button type="button" class="calcbutton2 poscolordelete" id="delete" onclick="deleteline();"><span class="fa fa-trash"></span></button>
 		</div>
 
 <?php
 
 // TakePOS setup check
 $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql.= " AND active = 1";
-$sql.= " ORDER BY libelle";
+$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql .= " AND active = 1";
+$sql .= " ORDER BY libelle";
+
 $resql = $db->query($sql);
 $paiementsModes = array();
-if ($resql){
-	while ($obj = $db->fetch_object($resql)){
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
         $paycode = $obj->code;
         if ($paycode == 'LIQ') $paycode = 'CASH';
-        if ($paycode == 'CB')  $paycode = 'CARD';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
-		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
+		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
+		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
+		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) array_push($paiementsModes, $obj);
 	}
 }
+
 if (empty($paiementsModes)) {
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	$langs->load('errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal").' '.$_SESSION["takeposterminal"], null, 'errors');
 }
-if (count($maincategories)==0) {
+if (count($maincategories) == 0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
 }
 // User menu and external TakePOS modules
 $menus = array();
-$r=0;
-$menus[$r++]=array('title'=>$langs->trans("SearchProduct"),
-					'action'=>'Search();');
-$menus[$r++]=array('title'=>$langs->trans("FreeZone"),
-                   'action'=>'FreeZone();');
-$menus[$r++]=array('title'=>$langs->trans("Customer"),
-					'action'=>'Customer();');
-$menus[$r++]=array('title'=>$langs->trans("BackOffice"),
-                    'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
-$menus[$r++]=array('title'=>$langs->trans("DoPayment"),
-					'action'=>'CloseBill();');
-$menus[$r++]=array('title'=>$langs->trans("Logout"),
-					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+$r = 0;
+
+if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
+{
+    $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action'=>'New();');
+}
+else
+{
+    // BAR RESTAURANT specific menu
+    $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
+}
+
+$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+$menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
+$menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
+$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
+
+if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
+	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").'</div>', 'action'=>'DirectPayment();');
+}
 
 // BAR RESTAURANT specific menu
-if($conf->global->TAKEPOS_BAR_RESTAURANT){
-	$menus[$r++]=array('title'=>$langs->trans("Floors"), 'action'=>'Floors();');
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS){
-		$menus[$r++]=array('title'=>$langs->trans("Order"),
-		'action'=>'TakeposPrintingOrder();');
+if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+{
+	if ($conf->global->TAKEPOS_ORDER_PRINTERS)
+	{
+		$menus[$r++]=array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
 	}
 	//add temp ticket button
-	if ($conf->global->TAKEPOS_BAR_RESTAURANT){
-		if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'TakeposPrinting(placeid);');
-		else $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'Print(placeid);');
+	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+	{
+	    if ($conf->global->TAKEPOSCONNECTOR) {
+			$menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>','action'=>'TakeposPrinting(placeid);');
+		} else {
+			$menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>','action'=>'Print(placeid);');
+		}
 	}
-	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1){
-		$menus[$r++]=array('title'=>$langs->trans("OrderNotes"),
-		'action'=>'TakeposOrderNotes();');
+	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1)
+	{
+	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
 }
 
-if ($conf->global->TAKEPOSCONNECTOR){
-    $menus[$r++]=array(
-        'title'=>$langs->trans("DOL_OPEN_DRAWER"),
-        'action'=>'OpenDrawer();'
-    );
+if ($conf->global->TAKEPOSCONNECTOR) {
+    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
+}
+if ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+    $menus[$r++] = array(
+		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
+		'action' => 'DolibarrOpenDrawer();',
+	);
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
@@ -536,59 +741,104 @@ if (!empty($reshook)) {
     $menus[$r++]=$reshook;
 }
 
-?>
-		<div class="div3">
-<?php
+if ($r % 3 == 2) $menus[$r++]=array('title'=>'', 'style'=>'visibility: hidden;');
 
-$i = 0;
-foreach($menus as $menu) {
-	$i++;
-	if (count($menus)>9 and $i==9)
-	{
-		echo '<button type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
-		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
-	}
-    elseif ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
-	else echo '<button type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
-}
+$menus[$r++]=array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
+$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+
 ?>
+		<!-- Show buttons -->
+		<div class="div3">
+		<?php
+        $i = 0;
+        foreach($menus as $menu)
+        {
+        	$i++;
+        	if (count($menus) > 9 and $i == 9)
+        	{
+        		echo '<button style="'.$menu['style'].'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
+        		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+        	}
+            elseif ($i > 9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+            else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+        }
+
+        print '<!-- Show the search input text -->'."\n";
+        print '<div class="margintoponly">';
+		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 41px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+		print '</div>';
+        ?>
 		</div>
 	</div>
 
 	<div class="row2">
+
+		<!--  Show categories -->
 		<div class="div4">
 	<?php
-	$count=0;
+	$count = 0;
 	while ($count < $MAXCATEG)
 	{
-	?>
-			<div class='wrapper' <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
-				<img class='imgwrapper' <?php if ($count==($MAXCATEG-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXCATEG-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="catimg<?php echo $count;?>" />
-				<div class='description'>
-					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
+	    ?>
+			<div class="wrapper" <?php if ($count == ($MAXCATEG - 2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count == ($MAXCATEG - 1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"'; ?> id="catdiv<?php echo $count; ?>">
+				<?php
+				if ($count == ($MAXCATEG - 2)) {
+				    //echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="catimg'.$count.'" />';
+				    echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
+				}
+				elseif ($count == ($MAXCATEG - 1)) {
+				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
+				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
+				}
+				else
+				{
+				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+				}
+				?>
+				<?php if ($count != ($MAXCATEG - 2) && $count != ($MAXCATEG - 1)) { ?>
+				<div class="description" id="catdivdesc<?php echo $count; ?>">
+					<div class="description_content" id="catdesc<?php echo $count; ?>"></div>
 				</div>
-				<div class="catwatermark" id='catwatermark<?php echo $count;?>'>+</div>
+				<?php } ?>
+				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>...</div>
 			</div>
-	<?php
-    $count++;
+	    <?php
+        $count++;
 	}
 	?>
 		</div>
 
+	    <!--  Show product -->
 		<div class="div5">
     <?php
-    $count=0;
+    $count = 0;
     while ($count < $MAXPRODUCT)
     {
-    ?>
-    			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-    				<img class='imgwrapper' <?php if ($count==($MAXPRODUCT-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXPRODUCT-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="proimg<?php echo $count;?>" />
-    				<div class='description'>
-    					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
+        ?>
+    			<div class="wrapper2" id='prodiv<?php echo $count; ?>' <?php if ($count == ($MAXPRODUCT - 2)) {?> onclick="MoreProducts('less');" <?php } if ($count == ($MAXPRODUCT - 1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"'; ?>>
+    				<?php
+    				if ($count == ($MAXPRODUCT - 2)) {
+    				    //echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
+    				    echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
+    				}
+    				elseif ($count == ($MAXPRODUCT - 1)) {
+    				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
+    				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
+    				}
+    				else
+    				{
+    				    echo '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+    				}
+    				?>
+					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1)) { ?>
+    				<div class="description" id="prodivdesc<?php echo $count; ?>">
+    					<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
     				</div>
-    				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
+    				<?php } ?>
+    				<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
     			</div>
-    <?php
+        <?php
         $count++;
     }
     ?>

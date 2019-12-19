@@ -18,7 +18,7 @@ StatusDeliveryCanceled=Storniert
 StatusDeliveryDraft=Entwurf
 StatusDeliveryValidated=erhalten
 # merou PDF model
-NameAndSignature=Name und Unterschrift:
+NameAndSignature=Name / Unterschrift:
 ToAndDate=An___________________________________ am ____/_____/__________
 GoodStatusDeclaration=Wir haben die oben genannten Waren in einwandfreiem Zustand erhalten,
 Deliverer=Lieferant:
@@ -28,3 +28,4 @@ ErrorStockIsNotEnough=Nicht genügend Bestand
 Shippable=Versandfertig
 NonShippable=Nicht versandfertig
 ShowReceiving=Zustellbestätigung anzeigen
+NonExistentOrder=Auftrag existiert nicht

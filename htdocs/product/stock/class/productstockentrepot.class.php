@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file    ProductEntrepot/ProductStockEntrepot.class.php
+ * \file    htdocs/product/stock/class/productstockentrepot.class.php
  * \ingroup ProductEntrepot
  * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *          Put some comments here
@@ -276,7 +276,6 @@ class ProductStockEntrepot extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			while ($obj = $this->db->fetch_object($resql)) {
 				$lines[$obj->rowid] = array(
 										'id'=>$obj->rowid
@@ -420,15 +419,14 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user	   User making the clone
+	 * @param   int     $fromid    Id of object to clone
+	 * @return  int                New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		global $user;
 		$error = 0;
 		$object = new ProductStockEntrepot($this->db);
 

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;
 
@@ -55,7 +55,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
-	 * @see product_label
+	 * @see $product_label
 	 */
 	public $libelle;
 
@@ -80,7 +80,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	/**
 	 * Unit price
 	 * @deprecated
-	 * @see subprice
+	 * @see $subprice
 	 */
     public $price;
 

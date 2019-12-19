@@ -31,14 +31,16 @@ ViewWeek=Zobraziť týždeň
 ViewPerUser=Podľa zobrazenia uživateľa
 ViewPerType=Podľa typu zobrazenia
 AutoActions= Automatické plnenie
-AgendaAutoActionDesc= Tu definujte udalosti, ktoré má Dolibarr automaticky pridať do agendy. Ak nič nie je zaškrtnuté iba manuálne akcie budu pridané do agendy. Automatické sledovanie firemných akcií pre objekty ( overenie, zmena statusu ) nebudú uložené.
-AgendaSetupOtherDesc= Táto stránka poskytuje možnosti, ako dať export vašich akcií Dolibarr do externého kalendára (thunderbird, Google kalendár, ...)
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Táto stránka umožňuje deklarovať externé zdroje kalendárov vidieť svoje akcie do programu Dolibarr.
 ActionsEvents=Udalosti, pre ktoré Dolibarr vytvorí akciu v programe automaticky
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tretia strana %s vytvorená
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Zmluva %s overená
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Ponuka %s podpísaná
 PropalClosedRefusedInDolibarr=Ponuka %s odmietnutá
 PropalValidatedInDolibarr=Návrh %s overená
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Zásielka %s overená
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Zásielka %s zmazaná
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Objednať %s overená
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=Objednávka %s faktúrovaná
 OrderApprovedInDolibarr=Objednať %s schválený
 OrderRefusedInDolibarr=Objednávka %s odmietnutá
 OrderBackToDraftInDolibarr=Objednať %s vrátiť do stavu návrhu
-ProposalSentByEMail=Komerčné návrh %s zaslaná e-mailom
-ContractSentByEMail=Contract %s sent by EMail
-OrderSentByEMail=%s zákazníkov objednávka zaslaná e-mailom
-InvoiceSentByEMail=%s faktúre Zákazníka zaslaná e-mailom
-SupplierOrderSentByEMail=%s Dodávateľ objednávka zaslaná e-mailom
-SupplierInvoiceSentByEMail=%s dodávateľskej faktúry zasielané e-mailom
-ShippingSentByEMail=Zásielka %s odosláná E-mailom
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Zásielka %s overená
-InterventionSentByEMail=Zákrok %s odoslaný E-mailom
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Ponuka zmazaná
 OrderDeleted=Objednávka zmazaná
 InvoiceDeleted=Faktúra zmazaná
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
 PROJECT_CREATEInDolibarr=Projekt vytvoril %s
 PROJECT_MODIFYInDolibarr=Project %s modified
 PROJECT_DELETEInDolibarr=Project %s deleted
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Dátum začatia
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>logina=%s</b> pre obmedzenie výstupu akciam ktoré vlastn�
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Zobraziť narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť naroodeniny kontaktov
 Busy=Zaneprázdnený
@@ -110,7 +118,7 @@ DefaultWorkingHours=Pracovná doba ( Pr.: 9-18 )
 # External Sites ical
 ExportCal=Export kalendár
 ExtSites=Importovať externé kalendára
-ExtSitesEnableThisTool=Zobrazit externé kalendáre ( definované v globálnom nastavení ) do agendy. Nemá vplyv na externé kalendáre definované užívateľom.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Počet kalendárov
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL pre prístup. Súbor iCal
@@ -121,7 +129,6 @@ AddEvent=Vytvoriť udalosť
 MyAvailability=Moja dostupnosť
 ActionType=Typ udalosti
 DateActionBegin=Začiatok udalosti
-CloneAction=Duplikovať udalosť
 ConfirmCloneEvent=Určite chcete duplikovať udalosť <b>%s</b>?
 RepeatEvent=Opakovať udalosť
 EveryWeek=Každý týždeň

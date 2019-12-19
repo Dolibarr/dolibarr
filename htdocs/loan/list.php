@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ $langs->loadLangs(array("loan","compta","banks","bills"));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'loan', '', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -43,21 +43,21 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="l.rowid";
-if (! $sortorder) $sortorder="DESC";
+if (!$sortfield) $sortfield = "l.rowid";
+if (!$sortorder) $sortorder = "DESC";
 
-$search_ref=GETPOST('search_ref', 'int');
-$search_label=GETPOST('search_label', 'alpha');
-$search_amount=GETPOST('search_amount', 'alpha');
-$filtre=GETPOST("filtre");
+$search_ref = GETPOST('search_ref', 'int');
+$search_label = GETPOST('search_label', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$filtre = GETPOST("filtre");
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_label="";
-	$search_amount="";
+	$search_ref = "";
+	$search_label = "";
+	$search_amount = "";
 }
 
 
@@ -70,19 +70,19 @@ $loan_static = new Loan($db);
 llxHeader();
 
 $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.paid,";
-$sql.= " SUM(pl.amount_capital) as alreadypayed";
-$sql.= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
-$sql.= " ON l.rowid = pl.fk_loan";
-$sql.= " WHERE l.entity = ".$conf->entity;
-if ($search_amount)	$sql.= natural_search("l.capital", $search_amount, 1);
-if ($search_ref) 	$sql.= " AND l.rowid = ".$db->escape($search_ref);
-if ($search_label)	$sql.= natural_search("l.label", $search_label);
+$sql .= " SUM(pl.amount_capital) as alreadypayed";
+$sql .= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
+$sql .= " ON l.rowid = pl.fk_loan";
+$sql .= " WHERE l.entity = ".$conf->entity;
+if ($search_amount)	$sql .= natural_search("l.capital", $search_amount, 1);
+if ($search_ref) 	$sql .= " AND l.rowid = ".$db->escape($search_ref);
+if ($search_label)	$sql .= natural_search("l.label", $search_label);
 if ($filtre) {
-	$filtre=str_replace(":", "=", $filtre);
+	$filtre = str_replace(":", "=", $filtre);
 	$sql .= " AND ".$filtre;
 }
-$sql.= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -116,14 +116,12 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->loan->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewLoan').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -133,7 +131,7 @@ if ($resql)
 	print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
