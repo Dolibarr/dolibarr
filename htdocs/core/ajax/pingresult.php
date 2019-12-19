@@ -36,8 +36,8 @@ $hash_algo=GETPOST('hash_algo', 'alpha');
 
 
 // Security check
-if (! empty($user->societe_id))
-	$socid = $user->societe_id;
+if (! empty($user->socid))
+	$socid = $user->socid;
 
 $now = dol_now();
 
@@ -54,6 +54,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 if ($action == 'firstpingok')
 {
 	// Note: pings are by installation, done on entity 1.
+	// Once this constant are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id);
 
@@ -63,7 +64,7 @@ if ($action == 'firstpingok')
 elseif ($action == 'firstpingko')
 {
 	// Note: pings are by installation, done on entity 1.
-	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt');
+	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt');	// erase last value
 	print 'First ping KO saved for entity '.$conf->entity;
 }
 else {

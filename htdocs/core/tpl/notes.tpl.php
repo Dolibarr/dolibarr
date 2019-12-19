@@ -18,7 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object)) {
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -86,7 +86,7 @@ if ($module != 'product') {
 	print '</div>'."\n";
 	print '</div>'."\n";
 }
-if (empty($user->societe_id)) {
+if (empty($user->socid)) {
 	print '<div class="tagtr table-border-row">'."\n";
 	print '<div class="tagtd tagtdnote tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);

@@ -90,13 +90,13 @@ class box_actions extends ModeleBoxes
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
 			$sql.= " AND a.entity = ".$conf->entity;
 			$sql.= " AND a.percent >= 0 AND a.percent < 100";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-			if($user->societe_id)   $sql.= " AND s.rowid = ".$user->societe_id;
+			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
+			if($user->socid)   $sql.= " AND s.rowid = ".$user->socid;
 			if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $this->db->plimit($max, 0);

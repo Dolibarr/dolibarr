@@ -64,7 +64,6 @@ div.mainmenu.cashdesk .tmenuimage {
 }
 
 <?php } else { ?>
-
 div.mainmenu.cashdesk::before {
     content: "\f788";
 }
@@ -126,4 +125,20 @@ div.mainmenu.tools::before {
 
 div.mainmenu.website::before {
     content: "\f542";
+}
+
+div.mainmenu.generic1::before {
+    content: "\f249";
+}
+
+div.mainmenu.generic2::before {
+    content: "\f249";
+}
+
+div.mainmenu.generic3::before {
+    content: "\f249";
+}
+
+div.mainmenu.generic4::before {
+    content: "\f249";
 }

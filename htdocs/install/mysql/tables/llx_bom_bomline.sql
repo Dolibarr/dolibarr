@@ -22,7 +22,9 @@ CREATE TABLE llx_bom_bomline(
 	description text, 
 	import_key varchar(14), 
 	qty double(24,8) NOT NULL, 
-	efficiency double(8,4) NOT NULL DEFAULT 1,
-	position integer NOT NULL
+    qty_frozen smallint DEFAULT 0,
+    disable_stock_change smallint DEFAULT 0, 
+	efficiency double(24,8) NOT NULL DEFAULT 1,
+	position integer NOT NULL DEFAULT 0
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

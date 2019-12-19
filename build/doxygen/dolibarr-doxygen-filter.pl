@@ -8,7 +8,7 @@
 # Usage: dolibarr-doxygen-filter.pl pathtofilefromdolibarrroot
 
 $file=$ARGV[0];
-if (! $file) 
+if (! $file)
 {
 	print "Usage: dolibarr-doxygen-filter.pl pathtofilefromdolibarrroot\n";
 	exit;
@@ -75,7 +75,7 @@ while (<FILE>)
 						{
 							$insidedquote=0;
 						}
-					}				
+					}
 				}
 			}
 			$ignore="";

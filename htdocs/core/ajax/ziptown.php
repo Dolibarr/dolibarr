@@ -131,7 +131,6 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 }
 else
 {
-
 }
 
 $db->close();

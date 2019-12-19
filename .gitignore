@@ -1,5 +1,7 @@
 htdocs/conf/conf.php
 htdocs/conf/conf.php.old
+htdocs/conf/conf.php.sav
+htdocs/conf/conf.php.back
 documents/
 custom2/
 test/report/
@@ -8,21 +10,33 @@ default.properties
 .settings/
 .buildpath
 .gitmodules
-dolibarr_install.log
-upgrade.log
-doxygen_warnings.log
 /.project
+/.pydevproject
 /.vscode
 .DS_Store
 .idea
 *.iml
 Thumbs.db
+/dolibarr_genesis.mp4
+# Log files
+dolibarr_install.log
+upgrade.log
+doxygen_warnings.log
 # Vagrant generated files
 .vagrant
 # Composer installed repositories
 /htdocs/includes/**/.git
 # Composer autoloader and unwanted files
+composer.phar
 htdocs/includes/autoload.php
 htdocs/includes/bin/
 htdocs/includes/composer/
-/.pydevproject
+htdocs/includes/doctrine/
+htdocs/includes/jakub-onderka/
+htdocs/includes/phpdocumentor/
+htdocs/includes/phpspec/
+htdocs/includes/phpunit/
+htdocs/includes/sebastian/
+htdocs/includes/squizlabs/
+htdocs/includes/symfony/
+htdocs/includes/webmozart/

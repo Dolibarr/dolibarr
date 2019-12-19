@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/core/boxes/box_activite.php
+ *  \file       htdocs/core/boxes/box_project.php
  *  \ingroup    projet
  *  \brief      Module to show Projet activity of the current Year
  */
@@ -85,12 +85,11 @@ class box_project extends ModeleBoxes
 
         // list the summary of the orders
         if ($user->rights->projet->lire) {
-
             include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
             $projectstatic = new Project($this->db);
 
             $socid=0;
-            //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+            //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 
             // Get list of project id allowed to user (in a string list separated by coma)
             $projectsListId='';
@@ -124,7 +123,7 @@ class box_project extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
                         'text' => $objp->title,
                     );
 

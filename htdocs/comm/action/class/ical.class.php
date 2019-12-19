@@ -379,7 +379,7 @@ class ICal
             return $temp;
         }
         else
-       {
+        {
             return false;
         }
     }

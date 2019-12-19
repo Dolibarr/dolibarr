@@ -29,7 +29,7 @@ $langs->loadLangs(array("companies","other"));
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+if ($user->socid > 0) $socid=$user->socid;
 
 
 
@@ -37,11 +37,11 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
  * View
  */
 
-$socstatic=new Societe($db);
+$socstatic = new Societe($db);
 
 llxHeader("", $langs->trans("Tools"), "");
 
-$text=$langs->trans("Tools");
+$text = $langs->trans("Tools");
 
 print load_fiche_titre($text, '', 'wrench');
 

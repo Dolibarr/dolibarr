@@ -48,7 +48,7 @@ $object=new Adherent($db);
 
 $extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -259,6 +259,7 @@ print '<br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForAllMembersCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="foruserid" value="all">';
 print '<input type="hidden" name="mode" value="card">';
 print '<input type="hidden" name="action" value="builddoc">';
@@ -278,6 +279,7 @@ print '<br><br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForOneMemberCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="mode" value="cardlogin">';
 print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_CARD_TYPE").' ';
@@ -297,6 +299,7 @@ print '<br><br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForLabels", $conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' ';

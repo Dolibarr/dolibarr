@@ -34,10 +34,10 @@ $mode=GETPOST('mode')?GETPOST('mode'):'';
 
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 
@@ -294,7 +294,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 if ($mode)
 {
     // Print array / Affiche le tableau
-    print '<table class="liste" width="100%">';
+    print '<table class="liste centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td class="center">'.$label2.'</td>';

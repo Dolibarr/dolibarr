@@ -16,16 +16,16 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$object=$GLOBALS['object'];
+$object = $GLOBALS['object'];
 
-$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
@@ -80,13 +80,12 @@ dol_fiche_head('');
 
 <br>
 
-<?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
-
+<?php if (!$conf->global->PRODUIT_MULTIPRICES) { ?>
 <table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $object->price; ?>">
-<?php echo $object->price_base_type; ?>
+	<?php echo $object->price_base_type; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
@@ -94,7 +93,7 @@ dol_fiche_head('');
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $object->tva_tx; ?>
+	<?php echo $object->tva_tx; ?>
 </td></tr>
 
 </table>

@@ -254,7 +254,6 @@ class InterfaceStripe
 
 		// If payment mode is linked to Stripee, we update/delete Stripe too
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
-
 			// For creation of credit card, we do not create in Stripe automatically
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {

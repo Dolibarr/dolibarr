@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        htdocs/modulebuilder/template/class/hook.class.php
+ * \file        htdocs/zapier/class/hook.class.php
  * \ingroup     zapier
  * \brief       This file is a CRUD class file for Hook (Create/Read/Update/Delete)
  */
@@ -633,39 +633,22 @@ class Hook extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        if (empty($this->labelstatus)) {
-            global $langs;
-            //$langs->load("zapier@zapier");
-            $this->labelstatus[1] = $langs->trans('Enabled');
-            $this->labelstatus[0] = $langs->trans('Disabled');
-        }
+    	global $langs;
 
-        if ($mode == 0) {
-            return $this->labelstatus[$status];
-        } elseif ($mode == 1) {
-            return $this->labelstatus[$status];
-        } elseif ($mode == 2) {
-            if ($status == 1) {
-                return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            } elseif ($status == 0) {
-                return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            }
-        } elseif ($mode == 3) {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        } elseif ($mode == 4) {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-        } elseif ($mode == 5) {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        } elseif ($mode == 6) {
-            if ($status == 1) {
-                return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            } elseif ($status == 0) {
-                return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-            }
-        }
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
+    	{
+    		global $langs;
+    		//$langs->load("mymodule");
+    		$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
+    		$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+    		$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
+    		$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+    	}
+
+    	$statusType = 'status5';
+    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+
+    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     /**

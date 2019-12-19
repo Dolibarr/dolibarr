@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 
@@ -11,7 +11,8 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 div.divButAction {
     margin-bottom: 1.4em;
 }
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
     margin-bottom: 1.4em !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
@@ -31,8 +32,8 @@ span.butAction, span.butActionDelete {
     text-transform: uppercase;
     font-weight: bold;
 
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em !important;
-    padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
+    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em !important;
+    padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
     font-family: <?php print $fontlist ?>;
     display: inline-block;
     text-align: center;
@@ -54,14 +55,15 @@ span.butAction, span.butActionDelete {
     font-weight: normal;
 
     margin: 0em 0.3em 0 0.3em !important;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
+    padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
     font-family: <?php print $fontlist ?>;
     display: inline-block;
     /* text-align: center; New button are on right of screen */
     cursor: pointer;
 }
 
-.tableforfieldcreate a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
+.tableforfieldcreate a.butActionNew>span.fa-plus-circle, .tableforfieldcreate a.butActionNew>span.fa-plus-circle:hover,
+.tableforfieldedit a.butActionNew>span.fa-plus-circle, .tableforfieldedit a.butActionNew>span.fa-plus-circle:hover,
 span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
 span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
@@ -124,8 +126,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
     white-space: nowrap !important;
     cursor: not-allowed !important;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em;
-    padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
+    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+    padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
     text-align: center;
@@ -143,8 +145,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
     white-space: nowrap !important;
     cursor: not-allowed !important;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+    padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
     /* text-align: center;  New button are on right of screen */
@@ -167,10 +169,9 @@ TITLE BUTTON
 
 .btnTitle, a.btnTitle {
     display: inline-block;
-    padding: 6px 12px;
-    font-size: 14px
+    padding: 4px 12px 4px 12px;
     font-weight: 400;
-    line-height: 1.4;
+    /* line-height: 1; */
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
@@ -192,6 +193,7 @@ TITLE BUTTON
     font-size: 12px;
     font-weight: 300;
     background-color: #fbfbfb;
+	border: 1px solid #fff;
 }
 
 .btnTitle > .btnTitle-icon{
@@ -203,12 +205,13 @@ TITLE BUTTON
 }
 
 .btnTitle:hover, a.btnTitle:hover {
+	border: 1px solid #bbb;
     border-radius: 3px;
     position: relative;
     margin: 0 0 0 10px;
     text-align: center;
-    color: #ffffff;
-    background-color: rgb(<?php print $colortextlink; ?>);
+    /* color: #ffffff;
+    background-color: rgb(<?php print $colortextlink; ?>); */
     font-size: 12px;
     text-decoration: none;
     box-shadow: none;
@@ -222,7 +225,7 @@ TITLE BUTTON
 }
 
 .btnTitle:hover .btnTitle-label{
-    color: #ffffff;
+    /* color: #ffffff; */
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
@@ -243,9 +246,37 @@ div.pagination li:first-child a.btnTitle{
 	color: #aaa;
 }
 
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+{
+	.btnTitle, a.btnTitle {
+	    display: inline-block;
+	    padding: 4px 4px 4px 4px;
+		min-width: unset;
+	}
+}
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
+<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }
-<?php }
+<?php } ?>
+
+
+/*
+ * BTN LINK
+ */
+
+.btn-link{
+	margin-right: 5px;
+	border: 1px solid #ddd;
+	color: #333;
+	padding: 5px 10px;
+	border-radius:1em;
+	text-decoration: none !important;
+}
+
+.btn-link:hover{
+	background-color: #ddd;
+	border: 1px solid #ddd;
+}

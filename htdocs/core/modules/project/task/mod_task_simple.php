@@ -117,13 +117,13 @@ class mod_task_simple extends ModeleNumRefTask
     }
 
 
-   /**
-	*  Return next value
-	*
-	*  @param   Societe	$objsoc		Object third party
-	*  @param   Task	$object		Object Task
-	*  @return	string				Value if OK, 0 if KO
-	*/
+    /**
+     *  Return next value
+     *
+     *  @param   Societe	$objsoc		Object third party
+     *  @param   Task	$object		Object Task
+     *  @return	string				Value if OK, 0 if KO
+     */
     public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;

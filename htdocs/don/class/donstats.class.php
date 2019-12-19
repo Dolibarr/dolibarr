@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/don/class/dontats.class.php
+ *  \file       htdocs/don/class/donstats.class.php
  *  \ingroup    donations
  *  \brief      File of class to manage donations statistics
  */
@@ -39,11 +39,22 @@ class DonationStats extends Stats
 	 */
 	public $table_element;
 
-	public  $socid;
+	public $socid;
     public $userid;
 
+    /**
+     * @var string FROM
+     */
     public $from;
+
+    /**
+     * @var string field
+     */
 	public $field;
+
+	/**
+	 * @var string WHERE
+	 */
     public $where;
 
 

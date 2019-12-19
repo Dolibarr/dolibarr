@@ -401,11 +401,11 @@ EOF;
  */
 function SendCKEditorResults($callback, $sFileUrl, $customMsg = '')
 {
-  echo '<script type="text/javascript">';
+    echo '<script type="text/javascript">';
 
-  $rpl = array( '\\' => '\\\\', '"' => '\\"' );
+    $rpl = array( '\\' => '\\\\', '"' => '\\"' );
 
-  echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'. strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
+    echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'. strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
 
-  echo '</script>';
+    echo '</script>';
 }

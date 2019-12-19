@@ -173,7 +173,7 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
      * @depends	testBonPrelevementOther
      * The depends says test is run only if previous is ok
      */
-/*    public function testBonPrelevementDelete($id)
+    /*    public function testBonPrelevementDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -189,5 +189,5 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-*/
+    */
 }

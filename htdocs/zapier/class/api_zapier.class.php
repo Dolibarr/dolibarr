@@ -23,7 +23,7 @@ dol_include_once('/zapier/class/hook.class.php');
 
 
 /**
- * \file    htdocs/modulebuilder/template/class/api_zapier.class.php
+ * \file    htdocs/zapier/class/api_zapier.class.php
  * \ingroup zapier
  * \brief   File for API management of hook.
  */
@@ -149,7 +149,7 @@ class ZapierApi extends DolibarrApi
 
         $obj_ret = array();
 
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         // Set to 1 if there is a field socid in table of object
         $restrictonsocid = 0;
@@ -263,15 +263,15 @@ class ZapierApi extends DolibarrApi
         );
     }
 
-    /**
-     * Update hook
-     *
-     * @param int   $id             Id of hook to update
-     * @param array $request_data   Datas
-     * @return int
-     *
-     * @url	PUT /hooks/{id}
-     */
+    // /**
+    //  * Update hook
+    //  *
+    //  * @param int   $id             Id of hook to update
+    //  * @param array $request_data   Datas
+    //  * @return int
+    //  *
+    //  * @url	PUT /hooks/{id}
+    //  */
     /*public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->zapier->write) {

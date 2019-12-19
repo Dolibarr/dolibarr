@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $action = GETPOST('action', 'alpha');
@@ -128,7 +128,7 @@ if ($id)
 
 		dol_fiche_head($head, $hselected, $langs->trans("StandingOrder"));
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td width="20%">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
 		print $bon->getNomUrl(1).'</td></tr>';
@@ -180,9 +180,9 @@ if ($id)
 		$rej = new RejetPrelevement($db, $user);
 
 		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("WithdrawalRefused").'</td></tr>';

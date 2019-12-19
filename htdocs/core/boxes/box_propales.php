@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,15 +84,15 @@ class box_propales extends ModeleBoxes
 
     	if ($user->rights->propale->lire)
     	{
-    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo,";
+    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.email,";
     		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE p.fk_soc = s.rowid";
     		$sql.= " AND p.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
             else $sql.= " ORDER BY p.tms DESC, p.ref DESC ";
     		$sql.= $this->db->plimit($max, 0);
@@ -121,6 +121,7 @@ class box_propales extends ModeleBoxes
                     $societestatic->name = $objp->name;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
+                    $societestatic->email = $objp->email;
 
     				$late = '';
     				if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
@@ -128,7 +129,7 @@ class box_propales extends ModeleBoxes
     				}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $propalstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
