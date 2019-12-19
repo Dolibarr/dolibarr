@@ -52,6 +52,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$id = 'mainmenu';
 	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+
 	if (empty($noout)) print_start_menu_array();
 
     $usemenuhider = 1;
@@ -448,8 +450,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id; // For backward compatibility
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
 		    // url = url from host, shorturl = relative path into dolibarr sources
@@ -678,6 +678,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	    print '</div>'."\n";
 	    print "<!-- End Bookmarks -->\n";
 	}
+
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
 	/**
 	 * We update newmenu with entries found into database
@@ -1982,8 +1984,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			}
 
 			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
-			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id; // For backward compatibility
+
 			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
 			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];
