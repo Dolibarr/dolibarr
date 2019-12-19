@@ -11,7 +11,8 @@ NEW: Can set the Address/Contact by default on third parties.
 NEW: Add a dictionary for list of Social networks
 NEW: A nicer dashboard for open elements on Home page.
 NEW: Add task widget and add task progress bar
-NEW: Support of deployement of metapackages
+NEW: Support of deployment of metapackages
+NEW: Menu "Export accounting document" to generate a zip with all documents requested by a bookkeeper is now stable.
 NEW: Add button "Save and Stay" in website editor of pages.
 NEW: Accountancy - Can add specific widget in this accountancy area.
 NEW: Accountancy - Add export model LDCompta V9 & higher

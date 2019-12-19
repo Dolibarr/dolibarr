@@ -1316,7 +1316,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 }
 
 				// Files
-				if ((!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || !empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
+				if (empty($conf->global->ACCOUNTANCY_HIDE_EXPORT_FILES_MENU))
 				{
 					$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
 				}
