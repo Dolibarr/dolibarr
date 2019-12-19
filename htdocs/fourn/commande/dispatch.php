@@ -240,7 +240,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$qty = "qty_".$reg[1].'_'.$reg[2];
 			$ent = "entrepot_".$reg[1].'_'.$reg[2];
 			if (empty(GETPOST($ent))) $ent = $fk_default_warehouse;
-      $pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
+			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
 
 			if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -490,7 +490,6 @@ if ($id > 0 || !empty($ref)) {
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY)
 	{
-
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$formproduct->loadWarehouses();
