@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module to manage resources into Dolibarr ERP/CRM
  */
@@ -55,7 +55,7 @@ class modResource extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
-		$this->module_position = '20';
+		$this->module_position = '16';
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -265,7 +265,7 @@ class modResource extends DolibarrModules
 		$this->import_tables_array[$r]=array('r'=>MAIN_DB_PREFIX.'resource','extra'=>MAIN_DB_PREFIX.'resource_extrafields');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('r.ref'=>"ResourceFormLabel_ref*",'r.fk_code_type_resource'=>'ResourceTypeCode','r.description'=>'ResourceFormLabel_description','r.note_private'=>"NotePrivate",'r.note_public'=>"NotePublic",'r.asset_number'=>'AssetNumber','r.datec'=>'DateCreation');
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity = ".$conf->entity;
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -313,7 +313,7 @@ class modResource extends DolibarrModules
 	 *
 	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-	private function loadTables()
+	protected function loadTables()
 	{
 		return $this->_load_tables('/resource/sql/');
 	}

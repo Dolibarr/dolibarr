@@ -18,14 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_proforma.modules.php
  *	\ingroup    commande
- *	\brief      Fichier de la classe permettant de generer les commandes au modele Proforma
+ *	\brief      File of Class to generate PDF orders with template Proforma
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/doc/pdf_einstein.modules.php';
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les commandes au modele Proforma
+ *	Class to generate PDF orders with template Proforma
  */
 class pdf_proforma extends pdf_einstein
 {
@@ -46,7 +46,7 @@ class pdf_proforma extends pdf_einstein
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -57,6 +57,8 @@ class pdf_proforma extends pdf_einstein
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -65,12 +67,13 @@ class pdf_proforma extends pdf_einstein
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	void
+	 *  @return	int                         Return topshift value
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="InvoiceProForma")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
 	{
+		// phpcs:enable
 		global $conf,$langs,$hookmanager;
 
-		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
+		return parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
 	}
 }

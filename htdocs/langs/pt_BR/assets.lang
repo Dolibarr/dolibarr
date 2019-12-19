@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - assets
+AccountancyCodeAsset =Código contábil (ativo)
+AccountancyCodeDepreciationAsset =Código contábil (conta de ativo de depreciação)
+AccountancyCodeDepreciationExpense =Código contábil (conta de despesas de depreciação)
+AssetsTypeSetup=Configuração de tipo de ativo
+AssetTypeModified=Tipo de ativo modificado
+DeleteType=Excluir
+DeleteAnAssetType=Excluir um tipo de recurso
+ConfirmDeleteAssetType=Tem certeza de que deseja excluir este tipo de recurso?
+ModuleAssetsDesc =Descrição dos Ativos
+AssetsSetup =Configuração de Ativos
+Settings =Configurações
+AssetsSetupPage =Página de configuração de ativos
+ExtraFieldsAssetsType =Atributos complementares (Tipo de ativo)
+AssetsTypeId=Id Tipo de ativo
+AssetsTypeLabel=Rótulo do tipo de ativo
+MenuNewAsset =Novo Ativo
+MenuTypeAssets =Digitar ativos
+MenuNewTypeAssets =Novo tipo

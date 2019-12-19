@@ -17,21 +17,21 @@ ProductMargins=Produkt-Gewinnspannen
 CustomerMargins=Kunden-Gewinnspannen
 SalesRepresentativeMargins=Vertreter-Gewinnspannen
 UserMargins=Spannen nach Benutzer
-ProductService=Produkt oder Service
+ProductService=Produkt oder Dienstleistung
 AllProducts=Alle Produkte und Leistungen
 ChooseProduct/Service=Produkt oder Service wählen
 ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
 ForceBuyingPriceIfNullDetails=Falls die Option aktiviert ist, wird die Spanne der Zeile mit Null angezeigt (EK-Preis/Herstellkosten = Verkaufspreis). Ist die Option deaktiviert, wird die Spanne gleich der Voreinstellung sein.
 MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
-UseDiscountAsProduct=Als Produkt
-UseDiscountAsService=Als Service
-UseDiscountOnTotal=Auf Zwischensumme
+UseDiscountAsProduct=als Produkt
+UseDiscountAsService=als Dienstleistung
+UseDiscountOnTotal=auf Zwischensumme
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiert, ob ein globaler Rabatt als Produkt, Service oder nur als Zwischensumme für die Gewinnberechnung benutzt wird.
 MARGIN_TYPE=Kaufpreis / Kosten standardmäßig vorgeschlagen für Standardmargenkalkulation empfohlen\n
-MargeType1=Margin on Best vendor price
+MargeType1=Marge beim günstigsten Einkaufspreis
 MargeType2=gewichtete Durchschnittspreis (WAP)
 MargeType3=Marge auf Herstellkosten
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Marge auf den günstigsten EK-Preis : Verkaufspreis - günstigster EK-Preis aus den Artikeldaten<br>* Marge auf den gleitenden Durchschnittspreis (GLD) : Verkaufspreis - gleitender Durchschnittspreis (GLD) oder günstigster EK-Preis falls der GLD nicht definiert ist<br>* Marge auf Herstellkosten = Verkaufspreis - Herstellkosten aus den Artikeldaten oder GLD, wenn die Herstellkosten nicht definiert sind oder günstigster EK-Preis, wenn der GLD nicht definiert ist
 CostPrice=Selbstkostenpreis
 UnitCharges=Einheit Kosten
 Charges=Kosten
@@ -41,4 +41,4 @@ rateMustBeNumeric=Die Rate muss ein numerischer Wert sein
 markRateShouldBeLesserThan100=Die markierte Rate sollte kleiner sein als 100
 ShowMarginInfos=Zeige Rand-Informationen
 CheckMargins=Detail zu Gewinnspanne
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=Der Margenbericht pro Benutzer verwendet den Link zwischen Partnern und Verkäufern um die Margen pro Verkäufer zu berechnen. Weil manche Partner keinen Verkäufer zugewiesen haben, werden machen Beträge in diesem Bericht fehlen (Wenn kein Verkäufer definiert ist) und andere kommen auf verschiedenen Zeilen (Für alle Verkäufer).

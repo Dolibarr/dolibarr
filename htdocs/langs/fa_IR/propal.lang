@@ -1,28 +1,28 @@
 # Dolibarr language file - Source file is en_US - propal
-Proposals=طرح های تجاری
+Proposals=پیشنهادهای تجاری
 Proposal=پیشنهاد تجاری
 ProposalShort=پیشنهاد
-ProposalsDraft=طرح تجاری پیش نویس
-ProposalsOpened=Open commercial proposals
+ProposalsDraft=پیشنهاد تجاری پیش‌نویس
+ProposalsOpened=بازکردن پیشنهادات تجاری
 CommercialProposal=پیشنهاد تجاری
 PdfCommercialProposalTitle=پیشنهاد تجاری
-ProposalCard=کارت های پیشنهادی
-NewProp=طرح تجاری جدید
-NewPropal=پیشنهاد جدید
-Prospect=چشم انداز
-DeleteProp=حذف طرح تجاری
-ValidateProp=اعتبار طرح های تجاری
-AddProp=Create proposal
+ProposalCard=کارت پیشنهاد
+NewProp=ساخت پیشنهاد تجاری
+NewPropal=ساخت پیشنهاد
+Prospect=احتمالی
+DeleteProp=حذف پیشنهاد تجاری
+ValidateProp=تائید پیشنهاد تجاری
+AddProp=ساخت پیشنهاد
 ConfirmDeleteProp=Are you sure you want to delete this commercial proposal?
 ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
 LastPropals=Latest %s proposals
-LastModifiedProposals=Latest %s modified proposals
+LastModifiedProposals=آخرین %s پیشنهاد تغییریافته
 AllPropals=تمام طرح های پیشنهادی
 SearchAProposal=جستجوی یک پیشنهاد
 NoProposal=No proposal
 ProposalsStatistics=آمار طرح های تجاری
 NumberOfProposalsByMonth=شماره ماه
-AmountOfProposalsByMonthHT=مقدار در ماه (خالص از مالیات)
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
 NbOfProposals=تعداد طرح های تجاری
 ShowPropal=نمایش پیشنهاد
 PropalsDraft=نوعی بازی چکرز
@@ -33,7 +33,7 @@ PropalStatusSigned=امضا (نیازهای حسابداری و مدیریت)
 PropalStatusNotSigned=امضا نشده (بسته شده)
 PropalStatusBilled=ثبت شده در صورتحساب یا لیست
 PropalStatusDraftShort=پیش نویس
-PropalStatusValidatedShort=اعتبار
+PropalStatusValidatedShort=Validated (open)
 PropalStatusClosedShort=بسته
 PropalStatusSignedShort=امضاء شده
 PropalStatusNotSignedShort=امضا نشده
@@ -53,10 +53,9 @@ ErrorPropalNotFound=Propal٪ s را یافت نشد
 AddToDraftProposals=اضافه کردن به پیش نویس پیشنهاد
 NoDraftProposals=بدون پیش نویس پیشنهادات
 CopyPropalFrom=ایجاد طرح های تجاری با کپی کردن طرح های موجود
-CreateEmptyPropal=ایجاد خالی طرح تجاری vierge و یا از لیست محصولات / خدمات
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
 DefaultProposalDurationValidity=پیش فرض طول مدت اعتبار پیشنهاد های تجاری (در روز)
-UseCustomerContactAsPropalRecipientIfExist=اگر به جای آدرس شخص ثالث به عنوان آدرس دریافت کننده پیشنهاد تعریف شده استفاده از آدرس ارتباط با مشتری
-ClonePropal=پیشنهاد تجاری کلون
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=پیشنهاد تجاری و خطوط
@@ -78,8 +77,9 @@ TypeContact_propal_external_CUSTOMER=تماس با مشتری را در پی ب�
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=یک مدل پیشنهاد کامل (logo. ..)
+DocModelCyanDescription=یک مدل پیشنهاد کامل (logo. ..)
 DefaultModelPropalCreate=ایجاد مدل پیش فرض
 DefaultModelPropalToBill=قالب پیش فرض هنگام بستن یک طرح کسب و کار (به صورتحساب می شود)
 DefaultModelPropalClosed=قالب پیش فرض هنگام بستن یک طرح کسب و کار (unbilled)
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
-ProposalsStatisticsSuppliers=Supplier proposals statistics
+ProposalsStatisticsSuppliers=Vendor proposals statistics

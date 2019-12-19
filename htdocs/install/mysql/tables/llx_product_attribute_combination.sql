@@ -12,17 +12,17 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 CREATE TABLE llx_product_attribute_combination
 (
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_parent INT NOT NULL,
-  fk_product_child INT NOT NULL,
-  variation_price FLOAT NOT NULL,
-  variation_price_percentage INT NULL,
-  variation_weight FLOAT NOT NULL,
-  entity INT DEFAULT 1 NOT NULL
+  rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_parent INTEGER NOT NULL,
+  fk_product_child INTEGER NOT NULL,
+  variation_price DOUBLE(24,8) NOT NULL,
+  variation_price_percentage INTEGER NULL,
+  variation_weight REAL NOT NULL,
+  entity INTEGER DEFAULT 1 NOT NULL
 )ENGINE=innodb;

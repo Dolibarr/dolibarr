@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -20,7 +20,9 @@
 create table llx_prelevement_facture_demande
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  entity              integer DEFAULT 1 NOT NULL,
   fk_facture          integer NOT NULL,
+  sourcetype          varchar(32),
   amount              double(24,8) NOT NULL,
   date_demande        datetime NOT NULL,
   traite              smallint DEFAULT 0,
@@ -31,6 +33,7 @@ create table llx_prelevement_facture_demande
   code_banque         varchar(128),
   code_guichet        varchar(6),
   number              varchar(255),
-  cle_rib             varchar(5)
-
+  cle_rib             varchar(5),
+  ext_payment_id      varchar(128),
+  ext_payment_site    varchar(128)
 )ENGINE=innodb;

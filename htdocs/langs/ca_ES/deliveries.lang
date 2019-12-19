@@ -28,3 +28,4 @@ ErrorStockIsNotEnough=No hi ha estoc suficient
 Shippable=Es pot enviar
 NonShippable=No es pot enviar
 ShowReceiving=Mostra el rebut d'entrega
+NonExistentOrder=Comanda inexistent

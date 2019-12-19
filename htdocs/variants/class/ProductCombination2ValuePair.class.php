@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -111,12 +111,12 @@ class ProductCombination2ValuePair
 	public function fetchByFkCombination($fk_combination)
 	{
 		$sql = "SELECT
-  c.rowid,
-  c2v.fk_prod_attr_val,
-  c2v.fk_prod_attr,
-  c2v.fk_prod_combination
-FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
-WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
+        c.rowid,
+        c2v.fk_prod_attr_val,
+        c2v.fk_prod_attr,
+        c2v.fk_prod_combination
+        FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
+        WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
 
 		$sql .= $this->db->order('c.rang', 'asc');
 
@@ -128,12 +128,12 @@ WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
 
 		$return = array();
 
-		while ($result = $this->db->fetch_object($query)) {
+		while ($obj = $this->db->fetch_object($query)) {
 			$tmp = new ProductCombination2ValuePair($this->db);
-			$tmp->fk_prod_attr_val = $result->fk_prod_attr_val;
-			$tmp->fk_prod_attr = $result->fk_prod_attr;
-			$tmp->fk_prod_combination = $result->fk_prod_combination;
-			$tmp->id = $result->rowid;
+			$tmp->fk_prod_attr_val = $obj->fk_prod_attr_val;
+			$tmp->fk_prod_attr = $obj->fk_prod_attr;
+			$tmp->fk_prod_combination = $obj->fk_prod_combination;
+			$tmp->id = $obj->rowid;
 
 			$return[] = $tmp;
 		}

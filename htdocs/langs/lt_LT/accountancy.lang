@@ -30,19 +30,25 @@ OverviewOfAmountOfLinesNotBound=Eilučių apžvalga, kurios nėra priskirtos aps
 OverviewOfAmountOfLinesBound=Eilučių apžvalga, kurios jau įtrauktos į apskaitos sąskaitą
 OtherInfo=Kita informacija
 DeleteCptCategory=Pašalinti apskaitos sąskaitą iš grupės
-ConfirmDeleteCptCategory=Ar tikrai norite pašalinti šią apskaitos sąskaitą iš apskaitos grupės?
+ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Įvesties būklė
 AlreadyInGeneralLedger=Jau įvesta didžiojoje knygoje
 NotYetInGeneralLedger=Dar nėra įvesta didžiojoje knygoje
 GroupIsEmptyCheckSetup=Grupė yra tuščia, patikrinkite individualizuotos apskaitos grupės nustatymus
 DetailByAccount=Rodyti išsamią informaciją pagal apskaitos sąskaitą
-AccountWithNonZeroValues=Apskaitos sąskaitos su nulinėmis vertėmis
+AccountWithNonZeroValues=Accounts with non-zero values
 ListOfAccounts=Apskaitos sąskaitų sąrašas
+CountriesInEEC=Countries in EEC
+CountriesNotInEEC=Countries not in EEC
+CountriesInEECExceptMe=Countries in EEC except %s
+CountriesExceptMe=All countries except %s
+AccountantFiles=Export accounting documents
 
 MainAccountForCustomersNotDefined=Pagrindinė apskaitos sąskaita klientams, kurie nenustatyti sąrankos metu
 MainAccountForSuppliersNotDefined=Pagrindinė apskaitos sąskaita tiekėjams, kurie nenustatyti sąrankos metu
 MainAccountForUsersNotDefined=Pagrindinė apskaitos sąskaita naudotojams, kurie nenustatyti sąrankos metu
 MainAccountForVatPaymentNotDefined=Pagrindinė apskaitos sąskaita PVM mokėjimui, kuri nėra nustatyta sąrankos metu
+MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
 
 AccountancyArea=Apskaitos sritis
 AccountancyAreaDescIntro=Apskaitos modulio naudojimas atliekamas keliais etapais:
@@ -58,8 +64,9 @@ AccountancyAreaDescVat=ŽINGSNIS %s: nustatykite kiekvieno PVM tarifo apskaitos 
 AccountancyAreaDescDefault=ŽINGSNIS %s: nustatykite numatytąsias apskaitos sąskaitas. Tam naudokite meniu punktą %s.
 AccountancyAreaDescExpenseReport=ŽINGSNIS %s: nustatykite numatytąsias apskaitos sąskaitas kiekvienai išlaidų ataskaitos rūšiai. Tam naudokite meniu punktą %s.
 AccountancyAreaDescSal=ŽINGSNIS %s: nustatykite numatytąsias apskaitos sąskaitas atlyginimų mokėjimams. Tam naudokite meniu punktą %s.
-AccountancyAreaDescContrib=ŽINGSNIS %s: nustatykite numatytąsis apskaitos sąskaitas specialioms išlaidoms (įvairiems mokesčiams). Tam naudokite meniu punktą %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=ŽINGSNIS %s: nustatykite numatytąsias aukojimo / paramos apskaitos sąskaitas. Tam naudokite meniu punktą %s.
+AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
 AccountancyAreaDescMisc=ŽINGSNIS %s: nustatykite privalomą numatytąją sąskaitą ir numatytąsias apskaitos sąskaitas įvairiems sandoriams. Tam naudokite meniu punktą %s.
 AccountancyAreaDescLoan=ŽINGSNIS %s: nustatykite numatytąsias paskolų apskaitos sąskaitas. Tam naudokite meniu punktą %s.
 AccountancyAreaDescBank=ŽINGSNIS %s: nustatykite kiekvieno banko ir finansinių sąskaitų apskaitos sąskaitas ir žurnalo kodus. Tam naudokite meniu punktą %s.
@@ -77,7 +84,8 @@ ChangeAndLoad=Pakeiskite ir įkelkite
 Addanaccount=Pridėti apskaitos sąskaitą
 AccountAccounting=Apskaitos sąskaita
 AccountAccountingShort=Sąskaita
-SubledgerAccount=Pagalbinė knygos sąskaita
+SubledgerAccount=Subledger account
+SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Rodyti apskaitos sąskaitą
 ShowAccountingJournal=Rodyti apskaitos žurnalą
 AccountAccountingSuggest=Siūloma apskaitos sąskaita
@@ -88,19 +96,22 @@ MenuTaxAccounts=Mokesčių sąskaitos
 MenuExpenseReportAccounts=Išlaidų ataskaitos sąskaitos
 MenuLoanAccounts=Paskolų sąskaitos
 MenuProductsAccounts=Prekės sąskaitos
+MenuClosureAccounts=Closure accounts
 ProductsBinding=Prekių sąskaitos
-Ventilation=Sąskaitų apvadas
+TransferInAccounting=Transfer in accounting
+RegistrationInAccounting=Registration in accounting
+Binding=Sąskaitų apvadas
 CustomersVentilation=Kliento sąskaita apvadas
 SuppliersVentilation=Tiekėjo sąskaitos apvadas
 ExpenseReportsVentilation=Išlaidų ataskaita apvadas
 CreateMvts=Sukurkite naują sandorį
 UpdateMvts=Sandorio keitimas
 ValidTransaction=Patikrinti sandorį
-WriteBookKeeping=Įveskite sandorius Didžiojoje knygoje
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=Didžioji knyga
 AccountBalance=Sąskaitos balansas
 ObjectsRef=Šaltinio objekto nuoroda
-CAHTF=Total purchase supplier before tax
+CAHTF=Total purchase vendor before tax
 TotalExpenseReport=Bendra išlaidų ataskaita
 InvoiceLines=Sąskaitų faktūrų eilutės, kurias reikia priskirti
 InvoiceLinesDone=Priskirtos sąskaitų faktūrų eilutės
@@ -122,17 +133,18 @@ NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
 ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
-ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zero at the end of an accounting account. Needed by some countries (like switzerland). If keep to off (default), you can set the 2 following parameters to ask application to add virtual zero.
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
+ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
 BANK_DISABLE_DIRECT_INPUT=Išjungti tiesioginį sandorio įrašymą banko sąskaitoje
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Įgalinti eksporto projektą žurnale
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 
 ACCOUNTING_SELL_JOURNAL=Pardavimų žurnalas
 ACCOUNTING_PURCHASE_JOURNAL=Pirkimų žurnalas
@@ -141,12 +153,21 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Socialinis žurnalas
 ACCOUNTING_HAS_NEW_JOURNAL=Turi naują žurnalą
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
+ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
+ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (used if not defined in the service sheet)
 
@@ -156,7 +177,10 @@ Docref=Nuoroda
 LabelAccount=Sąskaitos etiketė
 LabelOperation=Label operation
 Sens=Sens
+LetteringCode=Lettering code
+Lettering=Lettering
 Codejournal=Žurnalas
+JournalLabel=Journal label
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Personalized groups
@@ -170,7 +194,7 @@ NotMatch=Not Set
 DeleteMvt=Delete Ledger lines
 DelYear=Year to delete
 DelJournal=Žurnalas, kurį norite ištrinti
-ConfirmDeleteMvt=Tai pašalins visas didžiosios knygos eilutes metuose ir (arba) konkrečiame žurnale. Bent vienas kriterijus reikalingas.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Išlaidų ataskaitų žurnalas
@@ -182,38 +206,40 @@ ProductAccountNotDefined=Account for product not defined
 FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Banko sąskaita nenustatyta
 CustomerInvoicePayment=Kliento sąskaitos-faktūros apmokėjimas
-ThirdPartyAccount=Third party account
+ThirdPartyAccount=Third-party account
 NewAccountingMvt=Naujas sandoris
 NumMvts=Numero of transaction
 ListeMvts=List of movements
 ErrorDebitCredit=Debetas ir Kreditas negali turėti reikšmę tuo pačiu metu,
 AddCompteFromBK=Add accounting accounts to the group
-ReportThirdParty=List third party account
-DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
+ReportThirdParty=List third-party account
+DescThirdPartyReport=Consult here the list of third-party customers and vendors and their accounting accounts
 ListAccounts=Apskaitos sąskaitų sąrašas
-UnknownAccountForThirdparty=Unknown third party account. We will use %s
-UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
-UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+UnknownAccountForThirdparty=Unknown third-party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Iš viso pardavimų marža
 
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
 ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
 Vide=-
 DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
-DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 ValidateHistory=Bind Automatically
@@ -221,6 +247,7 @@ AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+Balancing=Balancing
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Kai kurie sandoriai negalėjo būti įvesti žurnale. Jei nėra kito klaidos pranešimo, tai tikriausiai todėl, kad jie jau buvo įvesti žurnale anksčiau.
@@ -232,13 +259,13 @@ NotYetAccounted=Not yet accounted in ledger
 
 ## Admin
 ApplyMassCategories=Apply mass categories
-AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Apskaitos žurnalai
 AccountingJournal=Apskaitos žurnalas
 NewAccountingJournal=Naujas apskaitos žurnalas
 ShowAccoutingJournal=Rodyti apskaitos žurnalą
-Nature=Prigimtis
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Įvairiarūšės operacijos
 AccountingJournalType2=Pardavimai
 AccountingJournalType3=Pirkimai
@@ -248,31 +275,42 @@ AccountingJournalType8=Inventory
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=Šis žurnalas jau naudojamas
 AccountingAccountForSalesTaxAreDefinedInto=Pastaba: Apskaitos sąskaita pardavimų mokestis yra apibrėžta meniu <b> %s </ b> - <b> %s </ b>
+NumberOfAccountancyEntries=Number of entries
+NumberOfAccountancyMovements=Number of movements
 
 ## Export
 ExportDraftJournal=Eksportuoti žurnalo projektą
 Modelcsv=Eksporto modelis
 Selectmodelcsv=Pasirinkite eksporto modelį
 Modelcsv_normal=Klasikinis eksportas
-Modelcsv_CEGID=Eksportas į CEGID Expert Comptabilité
-Modelcsv_COALA=Export towards Sage Coala
-Modelcsv_bob50=Export towards Sage BOB 50
-Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
-Modelcsv_quadratus=Export towards Quadratus QuadraCompta
-Modelcsv_ebp=Export towards EBP
-Modelcsv_cogilog=Export towards Cogilog
-Modelcsv_agiris=Export towards Agiris
-Modelcsv_configurable=Export Configurable
+Modelcsv_CEGID=Export for CEGID Expert Comptabilité
+Modelcsv_COALA=Export for Sage Coala
+Modelcsv_bob50=Export for Sage BOB 50
+Modelcsv_ciel=Export for Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export for Quadratus QuadraCompta
+Modelcsv_ebp=Export for EBP
+Modelcsv_cogilog=Export for Cogilog
+Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
+Modelcsv_configurable=Export CSV Configurable
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
 InitAccountancyDesc=Šis puslapis gali būti naudojamas inicijuoti apskaitos sąskaitą prekėms ir paslaugoms, kurių pardavimo ir pirkimo apibrėžtoje apskaitos sąskaitoje nėra.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Options
 OptionModeProductSell=Rėžimas pardavimas
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Rėžimas pirkimai
 OptionModeProductSellDesc=Show all products with accounting account for sales.
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Show all products with accounting account for purchases.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Reset all bindings for selected year
@@ -280,6 +318,10 @@ PredefinedGroups=Predefined groups
 WithoutValidAccount=Without valid dedicated account
 WithValidAccount=With valid dedicated account
 ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
+AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Range of accounting account
@@ -292,15 +334,15 @@ ErrorNoAccountingCategoryForThisCountry=No accounting account group available fo
 ErrorInvoiceContainsLinesNotYetBounded=Jūs bandote įvesti kai kurias sąskaitos faktūros eilutes <strong> %s </ strong>, tačiau kai kurios kitos eilutės dar nėra susietos apskaitos sąskaitoje. Visų šios sąskaitos faktūros eilučių įvesties atsisakoma.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=The export format setuped is not supported into this page
-BookeppingLineAlreayExists=Lines already existing into bookeeping
+BookeppingLineAlreayExists=Lines already existing into bookkeeping
 NoJournalDefined=Joks žurnalas nenustatytas
 Binded=Lines bound
 ToBind=Lines to bind
-UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 
 ## Import
 ImportAccountingEntries=Accounting entries
-
-WarningReportNotReliable=Įspėjimas: ši ataskaita nėra pagrįsta Didžiosios knygos, todėl joje nėra modifikuoto sandorio. Jei jūsų įvestis žurnale atnaujinta, buhalterijos vaizdas yra tikslesnis.
+DateExport=Date export
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Išlaidų ataskaitos žurnalas
 InventoryJournal=Inventoriaus žurnalas

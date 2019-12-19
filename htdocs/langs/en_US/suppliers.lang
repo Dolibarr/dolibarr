@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - suppliers
+# Dolibarr language file - Source file is en_US - vendors
 Suppliers=Vendors
 SuppliersInvoice=Vendor invoice
 ShowSupplierInvoice=Show Vendor Invoice
@@ -15,7 +15,7 @@ SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Add buying price
 ChangeSupplierPrice=Change buying price
 SupplierPrices=Vendor prices
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=This reference supplier is already associated with a reference: %s
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=This vendor reference is already associated with a product: %s
 NoRecordedSuppliers=No vendor recorded
 SupplierPayment=Vendor payment
 SuppliersArea=Vendor area
@@ -35,13 +35,13 @@ ListOfSupplierProductForSupplier=List of products and prices for vendor <b>%s</b
 SentToSuppliers=Sent to vendors
 ListOfSupplierOrders=List of purchase orders
 MenuOrdersSupplierToBill=Purchase orders to invoice
-NbDaysToDelivery=Delivery delay in days
-DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+NbDaysToDelivery=Delivery delay (days)
+DescNbDaysToDelivery=The longest delivery delay of the products from this order
 SupplierReputation=Vendor reputation
 DoNotOrderThisProductToThisSupplier=Do not order
-NotTheGoodQualitySupplier=Wrong quality
+NotTheGoodQualitySupplier=Low quality
 ReputationForThisProduct=Reputation
 BuyerName=Buyer name
 AllProductServicePrices=All product / service prices
-AllProductReferencesOfSupplier=All product / service references of supplier
+AllProductReferencesOfSupplier=All product / service references of vendor
 BuyingPriceNumShort=Vendor prices

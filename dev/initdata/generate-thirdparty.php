@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -52,7 +52,7 @@ $listoflastname = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Doroth
 define(GEN_NUMBER_SOCIETE, 10);
 
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -64,22 +64,34 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-  $num = $db->num_rows($resql); $i = 0;
-  while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
+    $num = $db->num_rows($resql); $i = 0;
+    while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		$productsid[$i] = $row[0];
+		$i++;
+	}
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) { $row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++; }
+    while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		$societesid[$i] = $row[0];
+		$i++;
+	}
 } else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) { $row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++; }
+    while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		$commandesid[$i] = $row[0];
+		$i++;
+	}
 } else { print "err"; }
 
 
@@ -91,22 +103,22 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     $soc = new Societe($db);
     $soc->name = "Company num ".time()."$s";
     $soc->town = $listoftown[mt_rand(0, count($listoftown)-1)];
-    $soc->client = mt_rand(1,2);		// Une societe sur 2 est prospect, l'autre client
-    $soc->fournisseur = mt_rand(0,1);	// Une societe sur 2 est fournisseur
+    $soc->client = mt_rand(1, 2);		// Une societe sur 2 est prospect, l'autre client
+    $soc->fournisseur = mt_rand(0, 1);	// Une societe sur 2 est fournisseur
     $soc->code_client='CU'.time()."$s";
     $soc->code_fournisseur='SU'.time()."$s";
     $soc->tva_assuj=1;
     $soc->country_id=1;
     $soc->country_code='FR';
 	// Un client sur 3 a une remise de 5%
-    $user_remise=mt_rand(1,3); if ($user_remise==3) $soc->remise_percent=5;
+    $user_remise=mt_rand(1, 3); if ($user_remise==3) $soc->remise_percent=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
     $soc->note_private = 'Company created by the script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
     {
-        $rand = mt_rand(1,4);
+        $rand = mt_rand(1, 4);
         print "> Generates $rand contact(s)\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
@@ -116,7 +128,6 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
             if ( $contact->create($user) )
             {
-
             }
         }
 
@@ -127,5 +138,3 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     	print "Error: ".$soc->error."\n";
     }
 }
-
-

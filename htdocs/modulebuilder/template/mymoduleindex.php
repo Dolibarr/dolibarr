@@ -15,11 +15,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *	\file       htdocs/mymodule/template/mymoduleindex.php
+ *	\file       htdocs/modulebuilder/template/mymoduleindex.php
  *	\ingroup    mymodule
  *	\brief      Home page of mymodule top menu
  */
@@ -49,11 +49,11 @@ $action=GETPOST('action', 'alpha');
 
 // Securite acces client
 if (! $user->rights->mymodule->read) accessforbidden();
-$socid=GETPOST('socid','int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+$socid=GETPOST('socid', 'int');
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=5;
@@ -74,9 +74,9 @@ $now=dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("",$langs->trans("MyModuleArea"));
+llxHeader("", $langs->trans("MyModuleArea"));
 
-print load_fiche_titre($langs->trans("MyModuleArea"),'','mymodule.png@mymodule');
+print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -104,9 +104,9 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th></tr>';
 
 		$var = true;
 		if ($num > 0)
@@ -134,14 +134,14 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
                 $companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($total>0)
 			{
 
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -188,14 +188,14 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -210,10 +210,10 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
                 $companystatic->canvas=$objp->canvas;
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
-				print '<td align="right" nowrap>';
+				print '<td class="right nowrap">';
 				print $companystatic->getLibCustProspStatut();
 				print "</td>";
-				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
 

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,39 +99,57 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         }
 
         // Members
-        elseif ($action == 'MEMBER_VALIDATE' || $action == 'MEMBER_MODIFY')
+        elseif ($action == 'MEMBER_VALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$return=0;
+            $return=0;
+            if ($object->add_to_abo() < 0)
+            {
+                $this->errors=$object->errors;
+                if (! empty($object->error)) $this->errors[]=$object->error;
+                $return=-1;
+            }
+            else
+            {
+                $return=1;
+            }
+
+            return $return;
+        }
+        elseif ($action == 'MEMBER_MODIFY')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+            $return=0;
             // Add user into some linked tools (mailman, spip, etc...)
-			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))	// TODO Do del/add also if type change
-			{
-				if (is_object($object->oldcopy) && ($object->oldcopy->email != $object->email))    // If email has changed we delete mailman subscription for old email
-				{
-					if ($object->oldcopy->del_to_abo() < 0)
-					{
-						if (! empty($object->oldcopy->error)) $this->error=$object->oldcopy->error;
-						$this->errors=$object->oldcopy->errors;
-						$return=-1;
-					}
-					else
-					{
-						$return=1;
-					}
-				}
-    			// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
-    			if ($object->add_to_abo() < 0)
-    			{
-    				 if (! empty($object->error)) $this->error=$object->error;
-    				 $this->errors=$object->errors;
-    				 $return=-1;
-    			}
-				else
-				{
-					$return=1;
-				}
-			}
+            if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
+            {
+                if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)))    // If email has changed or if list has changed we delete mailman subscription for old email
+                {
+                    if ($object->oldcopy->del_to_abo() < 0)
+                    {
+                        $this->errors=$object->oldcopy->errors;
+                        if (! empty($object->oldcopy->error)) $this->errors[]=$object->oldcopy->error;
+                        $return=-1;
+                    }
+                    else
+                    {
+                        $return=1;
+                    }
+                }
+                // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+                if ($object->add_to_abo() < 0)
+                {
+                    $this->errors=$object->errors;
+                    if (! empty($object->error)) $this->errors[]=$object->error;
+                    $return=-1;
+                }
+                else
+                {
+                    $return=1;
+                }
+            }
 
 			return $return;
         }
@@ -143,8 +161,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
             // Remove from external tools (mailman, spip, etc...)
         	if ($object->del_to_abo() < 0)
 			{
-				if (! empty($object->error)) $this->error=$object->error;
 				$this->errors=$object->errors;
+				if (! empty($object->error)) $this->errors[]=$object->error;
 				$return=-1;
 			}
 			else

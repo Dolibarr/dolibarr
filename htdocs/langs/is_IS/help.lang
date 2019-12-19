@@ -5,9 +5,9 @@ RemoteControlSupport=Online rauntíma / fjarlægur styðja
 OtherSupport=Annar stuðningur
 ToSeeListOfAvailableRessources=Til að hafa samband / sjá lista yfir auðlindir:
 HelpCenter=Hjálparmiðstöð AdWords
-DolibarrHelpCenter=Dolibarr aðstoð og stuðning sent
-ToGoBackToDolibarr=Annars skaltu smella <a href="%s">hér til að nota Dolibarr</a>
-TypeOfSupport=Heimild stuðning
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Samfélag (frítt)
 TypeSupportCommercial=Auglýsing
 TypeOfHelp=Tegund
@@ -15,12 +15,9 @@ NeedHelpCenter=Need help or support?
 Efficiency=Nýtni
 TypeHelpOnly=Hjálp aðeins
 TypeHelpDev=Hjálp + Development
-TypeHelpDevForm=Hjálp + Þróun + Myndun
-ToGetHelpGoOnSparkAngels1=Sum fyrirtæki geta afla a fljótur (stundum strax) og skilvirkari netinu styðja með því að taka stjórn á tölvunni þinni. Slík framreiðslu má finna <b>á %s </b> vefur staður:
-ToGetHelpGoOnSparkAngels3=Þú getur líka farið til lista yfir alla tiltæka þjálfarar fyrir Dolibarr, því að smella á hnappinn
-ToGetHelpGoOnSparkAngels2=Stundum er ekkert fyrirtæki sem til eru um þessar mundir þú gera leitina, hugsa svo til að breyta síu til að leita að "allar upplýsingar". Þú verður að vera fær um að senda fleiri beiðnir.
-BackToHelpCenter=Annars skaltu smella hér til að fara <a href="%s">til baka til að hjálpa miðstöð heimasíðu</a> .
-LinkToGoldMember=Þú getur hringt í einn þjálfara preselected eftir Dolibarr fyrir þitt tungumál ( %s ) með því að smella Búnaður hans (staða og hámarksverð eru sjálfkrafa uppfærðar):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Styður tungumálum
-SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

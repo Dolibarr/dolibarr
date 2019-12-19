@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,20 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits_alerte_stock extends ModeleBoxes
 {
-	var $boxcode="productsalertstock";
-	var $boximg="object_product";
-	var $boxlabel="BoxProductsAlertStock";
-	var $depends = array("produit");
+    public $boxcode="productsalertstock";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductsAlertStock";
+    public $depends = array("produit");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -57,16 +57,16 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db,$param='')
+	public function __construct($db, $param = '')
 	{
 	    global $conf,$user;
 
 	    $this->db = $db;
 
-	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
-	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
-	    $this->hidden=($showmode != 1);
+	    $showmode=isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden = ($showmode != 1);
 	}
 
 	/**
@@ -75,21 +75,21 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf, $hookmanager;
+		global $user, $langs, $conf, $hookmanager;
 
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$productstatic=new Product($db);
+		$productstatic=new Product($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
-			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
+			$sql.= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
@@ -100,23 +100,25 @@ class box_produits_alerte_stock extends ModeleBoxes
     		if (is_object($hookmanager))
     		{
 			    $parameters=array('boxproductalertstocklist'=>1);
-    		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+    		    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
     		    $sql.=$hookmanager->resPrint;
     		}
 		    $sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
-			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") < p.seuil_stock_alerte";
-			$sql.= $db->order('p.seuil_stock_alerte', 'DESC');
-			$sql.= $db->plimit($max, 0);
+			$sql.= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
+			$sql.= $this->db->order('p.seuil_stock_alerte', 'DESC');
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
 				$langs->load("stocks");
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$line = 0;
                 while ($line < $num) {
-					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datem=$this->db->jdate($objp->tms);
+                    $price = '';
+                    $price_base_type = '';
 
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
@@ -127,10 +129,10 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";
 
-						$resultd = $db->query($sqld);
+						$resultd = $this->db->query($sqld);
 						if ($resultd)
 						{
-							$objtp = $db->fetch_object($resultd);
+							$objtp = $this->db->fetch_object($resultd);
 							if (isset($objtp->label) && $objtp->label != '')
 								$objp->label = $objtp->label;
 						}
@@ -177,29 +179,30 @@ class box_produits_alerte_stock extends ModeleBoxes
 	               	}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => $price,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap"',
+                        'td' => 'class="right"',
                         'text' => $price_base_type,
                     );
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="center"',
-                    'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
-					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)));
+					    'td' => 'class="center"',
+                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
+                    );
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+					    'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
 					    'asis' => 1
 					);
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,0).'<span>',
+                        'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
                         'asis' => 1
                     );
 
@@ -207,24 +210,24 @@ class box_produits_alerte_stock extends ModeleBoxes
                 }
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoTooLowStockProducts"),
                     );
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else
 			{
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -238,9 +241,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

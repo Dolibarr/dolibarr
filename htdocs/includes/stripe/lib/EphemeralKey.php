@@ -17,21 +17,13 @@ namespace Stripe;
  */
 class EphemeralKey extends ApiResource
 {
+
+    const OBJECT_NAME = "ephemeral_key";
+
     use ApiOperations\Create {
         create as protected _create;
     }
     use ApiOperations\Delete;
-
-    /**
-     * This is a special case because the ephemeral key endpoint has an
-     *    underscore in it. The parent `className` function strips underscores.
-     *
-     * @return string The name of the class.
-     */
-    public static function className()
-    {
-        return 'ephemeral_key';
-    }
 
     /**
      * @param array|null $params

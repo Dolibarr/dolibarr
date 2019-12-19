@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=nb ของเอกสารในไดเรกทอรี
+ECMNbOfDocs=No. of documents in directory
 ECMSection=สารบบ
 ECMSectionManual=สมุดคู่มือ
 ECMSectionAuto=ไดเรกทอรีอัตโนมัติ
@@ -34,6 +34,8 @@ ECMDocsByProjects=เอกสารที่เชื่อมโยงกั�
 ECMDocsByUsers=เอกสารที่เชื่อมโยงกับผู้ใช้งาน
 ECMDocsByInterventions=เอกสารที่เชื่อมโยงกับการแทรกแซง
 ECMDocsByExpenseReports=Documents linked to expense reports
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
 ECMNoDirectoryYet=ไดเรกทอรีไม่มีที่สร้างขึ้น
 ShowECMSection=ไดเรกทอรีแสดง
 DeleteSection=ลบไดเรกทอรี
@@ -46,6 +48,5 @@ ECMSelectASection=Select a directory in the tree...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
-FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
-FileSharedViaALink=File shared via a link
 NoDirectoriesFound=No directories found
+FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)

@@ -16,6 +16,7 @@ MarginDetails=Margin details
 ProductMargins=Product margins
 CustomerMargins=Customer margins
 SalesRepresentativeMargins=Sales representative margins
+ContactOfInvoice=Contact of invoice
 UserMargins=User margins
 ProductService=Product or Service
 AllProducts=All products and services
@@ -31,12 +32,12 @@ MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Margin on Best vendor price
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
 CostPrice=Cost price
 UnitCharges=Unit charges
 Charges=Charges
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos

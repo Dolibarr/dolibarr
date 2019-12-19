@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
- *  Class of triggers for security events
+ *  Class of triggers for security audit events
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
@@ -47,7 +47,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarrr security audit event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
@@ -70,7 +70,7 @@ class InterfaceLogevents extends DolibarrTriggers
         $date = dol_now();
 
         // Actions
-        /*if ($action == 'USER_LOGIN')
+        if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -97,15 +97,15 @@ class InterfaceLogevents extends DolibarrTriggers
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogoff,".$object->login.")";
             $desc="(UserLogoff,".$object->login.")";
-        }*/
+        }
         if ($action == 'USER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("NewUserCreated",$object->login);
-            $desc=$langs->transnoentities("NewUserCreated",$object->login);
+            $text=$langs->transnoentities("NewUserCreated", $object->login);
+            $desc=$langs->transnoentities("NewUserCreated", $object->login);
 		}
         elseif ($action == 'USER_MODIFY')
         {
@@ -113,8 +113,8 @@ class InterfaceLogevents extends DolibarrTriggers
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("EventUserModified",$object->login);
-            $desc=$langs->transnoentities("EventUserModified",$object->login);
+            $text=$langs->transnoentities("EventUserModified", $object->login);
+            $desc=$langs->transnoentities("EventUserModified", $object->login);
         }
         elseif ($action == 'USER_NEW_PASSWORD')
         {
@@ -122,8 +122,8 @@ class InterfaceLogevents extends DolibarrTriggers
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("NewUserPassword",$object->login);
-            $desc=$langs->transnoentities("NewUserPassword",$object->login);
+            $text=$langs->transnoentities("NewUserPassword", $object->login);
+            $desc=$langs->transnoentities("NewUserPassword", $object->login);
         }
         elseif ($action == 'USER_ENABLEDISABLE')
         {
@@ -132,13 +132,13 @@ class InterfaceLogevents extends DolibarrTriggers
             // Initialisation donnees (date,duree,texte,desc)
 			if ($object->statut == 0)
 			{
-				$text=$langs->transnoentities("UserEnabled",$object->login);
-				$desc=$langs->transnoentities("UserEnabled",$object->login);
+				$text=$langs->transnoentities("UserEnabled", $object->login);
+				$desc=$langs->transnoentities("UserEnabled", $object->login);
 			}
 			if ($object->statut == 1)
 			{
-				$text=$langs->transnoentities("UserDisabled",$object->login);
-				$desc=$langs->transnoentities("UserDisabled",$object->login);
+				$text=$langs->transnoentities("UserDisabled", $object->login);
+				$desc=$langs->transnoentities("UserDisabled", $object->login);
 			}
         }
         elseif ($action == 'USER_DELETE')
@@ -146,8 +146,8 @@ class InterfaceLogevents extends DolibarrTriggers
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("UserDeleted",$object->login);
-            $desc=$langs->transnoentities("UserDeleted",$object->login);
+            $text=$langs->transnoentities("UserDeleted", $object->login);
+            $desc=$langs->transnoentities("UserDeleted", $object->login);
         }
 
 		// Groupes
@@ -156,34 +156,34 @@ class InterfaceLogevents extends DolibarrTriggers
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("NewGroupCreated",$object->name);
-            $desc=$langs->transnoentities("NewGroupCreated",$object->name);
+            $text=$langs->transnoentities("NewGroupCreated", $object->name);
+            $desc=$langs->transnoentities("NewGroupCreated", $object->name);
 		}
         elseif ($action == 'GROUP_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("GroupModified",$object->name);
-            $desc=$langs->transnoentities("GroupModified",$object->name);
+            $text=$langs->transnoentities("GroupModified", $object->name);
+            $desc=$langs->transnoentities("GroupModified", $object->name);
 		}
         elseif ($action == 'GROUP_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("GroupDeleted",$object->name);
-            $desc=$langs->transnoentities("GroupDeleted",$object->name);
+            $text=$langs->transnoentities("GroupDeleted", $object->name);
+            $desc=$langs->transnoentities("GroupDeleted", $object->name);
 		}
 
 		// If not found
-/*
+        /*
         else
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
-*/
+        */
 
 		// Add more information into desc from the context property
 		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];

@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+FingerprintsDesc=Esta es la herramienta para navegar o extraer los registros inalterables. Los registros inalterables se generan y archivan localmente en una tabla dedicada, en tiempo real cuando registra un evento de negocios. Puede usar esta herramienta para exportar este archivo y guardarlo en un soporte externo (algunos países, como Francia, le piden que lo haga todos los años). Tenga en cuenta que no hay ninguna función para limpiar este registro y que todos los cambios que se intentaron realizar directamente en este registro (por ejemplo, un pirata informático) se informarán con una huella digital no válida. Si realmente necesita purgar esta tabla porque usó su aplicación para una demostración / propósito de prueba y desea limpiar sus datos para comenzar su producción, puede solicitar a su revendedor o integrador que reinicie su base de datos (se eliminarán todos sus datos).
+AddedByAuthority=Almacenado en sitio remoto
+NotAddedByAuthorityYet=Aún no almacenado en sitio remoto
+logPAYMENT_ADD_TO_BANK=Pago agregado al banco
+logDONATION_PAYMENT_DELETE=Eliminación lógica del pago de donaciones.
+logBILL_UNPAYED=Factura del cliente sin pagar
+logBILL_VALIDATE=Factura del cliente validada
+logBILL_SENTBYMAIL=Factura del cliente enviar por correo
+logDON_DELETE=Eliminación lógica de la donación.
+logMEMBER_SUBSCRIPTION_DELETE=Suscripción de miembro eliminación lógica
+ListOfTrackedEvents=Lista de eventos de seguimiento
+Fingerprint=Huella Digital
+DataOfArchivedEvent=Datos completos de eventos archivados.
+ImpossibleToReloadObject=Objeto original (tipo %s, id %s) no vinculado (consulte la columna 'Datos completos' para obtener datos guardados inalterables)
+BlockedLogActivatedBecauseRequiredByYourCountryLegislation=El módulo de Registros inalterables se activó debido a la legislación de su país. La desactivación de este módulo puede invalidar cualquier transacción futura con respecto a la ley y el uso de software legal, ya que no pueden ser validados por una auditoría fiscal.
+BlockedLogDisableNotAllowedForCountry=Lista de países donde el uso de este módulo es obligatorio (solo para evitar deshabilitar el módulo por error, si su país está en esta lista, no es posible deshabilitar el módulo sin editar primero esta lista. Tenga en cuenta también que habilitar / deshabilitar este módulo mantener un rastreo en el registro inalterable).
+TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Por favor restringe la lista con filtros más restrictivos.

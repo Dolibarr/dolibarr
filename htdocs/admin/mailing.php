@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin", "mails"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 
@@ -44,21 +44,21 @@ if ($action == 'setvalue')
 {
 	$db->begin();
 
-	$mailfrom = GETPOST('MAILING_EMAIL_FROM','alpha');
-	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO','alpha');
-	$checkread = GETPOST('value','alpha');
-	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY','alpha');
+	$mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
+	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
+	$checkread = GETPOST('value', 'alpha');
+	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
     $mailingdelay = GETPOST('MAILING_DELAY', 'int');
 
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_DELAY",$mailingdelay,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
 	// Create temporary encryption key if nedded
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
     if (! $error)
@@ -78,10 +78,10 @@ if ($action == 'setvalue')
  *	View
  */
 
-llxHeader('',$langs->trans("MailingSetup"));
+llxHeader('', $langs->trans("MailingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("MailingSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
 
 if (! empty($conf->use_javascript_ajax))
 {
@@ -102,10 +102,10 @@ if (! empty($conf->use_javascript_ajax))
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';

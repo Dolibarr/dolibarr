@@ -1,23 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=بايبال حدة الإعداد
-PaypalDesc=صفحات تقدم هذه الوحدة للسماح للدفع على <a href="http://www.paypal.com" target="_blank">بال</a> من قبل العملاء. ويمكن استخدام هذا لدفع مجانا أو مقابل دفع Dolibarr على كائن معين (الفاتورة ، والنظام ،...)
-PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
-PaypalDoPayment=مع دفع بايبال
+PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalDoPayment=Pay with PayPal
 PAYPAL_API_SANDBOX=وضع الاختبار / رمل
 PAYPAL_API_USER=API المستخدم
 PAYPAL_API_PASSWORD=API كلمة السر
 PAYPAL_API_SIGNATURE=API توقيع
 PAYPAL_SSLVERSION=Curl SSL Version
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=تقدم الدفع &quot;لا يتجزأ&quot; (بطاقة الائتمان + باي بال) أو &quot;باي بال&quot; فقط
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
 PaypalModeIntegral=التكامل
 PaypalModeOnlyPaypal=باي بال فقط
-ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
 ThisIsTransactionId=هذا هو معرف من الصفقة: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
-YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-ONLINE_PAYMENT_SENDEMAIL=البريد الإلكتروني لتحذير بعد دفع (النجاح أو لا)
+ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
 ReturnURLAfterPayment=العودة URL بعد دفع
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
@@ -28,7 +27,10 @@ ShortErrorMessage=رسالة خطأ قصيرة
 ErrorCode=رمز الخطأ
 ErrorSeverityCode=خطأ خطورة مدونة
 OnlinePaymentSystem=Online payment system
-PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import Paypal payments
+PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card holder
+PayPalBalance=Paypal credit

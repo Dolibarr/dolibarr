@@ -5,7 +5,7 @@ DeleteResource=Elimina recurs
 ConfirmDeleteResourceElement=Estàs segur de voler eliminar el recurs d'aquest element?
 NoResourceInDatabase=Sense recursos a la base de dades.
 NoResourceLinked=Sense recursos enllaçats
-
+ActionsOnResource=Esdeveniments sobre aquest recurs
 ResourcePageIndex=Llistat de recursos
 ResourceSingular=Recurs
 ResourceCard=Fitxa de recurs

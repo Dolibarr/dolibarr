@@ -1,3 +1,16 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposalNew=Neue Preisanfrage
+CommRequests=Preisanfrage
+SearchRequest=Eine Anfrage finden
+DraftRequests=Anfrageentwurf
+SupplierProposalsDraft=Entwurf Lieferantenangebot
+LastModifiedRequests=Letzten %s geänderten Preisanfragen
+RequestsOpened=Offene Preisanfragen
+SupplierProposalShort=Lieferantenangebot
+NewAskPrice=Neue Preisanfrage
+ShowSupplierProposal=Zeige Preisanfrage
+AddSupplierProposal=Erstelle eine Preisanfrage
+SupplierProposalRefFourn=Lieferant Zeichen
+SupplierProposalDate=Lieferdatum
 SupplierProposalStatusClosed=geschlossen
 SupplierProposalStatusClosedShort=geschlossen

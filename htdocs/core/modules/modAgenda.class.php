@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ class modAgenda extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -53,7 +53,7 @@ class modAgenda extends DolibarrModules
 		$this->family = "projects";
 		$this->module_position = '15';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -93,7 +93,7 @@ class modAgenda extends DolibarrModules
 		    while ($obj = $this->db->fetch_object($resql))
 		    {
 		        //if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE','TASK_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty/product/task creation because there is no validation).
-		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
+		        if (preg_match('/^TASK_/', $obj->code)) continue;      // We don't track such events by default.
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }
@@ -204,18 +204,20 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-		$this->menu[$r]=array('fk_menu'=>0,
-													'type'=>'top',
-													'titre'=>'TMenuAgenda',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php',
-													'langs'=>'agenda',
-													'position'=>15,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
-		$r++;
+		$this->menu[$r]=array(
+            'fk_menu'=>0,
+            'type'=>'top',
+            'titre'=>'TMenuAgenda',
+            'mainmenu'=>'agenda',
+            'url'=>'/comm/action/index.php',
+            'langs'=>'agenda',
+            'position'=>86,
+            'perms'=>'$user->rights->agenda->myactions->read',
+            'enabled'=>'$conf->agenda->enabled',
+            'target'=>'',
+            'user'=>2,
+        );
+        $r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=0',
 													'type'=>'left',
@@ -244,7 +246,7 @@ class modAgenda extends DolibarrModules
 		// Calendar
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 													'type'=>'left',
-													'titre'=>'Agenda',
+													'titre'=>'Calendar',
 													'mainmenu'=>'agenda',
 													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
 													'langs'=>'agenda',
@@ -396,7 +398,7 @@ class modAgenda extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
 			'ac.datep2'=>"Date",'ac.label'=>"Text",'ac.note'=>"Text",'ac.percent'=>"Numeric",
 			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:id",
+			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
 			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
 			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text',
 			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
@@ -418,6 +420,6 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR ac.fk_soc IS NULL)';
 		if (empty($user->rights->agenda->allactions->read)) $this->export_sql_end[$r] .=' AND acr.fk_element = '.(empty($user)?0:$user->id);
-		$this->export_sql_end[$r] .=' ORDER BY ac.datep';
+		$this->export_sql_order[$r] =' ORDER BY ac.datep';
 	}
 }

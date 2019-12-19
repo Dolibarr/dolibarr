@@ -2,7 +2,7 @@
 Module64000Name=Impresión Directa
 Module64000Desc=Activa Sistema de Impresión Directa
 PrintingSetup=Configuración de la Impresión Directa
-PrintingDesc=Este módulo añade un botón para enviar documentos directamente a una impresora (sin abrir documentos en la aplicación) con varios módulos.
+PrintingDesc=Este módulo añade un botón para enviar documentos directamente a una impresora sin necesidad de abrir el documento en otra aplicación
 MenuDirectPrinting=Impresión de trabajos directos
 DirectPrint=Impresión directa
 PrintingDriverDesc=Configuración variables para el driver de impresión.

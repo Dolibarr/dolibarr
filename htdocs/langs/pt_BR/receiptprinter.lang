@@ -6,7 +6,6 @@ PrinterDeleted=Impressora %s excluída
 TestSentToPrinter=Teste enviado para a impressora %s
 ReceiptPrinterDesc=Configuração das impressoras de recibo
 ReceiptPrinterTemplateDesc=Configuração do Tema
-ReceiptPrinterTypeDesc=Descrição do tipo de Impressora de Recibo
 ReceiptPrinterProfileDesc=Descrição do Perfil da Impressora de Recibo
 SetupReceiptTemplate=Configuração do Tema
 CONNECTOR_DUMMY=Impressora Virtual

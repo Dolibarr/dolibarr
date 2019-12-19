@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,55 +24,55 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN'))         define('NOLOGIN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
-session_cache_limiter(false);
+session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 $tradMonths=array(
-dol_escape_js($langs->transnoentitiesnoconv("January")),
-dol_escape_js($langs->transnoentitiesnoconv("February")),
-dol_escape_js($langs->transnoentitiesnoconv("March")),
-dol_escape_js($langs->transnoentitiesnoconv("April")),
-dol_escape_js($langs->transnoentitiesnoconv("May")),
-dol_escape_js($langs->transnoentitiesnoconv("June")),
-dol_escape_js($langs->transnoentitiesnoconv("July")),
-dol_escape_js($langs->transnoentitiesnoconv("August")),
-dol_escape_js($langs->transnoentitiesnoconv("September")),
-dol_escape_js($langs->transnoentitiesnoconv("October")),
-dol_escape_js($langs->transnoentitiesnoconv("November")),
-dol_escape_js($langs->transnoentitiesnoconv("December"))
+dol_escape_js($langs->transnoentitiesnoconv("Month01")),
+dol_escape_js($langs->transnoentitiesnoconv("Month02")),
+dol_escape_js($langs->transnoentitiesnoconv("Month03")),
+dol_escape_js($langs->transnoentitiesnoconv("Month04")),
+dol_escape_js($langs->transnoentitiesnoconv("Month05")),
+dol_escape_js($langs->transnoentitiesnoconv("Month06")),
+dol_escape_js($langs->transnoentitiesnoconv("Month07")),
+dol_escape_js($langs->transnoentitiesnoconv("Month08")),
+dol_escape_js($langs->transnoentitiesnoconv("Month09")),
+dol_escape_js($langs->transnoentitiesnoconv("Month10")),
+dol_escape_js($langs->transnoentitiesnoconv("Month11")),
+dol_escape_js($langs->transnoentitiesnoconv("Month12"))
 );
 
 $tradMonthsShort=array(
-$langs->trans("JanuaryMin"),
-$langs->trans("FebruaryMin"),
-$langs->trans("MarchMin"),
-$langs->trans("AprilMin"),
-$langs->trans("MayMin"),
-$langs->trans("JuneMin"),
-$langs->trans("JulyMin"),
-$langs->trans("AugustMin"),
-$langs->trans("SeptemberMin"),
-$langs->trans("OctoberMin"),
-$langs->trans("NovemberMin"),
-$langs->trans("DecemberMin")
+$langs->trans("MonthShort01"),
+$langs->trans("MonthShort02"),
+$langs->trans("MonthShort03"),
+$langs->trans("MonthShort04"),
+$langs->trans("MonthShort05"),
+$langs->trans("MonthShort06"),
+$langs->trans("MonthShort07"),
+$langs->trans("MonthShort08"),
+$langs->trans("MonthShort09"),
+$langs->trans("MonthShort10"),
+$langs->trans("MonthShort11"),
+$langs->trans("MonthShort12")
 );
 
 $tradDays=array(
@@ -816,7 +816,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 
 /**
- * Function to output a dialog bog for copy/paste
+ * Function to output a dialog box for copy/paste
  *
  * @param	string	text	Text to put into copy/paste area
  * @param	string	text2	Text to put under the copy/paste area
@@ -841,10 +841,11 @@ function copyToClipboard(text,text2)
  * @return	boolean			False
  * @see document_preview
  */
-function newpopup(url,title) {
+function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
 	tmp=url;
+	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
@@ -855,7 +856,8 @@ function newpopup(url,title) {
 }
 
 /**
- * Function show document preview. Use the "dialog" function.
+ * Function show document preview. It uses the "dialog" function.
+ * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	string file 		Url
  * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
@@ -1010,6 +1012,23 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
 
 
 /**
+ * Function similar to PHP price()
+ *
+ * @param  {number|string} amount    The amount to show
+ * @param  {string} mode             'MT' or 'MU'
+ * @return {string}                  The amount with digits
+ */
+function pricejs(amount, mode) {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
+	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
+	return 'Bad value for parameter mode';
+}
+
+/**
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean
@@ -1020,16 +1039,16 @@ function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-		$dec = ',';
-		$thousand = ' ';
-		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-		}
-		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
-		}
-		if ($thousand == 'Space') $thousand=' ';
-		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
+	$dec = ',';
+	$thousand = ' ';
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+	}
+	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+	}
+	if ($thousand == 'Space') $thousand=' ';
+	print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
@@ -1062,7 +1081,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
-?>
+    ?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')

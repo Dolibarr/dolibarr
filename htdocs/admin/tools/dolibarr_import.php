@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ $type=$db->type;
 
 
 $help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
-llxHeader('','',$help_url);
+llxHeader('', '', $help_url);
 
 ?>
 <script type="text/javascript">
@@ -65,10 +65,10 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print load_fiche_titre($langs->trans("Restore"),'','title_setup');
+print load_fiche_titre($langs->trans("Restore"), '', 'title_setup');
 
-print '<div class="center">';
-print $langs->trans("RestoreDesc",DOL_DATA_ROOT);
+print '<div class="center opacitymedium">';
+print $langs->trans("RestoreDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';
 
@@ -76,7 +76,7 @@ print '<br>';
 <fieldset>
 <legend style="font-size: 3em">1</legend>
 <?php
-print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
+print $langs->trans("RestoreDesc2", DOL_DATA_ROOT).'<br><br>';
 ?>
 </fieldset>
 
@@ -85,7 +85,7 @@ print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
 <fieldset>
 <legend style="font-size: 3em">2</legend>
 <?php
-print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
+print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
 ?>
 
 <?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
@@ -99,21 +99,21 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
     <?php
     if (in_array($type, array('mysql', 'mysqli')))
     {
-    ?>
+        ?>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($radio_dump=='mysql_options'?' checked':''); ?> />
         <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
-    <?php
+        <?php
     }
-    else if (in_array($type, array('pgsql')))
+    elseif (in_array($type, array('pgsql')))
     {
-    ?>
+        ?>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($radio_dump=='postgresql_options'?' checked':''); ?> />
         <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore or psql)</label>
     </div>
-    <?php
+        <?php
     }
     else
     {
@@ -131,14 +131,12 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
 <?php
 if (in_array($type, array('mysql', 'mysqli')))
 {
-?>
-	<fieldset id="mysql_options">
-    <legend><?php echo $langs->trans('RestoreMySQL') ?></legend>
-	<div class="formelementrow centpercent">
-	<?php
+    print '<fieldset id="mysql_options">';
+    print '<legend>'.$langs->trans('RestoreMySQL').'</legend>';
+	print '<div class="formelementrow centpercent">';
 	// Parameteres execution
 	$command=$db->getPathOfRestore();
-	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+	if (preg_match("/\s/", $command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
 	$param=$dolibarr_main_db_name;
 	$param.=" -h ".$dolibarr_main_db_host;
@@ -148,32 +146,30 @@ if (in_array($type, array('mysql', 'mysqli')))
 	$paramclear=$param;
 	if (! empty($dolibarr_main_db_pass))
 	{
-		$paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
+		$paramcrypted.=" -p".preg_replace('/./i', '*', $dolibarr_main_db_pass);
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
 
 	echo $langs->trans("ImportMySqlDesc");
 	print '<br>';
-	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand", $command, ($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
 	print ajax_autoselect('restorecommand');
 
-	if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
-	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
-	?>
-	</div>
-    </fieldset>
-<?php
+    if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) {
+        print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
+    }
+    //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
+    print '</div>';
+    print '</fieldset>';
 }
-else if (in_array($type, array('pgsql')))
+elseif (in_array($type, array('pgsql')))
 {
-?>
-    <fieldset id="postgresql_options">
-    <legend>Restore PostgreSQL</legend>
-    <div class="formelementrow">
-    <?php
+    print '<fieldset id="postgresql_options">';
+    print '<legend>Restore PostgreSQL</legend>';
+    print '<div class="formelementrow">';
     // Parameteres execution
     $command=$db->getPathOfRestore();
-    if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);    // Use quotes on command
+    if (preg_match("/\s/", $command)) $command=$command=escapeshellarg($command);    // Use quotes on command
 
     $param=" -d ".$dolibarr_main_db_name;
     $param.=" -h ".$dolibarr_main_db_host;
@@ -194,24 +190,20 @@ else if (in_array($type, array('pgsql')))
 
     echo $langs->trans("ImportPostgreSqlDesc");
     print '<br>';
-    print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+    print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand", $command, ($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
     print ajax_autoselect('restorecommand');
     //if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
-    ?>
-    </div>
-    </fieldset>
-<?php
+    print '</div>';
+    print '</fieldset>';
 }
-?>
 
-</div>
+print '</div>';
 
 
-</td></tr></table>
-</fieldset>
+print '</td></tr></table>';
+print '</fieldset>';
 
-<?php
 // End of page
 llxFooter();
 $db->close();

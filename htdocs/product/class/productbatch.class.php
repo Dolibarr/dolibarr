@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,15 +33,15 @@ class Productbatch extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='productbatch';
+	public $element = 'productbatch';
 
-	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
+	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
-	public $tms='';
+	public $tms = '';
 	public $fk_product_stock;
-	public $sellby='';
-	public $eatby='';
-	public $batch='';
+	public $sellby = '';
+	public $eatby = '';
+	public $batch = '';
 	public $qty;
 	public $warehouseid;
 
@@ -57,7 +57,7 @@ class Productbatch extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -70,10 +70,10 @@ class Productbatch extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 		$this->cleanParam();
@@ -83,32 +83,32 @@ class Productbatch extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_batch (";
-		$sql.= "fk_product_stock,";
-		$sql.= "sellby,";
-		$sql.= "eatby,";
-		$sql.= "batch,";
-		$sql.= "qty,";
-		$sql.= "import_key";
-		$sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->fk_product_stock)?'NULL':$this->fk_product_stock).",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
-		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
-		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
-		$sql.= " ".(! isset($this->qty)?'NULL':$this->qty).",";
-		$sql.= " ".(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'")."";
+		$sql .= "fk_product_stock,";
+		$sql .= "sellby,";
+		$sql .= "eatby,";
+		$sql .= "batch,";
+		$sql .= "qty,";
+		$sql .= "import_key";
+		$sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->fk_product_stock) ? 'NULL' : $this->fk_product_stock).",";
+		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
+		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
+		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
+		$sql .= " ".(!isset($this->qty) ? 'NULL' : $this->qty).",";
+		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'")."";
 
-		$sql.= ")";
+		$sql .= ")";
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		if (! $error)
+        $resql = $this->db->query($sql);
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$error)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
@@ -126,7 +126,7 @@ class Productbatch extends CommonObject
 		if ($error)
 		{
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -142,27 +142,27 @@ class Productbatch extends CommonObject
      *  @param	int		$id		Id object
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
 		global $langs;
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
+		$sql .= " t.rowid,";
 
-		$sql.= " t.tms,";
-		$sql.= " t.fk_product_stock,";
-		$sql.= " t.sellby as oldsellby,";
-		$sql.= " t.eatby as oldeatby,";
-		$sql.= " t.batch,";
-		$sql.= " t.qty,";
-		$sql.= " t.import_key,";
-		$sql.= " w.fk_entrepot,";
-		$sql.= " w.fk_product,";
-		$sql.= " pl.eatby,";
-		$sql.= " pl.sellby";
+		$sql .= " t.tms,";
+		$sql .= " t.fk_product_stock,";
+		$sql .= " t.sellby as oldsellby,";
+		$sql .= " t.eatby as oldeatby,";
+		$sql .= " t.batch,";
+		$sql .= " t.qty,";
+		$sql .= " t.import_key,";
+		$sql .= " w.fk_entrepot,";
+		$sql .= " w.fk_product,";
+		$sql .= " pl.eatby,";
+		$sql .= " pl.sellby";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
-        $sql.= " WHERE t.rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
+        $sql .= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -172,16 +172,16 @@ class Productbatch extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
+				$this->id = $obj->rowid;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
-				$this->sellby = $this->db->jdate($obj->sellby?$obj->sellby:$obj->oldsellby);
-				$this->eatby = $this->db->jdate($obj->eatby?$obj->eatby:$obj->oldeatby);
+				$this->sellby = $this->db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$this->eatby = $this->db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
 				$this->import_key = $obj->import_key;
-				$this->warehouseid= $obj->fk_entrepot;
-				$this->fk_product= $obj->fk_product;
+				$this->warehouseid = $obj->fk_entrepot;
+				$this->fk_product = $obj->fk_product;
 			}
 			$this->db->free($resql);
 
@@ -201,10 +201,10 @@ class Productbatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 		$this->cleanParam();
@@ -212,7 +212,6 @@ class Productbatch extends CommonObject
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
 		if ($this->qty < 0)
 		{
-
 		}
 
         // Update request
@@ -223,7 +222,7 @@ class Productbatch extends CommonObject
 		$sql.= " batch=".(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").",";
 		$sql.= " qty=".(isset($this->qty)?$this->qty:"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
-        $sql.= " WHERE rowid=".$this->id." AND tms='".$this->db->idate($this->tms)."'";
+        $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
@@ -249,38 +248,38 @@ class Productbatch extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
- 	/**
-	 *  Delete object in database
-	 *
-     *	@param  User	$user        User that deletes
+    /**
+     *  Delete object in database
+     *
+     *  @param  User	$user        User that deletes
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger=0)
-	{
+     *  @return	int					 <0 if KO, >0 if OK
+     */
+    public function delete($user, $notrigger = 0)
+    {
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action calls a trigger.
@@ -294,26 +293,26 @@ class Productbatch extends CommonObject
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
-    		$sql.= " WHERE rowid=".$this->id;
+    		$sql .= " WHERE rowid=".$this->id;
 
     		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
     		$resql = $this->db->query($sql);
-        	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -327,18 +326,15 @@ class Productbatch extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		User making the clone
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new Productbatch($this->db);
-
-		$object->context['createfromclone']='createfromclone';
 
  		$this->db->begin();
 
@@ -351,25 +347,25 @@ class Productbatch extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+			$this->errors=array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
 		if (! $error)
 		{
-
-
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return $object->id;
@@ -388,16 +384,16 @@ class Productbatch extends CommonObject
 	 *
 	 *	@return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
-		$this->id=0;
+		$this->id = 0;
 
-		$this->tms='';
-		$this->fk_product_stock='';
-		$this->sellby='';
-		$this->eatby='';
-		$this->batch='';
-		$this->import_key='';
+		$this->tms = '';
+		$this->fk_product_stock = '';
+		$this->sellby = '';
+		$this->eatby = '';
+		$this->batch = '';
+		$this->import_key = '';
 	}
 
 	/**
@@ -407,53 +403,54 @@ class Productbatch extends CommonObject
 	 */
 	private function cleanParam()
 	{
-		if (isset($this->fk_product_stock)) $this->fk_product_stock=(int) trim($this->fk_product_stock);
-		if (isset($this->batch)) $this->batch=trim($this->batch);
-		if (isset($this->qty)) $this->qty=(float) trim($this->qty);
-		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+		if (isset($this->fk_product_stock)) $this->fk_product_stock = (int) trim($this->fk_product_stock);
+		if (isset($this->batch)) $this->batch = trim($this->batch);
+		if (isset($this->qty)) $this->qty = (float) trim($this->qty);
+		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 	}
 
     /**
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
      *  @param	int			$fk_product_stock   id product_stock for objet
-     *  @param	date		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-     *  @param	date		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
      *  @param	string		$batch_number   	batch number for object
      *  @return int          					<0 if KO, >0 if OK
      */
-    function find($fk_product_stock=0, $eatby='',$sellby='',$batch_number='')
+    public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
     {
     	global $langs;
+
 		$where = array();
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.tms,";
-		$sql.= " t.fk_product_stock,";
-		$sql.= " t.sellby,";              // deprecated
-		$sql.= " t.eatby,";               // deprecated
-		$sql.= " t.batch,";
-		$sql.= " t.qty,";
-		$sql.= " t.import_key";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
-		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
+		$sql .= " t.rowid,";
+		$sql .= " t.tms,";
+		$sql .= " t.fk_product_stock,";
+		$sql .= " t.sellby,"; // deprecated
+		$sql .= " t.eatby,"; // deprecated
+		$sql .= " t.batch,";
+		$sql .= " t.qty,";
+		$sql .= " t.import_key";
+		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
+		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
 
-		if (! empty($eatby)) array_push($where," eatby = '".$this->db->idate($eatby)."'");            // deprecated
-		if (! empty($sellby)) array_push($where," sellby = '".$this->db->idate($sellby)."'");         // deprecated
+		if (!empty($eatby)) array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
+		if (!empty($sellby)) array_push($where, " sellby = '".$this->db->idate($sellby)."'"); // deprecated
 
-		if (! empty($batch_number)) $sql.= " AND batch = '".$this->db->escape($batch_number)."'";
+		if (!empty($batch_number)) $sql .= " AND batch = '".$this->db->escape($batch_number)."'";
 
-		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
+		if (!empty($where)) $sql .= " AND (".implode(" OR ", $where).")";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
 
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
@@ -469,7 +466,7 @@ class Productbatch extends CommonObject
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+      	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -482,40 +479,39 @@ class Productbatch extends CommonObject
      *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
      *  @return array         					<0 if KO, array of batch
      */
-    public static function findAll($db, $fk_product_stock, $with_qty=0, $fk_product=0)
+    public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
     {
     	global $langs;
 		$ret = array();
 
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.tms,";
-		$sql.= " t.fk_product_stock,";
-		$sql.= " t.sellby as oldsellby,";     // deprecated but may not be migrated into new table
-		$sql.= " t.eatby as oldeatby,";       // deprecated but may not be migrated into new table
-		$sql.= " t.batch,";
-		$sql.= " t.qty,";
-		$sql.= " t.import_key";
+		$sql .= " t.rowid,";
+		$sql .= " t.tms,";
+		$sql .= " t.fk_product_stock,";
+		$sql .= " t.sellby as oldsellby,"; // deprecated but may not be migrated into new table
+		$sql .= " t.eatby as oldeatby,"; // deprecated but may not be migrated into new table
+		$sql .= " t.batch,";
+		$sql .= " t.qty,";
+		$sql .= " t.import_key";
 		if ($fk_product > 0)
 		{
-		    $sql.= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
+		    $sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
 		    // TODO May add extrafields to ?
 		}
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
         if ($fk_product > 0)
         {
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
             // TODO May add extrafields to ?
         }
-		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
-		if ($with_qty) $sql.= " AND t.qty <> 0";
+		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
+		if ($with_qty) $sql .= " AND t.qty <> 0";
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
-		$resql=$db->query($sql);
-		if ($resql)
-        {
-			$num = $db->num_rows($resql);
-			$i=0;
+		$resql = $db->query($sql);
+        if ($resql) {
+            $num = $db->num_rows($resql);
+            $i = 0;
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
@@ -531,7 +527,7 @@ class Productbatch extends CommonObject
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
 
-				$ret[$tmp->batch] = $tmp;       // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
+				$ret[$tmp->batch] = $tmp; // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
             }
             $db->free($resql);
@@ -540,7 +536,7 @@ class Productbatch extends CommonObject
         }
         else
         {
-      	    $error="Error ".$db->lasterror();
+            $error = "Error ".$db->lasterror();
             return -1;
         }
     }

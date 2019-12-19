@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -48,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SupplierProposalTest extends PHPUnit_Framework_TestCase
+class SupplierProposalTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,9 +61,9 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PropalTest
 	 */
-	function __construct()
+	public function __construct()
 	{
-    	parent::__construct();
+        parent::__construct();
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -78,7 +78,7 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -203,8 +203,8 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
     /**
      * testSupplierProposalValid
      *
-     * @param	Proposal	$localobject	Proposal
-     * @return	Proposal
+     * @param	SupplierProposal	$localobject	Proposal
+     * @return	SupplierProposal
      *
      * @depends	testSupplierProposalAddLine
      * The depends says test is run only if previous is ok
@@ -217,17 +217,24 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$result = $user->addrights(0, 'supplier_proposal');
+		$this->assertLessThan($result, 0);
+
+		$result = $user->getrights('supplier_proposal', 1);
+		//$this->assertLessThan($result, 0);
+
 		$result=$localobject->valid($user);
+		$this->assertLessThan($result, 0);
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject;
     }
 
-   /**
+    /**
      * testSupplierProposalOther
      *
-     * @param	Proposal	$localobject	Proposal
+     * @param	SupplierProposal	$localobject	Proposal
      * @return	int
      *
      * @depends testSupplierProposalValid

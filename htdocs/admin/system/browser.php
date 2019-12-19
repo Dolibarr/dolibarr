@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,13 +41,13 @@ $form=new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
 
 $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 
 // Browser
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("UserAgent").'</td><td colspan="2">'.$_SERVER['HTTP_USER_AGENT'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserName").'</td><td colspan="2">'.$tmp['browsername'].'</td></tr>'."\n";

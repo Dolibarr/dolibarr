@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ class modCashDesk extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -46,9 +46,9 @@ class modCashDesk extends DolibarrModules
 		$this->rights_class = 'cashdesk';
 
 		$this->family = "portal";
-		$this->module_position = '10';
+		$this->module_position = '55';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "CashDesk module";
 
 		$this->revision = '1.27';
@@ -97,7 +97,7 @@ class modCashDesk extends DolibarrModules
 		// This is to declare the Top Menu entry:
 		$this->menu[$r]=array(	    'fk_menu'=>0,			// Put 0 if this is a top menu
 									'type'=>'top',			// This is a Top menu entry
-									'titre'=>'CashDeskMenu',
+									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -121,24 +121,24 @@ class modCashDesk extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-	}
+    }
 
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
+     *
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
      */
-	function init($options='')
-  	{
-    	$sql = array();
+    public function init($options = '')
+    {
+        $sql = array();
 
-		// Remove permissions and default values
-		$this->remove($options);
+        // Remove permissions and default values
+        $this->remove($options);
 
-    	return $this->_init($sql,$options);
-  	}
+        return $this->_init($sql, $options);
+    }
 }

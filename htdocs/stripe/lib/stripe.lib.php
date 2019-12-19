@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,15 +38,15 @@ function stripeadmin_prepare_head()
 	$head[$h][2] = 'stripeaccount';
 	$h++;
 
-	$object=new stdClass();
+	$object = new stdClass();
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin', 'remove');
 
     return $head;
 }
@@ -60,7 +60,7 @@ function stripeadmin_prepare_head()
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showStripePaymentUrl($type,$ref)
+function showStripePaymentUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -68,12 +68,12 @@ function showStripePaymentUrl($type,$ref)
     $langs->load("paybox");
 	$langs->load("stripe");
 
-    $servicename='Stripe';
-    $out='<br><br>';
-    $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
-    $url=getStripePaymentUrl(0,$type,$ref);
-    $out.='<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
-    $out.=ajax_autoselect("stripeurl", 0);
+    $servicename = 'Stripe';
+    $out = '<br><br>';
+    $out .= img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $url = getStripePaymentUrl(0, $type, $ref);
+    $out .= '<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
+    $out .= ajax_autoselect("stripeurl", 0);
     return $out;
 }
 
@@ -87,47 +87,47 @@ function showStripePaymentUrl($type,$ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
+function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
 {
 	global $conf;
 
-	$ref=str_replace(' ','',$ref);
-	
+	$ref = str_replace(' ', '', $ref);
+
     if ($type == 'free')
     {
-	    $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
+	    $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
     }
     if ($type == 'order')
     {
-        $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
-        if ($mode == 1) $out.='order_ref';
-        if ($mode == 0) $out.=urlencode($ref);
-	    $out.=($mode?'</font>':'');
+        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=order&ref='.($mode ? '<font color="#666666">' : '');
+        if ($mode == 1) $out .= 'order_ref';
+        if ($mode == 0) $out .= urlencode($ref);
+	    $out .= ($mode ? '</font>' : '');
     }
     if ($type == 'invoice')
     {
-        $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
-        if ($mode == 1) $out.='invoice_ref';
-        if ($mode == 0) $out.=urlencode($ref);
-	    $out.=($mode?'</font>':'');
+        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=invoice&ref='.($mode ? '<font color="#666666">' : '');
+        if ($mode == 1) $out .= 'invoice_ref';
+        if ($mode == 0) $out .= urlencode($ref);
+	    $out .= ($mode ? '</font>' : '');
     }
     if ($type == 'contractline')
     {
-        $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
-        if ($mode == 1) $out.='contractline_ref';
-        if ($mode == 0) $out.=urlencode($ref);
-	    $out.=($mode?'</font>':'');
+        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=contractline&ref='.($mode ? '<font color="#666666">' : '');
+        if ($mode == 1) $out .= 'contractline_ref';
+        if ($mode == 0) $out .= urlencode($ref);
+	    $out .= ($mode ? '</font>' : '');
     }
     if ($type == 'membersubscription')
     {
-        $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
-        if ($mode == 1) $out.='member_ref';
-        if ($mode == 0) $out.=urlencode($ref);
-	    $out.=($mode?'</font>':'');
+        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
+        if ($mode == 1) $out .= 'member_ref';
+        if ($mode == 0) $out .= urlencode($ref);
+	    $out .= ($mode ? '</font>' : '');
     }
 
     // For multicompany
-    $out.="&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+    $out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
 
     return $out;
 }
@@ -140,56 +140,56 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param   Translate	$langs			Output language
  * @return	void
  */
-function html_print_stripe_footer($fromcompany,$langs)
+function html_print_stripe_footer($fromcompany, $langs)
 {
 	global $conf;
 
 	// Juridical status
-	$line1="";
+	$line1 = "";
 	if ($fromcompany->forme_juridique_code)
 	{
-		$line1.=($line1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
 	}
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
+	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2))
 	{
-		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
+		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field = $reg[1];
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2)
 	{
-		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
+		$field = $langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field = $reg[1];
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
 	}
 
 	// Second line of company infos
-	$line2="";
+	$line2 = "";
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{
-		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
+		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field = $reg[1];
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4)
 	{
-		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
+		$field = $langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field = $reg[1];
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
 	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')
 	{
-		$line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
 	}
 
 	print '<br><br><hr>'."\n";
@@ -199,4 +199,3 @@ function html_print_stripe_footer($fromcompany,$langs)
 	print $line2;
 	print '</font></div>'."\n";
 }
-

@@ -2,11 +2,6 @@
 OrderToProcess=Te verwerken bestelling
 NewOrder=Nieuwe bestelling
 MakeOrder=Bestelling ingeven
-CustomersOrdersRunning=Lopende klantenbestellingen
-CustomersOrdersAndOrdersLines=Klantenbestellingen en bestellijnen
-OrdersToBill=Afgeleverde bestellingen
-OrdersInProcess=Bestellingen in uitvoering
-OrdersToProcess=Nog te verwerken klantenbestellingen
 StatusOrderDraftShort=Ontwerp bestelling
 StatusOrderSentShort=In uitvoering
 StatusOrderDelivered=Geleverd

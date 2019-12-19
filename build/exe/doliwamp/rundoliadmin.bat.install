@@ -3,4 +3,5 @@ REM Launch Dolibarr Admin center
 REM ----------------------------
 
 REM Go to admin center page
-start "DoliWamp admin" "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/
+start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/
+REM FOR EDGE start microsoft-edge:"http://localhost:WAMPAPACHEPORT/"

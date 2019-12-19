@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -26,6 +26,7 @@ CREATE TABLE llx_website_page
 	aliasalt      varchar(255),
 	title         varchar(255),						
 	description   varchar(255),						
+	image         varchar(255),						
 	keywords      varchar(255),
 	lang          varchar(6),
 	fk_page       integer,          

@@ -1,16 +1,16 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=E-mail om externe HRM services te verhinderen.
+Establishments=Bedrijven
+Establishment=Bedrijf
+NewEstablishment=Nieuw bedrijf
+DeleteEstablishment=Verwijder bedrijf
+ConfirmDeleteEstablishment=Weet u zeker dat u deze vestiging wilt verwijderen?
+OpenEtablishment=Open bedrijf
+CloseEtablishment=Sluit bedrijf
 # Dictionary
 DictionaryDepartment=HRM - Afdelingslijst
-DictionaryFunction=HRM - Function list
+DictionaryFunction=HRM - Functielijst
 # Module
 Employees=Werknemers
 Employee=Werknemer

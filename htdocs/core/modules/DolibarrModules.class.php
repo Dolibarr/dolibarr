@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,7 +61,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     /**
      * @var string Family
-     * @see familyinfo
+     * @see $familyinfo
      *
      * Native values: 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'.
      * Use familyinfo to declare a custom value.
@@ -69,7 +70,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     /**
      * @var array Custom family informations
-     * @see family
+     * @see $family
      *
      * e.g.:
      * array(
@@ -259,26 +260,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     public $core_enabled;
 
     /**
-     * @var        string Relative path to module style sheet
-     * @deprecated
-     * @see        module_parts
-     */
-    public $style_sheet = '';
-
-    /**
-     * @var        0|1|2|3 Where to display the module in setup page
-     * @deprecated @since 4.0.0
-     * @see        family
-     * @see        familyinfo
-     *
-     * 0: common
-     * 1: interface
-     * 2: others
-     * 3: very specific
-     */
-    public $special;
-
-    /**
      * @var string Name of image file used for this module
      *
      * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
@@ -296,20 +277,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     /**
-     * @var string[] List of module class names that must be enabled if this module is enabled.
-     *
-     * e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+     * @var string[] List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @see $requiredby
      */
     public $depends;
 
     /**
-     * @var int[] List of module ids to disable if this one is disabled.
+     * @var string[] List of module class names to disable if the module is disabled.
+     * @see $depends
      */
     public $requiredby;
 
     /**
      * @var string[] List of module class names as string this module is in conflict with.
-     * @see depends
+     * @see $depends
      */
     public $conflictwith;
 
@@ -334,7 +315,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     /**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
      * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
     public $phpmin;
@@ -369,6 +350,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     // We need constructor into function unActivateModule into admin.lib.php
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Enables a module.
      * Inserts all informations into database
@@ -381,47 +363,57 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int                         1 if OK, 0 if KO
      */
-    function _init($array_sql, $options='')
+    protected function _init($array_sql, $options = '')
     {
+        // phpcs:enable
         global $conf;
         $err=0;
 
         $this->db->begin();
 
         // Insert activation module constant
-        if (! $err) { $err+=$this->_active();
+        if (! $err) {
+            $err+=$this->_active();
         }
 
         // Insert new pages for tabs (into llx_const)
-        if (! $err) { $err+=$this->insert_tabs();
+        if (! $err) {
+            $err+=$this->insert_tabs();
         }
 
         // Insert activation of module's parts
-        if (! $err) { $err+=$this->insert_module_parts();
+        if (! $err) {
+            $err+=$this->insert_module_parts();
         }
 
         // Insert constant defined by modules (into llx_const)
-        if (! $err && ! preg_match('/newboxdefonly/', $options)) { $err+=$this->insert_const();    // Test on newboxdefonly to avoid to erase value during upgrade
+        if (! $err && ! preg_match('/newboxdefonly/', $options)) {
+            $err+=$this->insert_const();    // Test on newboxdefonly to avoid to erase value during upgrade
         }
 
         // Insert boxes def into llx_boxes_def and boxes setup (into llx_boxes)
-        if (! $err && ! preg_match('/noboxes/', $options)) { $err+=$this->insert_boxes($options);
+        if (! $err && ! preg_match('/noboxes/', $options)) {
+            $err+=$this->insert_boxes($options);
         }
 
         // Insert cron job entries (entry in llx_cronjobs)
-        if (! $err) { $err+=$this->insert_cronjobs();
+        if (! $err) {
+            $err+=$this->insert_cronjobs();
         }
 
         // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
-        if (! $err) { $err+=$this->insert_permissions(1, null, 1);
+        if (! $err) {
+            $err+=$this->insert_permissions(1, null, 1);
         }
 
         // Insert specific menus entries into database
-        if (! $err) { $err+=$this->insert_menus();
+        if (! $err) {
+            $err+=$this->insert_menus();
         }
 
         // Create module's directories
-        if (! $err) { $err+=$this->create_dirs();
+        if (! $err) {
+            $err+=$this->create_dirs();
         }
 
         // Execute addons requests
@@ -466,6 +458,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Disable function. Deletes the module constants and boxes from the database.
      *
@@ -474,46 +467,56 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int                     1 if OK, 0 if KO
      */
-    function _remove($array_sql, $options='')
+    protected function _remove($array_sql, $options = '')
     {
+        // phpcs:enable
         $err=0;
 
         $this->db->begin();
 
         // Remove activation module line (constant MAIN_MODULE_MYMODULE in llx_const)
-        if (! $err) { $err+=$this->_unactive();
+        if (! $err) {
+            $err+=$this->_unactive();
         }
 
         // Remove activation of module's new tabs (MAIN_MODULE_MYMODULE_TABS_XXX in llx_const)
-        if (! $err) { $err+=$this->delete_tabs();
+        if (! $err) {
+            $err+=$this->delete_tabs();
         }
 
         // Remove activation of module's parts (MAIN_MODULE_MYMODULE_XXX in llx_const)
-        if (! $err) { $err+=$this->delete_module_parts();
+        if (! $err) {
+            $err+=$this->delete_module_parts();
         }
 
         // Remove constants defined by modules
-        if (! $err) { $err+=$this->delete_const();
+        if (! $err) {
+            $err+=$this->delete_const();
         }
 
         // Remove list of module's available boxes (entry in llx_boxes)
-        if (! $err && ! preg_match('/(newboxdefonly|noboxes)/', $options)) { $err+=$this->delete_boxes();    // We don't have to delete if option ask to keep boxes safe or ask to add new box def only
+        if (! $err && ! preg_match('/(newboxdefonly|noboxes)/', $options)) {
+            $err+=$this->delete_boxes();    // We don't have to delete if option ask to keep boxes safe or ask to add new box def only
         }
 
         // Remove list of module's cron job entries (entry in llx_cronjobs)
-        if (! $err) { $err+=$this->delete_cronjobs();
+        if (! $err) {
+            $err+=$this->delete_cronjobs();
         }
 
         // Remove module's permissions from list of available permissions (entries in llx_rights_def)
-        if (! $err) { $err+=$this->delete_permissions();
+        if (! $err) {
+            $err+=$this->delete_permissions();
         }
 
         // Remove module's menus (entries in llx_menu)
-        if (! $err) { $err+=$this->delete_menus();
+        if (! $err) {
+            $err+=$this->delete_menus();
         }
 
         // Remove module's directories
-        if (! $err) { $err+=$this->delete_dirs();
+        if (! $err) {
+            $err+=$this->delete_dirs();
         }
 
         // Run complementary sql requests
@@ -549,7 +552,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string  Translated module name
      */
-    function getName()
+    public function getName()
     {
         global $langs;
         $langs->load("admin");
@@ -585,7 +588,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string  Translated module description
      */
-    function getDesc()
+    public function getDesc()
     {
         global $langs;
         $langs->load("admin");
@@ -621,7 +624,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string     Long description of a module from README.md of from property.
      */
-    function getDescLong()
+    public function getDescLong()
     {
         global $langs;
         $langs->load("admin");
@@ -639,11 +642,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 @include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
                 $content = dolMd2Html(
-                    $content, 'parsedown',
+                    $content,
+                    'parsedown',
                     array(
-                    'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),
-                    'img/'=>dol_buildpath(strtolower($this->name).'/img/', 1),
-                    'images/'=>dol_buildpath(strtolower($this->name).'/imgages/', 1),
+                        'doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1),
+                        'img/' => dol_buildpath(strtolower($this->name).'/img/', 1),
+                        'images/' => dol_buildpath(strtolower($this->name).'/images/', 1),
                     )
                 );
             }
@@ -652,8 +656,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 $content = nl2br($content);
             }
         }
-        else                // Mostly for internal modules
+        else
         {
+            // Mostly for internal modules
             if (! empty($this->descriptionlong)) {
                 if (is_array($this->langfiles)) {
                     foreach($this->langfiles as $val)
@@ -675,7 +680,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string      Path of file if a README file was found.
      */
-    function getDescLongReadmeFound()
+    public function getDescLongReadmeFound()
     {
         global $langs;
 
@@ -710,7 +715,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string  Content of ChangeLog
      */
-    function getChangeLog()
+    public function getChangeLog()
     {
         global $langs;
         $langs->load("admin");
@@ -721,7 +726,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $filefound= false;
 
         // Define path to file README.md.
-        // First check README-la_LA.md then README.md
+        // First check ChangeLog-la_LA.md then ChangeLog.md
         $pathoffile = dol_buildpath(strtolower($this->name).'/ChangeLog-'.$langs->defaultlang.'.md', 0);
         if (dol_is_file($pathoffile)) {
             $filefound = true;
@@ -755,7 +760,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string  Publisher name
      */
-    function getPublisher()
+    public function getPublisher()
     {
         return $this->editor_name;
     }
@@ -765,7 +770,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string  Publisher url
      */
-    function getPublisherUrl()
+    public function getPublisherUrl()
     {
         return $this->editor_url;
     }
@@ -778,7 +783,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  int $translated 1=Special version keys are translated, 0=Special version keys are not translated
      * @return string                  Module version
      */
-    function getVersion($translated=1)
+    public function getVersion($translated = 1)
     {
         global $langs;
         $langs->load("admin");
@@ -786,14 +791,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $ret='';
 
         $newversion=preg_replace('/_deprecated/', '', $this->version);
-        if ($newversion == 'experimental') { $ret=($translated?$langs->transnoentitiesnoconv("VersionExperimental"):$newversion);
-        } elseif ($newversion == 'development') { $ret=($translated?$langs->transnoentitiesnoconv("VersionDevelopment"):$newversion);
-        } elseif ($newversion == 'dolibarr') { $ret=DOL_VERSION;
-        } elseif ($newversion) { $ret=$newversion;
-        } else { $ret=($translated?$langs->transnoentitiesnoconv("VersionUnknown"):'unknown');
+        if ($newversion == 'experimental') {
+            $ret=($translated?$langs->transnoentitiesnoconv("VersionExperimental"):$newversion);
+        } elseif ($newversion == 'development') {
+            $ret=($translated?$langs->transnoentitiesnoconv("VersionDevelopment"):$newversion);
+        } elseif ($newversion == 'dolibarr') {
+            $ret=DOL_VERSION;
+        } elseif ($newversion) {
+            $ret=$newversion;
+        } else {
+            $ret=($translated?$langs->transnoentitiesnoconv("VersionUnknown"):'unknown');
         }
 
-        if (preg_match('/_deprecated/', $this->version)) { $ret.=($translated?' ('.$langs->transnoentitiesnoconv("Deprecated").')':$this->version);
+        if (preg_match('/_deprecated/', $this->version)) {
+            $ret.=($translated?' ('.$langs->transnoentitiesnoconv("Deprecated").')':$this->version);
         }
         return $ret;
     }
@@ -804,15 +815,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string  'core', 'external' or 'unknown'
      */
-    function isCoreOrExternalModule()
+    public function isCoreOrExternalModule()
     {
-        if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') { return 'core';
+        if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') {
+            return 'core';
         }
-        if (! empty($this->version) && ! in_array($this->version, array('experimental','development'))) { return 'external';
+        if (! empty($this->version) && ! in_array($this->version, array('experimental','development'))) {
+            return 'external';
         }
-        if (! empty($this->editor_name) || ! empty($this->editor_url)) { return 'external';
+        if (! empty($this->editor_name) || ! empty($this->editor_url)) {
+            return 'external';
         }
-        if ($this->numero >= 100000) { return 'external';
+        if ($this->numero >= 100000) {
+            return 'external';
         }
         return 'unknown';
     }
@@ -823,7 +838,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string[]    Language files list
      */
-    function getLangFilesArray()
+    public function getLangFilesArray()
     {
         return $this->langfiles;
     }
@@ -835,7 +850,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string       Translated databaset label
      */
-    function getExportDatasetLabel($r)
+    public function getExportDatasetLabel($r)
     {
         global $langs;
 
@@ -859,7 +874,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return string      Translated dataset label
      */
-    function getImportDatasetLabel($r)
+    public function getImportDatasetLabel($r)
     {
         global $langs;
 
@@ -880,11 +895,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Gives the last date of activation
      *
-     * @return timestamp       Date of last activation
+     * @return 	int|string       	Date of last activation or '' if module was never activated
      */
-    function getLastActivationDate()
+    public function getLastActivationDate()
     {
         global $conf;
+
+        $err = 0;
 
         $sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
@@ -892,11 +909,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
-        } else
+        if (! $resql)
+        {
+            $err++;
+        }
+        else
         {
             $obj=$this->db->fetch_object($resql);
-            if ($obj) { return $this->db->jdate($obj->tms);
+            if ($obj) {
+                return $this->db->jdate($obj->tms);
             }
         }
 
@@ -909,25 +930,31 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return array       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
      */
-    function getLastActivationInfo()
+    public function getLastActivationInfo()
     {
         global $conf;
 
-        $sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-        $sql.= " AND entity IN (0, ".$conf->entity.")";
+        $err = 0;
+
+		$sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
+		$sql.= " AND entity IN (0, ".$conf->entity.")";
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
-        } else
+        if (! $resql)
+        {
+            $err++;
+        }
+        else
         {
             $obj=$this->db->fetch_object($resql);
             $tmp=array();
             if ($obj->note) {
                 $tmp=json_decode($obj->note, true);
             }
-            if ($obj) { return array('authorid'=>$tmp['authorid'], 'ip'=>$tmp['ip'], 'lastactivationdate'=>$this->db->jdate($obj->tms));
+            if ($obj) {
+                return array('authorid'=>$tmp['authorid'], 'ip'=>$tmp['ip'], 'lastactivationdate'=>$this->db->jdate($obj->tms));
             }
         }
 
@@ -935,13 +962,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Insert constants for module activation
      *
      * @return int Error count (0 if OK)
      */
-    function _active()
+    protected function _active()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $err = 0;
@@ -955,7 +984,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::_active delete activation constant", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
+        if (! $resql) {
+            $err++;
         }
 
         $note=json_encode(array('authorid'=>(is_object($user)?$user->id:0), 'ip'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])));
@@ -975,13 +1005,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Module deactivation
      *
      * @return int Error count (0 if OK)
      */
-    function _unactive()
+    protected function _unactive()
     {
+        // phpcs:enable
         global $conf;
 
         $err = 0;
@@ -1000,7 +1032,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Create tables and keys required by module.
      * Files module.sql and module.key.sql with create table and create keys
@@ -1010,7 +1042,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  string $reldir Relative directory where to scan files
      * @return int             <=0 if KO, >0 if OK
      */
-    function _load_tables($reldir)
+    protected function _load_tables($reldir)
     {
         // phpcs:enable
         global $conf;
@@ -1018,7 +1050,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $error=0;
         $dirfound=0;
 
-        if (empty($reldir)) { return 1;
+        if (empty($reldir)) {
+            return 1;
         }
 
         include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
@@ -1113,13 +1146,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             }
         }
 
-        if (! $dirfound) { dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
+        if (! $dirfound) {
+            dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
         }
         return $ok;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds boxes
      *
@@ -1127,7 +1161,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int             Error count (0 if OK)
      */
-    function insert_boxes($option='')
+    public function insert_boxes($option = '')
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
@@ -1219,13 +1253,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes boxes
      *
      * @return int Error count (0 if OK)
      */
-    function delete_boxes()
+    public function delete_boxes()
     {
         // phpcs:enable
         global $conf;
@@ -1243,7 +1277,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 // For the moment, we manage this with hard coded exception
                 //print "Remove box ".$file.'<br>';
                 if ($file == 'box_graph_product_distribution.php') {
-                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) {
+                    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
                         dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
                         continue;
                     }
@@ -1292,13 +1326,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds cronjobs
      *
      * @return int             Error count (0 if OK)
      */
-    function insert_cronjobs()
+    public function insert_cronjobs()
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
@@ -1332,13 +1366,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 // Search if cron entry already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
                 $sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
-                if ($class) { $sql.= " AND classesname = '".$this->db->escape($class)."'";
+                if ($class) {
+                    $sql.= " AND classesname = '".$this->db->escape($class)."'";
                 }
-                if ($objectname) { $sql.= " AND objectname = '".$this->db->escape($objectname)."'";
+                if ($objectname) {
+                    $sql.= " AND objectname = '".$this->db->escape($objectname)."'";
                 }
-                if ($method) { $sql.= " AND methodename = '".$this->db->escape($method)."'";
+                if ($method) {
+                    $sql.= " AND methodename = '".$this->db->escape($method)."'";
                 }
-                if ($command) { $sql.= " AND command = '".$this->db->escape($command)."'";
+                if ($command) {
+                    $sql.= " AND command = '".$this->db->escape($command)."'";
                 }
                 $sql.= " AND entity = ".$entity;    // Must be exact entity
 
@@ -1352,19 +1390,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
                         if (! $err) {
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
-                            if(is_int($frequency)) { $sql.= ' frequency,';
-                            }
-                            if(is_int($unitfrequency)) { $sql.= ' unitfrequency,';
-                            }
-                            if(is_int($priority)) { $sql.= ' priority,';
-                            }
-                            if(is_int($status)) { $sql.= ' status,';
-                            }
+                            if (is_int($frequency)) { $sql.= ' frequency,'; }
+                            if (is_int($unitfrequency)) { $sql.= ' unitfrequency,'; }
+                            if (is_int($priority)) { $sql.= ' priority,'; }
+                            if (is_int($status)) { $sql.= ' status,'; }
                             $sql.= " entity, test)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
-                            $sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "NULL").", ";
+                            $sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
                             $sql.= ($dateend   ? "'".$this->db->idate($dateend)."'"   : "NULL").", ";
                             $sql.= "'".$this->db->escape($label)."', ";
                             $sql.= "'".$this->db->escape($jobtype)."', ";
@@ -1414,13 +1448,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes boxes
      *
      * @return int Error count (0 if OK)
      */
-    function delete_cronjobs()
+    public function delete_cronjobs()
     {
         // phpcs:enable
         global $conf;
@@ -1445,13 +1479,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes tabs
      *
      * @return int Error count (0 if OK)
      */
-    function delete_tabs()
+    public function delete_tabs()
     {
         // phpcs:enable
         global $conf;
@@ -1471,13 +1505,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds tabs
      *
      * @return int  Error count (0 if ok)
      */
-    function insert_tabs()
+    public function insert_tabs()
     {
         // phpcs:enable
         global $conf;
@@ -1537,13 +1571,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds constants
      *
      * @return int Error count (0 if OK)
      */
-    function insert_const()
+    public function insert_const()
     {
         // phpcs:enable
         global $conf;
@@ -1609,13 +1643,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes constants tagged 'deleteonunactive'
      *
      * @return int <0 if KO, 0 if OK
      */
-    function delete_const()
+    public function delete_const()
     {
         // phpcs:enable
         global $conf;
@@ -1645,7 +1679,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds access rights
      *
@@ -1654,7 +1688,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  int $notrigger        1=Does not execute triggers, 0= execute triggers
      * @return int                     Error count (0 if OK)
      */
-    function insert_permissions($reinitadminperms=0, $force_entity=null, $notrigger=0)
+    public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
     {
         // phpcs:enable
         global $conf,$user;
@@ -1684,10 +1718,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $r_def      = $this->rights[$key][3];
                     $r_perms    = $this->rights[$key][4];
                     $r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
-                    $r_modul    = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
+                    $r_modul = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
-                    if (empty($r_type)) { $r_type='w';
-                    }
+                    if (empty($r_type)) { $r_type='w'; }
+                    if (empty($r_def)) { $r_def=0; }
 
                     // Search if perm already present
                     $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
@@ -1792,13 +1826,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes access rights
      *
      * @return int                     Error count (0 if OK)
      */
-    function delete_permissions()
+    public function delete_permissions()
     {
         // phpcs:enable
         global $conf;
@@ -1818,13 +1852,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds menu entries
      *
      * @return int     Error count (0 if OK)
      */
-    function insert_menus()
+    public function insert_menus()
     {
         // phpcs:enable
         global $user;
@@ -1884,7 +1918,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $menu->type=$this->menu[$key]['type'];
             $menu->mainmenu=isset($this->menu[$key]['mainmenu'])?$this->menu[$key]['mainmenu']:(isset($menu->fk_mainmenu)?$menu->fk_mainmenu:'');
             $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:'';
-            $menu->titre=$this->menu[$key]['titre'];
+            $menu->titre=$this->menu[$key]['titre'];	// deprecated
+            $menu->title=$this->menu[$key]['titre'];
             $menu->url=$this->menu[$key]['url'];
             $menu->langs=$this->menu[$key]['langs'];
             $menu->position=$this->menu[$key]['position'];
@@ -1922,13 +1957,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes menu entries
      *
      * @return int Error count (0 if OK)
      */
-    function delete_menus()
+    public function delete_menus()
     {
         // phpcs:enable
         global $conf;
@@ -1952,13 +1987,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Creates directories
      *
      * @return int Error count (0 if OK)
      */
-    function create_dirs()
+    public function create_dirs()
     {
         // phpcs:enable
         global $langs, $conf;
@@ -2012,7 +2047,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds directories definitions
      *
@@ -2021,7 +2056,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int             Error count (0 if OK)
      */
-    function insert_dirs($name,$dir)
+    public function insert_dirs($name, $dir)
     {
         // phpcs:enable
         global $conf;
@@ -2056,13 +2091,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes directories
      *
      * @return int Error count (0 if OK)
      */
-    function delete_dirs()
+    public function delete_dirs()
     {
         // phpcs:enable
         global $conf;
@@ -2082,13 +2117,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $err;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Adds generic parts
      *
      * @return int Error count (0 if OK)
      */
-    function insert_module_parts()
+    public function insert_module_parts()
     {
         // phpcs:enable
         global $conf;
@@ -2113,7 +2148,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                         if (isset($value['entity'])) { $entity = $value['entity'];
                         }
                     }
-                    else if (isset($value['data']) && !is_array($value['data'])) {
+                    elseif (isset($value['data']) && !is_array($value['data'])) {
                         $newvalue = $value['data'];
                         if (isset($value['entity'])) { $entity = $value['entity'];
                         }
@@ -2159,13 +2194,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         return $error;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Removes generic parts
      *
      * @return int Error count (0 if OK)
      */
-    function delete_module_parts()
+    public function delete_module_parts()
     {
         // phpcs:enable
         global $conf;

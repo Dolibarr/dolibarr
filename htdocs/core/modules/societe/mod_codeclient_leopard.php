@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -39,13 +39,6 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Leopard';
-
-	/**
 	 * @var string model name
 	 */
 	public $name='Leopard';
@@ -60,17 +53,20 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto; 	                // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 
 	/**
 	 *	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
@@ -80,12 +76,13 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 
 
-	/**		Return description of module
+	/**
+     *  Return description of module
 	 *
-	 * 		@param	Translate	$langs	Object langs
-	 * 		@return string      		Description of module
+	 *  @param  Translate   $langs  Object langs
+	 *  @return string              Description of module
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
@@ -99,7 +96,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc=0,$type=-1)
+	public function getNextValue($objsoc = 0, $type = -1)
 	{
 		global $langs;
 		return '';
@@ -119,7 +116,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $soc, $type)
+	public function verif($db, &$code, $soc, $type)
 	{
 		global $conf;
 
@@ -130,7 +127,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}
@@ -139,4 +136,3 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		return $result;
 	}
 }
-
