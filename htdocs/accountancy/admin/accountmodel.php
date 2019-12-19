@@ -509,7 +509,7 @@ if ($id)
 		print '</tr>';
 
 		// Line to enter new values
-		print "<tr ".$bcnd[$var].">";
+		print '<tr class="oddeven">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -597,44 +597,9 @@ if ($id)
 
 		// Title of lines
 		print '<tr class="liste_titre">';
-		foreach ($fieldlist as $field => $value)
-		{
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
-			$showfield=1;							  	// By defaut
-			$class="left";
-			$sortable=1;
-			$valuetoshow='';
-			/*
-            $tmparray=getLabelOfField($fieldlist[$field]);
-            $showfield=$tmp['showfield'];
-            $valuetoshow=$tmp['valuetoshow'];
-            $align=$tmp['align'];
-            $sortable=$tmp['sortable'];
-			*/
-			$valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
-			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			if ($fieldlist[$field]=='code') {
-                $valuetoshow=$langs->trans("Code");
-            }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
-                $valuetoshow=$langs->trans("Label");
-            }
-            if ($fieldlist[$field]=='country') {
-                $valuetoshow=$langs->trans("Country");
-            }
-            if ($fieldlist[$field]=='country_id') {
-                $showfield=0;
-            }
-            if ($fieldlist[$field]=='fk_pcg_version') {
-                $valuetoshow=$langs->trans("Pcg_version");
-            }
-
-			// Affiche nom du champ
-			if ($showfield) {
-				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "", $sortfield, $sortorder, $class.' ');
-			}
-		}
+		print getTitleFieldOfList($langs->trans("Pcg_version"), 0, $_SERVER["PHP_SELF"], "pcg_version", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, '');
+		print getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], "label", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, '');
+		print getTitleFieldOfList($langs->trans("Country"), 0, $_SERVER["PHP_SELF"], "country_code", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, '');
 		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, 'center ');
 		print getTitleFieldOfList('');
 		print getTitleFieldOfList('');
