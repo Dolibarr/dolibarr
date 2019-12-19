@@ -569,20 +569,6 @@ if ($id > 0 || !empty($ref)) {
 			if ($num) {
 				$entrepot = new Entrepot($db);
 				$listwarehouses=$entrepot->list_array(1);
-				// entrepot par défaut
-				print $langs->trans("Warehouse").' : ';
-				if (count($listwarehouses)>1)
-				{
-					print $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
-				}
-				elseif  (count($listwarehouses)==1)
-				{
-					print $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
-				}
-				else
-				{
-					print $langs->trans("NoWarehouseDefined");
-				}
 
 				print '<tr class="liste_titre">';
 
@@ -613,7 +599,19 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 
-				print '<td align="right">'.$langs->trans("Warehouse").'</td>';
+				print '<td align="right">'.$langs->trans("Warehouse");
+
+				// Select warehouse to force it everywhere
+				if (count($listwarehouses)>1)
+				{
+					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
+				}
+				elseif  (count($listwarehouses)==1)
+				{
+					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
+				}
+
+				print '</td>';
 
                 // Enable hooks to append additional columns
                 $parameters = array();
