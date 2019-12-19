@@ -68,18 +68,23 @@ $actiondone=1;
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
 print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'undefined').'<br>'."\n";
+// Disable modules
+print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'undefined').'<br>'."\n";
+// Files
 print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'undefined').'<br>'."\n";
 print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha')?GETPOST('restore_user_pictures', 'alpha'):'undefined').'<br>'."\n";
+print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'undefined').'<br>'."\n";
+// Clean tables and data
 print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha')?GETPOST('clean_product_stock_batch', 'alpha'):'undefined').'<br>'."\n";
-print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'undefined').'<br>'."\n";
-print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'undefined').'<br>'."\n";
-print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha')?GETPOST('clean_perm_table', 'alpha'):'undefined').'<br>'."\n";
-print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'undefined').'<br>'."\n";
 print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'confirmed\') is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha')?GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha'):'undefined').'<br>'."\n";
+// Init data
+print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'undefined').'<br>'."\n";
+// Structure
+print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'undefined').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -345,13 +350,13 @@ if ($ok && GETPOST('standard', 'alpha'))
 // clean declaration constants
 if ($ok && GETPOST('standard', 'alpha'))
 {
-	print '<tr><td colspan="2"><br>*** Clean module_parts entries of modules not enabled</td></tr>';
+	print '<tr><td colspan="2"><br>*** Clean constant record of modules not enabled</td></tr>';
 
 	$sql ="SELECT name, entity, value";
 	$sql.=" FROM ".MAIN_DB_PREFIX."const as c";
 	$sql.=" WHERE name LIKE 'MAIN_MODULE_%_TPL' OR name LIKE 'MAIN_MODULE_%_CSS' OR name LIKE 'MAIN_MODULE_%_JS' OR name LIKE 'MAIN_MODULE_%_HOOKS'";
 	$sql.=" OR name LIKE 'MAIN_MODULE_%_TRIGGERS' OR name LIKE 'MAIN_MODULE_%_THEME' OR name LIKE 'MAIN_MODULE_%_SUBSTITUTIONS' OR name LIKE 'MAIN_MODULE_%_MODELS'";
-	$sql.=" OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE'";
+	$sql.=" OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE' OR name LIKE 'MAIN_MODULE_%_TABS_%'";
 	$sql.=" ORDER BY name, entity";
 
 	$resql = $db->query($sql);
@@ -376,7 +381,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 
 					$sql2 ="SELECT COUNT(*) as nb";
 					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
-					$sql2.=" WHERE name LIKE 'MAIN_MODULE_".$name."'";
+					$sql2.=" WHERE name = 'MAIN_MODULE_".$name."'";
 					$sql2.=" AND entity = ".$obj->entity;
 					$resql2 = $db->query($sql2);
 					if ($resql2)
@@ -384,7 +389,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0)
 						{
-							// Module not found, so we canremove entry
+							// Module not found, so we can remove entry
 							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
 
 							if (GETPOST('standard', 'alpha') == 'confirmed')
