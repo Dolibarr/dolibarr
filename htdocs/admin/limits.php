@@ -94,12 +94,12 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
 
+$currencycode = (! empty($currencycode)?$currencycode:$conf->currency);
+$aCurrencies = array($conf->currency);	// Default currency always first position
+
 if (! empty($conf->multicurrency->enabled) && ! empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
-
-	$currencycode = (! empty($currencycode)?$currencycode:$conf->currency);
-	$aCurrencies = array($conf->currency);	// Default currency always first position
 
 	$sql = 'SELECT rowid, code FROM '.MAIN_DB_PREFIX.'multicurrency';
 	$sql.= ' WHERE entity = '.$conf->entity;
@@ -111,12 +111,12 @@ if (! empty($conf->multicurrency->enabled) && ! empty($conf->global->MULTICURREN
 		{
 			$aCurrencies[] = $obj->code;
 		}
+	}
 
-		if (! empty($aCurrencies) && count($aCurrencies) > 1)
-		{
-			$head = multicurrencyLimitPrepareHead($aCurrencies);
-			dol_fiche_head($head, $currencycode, '', -1, "multicurrency");
-		}
+	if (! empty($aCurrencies) && count($aCurrencies) > 1)
+	{
+		$head = multicurrencyLimitPrepareHead($aCurrencies);
+		dol_fiche_head($head, $currencycode, '', -1, "multicurrency");
 	}
 }
 
@@ -139,18 +139,18 @@ if ($action == 'edit')
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td><input class="flat" name="'.$mainmaxdecimalsunit.'" size="3" value="'.(! empty($conf->global->$mainmaxdecimalsunit)?$conf->global->$mainmaxdecimalsunit:$conf->global->MAIN_MAX_DECIMALS_UNIT).'"></td></tr>';
+    print '</td><td><input class="flat" name="'.$mainmaxdecimalsunit.'" size="3" value="'.(isset($conf->global->$mainmaxdecimalsunit)?$conf->global->$mainmaxdecimalsunit:$conf->global->MAIN_MAX_DECIMALS_UNIT).'"></td></tr>';
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td><input class="flat" name="'.$mainmaxdecimalstot.'" size="3" value="'.(! empty($conf->global->$mainmaxdecimalstot)?$conf->global->$mainmaxdecimalstot:$conf->global->MAIN_MAX_DECIMALS_TOT).'"></td></tr>';
+    print '</td><td><input class="flat" name="'.$mainmaxdecimalstot.'" size="3" value="'.(isset($conf->global->$mainmaxdecimalstot)?$conf->global->$mainmaxdecimalstot:$conf->global->MAIN_MAX_DECIMALS_TOT).'"></td></tr>';
 
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td>';
-    print '<td><input class="flat" name="'.$mainmaxdecimalsshown.'" size="3" value="'.(! empty($conf->global->$mainmaxdecimalsshown)?$conf->global->$mainmaxdecimalsshown:$conf->global->MAIN_MAX_DECIMALS_SHOWN).'"></td></tr>';
+    print '<td><input class="flat" name="'.$mainmaxdecimalsshown.'" size="3" value="'.(isset($conf->global->$mainmaxdecimalsshown)?$conf->global->$mainmaxdecimalsshown:$conf->global->MAIN_MAX_DECIMALS_SHOWN).'"></td></tr>';
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td><input class="flat" name="'.$mainroundingruletot.'" size="3" value="'.(! empty($conf->global->$mainroundingruletot)?$conf->global->$mainroundingruletot:$conf->global->MAIN_ROUNDING_RULE_TOT).'"></td></tr>';
+    print '</td><td><input class="flat" name="'.$mainroundingruletot.'" size="3" value="'.(isset($conf->global->$mainroundingruletot)?$conf->global->$mainroundingruletot:$conf->global->MAIN_ROUNDING_RULE_TOT).'"></td></tr>';
 
     print '</table>';
 
@@ -170,24 +170,32 @@ else
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td align="right">'.(! empty($conf->global->$mainmaxdecimalsunit)?$conf->global->$mainmaxdecimalsunit:$conf->global->MAIN_MAX_DECIMALS_UNIT).'</td></tr>';
+    print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalsunit)?$conf->global->$mainmaxdecimalsunit:$conf->global->MAIN_MAX_DECIMALS_UNIT).'</td></tr>';
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td align="right">'.(! empty($conf->global->$mainmaxdecimalstot)?$conf->global->$mainmaxdecimalstot:$conf->global->MAIN_MAX_DECIMALS_TOT).'</td></tr>';
+    print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalstot)?$conf->global->$mainmaxdecimalstot:$conf->global->MAIN_MAX_DECIMALS_TOT).'</td></tr>';
 
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td>';
-    print '<td align="right">'.(! empty($conf->global->$mainmaxdecimalsshown)?$conf->global->$mainmaxdecimalsshown:$conf->global->MAIN_MAX_DECIMALS_SHOWN).'</td></tr>';
+    print '<td align="right">'.(isset($conf->global->$mainmaxdecimalsshown)?$conf->global->$mainmaxdecimalsshown:$conf->global->MAIN_MAX_DECIMALS_SHOWN).'</td></tr>';
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td align="right">'.(! empty($conf->global->$mainroundingruletot)?$conf->global->$mainroundingruletot:$conf->global->MAIN_ROUNDING_RULE_TOT).'</td></tr>';
+    print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot)?$conf->global->$mainroundingruletot:$conf->global->MAIN_ROUNDING_RULE_TOT).'</td></tr>';
 
     print '</table>';
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit'.(! empty($currencycode)?'&currencycode='.$currencycode:'').'">'.$langs->trans("Modify").'</a>';
     print '</div>';
+}
+
+if (! empty($conf->multicurrency->enabled) && ! empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
+{
+	if (! empty($aCurrencies) && count($aCurrencies) > 1)
+	{
+		dol_fiche_end();
+	}
 }
 
 if (empty($mysoc->country_code))
