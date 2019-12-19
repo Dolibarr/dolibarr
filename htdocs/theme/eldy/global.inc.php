@@ -1446,7 +1446,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-<?php echo $right; ?>: 20px;
+	padding-<?php echo $right; ?>: 10px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -3602,6 +3602,7 @@ label.radioprivate {
 .photowithmargin {
 	margin-bottom: 2px;
 	margin-top: 10px;
+	margin-right: 10px;
 }
 .photowithborder {
 	border: 1px solid #f0f0f0;

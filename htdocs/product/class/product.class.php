@@ -4835,8 +4835,10 @@ class Product extends CommonObject
         global $conf;
 
         $dir = $sdir;
-        if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) { $dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos/";
-        } else { $dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product').dol_sanitizeFileName($this->ref).'/';
+        if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+        	$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos/";
+        } else {
+        	$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product').dol_sanitizeFileName($this->ref).'/';
         }
 
         $nbphoto = 0;
@@ -4847,9 +4849,11 @@ class Product extends CommonObject
             if (is_resource($handle)) {
                 while (($file = readdir($handle)) !== false)
                 {
-                    if (!utf8_check($file)) { $file = utf8_encode($file); // To be sure data is stored in UTF8 in memory
+                    if (!utf8_check($file)) {
+                    	$file = utf8_encode($file); // To be sure data is stored in UTF8 in memory
                     }
-                    if (dol_is_file($dir.$file) && image_format_supported($file) > 0) { return true;
+                    if (dol_is_file($dir.$file) && image_format_supported($file) >= 0) {
+                    	return true;
                     }
                 }
             }
