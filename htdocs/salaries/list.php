@@ -80,6 +80,7 @@ else
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref = "";
+	$search_user = "";
 	$search_label = "";
 	$search_amount = "";
 	$search_account = '';
