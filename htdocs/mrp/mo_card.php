@@ -571,13 +571,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
     		// Back to draft
-    		/*if ($object->status == $object::STATUS_VALIDATED)
+    		if ($object->status == $object::STATUS_VALIDATED)
     		{
 	    		if ($permissiontoadd)
 	    		{
-	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    			// TODO Add test that production has not started
+	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 	    		}
-    		}*/
+    		}
 
             // Modify
     		if ($object->status == $object::STATUS_DRAFT) {
@@ -620,7 +621,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			{
     				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
     			}
-    			else
+
+    			if ($object->status == $object::STATUS_CANCELED)
     			{
     				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
     			}

@@ -96,7 +96,7 @@ class Mo extends CommonObject
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
 		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM",),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce"),
-		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce",),
+		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75'),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1),
 	    'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
@@ -235,77 +235,28 @@ class Mo extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             <=0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
 		global $conf;
 
 		$error = 0;
+		$idcreated = 0;
 
 		$this->db->begin();
 
-		$result = $this->createCommon($user, $notrigger);
-		if ($result <= 0) {
-			$error++;
+		if (!$error) {
+			$idcreated = $this->createCommon($user, $notrigger);
+			if ($idcreated <= 0) {
+				$error++;
+			}
 		}
 
-		// Insert lines in mrp_production table from BOM data
-		if (!$error && $this->fk_bom > 0)
-		{
-			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-			$bom = new Bom($this->db);
-			$bom->fetch($this->fk_bom);
-			if ($bom->id > 0)
-			{
-				$moline = new MoLine($this->db);
-
-				// Line to produce
-				$moline->fk_mo = $this->id;
-				$moline->qty = $this->qty;
-				$moline->fk_product = $this->fk_product;
-				$moline->role = 'toproduce';
-				$moline->position = 1;
-
-				$resultline = $moline->create($user);
-				if ($resultline <= 0) {
-					$error++;
-					$this->error = $moline->error;
-					$this->errors = $moline->errors;
-					dol_print_error($this->db, $moline->error, $moline->errors);
-				}
-
-				// Lines to consume
-				if (! $error) {
-					foreach ($bom->lines as $line)
-					{
-						$moline = new MoLine($this->db);
-
-						$moline->fk_mo = $this->id;
-						$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
-						if ($moline->qty <= 0) {
-							$error++;
-							$this->error = "BadValueForquantityToConsume";
-							break;
-						}
-						else {
-							$moline->fk_product = $line->fk_product;
-							$moline->role = 'toconsume';
-							$moline->position = $line->position;
-							$moline->qty_frozen = $line->qty_frozen;
-							$moline->disable_stock_change = $line->disable_stock_change;
-
-							$resultline = $moline->create($user);
-							if ($resultline <= 0) {
-								$error++;
-								$this->error = $moline->error;
-								$this->errors = $moline->errors;
-								dol_print_error($this->db, $moline->error, $moline->errors);
-								break;
-							}
-						}
-					}
-				}
+		if (!$error) {
+			$result = $this->updateProduction($user, $notrigger);
+			if ($result <= 0) {
+				$error++;
 			}
 		}
 
@@ -315,7 +266,7 @@ class Mo extends CommonObject
 			$this->db->rollback();
 		}
 
-		return $result;
+		return $idcreated;
 	}
 
 	/**
@@ -525,8 +476,123 @@ class Mo extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		global $langs;
+
+		$error = 0;
+
+		$this->db->begin();
+
+		$result = $this->updateCommon($user, $notrigger);
+		if ($result <= 0) {
+			$error++;
+		}
+
+		$result = $this->updateProduction($user, $notrigger);
+		if ($result <= 0) {
+			$error++;
+		}
+
+		if (! $error) {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+			$this->db->commit();
+			return 1;
+		}
+		else {
+			setEventMessages($this->error, $this->errors, 'errors');
+			$this->db->rollback();
+			return -1;
+		}
 	}
+
+	/**
+	 * Erase and update the line to produce
+	 *
+	 * @param  User $user      User that modifies
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function updateProduction(User $user)
+	{
+		$error = 0;
+
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'BadStatus';
+			return -1;
+		}
+
+		$this->db->begin();
+
+		// Insert lines in mrp_production table from BOM data
+		if (!$error && $this->fk_bom > 0)
+		{
+			// TODO Check that production has not started. If yes, we stop here.
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.$this->id;
+			$this->db->query($sql);
+
+			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+			$bom = new Bom($this->db);
+			$bom->fetch($this->fk_bom);
+			if ($bom->id > 0)
+			{
+				$moline = new MoLine($this->db);
+
+				// Line to produce
+				$moline->fk_mo = $this->id;
+				$moline->qty = $this->qty;
+				$moline->fk_product = $this->fk_product;
+				$moline->role = 'toproduce';
+				$moline->position = 1;
+
+				$resultline = $moline->create($user);
+				if ($resultline <= 0) {
+					$error++;
+					$this->error = $moline->error;
+					$this->errors = $moline->errors;
+					dol_print_error($this->db, $moline->error, $moline->errors);
+				}
+
+				// Lines to consume
+				if (! $error) {
+					foreach ($bom->lines as $line)
+					{
+						$moline = new MoLine($this->db);
+
+						$moline->fk_mo = $this->id;
+						$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+						if ($moline->qty <= 0) {
+							$error++;
+							$this->error = "BadValueForquantityToConsume";
+							break;
+						}
+						else {
+							$moline->fk_product = $line->fk_product;
+							$moline->role = 'toconsume';
+							$moline->position = $line->position;
+							$moline->qty_frozen = $line->qty_frozen;
+							$moline->disable_stock_change = $line->disable_stock_change;
+
+							$resultline = $moline->create($user);
+							if ($resultline <= 0) {
+								$error++;
+								$this->error = $moline->error;
+								$this->errors = $moline->errors;
+								dol_print_error($this->db, $moline->error, $moline->errors);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Delete object in database
@@ -747,6 +813,81 @@ class Mo extends CommonObject
 		}
 	}
 
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function setDraft($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status <= self::STATUS_DRAFT)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MO_UNVALIDATE');
+	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancel($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_VALIDATED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MO_CLOSE');
+	}
+
+	/**
+	 *	Set back to validated status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_CANCELED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MO_REOPEN');
+	}
+
     /**
      *  Return a link to the object card (with optionaly the picto)
      *
@@ -846,7 +987,8 @@ class Mo extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
 	}
@@ -958,7 +1100,8 @@ class Mo extends CommonObject
 		$langs->load("mrp");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			//$modele = 'standard';
+			$modele = '';					// Remove this once a pdf_standard.php exists.
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
@@ -968,6 +1111,8 @@ class Mo extends CommonObject
 		}
 
 		$modelpath = "core/modules/mrp/doc/";
+
+		if (empty($modele)) return 1;	// Remove this once a pdf_standard.php exists.
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}

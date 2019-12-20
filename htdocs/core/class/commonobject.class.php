@@ -7960,7 +7960,7 @@ abstract class CommonObject
 
 
 	/**
-	 *	Set draft status
+	 *	Set to a status
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
