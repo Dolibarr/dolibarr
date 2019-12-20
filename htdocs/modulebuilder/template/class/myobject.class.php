@@ -514,7 +514,7 @@ class MyObject extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut == self::STATUS_VALIDATED)
+		if ($this->status == self::STATUS_VALIDATED)
 		{
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;

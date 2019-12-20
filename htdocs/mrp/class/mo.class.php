@@ -92,10 +92,10 @@ class Mo extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1,),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1',),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
 		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM",),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce",),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce"),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce",),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1),
@@ -250,7 +250,7 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		// Insert lines in mrp_production table
+		// Insert lines in mrp_production table from BOM data
 		if (!$error && $this->fk_bom > 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
@@ -258,31 +258,51 @@ class Mo extends CommonObject
 			$bom->fetch($this->fk_bom);
 			if ($bom->id > 0)
 			{
-				foreach ($bom->lines as $line)
-				{
-					$moline = new MoLine($this->db);
+				$moline = new MoLine($this->db);
 
-					$moline->fk_mo = $this->id;
-					$moline->qty = $line->qty * $this->qty * $bom->efficiency;
-					if ($moline->qty <= 0) {
-						$error++;
-						$this->error = "BadValueForquantityToConsume";
-						break;
-					}
-					else {
-						$moline->fk_product = $line->fk_product;
-						$moline->role = 'toconsume';
-						$moline->position = $line->position;
-						$moline->qty_frozen = $line->qty_frozen;
-						$moline->disable_stock_change = $line->disable_stock_change;
+				// Line to produce
+				$moline->fk_mo = $this->id;
+				$moline->qty = $this->qty;
+				$moline->fk_product = $this->fk_product;
+				$moline->role = 'toproduce';
+				$moline->position = 1;
 
-						$resultline = $moline->create($user);
-						if ($resultline <= 0) {
+				$resultline = $moline->create($user);
+				if ($resultline <= 0) {
+					$error++;
+					$this->error = $moline->error;
+					$this->errors = $moline->errors;
+					dol_print_error($this->db, $moline->error, $moline->errors);
+				}
+
+				// Lines to consume
+				if (! $error) {
+					foreach ($bom->lines as $line)
+					{
+						$moline = new MoLine($this->db);
+
+						$moline->fk_mo = $this->id;
+						$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+						if ($moline->qty <= 0) {
 							$error++;
-							$this->error = $moline->error;
-							$this->errors = $moline->errors;
-							dol_print_error($this->db, $moline->error, $moline->errors);
+							$this->error = "BadValueForquantityToConsume";
 							break;
+						}
+						else {
+							$moline->fk_product = $line->fk_product;
+							$moline->role = 'toconsume';
+							$moline->position = $line->position;
+							$moline->qty_frozen = $line->qty_frozen;
+							$moline->disable_stock_change = $line->disable_stock_change;
+
+							$resultline = $moline->create($user);
+							if ($resultline <= 0) {
+								$error++;
+								$this->error = $moline->error;
+								$this->errors = $moline->errors;
+								dol_print_error($this->db, $moline->error, $moline->errors);
+								break;
+							}
 						}
 					}
 				}
@@ -538,6 +558,193 @@ class Mo extends CommonObject
 		}
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
+	}
+
+
+	/**
+	 *  Returns the reference to the following non used MO depending on the active numbering module
+	 *  defined into MRP_MO_ADDON
+	 *
+	 *  @param	Product		$prod 	Object product
+	 *  @return string      		MO free reference
+	 */
+	public function getNextNumRef($prod)
+	{
+		global $langs, $conf;
+		$langs->load("mrp");
+
+		if (!empty($conf->global->MRP_MO_ADDON))
+		{
+			$mybool = false;
+
+			$file = $conf->global->MRP_MO_ADDON.".php";
+			$classname = $conf->global->MRP_MO_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+				$dir = dol_buildpath($reldir."core/modules/mrp/");
+
+				// Load file with numbering class (if found)
+				$mybool |= @include_once $dir.$file;
+			}
+
+			if ($mybool === false)
+			{
+				dol_print_error('', "Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			$numref = $obj->getNextValue($prod, $this);
+
+			if ($numref != "")
+			{
+				return $numref;
+			}
+			else
+			{
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_MRP_MO_ADDON_NotDefined");
+			return "";
+		}
+	}
+
+	/**
+	 *	Validate Mo
+	 *
+	 *	@param		User	$user     		User making status change
+	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 */
+	public function validate($user, $notrigger = 0)
+	{
+		global $conf, $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$error = 0;
+
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED)
+		{
+			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mrp->create))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mrp->mrp_advance->validate))))
+		 {
+		 $this->error='NotEnoughPermissions';
+		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+		 return -1;
+		 }*/
+
+		$now = dol_now();
+
+		$this->db->begin();
+
+		// Define new ref
+		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		{
+			$this->fetch_product();
+			$num = $this->getNextNumRef($this->product);
+		}
+		else
+		{
+			$num = $this->ref;
+		}
+		$this->newref = $num;
+
+		// Validate
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET ref = '".$this->db->escape($num)."',";
+		$sql .= " status = ".self::STATUS_VALIDATED.",";
+		$sql .= " date_valid='".$this->db->idate($now)."',";
+		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql)
+		{
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
+
+		if (!$error && !$notrigger)
+		{
+			// Call trigger
+			$result = $this->call_trigger('MRP_MO_VALIDATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
+
+		if (!$error)
+		{
+			$this->oldref = $this->ref;
+
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref))
+			{
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'mrp/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($num);
+				$dirsource = $conf->mrp->dir_output.'/'.$oldref;
+				$dirdest = $conf->mrp->dir_output.'/'.$newref;
+				if (!$error && file_exists($dirsource))
+				{
+					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
+
+					if (@rename($dirsource, $dirdest))
+					{
+						dol_syslog("Rename ok");
+						// Rename docs starting with $oldref with $newref
+						$listoffiles = dol_dir_list($conf->mrp->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						foreach ($listoffiles as $fileentry)
+						{
+							$dirsource = $fileentry['name'];
+							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+							$dirsource = $fileentry['path'].'/'.$dirsource;
+							$dirdest = $fileentry['path'].'/'.$dirdest;
+							@rename($dirsource, $dirdest);
+						}
+					}
+				}
+			}
+		}
+
+		// Set new ref and current status
+		if (!$error)
+		{
+			$this->ref = $num;
+			$this->status = self::STATUS_VALIDATED;
+		}
+
+		if (!$error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
     /**
@@ -824,19 +1031,19 @@ class Mo extends CommonObject
 		{
 			foreach ($this->lines as $line)
 			{
-				if (is_object($hookmanager))
+				/*if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
 				{
 					if (empty($line->fk_parent_line))
 					{
 						$parameters = array('line'=>$line, 'i'=>$i);
 						$action = '';
-						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						$result = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
 				}
 				else
-				{
+				{*/
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
-				}
+				//}
 
 				$i++;
 			}
@@ -873,7 +1080,7 @@ class Mo extends CommonObject
 		}
 		else
 		{
-			// If origin BOM line is not a product, but another BOM
+			// If origin MRP line is not a product, but another MRP
 			// TODO
 		}
 
