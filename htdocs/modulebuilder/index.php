@@ -718,14 +718,28 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			if ($type == 'int(11)') $type='integer';
 			// notnull
 			$notnull = ($obj->Null == 'YES'?0:1);
+			if ($fieldname == 'fk_user_modif') $notnull = -1;
 			// label
 			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
-			if ($fieldname == 'rowid') $label='ID';
-			if ($fieldname == 'import_key') $label='ImportKey';
+			if ($fieldname == 'rowid') $label='TechnicalID';
+			if ($fieldname == 'import_key') $label='ImportId';
+			if ($fieldname == 'fk_soc') $label='ThirdParty';
+			if ($fieldname == 'tms') $label='DateModification';
+			if ($fieldname == 'datec') $label='DateCreation';
+			if ($fieldname == 'date_valid') $label='DateValidation';
+			if ($fieldname == 'datev') $label='DateValidation';
+			if ($fieldname == 'note_private') $label='NotePublic';
+			if ($fieldname == 'note_public') $label='NotePrivate';
+			if ($fieldname == 'fk_user_creat') $label='UserAuthor';
+			if ($fieldname == 'fk_user_modif') $label='UserModif';
+			if ($fieldname == 'fk_user_valid') $label='UserValidation';
 			// visible
 			$visible = -1;
 			if ($fieldname == 'entity') $visible = -2;
-			if (in_array($fieldname, array('model_pdf', 'note_public', 'note_private'))) $visible = 0;
+			if ($fieldname == 'import_key') $visible = -2;
+			if ($fieldname == 'fk_user_creat') $visible = -2;
+			if ($fieldname == 'fk_user_modif') $visible = -2;
+			if (in_array($fieldname, array('ref_ext', 'model_pdf', 'note_public', 'note_private'))) $visible = 0;
 			// enabled
 			$enabled = 1;
 			// default
@@ -734,6 +748,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			// position
 			$position = $i;
 			if (in_array($fieldname, array('status', 'statut', 'fk_status', 'fk_statut'))) $position = 500;
+			// index
+			$index = 0;
+			if ($fieldname == 'entity') $index=1;
 
 			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."',";
 			if ($default != '') $string.= " 'default'=>".$default.",";
@@ -741,7 +758,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$string.= " 'visible'=>".$visible;
 			if ($notnull) $string.= ", 'notnull'=>".$notnull;
 			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
-			$string.= ", 'position'=>".$position."),\n";
+			$string.= ", 'position'=>".$position;
+			if ($index) $string.= ", 'index'=>".$index;
+			print "),\n";
 			$string.="<br>";
 			$i+=5;
 		}

@@ -160,20 +160,20 @@ $fieldstosearchall = array(
 
 // Definition of fields for list
 $arrayfields = array(
-	'p.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0)),
-	'p.lastname'=>array('label'=>"Lastname", 'checked'=>1),
-	'p.firstname'=>array('label'=>"Firstname", 'checked'=>1),
-	'p.poste'=>array('label'=>"PostOrFunction", 'checked'=>1),
-	'p.town'=>array('label'=>"Town", 'checked'=>0),
-	'p.zip'=>array('label'=>"Zip", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
-	'p.phone'=>array('label'=>"Phone", 'checked'=>1),
-	'p.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
-	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1),
-	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
-	'p.email'=>array('label'=>"EMail", 'checked'=>1),
-	'p.no_email'=>array('label'=>"No_Email", 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
-	'p.thirdparty'=>array('label'=>"ThirdParty", 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
+	'p.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0)),
+	'p.lastname'=>array('label'=>"Lastname", 'position'=>2, 'checked'=>1),
+	'p.firstname'=>array('label'=>"Firstname", 'position'=>3, 'checked'=>1),
+	'p.poste'=>array('label'=>"PostOrFunction", 'position'=>10, 'checked'=>1),
+	'p.town'=>array('label'=>"Town", 'position'=>20, 'checked'=>0),
+	'p.zip'=>array('label'=>"Zip", 'position'=>21, 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'position'=>22, 'checked'=>0),
+	'p.phone'=>array('label'=>"Phone", 'position'=>30, 'checked'=>1),
+	'p.phone_perso'=>array('label'=>"PhonePerso", 'position'=>31, 'checked'=>0),
+	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'position'=>32, 'checked'=>1),
+	'p.fax'=>array('label'=>"Fax", 'position'=>33, 'checked'=>0),
+	'p.email'=>array('label'=>"EMail", 'position'=>40, 'checked'=>1),
+	'p.no_email'=>array('label'=>"No_Email", 'position'=>41, 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
+	'p.thirdparty'=>array('label'=>"ThirdParty", 'position'=>50, 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
@@ -186,6 +186,7 @@ if (!empty($conf->socialnetworks->enabled)) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
 				'checked' => 0,
+				'position' => 300
 			);
 		}
 	}
