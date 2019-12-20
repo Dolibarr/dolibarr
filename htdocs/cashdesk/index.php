@@ -90,7 +90,7 @@ else
 <?php if ($err) print dol_escape_htmltag($err)."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Identification"); ?></legend>
 <form id="frmLogin" method="POST" action="index_verif.php">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+	<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 
 <table>
 

@@ -81,8 +81,6 @@ class modTicket extends DolibarrModules
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory
             'triggers' => 1,
-            // Set this to 1 if module has its own models directory
-            'models' => 1,
         );
 
         // Data directories to create when module is enabled.

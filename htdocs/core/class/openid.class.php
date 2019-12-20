@@ -158,7 +158,7 @@ class SimpleOpenID
          }else{
          $identity = $u['scheme'] . '://' . $u['host'] . $u['path'];
          }
-         //*/
+        */
         $this->openid_url_identity = $a;
     }
 
@@ -556,8 +556,8 @@ class SimpleOpenID
             return false;
         }
         else
-       {
-               dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
+        {
+            dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
             $this->SetOpenIDServer($server);
             return $server;
         }

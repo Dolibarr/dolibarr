@@ -341,3 +341,4 @@ ErrorDestinationProductNotFound=Zielprodukt nicht gefunden
 ErrorProductCombinationNotFound=Produktvariante nicht gefunden
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
 ProductsPricePerCustomer=Product prices per customers
+ProductSupplierExtraFields=Ergänzende Attribute (Lieferantenpreise)

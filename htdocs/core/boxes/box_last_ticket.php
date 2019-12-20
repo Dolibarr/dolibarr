@@ -1,7 +1,8 @@
 <?php
 /* Module descriptor for ticket system
- * Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
- *                    2016            Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +19,11 @@
  */
 
 /**
- *     \file        core/boxes/box_ticket_latest.php
+ *     \file        htdocs/core/boxes/box_last_ticket.php
  *     \ingroup     ticket
  *     \brief       This box shows latest created tickets
  */
-require_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
+require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box
@@ -46,7 +47,7 @@ class box_last_ticket extends ModeleBoxes
 
     /**
      * Constructor
-     *  @param	DoliDB	$db	        Database handler
+     *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
     public function __construct($db, $param = '')
@@ -70,7 +71,7 @@ class box_last_ticket extends ModeleBoxes
 
         $this->max = $max;
 
-        dol_include_once("/ticket/class/ticket.class.php");
+        require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
         $text = $langs->trans("BoxLastTicketDescription", $max);
         $this->info_box_head = array(
@@ -86,18 +87,18 @@ class box_last_ticket extends ModeleBoxes
         if ($user->rights->ticket->read) {
             $sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email ";
             $sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
-            $sql .= ", s.nom as company_name";
-            $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_type as type ON type.code=t.type_code";
-            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_category as category ON category.code=t.category_code";
-            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_severity as severity ON severity.code=t.severity_code";
-            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid=t.fk_soc";
+            $sql .= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
+            $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 
-            $sql .= " WHERE t.entity = " . $conf->entity;
+            $sql .= " WHERE t.entity = ".$conf->entity;
             //          $sql.= " AND e.rowid = er.fk_event";
-            //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->societe_id) {
-                $sql .= " AND t.fk_soc= " . $user->societe_id;
+            //if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->socid) {
+                $sql .= " AND t.fk_soc= ".$user->socid;
             }
 
             //$sql.= " AND t.fk_statut > 9";
@@ -108,7 +109,6 @@ class box_last_ticket extends ModeleBoxes
             $resql = $this->db->query($sql);
             if ($resql) {
                 $num = $this->db->num_rows($resql);
-                $now = gmmktime();
 
                 $i = 0;
 
@@ -120,55 +120,60 @@ class box_last_ticket extends ModeleBoxes
                     $late = '';
 
                     $ticket = new Ticket($this->db);
+                    $ticket->id = $objp->id;
+                    $ticket->track_id = $objp->track_id;
+                    $ticket->ref = $objp->ref;
+                    $ticket->fk_statut = $objp->fk_statut;
+                    $ticket->subject = $objp->subject;
+                    if ($objp->fk_soc > 0) {
+                        $thirdparty = new Societe($this->db);
+                        $thirdparty->id = $objp->fk_soc;
+                        $thirdparty->email = $objp->socemail;
+                        $thirdparty->client = $objp->client;
+                        $thirdparty->fournisseur = $objp->fournisseur;
+                        $thirdparty->name = $objp->company_name;
+                        $link = $thirdparty->getNomUrl(1);
+                    } else {
+                        $link = dol_print_email($objp->origin_email);
+                    }
 
                     $r = 0;
 
-                    // Picto
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'class="left" width="16"',
-                        'logo' => $this->boximg,
-                        'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1),
-                    );
-                    $r++;
-
-                    // Id
+                    // Ticket
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="left"',
-                        'text' => $objp->ref,
-                        'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1),
+                        'td' => 'class="nowraponall"',
+                        'text' => $ticket->getNomUrl(1),
+                        'asis' => 1
                     );
                     $r++;
 
                     // Subject
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="left"',
+                        'td' => '',
                         'text' => $objp->subject, // Some event have no ref
-                        'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1),
+                        'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
                     );
                     $r++;
 
                     // Customer
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="left"',
-                        'logo' => ($objp->fk_soc > 0 ? 'company' : ''),
-                        'text' => ($objp->company_name ? $objp->company_name : $objp->origin_email),
-                        'url' => ($objp->fk_soc > 0 ? DOL_URL_ROOT . "/comm/card.php?socid=" . $objp->fk_soc : ''),
+                        'td' => '',
+                        'text' => $link,
+                        'asis' => 1,
                     );
                     $r++;
 
                     // Date creation
                     $this->info_box_contents[$i][$r] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($this->db->idate($objp->datec), 'dayhour'),
+                        'text' => dol_print_date($datec, 'dayhour'),
                     );
                     $r++;
 
                     // Statut
-                    $ticketstat = new Ticket($this->db);
-                    $ticketstat->fk_statut = $objp->fk_statut;
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="right"',
-                        'text' => $ticketstat->getLibStatut(3),
+                        'td' => 'class="right nowraponall"',
+                        'text' => $ticket->getLibStatut(3),
                     );
                     $r++;
 

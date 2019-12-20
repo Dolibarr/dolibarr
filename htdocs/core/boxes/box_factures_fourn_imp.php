@@ -91,13 +91,13 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql.= " f.paye, f.fk_statut, f.type";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;
 			$sql.= " AND f.paye=0";
 			$sql.= " AND fk_statut = 1";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
 			$sql.= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
 			$sql.= $this->db->plimit($max, 0);
 
@@ -145,13 +145,13 @@ class box_factures_fourn_imp extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1, '', 40),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 

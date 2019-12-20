@@ -96,7 +96,7 @@ class ModelNumRefHolidays
 	public function info()
 	{
 		global $langs;
-		$langs->load("holidays");
+		$langs->load("holiday");
 		return $langs->trans("NoDescription");
 	}
 
@@ -108,7 +108,7 @@ class ModelNumRefHolidays
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("holidays");
+		$langs->load("holiday");
 		return $langs->trans("NoExample");
 	}
 

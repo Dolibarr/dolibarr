@@ -130,7 +130,7 @@ if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->comptarapport->lire)
 	accessforbidden();
@@ -256,7 +256,6 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats();		// WARNING: Computed groups must be after group they include
 
@@ -421,7 +420,7 @@ elseif ($modecompta=="BOOKKEEPING")
 				foreach ($cpts as $i => $cpt)    // Loop on each account.
 				{
 					// We make 1 loop for each account because we may want detail per account.
-					// @TODO Optimize to ask a 'group by' account and a filter with account in (..., ...) in request
+					// @todo Optimize to ask a 'group by' account and a filter with account in (..., ...) in request
 
 					// Each month
 					$resultN = 0;

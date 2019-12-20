@@ -140,5 +140,5 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
         time_js_next_test += time_auto_update;
 		console.log('Updated time_js_next_test. New value is '+time_js_next_test);
     }
-<?php
+    <?php
 }

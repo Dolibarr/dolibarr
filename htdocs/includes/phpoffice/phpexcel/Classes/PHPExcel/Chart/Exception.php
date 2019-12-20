@@ -21,7 +21,7 @@
  * @category   PHPExcel
  * @package    PHPExcel_Chart
  * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
- * @license	https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+ * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version	##VERSION##, ##DATE##
  */
 

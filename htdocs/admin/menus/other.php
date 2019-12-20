@@ -81,7 +81,7 @@ dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
 
 // Other Options
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Status").'</td>';

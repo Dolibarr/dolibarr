@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
@@ -142,7 +142,7 @@ if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
 	dol_print_error($bprev->error);
 }
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 print '<tr><td class="titlefield">'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td>';
@@ -161,6 +161,7 @@ print '</div>';
 if ($mesg) print $mesg;
 
 print "<div class=\"tabsAction\">\n";
+
 print '<form action="' . $_SERVER['PHP_SELF'] . '?action=create" method="POST">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 if ($nb) {
@@ -193,6 +194,7 @@ else
 }
 
 print "</form>\n";
+
 print "</div>\n";
 print '<br>';
 
@@ -240,12 +242,12 @@ if ($resql)
     if(! empty($page) && $num <= $nbtotalofrecords) $page = 0;
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Invoice").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -299,7 +301,10 @@ if ($resql)
 			$i++;
 		}
 	}
-	else print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	else
+	{
+		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
 	print "</table>";
 	print "</form>";
 	print "<br>\n";
@@ -332,9 +337,9 @@ if ($result)
     $i = 0;
 
     print"\n<!-- debut table -->\n";
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
-    print '<td align="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+    print '<td class="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -350,7 +355,7 @@ if ($result)
         print $bprev->getNomUrl(1);
         print "</td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
 

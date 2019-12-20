@@ -148,11 +148,13 @@ class DolibarrApiAccess implements iAuthenticate
 			$fuser->getrights();
 			static::$user = $fuser;
 
-			if($fuser->societe_id)
+			if ($fuser->socid) {
 				static::$role = 'external';
+            }
 
-			if($fuser->admin)
+			if ($fuser->admin) {
 				static::$role = 'admin';
+            }
         }
 		else
 		{

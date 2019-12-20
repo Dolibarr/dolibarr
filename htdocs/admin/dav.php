@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other","agenda"));
+$langs->loadLangs(array("admin", "other", "agenda"));
 
 if (!$user->admin)
     accessforbidden();
@@ -37,7 +37,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 
 
-$arrayofparameters=array(
+$arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
     'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
     'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -60,27 +60,27 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 llxHeader('', $langs->trans("DAVSetup"), $wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-$head=dav_admin_prepare_head();
+$head = dav_admin_prepare_head();
 
 dol_fiche_head($head, 'webdav', '', -1, 'action');
 
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
@@ -100,7 +100,7 @@ if ($action == 'edit')
 		}
 		else
 		{
-			print '<input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '">';
+			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'">';
 		}
 		print '</td></tr>';
 	}
@@ -116,14 +116,16 @@ if ($action == 'edit')
 }
 else
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
+		$label = $langs->trans($key);
+		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
@@ -164,22 +166,22 @@ print "<br>";
 
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
 // Show message
-$message='';
-$url='<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
-$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
-$message.='<br>';
-if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+$message = '';
+$url = '<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
+$message .= img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
+$message .= '<br>';
+if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
-	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
-	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
-	$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
-	$message.='<br>';
+	$urlEntity = (!empty($conf->multicompany->enabled) ? '?entity='.$conf->entity : '');
+	$url = '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+	$message .= img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
+	$message .= '<br>';
 }
 print $message;
 

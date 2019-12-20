@@ -51,7 +51,7 @@ $month	= GETPOST('month', 'int');
 $year	= GETPOST('year', 'int');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'facture', $facid, '');
 
 $paymentstatic=new Paiement($db);
@@ -73,14 +73,14 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.rowid";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "p.rowid";
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentlist'));
 $extrafields = new ExtraFields($db);
 
-$arrayfields=array();
+$arrayfields = array();
 
 
 /*
@@ -89,16 +89,16 @@ $arrayfields=array();
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_account="";
-	$search_amount="";
-    $search_paymenttype="";
-    $search_payment_num="";
-	$search_company="";
-    $day='';
-    $year='';
-    $month='';
-    $search_array_options=array();
+	$search_ref = "";
+	$search_account = "";
+	$search_amount = "";
+    $search_paymenttype = "";
+    $search_payment_num = "";
+	$search_company = "";
+    $day = '';
+    $year = '';
+    $month = '';
+    $search_array_options = array();
 }
 
 
@@ -106,8 +106,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * 	View
  */
 
-$form=new Form($db);
-$formother=new FormOther($db);
+$form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader('', $langs->trans('ListPayment'));
 
@@ -117,8 +117,6 @@ if (GETPOST("orphelins", "alpha"))
     $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code";
-	// Add fields for extrafields
-	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -139,8 +137,6 @@ else
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
     $sql.= " s.rowid as socid, s.nom as name, s.email";
-	// Add fields for extrafields
-	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -194,7 +190,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);
@@ -202,19 +198,19 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
 
-    $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-    $param.=(GETPOST("orphelins")?"&orphelins=1":"");
-    $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
-    $param.=($search_company?"&search_company=".urlencode($search_company):"");
-    $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
-    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
-    if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+    $param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+    $param .= (GETPOST("orphelins") ? "&orphelins=1" : "");
+    $param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : "");
+    $param .= ($search_company ? "&search_company=".urlencode($search_company) : "");
+    $param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : "");
+    $param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : "");
+    if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -222,10 +218,10 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     // Lines for filters fields
     print '<tr class="liste_titre_filter">';
@@ -233,9 +229,9 @@ if ($resql)
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
     print '<td class="liste_titre center">';
-    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+    if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
     print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-    $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
+    $formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
     print '</td>';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
@@ -246,7 +242,7 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
     print '</td>';
-    if (! empty($conf->banque->enabled))
+    if (!empty($conf->banque->enabled))
     {
 	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
@@ -272,46 +268,46 @@ if ($resql)
     print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", $param, "", $sortfield, $sortorder);
     print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "p.num_paiement", "", $param, "", $sortfield, $sortorder);
-    if (! empty($conf->banque->enabled))
+    if (!empty($conf->banque->enabled))
     {
         print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
     }
     print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, 'class="right"', $sortfield, $sortorder);
     //print_liste_field_titre("Invoices"),"","","",$param,'class="left"',$sortfield,$sortorder);
 
-	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.statut", "", $param, 'class="right"', $sortfield, $sortorder);
+    if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.statut", "", $param, 'class="right"', $sortfield, $sortorder);
     print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 
     $i = 0;
-    $totalarray=array();
+    $totalarray = array();
     while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
 
-        $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->ref;
+        $paymentstatic->id = $objp->rowid;
+        $paymentstatic->ref = $objp->ref;
 
-        $companystatic->id=$objp->socid;
-        $companystatic->name=$objp->name;
-        $companystatic->email=$objp->email;
+        $companystatic->id = $objp->socid;
+        $companystatic->name = $objp->name;
+        $companystatic->email = $objp->email;
 
         print '<tr class="oddeven">';
 
         print '<td>';
         print $paymentstatic->getNomUrl(1);
         print '</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
 
         // Date
         $dateformatforpayment = 'day';
-        if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment = 'dayhour';
+        print '<td class="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
+        if (!$i) $totalarray['nbfield']++;
 
         // Thirdparty
         print '<td>';
@@ -320,27 +316,27 @@ if ($resql)
             print $companystatic->getNomUrl(1, '', 24);
         }
         print '</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
 
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
 
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
 
         // Account
-	    if (! empty($conf->banque->enabled))
+	    if (!empty($conf->banque->enabled))
 	    {
 	        print '<td>';
 	        if ($objp->bid > 0)
 	        {
-	            $accountstatic->id=$objp->bid;
-	            $accountstatic->ref=$objp->bref;
-	            $accountstatic->label=$objp->blabel;
-	            $accountstatic->number=$objp->number;
-	            $accountstatic->account_number=$objp->account_number;
+	            $accountstatic->id = $objp->bid;
+	            $accountstatic->ref = $objp->bref;
+	            $accountstatic->label = $objp->blabel;
+	            $accountstatic->number = $objp->number;
+	            $accountstatic->account_number = $objp->account_number;
 
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($objp->accountancy_journal);
@@ -349,27 +345,27 @@ if ($resql)
 	            print $accountstatic->getNomUrl(1);
 	        }
 	        print '</td>';
-	        if (! $i) $totalarray['nbfield']++;
+	        if (!$i) $totalarray['nbfield']++;
 	    }
 
 	    // Amount
         print '<td class="right">'.price($objp->amount).'</td>';
-        if (! $i) $totalarray['nbfield']++;
-        $totalarray['pos'][7]='amount';
+        if (!$i) $totalarray['nbfield']++;
+        $totalarray['pos'][7] = 'amount';
         $totalarray['val']['amount'] += $objp->amount;
 
-        if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+        if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
         {
             print '<td class="right">';
             if ($objp->statut == 0) print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">';
             print $paymentstatic->LibStatut($objp->statut, 5);
             if ($objp->statut == 0) print '</a>';
             print '</td>';
-            if (! $i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['nbfield']++;
         }
 
 		print '<td></td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		print '</tr>';
 
@@ -377,26 +373,8 @@ if ($resql)
     }
 
     // Show total line
-    if (isset($totalarray['pos']))
-    {
-        print '<tr class="liste_total">';
-        $i=0;
-        while ($i < $totalarray['nbfield'])
-        {
-            $i++;
-            if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-            else
-            {
-                if ($i == 1)
-                {
-                    if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-                    else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-                }
-                else print '<td></td>';
-            }
-        }
-        print '</tr>';
-    }
+    include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
     print "</table>\n";
     print "</div>";

@@ -38,7 +38,6 @@ class AccountancyCategory // extends CommonObject
 
 	/**
 	 * @var string 		Error string
-	 * @see             $errors
 	 */
 	public $error;
 
@@ -56,6 +55,12 @@ class AccountancyCategory // extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='c_accounting_category';
+
+	/**
+	 * @var int ID
+	 * @deprecated
+	 */
+	public $rowid;
 
 	/**
      * @var int ID

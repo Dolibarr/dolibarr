@@ -135,13 +135,15 @@ echo $this->control->tpl['ajax_selectcountry'];
 	<td colspan="3" valign="top"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
 </tr>
 
-<?php if (! empty($this->control->tpl['contact_element'])) { ?>
-<?php foreach ($this->control->tpl['contact_element'] as $element) { ?>
-<tr>
-	<td><?php echo $element['linked_element_label']; ?></td>
-	<td colspan="3"><?php echo $element['linked_element_value']; ?></td>
-</tr>
-<?php } } ?>
+<?php
+if (! empty($this->control->tpl['contact_element'])) {
+	foreach ($this->control->tpl['contact_element'] as $element) {
+		print '<tr>';
+		print '<td>'.$element['linked_element_label'].'</td>';
+		print '<td colspan="3">'.$element['linked_element_value'].'</td>';
+		print '</tr>';
+	}
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans("DolibarrLogin"); ?></td>

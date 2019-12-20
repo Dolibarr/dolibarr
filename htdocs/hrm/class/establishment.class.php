@@ -55,7 +55,10 @@ class Establishment extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
-    public $picto='building';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='building';
 
     /**
 	 * @var int ID
@@ -265,12 +268,12 @@ class Establishment extends CommonObject
 		}
 	}
 
-   /**
-	*	Delete record
-	*
-	*	@param	int		$id		Id of record to delete
-	*	@return	int				<0 if KO, >0 if OK
-	*/
+    /**
+	 *	Delete record
+	 *
+	 *	@param	int		$id		Id of record to delete
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
 	public function delete($id)
 	{
 		$this->db->begin();

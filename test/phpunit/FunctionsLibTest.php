@@ -901,7 +901,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     {
         $s=img_picto('title', 'user');
         print __METHOD__." s=".$s."\n";
-        $this->assertContains('theme', $s, 'testImgPicto1');
+        $this->assertContains('fa-user', $s, 'testImgPicto1');
 
         $s=img_picto('title', 'img.png', 'style="float: right"', 0);
         print __METHOD__." s=".$s."\n";

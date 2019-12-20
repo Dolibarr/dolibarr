@@ -220,7 +220,7 @@ if ($format == 'rss')
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
 
-	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
 	else

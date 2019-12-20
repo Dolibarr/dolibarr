@@ -37,16 +37,16 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("InfoOS"), '', 'title_setup');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
 // Recupere l'OS au sens PHP
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
+print '<tr class="oddeven"><td>'.$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
 // Recupere la version de l'OS
 $osversion=version_os();
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
+print '<tr class="oddeven"><td>'.$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';
 
 // End of page

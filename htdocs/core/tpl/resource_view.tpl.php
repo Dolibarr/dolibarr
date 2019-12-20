@@ -23,7 +23,7 @@ print '<div class="tagtd liste_titre center">'.$langs->trans('Mandatory').'</div
 print '<div class="tagtd liste_titre"></div>';
 print '</div>';
 
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="id" value="'.$element_id.'" />';
 print '<input type="hidden" name="action" value="update_linked_resource" />';
 print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
@@ -32,7 +32,6 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 {
 	foreach ($linked_resources as $linked_resource)
 	{
-
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'], $linked_resource['resource_type']);
 
 		//$element_id = $linked_resource['rowid'];

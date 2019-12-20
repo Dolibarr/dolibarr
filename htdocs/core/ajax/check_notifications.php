@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+if (! defined('NOCSRFCHECK')) define('NOCSRFCHECK', '1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
@@ -88,7 +90,6 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
     $resql = $db->query($sql);
     if ($resql) {
-
         $actionmod = new ActionComm($db);
 
         while ($obj = $db->fetch_object($resql))

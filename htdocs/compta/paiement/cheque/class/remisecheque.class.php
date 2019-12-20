@@ -65,6 +65,10 @@ class RemiseCheque extends CommonObject
 	 */
 	public $ref;
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -437,7 +441,6 @@ class RemiseCheque extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/cheque/");
 
 				// Load file with numbering class (if found)
@@ -507,7 +510,7 @@ class RemiseCheque extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -562,7 +565,7 @@ class RemiseCheque extends CommonObject
         // phpcs:enable
 		global $user;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$sql = "SELECT count(b.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -575,7 +578,6 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nb["cheques"]=$obj->nb;
@@ -1074,50 +1076,26 @@ class RemiseCheque extends CommonObject
 	/**
 	 *  Return label of a status
 	 *
-	 *  @param	int		$status     Statut
+	 *  @param	int		$status     Id status
 	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return string      		Libelle du statut
 	 */
     public function LibStatut($status, $mode = 0)
     {
-        // phpcs:enable
-		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
-		$langs->load('compta');
-		if ($mode == 0)
-		{
-			if ($status == 0) return $langs->trans('ToValidate');
-			elseif ($status == 1) return $langs->trans('Validated');
-		}
-		elseif ($mode == 1)
-		{
-			if ($status == 0) return $langs->trans('ToValidate');
-			elseif ($status == 1) return $langs->trans('Validated');
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'), 'statut0').' '.$langs->trans('ToValidate');
-			elseif ($status == 1) return img_picto($langs->trans('Validated'), 'statut4').' '.$langs->trans('Validated');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'), 'statut0');
-			elseif ($status == 1) return img_picto($langs->trans('Validated'), 'statut4');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'), 'statut0').' '.$langs->trans('ToValidate');
-			elseif ($status == 1) return img_picto($langs->trans('Validated'), 'statut4').' '.$langs->trans('Validated');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'), 'statut0');
-			elseif ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'), 'statut4');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'), 'statut0');
-			elseif ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'), 'statut4');
-		}
-		return $langs->trans('Unknown');
+    	// phpcs:enable
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
+    	{
+    		global $langs;
+    		$langs->load('compta');
+    		$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('ToValidate');
+    		$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+    		$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('ToValidate');
+    		$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+    	}
+
+    	$statusType = 'status'.$status;
+    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+
+    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 }

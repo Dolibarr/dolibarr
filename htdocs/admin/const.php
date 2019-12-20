@@ -118,7 +118,6 @@ if (! empty($consts) && $action == 'update')
 // Mass delete
 if (! empty($consts) && $action == 'delete')
 {
-
 	$nbdeleted=0;
 	foreach($consts as $const)
 	{
@@ -164,7 +163,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
 {
-?>
+    ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();
@@ -182,7 +181,7 @@ jQuery(document).ready(function() {
 	});
 });
 </script>
-<?php
+    <?php
 }
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
@@ -193,11 +192,13 @@ print "<br>\n";
 $param = '';
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" id="action" name="action" value="">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
 print '<td>'.$langs->trans("Value").'</td>';
