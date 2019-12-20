@@ -760,7 +760,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
 			$string.= ", 'position'=>".$position;
 			if ($index) $string.= ", 'index'=>".$index;
-			print "),\n";
+			$string.= "),\n";
 			$string.="<br>";
 			$i+=5;
 		}
