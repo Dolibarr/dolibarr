@@ -9,7 +9,7 @@
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,20 +64,40 @@ class Contact extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields = array(
-		'rowid'         =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'firstname'     =>array('type'=>'varchar(128)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>11, 'searchall'=>1),
-		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'note_public'   =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>60),
-		'note_private'  =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>61),
-		'datec'         =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1, 'position'=>1000),
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
+		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'Phone perso', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'Phone mobile', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
+		'priv' =>array('type'=>'smallint(6)', 'label'=>'Priv', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
+		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>195),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>200),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 	);
 
 	public $civility_id; // In fact we store civility_code
@@ -193,8 +213,38 @@ class Contact extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf, $langs;
+
 		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->mailing->enabled)) $this->fields['no_email']['enabled'] = 0;
+		if (!empty($conf->global->SOCIETE_DISABLE_CONTACTS)) $this->fields['thirdparty']['enabled'] = 0;
 		$this->statut = 1; // By default, status is enabled
+
+		// Unset fields that are disabled
+		foreach ($this->fields as $key => $val)
+		{
+			if (isset($val['enabled']) && empty($val['enabled']))
+			{
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		/*if (is_object($langs))
+		{
+			foreach($this->fields as $key => $val)
+			{
+				if (is_array($val['arrayofkeyval']))
+				{
+					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					{
+						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+					}
+				}
+			}
+		}*/
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

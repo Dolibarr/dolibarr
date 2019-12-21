@@ -178,7 +178,7 @@ class ExpenseReport extends CommonObject
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
 		'date_create' =>array('type'=>'datetime', 'label'=>'Date create', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>300),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>305),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportKey', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'fk_statut' =>array('type'=>'integer', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 	);

@@ -514,7 +514,7 @@ class MyObject extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut == self::STATUS_VALIDATED)
+		if ($this->status == self::STATUS_VALIDATED)
 		{
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
@@ -803,7 +803,8 @@ class MyObject extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

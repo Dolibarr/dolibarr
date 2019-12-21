@@ -2555,17 +2555,17 @@ if (!function_exists("llxFooter"))
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
+			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
-			|| (!empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
+				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| GETPOST('forceping', 'alpha'))
 			{
-				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
+				if (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
-					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
 					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 					?>
 		    			<script>

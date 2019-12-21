@@ -59,6 +59,8 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
+
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
 
 ALTER TABLE llx_societe_account ADD COLUMN site_account varchar(128);
@@ -464,9 +466,11 @@ CREATE TABLE llx_mrp_mo(
     note_public text,
     note_private text,
     date_creation datetime NOT NULL,
+    date_valid datetime NULL,
     tms timestamp,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
+    fk_user_valid integer,
     model_pdf varchar(255),
     import_key varchar(14),
     status integer NOT NULL,
@@ -477,6 +481,9 @@ CREATE TABLE llx_mrp_mo(
     fk_project integer
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo ADD COLUMN date_valid datetime NULL;
+ALTER TABLE llx_mrp_mo ADD COLUMN fk_user_valid integer;
 
 ALTER TABLE llx_bom_bom ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_mrp_mo ADD COLUMN model_pdf varchar(255);

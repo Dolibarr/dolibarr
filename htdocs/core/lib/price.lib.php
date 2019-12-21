@@ -378,9 +378,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$keyforforeignMAIN_MAX_DECIMALS_TOT = 'MAIN_MAX_DECIMALS_TOT_'.$multicurrency_code;
 			$keyforforeignMAIN_ROUNDING_RULE_TOT = 'MAIN_ROUNDING_RULE_TOT_'.$multicurrency_code;
 			if (!empty($conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT)) {
-				$conf->global->MAIN_MAX_DECIMALS_UNIT = $keyforforeignMAIN_MAX_DECIMALS_UNIT;
-				$conf->global->MAIN_MAX_DECIMALS_TOT = $keyforforeignMAIN_MAX_DECIMALS_TOT;
-				$conf->global->MAIN_ROUNDING_RULE_TOT = $keyforforeignMAIN_ROUNDING_RULE_TOT;
+				$conf->global->MAIN_MAX_DECIMALS_UNIT = $conf->global->$keyforforeignMAIN_MAX_DECIMALS_UNIT;
+				$conf->global->MAIN_MAX_DECIMALS_TOT = $conf->global->$keyforforeignMAIN_MAX_DECIMALS_TOT;
+				$conf->global->MAIN_ROUNDING_RULE_TOT = $conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT;
 			}
 		}
 

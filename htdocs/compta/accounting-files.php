@@ -136,7 +136,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 	    $sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 	    $sql .= " UNION ALL";
 	    // Paiements of salaries
-	    $sql .= " SELECT t.rowid as id, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, datep as date, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+	    $sql .= " SELECT t.rowid as id, t.ref as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, datep as date, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 	    $sql .= " WHERE datep between ".$wheretail;
 	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -450,7 +450,7 @@ if (!empty($date_start) && !empty($date_stop))
     print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+    print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "item", "", $param, '', $sortfield, $sortorder, 'nowrap ');
     print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
     print '<td>'.$langs->trans("Ref").'</td>';
     print '<td>'.$langs->trans("Document").'</td>';
@@ -465,7 +465,7 @@ if (!empty($date_start) && !empty($date_stop))
     print '</tr>';
     if ($result)
     {
-        $TData = dol_sort_array($filesarray, 'date', 'ASC');
+        $TData = dol_sort_array($filesarray, $sortfield, $sortorder);
 
         if (empty($TData))
         {
