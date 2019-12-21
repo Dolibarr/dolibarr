@@ -1814,7 +1814,9 @@ class ActionComm extends CommonObject
         $this->location = 'Location';
         $this->transparency = 1; // 1 means opaque
         $this->priority = 1;
-        $this->note = 'Note';
+        $this->note = "This is a 'public' note";
+		$this->note_public = "This is a 'public' note.";
+		$this->note_private = "This is a 'private' note.";
 
         $this->userownerid = $user->id;
         $this->userassigned[$user->id] = array('id'=>$user->id, 'transparency'=> 1);
