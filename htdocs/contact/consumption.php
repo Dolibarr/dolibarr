@@ -126,7 +126,7 @@ dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'rowid', 'nom', $mo
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Civility
 print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
