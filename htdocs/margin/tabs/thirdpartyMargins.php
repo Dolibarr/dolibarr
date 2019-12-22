@@ -147,8 +147,8 @@ if ($socid > 0)
     $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
     $sql.= " sum(d.total_ht) as selling_price,";						// may be negative or positive
-    $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";				// always positive
-    $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge";	// always positive
+    $sql.= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,";				// always positive
+    $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge";	// always positive
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql.= ", ".MAIN_DB_PREFIX."facture as f";
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
