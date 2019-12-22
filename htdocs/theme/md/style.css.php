@@ -459,6 +459,9 @@ select.flat, form.flat select {
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
+.opacitymediumbycolor {
+	color: rgba(0, 0, 0, 0.4);
+}
 .opacityhigh {
 	opacity: 0.2;
 }
@@ -3718,6 +3721,9 @@ label.radioprivate {
 .photowithmargin {
 	margin-bottom: 2px;
 	margin-top: 2px;
+}
+div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+    margin-right: 15px;
 }
 .photowithborder {
 	border: 1px solid #f0f0f0;

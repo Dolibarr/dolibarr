@@ -525,6 +525,7 @@ class User extends CommonObject
 					// $obj->param is key or param
 					$pagewithoutquerystring = $obj->page;
 					$pagequeries = '';
+					$reg = array();
 					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
 					{
 						$pagewithoutquerystring = $reg[1];

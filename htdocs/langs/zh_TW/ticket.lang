@@ -28,14 +28,14 @@ Permission56004=管理服務單
 Permission56005=查看所有合作方的服務單（對外部用戶無效，始終僅限於他們所依賴的合作方）
 
 TicketDictType=服務單-類型
-TicketDictCategory=Ticket - Groupes
-TicketDictSeverity=Ticket - Severities
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Commercial question
+TicketDictCategory=服務單-組別
+TicketDictSeverity=服務單-嚴重程度
+TicketTypeShortBUGSOFT=軟體故障
+TicketTypeShortBUGHARD=設備故障
+TicketTypeShortCOM=商業問題
 
-TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortHELP=請求有用的幫助
+TicketTypeShortISSUE=錯誤或問題
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=項目
 TicketTypeShortOTHER=其他

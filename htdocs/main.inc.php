@@ -2346,6 +2346,7 @@ function getHelpParamFor($helppagename, $langs)
 	else
 	{
 		// If WIKI URL
+		$reg = array();
 		if (preg_match('/^es/i', $langs->defaultlang))
 		{
 			$helpbaseurl = 'http://wiki.dolibarr.org/index.php/%s';
