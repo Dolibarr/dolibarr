@@ -2615,7 +2615,7 @@ if ($action == 'create')
 		$element = $subelement = $origin;
 		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $reg[1];
+			$element = $regs[1];
 			$subelement = $regs[2];
 		}
 
@@ -3726,21 +3726,21 @@ elseif ($id > 0 || !empty($ref))
 	if ($action == 'paid' && $resteapayer > 0) {
 		// Code
 		$i = 0;
-		$close [$i]['code'] = 'discount_vat'; // escompte
+		$close[$i]['code'] = 'discount_vat'; // escompte
 		$i++;
-		$close [$i]['code'] = 'badcustomer';
+		$close[$i]['code'] = 'badcustomer';
 		$i++;
 		// Help
 		$i = 0;
-		$close [$i]['label'] = $langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPaidPartiallyReasonDiscountVatDesc");
+		$close[$i]['label'] = $langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPaidPartiallyReasonDiscountVatDesc");
 		$i++;
-		$close [$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
+		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 		$i++;
 		// Texte
 		$i = 0;
-		$close [$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
-		$close [$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
 		// arrayreasons[code]=reason
 		foreach ($close as $key => $val) {
@@ -3766,17 +3766,17 @@ elseif ($id > 0 || !empty($ref))
 			print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
 		} else {
 			// Code
-			$close [1] ['code'] = 'badcustomer';
-			$close [2] ['code'] = 'abandon';
+			$close[1]['code'] = 'badcustomer';
+			$close[2]['code'] = 'abandon';
 			// Help
-			$close [1] ['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
-			$close [2] ['label'] = $langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
+			$close[1]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
+			$close[2]['label'] = $langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
 			// Texte
-			$close [1] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close [1] ['label'], 1);
-			$close [2] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close [2] ['label'], 1);
+			$close[1]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close[1]['label'], 1);
+			$close[2]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close[2]['label'], 1);
 			// arrayreasons
-			$arrayreasons [$close [1] ['code']] = $close [1] ['reason'];
-			$arrayreasons [$close [2] ['code']] = $close [2] ['reason'];
+			$arrayreasons[$close[1]['code']] = $close[1]['reason'];
+			$arrayreasons[$close[2]['code']] = $close[2]['reason'];
 
 			// Cree un tableau formulaire
 			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"), array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
@@ -3880,25 +3880,25 @@ elseif ($id > 0 || !empty($ref))
 	print '<table class="border tableforfield" width="100%">';
 
 	// Type
-	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
+	print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
 	print $object->getLibType();
 	if ($object->module_source) {
-		print ' <span class="opacitymedium">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
+		print ' <span class="opacitymediumbycolor">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
 	if ($object->type == Facture::TYPE_REPLACEMENT) {
 		$facreplaced = new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' <span class="opacitymedium">('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')</span>';
+		print ' <span class="opacitymediumbycolor">('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')</span>';
 	}
 	if ($object->type == Facture::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {
 		$facusing = new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' <span class="opacitymedium">('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')</span>';
+		print ' <span class="opacitymediumbycolor">('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')</span>';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
 	if (count($facidavoir) > 0) {
-		print ' <span class="opacitymedium">('.$langs->transnoentities("InvoiceHasAvoir");
+		print ' <span class="opacitymediumbycolor">('.$langs->transnoentities("InvoiceHasAvoir");
 		$i = 0;
 		foreach ($facidavoir as $id) {
 			if ($i == 0)
@@ -3914,14 +3914,14 @@ elseif ($id > 0 || !empty($ref))
 	if ($objectidnext > 0) {
 		$facthatreplace = new Facture($db);
 		$facthatreplace->fetch($objectidnext);
-		print ' <span class="opacitymedium">('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')</span>';
+		print ' <span class="opacitymediumbycolor">('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')</span>';
 	}
 
 	if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(0, $object->id);
 		if ($result > 0) {
-			print '. <span class="opacitymedium">'.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'</span><br>';
+			print '. <span class="opacitymediumbycolor">'.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'</span><br>';
 		}
 	}
 
@@ -3930,7 +3930,7 @@ elseif ($id > 0 || !empty($ref))
 		$tmptemplate = new FactureRec($db);
 		$result = $tmptemplate->fetch($object->fk_fac_rec_source);
 		if ($result > 0) {
-			print '. <span class="opacitymedium">'.$langs->trans(
+			print '. <span class="opacitymediumbycolor">'.$langs->trans(
 				"GeneratedFromTemplate",
 				'<a href="'.DOL_MAIN_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$tmptemplate->id.'">'.$tmptemplate->ref.'</a>'
 			).'</span>';
@@ -3939,7 +3939,8 @@ elseif ($id > 0 || !empty($ref))
 	print '</td></tr>';
 
 	// Relative and absolute discounts
-	print '<!-- Discounts --><tr><td>'.$langs->trans('Discounts');
+	print '<!-- Discounts -->'."\n";
+	print '<tr><td>'.$langs->trans('Discounts');
 
 	print '</td><td>';
 	$thirdparty = $soc;

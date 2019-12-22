@@ -605,6 +605,7 @@ if (empty($reshook))
 				$idprod = 0;
 				if (GETPOST('idprodfournprice', 'alpha') == -1 || GETPOST('idprodfournprice', 'alpha') == '') $idprod = -99; // Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
+				$reg = array();
 				if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg))
 				{
 					$idprod = $reg[1];
@@ -842,6 +843,7 @@ if (empty($reshook))
 		}
 		else
 		{
+			$reg = array();
 			$vatratecleaned = $vat_rate;
 			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
 			{

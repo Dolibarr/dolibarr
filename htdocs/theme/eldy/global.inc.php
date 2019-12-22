@@ -241,6 +241,9 @@ select.flat, form.flat select {
 .optiongrey, .opacitymedium {
 	opacity: 0.4;
 }
+.opacitymediumbycolor {
+	color: rgba(0, 0, 0, 0.4);
+}
 .opacityhigh {
 	opacity: 0.2;
 }
