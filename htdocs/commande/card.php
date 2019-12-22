@@ -1666,6 +1666,7 @@ if ($action == 'create' && $usercancreate)
 
 		print '</td></tr>';
 	}
+
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
@@ -2183,7 +2184,7 @@ if ($action == 'create' && $usercancreate)
 			print '</form>';
 		} else {
 			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
-			if ($object->hasDelay() && !empty($object->date_livraison)) {
+			if ($object->hasDelay()) {
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
 		}

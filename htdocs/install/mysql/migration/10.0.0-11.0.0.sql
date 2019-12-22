@@ -59,6 +59,9 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
+UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
+
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
 
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;

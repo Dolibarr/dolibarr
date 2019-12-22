@@ -816,8 +816,7 @@ if ($resql)
 		{
 			print '<td class="nowrap">';
 
-			$generic_commande->lines = array();
-			$generic_commande->getLinesArray();
+			$generic_commande->getLinesArray();		// This set ->lines
 
 			print $generic_commande->getNomUrl(1, ($viewstatut != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1);
 

@@ -250,3 +250,6 @@ ConfirmMassDraftDeletion=Confirmación de borrado masivo borrador
 FileSharedViaALink=Archivo compartido a través de un enlace.
 SelectAThirdPartyFirst=Seleccione un tercero primero ...
 YouAreCurrentlyInSandboxMode=Actualmente se encuentra en el modo "sandbox" %s
+ContactDefault_agenda=Acción
+ContactDefault_commande=Orden
+ContactDefault_propal=Propuesta

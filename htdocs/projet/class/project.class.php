@@ -1938,7 +1938,7 @@ class Project extends CommonObject
 	{
 	    global $conf;
 
-        if (!($this->statut == 1)) return false;
+        if (!($this->statut == self::STATUS_VALIDATED)) return false;
         if (!$this->datee && !$this->date_end) return false;
 
         $now = dol_now();
