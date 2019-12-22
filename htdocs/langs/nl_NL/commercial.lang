@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Commercieel
-CommercialArea=Commerciële gedeelte
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Klant
 Customers=Klanten
 Prospect=Prospect
@@ -59,7 +59,7 @@ ActionAC_FAC=Stuur factuur
 ActionAC_REL=Stuur factuur (herinnering)
 ActionAC_CLO=Sluiten
 ActionAC_EMAILING=Stuur bulkmail
-ActionAC_COM=Verstuur order per mail
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Stuur verzending per post
 ActionAC_SUP_ORD=Verzend bestelling per e-mail
 ActionAC_SUP_INV=Stuur leveranciers-factuur per e-mail

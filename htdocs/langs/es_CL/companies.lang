@@ -121,6 +121,7 @@ ContactId=ID de contacto
 NoContactDefinedForThirdParty=Sin contacto definido para este tercero
 NoContactDefined=Sin contacto definido
 DefaultContact=Contacto / dirección predeterminados
+ContactByDefaultFor=Contacto / dirección predeterminados para
 AddThirdParty=Crear un tercero
 CustomerCode=Código de cliente
 SupplierCode=Código de proveedor

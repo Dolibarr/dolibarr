@@ -75,3 +75,5 @@ DirectPayment=Direct payment
 DirectPaymentButton=Direct cash payment button
 InvoiceIsAlreadyValidated=Invoice is already validated
 NoLinesToBill=No lines to bill
+CustomReceipt=Custom Receipt
+ReceiptName=Receipt Name

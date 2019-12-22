@@ -6,7 +6,7 @@ TMenuTools=Инструменти
 ToolsDesc=Всички инструменти, които не са включени в другите менюта, са групирани тук. <br> Всички инструменти са достъпни, чрез лявото меню.
 Birthday=Рожден ден
 BirthdayDate=Рождена дата
-DateToBirth=Дата на раждане
+DateToBirth=Рождена дата
 BirthdayAlertOn=сигнал за рожден ден активен
 BirthdayAlertOff=сигнал за рожден ден неактивен
 TransKey=Превод на ключа TransKey
@@ -88,7 +88,7 @@ PredefinedMailContentSendInvoice=__(Здравейте)__,\n\nМоля, вижт
 PredefinedMailContentSendInvoiceReminder=__(Здравейте)__,\n\nБихме желали да Ви напомним, че фактура __REF__ все още не е платена. Копие на фактурата е прикачено към съобщението.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendProposal=__(Здравейте)__,\n\nМоля, вижте приложеното търговско предложение __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierProposal=__(Здравейте)__,\n\nМоля, вижте приложеното запитване за доставка __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
-PredefinedMailContentSendOrder=__(Здравейте)__\n\nМоля, вижте приложената поръчка __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
+PredefinedMailContentSendOrder=__(Здравейте)__,\n\nМоля, вижте приложената поръчка __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__(Здравейте)__,\n\nМоля, вижте приложена нашата поръчка __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierInvoice=__(Здравейте)__,\n\nМоля, вижте приложената фактура __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendShipping=__(Здравейте)__,\n\nМоля, вижте приложената доставка __REF__\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Контрагентът е създаден, 
 ContactCreatedByEmailCollector=Контактът / адресът е създаден, чрез имейл колектор от имейл MSGID %s
 ProjectCreatedByEmailCollector=Проектът е създаден, чрез имейл колектор от имейл MSGID %s
 TicketCreatedByEmailCollector=Тикетът е създаден, чрез имейл колектор от имейл MSGID %s
+OpeningHoursFormatDesc=Използвайте средно тире '-' за разделяне на часовете на отваряне и затваряне.<br> Използвайте интервал, за да въведете различни диапазони.<br> Пример: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Секция за експортиране

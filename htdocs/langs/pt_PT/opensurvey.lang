@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Sondagem
 Surveys=Sondagens
-OrganizeYourMeetingEasily=Organize suas reuniões e inquéritos facilmente. Primeiro selecione o tipo inquérito...
+OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select the type of poll...
 NewSurvey=Novo inquérito
 OpenSurveyArea=Área de inquéritos
 AddACommentForPoll=Pode adicionar um comentário ao inquérito...
@@ -49,7 +49,7 @@ votes=Voto(s)
 NoCommentYet=Ainda não foi escrito qualquer comentário para esta votação
 CanComment=Os eleitores podem comentar na votação
 CanSeeOthersVote=Os eleitores podem ver voto de outras pessoas
-SelectDayDesc=Para cada dia selecionado, você pode escolher, ou não, as horas de reunião no seguinte formato: <br>- vazio, <br> - "8h", "8H" ou "8:00" para dar uma hora de início da reunião,<br> - "8-11", "8h-11h", "8H-11H" ou "8: 00-11: 00" para dar uma hora de início e fim de uma reunião,<br> - "8h15-11h15", " 8H15-11H15 "ou" 8: 15-11: 15 "para a mesma coisa, mas com minutos.
+SelectDayDesc=For each selected day, you can choose, or not, meeting hours in the following format:<br>- empty,<br>- "8h", "8H" or "8:00" to give a meeting's start hour,<br>- "8-11", "8h-11h", "8H-11H" or "8:00-11:00" to give a meeting's start and end hour,<br>- "8h15-11h15", "8H15-11H15" or "8:15-11:15" for the same thing but with minutes.
 BackToCurrentMonth=Voltar para o mês atual
 ErrorOpenSurveyFillFirstSection=Você não preencheu a primeira secção da criação do inquérito
 ErrorOpenSurveyOneChoice=Introduza pelo menos uma opção
