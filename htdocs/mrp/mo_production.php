@@ -405,8 +405,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	    		// Show detailed of already consumed
     	    		//$arrayoflines = $line->fetchLinesLinked('consumed');
-
-
     	    	}
     	    }
     	}
@@ -466,8 +464,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     				// Show detailed of already consumed
     				//$arrayoflines = $line->fetchLinesLinked('consumed');
-
-
     			}
     		}
     	}
