@@ -3605,7 +3605,9 @@ label.radioprivate {
 .photowithmargin {
 	margin-bottom: 2px;
 	margin-top: 10px;
-	margin-right: 10px;
+}
+div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+    margin-right: 15px;
 }
 .photowithborder {
 	border: 1px solid #f0f0f0;
