@@ -996,7 +996,7 @@ class ProductFournisseur extends Product
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
             foreach ($productFournLogList as $productFournLog) {
-                $out.= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
+                $out .= '<tr><td class="right">'.dol_print_date($this->db->jdate($productFournLog['datec']), 'dayhour', 'tzuser').'</td>';
                 $out.= '<td class="right">'.price($productFournLog['price']).'</td>';
                 //$out.= '<td class="right">'.$productFournLog['quantity'].'</td>';
                 $out.= '<td>'.$productFournLog['lastname'].'</td></tr>';
