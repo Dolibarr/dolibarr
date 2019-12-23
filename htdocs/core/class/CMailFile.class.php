@@ -467,7 +467,7 @@ class CMailFile
 			} else {
 				$this->message->setBody($msg, 'text/plain');
 				// And optionally an alternative body
-				$this->message->addPart($msg, 'text/html');
+				$this->message->addPart(dol_nl2br($msg), 'text/html');
 			}
 
 			if ($this->atleastonefile)
