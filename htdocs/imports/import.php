@@ -862,8 +862,8 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
     print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
-    print '<div class="marginbottomonly opacitymedium">';
-    print $langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).' ';
+    print '<div class="marginbottomonly">';
+    print '<span class="opacitymedium">'.$langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).'</span> ';
     $htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</div>';
