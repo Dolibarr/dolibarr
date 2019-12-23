@@ -555,10 +555,10 @@ CREATE TABLE llx_c_type_category
 (
   rowid         integer PRIMARY KEY,
   code          varchar(32) NOT NULL,
-  element_key   varchar(254) NOT NULL,
-  element_table varchar(254) NOT NULL,
-  object_class  varchar(254) NOT NULL,
-  object_table  varchar(254) NOT NULL
+  element_key   varchar(255) NOT NULL,
+  element_table varchar(255) NOT NULL,
+  object_class  varchar(255) NOT NULL,
+  object_table  varchar(255) NOT NULL
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_type_category ADD UNIQUE INDEX uk_c_type_category(code);

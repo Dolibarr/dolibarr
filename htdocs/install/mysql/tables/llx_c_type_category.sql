@@ -19,7 +19,7 @@
 create table llx_c_type_category
 (
   rowid         integer PRIMARY KEY,
-  code          varchar(255) NOT NULL,
+  code          varchar(32) NOT NULL,
   element_key   varchar(255) NOT NULL,
   element_table varchar(255) NOT NULL,
   object_class  varchar(255) NOT NULL,
