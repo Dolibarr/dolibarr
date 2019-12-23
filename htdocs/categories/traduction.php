@@ -82,7 +82,7 @@ $cancel != $langs->trans("Cancel") &&
 	// check parameters
     $forcelangprod = GETPOST('forcelangprod', 'alpha');
     $libelle = GETPOST('libelle', 'alpha');
-    $desc = GETPOST('desc');
+    $desc = GETPOST('desc', 'none');
 
     if (empty($forcelangprod)) {
         $error++;
@@ -263,7 +263,7 @@ if ($action == 'edit')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
@@ -335,7 +335,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	print '<br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
@@ -345,7 +345,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
     print $formadmin->select_language(GETPOST('forcelangprod', 'alpha'), 'forcelangprod', 0, $object->multilangs);
 	print '</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
-	print '<td><input name="libelle" size="40" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
+	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();

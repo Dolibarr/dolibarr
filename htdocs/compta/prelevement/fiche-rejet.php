@@ -212,8 +212,8 @@ if ($resql)
     		print '<td class="right">'.price($obj->amount)."</td>\n";
     		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
-    		print '<td align="center">'.yn($obj->afacturer).'</td>';
-    		print '<td align="center">'.$obj->fk_facture.'</td>';
+    		print '<td class="center">'.yn($obj->afacturer).'</td>';
+    		print '<td class="center">'.$obj->fk_facture.'</td>';
     		print "</tr>\n";
 
     		$total += $obj->amount;

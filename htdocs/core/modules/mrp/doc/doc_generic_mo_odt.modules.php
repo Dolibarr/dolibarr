@@ -119,7 +119,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="MRP_MO_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
@@ -175,12 +175,12 @@ class doc_generic_mo_odt extends ModelePDFMo
    			{
                 $texte .= $file['name'].'<br>';
    			}
-   			$texte .= '<div id="div_'.get_class($this).'">';
+   			$texte .= '</div>';
 		}
 
 		$texte .= '</td>';
 
-		$texte .= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte .= '</td>';
 		$texte .= '</tr>';

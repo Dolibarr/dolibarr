@@ -215,7 +215,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans('NewAccountingAccount'));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -286,7 +286,7 @@ elseif ($id > 0 || $ref) {
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="edit">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

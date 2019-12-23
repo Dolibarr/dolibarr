@@ -154,18 +154,16 @@ if ($result)
 
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->banque->modifier)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewVariousPayment').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -306,7 +304,7 @@ if ($result)
 		}
 
 		// Debit
-		print "<td class=\"right\">";
+		print '<td class="nowrap right">';
 		if ($obj->sens == 0)
 		{
 			print price($obj->amount);
@@ -317,7 +315,7 @@ if ($result)
 		print "</td>";
 
 		// Credit
-		print "<td class=\"right\">";
+		print '<td class="nowrap right">';
 		if ($obj->sens == 1)
 		{
 			print price($obj->amount);
@@ -325,16 +323,15 @@ if ($result)
 		}
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='total_cred';
-		print "</td>";
+		print '</td>' ;
+		print '<td></td>';
 
-		print "<td></td>";
+		if (! $i) $totalarray['nbfield']++;
+
+		print "</tr>\n";
 
 		$i++;
 	}
-
-	$colspan = 4;
-	if (!empty($conf->banque->enabled)) $colspan++;
-	if (!empty($conf->accounting->enabled)) $colspan++;
 
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

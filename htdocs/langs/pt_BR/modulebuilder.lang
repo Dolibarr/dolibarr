@@ -25,9 +25,6 @@ RegenerateClassAndSql=Forçar atualização de arquivos .class e .sql
 SpecificationFile=Arquivo de documentação
 ObjectProperties=Propriedades do Objeto
 DatabaseIndex=Índice do banco de dados
-PageForLib=Arquivo para biblioteca PHP
-PageForObjLib=Arquivo para biblioteca PHP dedicada ao objeto
-VisibleDesc=O campo está visível? (Exemplos: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view (não na lista), 4 = Visível na lista e apenas um formulário de update/view (não criar). Usando um valor negativo significa que o campo não é mostrado por padrão na lista, mas pode ser selecionado para visualização). Pode ser uma expressão, por exemplo: preg_match ('/public /', $_SERVER ['PHP_SELF'])?0: 1
 MenusDefDesc=Defina aqui os menus fornecidos pelo seu módulo
 PermissionsDefDesc=Defina aqui as novas permissões fornecidas pelo seu módulo
 MenusDefDescTooltip=Os menus fornecidos pelo seu módulo/aplicativo são definidos nos <strong>menus $this-></strong> do array no arquivo descritor do módulo. Você pode editar manualmente este arquivo ou usar o editor incorporado. <br><br> Nota: Uma vez definido (e módulo reativado), os menus também são visíveis no editor de menu disponível para usuários administradores em %s.

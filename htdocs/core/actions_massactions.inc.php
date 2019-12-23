@@ -772,7 +772,10 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 							$lines[$i]->fk_fournprice,
 							$lines[$i]->pa_ht,
 							$lines[$i]->label,
-							$array_options
+							$array_options,
+							100,
+							0,
+							$lines[$i]->fk_unit
 							);
 						if ($result > 0)
 						{
@@ -1114,7 +1117,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd)
 {
 	$objecttmp = new $objectclass($db);
 
-	if ($objecttmp->element == 'invoice' && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL))
+	if (($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL))
 	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
@@ -1277,7 +1280,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 }
 
 // Generate document foreach object according to model linked to object
-// @TODO : propose model selection
+// @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread)
 {
     $db->begin();

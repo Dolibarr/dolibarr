@@ -235,8 +235,11 @@ if (empty($reshook)) {
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+			$object->thm = price2num($object->thm);
 			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+			$object->tjm =  price2num($object->tjm);
 			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+			$object->salary = price2num($object->salary);
 			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
@@ -394,10 +397,15 @@ if (empty($reshook)) {
 				$object->employee = GETPOST('employee', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+				$object->thm = price2num($object->thm);
 				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+				$object->thm = price2num($object->thm);
 				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+				$object->salary = price2num($object->salary);
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+				$object->salaryextra = price2num($object->salaryextra);
 				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+				$object->weeklyhours = price2num($object->weeklyhours);
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
@@ -657,7 +665,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$trigger_name = 'USER_SENTBYMAIL';
+	$triggersendname = 'USER_SENTBYMAIL';
 	$paramname = 'id'; // Name of param key to open the card
 	$mode = 'emailfromuser';
 	$trackid = 'use'.$id;
@@ -763,7 +771,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	   	print "\n\n<!-- Form liste LDAP debut -->\n";
 
 	   	print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	   	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	   	print '<input type="hidden" name="token" value="'.newToken().'">';
 	   	print '<table class="border centpercent"><tr>';
 	   	print '<td width="160">';
 	   	print $langs->trans("LDAPUsers");
@@ -786,7 +794,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if (!empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
@@ -2015,7 +2023,7 @@ else
 						if ($caneditgroup)
 						{
 							print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
-							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+							print '<input type="hidden" name="token" value="'.newToken().'" />';
 							print '<input type="hidden" name="action" value="addgroup" />';
 						}
 
@@ -2086,7 +2094,7 @@ else
 		if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="entity" value="'.$object->entity.'">';
 

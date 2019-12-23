@@ -81,7 +81,7 @@ if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '')
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -105,7 +105,7 @@ if (!$rowid) {
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right_');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
 
 	print "</tr>\n";

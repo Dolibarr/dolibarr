@@ -274,7 +274,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfProposals").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';

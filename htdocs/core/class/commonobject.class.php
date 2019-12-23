@@ -73,7 +73,7 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
@@ -548,10 +548,10 @@ abstract class CommonObject
 		if (empty($lastname))  $lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
 
 		$ret = '';
-		if ($option && $this->civility_id)
+		if ($option && $this->civility_code)
 		{
-			if ($langs->transnoentitiesnoconv("Civility".$this->civility_id) != "Civility".$this->civility_id) $ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_id).' ';
-			else $ret .= $this->civility_id.' ';
+			if ($langs->transnoentitiesnoconv("Civility".$this->civility_code) != "Civility".$this->civility_code) $ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_code).' ';
+			else $ret .= $this->civility_code.' ';
 		}
 
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
@@ -577,7 +577,7 @@ abstract class CommonObject
 			$this->country = $tmparray['label'];
 		}
 
-        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_cpde)))
+        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_code)))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
     		$tmparray = getState($this->state_id, 'all', 0, 1);
@@ -621,7 +621,7 @@ abstract class CommonObject
 			$thirdpartyid = $object->fk_soc;
 		}
 
-		$out = '<!-- BEGIN part to show address block -->';
+		$out = '';
 
 		$outdone = 0;
 		$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
@@ -682,7 +682,7 @@ abstract class CommonObject
 			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
 		}
 
-		$out .= '<div style="clear: both;"></div>';
+		if ($out) $out .= '<div style="clear: both;"></div>';
 		$outdone = 0;
 		if (!empty($this->email))
 		{
@@ -695,32 +695,36 @@ abstract class CommonObject
 		    $out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
-		$out .= '<div style="clear: both;">';
+
 		if (!empty($conf->socialnetworks->enabled))
 		{
+			$outsocialnetwork = '';
+
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				foreach ($this->socialnetworks as $key => $value) {
-					$out .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
 					$outdone++;
 				}
 			} else {
-				if ($this->skype) $out .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
+				if ($this->skype) $outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				$outdone++;
-				if ($this->jabberid) $out .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
+				if ($this->jabberid) $outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
 				$outdone++;
-				if ($this->twitter) $out .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
+				if ($this->twitter) $outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
 				$outdone++;
-				if ($this->facebook) $out .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
+				if ($this->facebook) $outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
 				$outdone++;
-				if ($this->linkedin) $out .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+				if ($this->linkedin) $outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
 				$outdone++;
 			}
+
+			if ($outsocialnetwork) {
+				$out .= '<div style="clear: both;">'.$outsocialnetwork.'</div>';
+			}
 		}
-		$out .= '</div>';
 
-		$out .= '<!-- END Part to show address block -->';
-
-		return $out;
+		if ($out) return '<!-- BEGIN part to show address block -->'."\n".$out.'<!-- END Part to show address block -->'."\n";
+		else return '';
 	}
 
 	/**
@@ -1982,7 +1986,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyCode($code)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyCode('.$code.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_code';
@@ -2024,7 +2028,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.','.$mode.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_tx';
@@ -2594,7 +2598,7 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang'; // @TODO Rename 'rang' into 'position'
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
@@ -4118,7 +4122,7 @@ abstract class CommonObject
 
 		$i = 0;
 
-		print "<tbody>\n";
+		print "<!-- begin printObjectLines() --><tbody>\n";
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
@@ -4879,7 +4883,7 @@ abstract class CommonObject
 
 	/**
 	 *  Build thumb
-	 *  @TODO Move this into files.lib.php
+	 *  @todo Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
@@ -4956,11 +4960,11 @@ abstract class CommonObject
 	 * NB:  Error from trigger are stacked in interface->errors
 	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
 	 *
-	 * @param   string    $trigger_name   trigger's name to execute
+	 * @param   string    $triggerName   trigger's name to execute
 	 * @param   User      $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
-	public function call_trigger($trigger_name, $user)
+	public function call_trigger($triggerName, $user)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -4972,7 +4976,7 @@ abstract class CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers($trigger_name, $this, $user, $langs, $conf);
+		$result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
 
 		if ($result < 0)
 		{
@@ -5689,7 +5693,7 @@ abstract class CommonObject
 		}
 		elseif (in_array($type, array('duration')))
 		{
-			$out=$form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
+			$out = $form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
 		}
 		elseif (in_array($type, array('int', 'integer')))
 		{
@@ -6317,13 +6321,13 @@ abstract class CommonObject
 		elseif ($type == 'duration')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			if (! is_null($value) && $value !== '') {
+			if (!is_null($value) && $value !== '') {
 				$value = convertSecondToTime($value, 'allhourmin');
 			}
 		}
 		elseif ($type == 'double' || $type == 'real')
 		{
-			if (! is_null($value) && $value !== '') {
+			if (!is_null($value) && $value !== '') {
 				$value = price($value);
 			}
 		}
@@ -6349,7 +6353,7 @@ abstract class CommonObject
 		}
 		elseif ($type == 'price')
 		{
-			if (! is_null($value) && $value !== '') {
+			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		}
@@ -6571,7 +6575,8 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to show lines of extrafields with output datas
+	 * Function to show lines of extrafields with output datas.
+	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan']
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output (view) or input (edit) for extrafield
@@ -6602,7 +6607,7 @@ abstract class CommonObject
 				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-				// @TODO Add test also on 'enabled' (different than 'list' that is 'visibility')
+				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
 				$enabled = 1;
 
 				$visibility = 1;
@@ -7028,7 +7033,7 @@ abstract class CommonObject
 
 						if ($nbbyrow > 0)
 						{
-							if ($nbphoto == 1) $return .= '<table class="valigntop center centpercent" style="border: 0; padding: 2; border-spacing: 2px; border-collapse: separate;">';
+							if ($nbphoto == 1) $return .= '<table class="valigntop center centpercent" style="border: 0; padding: 2px; border-spacing: 2px; border-collapse: separate;">';
 
 							if ($nbphoto % $nbbyrow == 1) $return .= '<tr class="center valignmiddle" style="border: 1px">';
 							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">';
@@ -7316,7 +7321,7 @@ abstract class CommonObject
 		global $conf;
 
 		$queryarray = array();
-		foreach ($this->fields as $field=>$info)	// Loop on definition of fields
+		foreach ($this->fields as $field => $info)	// Loop on definition of fields
 		{
 			// Depending on field type ('datetime', ...)
 			if ($this->isDate($info))
@@ -7366,7 +7371,7 @@ abstract class CommonObject
 			}
 
 			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
-			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;	// May force 0 to null
+			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null; // May force 0 to null
 		}
 
 		return $queryarray;
@@ -7409,7 +7414,7 @@ abstract class CommonObject
 					}
 					else
 					{
-						if (! is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 							$this->{$field} = (int) $obj->{$field};
 						} else {
 							$this->{$field} = null;
@@ -7426,7 +7431,7 @@ abstract class CommonObject
 				}
 				else
 				{
-					if (! is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 						$this->{$field} = (double) $obj->{$field};
 					} else {
 						$this->{$field} = null;
@@ -7545,13 +7550,15 @@ abstract class CommonObject
 		{
 		    if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)')
 		    {
-		        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE ref = '(PROV)' AND rowid = ".$this->id;
+		        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".$this->id;
 		        $resqlupdate = $this->db->query($sql);
 
 		        if ($resqlupdate === false)
 		        {
 		            $error++;
 		            $this->errors[] = $this->db->lasterror();
+		        } else {
+		        	$this->ref = '(PROV'.$this->id.')';
 		        }
 		    }
 		}
@@ -7953,7 +7960,7 @@ abstract class CommonObject
 
 
 	/**
-	 *	Set draft status
+	 *	Set to a status
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)

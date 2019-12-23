@@ -76,7 +76,7 @@ class Orders extends DolibarrApi
      * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
      * @return 	array|mixed data without useless information
      *
-     * @url GET    byRef/{ref}
+     * @url GET    ref/{ref}
      *
      * @throws 	RestException
      */
@@ -94,7 +94,7 @@ class Orders extends DolibarrApi
      * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
      * @return 	array|mixed data without useless information
      *
-     * @url GET    byRefExt/{ref_ext}
+     * @url GET    ref_ext/{ref_ext}
      *
      * @throws 	RestException
      */

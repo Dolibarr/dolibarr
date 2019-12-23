@@ -33,7 +33,10 @@ TicketDictSeverity=Tichet - Severități
 TicketTypeShortBUGSOFT=Logică disfuncţională
 TicketTypeShortBUGHARD=Material disfuncţional
 TicketTypeShortCOM=Întrebare comercială
-TicketTypeShortINCIDENT=Cerere de asistență
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Proiect
 TicketTypeShortOTHER=Altele
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=Vezi toate tichetele
 TicketViewNonClosedOnly=Vedeți numai tichetele deschise
 TicketStatByStatus=Tichete după statut
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Confirmați modificarea stării: %s?
 TicketLogStatusChanged=Starea modificată: %s la %s
 TicketNotNotifyTiersAtCreate=Nu notificați compania la crearea
 Unread=Necitită
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

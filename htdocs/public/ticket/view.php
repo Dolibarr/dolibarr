@@ -198,7 +198,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 //$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
-$trigger_name = 'TICKET_SENTBYMAIL';
+$triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
 $trackid = 'tic'.$object->id;
@@ -344,7 +344,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
         if ($action != 'presend') {
             print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/public/ticket/list.php">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="view_ticketlist">';
             print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
             print '<input type="hidden" name="email" value="'.$_SESSION['email_customer'].'">';
@@ -382,7 +382,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticket"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="view_ticket">';
 
     print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans("TicketTrackId").'</span></label>';

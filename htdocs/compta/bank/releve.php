@@ -265,7 +265,7 @@ if (empty($numref))
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder, '', $numrows, $totalnboflines, '');
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_editbankreceipt">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="account" value="'.$object->id.'">';
@@ -380,7 +380,7 @@ else
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
     print '<div class="div-table-responsive">';

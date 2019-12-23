@@ -252,7 +252,7 @@ $head = receiptprinteradmin_prepare_head($mode);
 
 if ($mode == 'config' && $user->admin) {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     if ($action!='editprinter') {
         print '<input type="hidden" name="action" value="addprinter">';
     } else {
@@ -375,7 +375,7 @@ if ($mode == 'config' && $user->admin) {
 
 if ($mode == 'template' && $user->admin) {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     if ($action!='edittemplate') {
         print '<input type="hidden" name="action" value="addtemplate">';
     } else {

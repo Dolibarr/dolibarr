@@ -241,6 +241,9 @@ select.flat, form.flat select {
 .optiongrey, .opacitymedium {
 	opacity: 0.4;
 }
+.opacitymediumbycolor {
+	color: rgba(0, 0, 0, 0.4);
+}
 .opacityhigh {
 	opacity: 0.2;
 }
@@ -293,7 +296,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-top: 0;
 	margin-left: 5px;
 	margin-right: 5px;
-    	font-family: <?php print $fontlist ?>;
+	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	padding: 4px 14px;
 	text-align: center;
@@ -372,6 +375,7 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+	min-width: 54px;
 }
 .valigntop {
 	vertical-align: top;
@@ -529,7 +533,9 @@ body[class*="colorblind-"] .text-success{
 
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
-.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
+	font-size: 1.5em; vertical-align: text-bottom;
+}
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -838,6 +844,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth75imp  { min-width: 75px !important; }
     .minwidth100imp { min-width: 100px !important; }
     .minwidth200imp { min-width: 200px !important; }
+    .minwidth250imp { min-width: 250px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
@@ -889,6 +896,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth100imp { min-width: 100px !important; }
     .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
+    .minwidth250imp { min-width: 250px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
     .minwidth500imp { min-width: 300px !important; }
@@ -903,10 +911,11 @@ table[summary="list_of_modules"] .fa-cog {
 {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
-    .minwidth75imp  { min-width: 70px !important; }
-    .minwidth100imp { min-width: 80px !important; }
-    .minwidth150imp { min-width: 100px !important; }
+    .minwidth75imp  { min-width: 75px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 110px !important; }
     .minwidth200imp { min-width: 110px !important; }
+    .minwidth250imp { min-width: 115px !important; }
     .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
@@ -991,10 +1000,11 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
-	.minwidth75imp  { min-width: 60px !important; }
-    .minwidth100imp { min-width: 80px !important; }
-    .minwidth150imp { min-width: 90px !important; }
-    .minwidth200imp { min-width: 100px !important; }
+	.minwidth75imp  { min-width: 75px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 110px !important; }
+    .minwidth200imp { min-width: 110px !important; }
+    .minwidth250imp { min-width: 115px !important; }
     .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
@@ -1090,7 +1100,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (! empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -1131,11 +1141,11 @@ div.blockvmenulogo
 	border-bottom: 0 !important;
 }
 .menulogocontainer {
-    margin: <?php echo $disableimages?'0':'6'; ?>px;
+    margin: <?php echo $disableimages ? '0' : '6'; ?>px;
     margin-left: 11px;
     margin-right: 9px;
     padding: 0;
-    height: <?php echo $disableimages?'20':'32'; ?>px;
+    height: <?php echo $disableimages ? '20' : '32'; ?>px;
     /* width: 100px; */
     max-width: 100px;
     vertical-align: middle;
@@ -1263,7 +1273,6 @@ div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
 div.fichecenter {
-	/* margin-top: 10px; */
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
@@ -1397,7 +1406,10 @@ div.nopadding {
 }
 .pictowarning {
     /* vertical-align: text-bottom; */
-    color: #9f4705;
+    color: <?php echo $badgeWarning ?>;
+}
+.pictoerror {
+    color: <?php echo $badgeDanger ?>;
 }
 .pictomodule {
 	width: 14px;
@@ -1519,6 +1531,7 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
 <?php } ?>
 }
 
@@ -1630,18 +1643,6 @@ li.tmenusel::after, li.tmenu:hover::after{
 	border-width: 0px 6px 5px 6px;
 	border-color:  transparent transparent #ffffff transparent;
 }
-/*
-// Add a bottom arrow
-li.tmenusel::before, li.tmenu:hover::before{
-	content: "";
-	position:absolute;
-	top:0px;
-	left:0;
-	width: 100%;
-	height: 2px;
-	background: #fff;
-}*/
-
 
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
@@ -2075,8 +2076,8 @@ div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	line-height: <?php echo $disableimages?'25':'48'; ?>px;
-	height: <?php echo $disableimages?'25':'50'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '48'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -2120,9 +2121,9 @@ img.login, img.printer, img.entity {
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
-	border-radius: 0.725em;
-	width: 1.45em;
-    height: 1.45em;
+	border-radius: 0.72em;
+	width: 1.4em;
+    height: 1.4em;
     background-size: contain;
     vertical-align: middle;
 }
@@ -2431,6 +2432,11 @@ div.popuptab {
 	padding-left: 5px;
 	padding-right: 5px;
 }
+
+/* ============================================================================== */
+/* Buttons for actions                                                            */
+/* ============================================================================== */
+
 div.tabsAction {
     margin: 20px 0em 30px 0em;
     padding: 0em 0em;
@@ -2444,7 +2450,7 @@ div.tabsAction > a {
 }
 
 a.tabTitle {
-    color:rgba(0,0,0,.5) !important;
+    color: rgba(0,0,0,0.4) !important;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal !important;
@@ -2776,7 +2782,7 @@ table.listwithfilterbefore {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
-
+.confirmquestions { margin-top: 5px; }
 
 /* Pagination */
 div.refidpadding  {
@@ -3113,7 +3119,9 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
     border-bottom: unset;
 }
 
-
+div.liste_titre {
+	padding-left: 3px;
+}
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
@@ -3246,7 +3254,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     min-height: 40px;
     padding-right: 0px;
     padding-left: 0px;
-    /*padding-bottom: 25px;*/
     padding-bottom: 10px;
 }
 .ficheaddleft div.boxstats, .ficheaddright div.boxstats {
@@ -3380,9 +3387,6 @@ span.dashboardlineok {
 }
 span.dashboardlineko {
 	color: #FFF;
-	/*color: #8c4446 ! important;
-	padding-left: 1px;*/
-
 	font-size: 80%;
 }
 .dashboardlinelatecoin {
@@ -3604,6 +3608,9 @@ label.radioprivate {
 .photowithmargin {
 	margin-bottom: 2px;
 	margin-top: 10px;
+}
+div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+    margin-right: 15px;
 }
 .photowithborder {
 	border: 1px solid #f0f0f0;
@@ -4023,6 +4030,11 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
 
 .calendarviewcontainertr { height: 100px; }
+
+td.cal_other_month {
+	opacity: 0.8;
+}
+
 
 
 /* ============================================================================== */
@@ -4493,7 +4505,6 @@ td.gminorheading {
 .ecmfiletree {
 	width: 99%;
 	height: 99%;
-	/* background: #FFF; */
 	padding-left: 2px;
 	font-weight: normal;
 }
@@ -5959,8 +5970,12 @@ div.tabsElem a.tab {
 		font-size: 12px;
 	}
 
-	.text-plus-circle {
-	   display: none;
+	table.table-fiche-title .col-title div.titre{
+		line-height: unset;
+	}
+
+	input#addedfile {
+		width: 95%;
 	}
 }
 
@@ -5969,3 +5984,5 @@ include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
+
+if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;

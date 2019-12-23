@@ -1347,7 +1347,7 @@ function hexbin($hexa)
     $strLength = dol_strlen($hexa);
     for ($i = 0; $i < $strLength; $i++)
     {
-        $bin .= str_pad(decbin(hexdec($hexa{$i})), 4, '0', STR_PAD_LEFT);
+        $bin .= str_pad(decbin(hexdec($hexa[$i])), 4, '0', STR_PAD_LEFT);
     }
     return $bin;
 }
@@ -1564,11 +1564,13 @@ function dol_print_reduction($reduction, $langs)
  * 	Return OS version.
  *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
  *
- * 	@return		string			OS version
+ *  @param 		string		$option 	Option string
+ * 	@return		string					OS version
  */
-function version_os()
+function version_os($option = '')
 {
-    $osversion = php_uname();
+	if ($option == 'smr') $osversion = php_uname('s').' '.php_uname('m').' '.php_uname('r');
+	else $osversion = php_uname();
     return $osversion;
 }
 

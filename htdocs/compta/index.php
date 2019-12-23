@@ -114,7 +114,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i = 0;
@@ -170,7 +170,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -257,7 +257,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -667,10 +667,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="nowrap right">'.price($obj->amount).'</td>';
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
-					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
+					print '<td class="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 
 					$tot_ttc += $obj->amount;

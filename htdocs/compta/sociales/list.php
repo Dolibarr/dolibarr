@@ -33,16 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
-$action=GETPOST('action', 'alpha');
-$massaction=GETPOST('massaction', 'alpha');
-$show_files=GETPOST('show_files', 'int');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'sclist';
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sclist';
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->socid) $socid=$user->socid;
+$socid = isset($_GET["socid"]) ? $_GET["socid"] : '';
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');
@@ -50,7 +50,7 @@ $search_label = GETPOST('search_label', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 $search_day_lim		= GETPOST('search_day_lim', 'int');
-$search_month_lim	= GETPOST('search_month_lim', 'int');
+$search_month_lim = GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -61,40 +61,40 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="cs.date_ech";
-if (! $sortorder) $sortorder="DESC";
+if (!$sortfield) $sortfield = "cs.date_ech";
+if (!$sortorder) $sortorder = "DESC";
 
-$year=GETPOST("year", 'int');
-$filtre=GETPOST("filtre", 'int');
+$year = GETPOST("year", 'int');
+$filtre = GETPOST("filtre", 'int');
 
-if (! GETPOSTISSET('search_typeid'))
+if (!GETPOSTISSET('search_typeid'))
 {
-	$newfiltre=str_replace('filtre=', '', $filtre);
-	$filterarray=explode('-', $newfiltre);
-	foreach($filterarray as $val)
+	$newfiltre = str_replace('filtre=', '', $filtre);
+	$filterarray = explode('-', $newfiltre);
+	foreach ($filterarray as $val)
 	{
-		$part=explode(':', $val);
-		if ($part[0] == 'cs.fk_type') $search_typeid=$part[1];
+		$part = explode(':', $val);
+		if ($part[0] == 'cs.fk_type') $search_typeid = $part[1];
 	}
 }
 else
 {
-	$search_typeid=GETPOST('search_typeid', 'int');
+	$search_typeid = GETPOST('search_typeid', 'int');
 }
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_label="";
-	$search_amount="";
-	$search_status='';
-    $search_typeid="";
-	$year="";
-	$search_day_lim='';
-	$search_year_lim='';
-	$search_month_lim='';
-	$toselect='';
-	$search_array_options=array();
+	$search_ref = "";
+	$search_label = "";
+	$search_amount = "";
+	$search_status = '';
+    $search_typeid = "";
+	$year = "";
+	$search_day_lim = '';
+	$search_year_lim = '';
+	$search_month_lim = '';
+	$toselect = '';
+	$search_array_options = array();
 }
 
 
@@ -105,25 +105,25 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 $form = new Form($db);
 $formother = new FormOther($db);
 $formsocialcontrib = new FormSocialContrib($db);
-$chargesociale_static=new ChargeSociales($db);
+$chargesociale_static = new ChargeSociales($db);
 
 llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
-$sql.= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
-$sql.= " c.libelle as type_label,";
-$sql.= " SUM(pc.amount) as alreadypayed";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
-$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
-$sql.= " WHERE cs.fk_type = c.id";
-$sql.= " AND cs.entity = ".$conf->entity;
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
+$sql .= " c.libelle as type_label,";
+$sql .= " SUM(pc.amount) as alreadypayed";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
+$sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
+$sql .= " WHERE cs.fk_type = c.id";
+$sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
-if ($search_ref)	$sql.=" AND cs.rowid=".$db->escape($search_ref);
-if ($search_label) 	$sql.=natural_search("cs.libelle", $search_label);
-if ($search_amount) $sql.=natural_search("cs.amount", price2num(trim($search_amount)), 1);
-if ($search_status != '' && $search_status >= 0) $sql.=" AND cs.paye = ".$db->escape($search_status);
-$sql.= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
+if ($search_ref)	$sql .= " AND cs.rowid=".$db->escape($search_ref);
+if ($search_label) 	$sql .= natural_search("cs.libelle", $search_label);
+if ($search_amount) $sql .= natural_search("cs.amount", price2num(trim($search_amount)), 1);
+if ($search_status != '' && $search_status >= 0) $sql .= " AND cs.paye = ".$db->escape($search_status);
+$sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
 if ($year > 0)
 {
@@ -171,14 +171,12 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
-		$newcardbutton .= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton .= '</a>';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -187,7 +185,7 @@ if ($resql)
 
 	if ($year)
 	{
-	    $center=($year?"<a href='list.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year+1)."'>".img_next()."</a>":"");
+	    $center = ($year ? "<a href='list.php?year=".($year - 1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year + 1)."'>".img_next()."</a>" : "");
 	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
 	else
@@ -221,9 +219,9 @@ if ($resql)
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
+		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
-		$formother->select_year($search_year_lim?$search_year_lim:-1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		$formother->select_year($search_year_lim ? $search_year_lim : -1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	    // Amount
 		print '<td class="liste_titre right">';
@@ -232,12 +230,12 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 		// Status
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$liststatus=array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
+		$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
 		print $form->selectarray('search_status', $liststatus, $search_status, 1);
 		print '</td>';
 
         print '<td class="liste_titre maxwidthsearch">';
-        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        $searchpicto = $form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
 		print "</tr>\n";
@@ -253,32 +251,33 @@ if ($resql)
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print "</tr>\n";
 
-		$i=0;
-		$totalarray=array();
+		$i = 0;
+		$totalarray = array();
 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
 
-			$chargesociale_static->id=$obj->id;
-			$chargesociale_static->ref=$obj->id;
-			$chargesociale_static->label=$obj->label;
-			$chargesociale_static->type_label=$obj->type_label;
+			$chargesociale_static->id = $obj->id;
+			$chargesociale_static->ref = $obj->id;
+			$chargesociale_static->label = $obj->label;
+			$chargesociale_static->type_label = $obj->type_label;
 
 			print '<tr class="oddeven">';
 
 			// Ref
-			print '<td width="60">';
-			print $chargesociale_static->getNomUrl(1, '20');
-			print '</td>';
+			print "<td>".$chargesociale_static->getNomUrl(1, '20')."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 
 			// Label
-			print '<td>'.dol_trunc($obj->label, 42).'</td>';
+			print "<td>".dol_trunc($obj->label, 42)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 
 			// Type
-			print '<td>'.$obj->type_label.'</td>';
+			print "<td>".$obj->type_label."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 
 			// Date end period
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($obj->periode)
 			{
 				print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
@@ -287,20 +286,25 @@ if ($resql)
 			{
 				print '&nbsp;';
 			}
-			print '</td>';
+			print "</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 
 			// Amount
-			print '<td class="right" width="100">'.price($obj->amount).'</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalttcfield';
+			print '<td class="nowrap right">'.price($obj->amount).'</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			$totalarray['val']['totalttcfield'] += $obj->amount;
 
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+			if (!$i) $totalarray['nbfield']++;
 
 			print '<td class="nowrap right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+			if (!$i) $totalarray['nbfield']++;
 
 			print '<td></td>';
+
+			if (!$i) $totalarray['nbfield']++;
 
 			print '</tr>';
 			$i++;

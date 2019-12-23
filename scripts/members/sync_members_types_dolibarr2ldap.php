@@ -20,7 +20,7 @@
  */
 
 /**
- * \file scripts/user/sync_members_types_dolibarr2ldap.php
+ * \file scripts/members/sync_members_types_dolibarr2ldap.php
  * \ingroup ldap core
  * \brief Script de mise a jour des types de membres dans LDAP depuis base Dolibarr
  */

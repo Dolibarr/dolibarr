@@ -21,7 +21,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 print '<br>';
 print '<div id="comment">';
 print '<form method="POST" action="'.$varpage.'?id='.$object->id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addcomment">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="comment_element_type" value="'.$object->element.'">';
@@ -99,7 +99,7 @@ if (!empty($object->comments))
         if ($action === 'editcomment' && $comment->id == $idcomment)
         {
             print '<form method="POST" action="'.$varpage.'?id='.$object->id.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="updatecomment">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="idcomment" value="'.$idcomment.'">';

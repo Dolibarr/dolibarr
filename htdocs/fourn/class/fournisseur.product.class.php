@@ -395,7 +395,6 @@ class ProductFournisseur extends Product
 				return -2;
 			}
         }
-
         else
         {
             dol_syslog(get_class($this).'::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
@@ -438,11 +437,11 @@ class ProductFournisseur extends Product
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
                 $sql .= ")";
 
-                $idinserted = 0;
+				$this->product_fourn_price_id = 0;
 
                 $resql = $this->db->query($sql);
                 if ($resql) {
-                    $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
+                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
                 }
                 else {
                     $error++;
@@ -450,6 +449,7 @@ class ProductFournisseur extends Product
 
                 if (!$error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
+					// $this->product_fourn_price_id must be set
                     $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
@@ -465,7 +465,6 @@ class ProductFournisseur extends Product
 
                     if (empty($error)) {
                         $this->db->commit();
-						$this->product_fourn_price_id = $idinserted;
                         return $this->product_fourn_price_id;
                     } else {
                         $this->db->rollback();
@@ -944,8 +943,6 @@ class ProductFournisseur extends Product
      */
     public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
-        global $conf;
-
         $sql = "SELECT";
         $sql .= " pfpl.rowid, pfp.ref_fourn as supplier_ref, pfpl.datec, u.lastname,";
         $sql .= " pfpl.price, pfpl.quantity";
@@ -966,9 +963,17 @@ class ProductFournisseur extends Product
         {
             $retarray = array();
 
-            while ($record = $this->db->fetch_array($resql))
+            while ($obj = $this->db->fetch_object($resql))
             {
-                $retarray[] = $record;
+                $tmparray = array();
+                $tmparray['rowid'] = $obj->rowid;
+                $tmparray['supplier_ref'] = $obj->supplier_ref;
+                $tmparray['datec'] = $this->db->jdate($obj->datec);
+                $tmparray['lastname'] = $obj->lastname;
+                $tmparray['price'] = $obj->price;
+                $tmparray['quantity'] = $obj->quantity;
+
+            	$retarray[] = $tmparray;
             }
 
             $this->db->free($resql);
@@ -996,7 +1001,7 @@ class ProductFournisseur extends Product
         $langs->load("suppliers");
         if (count($productFournLogList) > 0) {
             $out .= '<table class="nobordernopadding" width="100%">';
-            $out .= '<tr><td class="liste_titre">'.$langs->trans("Date").'</td>';
+            $out .= '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Date").'</td>';
             $out .= '<td class="liste_titre right">'.$langs->trans("Price").'</td>';
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
@@ -1037,7 +1042,7 @@ class ProductFournisseur extends Product
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
-            $label .= '<br>';
+            $label .= '<br><br>';
             $label .= '<u>'.$langs->trans("History").'</u>';
             $label .= $this->displayPriceProductFournisseurLog($logPrices);
         }

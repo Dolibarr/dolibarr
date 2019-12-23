@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/printsend.php
+ *	\file       htdocs/takepos/send.php
  *	\ingroup	takepos
  *	\brief      Page with the content of the popup to enter payments
  */

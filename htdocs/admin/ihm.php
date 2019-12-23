@@ -227,7 +227,7 @@ print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 clearstatcache();

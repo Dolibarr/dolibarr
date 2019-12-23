@@ -132,7 +132,7 @@ class Account extends CommonObject
 
 	/**
 	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database
-	 * @var
+	 * @var string
 	 */
 	public $iban;
 
@@ -1427,6 +1427,7 @@ class Account extends CommonObject
 		if (!empty($this->iban))
 		{
 			// If IBAN defined, we can know country of account from it
+			$reg = array();
 			if (preg_match("/^([a-zA-Z][a-zA-Z])/i", $this->iban, $reg)) return $reg[1];
 		}
 

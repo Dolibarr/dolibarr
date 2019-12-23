@@ -70,7 +70,7 @@ $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$type = GETPOST('type', 'int');
+$type = (GETPOST('type', 'int') !== '') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -954,7 +954,7 @@ else
         dol_set_focus('input[name="ref"]');
 
         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 		if (!empty($modCodeProduct->code_auto))
@@ -1023,7 +1023,9 @@ else
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
             print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
-	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+	        print '</td>';
+	        if ($conf->browser->layout == 'phone') print '</tr><tr>';
+	        print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
 	        if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 	        print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
@@ -1048,12 +1050,17 @@ else
             // Default warehouse
             print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
             print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
-            print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddWarehouse").'</a>';
+            print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
+            print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
+            print '</a>';
             print '</td>';
+            print '</tr>';
+
             // Stock min level
             print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
             print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td>';
+            if ($conf->browser->layout == 'phone') print '</tr><tr>';
             // Stock desired level
             print '<td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
             print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
@@ -1092,9 +1099,9 @@ else
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
             {
                 print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
-                print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
-                print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
-                print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
+                print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
+                print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
+                print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
                 print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ?GETPOST('size_units', 'alpha') : '0', 0, 2);
                 print '</td></tr>';
             }
@@ -1138,8 +1145,10 @@ else
         if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type))
         {
 	        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td>';
+	        if ($conf->browser->layout == 'phone') print '</tr><tr>';
 	        // Origin country
-	        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+	        print '<td>'.$langs->trans("CountryOrigin").'</td>';
+	        print '<td>';
 	        print $form->select_country(GETPOST('country_id', 'int'), 'country_id');
 	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	        print '</td></tr>';
@@ -1176,7 +1185,7 @@ else
 
         print '</table>';
 
-        print '<br>';
+        print '<hr>';
 
         if (!empty($conf->global->PRODUIT_MULTIPRICES))
         {
@@ -1189,6 +1198,7 @@ else
             print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
             print '</td></tr>';
             print '</table>';
+
             print '<br>';
         }
         else
@@ -1220,15 +1230,15 @@ else
         // Accountancy codes
         print '<table class="border centpercent">';
 
-		if (! empty($conf->accounting->enabled))
+		if (!empty($conf->accounting->enabled))
 		{
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td>';
-            if($type = 0) {
-                $accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell')?GETPOST('accountancy_code_sell', 'alpha'):$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+            if ($type = 0) {
+                $accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ?GETPOST('accountancy_code_sell', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
             } else {
-                $accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell')?GETPOST('accountancy_code_sell', 'alpha'):$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
+                $accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ?GETPOST('accountancy_code_sell', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
             }
             print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
 			print '</td></tr>';
@@ -1238,10 +1248,10 @@ else
 			{
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 				print '<td>';
-                if($type = 0) {
-                    $accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra')?GETPOST('accountancy_code_sell_intra', 'alpha'):$conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
+                if ($type = 0) {
+                    $accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ?GETPOST('accountancy_code_sell_intra', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
                 } else {
-                	$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra')?GETPOST('accountancy_code_sell_intra', 'alpha'):$conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT);
+                	$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ?GETPOST('accountancy_code_sell_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT);
                 }
                 print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, '');
                 print '</td></tr>';
@@ -1250,11 +1260,11 @@ else
 			// Accountancy_code_sell_export
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 			print '<td>';
-            if($type = 0)
+            if ($type = 0)
             {
-                $accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export')?GETPOST('accountancy_code_sell_export', 'alpha'):$conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT);
+                $accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ?GETPOST('accountancy_code_sell_export', 'alpha') : $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT);
             } else {
-            	$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export')?GETPOST('accountancy_code_sell_export', 'alpha'):$conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT);
+            	$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ?GETPOST('accountancy_code_sell_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT);
             }
             print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, '');
             print '</td></tr>';
@@ -1321,7 +1331,7 @@ else
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="canvas" value="'.$object->canvas.'">';
@@ -1528,12 +1538,12 @@ else
         	}
 
             // Other attributes
-            $parameters = array('colspan' => ' colspan="3"', 'cols'=>3);
+            $parameters = array('colspan' => ' colspan="3"', 'cols' => 3);
             $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             if (empty($reshook))
             {
-            	print $object->showOptionals($extrafields, 'edit');
+            	print $object->showOptionals($extrafields, 'edit', $parameters);
             }
 
 			// Tags-Categories
@@ -1713,7 +1723,7 @@ else
 					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
 					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
@@ -1976,7 +1986,7 @@ else
         	}
 
             // Other attributes
-            $parameters = array('colspan' => ' colspan="'.(2 + (($showphoto || $showbarcode) ? 1 : 0)).'"');
+        	$parameters = array('colspan' => ' colspan="'.(2 + (($showphoto || $showbarcode) ? 1 : 0)).'"', 'cols' => (2 + (($showphoto || $showbarcode) ? 1 : 0)));
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Categories
@@ -2199,7 +2209,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
     if (!empty($html))
     {
 	    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
     	print '<input type="hidden" name="action" value="addin">';
 
 	    print load_fiche_titre($langs->trans("AddToDraft"), '', '');
