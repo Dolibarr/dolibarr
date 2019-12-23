@@ -95,7 +95,7 @@ class BOM extends CommonObject
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
-		'duration' => array('type'=>'real', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
+		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
 		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>102),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-2, 'position'=>162, 'notnull'=>-1,),
@@ -532,7 +532,7 @@ class BOM extends CommonObject
 	    $error = 0;
 
 	    // Protection
-	    if ($this->statut == self::STATUS_VALIDATED)
+	    if ($this->status == self::STATUS_VALIDATED)
 	    {
 	        dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 	        return 0;
@@ -829,6 +829,7 @@ class BOM extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
 	}
@@ -992,7 +993,7 @@ class BOM extends CommonObject
 /**
  * Class for BOMLine
  */
-class BOMLine extends CommonObject
+class BOMLine extends CommonObjectLine
 {
 	/**
 	 * @var string ID to identify managed object
@@ -1051,7 +1052,7 @@ class BOMLine extends CommonObject
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 	    'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
-	    //'efficiency' => array('type'=>'double(8,4)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
+	    //'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);

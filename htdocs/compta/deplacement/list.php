@@ -172,7 +172,7 @@ if ($resql)
         // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
+        print '<td class="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
         // User
         print '<td>';
         $userstatic->id = $obj->fk_user;

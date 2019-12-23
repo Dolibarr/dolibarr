@@ -52,7 +52,7 @@ function jsUnEscape($source)
                 $pos++;
                 $unicodeHexVal = substr($source, $pos, 4);
                 $unicode = hexdec($unicodeHexVal);
-                $entity = "&#". $unicode . ';';
+                $entity = "&#".$unicode.';';
                 $decodedStr .= utf8_encode($entity);
                 $pos += 4;
             }
@@ -82,28 +82,28 @@ function dolGetModulesDirs($subdir = '')
 {
     global $conf;
 
-    $modulesdir=array();
+    $modulesdir = array();
 
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         // Default core/modules dir
         if ($type === 'main') {
-            $modulesdir[$dirroot . '/core/modules' . $subdir . '/'] = $dirroot . '/core/modules' . $subdir . '/';
+            $modulesdir[$dirroot.'/core/modules'.$subdir.'/'] = $dirroot.'/core/modules'.$subdir.'/';
         }
 
         // Scan dir from external modules
-        $handle=@opendir($dirroot);
+        $handle = @opendir($dirroot);
         if (is_resource($handle))
         {
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
-                if (preg_match('/disabled/', $file)) continue;   // We discard module if it contains disabled into name.
+                if (preg_match('/disabled/', $file)) continue; // We discard module if it contains disabled into name.
 
                 if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules'.$subdir.'/'))
+                    if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/'))
                     {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules'.$subdir.'/'] = $dirroot . '/' . $file . '/core/modules'.$subdir.'/';
+                        $modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
                     }
                 }
             }
@@ -124,13 +124,13 @@ function dol_getDefaultFormat(Translate $outputlangs = null)
 {
     global $langs;
 
-    $selected='EUA4';
+    $selected = 'EUA4';
     if (!$outputlangs) {
-    	$outputlangs=$langs;
+    	$outputlangs = $langs;
     }
 
-    if ($outputlangs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
-    if ($outputlangs->defaultlang == 'en_US') $selected='USLetter';    // US
+    if ($outputlangs->defaultlang == 'ca_CA') $selected = 'CAP4'; // Canada
+    if ($outputlangs->defaultlang == 'en_US') $selected = 'USLetter'; // US
     return $selected;
 }
 
@@ -147,15 +147,15 @@ function dol_print_file($langs, $filename, $searchalt = 0)
     global $conf;
 
     // Test if file is in lang directory
-    foreach($langs->dir as $searchdir)
+    foreach ($langs->dir as $searchdir)
     {
-        $formfile=($searchdir."/langs/".$langs->defaultlang."/".$filename);
+        $formfile = ($searchdir."/langs/".$langs->defaultlang."/".$filename);
         dol_syslog('functions2::dol_print_file search file '.$formfile, LOG_DEBUG);
         if (is_readable($formfile))
         {
-            $content=file_get_contents($formfile);
-            $isutf8=utf8_check($content);
-            if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
+            $content = file_get_contents($formfile);
+            $isutf8 = utf8_check($content);
+            if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
             elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
             else print $content;
             return true;
@@ -170,9 +170,9 @@ function dol_print_file($langs, $filename, $searchalt = 0)
             //print 'getcwd='.getcwd().' htmlfilealt='.$formfilealt.' X '.file_exists(getcwd().'/'.$formfilealt);
             if (is_readable($formfilealt))
             {
-                $content=file_get_contents($formfilealt);
-                $isutf8=utf8_check($content);
-                if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
+                $content = file_get_contents($formfilealt);
+                $isutf8 = utf8_check($content);
+                if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
                 elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
                 else print $content;
                 return true;
@@ -201,16 +201,16 @@ function dol_print_object_info($object, $usetable = 0)
 
     include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-    $deltadateforserver=getServerTimeZoneInt('now');
-    $deltadateforclient=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
+    $deltadateforserver = getServerTimeZoneInt('now');
+    $deltadateforclient = ((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
     //$deltadateforcompany=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
-    $deltadateforuser=round($deltadateforclient-$deltadateforserver);
+    $deltadateforuser = round($deltadateforclient - $deltadateforserver);
     //print "x".$deltadateforserver." - ".$deltadateforclient." - ".$deltadateforuser;
 
     if ($usetable) print '<table class="border tableforfield centpercent">';
 
     // Import key
-    if (! empty($object->import_key))
+    if (!empty($object->import_key))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ImportedWithSet");
@@ -222,7 +222,7 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // User creation (old method using already loaded object and not id is kept for backward compatibility)
-    if (! empty($object->user_creation) || ! empty($object->user_creation_id))
+    if (!empty($object->user_creation) || !empty($object->user_creation_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("CreatedBy");
@@ -235,7 +235,7 @@ function dol_print_object_info($object, $usetable = 0)
         }
         else
         {
-            $userstatic=new User($db);
+            $userstatic = new User($db);
             $userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
             if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
@@ -245,20 +245,20 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date creation
-    if (! empty($object->date_creation))
+    if (!empty($object->date_creation))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateCreation");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_creation, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // User change (old method using already loaded object and not id is kept for backward compatibility)
-    if (! empty($object->user_modification) || ! empty($object->user_modification_id))
+    if (!empty($object->user_modification) || !empty($object->user_modification_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ModifiedBy");
@@ -271,7 +271,7 @@ function dol_print_object_info($object, $usetable = 0)
         }
         else
         {
-            $userstatic=new User($db);
+            $userstatic = new User($db);
             $userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
             if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
@@ -281,20 +281,20 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date change
-    if (! empty($object->date_modification))
+    if (!empty($object->date_modification))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateLastModification");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_modification, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // User validation (old method using already loaded object and not id is kept for backward compatibility)
-    if (! empty($object->user_validation) || ! empty($object->user_validation_id))
+    if (!empty($object->user_validation) || !empty($object->user_validation_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ValidatedBy");
@@ -307,7 +307,7 @@ function dol_print_object_info($object, $usetable = 0)
         }
         else
         {
-            $userstatic=new User($db);
+            $userstatic = new User($db);
             $userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
@@ -317,20 +317,20 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date validation
-    if (! empty($object->date_validation))
+    if (!empty($object->date_validation))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateValidation");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_validation, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // User approve (old method using already loaded object and not id is kept for backward compatibility)
-    if (! empty($object->user_approve) || ! empty($object->user_approve_id))
+    if (!empty($object->user_approve) || !empty($object->user_approve_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ApprovedBy");
@@ -343,7 +343,7 @@ function dol_print_object_info($object, $usetable = 0)
         }
         else
         {
-            $userstatic=new User($db);
+            $userstatic = new User($db);
             $userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
@@ -353,26 +353,26 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date approve
-    if (! empty($object->date_approve))
+    if (!empty($object->date_approve))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateApprove");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_approve, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // User approve
-    if (! empty($object->user_approve_id2))
+    if (!empty($object->user_approve_id2))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ApprovedBy");
         if ($usetable) print '</td><td>';
         else print ': ';
-        $userstatic=new User($db);
+        $userstatic = new User($db);
         $userstatic->fetch($object->user_approve_id2);
         if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         else print $langs->trans("Unknown");
@@ -381,20 +381,20 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date approve
-    if (! empty($object->date_approve2))
+    if (!empty($object->date_approve2))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateApprove2");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_approve2, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2 + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // User close
-    if (! empty($object->user_cloture))
+    if (!empty($object->user_cloture))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ClosedBy");
@@ -407,7 +407,7 @@ function dol_print_object_info($object, $usetable = 0)
         }
         else
         {
-            $userstatic=new User($db);
+            $userstatic = new User($db);
             $userstatic->fetch($object->user_cloture);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
@@ -417,20 +417,20 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date close
-    if (! empty($object->date_cloture))
+    if (!empty($object->date_cloture))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateClosing");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_cloture, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // User conciliate
-    if (! empty($object->user_rappro))
+    if (!empty($object->user_rappro))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ConciliatedBy");
@@ -443,7 +443,7 @@ function dol_print_object_info($object, $usetable = 0)
         }
         else
         {
-            $userstatic=new User($db);
+            $userstatic = new User($db);
             $userstatic->fetch($object->user_rappro);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
@@ -453,27 +453,27 @@ function dol_print_object_info($object, $usetable = 0)
     }
 
     // Date conciliate
-    if (! empty($object->date_rappro))
+    if (!empty($object->date_rappro))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateConciliating");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_rappro, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
 
     // Date send
-    if (! empty($object->date_envoi))
+    if (!empty($object->date_envoi))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("DateLastSend");
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_envoi, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -492,8 +492,8 @@ function dol_print_object_info($object, $usetable = 0)
  */
 function dolAddEmailTrackId($email, $trackingid)
 {
-	$tmp=explode('@', $email);
-	return $tmp[0].'+'.$trackingid.'@'.(isset($tmp[1])?$tmp[1]:'');
+	$tmp = explode('@', $email);
+	return $tmp[0].'+'.$trackingid.'@'.(isset($tmp[1]) ? $tmp[1] : '');
 }
 
 /**
@@ -535,7 +535,7 @@ function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0
     // HOSTNAME OR IP
     //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // x allowed (ex. http://localhost, http://routerlogin)
     //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // x.x
-    $urlregex .= "([a-z0-9+\$_\\\:-])+(\.[a-z0-9+\$_-][a-z0-9+\$_-]+)*";  // x ou x.xx (2 x ou plus)
+    $urlregex .= "([a-z0-9+\$_\\\:-])+(\.[a-z0-9+\$_-][a-z0-9+\$_-]+)*"; // x ou x.xx (2 x ou plus)
     //use only one of the above
 
     // PORT
@@ -596,16 +596,16 @@ function clean_url($url, $http = 1)
     // Also, there's no need of escape a dot sign in a class
     if (preg_match('/^(https?:[\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?/i', $url, $regs))
     {
-        $proto=$regs[1];
-        $domain=$regs[2];
-        $port=isset($regs[3])?$regs[3]:'';
+        $proto = $regs[1];
+        $domain = $regs[2];
+        $port = isset($regs[3]) ? $regs[3] : '';
         //print $url." -> ".$proto." - ".$domain." - ".$port;
         //$url = dol_string_nospecial(trim($url));
         $url = trim($url);
 
         // Si http: defini on supprime le http (Si https on ne supprime pas)
-        $newproto=$proto;
-        if ($http==0)
+        $newproto = $proto;
+        if ($http == 0)
         {
             if (preg_match('/^http:[\\/]+/i', $url))
             {
@@ -637,7 +637,7 @@ function clean_url($url, $http = 1)
  */
 function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail = 4, $nbdisplaydomain = 3, $displaytld = true)
 {
-	if(!isValidEmail($mail))return '';
+	if (!isValidEmail($mail))return '';
 	$tab = explode('@', $mail);
 	$tab2 = explode('.', $tab[1]);
 	$string_replace = '';
@@ -646,24 +646,24 @@ function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail
 	$mail_tld = '';
 
 	$nbofelem = count($tab2);
-	for($i=1; $i < $nbofelem && $displaytld; $i++)
+	for ($i = 1; $i < $nbofelem && $displaytld; $i++)
 	{
 		$mail_tld .= '.'.$tab2[$i];
 	}
 
-	for($i=0; $i < $nbreplace; $i++){
+	for ($i = 0; $i < $nbreplace; $i++) {
 		$string_replace .= $replace;
 	}
 
-	if(strlen($mail_name) > $nbdisplaymail){
+	if (strlen($mail_name) > $nbdisplaymail) {
 		$mail_name = substr($mail_name, 0, $nbdisplaymail);
 	}
 
-	if(strlen($mail_domaine) > $nbdisplaydomain){
-		$mail_domaine = substr($mail_domaine, strlen($mail_domaine)-$nbdisplaydomain);
+	if (strlen($mail_domaine) > $nbdisplaydomain) {
+		$mail_domaine = substr($mail_domaine, strlen($mail_domaine) - $nbdisplaydomain);
 	}
 
-	return $mail_name . $string_replace . $mail_domaine . $mail_tld;
+	return $mail_name.$string_replace.$mail_domaine.$mail_tld;
 }
 
 
@@ -678,12 +678,12 @@ function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail
  */
 function array2tr($data, $troptions = '', $tdoptions = '')
 {
-    $text = '<tr '.$troptions.'>' ;
-    foreach($data as $key => $item){
-        $text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
+    $text = '<tr '.$troptions.'>';
+    foreach ($data as $key => $item) {
+        $text .= '<td '.$tdoptions.'>'.$item.'</td>';
     }
-    $text.= '</tr>' ;
-    return $text ;
+    $text .= '</tr>';
+    return $text;
 }
 
 /**
@@ -698,20 +698,20 @@ function array2tr($data, $troptions = '', $tdoptions = '')
  */
 function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '', $tdoptions = '')
 {
-    $text='' ;
-    if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
-    foreach($data as $key => $item){
-        if(is_array($item)){
-            $text.=array2tr($item, $troptions, $tdoptions);
+    $text = '';
+    if ($tableMarkup) $text = '<table '.$tableoptions.'>';
+    foreach ($data as $key => $item) {
+        if (is_array($item)) {
+            $text .= array2tr($item, $troptions, $tdoptions);
         } else {
-            $text.= '<tr '.$troptions.'>' ;
-            $text.= '<td '.$tdoptions.'>'.$key.'</td>' ;
-            $text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
-            $text.= '</tr>' ;
+            $text .= '<tr '.$troptions.'>';
+            $text .= '<td '.$tdoptions.'>'.$key.'</td>';
+            $text .= '<td '.$tdoptions.'>'.$item.'</td>';
+            $text .= '</tr>';
         }
     }
-    if($tableMarkup) $text.= '</table>' ;
-    return $text ;
+    if ($tableMarkup) $text .= '</table>';
+    return $text;
 }
 
 /**
@@ -752,42 +752,42 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
     //$date=dol_stringtotime('20130101');
 
-    $hasglobalcounter=false;
+    $hasglobalcounter = false;
     // Extract value for mask counter, mask raz and mask offset
     if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg))
     {
-        $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
-        $maskcounter=$reg[1];
-        $hasglobalcounter=true;
+        $masktri = $reg[1].(!empty($reg[2]) ? $reg[2] : '').(!empty($reg[3]) ? $reg[3] : '');
+        $maskcounter = $reg[1];
+        $hasglobalcounter = true;
     }
     else
     {
         // setting some defaults so the rest of the code won't fail if there is a third party counter
-        $masktri='00000';
-        $maskcounter='00000';
+        $masktri = '00000';
+        $maskcounter = '00000';
     }
 
-    $maskraz=-1;
-    $maskoffset=0;
-    $resetEveryMonth=false;
+    $maskraz = -1;
+    $maskoffset = 0;
+    $resetEveryMonth = false;
     if (dol_strlen($maskcounter) < 3 && empty($conf->global->MAIN_COUNTER_WITH_LESS_3_DIGITS)) return 'ErrorCounterMustHaveMoreThan3Digits';
 
     // Extract value for third party mask counter
     if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
     {
-        $maskrefclient=$regClientRef[1].$regClientRef[2];
-        $maskrefclient_maskclientcode=$regClientRef[1];
-        $maskrefclient_maskcounter=$regClientRef[2];
-        $maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-        $maskrefclient_clientcode=substr($valueforccc, 0, dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code where n is length in mask
-        $maskrefclient_clientcode=str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
-        $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
+        $maskrefclient = $regClientRef[1].$regClientRef[2];
+        $maskrefclient_maskclientcode = $regClientRef[1];
+        $maskrefclient_maskcounter = $regClientRef[2];
+        $maskrefclient_maskoffset = 0; //default value of maskrefclient_counter offset
+        $maskrefclient_clientcode = substr($valueforccc, 0, dol_strlen($maskrefclient_maskclientcode)); //get n first characters of client code where n is length in mask
+        $maskrefclient_clientcode = str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT); //padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
+        $maskrefclient_clientcode = dol_string_nospecial($maskrefclient_clientcode); //sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
-    else $maskrefclient='';
+    else $maskrefclient = '';
 
     // fail if there is neither a global nor a third party counter
-    if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
+    if (!$hasglobalcounter && ($maskrefclient_maskcounter == ''))
     {
         return 'ErrorBadMask';
     }
@@ -795,14 +795,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     // Extract value for third party type
     if (preg_match('/\{(t+)\}/i', $mask, $regType))
     {
-        $masktype=$regType[1];
-        $masktype_value=substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1]));// get n first characters of thirdpaty typent_code (where n is length in mask)
-        $masktype_value=str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
+        $masktype = $regType[1];
+        $masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdpaty typent_code (where n is length in mask)
+        $masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
     }
     else
     {
-    	$masktype='';
-    	$masktype_value='';
+    	$masktype = '';
+    	$masktype_value = '';
     }
 
     // Extract value for user
@@ -891,79 +891,79 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // Define posy, posm and reg
         if ($maskraz > 1)	// if reset is not first month, we need month and year into mask
         {
-            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy=2; $posm=3; }
-            elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy=3; $posm=2; }
+            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 3; }
+            elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 3; $posm = 2; }
             else return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
 
             if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
         }
         else // if reset is for a specific month in year, we need year
         {
-            if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy=3; $posm=2; }
-        	elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy=2; $posm=3; }
-            elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy=2; $posm=0; }
+            if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 3; $posm = 2; }
+        	elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 3; }
+            elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 0; }
             else return 'ErrorCantUseRazIfNoYearInMask';
         }
         // Define length
-        $yearlen = $posy?dol_strlen($reg[$posy]):0;
-        $monthlen = $posm?dol_strlen($reg[$posm]):0;
+        $yearlen = $posy ?dol_strlen($reg[$posy]) : 0;
+        $monthlen = $posm ?dol_strlen($reg[$posm]) : 0;
         // Define pos
-       	$yearpos = (dol_strlen($reg[1])+1);
-        $monthpos = ($yearpos+$yearlen);
+       	$yearpos = (dol_strlen($reg[1]) + 1);
+        $monthpos = ($yearpos + $yearlen);
         if ($posy == 3 && $posm == 2) {		// if month is before year
-          	$monthpos = (dol_strlen($reg[1])+1);
-           	$yearpos = ($monthpos+$monthlen);
+          	$monthpos = (dol_strlen($reg[1]) + 1);
+           	$yearpos = ($monthpos + $monthlen);
         }
         //print "xxx ".$maskwithonlyymcode." maskraz=".$maskraz." posy=".$posy." yearlen=".$yearlen." yearpos=".$yearpos." posm=".$posm." monthlen=".$monthlen." monthpos=".$monthpos." yearoffsettype=".$yearoffsettype." resetEveryMonth=".$resetEveryMonth."\n";
 
         // Define $yearcomp and $monthcomp (that will be use in the select where to search max number)
-        $monthcomp=$maskraz;
-        $yearcomp=0;
+        $monthcomp = $maskraz;
+        $yearcomp = 0;
 
-        if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// $yearoffsettype is - or +
+        if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=')	// $yearoffsettype is - or +
         {
-        	$currentyear=date("Y", $date);
-        	$fiscaldate=dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
-        	$newyeardate=dol_mktime('0', '0', '0', '1', '1', $currentyear);
-        	$nextnewyeardate=dol_mktime('0', '0', '0', '1', '1', $currentyear+1);
+        	$currentyear = date("Y", $date);
+        	$fiscaldate = dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
+        	$newyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear);
+        	$nextnewyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear + 1);
         	//echo 'currentyear='.$currentyear.' date='.dol_print_date($date, 'day').' fiscaldate='.dol_print_date($fiscaldate, 'day').'<br>';
 
         	// If after or equal of current fiscal date
         	if ($date >= $fiscaldate)
         	{
         		// If before of next new year date
-        		if ($date < $nextnewyeardate && $yearoffsettype == '+') $yearoffset=1;
+        		if ($date < $nextnewyeardate && $yearoffsettype == '+') $yearoffset = 1;
         	}
         	// If after or equal of current new year date
-        	elseif ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset=-1;
+        	elseif ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset = -1;
         }
         // For backward compatibility
-        elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+        elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) { $yearoffset = -1; }	// If current month lower that month of return to zero, year is previous year
 
-        if ($yearlen == 4) $yearcomp=sprintf("%04d", date("Y", $date)+$yearoffset);
-        elseif ($yearlen == 2) $yearcomp=sprintf("%02d", date("y", $date)+$yearoffset);
-        elseif ($yearlen == 1) $yearcomp=substr(date("y", $date), 2, 1)+$yearoffset;
+        if ($yearlen == 4) $yearcomp = sprintf("%04d", date("Y", $date) + $yearoffset);
+        elseif ($yearlen == 2) $yearcomp = sprintf("%02d", date("y", $date) + $yearoffset);
+        elseif ($yearlen == 1) $yearcomp = substr(date("y", $date), 2, 1) + $yearoffset;
         if ($monthcomp > 1 && empty($resetEveryMonth))	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
         {
-            if ($yearlen == 4) $yearcomp1=sprintf("%04d", date("Y", $date)+$yearoffset+1);
-            elseif ($yearlen == 2) $yearcomp1=sprintf("%02d", date("y", $date)+$yearoffset+1);
+            if ($yearlen == 4) $yearcomp1 = sprintf("%04d", date("Y", $date) + $yearoffset + 1);
+            elseif ($yearlen == 2) $yearcomp1 = sprintf("%02d", date("y", $date) + $yearoffset + 1);
 
-            $sqlwhere.="(";
-            $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
-            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") >= '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
-            $sqlwhere.=" OR";
-            $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp1."'";
-            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
-            $sqlwhere.=')';
+            $sqlwhere .= "(";
+            $sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+            $sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") >= '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
+            $sqlwhere .= " OR";
+            $sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp1."'";
+            $sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
+            $sqlwhere .= ')';
         }
 		elseif ($resetEveryMonth)
 		{
-			$sqlwhere.="(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
-            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
+			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+            $sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
 		}
         else   // reset is done on january
         {
-            $sqlwhere.='(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$yearcomp."')";
+            $sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$yearcomp."')";
         }
     }
     //print "sqlwhere=".$sqlwhere." yearcomp=".$yearcomp."<br>\n";	// sqlwhere and yearcomp defined only if we ask a reset
@@ -972,14 +972,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     // Define $sqlstring
     if (function_exists('mb_strrpos'))
     	{
-    	$posnumstart=mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
+    	$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
 	}
 	else
 	{
-    	$posnumstart=strrpos($maskwithnocode, $maskcounter);
+    	$posnumstart = strrpos($maskwithnocode, $maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
-    $sqlstring='SUBSTRING('.$field.', '.($posnumstart+1).', '.dol_strlen($maskcounter).')';
+    $sqlstring = 'SUBSTRING('.$field.', '.($posnumstart + 1).', '.dol_strlen($maskcounter).')';
 
     // Define $maskLike
     $maskLike = dol_string_nospecial($mask);
@@ -995,27 +995,27 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
     if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'), $masktype_value, $maskLike);
     if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'), $maskuser_value, $maskLike);
-    foreach($maskperso as $key => $val)
+    foreach ($maskperso as $key => $val)
     {
     	$maskLike = str_replace(dol_string_nospecial($maskperso[$key]), $maskpersonew[$key], $maskLike);
     }
 
     // Get counter in database
-    $counter=0;
+    $counter = 0;
     $sql = "SELECT MAX(".$sqlstring.") as val";
-    $sql.= " FROM ".MAIN_DB_PREFIX.$table;
-    $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
-	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
+    $sql .= " FROM ".MAIN_DB_PREFIX.$table;
+    $sql .= " WHERE ".$field." LIKE '".$maskLike."'";
+	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
-    	$sql.= " AND entity IN (".getEntity($sharetable).")";
-    elseif (! empty($forceentity))
-    	$sql.= " AND entity IN (".$forceentity.")";
-    if ($where) $sql.=$where;
-    if ($sqlwhere) $sql.=' AND '.$sqlwhere;
+    	$sql .= " AND entity IN (".getEntity($sharetable).")";
+    elseif (!empty($forceentity))
+    	$sql .= " AND entity IN (".$forceentity.")";
+    if ($where) $sql .= $where;
+    if ($sqlwhere) $sql .= ' AND '.$sqlwhere;
 
     //print $sql.'<br>';
     dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
     if ($resql)
     {
         $obj = $db->fetch_object($resql);
@@ -1024,17 +1024,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     else dol_print_error($db);
 
     // Check if we must force counter to maskoffset
-    if (empty($counter)) $counter=$maskoffset;
+    if (empty($counter)) $counter = $maskoffset;
     elseif (preg_match('/[^0-9]/i', $counter))
     {
-    	$counter=0;
+    	$counter = 0;
     	dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
     }
-    elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter=$maskoffset;
+    elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter = $maskoffset;
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
     {
-        $counterpadded=str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
+        $counterpadded = str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
 
         // Define $maskLike
         $maskLike = dol_string_nospecial($mask);
@@ -1050,20 +1050,20 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'), $masktype_value, $maskLike);
         if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'), $maskuser_value, $maskLike);
 
-        $ref='';
+        $ref = '';
         $sql = "SELECT ".$field." as ref";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$table;
-        $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
-    	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
+        $sql .= " FROM ".MAIN_DB_PREFIX.$table;
+        $sql .= " WHERE ".$field." LIKE '".$maskLike."'";
+    	$sql .= " AND ".$field." NOT LIKE '%PROV%'";
     	if ($bentityon) // only if entity enable
-        	$sql.= " AND entity IN (".getEntity($sharetable).")";
-        elseif (! empty($forceentity))
-        	$sql.= " AND entity IN (".$forceentity.")";
-        if ($where) $sql.=$where;
-        if ($sqlwhere) $sql.=' AND '.$sqlwhere;
+        	$sql .= " AND entity IN (".getEntity($sharetable).")";
+        elseif (!empty($forceentity))
+        	$sql .= " AND entity IN (".$forceentity.")";
+        if ($where) $sql .= $where;
+        if ($sqlwhere) $sql .= ' AND '.$sqlwhere;
 
         dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
-        $resql=$db->query($sql);
+        $resql = $db->query($sql);
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
@@ -1071,7 +1071,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         }
         else dol_print_error($db);
 
-        $numFinal=$ref;
+        $numFinal = $ref;
     }
     elseif ($mode == 'next')
     {
@@ -1080,17 +1080,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // If value for $counter has a length higher than $maskcounter chars
         if ($counter >= pow(10, dol_strlen($maskcounter)))
         {
-        	$counter='ErrorMaxNumberReachForThisMask';
+        	$counter = 'ErrorMaxNumberReachForThisMask';
         }
 
-        if (! empty($maskrefclient_maskcounter))
+        if (!empty($maskrefclient_maskcounter))
         {
             //print "maskrefclient_maskcounter=".$maskrefclient_maskcounter." maskwithnocode=".$maskwithnocode." maskrefclient=".$maskrefclient."\n<br>";
 
             // Define $sqlstring
-            $maskrefclient_posnumstart=strpos($maskwithnocode, $maskrefclient_maskcounter, strpos($maskwithnocode, $maskrefclient));	// Pos of counter in final string (from 0 to ...)
+            $maskrefclient_posnumstart = strpos($maskwithnocode, $maskrefclient_maskcounter, strpos($maskwithnocode, $maskrefclient)); // Pos of counter in final string (from 0 to ...)
             if ($maskrefclient_posnumstart <= 0) return 'ErrorBadMask';
-            $maskrefclient_sqlstring='SUBSTRING('.$field.', '.($maskrefclient_posnumstart+1).', '.dol_strlen($maskrefclient_maskcounter).')';
+            $maskrefclient_sqlstring = 'SUBSTRING('.$field.', '.($maskrefclient_posnumstart + 1).', '.dol_strlen($maskrefclient_maskcounter).')';
             //print "x".$sqlstring;
 
             // Define $maskrefclient_maskLike
@@ -1106,21 +1106,21 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             $maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
             // Get counter in database
-            $maskrefclient_counter=0;
+            $maskrefclient_counter = 0;
             $maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
-            $maskrefclient_sql.= " FROM ".MAIN_DB_PREFIX.$table;
+            $maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
             //$sql.= " WHERE ".$field." not like '(%'";
-            $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
+            $maskrefclient_sql .= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
             if ($bentityon) // only if entity enable
-            	$maskrefclient_sql.= " AND entity IN (".getEntity($sharetable).")";
-            elseif (! empty($forceentity))
-            	$sql.= " AND entity IN (".$forceentity.")";
-            if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
-            if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
-            $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
+            	$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
+            elseif (!empty($forceentity))
+            	$sql .= " AND entity IN (".$forceentity.")";
+            if ($where) $maskrefclient_sql .= $where; //use the same optional where as general mask
+            if ($sqlwhere) $maskrefclient_sql .= ' AND '.$sqlwhere; //use the same sqlwhere as general mask
+            $maskrefclient_sql .= ' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient) + 1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
 
             dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
-            $maskrefclient_resql=$db->query($maskrefclient_sql);
+            $maskrefclient_resql = $db->query($maskrefclient_sql);
             if ($maskrefclient_resql)
             {
                 $maskrefclient_obj = $db->fetch_object($maskrefclient_resql);
@@ -1128,7 +1128,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             }
             else dol_print_error($db);
 
-            if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i', $maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
+            if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i', $maskrefclient_counter)) $maskrefclient_counter = $maskrefclient_maskoffset;
 			$maskrefclient_counter++;
         }
 
@@ -1136,11 +1136,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $numFinal = $mask;
 
         // We replace special codes except refclient
-		if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// yearoffsettype is - or +, so we don't want current year
+		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=')	// yearoffsettype is - or +, so we don't want current year
 		{
-	        $numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{yy\}/i', date("y", $date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1)+$yearoffset, $numFinal);
+	        $numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
 		}
 		else	// we want yyyy to be current year
 		{
@@ -1152,8 +1152,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $numFinal = preg_replace('/\{dd\}/i', date("d", $date), $numFinal);
 
         // Now we replace the counter
-        $maskbefore='{'.$masktri.'}';
-        $maskafter=str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
+        $maskbefore = '{'.$masktri.'}';
+        $maskafter = str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
         //print 'x'.$maskbefore.'-'.$maskafter.'y';
         $numFinal = str_replace($maskbefore, $maskafter, $numFinal);
 
@@ -1296,8 +1296,8 @@ function check_value($mask, $value)
     //
 
     // Check length
-    $len=dol_strlen($maskwithnocode);
-    if (dol_strlen($value) != $len) $result=-1;
+    $len = dol_strlen($maskwithnocode);
+    if (dol_strlen($value) != $len) $result = -1;
 
     // Define $maskLike
     /* seems not used
@@ -1327,11 +1327,11 @@ function check_value($mask, $value)
  */
 function binhex($bin, $pad = false, $upper = false)
 {
-    $last = dol_strlen($bin)-1;
-    for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2, $i); }
+    $last = dol_strlen($bin) - 1;
+    for ($i = 0; $i <= $last; $i++) { $x += $bin[$last - $i] * pow(2, $i); }
     $x = dechex($x);
-    if($pad){ while(dol_strlen($x) < intval(dol_strlen($bin))/4){ $x = "0$x"; } }
-    if($upper){ $x = strtoupper($x); }
+    if ($pad) { while (dol_strlen($x) < intval(dol_strlen($bin)) / 4) { $x = "0$x"; } }
+    if ($upper) { $x = strtoupper($x); }
     return $x;
 }
 
@@ -1343,11 +1343,11 @@ function binhex($bin, $pad = false, $upper = false)
  */
 function hexbin($hexa)
 {
-    $bin='';
+    $bin = '';
     $strLength = dol_strlen($hexa);
-    for($i=0;$i<$strLength;$i++)
+    for ($i = 0; $i < $strLength; $i++)
     {
-        $bin.=str_pad(decbin(hexdec($hexa{$i})), 4, '0', STR_PAD_LEFT);
+        $bin .= str_pad(decbin(hexdec($hexa[$i])), 4, '0', STR_PAD_LEFT);
     }
     return $bin;
 }
@@ -1378,27 +1378,27 @@ function numero_semaine($time)
      */
 
     // Definition du Jeudi de la semaine
-    if (date("w", mktime(12, 0, 0, $mois, $jour, $annee))==0) // Dimanche
-    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-3*24*60*60;
-    elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee))<4) // du Lundi au Mercredi
-    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)+(4-date("w", mktime(12, 0, 0, $mois, $jour, $annee)))*24*60*60;
-    elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee))>4) // du Vendredi au Samedi
-    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-(date("w", mktime(12, 0, 0, $mois, $jour, $annee))-4)*24*60*60;
+    if (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) // Dimanche
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - 3 * 24 * 60 * 60;
+    elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) // du Lundi au Mercredi
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
+    elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) // du Vendredi au Samedi
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
     else // Jeudi
     $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 
     // Definition du premier Jeudi de l'annee
-    if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))==0) // Dimanche
+    if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 0) // Dimanche
     {
-        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))+4*24*60*60;
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
     }
-    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))<4) // du Lundi au Mercredi
+    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) < 4) // du Lundi au Mercredi
     {
-        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))+(4-date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))))*24*60*60;
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
     }
-    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))>4) // du Vendredi au Samedi
+    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) // du Vendredi au Samedi
     {
-        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))+(7-(date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))-4))*24*60*60;
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
     }
     else // Jeudi
     {
@@ -1406,7 +1406,7 @@ function numero_semaine($time)
     }
 
     // Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
-    $numeroSemaine =     (
+    $numeroSemaine = (
     (
     date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
     -
@@ -1415,10 +1415,10 @@ function numero_semaine($time)
     ) + 1;
 
     // Cas particulier de la semaine 53
-    if ($numeroSemaine==53)
+    if ($numeroSemaine == 53)
     {
         // Les annees qui commence un Jeudi et les annees bissextiles commencant un Mercredi en possede 53
-        if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))==4 || (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))==3 && date("z", mktime(12, 0, 0, 12, 31, date("Y", $jeudiSemaine)))==365))
+        if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 4 || (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 3 && date("z", mktime(12, 0, 0, 12, 31, date("Y", $jeudiSemaine))) == 365))
         {
             $numeroSemaine = 53;
         }
@@ -1448,7 +1448,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
      *  weigh_convert(320, $f, 0) retournera 0.32
      *
      */
-    while ($from_unit  <> $to_unit)
+    while ($from_unit <> $to_unit)
     {
         if ($from_unit > $to_unit)
         {
@@ -1487,21 +1487,21 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
     // We remove old parameters for all keys in $tab
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-    $sql.= " WHERE fk_user = ".$user->id;
-    $sql.= " AND entity = ".$conf->entity;
-    $sql.= " AND param in (";
-    $i=0;
+    $sql .= " WHERE fk_user = ".$user->id;
+    $sql .= " AND entity = ".$conf->entity;
+    $sql .= " AND param in (";
+    $i = 0;
     foreach ($tab as $key => $value)
     {
-        if ($i > 0) $sql.=',';
-        $sql.="'".$db->escape($key)."'";
+        if ($i > 0) $sql .= ',';
+        $sql .= "'".$db->escape($key)."'";
         $i++;
     }
-    $sql.= ")";
+    $sql .= ")";
     dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
 
-    $resql=$db->query($sql);
-    if (! $resql)
+    $resql = $db->query($sql);
+    if (!$resql)
     {
         dol_print_error($db);
         $db->rollback();
@@ -1514,12 +1514,12 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         if ($value)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
-            $sql.= " VALUES (".$user->id.",".$conf->entity.",";
-            $sql.= " '".$db->escape($key)."','".$db->escape($value)."')";
+            $sql .= " VALUES (".$user->id.",".$conf->entity.",";
+            $sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
 
             dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
-            $result=$db->query($sql);
-            if (! $result)
+            $result = $db->query($sql);
+            if (!$result)
             {
                 dol_print_error($db);
                 $db->rollback();
@@ -1564,11 +1564,13 @@ function dol_print_reduction($reduction, $langs)
  * 	Return OS version.
  *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
  *
- * 	@return		string			OS version
+ *  @param 		string		$option 	Option string
+ * 	@return		string					OS version
  */
-function version_os()
+function version_os($option = '')
 {
-    $osversion=php_uname();
+	if ($option == 'smr') $osversion = php_uname('s').' '.php_uname('m').' '.php_uname('r');
+	else $osversion = php_uname();
     return $osversion;
 }
 
@@ -1718,10 +1720,10 @@ function is_ip($ip)
 	// First we test if it is a valid IPv4
 	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 		// Then we test if it is a private range
-		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
+		if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
 
 		// Then we test if it is a reserved range
-		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE)) return 0;
+		if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE)) return 0;
 
 		return 1;
 	}
@@ -1738,10 +1740,10 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-    $login=strtolower(dol_string_unaccent($firstname));
-    $login.=($login?'.':'');
-    $login.=strtolower(dol_string_unaccent($lastname));
-    $login=dol_string_nospecial($login, ''); // For special names
+    $login = strtolower(dol_string_unaccent($firstname));
+    $login .= ($login ? '.' : '');
+    $login .= strtolower(dol_string_unaccent($lastname));
+    $login = dol_string_nospecial($login, ''); // For special names
     return $login;
 }
 
@@ -1754,18 +1756,18 @@ function getSoapParams()
 {
     global $conf;
 
-    $params=array();
-    $proxyuse =(empty($conf->global->MAIN_PROXY_USE)?false:true);
-    $proxyhost=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_HOST);
-    $proxyport=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_PORT);
-    $proxyuser=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_USER);
-    $proxypass=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_PASS);
-    $timeout  =(empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?10:$conf->global->MAIN_USE_CONNECT_TIMEOUT);               // Connection timeout
-    $response_timeout=(empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);    // Response timeout
+    $params = array();
+    $proxyuse = (empty($conf->global->MAIN_PROXY_USE) ?false:true);
+    $proxyhost = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_HOST);
+    $proxyport = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PORT);
+    $proxyuser = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_USER);
+    $proxypass = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PASS);
+    $timeout  = (empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
+    $response_timeout = (empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
     //print extension_loaded('soap');
     if ($proxyuse)
     {
-        $params=array('connection_timeout'=>$timeout,
+        $params = array('connection_timeout'=>$timeout,
                       'response_timeout'=>$response_timeout,
                       'proxy_use'      => 1,
                       'proxy_host'     => $proxyhost,
@@ -1777,7 +1779,7 @@ function getSoapParams()
     }
     else
     {
-        $params=array('connection_timeout'=>$timeout,
+        $params = array('connection_timeout'=>$timeout,
                       'response_timeout'=>$response_timeout,
                       'proxy_use'      => 0,
                       'proxy_host'     => false,
@@ -1804,7 +1806,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 {
 	global $db, $conf, $langs;
 
-	$ret='';
+	$ret = '';
 
 	// Parse element/subelement (ex: project_task)
 	$module = $element = $subelement = $objecttype;
@@ -1886,34 +1888,34 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 	if ($objecttype == 'invoice_supplier') {
 		$classfile = 'fournisseur.facture';
-		$classname='FactureFournisseur';
+		$classname = 'FactureFournisseur';
 		$classpath = 'fourn/class';
-		$module='fournisseur';
+		$module = 'fournisseur';
 	}
-	elseif ($objecttype == 'order_supplier')   {
+	elseif ($objecttype == 'order_supplier') {
 		$classfile = 'fournisseur.commande';
-		$classname='CommandeFournisseur';
+		$classname = 'CommandeFournisseur';
 		$classpath = 'fourn/class';
-		$module='fournisseur';
+		$module = 'fournisseur';
 	}
-	elseif ($objecttype == 'stock')   {
+	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
-		$classfile='entrepot';
-		$classname='Entrepot';
+		$classfile = 'entrepot';
+		$classname = 'Entrepot';
 	}
-	if (! empty($conf->$module->enabled))
+	if (!empty($conf->$module->enabled))
 	{
-		$res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+		$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 		if ($res)
 		{
 			if (class_exists($classname))
 			{
 				$object = new $classname($db);
-				$res=$object->fetch($objectid);
+				$res = $object->fetch($objectid);
 				if ($res > 0) {
-					$ret=$object->getNomUrl($withpicto, $option);
-				} elseif($res==0) {
-					$ret=$langs->trans('Deleted');
+					$ret = $object->getNomUrl($withpicto, $option);
+				} elseif ($res == 0) {
+					$ret = $langs->trans('Deleted');
 				}
 				unset($object);
 			}
@@ -1934,12 +1936,12 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
  */
 function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 {
-	$totalnb=0;
-	$listofid=array();
-	$listofparentid=array();
+	$totalnb = 0;
+	$listofid = array();
+	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql='SELECT rowid, '.$fieldfkparent.' as parent_id FROM '.MAIN_DB_PREFIX.$tabletocleantree;
+	$sql = 'SELECT rowid, '.$fieldfkparent.' as parent_id FROM '.MAIN_DB_PREFIX.$tabletocleantree;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1948,8 +1950,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$listofid[]=$obj->rowid;
-			if ($obj->parent_id > 0) $listofparentid[$obj->rowid]=$obj->parent_id;
+			$listofid[] = $obj->rowid;
+			if ($obj->parent_id > 0) $listofparentid[$obj->rowid] = $obj->parent_id;
 			$i++;
 		}
 	}
@@ -1963,51 +1965,51 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print 'Code requested to clean tree (may be to solve data corruption), so we check/clean orphelins and loops.'."<br>\n";
 
 		// Check loops on each other
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid";	// So we update only records linked to themself
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid"; // So we update only records linked to themself
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$nb=$db->affected_rows($sql);
+			$nb = $db->affected_rows($sql);
 			if ($nb > 0)
 			{
 				print '<br>Some record that were parent of themself were cleaned.';
 			}
 
-			$totalnb+=$nb;
+			$totalnb += $nb;
 		}
 		//else dol_print_error($db);
 
 		// Check other loops
-		$listofidtoclean=array();
-		foreach($listofparentid as $id => $pid)
+		$listofidtoclean = array();
+		foreach ($listofparentid as $id => $pid)
 		{
 			// Check depth
 			//print 'Analyse record id='.$id.' with parent '.$pid.'<br>';
 
-			$cursor=$id; $arrayidparsed=array();	// We start from child $id
+			$cursor = $id; $arrayidparsed = array(); // We start from child $id
 			while ($cursor > 0)
 			{
-				$arrayidparsed[$cursor]=1;
+				$arrayidparsed[$cursor] = 1;
 				if ($arrayidparsed[$listofparentid[$cursor]])	// We detect a loop. A record with a parent that was already into child
 				{
 					print 'Found a loop between id '.$id.' - '.$cursor.'<br>';
 					unset($arrayidparsed);
-					$listofidtoclean[$cursor]=$id;
+					$listofidtoclean[$cursor] = $id;
 					break;
 				}
-				$cursor=$listofparentid[$cursor];
+				$cursor = $listofparentid[$cursor];
 			}
 
 			if (count($listofidtoclean)) break;
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql.= " SET ".$fieldfkparent." = 0";
-		$sql.= " WHERE rowid IN (".join(',', $listofidtoclean).")";	// So we update only records detected wrong
+		$sql .= " SET ".$fieldfkparent." = 0";
+		$sql .= " WHERE rowid IN (".join(',', $listofidtoclean).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$nb=$db->affected_rows($sql);
+			$nb = $db->affected_rows($sql);
 			if ($nb > 0)
 			{
 				// Removed orphelins records
@@ -2015,18 +2017,18 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 				print join(',', $listofidtoclean);
 			}
 
-			$totalnb+=$nb;
+			$totalnb += $nb;
 		}
 		//else dol_print_error($db);
 
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql.= " SET ".$fieldfkparent." = 0";
-		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',', $listofid).")";	// So we update only records linked to a non existing parent
+		$sql .= " SET ".$fieldfkparent." = 0";
+		$sql .= " WHERE ".$fieldfkparent." NOT IN (".join(',', $listofid).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$nb=$db->affected_rows($sql);
+			$nb = $db->affected_rows($sql);
 			if ($nb > 0)
 			{
 				// Removed orphelins records
@@ -2034,7 +2036,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 				print join(',', $listofid);
 			}
 
-			$totalnb+=$nb;
+			$totalnb += $nb;
 		}
 		//else dol_print_error($db);
 
@@ -2053,7 +2055,7 @@ function getElementProperties($element_type)
 {
     // Parse element/subelement (ex: project_task)
     $module = $element_type;
-    $element =  $element_type;
+    $element = $element_type;
     $subelement = $element_type;
 
     // If we ask an resource form external module (instead of default path)
@@ -2063,7 +2065,7 @@ function getElementProperties($element_type)
     }
 
     //print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-    if ( preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
+    if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
         $module = $element = $regs[1];
         $subelement = $regs[2];
     }
@@ -2078,7 +2080,7 @@ function getElementProperties($element_type)
     // To work with non standard path
     if ($element_type == 'facture' || $element_type == 'invoice') {
         $classpath = 'compta/facture/class';
-        $module ='facture';
+        $module = 'facture';
         $subelement = 'facture';
     }
     if ($element_type == 'commande' || $element_type == 'order') {
@@ -2086,10 +2088,10 @@ function getElementProperties($element_type)
         $module = 'commande';
         $subelement = 'commande';
     }
-    if ($element_type == 'propal')  {
+    if ($element_type == 'propal') {
         $classpath = 'comm/propal/class';
     }
-    if ($element_type == 'supplier_proposal')  {
+    if ($element_type == 'supplier_proposal') {
         $classpath = 'supplier_proposal/class';
     }
     if ($element_type == 'shipping') {
@@ -2104,49 +2106,49 @@ function getElementProperties($element_type)
     }
     if ($element_type == 'contract') {
         $classpath = 'contrat/class';
-        $module='contrat';
-        $subelement='contrat';
+        $module = 'contrat';
+        $subelement = 'contrat';
     }
     if ($element_type == 'member') {
         $classpath = 'adherents/class';
-        $module='adherent';
-        $subelement='adherent';
+        $module = 'adherent';
+        $subelement = 'adherent';
     }
     if ($element_type == 'cabinetmed_cons') {
         $classpath = 'cabinetmed/class';
-        $module='cabinetmed';
-        $subelement='cabinetmedcons';
+        $module = 'cabinetmed';
+        $subelement = 'cabinetmedcons';
     }
     if ($element_type == 'fichinter') {
         $classpath = 'fichinter/class';
-        $module='ficheinter';
-        $subelement='fichinter';
+        $module = 'ficheinter';
+        $subelement = 'fichinter';
     }
     if ($element_type == 'dolresource' || $element_type == 'resource') {
         $classpath = 'resource/class';
-        $module='resource';
-        $subelement='dolresource';
+        $module = 'resource';
+        $subelement = 'dolresource';
     }
     if ($element_type == 'propaldet') {
         $classpath = 'comm/propal/class';
-        $module='propal';
-        $subelement='propaleligne';
+        $module = 'propal';
+        $subelement = 'propaleligne';
     }
-    if ($element_type == 'order_supplier')  {
+    if ($element_type == 'order_supplier') {
         $classpath = 'fourn/class';
-        $module='fournisseur';
-        $subelement='commandefournisseur';
-        $classfile='fournisseur.commande';
+        $module = 'fournisseur';
+        $subelement = 'commandefournisseur';
+        $classfile = 'fournisseur.commande';
     }
-    if ($element_type == 'invoice_supplier')  {
+    if ($element_type == 'invoice_supplier') {
         $classpath = 'fourn/class';
-        $module='fournisseur';
-        $subelement='facturefournisseur';
-        $classfile='fournisseur.facture';
+        $module = 'fournisseur';
+        $subelement = 'facturefournisseur';
+        $classfile = 'fournisseur.facture';
     }
     if ($element_type == "service") {
         $classpath = 'product/class';
-        $subelement='product';
+        $subelement = 'product';
     }
 
     if (!isset($classfile)) $classfile = strtolower($subelement);
@@ -2204,7 +2206,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  */
 function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
-	if (! is_array($arraycolor)) return $colorifnotfound;
+	if (!is_array($arraycolor)) return $colorifnotfound;
 	if (empty($arraycolor)) return $colorifnotfound;
 	return sprintf("%02s", dechex($arraycolor[0])).sprintf("%02s", dechex($arraycolor[1])).sprintf("%02s", dechex($arraycolor[2]));
 }
@@ -2219,18 +2221,18 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  @return	array   					RGB hex value (without # before). For example: FF00FF
  *  @see	colorArrayToHex(), colorHexToRgb()
  */
-function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
+function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
 {
-	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
-	$reg=array();
-	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
-	if (! $tmp)
+	if (is_array($stringcolor)) return $stringcolor; // If already into correct output format, we return as is
+	$reg = array();
+	$tmp = preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
+	if (!$tmp)
 	{
-		$tmp=explode(',', $stringcolor);
+		$tmp = explode(',', $stringcolor);
 		if (count($tmp) < 3) return $colorifnotfound;
 		return $tmp;
 	}
-	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
+	return array(hexdec($reg[1]), hexdec($reg[2]), hexdec($reg[3]));
 }
 
 /**
@@ -2372,18 +2374,18 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
     $rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
     $rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
     $rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
-    if ( $alpha !== false ) {
+    if ($alpha !== false) {
         $rgb['a'] = floatval($alpha);
         $string = 'rgba('.implode(',', $rgb).')';
     }
-    else{
+    else {
         $string = 'rgb('.implode(',', $rgb).')';
     }
 
-    if($returnArray){
+    if ($returnArray) {
         return $rgb;
     }
-    else{
+    else {
         return $string;
     }
 }
@@ -2406,8 +2408,8 @@ function cartesianArray(array $input)
     foreach ($input as $key => $values) {
         $append = array();
 
-        foreach($result as $product) {
-            foreach($values as $item) {
+        foreach ($result as $product) {
+            foreach ($values as $item) {
                 $product[$key] = $item;
                 $append[] = $product;
             }
@@ -2428,7 +2430,7 @@ function cartesianArray(array $input)
  */
 function getModuleDirForApiClass($module)
 {
-    $moduledirforclass=$module;
+    $moduledirforclass = $module;
     if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i', '', $moduledirforclass);
 
     if ($module == 'contracts') {
@@ -2525,11 +2527,11 @@ function randomColorPart($min = 0, $max = 255)
  */
 function randomColor($min = 0, $max = 255)
 {
-    return randomColorPart($min, $max) . randomColorPart($min, $max) . randomColorPart($min, $max);
+    return randomColorPart($min, $max).randomColorPart($min, $max).randomColorPart($min, $max);
 }
 
 
-if (! function_exists('dolEscapeXML'))
+if (!function_exists('dolEscapeXML'))
 {
     /**
      * Encode string for xml usage
@@ -2539,7 +2541,7 @@ if (! function_exists('dolEscapeXML'))
      */
     function dolEscapeXML($string)
     {
-        return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
+        return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
     }
 }
 
@@ -2555,25 +2557,25 @@ if (! function_exists('dolEscapeXML'))
 function autoOrManual($automaticmanual, $case = 1, $color = 0)
 {
     global $langs;
-    $result='unknown'; $classname='';
+    $result = 'unknown'; $classname = '';
     if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') 	// A mettre avant test sur no a cause du == 0
     {
-        $result=$langs->trans('automatic');
-        if ($case == 1 || $case == 3) $result=$langs->trans("Automatic");
-        if ($case == 2) $result='<input type="checkbox" value="1" checked disabled>';
-        if ($case == 3) $result='<input type="checkbox" value="1" checked disabled> '.$result;
+        $result = $langs->trans('automatic');
+        if ($case == 1 || $case == 3) $result = $langs->trans("Automatic");
+        if ($case == 2) $result = '<input type="checkbox" value="1" checked disabled>';
+        if ($case == 3) $result = '<input type="checkbox" value="1" checked disabled> '.$result;
 
-        $classname='ok';
+        $classname = 'ok';
     }
     elseif ($automaticmanual == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
     {
-        $result=$langs->trans("manual");
-        if ($case == 1 || $case == 3) $result=$langs->trans("Manual");
-        if ($case == 2) $result='<input type="checkbox" value="0" disabled>';
-        if ($case == 3) $result='<input type="checkbox" value="0" disabled> '.$result;
+        $result = $langs->trans("manual");
+        if ($case == 1 || $case == 3) $result = $langs->trans("Manual");
+        if ($case == 2) $result = '<input type="checkbox" value="0" disabled>';
+        if ($case == 3) $result = '<input type="checkbox" value="0" disabled> '.$result;
 
-        if ($color == 2) $classname='ok';
-        else $classname='error';
+        if ($color == 2) $classname = 'ok';
+        else $classname = 'error';
     }
     if ($color) return '<font class="'.$classname.'">'.$result.'</font>';
     return $result;

@@ -36,13 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 $langs->loadlangs(array('categories', 'bills'));
 
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref');
-$type=GETPOST('type');
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref');
+$type = GETPOST('type');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
 
-if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 if ($id == "")
 {
@@ -66,7 +66,7 @@ if ($id > 0)
  * Actions
  */
 
-if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
         $file = $_FILES['userfile'];
@@ -74,15 +74,15 @@ if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sen
         {
             foreach ($file['name'] as $i => $name)
             {
-                if(empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]) )
+                if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]))
                 {
-                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+                    setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
                     unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
                 }
             }
         }
 
-        if(!empty($file['tmp_name'])) {
+        if (!empty($file['tmp_name'])) {
             $object->add_photo($upload_dir, $file);
         }
     }
@@ -110,15 +110,15 @@ $formother = new FormOther($db);
 
 if ($object->id)
 {
-	if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
-	elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
-	elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
-	elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
-	elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
-	elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
-	elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
-	elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
-	else                                        $title=$langs->trans("Category");
+	if ($type == Categorie::TYPE_PRODUCT)       $title = $langs->trans("ProductsCategoryShort");
+	elseif ($type == Categorie::TYPE_SUPPLIER)  $title = $langs->trans("SuppliersCategoryShort");
+	elseif ($type == Categorie::TYPE_CUSTOMER)  $title = $langs->trans("CustomersCategoryShort");
+	elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCategoryShort");
+	elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
+	elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
+	elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
+	elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
+	else                                        $title = $langs->trans("Category");
 
 	$head = categories_prepare_head($object, $type);
 
@@ -167,7 +167,7 @@ if ($object->id)
 	print "</table>\n";
     print '</div>';
 
-	print dol_fiche_end();
+	dol_fiche_end();
 
 
 
@@ -181,7 +181,7 @@ if ($object->id)
 
 	if ($action != 'ajout_photo' && $user->rights->categorie->creer)
 	{
-		if (! empty($conf->global->MAIN_UPLOAD_DOC))
+		if (!empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
@@ -198,23 +198,23 @@ if ($object->id)
 	/*
 	 * Ajouter une photo
 	*/
-	if ($action == 'ajout_photo' && $user->rights->categorie->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	if ($action == 'ajout_photo' && $user->rights->categorie->creer && !empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		// Affiche formulaire upload
-		$formfile=new FormFile($db);
+		$formfile = new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->rights->categorie->creer, 50, $object, '', false, '', 0);
 	}
 
 	// Affiche photos
 	if ($action != 'ajout_photo')
 	{
-		$nbphoto=0;
-		$nbbyrow=5;
+		$nbphoto = 0;
+		$nbbyrow = 5;
 
 		$maxWidth = 160;
 		$maxHeight = 120;
 
-		$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
+		$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 		$dir = $upload_dir.'/'.$pdir;
 
 		$listofphoto = $object->liste_photos($dir);
@@ -229,22 +229,22 @@ if ($object->id)
     			$nbphoto++;
 
     			if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
-    			if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    			if ($nbbyrow) print '<td width="'.ceil(100 / $nbbyrow).'%" class="photo">';
 
     			print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
 
     			// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
     			if ($obj['photo_vignette'])
     			{
-    				$filename=$obj['photo_vignette'];
+    				$filename = $obj['photo_vignette'];
     			}
     			else
     			{
-    				$filename=$obj['photo'];
+    				$filename = $obj['photo'];
     			}
 
     			// Nom affiche
-    			$viewfilename=$obj['photo'];
+    			$viewfilename = $obj['photo'];
 
     			// Taille de l'image
     			$object->get_image_size($dir.$filename);
@@ -274,7 +274,7 @@ if ($object->id)
     		// Ferme tableau
     		while ($nbphoto % $nbbyrow)
     		{
-    			print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+    			print '<td width="'.ceil(100 / $nbbyrow).'%">&nbsp;</td>';
     			$nbphoto++;
     		}
 

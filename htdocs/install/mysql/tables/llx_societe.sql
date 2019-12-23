@@ -52,15 +52,15 @@ create table llx_societe
   email                    varchar(128),                        		--
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
-  skype                    varchar(255),                        		--
-  twitter                  varchar(255),                        		--
-  facebook                 varchar(255),                        		--
-  linkedin                 varchar(255),                        		--
-  instagram                varchar(255),                        		--
-  snapchat                 varchar(255),                        		--
-  googleplus               varchar(255),                        		--
-  youtube                  varchar(255),                        		--
-  whatsapp                 varchar(255),                        		--
+  skype                    varchar(255),                        		-- deprecated
+  twitter                  varchar(255),                        		-- deprecated
+  facebook                 varchar(255),                        		-- deprecated
+  linkedin                 varchar(255),                        		-- deprecated
+  instagram                varchar(255),                        		-- deprecated
+  snapchat                 varchar(255),                        		-- deprecated
+  googleplus               varchar(255),                        		-- deprecated
+  youtube                  varchar(255),                        		-- deprecated
+  whatsapp                 varchar(255),                        		-- deprecated
 
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--

@@ -313,7 +313,7 @@ if (empty($object->status) && $action != 'create')
 if (($action=="create") || ($action=="edit"))
 {
 	print '<form name="cronform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">'."\n";
 	if (!empty($object->id)) {
 		print '<input type="hidden" name="action" value="update">'."\n";

@@ -88,7 +88,7 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mrp', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
@@ -97,8 +97,9 @@ $permissionnote = $user->rights->mrp->write; // Used by the include of actions_s
 $permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$upload_dir = $conf->mrp->multidir_output[isset($object->entity)?$object->entity:1];
+$upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+$permissiontoproduce = $permissiontoadd;
 
 /*
  * Actions
@@ -133,7 +134,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Actions to send emails
-    $trigger_name = 'MO_SENTBYMAIL';
+    $triggersendname = 'MO_SENTBYMAIL';
     $autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
     $trackid = 'mo'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -260,7 +261,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref .= $formproject->select_projects($object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
@@ -305,6 +306,49 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	dol_fiche_end();
 
+	print '<div class="tabsAction">';
+
+	$parameters = array();
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+	if (empty($reshook)) {
+		// Consume
+
+		if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
+			if ($permissiontoproduce) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=consume">'.$langs->trans('Consume').'</a>';
+			} else {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Consume').'</a>';
+			}
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateFirst").'">'.$langs->trans('Consume').'</a>';
+		}
+
+		// Produce
+		if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
+			if ($permissiontoproduce) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=produce">'.$langs->trans('Produce').'</a>';
+			} else {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Produce').'</a>';
+			}
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateFirst").'">'.$langs->trans('Produce').'</a>';
+		}
+
+		// ConsumeAndProduceAll
+		if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
+			if ($permissiontoproduce) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=consumeandproduceall">'.$langs->trans('ConsumeAndProduceAll').'</a>';
+			} else {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ConsumeAndProduceAll').'</a>';
+			}
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateFirst").'">'.$langs->trans('ConsumeAndProduceAll').'</a>';
+		}
+	}
+
+	print '</div>';
+
 
 	/*
 	 * Lines
@@ -313,7 +357,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->table_element_line))
 	{
     	// Show object lines
-    	$result = $object->getLinesArray();
+    	//$result = $object->getLinesArray();
+    	$object->fetchLines();
 
     	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
     	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
@@ -326,13 +371,45 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
     	}
 
+    	print '<div class="fichecenter">';
+    	print '<div class="fichehalfleft">';
+    	print '<div class="clearboth"></div>';
+
+    	print load_fiche_titre($langs->trans('Consumption'), '', '');
+
     	print '<div class="div-table-responsive-no-min">';
-    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-    	{
-    	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
-    	}
+    	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("Product").'</td>';
+    	print '<td>'.$langs->trans("Qty").'</td>';
+    	print '<td>'.$langs->trans("QtyAlreadyConsumed").'</td>';
+    	/*print '<td>'.$langs->trans("Date").'</td>';
+    	print '<td>'.$langs->trans("Batch").'</td>';*/
+    	print '</tr>';
 
     	if (!empty($object->lines))
+    	{
+    	    foreach($object->lines as $line) {
+    	    	if ($line->role == 'toconsume') {
+    	    		print '<tr>';
+    	    		$tmpproduct = new Product($db);
+    	    		$tmpproduct->fetch($line->fk_product);
+    	    		print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
+    	    		print '<td>'.$line->qty.'</td>';
+    	    		$alreadyconsumed = 0;
+    	    		print '<td>'.$alreadyconsumed.'</td>';
+    	    		/*print '<td>'.'</td>';
+    	    		print '<td>'.'</td>';*/
+    	    		print '</tr>';
+
+    	    		// Show detailed of already consumed
+    	    		//$arrayoflines = $line->fetchLinesLinked('consumed');
+    	    	}
+    	    }
+    	}
+
+    	/*if (!empty($object->lines))
     	{
     		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/mrp/tpl');
     	}
@@ -348,12 +425,53 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	        $parameters = array();
     	        $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     	    }
+    	}*/
+
+   	    print '</table>';
+    	print '</div>';
+
+		print '</div>';
+    	print '<div class="fichehalfright">';
+    	print '<div class="clearboth"></div>';
+
+    	print load_fiche_titre($langs->trans('Production'), '', '');
+
+    	print '<div class="div-table-responsive-no-min">';
+    	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("Product").'</td>';
+    	print '<td>'.$langs->trans("Qty").'</td>';
+    	print '<td>'.$langs->trans("QtyAlreadyProduced").'</td>';
+    	/*print '<td>'.$langs->trans("Date").'</td>';
+    	print '<td>'.$langs->trans("Batch").'</td>';*/
+    	print '</tr>';
+
+    	if (!empty($object->lines))
+    	{
+    		foreach($object->lines as $line) {
+    			if ($line->role == 'toproduce') {
+    				print '<tr>';
+    				$tmpproduct = new Product($db);
+    				$tmpproduct->fetch($line->fk_product);
+    				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
+    				print '<td>'.$line->qty.'</td>';
+    				$alreadyconsumed = 0;
+    				print '<td>'.$alreadyconsumed.'</td>';
+    				/*print '<td>'.'</td>';
+    				 print '<td>'.'</td>';*/
+    				print '</tr>';
+
+    				// Show detailed of already consumed
+    				//$arrayoflines = $line->fetchLinesLinked('consumed');
+    			}
+    		}
     	}
 
-    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-    	{
-    	    print '</table>';
-    	}
+    	print '</table>';
+    	print '</div>';
+
+    	print '</div>';
     	print '</div>';
 
     	print "</form>\n";

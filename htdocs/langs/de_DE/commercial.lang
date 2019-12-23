@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Einkauf | Vertrieb
-CommercialArea=Vertrieb - Übersicht
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Kunde
 Customers=Kunden
 Prospect=Interessent

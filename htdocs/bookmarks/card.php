@@ -149,7 +149,7 @@ if ($action == 'create')
 	 */
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
@@ -212,7 +212,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 	if ($action == 'edit')
 	{
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/card.php?id='.$object->id.'">';
@@ -222,7 +222,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
 

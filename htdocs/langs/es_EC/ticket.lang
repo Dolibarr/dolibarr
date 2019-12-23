@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
 Module56000Desc=Sistema de tickets para gestión de problemas o solicitudes
-TicketTypeShortINCIDENT=Solicitud de asistencia
 TicketSeverityShortBLOCKING=Crítico/Bloqueo
 ErrorBadEmailAddress=Campo '%s' incorrecto
 MenuListNonClosed=Tikests abiertos

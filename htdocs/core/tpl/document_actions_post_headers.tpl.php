@@ -29,7 +29,7 @@
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
+if (empty($langs) || !is_object($langs))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -57,9 +57,9 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 
 if ($action == 'delete')
 {
-	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
+	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
     print $form->formconfirm(
-			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
+			$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
 			$langs->trans('DeleteFile'),
 			$langs->trans('ConfirmDeleteFile'),
 			'confirm_deletefile',
@@ -128,7 +128,7 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "0/1"
+    $relativepathwithnofile, // relative path with no file. For example "0/1"
     $permission,
     0,
     '',

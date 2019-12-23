@@ -28,6 +28,12 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
+-- Missing in v11
+
+
+
+-- For v12
+
 -- Migration to the new regions (France)
 UPDATE llx_c_regions set nom = 'Centre-Val de Loire' WHERE fk_pays = 1 AND code_region = 24;
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (1, 27, '21231', 0, 'Bourgogne-Franche-Comté');
@@ -62,4 +68,3 @@ DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 74;
 DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 82;
 DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 83;
 DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 91;
-

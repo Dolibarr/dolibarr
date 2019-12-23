@@ -226,7 +226,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 if ($action == 'history')
 {
-    $placeid = GETPOST('placeid', 'int');
+    $placeid = (int) GETPOST('placeid', 'int');
     $invoice = new Facture($db);
     $invoice->fetch($placeid);
 }

@@ -259,8 +259,9 @@ if (empty($reshook))
 			{
 				$supplier = new Fournisseur($db);
 				$result = $supplier->fetch($id_fourn);
-				if (isset($_POST['ref_fourn_price_id']))
-					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+				if (GETPOSTISSET('ref_fourn_price_id')) {
+					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
+				}
 
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
@@ -451,7 +452,7 @@ if ($id > 0 || $ref)
 				}
 
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="save_price">';
 
 				dol_fiche_head();
@@ -994,7 +995,7 @@ SCRIPT;
                             print '</td>';
 
                             // Barcode type
-                            print '<td align="center">';
+                            print '<td class="center">';
                             $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type : 0;
                             $productfourn->fetch_barcode();
                             print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');

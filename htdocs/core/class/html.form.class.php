@@ -100,9 +100,10 @@ class Form
 	 * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
+	 * @param	string	$help			Tooltip help
 	 * @return	string					HTML edit field
 	 */
-    public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id')
+    public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
     {
 		global $conf, $langs;
 
@@ -116,14 +117,22 @@ class Form
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_'.$tmp[0].(!empty($tmp[1]) ? ' '.$tmp[1] : '').'" id="'.$htmlname.'">';
 				if ($fieldrequired) $ret .= '<span class="fieldrequired">';
-				$ret .= $langs->trans($text);
+				if ($help) {
+					$ret .= $this->textwithpicto($langs->trans($text), $help);
+				} else {
+					$ret .= $langs->trans($text);
+				}
 				if ($fieldrequired) $ret .= '</span>';
 				$ret .= '</div>'."\n";
 			}
 			else
 			{
 				if ($fieldrequired) $ret .= '<span class="fieldrequired">';
-				$ret .= $langs->trans($text);
+				if ($help) {
+					$ret .= $this->textwithpicto($langs->trans($text), $help);
+				} else {
+					$ret .= $langs->trans($text);
+				}
 				if ($fieldrequired) $ret .= '</span>';
 			}
 		}
@@ -131,7 +140,11 @@ class Form
 		{
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret .= '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			if ($fieldrequired) $ret .= '<span class="fieldrequired">';
-			$ret .= $langs->trans($text);
+			if ($help) {
+				$ret .= $this->textwithpicto($langs->trans($text), $help);
+			} else {
+				$ret .= $langs->trans($text);
+			}
 			if ($fieldrequired) $ret .= '</span>';
 			if (!empty($notabletag)) $ret .= ' ';
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret .= '</td>';
@@ -185,7 +198,7 @@ class Form
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
 				$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
-				$ret .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) $ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret .= '<tr><td>';
@@ -228,6 +241,7 @@ class Form
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
+                    $arraylist = array();
 					foreach ($arraydata as $val)
 					{
 						$tmp = explode(':', $val);
@@ -265,6 +279,7 @@ class Form
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
+                    $arraylist = array();
 					foreach ($arraydata as $val)
 					{
 						$tmp = explode(':', $val);
@@ -283,7 +298,7 @@ class Form
 					}
 					$ret .= $tmpcontent;
 				}
-				else $ret .= $value;
+				else $ret .= dol_escape_htmltag($value);
 
 				if ($formatfunc && method_exists($object, $formatfunc))
 				{
@@ -825,7 +840,7 @@ class Form
 			{
 				$out .= '<form method="post" action="'.$page.'">';
 				$out .= '<input type="hidden" name="action" value="set_incoterms">';
-				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			}
 
 			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
@@ -1622,52 +1637,52 @@ class Form
 			$includeUsers = implode(",", $user->getAllChildIds(1));
 		}
 
-		$out='';
+		$out = '';
 		$outarray = array();
 
 		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
-			$sql.= ", e.label";
+			$sql .= ", e.label";
 		}
-		$sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
-		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as e ON e.rowid=u.entity";
-			if ($force_entity) $sql.= " WHERE u.entity IN (0,".$force_entity.")";
-			else $sql.= " WHERE u.entity IS NOT NULL";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=u.entity";
+			if ($force_entity) $sql .= " WHERE u.entity IN (0,".$force_entity.")";
+			else $sql .= " WHERE u.entity IS NOT NULL";
 		}
 		else
 		{
-			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 			{
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
-				$sql.= " ON ug.fk_user = u.rowid";
-				$sql.= " WHERE ug.entity = ".$conf->entity;
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
+				$sql .= " ON ug.fk_user = u.rowid";
+				$sql .= " WHERE ug.entity = ".$conf->entity;
 			}
 			else
 			{
-				$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+				$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
 			}
 		}
-		if (! empty($user->socid)) $sql.= " AND u.fk_soc = ".$user->socid;
-		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN (".$excludeUsers.")";
-		if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
-		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
-		if (! empty($morefilter)) $sql.=" ".$morefilter;
+		if (!empty($user->socid)) $sql .= " AND u.fk_soc = ".$user->socid;
+		if (is_array($exclude) && $excludeUsers) $sql .= " AND u.rowid NOT IN (".$excludeUsers.")";
+		if ($includeUsers) $sql .= " AND u.rowid IN (".$includeUsers.")";
+		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql .= " AND u.statut <> 0";
+		if (!empty($morefilter)) $sql .= " ".$morefilter;
 
 		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 		{
-			$sql.= " ORDER BY u.firstname ASC";
+			$sql .= " ORDER BY u.firstname ASC";
 		}
 		else
 		{
-			$sql.= " ORDER BY u.lastname ASC";
+			$sql .= " ORDER BY u.lastname ASC";
 		}
 
 		dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
@@ -2095,7 +2110,7 @@ class Form
 		}
 		else
 		{
-		    $selectFieldsGrouped = ", p.stock";
+		    $selectFieldsGrouped = ", ".$db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
 		}
 
 		$sql = "SELECT ";
@@ -3548,7 +3563,7 @@ class Form
 
 		$return = '';
 
-		$return .= '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		$return .= '<select class="flat maxwidth75" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
@@ -3642,7 +3657,7 @@ class Form
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setshippingmethod">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectShippingMethod($selected, $htmlname, '', $addempty);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -3782,11 +3797,11 @@ class Form
 		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE entity IN (".getEntity('bank_account').")";
-		if ($status != 2) $sql.= " AND clos = ".(int) $status;
-		if ($filtre) $sql.=" AND ".$filtre;
-		$sql.= " ORDER BY label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql .= " WHERE entity IN (".getEntity('bank_account').")";
+		if ($status != 2) $sql .= " AND clos = ".(int) $status;
+		if ($filtre) $sql .= " AND ".$filtre;
+		$sql .= " ORDER BY label";
 
 		dol_syslog(get_class($this)."::select_comptes", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3854,11 +3869,11 @@ class Form
 		$num = 0;
 
 		$sql = "SELECT rowid, name, fk_country, status, entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
-		$sql.= " WHERE 1=1";
-		if ($status != 2) $sql.= " AND status = ".(int) $status;
-		if ($filtre) $sql.=" AND ".$filtre;
-		$sql.= " ORDER BY name";
+		$sql .= " FROM ".MAIN_DB_PREFIX."establishment";
+		$sql .= " WHERE 1=1";
+		if ($status != 2) $sql .= " AND status = ".(int) $status;
+		if ($filtre) $sql .= " AND ".$filtre;
+		$sql .= " ORDER BY name";
 
 		dol_syslog(get_class($this)."::select_establishment", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3918,7 +3933,7 @@ class Form
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setbankaccount">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
 			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -3951,10 +3966,11 @@ class Form
      *                                                          - array (list of categories ids)
 	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
      *    @param	int			            $include			[=0] Removed or 1=Keep only
+     *    @param	string					$morecss			More CSS
 	 *    @return	string
 	 *    @see select_categories()
 	 */
-    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3971,7 +3987,7 @@ class Form
 		if ($type === Categorie::TYPE_BANK_LINE)
 		{
 			// TODO Move this into common category feature
-			$categids = array();
+			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
 			$sql .= " WHERE entity = ".$conf->entity;
@@ -3997,7 +4013,7 @@ class Form
             $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
-		$output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+		$output = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		$outarray = array();
 		if (is_array($cate_arbo))
 		{
@@ -4114,7 +4130,6 @@ class Form
 
 			// Now add questions
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
-			if (!empty($formquestion['text'])) $more .= '<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
 				if (is_array($input) && !empty($input))
@@ -4228,8 +4243,11 @@ class Form
 			}
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
 			$formconfirm .= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
+			if (!empty($formquestion['text'])) {
+				$formconfirm .= '<div class="confirmtext">'.$formquestion['text'].'</div>'."\n";
+			}
 			if (!empty($more)) {
-				$formconfirm .= '<div class="confirmquestions">'.$more.'</div>';
+				$formconfirm .= '<div class="confirmquestions">'.$more.'</div>'."\n";
 			}
 			$formconfirm .= ($question ? '<div class="confirmmessage">'.img_help('', '').' '.$question.'</div>' : '');
 			$formconfirm .= '</div>'."\n";
@@ -4256,7 +4274,7 @@ class Form
                     closeOnEscape: false,
                     buttons: {
                         "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
-                        	var options = "&token='.urlencode($_SESSION['newtoken']).'";
+                        	var options = "&token='.urlencode(newToken()).'";
                         	var inputok = '.json_encode($inputok).';
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
                          	if (inputok.length>0) {
@@ -4275,7 +4293,7 @@ class Form
                             $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities("No")).'": function() {
-                        	var options = "&token='.urlencode($_SESSION['newtoken']).'";
+                        	var options = "&token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
                          	if (inputko.length>0) {
@@ -4314,12 +4332,17 @@ class Form
 			if (empty($disableformtag)) $formconfirm .= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
 
 			$formconfirm .= '<input type="hidden" name="action" value="'.$action.'">'."\n";
-			$formconfirm .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+			$formconfirm .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 			$formconfirm .= '<table class="valid centpercent">'."\n";
 
 			// Line title
 			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
+
+			// Line text
+			if (!empty($formquestion['text'])) {
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'.$formquestion['text'].'</td></tr>'."\n";
+			}
 
 			// Line form fields
 			if ($more)
@@ -4382,7 +4405,7 @@ class Form
 			$out .= "\n";
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="classin">';
-			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
 			$out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
@@ -4428,7 +4451,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4463,7 +4486,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setavailability">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
 			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4497,7 +4520,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setdemandreason">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectInputReason($selected, $htmlname, -1, $addempty);
 			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4545,7 +4568,7 @@ class Form
 		{
 			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			$ret .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
@@ -4584,7 +4607,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->select_dolusers($selected, $htmlname, 1, $exclude, 0, $include);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4624,7 +4647,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4658,7 +4681,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencycode">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->selectMultiCurrency($selected, $htmlname, 0);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4689,7 +4712,7 @@ class Form
 		{
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" /> ';
 			print '<select name="calculation_mode">';
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
@@ -4737,7 +4760,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<div class="inline-block">';
 			if (!empty($discount_type)) {
 				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
@@ -4829,7 +4852,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$num = $this->select_contacts($societe->id, $selected, $htmlname);
@@ -4869,7 +4892,7 @@ class Form
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param  int     $nooutput       No print output. Return it only.
-	 *  @return	void
+	 *  @return	void|string
 	 */
     public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0)
 	{
@@ -4881,7 +4904,7 @@ class Form
 		{
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
-			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
 			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
@@ -5646,7 +5669,7 @@ class Form
             {
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(d.toLocaleDateString(\''.str_replace('_', '-', $langs->defaultlang).'\'));';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(d.getDate().pad());';
-                $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(d.getMonth().pad());';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(parseInt(d.getMonth().pad()) + 1);';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(d.getFullYear());';
             }
 			/*if ($usecalendar == "eldy")
@@ -5728,18 +5751,18 @@ class Form
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
 			if ($reset_scripts && empty($conf->dol_optimize_smallscreen))
 			{
-				$retstring.=' <button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonPlusOne" type="button" name="_useless2" value="plusone" onClick="'.$reset_scripts.'">';
-				$retstring.=$langs->trans("DateStartPlusOne");
-				$retstring.='</button> ';
+				$retstring .= ' <button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonPlusOne" type="button" name="_useless2" value="plusone" onClick="'.$reset_scripts.'">';
+				$retstring .= $langs->trans("DateStartPlusOne");
+				$retstring .= '</button> ';
 			}
 		}
 
 		// Add a "Plus one hour" link
 		if ($conf->use_javascript_ajax && $adddateof)
 		{
-			$tmparray=dol_getdate($adddateof);
+			$tmparray = dol_getdate($adddateof);
 			if (empty($labeladddateof)) $labeladddateof = $langs->trans("DateInvoice");
-			$retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
+			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
@@ -5749,14 +5772,14 @@ class Form
     /**
      *  Function to show a form to select a duration on a page
 	 *
-	 *	@param	string	$prefix   		Prefix for input fields
-	 *	@param  int	$iSecond  		    Default preselected duration (number of seconds or '')
-	 * 	@param	int	$disabled           Disable the combo box
-	 * 	@param	string	$typehour		If 'select' then input hour and input min is a combo,
-	 *						            if 'text' input hour is in text and input min is a text,
-	 *						            if 'textselect' input hour is in text and input min is a combo
-	 *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
-	 * 	@param	int	$nooutput		    Do not output html string but return it
+	 *	@param	string		$prefix   		Prefix for input fields
+	 *	@param  int			$iSecond  		Default preselected duration (number of seconds or '')
+	 * 	@param	int			$disabled       Disable the combo box
+	 * 	@param	string		$typehour		If 'select' then input hour and input min is a combo,
+	 *						            	If 'text' input hour is in text and input min is a text,
+	 *						            	If 'textselect' input hour is in text and input min is a combo
+	 *  @param	integer		$minunderhours	If 1, show minutes selection under the hours
+	 * 	@param	int			$nooutput		Do not output html string but return it
 	 *  @return	string|void
 	 */
     public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
@@ -5875,45 +5898,45 @@ class Form
 					$filter);
 			}
 		}
-		if (! is_object($objecttmp))
+		if (!is_object($objecttmp))
 		{
 			dol_syslog('Error bad setup of type for field '.$InfoFieldList, LOG_WARNING);
 			return 'Error bad setup of type for field '.join(',', $InfoFieldList);
 		}
 
 		//var_dump($objecttmp->filter);
-		$prefixforautocompletemode=$objecttmp->element;
-		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
-		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
+		$prefixforautocompletemode = $objecttmp->element;
+		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
+		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
-		$out='';
-		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->$confkeyforautocompletemode) && ! $forcecombo)
+		$out = '';
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->$confkeyforautocompletemode) && !$forcecombo)
 		{
 		    // No immediate load of all database
-		    $placeholder='';
+		    $placeholder = '';
 		    if ($preselectedvalue && empty($selected_input_value))
 		    {
 		        $objecttmp->fetch($preselectedvalue);
-		        $selected_input_value=($prefixforautocompletemode == 'company' ? $objecttmp->name : $objecttmp->ref);
+		        $selected_input_value = ($prefixforautocompletemode == 'company' ? $objecttmp->name : $objecttmp->ref);
 		        //unset($objecttmp);
 		    }
 
-		    $objectdesc=$classname.':'.$classpath.':'.$addcreatebuttonornot.':'.$filter;
+		    $objectdesc = $classname.':'.$classpath.':'.$addcreatebuttonornot.':'.$filter;
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams?$moreparams:'');
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams ? $moreparams : '');
 			// Activate the auto complete using ajax call.
-			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
-			$out.= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
-			if ($placeholder) $placeholder=' placeholder="'.$placeholder.'"';
-			$out.= '<input type="text" class="'.$morecss.'"'.($disabled?' disabled="disabled"':'').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
+			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
+			if ($placeholder) $placeholder = ' placeholder="'.$placeholder.'"';
+			$out .= '<input type="text" class="'.$morecss.'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
 			// Immediate load of table record. Note: filter is inside $objecttmp->filter
-			$out.=$this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled);
+			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled);
 		}
 
 		return $out;
@@ -5971,23 +5994,23 @@ class Form
 
 		//print "$objecttmp->filter, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled";
 
-		$prefixforautocompletemode=$objecttmp->element;
-		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
-		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
+		$prefixforautocompletemode = $objecttmp->element;
+		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
+		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
-		if (! empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
+		if (!empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 		{
-			$tmpfieldstoshow='';
-			foreach($objecttmp->fields as $key => $val)
+			$tmpfieldstoshow = '';
+			foreach ($objecttmp->fields as $key => $val)
 			{
-				if ($val['showoncombobox']) $tmpfieldstoshow.=($tmpfieldstoshow?',':'').'t.'.$key;
+				if ($val['showoncombobox']) $tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '').'t.'.$key;
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
 		if (empty($fieldstoshow))
 		{
 			if (isset($objecttmp->fields['ref'])) {
-				$fieldstoshow='t.ref';
+				$fieldstoshow = 't.ref';
 			}
 			else
 			{
@@ -5997,60 +6020,60 @@ class Form
 			}
 		}
 
-		$out='';
-		$outarray=array();
+		$out = '';
+		$outarray = array();
 
-		$num=0;
+		$num = 0;
 
 		// Search data
-		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX .$objecttmp->table_element." as t";
+		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE 1=1";
-		if(! empty($objecttmp->ismultientitymanaged)) $sql.= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->socid)) {
-			if ($objecttmp->element == 'societe') $sql.= " AND t.rowid = ".$user->socid;
-			else $sql.= " AND t.fk_soc = ".$user->socid;
+		$sql .= " WHERE 1=1";
+		if (!empty($objecttmp->ismultientitymanaged)) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+			if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
+			else $sql .= " AND t.fk_soc = ".$user->socid;
 		}
-		if ($searchkey != '') $sql.=natural_search(explode(',', $fieldstoshow), $searchkey);
+		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
 		if ($objecttmp->ismultientitymanaged == 2) {
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND t.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 			/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
 			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
 			}*/
-			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
 		}
-		$sql.=$this->db->order($fieldstoshow, "ASC");
+		$sql .= $this->db->order($fieldstoshow, "ASC");
 		//$sql.=$this->db->plimit($limit, 0);
 		//print $sql;
 
 		// Build output string
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (! $forcecombo)
+			if (!$forcecombo)
 			{
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
 			}
 
 			// Construct $out and $outarray
-			$out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled="disabled"':'').($moreparams?' '.$moreparams:'').' name="'.$htmlname.'">'."\n";
+			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').($moreparams ? ' '.$moreparams : '').' name="'.$htmlname.'">'."\n";
 
 			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
-			$textifempty='&nbsp;';
+			$textifempty = '&nbsp;';
 
 			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (! empty($conf->global->$confkeyforautocompletemode))
+			if (!empty($conf->global->$confkeyforautocompletemode))
 			{
-				if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
-				else $textifempty.=$langs->trans("All");
+				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
+				else $textifempty .= $langs->trans("All");
 			}
-			if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
+			if ($showempty) $out .= '<option value="-1">'.$textifempty.'</option>'."\n";
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -6521,6 +6544,7 @@ class Form
 			elseif ($addjscombo == 2)
 			{
 				// Add other js lib
+				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({
@@ -6939,7 +6963,7 @@ class Form
 					print '<br>';
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
 					print '<input type="hidden" name="action" value="addlink">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="id" value="'.$object->id.'">';
 					print '<input type="hidden" name="addlink" value="'.$key.'">';
 					print '<table class="noborder">';
@@ -7401,63 +7425,63 @@ class Form
 			{
 				if ($addlinktofullsize)
 				{
-					$urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
-					if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
-					else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
+					if ($urladvanced) $ret .= '<a href="'.$urladvanced.'">';
+					else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 				}
-				$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-				if ($addlinktofullsize) $ret.='</a>';
+				$ret .= '<img alt="Photo" class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').' photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+				if ($addlinktofullsize) $ret .= '</a>';
 			}
 			elseif ($altfile && file_exists($dir."/".$altfile))
 			{
 				if ($addlinktofullsize)
 				{
-					$urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
-					if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
-					else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
+					if ($urladvanced) $ret .= '<a href="'.$urladvanced.'">';
+					else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 				}
-				$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
-				if ($addlinktofullsize) $ret.='</a>';
+				$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" class="'.$cssclass.'" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
+				if ($addlinktofullsize) $ret .= '</a>';
 			}
 			else
 			{
-				$nophoto='/public/theme/common/nophoto.png';
-				if (in_array($modulepart, array('userphoto','contact','memberphoto')))	// For module that are "physical" users
+				$nophoto = '/public/theme/common/nophoto.png';
+				if (in_array($modulepart, array('userphoto', 'contact', 'memberphoto')))	// For module that are "physical" users
 				{
 					if ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor') !== false) {
-						$nophoto='/public/theme/common/company.png';
+						$nophoto = '/public/theme/common/company.png';
 					}
 					else {
-						$nophoto='/public/theme/common/user_anonymous.png';
-						if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-						if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+						$nophoto = '/public/theme/common/user_anonymous.png';
+						if ($object->gender == 'man') $nophoto = '/public/theme/common/user_man.png';
+						if ($object->gender == 'woman') $nophoto = '/public/theme/common/user_woman.png';
 					}
 				}
 
-				if (! empty($conf->gravatar->enabled) && $email)
+				if (!empty($conf->gravatar->enabled) && $email)
 				{
 					/**
 					 * @see https://gravatar.com/site/implement/images/php/
 					 */
 					global $dolibarr_main_url_root;
-					$ret.='<!-- Put link to gravatar -->';
+					$ret .= '<!-- Put link to gravatar -->';
 					//$defaultimg=urlencode(dol_buildpath($nophoto,3));
-					$defaultimg='mm';
-					$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">';	// gravatar need md5 hash
+					$defaultimg = 'mm';
+					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
 				}
 				else
 				{
-					$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
+					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
 				}
 			}
 
 			if ($caneditfield)
 			{
-				if ($object->photo) $ret.="<br>\n";
-				$ret.='<table class="nobordernopadding centpercent">';
-				if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
-				$ret.='</table>';
+				if ($object->photo) $ret .= "<br>\n";
+				$ret .= '<table class="nobordernopadding centpercent">';
+				if ($object->photo) $ret .= '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+				$ret .= '<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture ? ' capture="'.$capture.'"' : '').'></td></tr>';
+				$ret .= '</table>';
 			}
 		}
 		else dol_print_error('', 'Call of showphoto with wrong parameters modulepart='.$modulepart);
@@ -7659,7 +7683,8 @@ class Form
 	{
 		global $db, $conf, $langs, $user;
 
-		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
+        $out = '';
+        $sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) $sql .= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
 		$sql .= ' ORDER BY label';
@@ -7748,6 +7773,7 @@ class Form
 	{
 		global $db, $conf, $langs;
 
+        $out = '';
 		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
 		$sql .= ' WHERE entity = '.$conf->entity.' AND active = 1';
 
@@ -7785,6 +7811,7 @@ class Form
 	{
 		global $db, $langs;
 
+        $out = '';
 		$sql = 'SELECT id, code, label FROM '.MAIN_DB_PREFIX.'c_type_fees';
 		$sql .= ' WHERE active = 1';
 

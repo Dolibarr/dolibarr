@@ -261,7 +261,7 @@ class pdf_standard extends CommonStickerGenerator
 
     		// List of values to scan for a replacement
     		$substitutionarray = array (
-    		    '__ID__'=>$object->rowid,
+    		    '__ID__' => $object->id,
     		    '__LOGIN__'=>$object->login,
     		    '__FIRSTNAME__'=>$object->firstname,
     		    '__LASTNAME__'=>$object->lastname,

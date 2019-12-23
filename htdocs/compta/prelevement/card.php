@@ -177,7 +177,7 @@ if ($id > 0 || $ref)
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -214,7 +214,7 @@ if ($id > 0 || $ref)
 	print '<br>';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	$acc = new Account($db);
 	$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
@@ -260,7 +260,7 @@ if ($id > 0 || $ref)
 	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action == 'settransmitted')
 	{
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
@@ -284,7 +284,7 @@ if ($id > 0 || $ref)
 	if (!empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action == 'setcredited')
 	{
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infocredit">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';

@@ -6,7 +6,7 @@ TMenuTools=Araçlar
 ToolsDesc=Diğer menü girişlerinde bulunmayan tüm araçlar burada gruplandırılmıştır.<br>Tüm araçlara sol menüden erişilebilir.
 Birthday=Doğumgünü
 BirthdayDate=Doğumgünü tarihi
-DateToBirth=Doğum Tarihi
+DateToBirth=Doğum günü
 BirthdayAlertOn=doğum günü uyarısı etkin
 BirthdayAlertOff=doğumgünü uyarısı etkin değil
 TransKey=TransKey anahtarının çevirisi
@@ -252,14 +252,15 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
-ExportsArea=Dışaaktar alanı
+ExportsArea=Dışa aktarma alanı
 AvailableFormats=Varolan biçimler
 LibraryUsed=Kullanılan kitaplık
 LibraryVersion=Kütüphane sürümü
-ExportableDatas=Dışaaktarılabilir veri
-NoExportableData=Dışaaktarılabilir veri yok (dışaaktarılabilir verili modül yok ya da izinler yok)
+ExportableDatas=Dışa aktarılabilir veri
+NoExportableData=Dışa aktarılabilir veri yok (dışa aktarılabilir veriye sahip modül yok veya izinler eksik)
 ##### External sites #####
 WebsiteSetup=Websitesi modülü kurulumu
 WEBSITE_PAGEURL=Sayfanın URL si

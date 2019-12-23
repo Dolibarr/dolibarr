@@ -235,8 +235,11 @@ if (empty($reshook)) {
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+			$object->thm = price2num($object->thm);
 			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+			$object->tjm =  price2num($object->tjm);
 			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+			$object->salary = price2num($object->salary);
 			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
@@ -394,10 +397,15 @@ if (empty($reshook)) {
 				$object->employee = GETPOST('employee', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+				$object->thm = price2num($object->thm);
 				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+				$object->thm = price2num($object->thm);
 				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+				$object->salary = price2num($object->salary);
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+				$object->salaryextra = price2num($object->salaryextra);
 				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+				$object->weeklyhours = price2num($object->weeklyhours);
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
@@ -657,7 +665,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$trigger_name = 'USER_SENTBYMAIL';
+	$triggersendname = 'USER_SENTBYMAIL';
 	$paramname = 'id'; // Name of param key to open the card
 	$mode = 'emailfromuser';
 	$trackid = 'use'.$id;
@@ -763,7 +771,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	   	print "\n\n<!-- Form liste LDAP debut -->\n";
 
 	   	print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	   	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	   	print '<input type="hidden" name="token" value="'.newToken().'">';
 	   	print '<table class="border centpercent"><tr>';
 	   	print '<td width="160">';
 	   	print $langs->trans("LDAPUsers");
@@ -786,7 +794,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if (!empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
@@ -803,12 +811,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_lastname))
 	{
-		print '<input type="hidden" id="lastname" name="lastname" value="'.$ldap_lastname.'">';
+		print '<input type="hidden" id="lastname" name="lastname" value="'.dol_escape_htmltag($ldap_lastname).'">';
 		print $ldap_lastname;
 	}
 	else
 	{
-		print '<input class="minwidth100" type="text" id="lastname" name="lastname" value="'.GETPOST('lastname').'">';
+		print '<input class="minwidth100" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -817,12 +825,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_firstname))
 	{
-		print '<input type="hidden" name="firstname" value="'.$ldap_firstname.'">';
+		print '<input type="hidden" name="firstname" value="'.dol_escape_htmltag($ldap_firstname).'">';
 		print $ldap_firstname;
 	}
 	else
 	{
-		print '<input class="minwidth100" type="text" name="firstname" value="'.GETPOST('firstname').'">';
+		print '<input class="minwidth100" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -831,17 +839,17 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_login))
 	{
-		print '<input type="hidden" name="login" value="'.$ldap_login.'">';
+		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_login).'">';
 		print $ldap_login;
 	}
 	elseif (!empty($ldap_loginsmb))
 	{
-		print '<input type="hidden" name="login" value="'.$ldap_loginsmb.'">';
+		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_loginsmb).'">';
 		print $ldap_loginsmb;
 	}
 	else
 	{
-		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alpha')).'">';
+		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -851,7 +859,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$generated_password = getRandomPassword(false);
 	}
-	$password = $generated_password;
+	$password=(GETPOSTISSET('password')?GETPOST('password'):$generated_password);
 
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
@@ -1045,12 +1053,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_phone))
 	{
-		print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
+		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	}
 	else
 	{
-		print '<input size="20" type="text" name="office_phone" value="'.GETPOST('office_phone').'">';
+		print '<input size="20" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1059,12 +1067,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_mobile))
 	{
-		print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
+		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	}
 	else
 	{
-		print '<input size="20" type="text" name="user_mobile" value="'.GETPOST('user_mobile').'">';
+		print '<input size="20" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1073,12 +1081,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_fax))
 	{
-		print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
+		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	}
 	else
 	{
-		print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
+		print '<input size="20" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1087,12 +1095,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<td>';
 	if (!empty($ldap_mail))
 	{
-		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
+		print '<input type="hidden" name="email" value="'.dol_escape_htmltag($ldap_mail).'">';
 		print $ldap_mail;
 	}
 	else
 	{
-		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
+		print '<input size="40" type="text" name="email" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1191,7 +1199,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
+		print '<input size="30" type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
 		print '</td></tr>';
 	}
 
@@ -1200,7 +1208,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color') ?GETPOST('color') : $object->color, 'color', null, 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOSTISSET('color')?GETPOST('color', 'alphanohtml'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1246,7 +1254,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $langs->trans("Note");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', '', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('note', GETPOSTISSET('note')?GETPOST('note', 'none'):'', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 
@@ -1275,7 +1283,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Position/Job
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
+	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'nohtml')).'">';
 	print '</td></tr>';
 
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
@@ -1289,7 +1297,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 		print '</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
+		print '<input size="8" type="text" name="thm" value="'.dol_escape_htmltag(GETPOST('thm')).'">';
 		print '</td>';
 		print "</tr>\n";
 
@@ -1299,14 +1307,14 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 		print '</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
+		print '<input size="8" type="text" name="tjm" value="'.dol_escape_htmltag(GETPOST('tjm')).'">';
 		print '</td>';
 		print "</tr>\n";
 
 		// Salary
 		print '<tr><td>'.$langs->trans("Salary").'</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="salary" value="'.GETPOST('salary').'">';
+		print '<input size="8" type="text" name="salary" value="'.dol_escape_htmltag(GETPOST('salary')).'">';
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -1314,7 +1322,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Weeklyhours
 	print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 	print '<td>';
-	print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
+	print '<input size="8" type="text" name="weeklyhours" value="'.dol_escape_htmltag(GETPOST('weeklyhours')).'">';
 	print '</td>';
 	print "</tr>\n";
 
@@ -2005,15 +2013,6 @@ else
 						}
 					}
 
-					if ($caneditgroup)
-					{
-						print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
-						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-						print '<input type="hidden" name="action" value="addgroup" />';
-					}
-
-					print '<table class="noborder centpercent">'."\n";
-
 					// Other form for add user to group
 					$parameters = array('caneditgroup' => $caneditgroup, 'groupslist' => $groupslist, 'exclude' => $exclude);
 					$reshook = $hookmanager->executeHooks('formAddUserToGroup', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2021,6 +2020,14 @@ else
 
 					if (empty($reshook))
 					{
+						if ($caneditgroup)
+						{
+							print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
+							print '<input type="hidden" name="token" value="'.newToken().'" />';
+							print '<input type="hidden" name="action" value="addgroup" />';
+						}
+
+						print '<table class="noborder centpercent">'."\n";
 						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 						print '<th class="liste_titre right">';
 						if ($caneditgroup)
@@ -2068,15 +2075,15 @@ else
 						{
 							print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 						}
-					}
 
-					print "</table>";
+						print "</table>";
 
-					if ($caneditgroup)
-					{
-						print '</form>';
+						if ($caneditgroup)
+						{
+							print '</form>';
+						}
+						print "<br>";
 					}
-					print "<br>";
 				}
 			}
 		}
@@ -2087,7 +2094,7 @@ else
 		if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="entity" value="'.$object->entity.'">';
 
@@ -2596,7 +2603,7 @@ else
 				print '<td>';
 				if ($caneditfield)
 				{
-					print $formother->selectColor(GETPOST('color') ?GETPOST('color') : $object->color, 'color', null, 1, '', 'hideifnotset');
+					print $formother->selectColor(GETPOSTISSET('color')?GETPOST('color', 'alphanohtml'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				} else {
 					print $formother->showColor($object->color, '');
 				}

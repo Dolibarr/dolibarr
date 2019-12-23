@@ -18,11 +18,10 @@
  */
 
 /**
- * 	\defgroup   mymodule     Module MyModule
- *  \brief      Example of a module descriptor.
- *				Such a file must be copied into htdocs/mymodule/core/modules directory.
- *  \file       htdocs/mymodule/core/modules/modMyModule.class.php
- *  \ingroup    mymodule
+ * 	\defgroup   incoterm     Module MyModule
+ *
+ *  \file       htdocs/core/modules/modIncoterm.class.php
+ *  \ingroup    incoterm
  *  \brief      Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';

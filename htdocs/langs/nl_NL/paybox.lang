@@ -11,17 +11,8 @@ YourEMail=E-mail om betalingsbevestiging te ontvangen
 Creditor=Crediteur
 PaymentCode=Betalingscode
 PayBoxDoPayment=Pay with Paybox
-ToPay=Doe een betaling
 YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina om uw credit card informatie in te voeren
 Continue=Volgende
-ToOfferALinkForOnlinePayment=URL voor %s betaling
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL om een %s online betalingsgebruikersinterface aan te bieden voor een factuur
-ToOfferALinkForOnlinePaymentOnContractLine=URL om een %s online betalingsgebruikersinterface aan te bieden voor een contractregel
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een %s online betalingsgebruikersinterface aan te bieden voor een donatie
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL om een %s online betalingsgebruikersinterface aan te bieden voor een ledenabonnement
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=U kunt ook een URL (GET) parameter <b>&tag=<i>waarde</i></b> toevoegen aan elk van deze URL's (enkel nodig voor een donatie) om deze van uw eigen betalingscommentaar te voorzien
 SetupPayBoxToHavePaymentCreatedAutomatically=Stel uw Paybox in met url <b> %s </b> om de betaling automatisch te laten aanmaken na validatie door Paybox.
 YourPaymentHasBeenRecorded=Deze pagina bevestigd dat uw betaling succesvol in geregistreerd. Dank u.
 YourPaymentHasNotBeenRecorded=Uw betaling is NIET geboekt en de transactie is geannuleerd. Dankuwel.
