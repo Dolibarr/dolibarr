@@ -227,13 +227,13 @@ print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 clearstatcache();
 
 print '<br>';
-print '<table summary="edit" class="noborder" width="100%">';
+print '<table summary="edit" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -259,7 +259,7 @@ showSkins(null, 1);
 print '<br>';
 
 // Other
-print '<table summary="otherparameters" class="noborder" width="100%">';
+print '<table summary="otherparameters" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -375,7 +375,7 @@ print '</table>'."\n";
 print '<br>';
 
 // Other
-print '<table summary="edit" class="noborder" width="100%">';
+print '<table summary="edit" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LoginPage").'</td><td></td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';

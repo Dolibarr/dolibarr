@@ -103,7 +103,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);
@@ -121,7 +121,7 @@ if ($resql)
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td class="right">'.price($objp->amount).'</td>';
-        print '<td align="center">';
+        print '<td class="center">';
 
         if ($objp->statut == 0)
         {

@@ -2,7 +2,7 @@
 Delivery=交貨
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=交貨單
+DeliveryOrder=Delivery receipt
 DeliveryDate=交貨日期
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=取消
 StatusDeliveryDraft=草案
 StatusDeliveryValidated=已收到
 # merou PDF model
-NameAndSignature=姓名及簽署：
+NameAndSignature=Name and Signature:
 ToAndDate=To___________________________________對____ / _____ / __________
 GoodStatusDeclaration=上述貨物已收到，且貨品狀態良好
-Deliverer=發貨人：
+Deliverer=Deliverer:
 Sender=寄件人
 Recipient=收貨人
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

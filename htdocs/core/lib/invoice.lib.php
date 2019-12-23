@@ -137,7 +137,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'payment';
 	$h++;
 
-	if ($conf->global->INVOICE_USE_SITUATION) {
+	if ($conf->global->INVOICE_USE_SITUATION || $conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	    $head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
 	    $head[$h][1] = $langs->trans("InvoiceSituation");
 	    $head[$h][2] = 'situation';

@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/core/boxes/box_activite.php
+ *  \file       htdocs/core/boxes/box_project.php
  *  \ingroup    projet
  *  \brief      Module to show Projet activity of the current Year
  */

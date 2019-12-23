@@ -20,7 +20,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf)) {
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -59,10 +59,10 @@ if (empty($conf) || ! is_object($conf)) {
 
         dol_fiche_head();
 
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Warehouse or product
 		print '<tr>';
@@ -70,10 +70,10 @@ if ($object->element == 'product')
 {
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
-	print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid", 'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot', 'int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+	print $formproduct->selectWarehouses((GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ?GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 	print ' &nbsp; <select name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
-	print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
+	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';
 	print '</td>';
 }
@@ -81,10 +81,10 @@ if ($object->element == 'stock')
 {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
-	print $form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES) ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 	print ' &nbsp; <select name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
-	print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
+	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';
 	print '</td>';
 }
@@ -96,7 +96,7 @@ if ($object->element == 'stock')
 		print '<tr>';
 		print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
 		print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
@@ -106,36 +106,36 @@ if (! empty($conf->projet->enabled))
 		print '</tr>';
 
 		// Serial / Eat-by date
-if (! empty($conf->productbatch->enabled) &&
+if (!empty($conf->productbatch->enabled) &&
 		    (($object->element == 'product' && $object->hasbatch())
 		    || ($object->element == 'stock'))
 		)
 {
 	print '<tr>';
-	print '<td'.($object->element == 'stock'?'': ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
+	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
 	print '<td>'.$langs->trans("EatByDate").'</td><td>';
-	$eatbyselected=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+	$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 	print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
 	print '</td>';
 	print '<td>'.$langs->trans("SellByDate").'</td><td>';
-	$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+	$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 	print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
 	print '</td>';
 	print '</tr>';
 }
 
 		// Label of mouvement of id of inventory
-		$valformovementlabel=((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock", ''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
+		$valformovementlabel = ((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock", ''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
 		print '<tr>';
 		print '<td>'.$langs->trans("MovementLabel").'</td>';
 		print '<td>';
 		print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 		print '</td>';
-		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode", 'alpha'):dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"]) ?GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
 		print '</tr>';
 
 		print '</table>';

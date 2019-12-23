@@ -153,9 +153,9 @@ else
 {
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("NewFTPClient").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
@@ -233,10 +233,10 @@ else
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 
 			print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
 
-			print '<table class="noborder" width="100%">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 
 			print '<tr class="liste_titre">';
 			print '<td class="fieldtitle">'.$langs->trans("FTP")." ".($idrss)."</td>";

@@ -629,7 +629,9 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = $objmid->labelc;
+
+							$accountingaccount->fetch(null, $k, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_vat') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';

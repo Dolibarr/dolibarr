@@ -99,7 +99,7 @@ if ($result)
 else dol_print_error($db);
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder nohover" width="100%">'."\n";
+print '<table class="noborder nohover centpercent">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2))
 {
@@ -157,7 +157,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover" width="100%">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
@@ -239,7 +239,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
 $sql .= ", s.logo";
-$sql .= ", s.canvas, s.tms as datem, s.status as status";
+$sql .= ", s.canvas, s.tms as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
@@ -263,7 +263,7 @@ if ($result)
 
         print "\n<!-- last thirdparties modified -->\n";
         print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
         print '<th>&nbsp;</th>';
@@ -279,7 +279,7 @@ if ($result)
             $thirdparty_static->client = $objp->client;
             $thirdparty_static->fournisseur = $objp->fournisseur;
             $thirdparty_static->logo = $objp->logo;
-            $thirdparty_static->datem = $db->jdate($objp->datem);
+            $thirdparty_static->date_modification = $db->jdate($objp->date_modification);
             $thirdparty_static->status = $objp->status;
             $thirdparty_static->code_client = $objp->code_client;
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
@@ -313,7 +313,7 @@ if ($result)
             print '</td>';
             // Last modified date
             print '<td class="right">';
-            print dol_print_date($thirdparty_static->datem, 'day');
+            print dol_print_date($thirdparty_static->date_modification, 'day');
             print "</td>";
             print '<td class="right nowrap">';
             print $thirdparty_static->getLibStatut(3);

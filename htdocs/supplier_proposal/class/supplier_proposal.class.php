@@ -99,7 +99,15 @@ class SupplierProposal extends CommonObject
     public $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
     public $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
     public $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
-    public $date;						// Date of proposal
+
+    /**
+     * @var integer|string Date of proposal
+     */
+    public $date;
+
+    /**
+     * @var integer|string date_livraison
+     */
     public $date_livraison;
 
     /**
@@ -109,9 +117,8 @@ class SupplierProposal extends CommonObject
     public $datec;
 
     /**
-     * Creation date
-     * @var int
-     */
+	 * @var integer|string date_creation
+	 */
     public $date_creation;
 
     /**
@@ -121,8 +128,7 @@ class SupplierProposal extends CommonObject
     public $datev;
 
     /**
-     * Validation date
-     * @var int
+     * @var integer|string date_validation
      */
     public $date_validation;
 
@@ -399,7 +405,7 @@ class SupplierProposal extends CommonObject
      */
     public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_option = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0, $date_start = 0, $date_end = 0)
     {
-        global $mysoc, $conf;
+        global $mysoc, $conf, $langs;
 
         dol_syslog(get_class($this)."::addline supplier_proposalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1723,11 +1729,11 @@ class SupplierProposal extends CommonObject
         if ($resql)
         {
             $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
-            $trigger_name='SUPPLIER_PROPOSAL_CLOSE_REFUSED';
+            $triggerName = 'SUPPLIER_PROPOSAL_CLOSE_REFUSED';
 
             if ($status == 2)
             {
-                $trigger_name='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
+                $triggerName='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
                 $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
 
                 if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
@@ -1737,7 +1743,7 @@ class SupplierProposal extends CommonObject
             }
             if ($status == 4)
             {
-                $trigger_name='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
+                $triggerName='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
             }
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1754,7 +1760,7 @@ class SupplierProposal extends CommonObject
             }
 
             // Call trigger
-            $result=$this->call_trigger($trigger_name, $user);
+            $result=$this->call_trigger($triggerName, $user);
             if ($result < 0) { $error++; }
             // End call triggers
 

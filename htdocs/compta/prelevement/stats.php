@@ -89,7 +89,7 @@ if ($resql)
 	$i = 0;
 
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
@@ -120,7 +120,7 @@ if ($resql)
 	}
 
 	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print '<td class="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
@@ -182,7 +182,7 @@ if ($resql)
 	$i = 0;
 
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
 	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';

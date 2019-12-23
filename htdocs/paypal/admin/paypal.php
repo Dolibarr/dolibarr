@@ -118,7 +118,7 @@ print load_fiche_titre($langs->trans("ModuleSetup").' PayPal', $linkback);
 $head=paypaladmin_prepare_head();
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
@@ -136,7 +136,7 @@ if (! function_exists('curl_version'))
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Account Parameters
 print '<tr class="liste_titre">';

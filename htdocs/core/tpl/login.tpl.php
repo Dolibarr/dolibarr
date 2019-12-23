@@ -90,7 +90,8 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
+<input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
 <input type="hidden" name="tz" id="tz" value="" />

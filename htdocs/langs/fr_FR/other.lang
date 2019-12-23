@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Tiers créé par le collecteur de courrier él
 ContactCreatedByEmailCollector=Contact/adresse créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 ProjectCreatedByEmailCollector=Projet créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 TicketCreatedByEmailCollector=Ticket créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
+OpeningHoursFormatDesc=Utilisez un - pour séparer les heures d'ouverture et de fermeture. <br> Utilisez un espace pour entrer différentes plages. <br> Exemple: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Espace exports

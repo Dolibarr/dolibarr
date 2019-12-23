@@ -3,7 +3,8 @@
 usermod -u $HOST_USER_ID www-data
 groupmod -g $HOST_USER_ID www-data
 
-chown -hR www-data:www-data /var/www
+chgrp -hR www-data /var/www/html
+chmod g+rwx /var/www/html/conf
 
 if [ ! -f /usr/local/etc/php/php.ini ]; then
   cat <<EOF > /usr/local/etc/php/php.ini

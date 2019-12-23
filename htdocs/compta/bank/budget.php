@@ -46,7 +46,7 @@ llxHeader();
 // List movements bu category for bank transactions
 print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_bank.png');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print '<td>'.$langs->trans("Rubrique").'</td>';
 print '<td class="right">'.$langs->trans("Nb").'</td>';

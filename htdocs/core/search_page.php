@@ -113,7 +113,7 @@ else $searchform=$hookmanager->resPrint;
 
 print "\n";
 print "<!-- Begin SearchForm -->\n";
-print '<div class="center" align="center"><div align="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 6px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch">'."\n";
 print $searchform;

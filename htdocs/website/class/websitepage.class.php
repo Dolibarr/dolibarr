@@ -19,13 +19,13 @@
  */
 
 /**
- * \file    website/websitepage.class.php
+ * \file    htdocs/website/class/websitepage.class.php
  * \ingroup website
  * \brief   File for the CRUD class of websitepage (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -74,6 +74,10 @@ class WebsitePage extends CommonObject
 	 * @var string keywords
 	 */
 	public $keywords;
+	/**
+	 * @var string language code ('en', 'fr', 'en-gb', ..)
+	 */
+	public $lang;
 
 	public $htmlheader;
 	public $content;
@@ -84,7 +88,14 @@ class WebsitePage extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+
+	/**
+	 * @var integer|string date_modification
+	 */
 	public $date_modification;
 
 
@@ -97,29 +108,29 @@ class WebsitePage extends CommonObject
 	/**
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
-	public $fields=array(
-	    'rowid'          =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'pageurl'        =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
-		'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt',         'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
-		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
-		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
-		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-		'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+	public $fields = array(
+	    'rowid'          =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'pageurl'        =>array('type'=>'varchar(16)', 'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
+		'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
+		'type_container' =>array('type'=>'varchar(16)', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
+		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'help'=>'UseTextBetween5And70Chars'),
+	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1),
+		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image', 'enabled'=>1, 'visible'=>1, 'position'=>32, 'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
+		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
+		'lang'           =>array('type'=>'varchar(6)', 'label'=>'Lang', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
-	    'fk_website'     =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
-	    'fk_page'        =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
-	    'htmlheader'     =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
-	    'content'        =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
-		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
-	    'date_creation'  =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-		'tms'            =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
+	    'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
+	    'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
+	    'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
+	    'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
+		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom', 'enabled'=>1, 'visible'=>1, 'index'=>1, 'position'=>400, 'comment'=>'URL page content was grabbed from'),
+	    'date_creation'  =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'tms'            =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		'fk_user_creat'  =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
-		'fk_user_modif'  =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
+		'fk_user_creat'  =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
+		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'     =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
+		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -145,7 +156,7 @@ class WebsitePage extends CommonObject
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
-		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';	// content in database must be ',xxx,...,yyy,'
+		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 
 		return $this->createCommon($user, $notrigger);
 	}
@@ -186,20 +197,20 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif";
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
 		if ($id > 0)
 		{
-			$sql .= ' AND t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = '.$id;
 		}
 		else
 		{
-			if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
+			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
-			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
-			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
-			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%' OR t.aliasalt LIKE '%, " . $this->db->escape($aliasalt) . ",%')";
+			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
+			    if ($page)		$sql .= " AND t.pageurl = '".$this->db->escape($page)."'";
+			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
 			}
 		}
         $sql .= $this->db->plimit(1);
@@ -242,10 +253,10 @@ class WebsitePage extends CommonObject
 				return 0;
 			}
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -265,7 +276,7 @@ class WebsitePage extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$records=array();
+		$records = array();
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
@@ -287,28 +298,28 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif";
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key=='t.rowid' || $key=='t.fk_website') {
-					$sqlwhere[] = $key . '='. $value;
+				if ($key == 't.rowid' || $key == 't.fk_website') {
+					$sqlwhere[] = $key.'='.$value;
 				} else {
-					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .=  ' ' . $this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -345,9 +356,9 @@ class WebsitePage extends CommonObject
 
 			return $records;
 		} else {
-			$this->error = 'Error ' . $this->db->lasterror();
+			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -364,7 +375,7 @@ class WebsitePage extends CommonObject
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
-		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';	// content in database must be ',xxx,...,yyy,'
+		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -382,16 +393,16 @@ class WebsitePage extends CommonObject
 
 		if ($result > 0)
 		{
-			$websiteobj=new Website($this->db);
+			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
 
 			if ($result > 0)
 			{
 				global $dolibarr_main_data_root;
-				$pathofwebsite=$dolibarr_main_data_root.'/website/'.$websiteobj->ref;
+				$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteobj->ref;
 
-				$filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
-				$filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
+				$filealias = $pathofwebsite.'/'.$this->pageurl.'.php';
+				$filetpl = $pathofwebsite.'/page'.$this->id.'.tpl.php';
 
 				dol_delete_file($filealias);
 				dol_delete_file($filetpl);
@@ -438,10 +449,10 @@ class WebsitePage extends CommonObject
 		$object->fk_user_creat = $user->id;
 		$object->date_creation = $now;
 		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
-		if (! empty($newlang)) $object->lang=$newlang;
+		if (!empty($newlang)) $object->lang = $newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
-		if (! empty($newwebsite)) $object->fk_website=$newwebsite;
+		if (!empty($newwebsite)) $object->fk_website = $newwebsite;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -450,7 +461,7 @@ class WebsitePage extends CommonObject
 			$error++;
 			$this->error = $object->error;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -486,36 +497,36 @@ class WebsitePage extends CommonObject
 
         $result = '';
 
-        $label = '<u>' . $langs->trans("Page") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
-        $label.= '<b>' . $langs->trans('ID') . ':</b> ' . $this->id.'<br>';
-        $label.= '<b>' . $langs->trans('Title') . ':</b> ' . $this->title;
+        $label = '<u>'.$langs->trans("Page").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
+        $label .= '<b>'.$langs->trans('ID').':</b> '.$this->id.'<br>';
+        $label .= '<b>'.$langs->trans('Title').':</b> '.$this->title;
 
         $url = DOL_URL_ROOT.'/website/index.php?websiteid='.$this->fk_website.'&pageid='.$this->id;
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip))
         {
-        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
-        		$label=$langs->trans("ShowMyObject");
-        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        		$label = $langs->trans("ShowMyObject");
+        		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
         	}
-        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
         }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-		$linkend='</a>';
+        $linkstart .= $linkclose.'>';
+		$linkend = '</a>';
 
 		//$linkstart = $linkend = '';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_picto(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto) $result .= img_picto(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 
 		return $result;
@@ -574,7 +585,7 @@ class WebsitePage extends CommonObject
 
 		$this->id = 0;
 
-		$now=dol_now();
+		$now = dol_now();
 
 		$this->fk_website = '';
 		$this->type_container = 'page';
