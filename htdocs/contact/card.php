@@ -482,7 +482,7 @@ if (empty($reshook))
     }
 
     // Actions to send emails
-	$trigger_name = 'CONTACT_SENTBYMAIL';
+	$triggersendname = 'CONTACT_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromcontact';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -609,7 +609,7 @@ else
             }
 
             print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (!empty($objsoc)) {
@@ -622,9 +622,14 @@ else
 
             // Name
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-            print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
-            print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-            print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'"></td></tr>';
+            print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+            print '</tr>';
+
+            print '<tr>';
+            print '<td><label for="firstname">';
+            print $form->textwithpicto($langs->trans("Firstname"), $langs->trans("KeepEmptyIfGenericAddress")).'</label></td>';
+            print '<td colspan="3"><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'"></td>';
+            print '</tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -715,19 +720,24 @@ else
             // Phone / Fax
             print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
             print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" value="'.(GETPOSTISSET('phone_pro') ?GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+            if ($conf->browser->layout == 'phone') print '</tr><tr>';
             print '<td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePerso', 'phone_perso', '', $object, 0).'</td>';
             print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" value="'.(GETPOSTISSET('phone_perso') ?GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
             print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
             print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+            if ($conf->browser->layout == 'phone') print '</tr><tr>';
             print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td>';
+            print '</tr>';
 
             if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email; // Predefined with third party
 
             // Email
             print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
             print '<td><input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
+			print '</tr>';
+
             if (!empty($conf->mailing->enabled))
             {
             	$noemail = '';
@@ -743,12 +753,10 @@ else
             		}
             	}
 
+            	print '<tr>';
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 	            print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
-            }
-            else
-			      {
-          		print '<td colspan="2">&nbsp;</td>';
+	            print '</tr>';
             }
             print '</tr>';
 
@@ -842,7 +850,7 @@ else
             print '<table class="border centpercent">';
 
             // Date To Birth
-            print '<tr><td width="20%"><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td width="30%">';
+            print '<tr><td><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td>';
             $form = new Form($db);
             if ($object->birthday)
             {
@@ -854,15 +862,16 @@ else
             }
             print '</td>';
 
-            print '<td colspan="2"><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
+            print '<td><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
             if ($object->birthday_alert)
             {
-                print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked>';
             }
             else
             {
-                print '<input type="checkbox" name="birthday_alert" id="birthday_alert"></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_alert">';
             }
+            print '</td>';
             print '</tr>';
 
             print "</table>";
@@ -929,7 +938,7 @@ else
             }
 
             print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
@@ -971,7 +980,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOSTISSET("civility_code") ?GETPOST("civility", "aZ09") : $object->civility_code, 'civility_code');
+            print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", "aZ09") : $object->civility_code, 'civility_code');
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -1011,7 +1020,7 @@ else
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
 
-                print $formcompany->select_state(GETPOSTISSET('state_id') ?GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
+                print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
                 print '</td></tr>';
             }
 

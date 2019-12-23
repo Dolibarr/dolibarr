@@ -1803,8 +1803,8 @@ class BonPrelevement extends CommonObject
 	 *	Write sender of request (me).
 	 *  Note: The tag PmtInf is opened here but closed into caller
 	 *
-	 *	@param	string	$configuration	conf
-	 *	@param	int	$ladate			Date
+	 *	@param	Conf	$configuration	conf
+	 *	@param	int     $ladate			Date
 	 *	@param	int		$nombre			0 or 1
 	 *	@param	float	$total			Total
 	 *	@param	string	$CrLf			End of line character
@@ -1827,15 +1827,15 @@ class BonPrelevement extends CommonObject
 		if ($account->fetch($id) > 0)
 		{
 			$this->emetteur_code_banque = $account->code_banque;
-			$this->emetteur_code_guichet       = $account->code_guichet;
-			$this->emetteur_numero_compte      = $account->number;
+			$this->emetteur_code_guichet = $account->code_guichet;
+			$this->emetteur_numero_compte = $account->number;
 			$this->emetteur_number_key = $account->cle_rib;
-			$this->emetteur_iban               = $account->iban;
-			$this->emetteur_bic                = $account->bic;
+			$this->emetteur_iban = $account->iban;
+			$this->emetteur_bic = $account->bic;
 
-			$this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS; // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+			$this->emetteur_ics = $conf->global->PRELEVEMENT_ICS; // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
-			$this->raison_sociale              = $account->proprio;
+			$this->raison_sociale = $account->proprio;
 		}
 
 		// Récupération info demandeur

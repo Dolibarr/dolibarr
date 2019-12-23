@@ -79,9 +79,13 @@ if (!empty($conf->stripe->enabled))
 		$servicestatus = 1;
 	}
 
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+
 	$stripe = new Stripe($db);
-	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no network access here)
-	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus); // Get remote Stripe customer 'cus_...' (no network access here)
+	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
+	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 }
 
 
@@ -770,7 +774,7 @@ if (empty($companybankaccount->socid)) $companybankaccount->socid = $object->id;
 if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->societe->creer)
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
 	if ($action == 'editcard') $actionforadd = 'updatecard';
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
@@ -779,7 +783,7 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->soc
 if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights->societe->creer)
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
 	if ($action == 'createcard') $actionforadd = 'addcard';
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
@@ -843,7 +847,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$permissiontowrite = $user->rights->societe->creer;
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid', 'Publishable key '.$site_account);
 			print '</td><td>';
 			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 			if (!empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
@@ -862,7 +866,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
 				print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
@@ -916,7 +920,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
 			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 			//print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
@@ -1470,7 +1474,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				$out .= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
-				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
 				$out .= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 
@@ -1613,7 +1617,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -1719,7 +1723,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -1767,7 +1771,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -1867,7 +1871,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 

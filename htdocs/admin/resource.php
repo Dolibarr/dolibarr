@@ -73,7 +73,7 @@ $head=resource_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("ResourceSingular"), -1, 'action');
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
 print '<table class="noborder centpercent">';

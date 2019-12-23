@@ -232,7 +232,7 @@ if ($action == 'edit') {
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';

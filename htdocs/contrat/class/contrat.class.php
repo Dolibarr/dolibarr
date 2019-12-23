@@ -643,7 +643,7 @@ class Contrat extends CommonObject
 		$sql .= " note_private, note_public, model_pdf, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) $sql .= " WHERE entity IN (".getEntity('contract').")";
-		else $sql .= " WHERE rowid=".$id;
+		else $sql .= " WHERE rowid=".(int) $id;
 		if ($ref_customer)
 		{
 			$sql .= " AND ref_customer = '".$this->db->escape($ref_customer)."'";
@@ -1054,7 +1054,7 @@ class Contrat extends CommonObject
     			    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
     			    {
     			        require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-    			        $exp = new Expedition($db);
+    			        $exp = new Expedition($this->db);
     			        $exp->fetch($this->origin_id);
     			        $exp->fetchObjectLinked();
     			        if (count($exp->linkedObjectsIds['commande']) > 0)
@@ -1291,20 +1291,20 @@ class Contrat extends CommonObject
 		// Clean parameters
 		if (empty($this->fk_commercial_signature) && $this->commercial_signature_id > 0) $this->fk_commercial_signature = $this->commercial_signature_id;
 		if (empty($this->fk_commercial_suivi) && $this->commercial_suivi_id > 0) $this->fk_commercial_suivi = $this->commercial_suivi_id;
-		if (empty($this->fk_soc) && $this->socid > 0) $this->fk_soc = $this->socid;
-		if (empty($this->fk_project) && $this->projet > 0) $this->fk_project = $this->projet;
+		if (empty($this->fk_soc) && $this->socid > 0) $this->fk_soc = (int) $this->socid;
+		if (empty($this->fk_project) && $this->projet > 0) $this->fk_project = (int) $this->projet;
 
 		if (isset($this->ref)) $this->ref = trim($this->ref);
 		if (isset($this->ref_customer)) $this->ref_customer = trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier = trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext = trim($this->ref_ext);
-		if (isset($this->entity)) $this->entity = trim($this->entity);
+		if (isset($this->entity)) $this->entity = (int) $this->entity;
 		if (isset($this->statut)) $this->statut = (int) $this->statut;
-		if (isset($this->fk_soc)) $this->fk_soc = trim($this->fk_soc);
+		if (isset($this->fk_soc)) $this->fk_soc = (int) $this->fk_soc;
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature = trim($this->fk_commercial_signature);
 		if (isset($this->fk_commercial_suivi)) $this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
-		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = trim($this->fk_user_mise_en_service);
-		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = trim($this->fk_user_cloture);
+		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = (int) $this->fk_user_mise_en_service;
+		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = (int) $this->fk_user_cloture;
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);

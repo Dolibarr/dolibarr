@@ -80,7 +80,7 @@ else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
 
 $morehtml='';
 $morehtml.='<form name="projectform" method="POST">';
-$morehtml.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$morehtml.='<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml.='<SELECT name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
@@ -138,7 +138,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i = 0;

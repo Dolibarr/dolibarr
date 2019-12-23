@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Tredjepart skapt av e-post samler fra e-post M
 ContactCreatedByEmailCollector=Kontakt/adresse opprettet av e-post samler fra e-post MSGID %s
 ProjectCreatedByEmailCollector=Prosjekt opprettet av e-post samler fra e-post MSGID %s
 TicketCreatedByEmailCollector=Supportseddel opprettet av e-post samler fra e-post MSGID %s
+OpeningHoursFormatDesc=Bruk en bindestrek for å skille åpning og stengetid. <br> Bruk et mellomrom for å angi forskjellige områder. <br> Eksempel: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Eksportområde

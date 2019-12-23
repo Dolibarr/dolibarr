@@ -637,7 +637,7 @@ if ($resql)
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -1139,205 +1139,205 @@ if ($resql)
 				    print $thirdpartystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Town
-			if (! empty($arrayfields['s.town']['checked']))
+			if (!empty($arrayfields['s.town']['checked']))
 			{
 				print '<td>';
 				print $obj->town;
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Zip
-			if (! empty($arrayfields['s.zip']['checked']))
+			if (!empty($arrayfields['s.zip']['checked']))
 			{
 				print '<td>';
 				print $obj->zip;
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// State
-			if (! empty($arrayfields['state.nom']['checked']))
+			if (!empty($arrayfields['state.nom']['checked']))
 			{
 				print "<td>".$obj->state_name."</td>\n";
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Country
-			if (! empty($arrayfields['country.code_iso']['checked']))
+			if (!empty($arrayfields['country.code_iso']['checked']))
 			{
-				print '<td align="center">';
-				$tmparray=getCountry($obj->fk_pays, 'all');
+				print '<td class="center">';
+				$tmparray = getCountry($obj->fk_pays, 'all');
 				print $tmparray['label'];
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Type ent
-			if (! empty($arrayfields['typent.code']['checked']))
+			if (!empty($arrayfields['typent.code']['checked']))
 			{
-				print '<td align="center">';
-				if (! is_array($typenArray) || count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+				print '<td class="center">';
+				if (!is_array($typenArray) || count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
 				print $typenArray[$obj->typent_code];
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Staff
-			if (! empty($arrayfields['staff.code']['checked']))
+			if (!empty($arrayfields['staff.code']['checked']))
 			{
-				print '<td align="center">';
-				if (! is_array($staffArray) || count($staffArray)==0) $staffArray = $formcompany->effectif_array(1);
+				print '<td class="center">';
+				if (!is_array($staffArray) || count($staffArray) == 0) $staffArray = $formcompany->effectif_array(1);
 				print $staffArray[$obj->staff_code];
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Payment mode
-			if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
+			if (!empty($arrayfields['f.fk_mode_reglement']['checked']))
 			{
 				print '<td>';
 				$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Payment terms
-			if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
+			if (!empty($arrayfields['f.fk_cond_reglement']['checked']))
 			{
 				print '<td>';
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Module Source
-			if (! empty($arrayfields['f.module_source']['checked']))
+			if (!empty($arrayfields['f.module_source']['checked']))
 			{
 				print '<td>';
 				print $obj->module_source;
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// POS Terminal
-			if (! empty($arrayfields['f.pos_source']['checked']))
+			if (!empty($arrayfields['f.pos_source']['checked']))
 			{
 				print '<td>';
 				print $obj->pos_source;
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Amount HT
-			if (! empty($arrayfields['f.total_ht']['checked']))
+			if (!empty($arrayfields['f.total_ht']['checked']))
 			{
 				  print '<td class="right nowrap">'.price($obj->total_ht)."</td>\n";
-				  if (! $i) $totalarray['nbfield']++;
-				  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_ht';
+				  if (!$i) $totalarray['nbfield']++;
+				  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
 				  $totalarray['val']['f.total_ht'] += $obj->total_ht;
 			}
 			// Amount VAT
-			if (! empty($arrayfields['f.total_vat']['checked']))
+			if (!empty($arrayfields['f.total_vat']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_vat)."</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_vat';
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_vat';
 				$totalarray['val']['f.total_vat'] += $obj->total_vat;
 			}
 			// Amount LocalTax1
-			if (! empty($arrayfields['f.total_localtax1']['checked']))
+			if (!empty($arrayfields['f.total_localtax1']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_localtax1)."</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_localtax1';
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax1';
 				$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1;
 			}
 			// Amount LocalTax2
-			if (! empty($arrayfields['f.total_localtax2']['checked']))
+			if (!empty($arrayfields['f.total_localtax2']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_localtax2)."</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_localtax2';
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax2';
 				$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2;
 			}
 			// Amount TTC
-			if (! empty($arrayfields['f.total_ttc']['checked']))
+			if (!empty($arrayfields['f.total_ttc']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_ttc)."</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_ttc';
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 			}
 
-			if(! empty($arrayfields['f.retained_warranty']['checked']))
+			if (!empty($arrayfields['f.retained_warranty']['checked']))
 			{
-			    print '<td align="right">'.(! empty($obj->retained_warranty)?price($obj->retained_warranty).'%':'&nbsp;').'</td>';
+			    print '<td align="right">'.(!empty($obj->retained_warranty) ?price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
 			}
 
-			if (! empty($arrayfields['dynamount_payed']['checked']))
+			if (!empty($arrayfields['dynamount_payed']['checked']))
 			{
-				print '<td class="right nowrap">'.(! empty($totalpay)?price($totalpay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
-				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalam';
+				print '<td class="right nowrap">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalam';
 				$totalarray['val']['totalam'] += $totalpay;
 			}
 
-			if (! empty($arrayfields['rtp']['checked']))
+			if (!empty($arrayfields['rtp']['checked']))
 			{
-				print '<td class="right nowrap">'.(! empty($remaintopay)?price($remaintopay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
-				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='rtp';
+				print '<td class="right nowrap">'.(!empty($remaintopay) ?price($remaintopay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'rtp';
 				$totalarray['val']['rtp'] += $remaintopay;
 			}
 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
-			$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
-			if (! empty($arrayfields['f.datec']['checked']))
+			if (!empty($arrayfields['f.datec']['checked']))
 			{
 				print '<td align="center" class="nowrap">';
 				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Date modification
-			if (! empty($arrayfields['f.tms']['checked']))
+			if (!empty($arrayfields['f.tms']['checked']))
 			{
 				print '<td align="center" class="nowrap">';
 				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Date closing
-			if (! empty($arrayfields['f.date_closing']['checked']))
+			if (!empty($arrayfields['f.date_closing']['checked']))
 			{
 				print '<td align="center" class="nowrap">';
 				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
 				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Status
-			if (! empty($arrayfields['f.fk_statut']['checked']))
+			if (!empty($arrayfields['f.fk_statut']['checked']))
 			{
 				print '<td class="nowrap right">';
 				print $facturestatic->LibStatut($obj->paye, $obj->fk_statut, 5, $paiement, $obj->type);
 				print "</td>";
-				if (! $i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Action column
 			print '<td class="nowrap" align="center">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			{
-				$selected=0;
-				if (in_array($obj->id, $arrayofselected)) $selected=1;
-				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected?' checked="checked"':'').'>';
+				$selected = 0;
+				if (in_array($obj->id, $arrayofselected)) $selected = 1;
+				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '</td>' ;
-			if (! $i) $totalarray['nbfield']++;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 
 			print "</tr>\n";
 

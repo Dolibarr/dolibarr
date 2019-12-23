@@ -119,7 +119,7 @@ $head = printingAdminPrepareHead($mode);
 if ($mode == 'setup' && $user->admin)
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setconst">';
 
     dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');

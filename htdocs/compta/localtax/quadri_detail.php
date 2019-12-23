@@ -129,7 +129,7 @@ foreach ($listofparams as $param)
 llxHeader('', $langs->trans("LocalTaxReport"), '', '', 0, 0, '', '', $morequerystring);
 
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 

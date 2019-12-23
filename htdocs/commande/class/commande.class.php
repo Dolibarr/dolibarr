@@ -977,35 +977,22 @@ class Commande extends CommonOrder
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
 				if ($this->db->query($sql))
 				{
-					if ($this->id)
+					$this->ref = $initialref;
+
+					if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
 					{
-						$this->ref = $initialref;
+						$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
+					}
 
-						if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+					// Add object linked
+					if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+					{
+						foreach ($this->linked_objects as $origin => $tmp_origin_id)
 						{
-							$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
-						}
-
-						// Add object linked
-						if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
-						{
-							foreach ($this->linked_objects as $origin => $tmp_origin_id)
+							if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 							{
-								if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+								foreach ($tmp_origin_id as $origin_id)
 								{
-									foreach ($tmp_origin_id as $origin_id)
-									{
-										$ret = $this->add_object_linked($origin, $origin_id);
-										if (!$ret)
-										{
-											$this->error = $this->db->lasterror();
-											$error++;
-										}
-									}
-								}
-								else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-								{
-									$origin_id = $tmp_origin_id;
 									$ret = $this->add_object_linked($origin, $origin_id);
 									if (!$ret)
 									{
@@ -1014,44 +1001,54 @@ class Commande extends CommonOrder
 									}
 								}
 							}
+							else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+							{
+								$origin_id = $tmp_origin_id;
+								$ret = $this->add_object_linked($origin, $origin_id);
+								if (!$ret)
+								{
+									$this->error = $this->db->lasterror();
+									$error++;
+								}
+							}
 						}
+					}
 
-						if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id))   // Get contact from origin object
+					if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id))   // Get contact from origin object
+					{
+						$originforcontact = $this->origin;
+						$originidforcontact = $this->origin_id;
+						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
 						{
-							$originforcontact = $this->origin;
-							$originidforcontact = $this->origin_id;
-							if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+							require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+							$exp = new Expedition($this->db);
+							$exp->fetch($this->origin_id);
+							$exp->fetchObjectLinked();
+							if (count($exp->linkedObjectsIds['commande']) > 0)
 							{
-								require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-								$exp = new Expedition($this->db);
-								$exp->fetch($this->origin_id);
-								$exp->fetchObjectLinked();
-								if (count($exp->linkedObjectsIds['commande']) > 0)
+								foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
 								{
-									foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
-									{
-										$originforcontact = 'commande';
-										if (is_object($value)) $originidforcontact = $value->id;
-										else $originidforcontact = $value;
-										break; // We take first one
-									}
+									$originforcontact = 'commande';
+									if (is_object($value)) $originidforcontact = $value->id;
+									else $originidforcontact = $value;
+									break; // We take first one
 								}
 							}
-
-							$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-							$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-
-							$resqlcontact = $this->db->query($sqlcontact);
-							if ($resqlcontact)
-							{
-								while ($objcontact = $this->db->fetch_object($resqlcontact))
-								{
-									//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
-									$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
-								}
-							}
-							else dol_print_error($resqlcontact);
 						}
+
+						$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+						$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+
+						$resqlcontact = $this->db->query($sqlcontact);
+						if ($resqlcontact)
+						{
+							while ($objcontact = $this->db->fetch_object($resqlcontact))
+							{
+								//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
+							}
+						}
+						else dol_print_error($resqlcontact);
 					}
 
 					if (!$error)

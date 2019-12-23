@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/asset/admin/asset_extrafields.php
- *		\ingroup    asset
- *		\brief      Page to setup extra fields of assets
+ *  \file       htdocs/asset/admin/assets_extrafields.php
+ *  \ingroup    asset
+ *  \brief      Page to setup extra fields of assets
  */
 
 require '../../main.inc.php';

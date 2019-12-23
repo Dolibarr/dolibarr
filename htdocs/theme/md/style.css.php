@@ -44,7 +44,6 @@ define('ISLOADEDBYSTEELSHEET', '1');
 require __DIR__.'/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) return;
 
-
 session_cache_limiter('public');
 
 
@@ -112,7 +111,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_BACKTABCARD1 = '255,255,255'; // card
 	$conf->global->THEME_ELDY_BACKTABACTIVE = '234,234,234';
 	$conf->global->THEME_ELDY_TEXT = '0,0,0';
-	$conf->global->THEME_ELDY_FONT_SIZE1 = '14';
+	$conf->global->THEME_ELDY_FONT_SIZE1 = $fontsize;
 	$conf->global->THEME_ELDY_FONT_SIZE2 = '11';
 }
 
@@ -238,7 +237,7 @@ body {
 	background: rgb(<?php print $colorbackbody; ?>);
 <?php } ?>
 	color: rgb(<?php echo $colortext; ?>);
-	font-size: <?php print $fontsize ?>px;
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	line-height: 1.3;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
@@ -300,7 +299,6 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-    font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
     border: none;
     border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px rgba(0,0,0,.2);
@@ -422,7 +420,7 @@ a.buttonticket {
 	padding-right: 5px;
 }
 
-/* Used for timesheets */
+/* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.1);
@@ -434,9 +432,6 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
-td.actionbuttons a {
-    padding-left: 6px;
-}
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
@@ -447,6 +442,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.actionbuttons a {
+    padding-left: 6px;
+}
 select.flat, form.flat select {
 	font-weight: normal;
 	font-size: unset;
@@ -461,14 +459,18 @@ select.flat, form.flat select {
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
+.opacitymediumbycolor {
+	color: rgba(0, 0, 0, 0.4);
+}
 .opacityhigh {
 	opacity: 0.2;
 }
 .opacitytransp {
 	opacity: 0;
 }
-select:invalid { color: gray; }
-
+select:invalid {
+	color: gray;
+}
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
 	background:#eee;
@@ -514,13 +516,13 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
-    font-family: <?php print $fontlist ?>;
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
 	padding: 4px 14px;
 	margin-bottom: 0;
 	margin-top: 0;
+    font-family: <?php print $fontlist ?>;
 	text-align: center;
 	cursor: pointer;
 	color: #333333 !important;
@@ -567,6 +569,9 @@ hr { border: 0; border-top: 1px solid #ccc; }
     border: unset;
     background: unset;
 }
+.button_search:hover, .button_removefilter:hover {
+    cursor: pointer;
+}
 form {
     padding:0px;
     margin:0px;
@@ -592,6 +597,7 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+	min-width: 54px;
 }
 
 .valigntop {
@@ -621,6 +627,19 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.small, small {
+    font-size: 85%;
+}
+
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
+    font-size: 65%;
+}
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
+    font-weight: 400;
+    line-height: 1;
+    color: #777;
+}
+
 .center {
     text-align: center;
     margin: 0px auto;
@@ -633,6 +652,12 @@ textarea.centpercent {
 }
 .justify {
 	text-align: justify;
+}
+.pull-left {
+    float: left!important;
+}
+.pull-right {
+    float: right!important;
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
@@ -722,15 +747,18 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
-.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
+	font-size: 1.5em; vertical-align: text-bottom;
+}
 
 
 /* Themes for badges */
@@ -768,6 +796,14 @@ div.divsearchfield {
     padding-bottom: 5px;
     opacity: 0.6;
 }
+<?php
+// Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
+if ($conf->browser->layout == 'phone') {
+	?>
+.divsearchfieldfilter {
+   	white-space: nowrap;
+}
+<?php } ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -804,13 +840,13 @@ select.flat.selectlimit {
 	margin-right: 10px !important;
 }
 .marginleftonly {
-	margin-left: 10px !important;
+	margin-<?php echo $left; ?>: 10px !important;
 }
 .marginleftonlyshort {
-	margin-left: 4px !important;
+	margin-<?php echo $left; ?>: 4px !important;
 }
 .nomarginleft {
-	margin-left: 0px !important;
+	margin-<?php echo $left; ?>: 0px !important;
 }
 .margintoponly {
 	margin-top: 10px !important;
@@ -871,6 +907,20 @@ select.flat.selectlimit {
     max-width: 0;
     overflow: auto;
 }
+.divintdwithtwolinesmax {
+    width: 75px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+.twolinesmax {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
@@ -914,6 +964,10 @@ select.flat.selectlimit {
 	color: #505;
 }
 
+.fa-15 {
+	font-size: 1.5em;
+}
+
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
     width: calc(100% - 330px);
@@ -922,6 +976,9 @@ select.flat.selectlimit {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
 /* Style used for most tables */
+div.fiche>div.tabBar>form>div.div-table-responsive {
+    min-height: 392px;
+}
 .div-table-responsive, .div-table-responsive-no-min {
     overflow-x: auto;
     min-height: 0.01%;
@@ -938,7 +995,7 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-    <?php if (in_array($conf->browser->browsername, array('chrome', 'firefox'))) echo 'display: inline-flex;' ?>
+    <?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) echo 'display: inline-flex;' ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -1003,6 +1060,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
 	.minwidth200imp { min-width: 200px !important; }
+    .minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
@@ -1032,6 +1090,16 @@ table[summary="list_of_modules"] .fa-cog {
 .titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
+.imgmaxheight50 { max-height: 50px; }
+
+.width20p { width:20%; }
+.width25p { width:25%; }
+.width40p { width:40%; }
+.width50p { width:50%; }
+.width60p { width:60%; }
+.width75p { width:75%; }
+.width80p { width:80%; }
+.width100p { width:100%; }
 
 
 /* Force values for small screen 1400 */
@@ -1044,9 +1112,14 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth100imp { min-width: 100px !important; }
     .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
+    .minwidth250imp { min-width: 250px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
     .minwidth500imp { min-width: 300px !important; }
+
+    .linkedcol-element {
+		min-width: unset;
+	}
 }
 
 /* Force values for small screen 1000 */
@@ -1055,9 +1128,10 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 70px !important; }
-    .minwidth100imp { min-width: 80px !important; }
-    .minwidth150imp { min-width: 100px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 110px !important; }
     .minwidth200imp { min-width: 110px !important; }
+    .minwidth250imp { min-width: 115px !important; }
     .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
@@ -1067,10 +1141,10 @@ table[summary="list_of_modules"] .fa-cog {
 @media only screen and (max-width: 767px)
 {
 	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?>;
 	}
 	div.refidno {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 }
 
@@ -1078,10 +1152,10 @@ table[summary="list_of_modules"] .fa-cog {
 @media only screen and (max-width: 570px)
 {
 	body {
-		font-size: <?php print $fontsize + 3; ?>px;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?>;
 	}
 	div.refidno {
-		font-size: <?php print $fontsize + 3; ?>px !important;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
 	.login_vertical_align {
@@ -1099,7 +1173,7 @@ table[summary="list_of_modules"] .fa-cog {
 	div.fiche {
 		    margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
-    .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
+    .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
     }
 
@@ -1112,6 +1186,9 @@ table[summary="list_of_modules"] .fa-cog {
 		padding-bottom: 5px;
 	}
 
+	.login_table .tdinputlogin {
+		min-width: unset !important;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
@@ -1119,6 +1196,7 @@ table[summary="list_of_modules"] .fa-cog {
      }
 
     .hideonsmartphone { display: none; }
+    .hideonsmartphoneimp { display: none !important; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 40px; }
@@ -1130,10 +1208,11 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
-	.minwidth75imp  { min-width: 60px !important; }
-    .minwidth100imp { min-width: 80px !important; }
-    .minwidth150imp { min-width: 90px !important; }
-    .minwidth200imp { min-width: 100px !important; }
+	.minwidth75imp  { min-width: 75px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 110px !important; }
+    .minwidth200imp { min-width: 110px !important; }
+    .minwidth250imp { min-width: 115px !important; }
     .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
@@ -1152,7 +1231,7 @@ table[summary="list_of_modules"] .fa-cog {
 	}
 
 	div.divphotoref {
-		padding-right: 5px;
+		padding-<?php echo $right; ?>: 5px;
 	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
@@ -1410,6 +1489,9 @@ div.fiche {
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
 }
+div.fiche>table:first-child {
+	margin-bottom: 15px !important;
+}
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -1496,16 +1578,12 @@ div.secondcolumn div.box {
 }
 
 /* For table into table into card */
-div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
 }
 div.nopadding {
 	padding: 0 !important;
 }
-
-/*table.noborder tr.liste_titre td {
-	padding: 3px !important;
-}*/
 
 .containercenter {
 	display : table;
@@ -1533,7 +1611,10 @@ div.nopadding {
 }
 .pictowarning {
     /* vertical-align: text-bottom; */
-    color: #9f4705;
+    color: <?php echo $badgeWarning; ?>;
+}
+.pictoerror {
+    color: <?php echo $badgeDanger ?>;
 }
 .pictomodule {
 	width: 14px;
@@ -1575,7 +1656,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-right: 20px;
+	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -1626,7 +1707,7 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
 .trextrafieldseparator td {
@@ -1922,9 +2003,7 @@ div.mainmenu.website {
 		'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
 		'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
 		'fournisseur'=>'companies',
-		'barcode'=>'',
-		'fckeditor'=>'',
-		'categorie'=>'',
+		'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
 	);
 	$mainmenuused = 'home';
 	foreach ($conf->modules as $val)
@@ -2058,7 +2137,7 @@ form#login {
 	border-radius: 4px;
 	border:solid 1px rgba(80,80,80,.4);
 
-	border-top:solid 1px f8f8f8;
+	border-top:solid 1px #f8f8f8;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
 	border: none;
@@ -2507,6 +2586,7 @@ div.tabBar.tabBarNoTop {
 }
 */
 
+/* tabBar used for creation/update/send forms */
 div.tabBarWithBottom {
 	padding-bottom: 18px;
 	border-bottom: 1px solid #aaa;
@@ -2516,6 +2596,10 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 .tableforservicepart1 .tdhrthin {
 	height: unset;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 /* ============================================================================== */
@@ -2680,6 +2764,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	margin: 0px 0px 0px 0px;
 }
 
+table.tableforemailform tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 
 table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #f4f4f4;
@@ -2690,7 +2778,7 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 26px;
 }
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
@@ -3051,7 +3139,16 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 }
 <?php } ?>
 
-.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
+.nohover:hover {
+	background: unset;
+}
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
+}
+
+.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover, .tagtr.oddeven
 {
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
@@ -3063,10 +3160,10 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
-.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover {
+.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: #202020;
@@ -3083,7 +3180,7 @@ td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.imp
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
-td.evenodd, tr.nohoverpair td {
+td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
@@ -3388,9 +3485,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
+    /* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
     line-height: 18px;
     color: #000;
-    /* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
 }
 .boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
 	display: inline-flex;
@@ -3499,7 +3596,10 @@ img.boxhandle, img.boxclose {
     vertical-align: middle;
 }
 
-
+.modulebuilderbox {
+	border: 1px solid #888;
+	padding: 16px;
+}
 
 
 
@@ -3625,6 +3725,9 @@ label.radioprivate {
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
+div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+    margin-right: 15px;
+}
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
@@ -3667,6 +3770,9 @@ div.titre, .secondary {
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
+table.centpercent.notopnoleftnoright.table-fiche-title {
+	margin-bottom: 10px !important;
+}
 table.table-fiche-title .col-title div.titre{
 	line-height: 40px;
 }
@@ -3742,6 +3848,19 @@ div#card-errors {
 .ui-dialog-content {
     font-size: <?php print $fontsize; ?>px !important;
 }
+
+
+/* ============================================================================== */
+/* For content of image preview                                                   */
+/* ============================================================================== */
+
+/*
+.ui-dialog-content.ui-widget-content > object {
+     max-height: none;
+     width: auto; margin-left: auto; margin-right: auto; display: block;
+}
+*/
+
 
 /* ============================================================================== */
 /* Formulaire confirmation (When HTML is used)                                    */
@@ -3939,6 +4058,9 @@ tr.visible {
 	display: inline-block;
     padding: 4px 0 4px 0;
 }
+.websitebar .buttonDelete, .websitebar .button {
+	text-shadow: none;
+}
 .websitebar .button, .websitebar .buttonDelete
 {
 	padding: 2px 4px 2px 4px !important;
@@ -3958,16 +4080,20 @@ tr.visible {
 	float: right;
 }
 .websiteselection, .websitetools {
-	margin-top: 3px;
+	/* margin-top: 3px;
 	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-bottom: 3px; */
 }
 .websiteinputurl {
     display: inline-block;
     vertical-align: top;
+    line-height: 28px;
 }
 .websiteiframenoborder {
 	border: 0px;
+}
+span.websitebuttonsitepreview, a.websitebuttonsitepreview {
+	vertical-align: middle;
 }
 span.websitebuttonsitepreview img, a.websitebuttonsitepreview img {
 	width: 26px;
@@ -3984,6 +4110,14 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
     float: right;
     padding-top: 8px;
 }
+.websiteselectionsection {
+	border-left: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	margin-left: 0px;
+	padding-left: 8px;
+	margin-right: 5px;
+}
+
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */
@@ -4028,9 +4162,16 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
 
+.calendarviewcontainertr { height: 100px; }
+
 .topmenuimage {
 	background-size: 24px auto;
 }
+
+td.cal_other_month {
+	opacity: 0.8;
+}
+
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
@@ -4262,7 +4403,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 .ui-widget {
     font-family:<?php echo $fontlist; ?>;
-    font-size:<?php echo $fontsize; ?>px;
 }
 .ui-button { margin-left: -2px; <?php print (preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
 .ui-button-icon-only .ui-button-text { height: 8px; }
@@ -4277,6 +4417,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
+
+body.cke_show_borders {
+    margin: 5px !important;
+}
 
 .cke_dialog {
     border: 1px #bbb solid ! important;
@@ -4387,6 +4531,65 @@ pre#editfilecontentaceeditorid {
 }
 
 
+/* ============================================================================== */
+/*  Comments                                                                   	  */
+/* ============================================================================== */
+
+#comment div {
+	box-sizing:border-box;
+}
+#comment .comment {
+    border-radius:7px;
+    margin-bottom:10px;
+    overflow:hidden;
+}
+#comment .comment-table {
+    display:table;
+    height:100%;
+}
+#comment .comment-cell {
+    display:table-cell;
+}
+#comment .comment-info {
+    font-size:0.8em;
+    border-right:1px solid #dedede;
+    margin-right:10px;
+    width:160px;
+    text-align:center;
+    background:rgba(255,255,255,0.5);
+    vertical-align:middle;
+    padding:10px 2px;
+}
+#comment .comment-info a {
+    color:inherit;
+}
+#comment .comment-right {
+    vertical-align:top;
+}
+#comment .comment-description {
+    padding:10px;
+    vertical-align:top;
+}
+#comment .comment-delete {
+    width: 100px;
+    text-align:center;
+    vertical-align:middle;
+}
+#comment .comment-delete:hover {
+    background:rgba(250,20,20,0.8);
+}
+#comment .comment-edit {
+    width: 100px;
+    text-align:center;
+    vertical-align:middle;
+}
+#comment .comment-edit:hover {
+    background:rgba(0,184,148,0.8);
+}
+#comment textarea {
+    width: 100%;
+}
+
 
 /* ============================================================================== */
 /*  JSGantt                                                                       */
@@ -4481,10 +4684,6 @@ ul.filedirelem li {
     border: solid 1px #f4f4f4;
 }
 
-.ui-layout-north {
-
-}
-
 ul.ecmjqft {
 	line-height: 16px;
 	padding: 0px;
@@ -4554,6 +4753,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -4591,7 +4791,7 @@ div.dolEventError h1, div.dolEventError h2 {
 /*  Maps                                                                          */
 /* ============================================================================== */
 
-.divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, google-visualization-geomap-embed-2 {
+.divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, #google-visualization-geomap-embed-2 {
 }
 
 
@@ -5031,7 +5231,7 @@ dl.dropdown {
 }
 .dropdown ul {
     margin: -1px 0 0 0;
-    text-align: left;
+    text-align: <?php echo $left; ?>;
 }
 .dropdown dd {
     position:relative;
@@ -5053,7 +5253,7 @@ dl.dropdown {
     background-color: #FFF;
     box-shadow: 1px 1px 10px #aaa;
     display:none;
-    right:0px;						/* pop is align on right */
+    <?php echo $right; ?>:0px;						/* pop is align on right */
     padding: 0 0 0 0;
     position:absolute;
     top:2px;
@@ -5065,13 +5265,14 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
+	/* color: rgb(<?php print $colortext; ?>); */
 	color: #000;
 }
 .dropdown dd ul li:hover {
 	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
-    margin-right: 3px;
+    margin-<?php echo $right; ?>: 3px;
 }
 .dropdown dd ul li a, .dropdown dd ul li span {
     padding: 3px;
@@ -5125,7 +5326,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 6px;
 	padding-right: 6px;
-	font-size: <?php print $fontsize ?>px;
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
@@ -5845,13 +6046,21 @@ border-top-right-radius: 6px;
     }
 
 	.titlefield {
-		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
+		width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
 	}
 	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	    /* max-width: 100px; */			/* but no more than 100px */
 	}
 	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
 	    word-break: break-word;
+	}
+
+	table.table-fiche-title .col-title div.titre{
+		line-height: unset;
+	}
+
+	input#addedfile {
+		width: 95%;
 	}
 }
 
@@ -5873,15 +6082,12 @@ border-top-right-radius: 6px;
 
 
 
-<?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php }
-
+<?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
-
+if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
 
 if (is_object($db)) $db->close();

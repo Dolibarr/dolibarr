@@ -17,6 +17,7 @@ DonationStatusPromiseNotValidatedShort=Чернова
 DonationStatusPromiseValidatedShort=Валидирано
 DonationStatusPaidShort=Получено
 DonationTitle=Разписка за дарение
+DonationDate=Дата на дарение
 DonationDatePayment=Дата на плащане
 ValidPromess=Валидиране на дарение
 DonationReceipt=Разписка за дарение

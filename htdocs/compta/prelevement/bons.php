@@ -114,7 +114,7 @@ if ($result)
     // Lines of title fields
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -148,15 +148,25 @@ if ($result)
     print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
     print "</tr>\n";
 
+    $directdebitorder = new BonPrelevement($db);
+
     while ($i < min($num, $limit))
     {
         $obj = $db->fetch_object($result);
 
-        print '<tr class="oddeven"><td>';
+        $directdebitorder->id = $obj->rowid;
+        $directdebitorder->ref = $obj->ref;
+        $directdebitorder->datec = $obj->datec;
+        $directdebitorder->amount = $obj->amount;
+        $directdebitorder->statut = $obj->statut;
 
-        print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+        print '<tr class="oddeven">';
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+        print '<td>';
+        print $directdebitorder->getNomUrl(1);
+        print "</td>\n";
+
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount)."</td>\n";
 

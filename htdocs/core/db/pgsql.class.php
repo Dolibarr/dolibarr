@@ -200,7 +200,7 @@ class DoliDBPgsql extends DoliDB
     			}
 
     			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+bigint.*auto_increment/i', $line, $reg)) {
-    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 BIGSERIAL PRIMARY KEY', $line);
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+bigint.*auto_increment[^,]*/i', '\\1 \\2 BIGSERIAL PRIMARY KEY', $line);
     				//$line = "-- ".$line." replaced by --\n".$newline;
     				$line=$newline;
     			}

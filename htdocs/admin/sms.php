@@ -161,7 +161,7 @@ if ($action == 'edit')
 	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	clearstatcache();

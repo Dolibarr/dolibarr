@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Thương mại
-CommercialArea=Khu vực thương mại
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Khách hàng
 Customers=Khách hàng
 Prospect=KH tiềm năng
@@ -59,7 +59,7 @@ ActionAC_FAC=Gửi hóa đơn khách hàng bằng thư
 ActionAC_REL=Gửi hóa đơn khách hàng bằng thư (nhắc nhở)
 ActionAC_CLO=Đóng
 ActionAC_EMAILING=Gửi email hàng loạt
-ActionAC_COM=Gửi đơn hàng khách hàng bằng thư
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Gửi đơn hàng vận chuyển bằng thư
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

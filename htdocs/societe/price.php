@@ -185,7 +185,7 @@ $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), -1, 'company');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -263,7 +263,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<tr>';
 		print '<td>'.$langs->trans('Product').'</td>';
 		print '<td>';
-		print $form->select_produits('', 'prodid', '', 0);
+		$form->select_produits('', 'prodid', '', 0);
 		print '</td>';
 		print '</tr>';
 

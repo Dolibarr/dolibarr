@@ -7798,7 +7798,8 @@ class TCPDF {
 			}
 			if (isset($this->imagekeys)) {
 				foreach($this->imagekeys as $file) {
-					unlink($file);
+// @CHANGE DOL
+//					unlink($file);
 				}
 			}
 		}

@@ -33,7 +33,10 @@ TicketDictSeverity=Billett - Alvorlighetsgrader
 TicketTypeShortBUGSOFT=Programvarefeil
 TicketTypeShortBUGHARD=Hardwarefeil
 TicketTypeShortCOM=Prisforespørsel
-TicketTypeShortINCIDENT=Be om hjelp
+
+TicketTypeShortHELP=Be om funksjonell hjelp
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Endring- eller forbedringsforespørsel
 TicketTypeShortPROJET=Prosjekt
 TicketTypeShortOTHER=Annet
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=Ingen ulest billett funnet
 TicketViewAllTickets=Se alle supportsedler
 TicketViewNonClosedOnly=Se bare åpne supportsedler
 TicketStatByStatus=Supportsedler etter status
+OrderByDateAsc=Sorter etter stigende dato
+OrderByDateDesc=Sorter etter synkende dato
+ShowAsConversation=Vis som samtaleliste
+MessageListViewType=Vis som tabell
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Bekreft statusendringen: %s?
 TicketLogStatusChanged=Status endret: %s til %s
 TicketNotNotifyTiersAtCreate=Ikke gi beskjed til firmaet ved opprettelse
 Unread=Ulest
+TicketNotCreatedFromPublicInterface=Ikke tilgjengelig. Billett ble ikke opprettet fra offentlig grensesnitt.
+PublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
+ErrorTicketRefRequired=Billettreferansenavn kreves
 
 #
 # Logs

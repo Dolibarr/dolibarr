@@ -91,7 +91,7 @@ class FormResource
     	if ($outputmode != 2)
     	{
     	    $out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    	    $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	    $out .= '<input type="hidden" name="token" value="'.newToken().'">';
     	}
 
     	if ($resourcestat)

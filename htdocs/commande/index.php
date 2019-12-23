@@ -74,7 +74,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     // Search customer orders
     $var = false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';

@@ -1497,7 +1497,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'BILL_SUPPLIER_SENTBYMAIL';
+	$triggersendname = 'BILL_SUPPLIER_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
 	$trackid = 'sin'.$object->id;
@@ -1717,7 +1717,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($societe->id > 0) print '<input type="hidden" name="socid" value="'.$societe->id.'">'."\n";
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -2394,7 +2394,7 @@ else
                     //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                     $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                    $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                     $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                     $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                     $morehtmlref .= '</form>';
@@ -2674,11 +2674,14 @@ else
 		else $calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
 		if ($calculationrule == 'totalofround') $calculationrulenum = 1;
 		else  $calculationrulenum = 2;
-		$s = $langs->trans("ReCalculate").' ';
-		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
-		$s .= ' / ';
-		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
-		print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+		// Show link for "recalculate"
+		if ($object->getVentilExportCompta() == 0) {
+			$s = $langs->trans("ReCalculate").' ';
+			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+			$s .= ' / ';
+			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+		}
 		print '</div></td></tr>';
 
 		// Amount Local Taxes
@@ -2984,7 +2987,7 @@ else
          * Lines
          */
 		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';

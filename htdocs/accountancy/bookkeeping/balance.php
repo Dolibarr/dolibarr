@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
 
-$page = GETPOST("page");
+$page = GETPOST("page", 'int');
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -196,7 +196,7 @@ if ($action != 'export_csv')
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
