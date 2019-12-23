@@ -1452,7 +1452,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-<?php echo $right; ?>: 10px;
+	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
 	padding-bottom: 10px;
