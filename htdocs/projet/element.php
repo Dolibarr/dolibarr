@@ -512,7 +512,7 @@ elseif ($action == "unlink")
 {
 
 	$tablename = GETPOST("tablename", "aZ09");
-    $projectField = GETPOST('projectfield', 'aZ09') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
+    $projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOST("elementselect", "int");
 
 	$result = $object->remove_element($tablename, $elementselectid, $projectField);
