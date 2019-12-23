@@ -2561,7 +2561,10 @@ if (!function_exists("llxFooter"))
 				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| GETPOST('forceping', 'alpha'))
 			{
-				if (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]))
+				if (strpos('alpha', DOL_VERSION) > 0) {
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It is an alpha version -->\n";
+				}
+				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
