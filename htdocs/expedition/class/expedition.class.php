@@ -1981,10 +1981,10 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Protection. This avoid to move stock later when we should not
-                if ($this->statut == self::STATUS_CLOSED)
-                {
-                        return 0;
-                }
+		if ($this->statut == self::STATUS_CLOSED)
+		{
+			return 0;
+		}
 
 		$this->db->begin();
 
