@@ -22,7 +22,7 @@
  *  \brief      Page for statistics of module salaries
  */
 
-require '../../../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 

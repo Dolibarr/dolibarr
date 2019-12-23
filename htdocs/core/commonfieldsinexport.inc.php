@@ -47,10 +47,12 @@ if (class_exists($keyforclass))
 			 * break;
 			 */
 		}
+		$helpfield=preg_replace('/\(.*$/', '', $valuefield['help']);
 		if ($valuefield['enabled']) {
 			$this->export_fields_array[$r][$fieldname] = $fieldlabel;
 			$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
 			$this->export_entities_array[$r][$fieldname] = $keyforelement;
+			$this->export_help_array[$r][$fieldname] = $helpfield;
 		}
 	}
 }

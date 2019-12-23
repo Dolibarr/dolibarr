@@ -1408,6 +1408,9 @@ div.nopadding {
     /* vertical-align: text-bottom; */
     color: <?php echo $badgeWarning ?>;
 }
+.pictoerror {
+    color: <?php echo $badgeDanger ?>;
+}
 .pictomodule {
 	width: 14px;
 }
@@ -1449,7 +1452,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-<?php echo $right; ?>: 10px;
+	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
 	padding-bottom: 10px;

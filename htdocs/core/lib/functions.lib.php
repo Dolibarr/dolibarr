@@ -3349,7 +3349,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  */
 function img_action($titlealt, $numaction)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if (empty($titlealt) || $titlealt == 'default')
 	{
@@ -3374,7 +3374,7 @@ function img_action($titlealt, $numaction)
  */
 function img_pdf($titlealt = 'default', $size = 3)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Show');
 
@@ -3390,7 +3390,7 @@ function img_pdf($titlealt = 'default', $size = 3)
  */
 function img_edit_add($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Add');
 
@@ -3405,7 +3405,7 @@ function img_edit_add($titlealt = 'default', $other = '')
  */
 function img_edit_remove($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Remove');
 
@@ -3422,7 +3422,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  */
 function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
@@ -3439,7 +3439,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  */
 function img_view($titlealt = 'default', $float = 0, $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('View');
 
@@ -3457,7 +3457,7 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  */
 function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
@@ -3474,7 +3474,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
  */
 function img_printer($titlealt = "default", $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 	if ($titlealt == "default") $titlealt = $langs->trans("Print");
 	return img_picto($titlealt, 'printer.png', $other);
 }
@@ -3488,7 +3488,7 @@ function img_printer($titlealt = "default", $other = '')
  */
 function img_split($titlealt = 'default', $other = 'class="pictosplit"')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Split');
 
@@ -3504,7 +3504,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
  */
 function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($usealttitle)
 	{
@@ -3523,7 +3523,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
  */
 function img_info($titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Informations');
 
@@ -3540,7 +3540,7 @@ function img_info($titlealt = 'default')
  */
 function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
@@ -3556,11 +3556,11 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
  */
 function img_error($titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($titlealt, 'error.png', 'class="valigntextbottom"');
+	return img_picto($titlealt, 'error.png');
 }
 
 /**
@@ -3572,7 +3572,7 @@ function img_error($titlealt = 'default')
  */
 function img_next($titlealt = 'default', $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
@@ -3589,7 +3589,7 @@ function img_next($titlealt = 'default', $moreatt = '')
  */
 function img_previous($titlealt = 'default', $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
@@ -3607,7 +3607,7 @@ function img_previous($titlealt = 'default', $moreatt = '')
  */
 function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Down');
 
@@ -3624,7 +3624,7 @@ function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
  */
 function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Up');
 
@@ -3641,7 +3641,7 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
  */
 function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
 
@@ -3658,7 +3658,7 @@ function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
  */
 function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Right');
 
@@ -3674,7 +3674,7 @@ function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
  */
 function img_allow($allow, $titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Active');
 

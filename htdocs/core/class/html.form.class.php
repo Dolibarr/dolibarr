@@ -4130,9 +4130,6 @@ class Form
 
 			// Now add questions
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
-			if (!empty($formquestion['text'])) {
-				$more .= '<div class="tagtr"><div class="tagtd">'.$formquestion['text'].'</div></div>'."\n";
-			}
 			foreach ($formquestion as $key => $input)
 			{
 				if (is_array($input) && !empty($input))
@@ -4246,8 +4243,11 @@ class Form
 			}
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
 			$formconfirm .= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
+			if (!empty($formquestion['text'])) {
+				$formconfirm .= '<div class="confirmtext">'.$formquestion['text'].'</div>'."\n";
+			}
 			if (!empty($more)) {
-				$formconfirm .= '<div class="confirmquestions">'.$more.'</div>';
+				$formconfirm .= '<div class="confirmquestions">'.$more.'</div>'."\n";
 			}
 			$formconfirm .= ($question ? '<div class="confirmmessage">'.img_help('', '').' '.$question.'</div>' : '');
 			$formconfirm .= '</div>'."\n";
@@ -4338,6 +4338,11 @@ class Form
 
 			// Line title
 			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
+
+			// Line text
+			if (!empty($formquestion['text'])) {
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'.$formquestion['text'].'</td></tr>'."\n";
+			}
 
 			// Line form fields
 			if ($more)

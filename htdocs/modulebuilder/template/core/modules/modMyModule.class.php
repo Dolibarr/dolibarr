@@ -342,7 +342,10 @@ class modMyModule extends DolibarrModules
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         //$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_dependencies_array[$r] = array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_special_array[$r] = array('t.field'=>'...');
+        //$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
+        //$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
         //$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';

@@ -338,7 +338,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $permforcashfence = 1;
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permforcashfence);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permforcashfence);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'cash-register', 0, $newcardbutton, '', $limit);
 

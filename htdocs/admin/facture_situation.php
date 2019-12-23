@@ -74,7 +74,7 @@ $head = invoice_admin_prepare_head();
 dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
 
 
-print '<span class="opacitymedium">'.$langs->trans("SituationInvoiceDesc").'</span><br><br>';
+print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").'</span><br><br>';
 
 
 /*
