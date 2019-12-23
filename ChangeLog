@@ -3,6 +3,14 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 12.0.0 compared to 11.0.0 *****
+For Users:
+
+
+For Developers or integrators:
+
+
+
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
