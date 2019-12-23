@@ -520,15 +520,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 0);
-        $this->assertEquals("A string\n\n\n\n\nwith html tag", $after, "test2a 2 br and 3 \n give 5 \n");
+        $this->assertEquals("A string\n\n\n\n\nwith html tag", $after, 'test2a 2 br and 3 \n give 5 \n');
 
         $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 1);
-        $this->assertEquals("A string with html tag", $after, "test2b 2 br and 3 \n give 1 space");
+        $this->assertEquals("A string with html tag", $after, 'test2b 2 br and 3 \n give 1 space');
 
         $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 2);
-        $this->assertEquals("A string\n\nwith html tag", $after, "test2c 2 br and 3 \n give 2 \n");
+        $this->assertEquals("A string\n\nwith html tag", $after, 'test2c 2 br and 3 \n give 2 \n');
+
+        $text="A <b>string<b><br>\r\n<br>\r\n\r\nwith html tag<br>\n";
+        $after=dol_string_nohtmltag($text, 2);
+        $this->assertEquals("A string\n\nwith html tag", $after, 'test2c 2 br and 3 \r\n give 2 \n');
 
         $text="A string<br>Another string";
         $after=dol_string_nohtmltag($text, 0);
