@@ -143,13 +143,13 @@ if ($action == 'edit')
 	 */
 
     print '<form name="perso" method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
 
     dol_fiche_head($head, 'perso', $title, 0, 'contact');
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     // Ref
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">';
@@ -253,7 +253,7 @@ else
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Company
     /*

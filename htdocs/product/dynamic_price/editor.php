@@ -172,12 +172,12 @@ print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
 //Form/Table
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Price expression selector
 print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';

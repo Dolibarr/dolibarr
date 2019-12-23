@@ -63,14 +63,22 @@ class Livraison extends CommonObject
 	public $socid;
 	public $ref_customer;
 
-	public $date_delivery;    // Date really received
+	/**
+	 * @var integer|string Date really received
+	 */
+	public $date_delivery;
 
 	/**
-   * @var integer|string date_creation
-   */
+     * @var integer|string date_creation
+     */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_valid
+	 */
 	public $date_valid;
+
+
 	public $model_pdf;
 
 
@@ -352,12 +360,13 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *        Validate object and update stock if option enabled
+	 *  Validate object and update stock if option enabled
 	 *
-     *        @param 	User	$user        Object user that validate
-     *        @return   int
+     *  @param  User    $user       Object user that validate
+     *  @param  int     $notrigger  1=Does not execute triggers, 0= execute triggers
+     *  @return int
 	 */
-    public function valid($user)
+    public function valid($user, $notrigger = 0)
 	{
 		global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

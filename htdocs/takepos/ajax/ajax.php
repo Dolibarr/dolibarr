@@ -43,16 +43,16 @@ $id = GETPOST('id', 'int');
  * View
  */
 
-if ($action=="getProducts") {
+if ($action == 'getProducts') {
     $object = new Categorie($db);
-    $result=$object->fetch($category);
+    $result = $object->fetch($category);
     if ($result > 0)
     {
 	    $prods = $object->getObjectsInCateg("product");
 	    // Removed properties we don't need
 	    if (is_array($prods) && count($prods) > 0)
 	    {
-	    	foreach($prods as $prod)
+	    	foreach ($prods as $prod)
 	    	{
 	    		unset($prod->fields);
 	    		unset($prod->db);
@@ -65,11 +65,28 @@ if ($action=="getProducts") {
     	echo 'Failed to load category with id='.$category;
     }
 }
-elseif ($action=="search" && $term != '') {
-    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product';
-    $sql.= ' WHERE entity IN ('.getEntity('product').')';
-    $sql.= ' AND tosell = 1';
-    $sql.= natural_search(array('ref','label','barcode'), $term);
+elseif ($action == 'search' && $term != '') {
+	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
+	$filteroncategids = '';
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
+		$object = new Categorie($db);
+		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
+		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
+			foreach($arrayofcateg as $val)
+			{
+				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
+			}
+		}
+	}
+
+    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product as p';
+    $sql .= ' WHERE entity IN ('.getEntity('product').')';
+    if ($filteroncategids) {
+    	$sql.= ' AND rowid IN (SELECT DISTINCT fk_product FROM '.MAIN_DB_PREFIX.'categorie_product WHERE fk_categorie IN ('.$filteroncategids.'))';
+    }
+    $sql .= ' AND tosell = 1';
+    $sql .= natural_search(array('ref', 'label', 'barcode'), $term);
     $resql = $db->query($sql);
 	if ($resql)
 	{

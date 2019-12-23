@@ -91,6 +91,7 @@ class HookManager
 
 		$this->contextarray=array_unique(array_merge($arraycontext, $this->contextarray));    // All contexts are concatenated
 
+		$arraytolog = array();
 		foreach($conf->modules_parts['hooks'] as $module => $hooks)	// Loop on each module that brings hooks
 		{
 			if (empty($conf->$module->enabled)) continue;
@@ -109,7 +110,7 @@ class HookManager
 						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
 
-						dol_syslog(get_class($this).'::initHooks Loading hook class for context '.$context.": ".$actionfile, LOG_INFO);
+						$arraytolog[] = 'context='.$context.'-path='.$path.$actionfile;
 						$resaction=dol_include_once($path.$actionfile);
 						if ($resaction)
 						{
@@ -121,6 +122,11 @@ class HookManager
 				}
 			}
 		}
+		if (count($arraytolog) > 0)
+		{
+			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
+		}
+
 		return 1;
 	}
 

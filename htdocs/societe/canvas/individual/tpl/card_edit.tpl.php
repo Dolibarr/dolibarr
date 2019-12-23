@@ -36,7 +36,7 @@ if (empty($conf) || ! is_object($conf))
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="socid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="typent_id" value="<?php echo $this->control->tpl['typent_id']; ?>">
 <?php if ($this->control->tpl['auto_customercode'] || $this->control->tpl['auto_suppliercode']) { ?>

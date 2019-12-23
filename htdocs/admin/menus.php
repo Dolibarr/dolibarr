@@ -150,7 +150,7 @@ $h++;
 
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'handler', $langs->trans("Menus"), -1);
@@ -162,7 +162,7 @@ print "<br>\n";
 clearstatcache();
 
 // Gestionnaires de menu
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 print '<td>';
 print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));

@@ -83,7 +83,7 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 // Toggle the status of a contact
 elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 {
-    $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
+    $result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
 // Deletes a contact
@@ -108,15 +108,15 @@ elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer)
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
-$formproject=new FormProjets($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
+$formproject = new FormProjets($db);
 
 llxHeader('', $langs->trans("Intervention"));
 
 // Mode vue et edition
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$object->fetch_thirdparty();
 
@@ -149,7 +149,7 @@ if ($id > 0 || ! empty($ref))
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref.='</form>';
@@ -176,14 +176,14 @@ if ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
-	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;
-	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
+	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser = 1;
+	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty = 1;
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach($dirtpls as $reldir)
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir)
 	{
-	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+	    $res = @include dol_buildpath($reldir.'/contacts.tpl.php');
 	    if ($res) break;
 	}
 }

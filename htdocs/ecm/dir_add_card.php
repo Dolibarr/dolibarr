@@ -225,7 +225,7 @@ if ($action == 'create')
 	// Create
 	//***********************
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
@@ -237,7 +237,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";

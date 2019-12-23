@@ -167,6 +167,7 @@ ThirdPartyCreatedByEmailCollector=Tercero creado por el recolector de correo ele
 ContactCreatedByEmailCollector=Contacto / dirección creada por el recolector de correo electrónico del correo electrónico MSGID %s
 ProjectCreatedByEmailCollector=Proyecto creado por el recolector de correo electrónico del correo electrónico MSGID %s
 TicketCreatedByEmailCollector=Ticket creado por el recolector de correo electrónico del correo electrónico MSGID %s
+OpeningHoursFormatDesc=Use un - para separar el horario de apertura y cierre.<br>Use un espacio para ingresar  diferentes rangos.<br>Ejemplo: 8-12 14-18
 LibraryUsed=Biblioteca utilizada
 LibraryVersion=Versión de biblioteca
 NoExportableData=No se pueden exportar datos (no hay módulos con datos exportables cargados o sin permisos)

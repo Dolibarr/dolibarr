@@ -94,7 +94,7 @@ print "<br>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
 $head=security_prepare_head();
@@ -103,7 +103,7 @@ dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="right" width="100">'.$langs->trans("Status").'</td>';

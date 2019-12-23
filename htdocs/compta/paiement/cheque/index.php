@@ -61,7 +61,7 @@ $sql.= " AND b.amount > 0";
 
 $resql = $db->query($sql);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
@@ -101,7 +101,7 @@ $sql.= $db->plimit($max);
 $resql = $db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
 	print '<th>'.$langs->trans("Date")."</th>";

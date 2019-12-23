@@ -26,7 +26,7 @@
  *  \ingroup    mymodule
  *  \brief      Description and activation file for module MyModule
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module MyModule
@@ -40,7 +40,7 @@ class modMyModule extends DolibarrModules
      */
     public function __construct($db)
     {
-        global $langs,$conf;
+        global $langs, $conf;
         $this->db = $db;
 
         // Id for module (must be unique).
@@ -73,7 +73,7 @@ class modMyModule extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-        $this->picto='generic';
+        $this->picto = 'generic';
         // Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory (core/triggers)
@@ -121,13 +121,13 @@ class modMyModule extends DolibarrModules
         $this->hidden = false;
         // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
         $this->depends = array();
-        $this->requiredby = array();	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-        $this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+        $this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+        $this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
         $this->langfiles = array("mymodule@mymodule");
-        $this->phpmin = array(5,5);					    // Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(11,-3);		// Minimum version of Dolibarr required by module
-        $this->warnings_activation = array();			// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-        $this->warnings_activation_ext = array();		// Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+        $this->phpmin = array(5, 5); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
+        $this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+        $this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         //$this->automatic_activation = array('FR'=>'MyModuleWasAutomaticallyActivatedBecauseOfYourCountryChoice');
         //$this->always_enabled = true;								// If true, can't be disabled
 
@@ -146,9 +146,9 @@ class modMyModule extends DolibarrModules
             'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
         )*/
 
-        if (! isset($conf->mymodule) || ! isset($conf->mymodule->enabled)) {
-            $conf->mymodule=new stdClass();
-            $conf->mymodule->enabled=0;
+        if (!isset($conf->mymodule) || !isset($conf->mymodule->enabled)) {
+            $conf->mymodule = new stdClass();
+            $conf->mymodule->enabled = 0;
         }
 
         // Array to add new pages in new tabs
@@ -180,7 +180,7 @@ class modMyModule extends DolibarrModules
         // 'user'             to add a tab in user view
 
         // Dictionaries
-        $this->dictionaries=array();
+        $this->dictionaries = array();
         /* Example:
         $this->dictionaries=array(
             'langs'=>'mymodule@mymodule',
@@ -241,44 +241,44 @@ class modMyModule extends DolibarrModules
 
         // Permissions provided by this module
         $this->rights = array();
-        $r=0;
+        $r = 0;
         // Add here entries to declare new permissions
         /* BEGIN MODULEBUILDER PERMISSIONS */
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Read objects of MyModule';	// Permission label
-        $this->rights[$r][4] = 'myobject';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-        $this->rights[$r][5] = 'read';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
+        $this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $r++;
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update objects of MyModule';	// Permission label
-        $this->rights[$r][4] = 'myobject';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-        $this->rights[$r][5] = 'write';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update objects of MyModule'; // Permission label
+        $this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $r++;
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Delete objects of MyModule';	// Permission label
-        $this->rights[$r][4] = 'myobject';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-        $this->rights[$r][5] = 'delete';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Delete objects of MyModule'; // Permission label
+        $this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $r++;
         /* END MODULEBUILDER PERMISSIONS */
 
         // Main menu entries to add
         $this->menu = array();
-        $r=0;
+        $r = 0;
         // Add here entries to declare new menus
         /* BEGIN MODULEBUILDER TOPMENU */
-        $this->menu[$r++]=array(
-            'fk_menu'=>'',                          // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'top',                          // This is a Top menu entry
+        $this->menu[$r++] = array(
+            'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'type'=>'top', // This is a Top menu entry
             'titre'=>'MyModule',
             'mainmenu'=>'mymodule',
             'leftmenu'=>'',
             'url'=>'/mymodule/mymoduleindex.php',
-            'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'position'=>1000+$r,
-            'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->mymodule->myobject->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'langs'=>'mymodule@mymodule', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'position'=>1000 + $r,
+            'enabled'=>'$conf->mymodule->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->mymodule->myobject->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'target'=>'',
-            'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
         );
         /* END MODULEBUILDER TOPMENU */
         /* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
@@ -327,7 +327,7 @@ class modMyModule extends DolibarrModules
         END MODULEBUILDER LEFTMENU MYOBJECT */
 
         // Exports profiles provided by this module
-        $r=1;
+        $r = 1;
         /* BEGIN MODULEBUILDER EXPORT MYOBJECT */
         /*
         $langs->load("mymodule@mymodule");
@@ -342,7 +342,10 @@ class modMyModule extends DolibarrModules
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         //$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_dependencies_array[$r] = array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_special_array[$r] = array('t.field'=>'...');
+        //$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
+        //$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
         //$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
@@ -352,7 +355,7 @@ class modMyModule extends DolibarrModules
         /* END MODULEBUILDER EXPORT MYOBJECT */
 
         // Imports profiles provided by this module
-        $r=1;
+        $r = 1;
         /* BEGIN MODULEBUILDER IMPORT MYOBJECT */
         /*
          $langs->load("mymodule@mymodule");
@@ -384,7 +387,7 @@ class modMyModule extends DolibarrModules
     {
         global $conf, $langs;
 
-        $result=$this->_load_tables('/mymodule/sql/');
+        $result = $this->_load_tables('/mymodule/sql/');
         if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
         // Create extrafields during init

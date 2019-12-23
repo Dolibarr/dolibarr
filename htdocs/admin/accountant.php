@@ -106,10 +106,10 @@ print '$(document).ready(function () {
 print '</script>'."\n";
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="oddeven liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 // Name

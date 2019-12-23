@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,13 +82,39 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_user;
 
-	public $km;
+    /**
+     * @var string km value formatted
+     */
+    public $km;
+
+    /**
+     * @var int Thirdparty id
+     */
 	public $socid;
-	public $statut;		// 0=draft, 1=validated
+
+    /**
+     * @var int Status 0=draft, 1=validated, 2=Refunded
+     */
+    public $statut;
 	public $extraparams=array();
 
 	public $statuts=array();
 	public $statuts_short=array();
+
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Refunded status
+	 */
+	const STATUS_REFUNDED = 2;
 
     /**
 	 * Constructor

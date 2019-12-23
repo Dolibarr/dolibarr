@@ -67,7 +67,7 @@ $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 */
 
 $lettering = GETPOST('lettering', 'alpha');
-if (! empty($lettering)) {
+if (!empty($lettering)) {
 	$action = $lettering;
 }
 
@@ -127,8 +127,8 @@ if ($action == 'autolettrage') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$title=$object->name." - ".$langs->trans('TabLetteringCustomer');
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = $object->name." - ".$langs->trans('TabLetteringCustomer');
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
@@ -164,13 +164,13 @@ $solde = 0;
 // Count total nb of records and calc total sum
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
-if (! $resql) {
+if (!$resql) {
 	dol_print_error($db);
 	exit();
 }
 $nbtotalofrecords = $db->num_rows($resql);
 
-while ( $obj = $db->fetch_object($resql) ) {
+while ($obj = $db->fetch_object($resql)) {
 	$debit += $obj->debit;
 	$credit += $obj->credit;
 
@@ -181,7 +181,7 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_customer.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if (! $resql) {
+if (!$resql) {
 	dol_print_error($db);
 	exit();
 }
@@ -205,7 +205,7 @@ if ($resql) {
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
 	/*
     print '<tr class="liste_titre">';

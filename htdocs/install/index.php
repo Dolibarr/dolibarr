@@ -62,7 +62,7 @@ print '</tr>';
 
 print '</table></div>';
 
-print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
+print '<br><br><span class="opacitymedium">'.$langs->trans("SomeTranslationAreUncomplete").'</span>';
 
 // If there's no error, we display the next step button
 if ($err == 0) pFooter(0);

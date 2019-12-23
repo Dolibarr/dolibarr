@@ -294,7 +294,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 if ($mode)
 {
     // Print array / Affiche le tableau
-    print '<table class="liste" width="100%">';
+    print '<table class="liste centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td class="center">'.$label2.'</td>';
