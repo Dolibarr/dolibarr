@@ -447,7 +447,7 @@ else
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
 		// Construit liste des repertoires

@@ -538,7 +538,6 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape($this->retained_warranty));
 		$sql .= ", ".(!empty($this->retained_warranty_date_limit) ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'NULL');
 		$sql .= ", ".(int) $this->retained_warranty_fk_cond_reglement;
-
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -980,7 +979,7 @@ class Facture extends CommonInvoice
 		}
 		elseif ($this->type == self::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
 		{
-			$this->fetchObjectLinked('', '', $facture->id, 'facture');
+			$this->fetchObjectLinked('', '', $this->id, 'facture');
 
 			foreach ($this->linkedObjectsIds as $typeObject => $Tfk_object)
 			{
@@ -1378,12 +1377,13 @@ class Facture extends CommonInvoice
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
-		if ($rowid)   $sql .= " WHERE f.rowid=".$rowid;
-		else $sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
-
-		if ($ref)     $sql .= " AND f.ref='".$this->db->escape($ref)."'";
-		if ($ref_ext) $sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql .= " AND f.ref_int='".$this->db->escape($ref_int)."'";
+		if ($rowid) $sql .= " WHERE f.rowid=".$rowid;
+		else {
+			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
+			if ($ref)     $sql .= " AND f.ref='".$this->db->escape($ref)."'";
+			if ($ref_ext) $sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+			if ($ref_int) $sql .= " AND f.ref_int='".$this->db->escape($ref_int)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1832,7 +1832,6 @@ class Facture extends CommonInvoice
 			{
     			$srcinvoice = new Facture($this->db);
     			$srcinvoice->fetch($remise->fk_facture_source);
-    			$totalcostpriceofinvoice = 0;
     			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
     			$formmargin = new FormMargin($this->db);
     			$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);

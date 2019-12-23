@@ -23,7 +23,7 @@ dol_include_once('/zapier/class/hook.class.php');
 
 
 /**
- * \file    htdocs/modulebuilder/template/class/api_zapier.class.php
+ * \file    htdocs/zapier/class/api_zapier.class.php
  * \ingroup zapier
  * \brief   File for API management of hook.
  */
@@ -263,15 +263,15 @@ class ZapierApi extends DolibarrApi
         );
     }
 
-    /**
-     * Update hook
-     *
-     * @param int   $id             Id of hook to update
-     * @param array $request_data   Datas
-     * @return int
-     *
-     * @url	PUT /hooks/{id}
-     */
+    // /**
+    //  * Update hook
+    //  *
+    //  * @param int   $id             Id of hook to update
+    //  * @param array $request_data   Datas
+    //  * @return int
+    //  *
+    //  * @url	PUT /hooks/{id}
+    //  */
     /*public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->zapier->write) {

@@ -825,7 +825,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 
 			// Escompte
-			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
+			if ($object->close_code == FactureFournisseur::CLOSECODE_DISCOUNTVAT)
 			{
 				$index++;
 				$pdf->SetFillColor(255, 255, 255);

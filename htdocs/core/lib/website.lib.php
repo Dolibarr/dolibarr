@@ -384,12 +384,13 @@ function dolWebsiteSaveContent($content)
 /**
  * Make a redirect to another container.
  *
- * @param 	string	$containerref		Ref of container to redirect to (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php').
+ * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
  * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
  * @param 	int		$containerid		Id of container.
+ * @param	int		$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0)
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0)
 {
 	global $db, $website;
 
@@ -436,6 +437,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if ($result > 0)
 		{
 			$currenturi = $_SERVER["REQUEST_URI"];
+			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp))
 			{
 				if ($regtmp[0] == $containerref)
@@ -461,6 +463,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 
 	if ($newurl)
 	{
+		if ($permanent) {
+			header("Status: 301 Moved Permanently", false, 301);
+		}
 		header("Location: ".$newurl);
 		exit;
 	}

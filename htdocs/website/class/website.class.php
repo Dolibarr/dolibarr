@@ -20,7 +20,7 @@
  */
 
 /**
- * \file    website/website.class.php
+ * \file    htdocs/website/class/website.class.php
  * \ingroup website
  * \brief   File for the CRUD class of website (Create/Read/Update/Delete)
  */
@@ -95,6 +95,11 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
+
+	/**
+	 * @var int
+	 */
+	public $use_manifest;
 
 	/**
 	 * List of containers
@@ -237,6 +242,7 @@ class Website extends CommonObject
 		$sql .= " t.description,";
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
+		$sql .= " t.use_manifest,";
 		$sql .= " t.virtualhost,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -264,6 +270,7 @@ class Website extends CommonObject
 				$this->status = $obj->status;
 				$this->fk_default_home = $obj->fk_default_home;
 				$this->virtualhost = $obj->virtualhost;
+				$this->use_manifest = $obj->use_manifest;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
@@ -425,6 +432,7 @@ class Website extends CommonObject
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' status = '.(isset($this->status) ? $this->status : "null").',';
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? $this->fk_default_home : "null").',';
+		$sql .= ' use_manifest = '.((int) $this->use_manifest).',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '') ? "'".$this->db->escape($this->virtualhost)."'" : "null").',';
 		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
@@ -833,9 +841,15 @@ class Website extends CommonObject
 		$arrayreplacementincss['file=js/'.$website->ref.'/'] = "file=js/__WEBSITE_KEY__/";
 		$arrayreplacementincss['medias/image/'.$website->ref.'/'] = "medias/image/__WEBSITE_KEY__/";
 		$arrayreplacementincss['medias/js/'.$website->ref.'/'] = "medias/js/__WEBSITE_KEY__/";
-		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_small] = "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__";
-		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_mini] = "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__";
-		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
+		if ($mysoc->logo_small) {
+		    $arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_small] = "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__";
+		}
+		if ($mysoc->logo_mini) {
+		    $arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_mini] = "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__";
+		}
+		if ($mysoc->logo) {
+		    $arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
+		}
 
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
@@ -1145,6 +1159,18 @@ class Website extends CommonObject
 			$this->db->commit();
 			return $object->id;
 		}
+	}
+
+	/**
+	 * Return if web site is a multilanguage web site. Return false if there is only 0 or 1 language.
+	 *
+	 * @return boolean			True if web site is a multilanguage web site
+	 */
+	public function isMultiLang()
+	{
+		// TODO Can edit list of languages of web site. Return false if there is only 0 or 1 language.
+
+		return true;
 	}
 
 	/**

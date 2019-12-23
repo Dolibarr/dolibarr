@@ -27,21 +27,21 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
-$action=GETPOST('action', 'alpha');
-$massaction=GETPOST('massaction', 'alpha');
-$show_files=GETPOST('show_files', 'int');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectlist';   // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 
 // Security check
-if (! $user->rights->bookmark->lire) {
+if (!$user->rights->bookmark->lire) {
 	restrictedArea($user, 'bookmarks');
 }
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -54,7 +54,7 @@ if (!$sortorder) $sortorder = 'ASC';
 
 $id = GETPOST("id", 'int');
 
-$object=new Bookmark($db);
+$object = new Bookmark($db);
 
 $permissiontoread = $user->rights->bookmark->lire;
 $permissiontoadd = $user->rights->bookmark->write;
@@ -67,7 +67,7 @@ $permissiontodelete = $user->rights->bookmark->delete;
 
 if ($action == 'delete')
 {
-	$res=$object->remove($id);
+	$res = $object->remove($id);
 	if ($res > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
@@ -84,20 +84,20 @@ if ($action == 'delete')
  * View
  */
 
-$userstatic=new User($db);
+$userstatic = new User($db);
 
 $title = $langs->trans("ListOfBookmarks");
 
 llxHeader('', $title);
 
 $sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
-$sql.= " u.login, u.lastname, u.firstname";
-$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
-$sql.= " WHERE 1=1";
-$sql.= " AND b.entity IN (".getEntity('bookmark').")";
-if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
+$sql .= " u.login, u.lastname, u.firstname";
+$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
+$sql .= " WHERE 1=1";
+$sql .= " AND b.entity IN (".getEntity('bookmark').")";
+if (!$user->admin) $sql .= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
 
-$sql.=$db->order($sortfield.", position", $sortorder);
+$sql .= $db->order($sortfield.", position", $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -118,10 +118,10 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 }
 else
 {
-	$sql.= $db->plimit($limit+1, $offset);
+	$sql .= $db->plimit($limit + 1, $offset);
 
-	$resql=$db->query($sql);
-	if (! $resql)
+	$resql = $db->query($sql);
+	if (!$resql)
 	{
 		dol_print_error($db);
 		exit;
@@ -131,26 +131,26 @@ else
 }
 
 $param = "";
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($optioncss != '') $param ='&optioncss='.urlencode($optioncss);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($optioncss != '') $param = '&optioncss='.urlencode($optioncss);
 
-$moreforfilter='';
+$moreforfilter = '';
 
 // List of mass actions available
-$arrayofmassactions =  array(
+$arrayofmassactions = array(
 	//'validate'=>$langs->trans("Validate"),
 	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 	//'presend'=>$langs->trans("SendByMail"),
 );
-if ($permissiontodelete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -158,13 +158,13 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton='';
-$newcardbutton.= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bookmark', 0, $newcardbutton, '', $limit);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 print "<tr class=\"liste_titre\">";
 //print "<td>&nbsp;</td>";
@@ -193,13 +193,13 @@ while ($i < min($num, $limit))
 	print $object->getNomUrl(1);
 	print '</td>';
 
-	$linkintern=0;
-	$title=$obj->title;
-	$link=$obj->url;
+	$linkintern = 0;
+	$title = $obj->title;
+	$link = $obj->url;
 
 	// Title
 	print "<td>";
-	$linkintern=1;
+	$linkintern = 1;
 	if ($linkintern) print "<a href=\"".$obj->url."\">";
 	print $title;
 	if ($linkintern) print "</a>";
@@ -207,23 +207,23 @@ while ($i < min($num, $limit))
 
 	// Url
 	print '<td class="tdoverflowmax200">';
-	if (! $linkintern) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
+	if (!$linkintern) print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink"' : '').'>';
 	print $link;
-	if (! $linkintern) print '</a>';
+	if (!$linkintern) print '</a>';
 	print "</td>\n";
 
 	// Target
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($obj->target == 0) print $langs->trans("BookmarkTargetReplaceWindowShort");
 	if ($obj->target == 1) print $langs->trans("BookmarkTargetNewWindowShort");
 	print "</td>\n";
 
 	// Author
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($obj->fk_user)
 	{
-		$userstatic->id=$obj->fk_user;
-		$userstatic->lastname=$obj->login;
+		$userstatic->id = $obj->fk_user;
+		$userstatic->lastname = $obj->login;
 		print $userstatic->getNomUrl(1);
 	}
 	else
@@ -233,7 +233,7 @@ while ($i < min($num, $limit))
 	print "</td>\n";
 
 	// Date creation
-	print '<td align="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
+	print '<td class="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
 
 	// Position
 	print '<td class="right">'.$obj->position."</td>";

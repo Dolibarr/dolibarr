@@ -77,6 +77,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account MA PCG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
 
+-- Description of chart of account SE BAS-K1-MINI
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
+
+
 --DELETE FROM llx_accounting_system WHERE pcg_version = 'SYSCOHADA';
 
 -- Description of chart of account BJ SYSCOHADA

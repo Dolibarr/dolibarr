@@ -78,7 +78,7 @@ $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $optioncss = GETPOST('optioncss', 'alpha');
 $billed = GETPOST('billed', 'int');
-$viewstatut = GETPOST('viewstatut');
+$viewstatut = GETPOST('viewstatut', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
@@ -219,7 +219,7 @@ if (empty($reshook))
 	$permissiontoread = $user->rights->commande->lire;
 	$permissiontodelete = $user->rights->commande->supprimer;
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
-	$trigger_name = 'ORDER_SENTBYMAIL';
+	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -453,7 +453,7 @@ if ($resql)
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -824,8 +824,7 @@ if ($resql)
 		{
 			print '<td class="nowrap">';
 
-			$generic_commande->lines = array();
-			$generic_commande->getLinesArray();
+			$generic_commande->getLinesArray();		// This set ->lines
 
 			print $generic_commande->getNomUrl(1, ($viewstatut != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1);
 
@@ -1001,148 +1000,148 @@ if ($resql)
 				}
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Town
-		if (! empty($arrayfields['s.town']['checked']))
+		if (!empty($arrayfields['s.town']['checked']))
 		{
 			print '<td class="nocellnopadd">';
 			print $obj->town;
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Zip
-		if (! empty($arrayfields['s.zip']['checked']))
+		if (!empty($arrayfields['s.zip']['checked']))
 		{
 			print '<td class="nocellnopadd">';
 			print $obj->zip;
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// State
-		if (! empty($arrayfields['state.nom']['checked']))
+		if (!empty($arrayfields['state.nom']['checked']))
 		{
 			print "<td>".$obj->state_name."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Country
-		if (! empty($arrayfields['country.code_iso']['checked']))
+		if (!empty($arrayfields['country.code_iso']['checked']))
 		{
-			print '<td align="center">';
-			$tmparray=getCountry($obj->fk_pays, 'all');
+			print '<td class="center">';
+			$tmparray = getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Type ent
-		if (! empty($arrayfields['typent.code']['checked']))
+		if (!empty($arrayfields['typent.code']['checked']))
 		{
-			print '<td align="center">';
-			if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+			print '<td class="center">';
+			if (count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
 			print $typenArray[$obj->typent_code];
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Order date
-		if (! empty($arrayfields['c.date_commande']['checked']))
+		if (!empty($arrayfields['c.date_commande']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
-		// Planned date of delivery
-		if (! empty($arrayfields['c.date_delivery']['checked']))
+		// Plannned date of delivery
+		if (!empty($arrayfields['c.date_delivery']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_delivery), 'day');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Amount HT
-		if (! empty($arrayfields['c.total_ht']['checked']))
+		if (!empty($arrayfields['c.total_ht']['checked']))
 		{
 			  print '<td class="nowrap right">'.price($obj->total_ht)."</td>\n";
-			  if (! $i) $totalarray['nbfield']++;
-			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='c.total_ht';
+			  if (!$i) $totalarray['nbfield']++;
+			  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.total_ht';
 			  $totalarray['val']['c.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
-		if (! empty($arrayfields['c.total_vat']['checked']))
+		if (!empty($arrayfields['c.total_vat']['checked']))
 		{
 			print '<td class="nowrap right">'.price($obj->total_tva)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='c.total_tva';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.total_tva';
 			$totalarray['val']['c.total_tva'] += $obj->total_tva;
 		}
 		// Amount TTC
-		if (! empty($arrayfields['c.total_ttc']['checked']))
+		if (!empty($arrayfields['c.total_ttc']['checked']))
 		{
 			print '<td class="nowrap right">'.price($obj->total_ttc)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='c.total_ttc';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
 			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
 		}
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
-		if (! empty($arrayfields['c.datec']['checked']))
+		if (!empty($arrayfields['c.datec']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Date modification
-		if (! empty($arrayfields['c.tms']['checked']))
+		if (!empty($arrayfields['c.tms']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Date cloture
-		if (! empty($arrayfields['c.date_cloture']['checked']))
+		if (!empty($arrayfields['c.date_cloture']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Status
-		if (! empty($arrayfields['c.fk_statut']['checked']))
+		if (!empty($arrayfields['c.fk_statut']['checked']))
 		{
 			print '<td class="nowrap right">'.$generic_commande->LibStatut($obj->fk_statut, $obj->billed, 5, 1).'</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Billed
-		if (! empty($arrayfields['c.facture']['checked']))
+		if (!empty($arrayfields['c.facture']['checked']))
 		{
-			print '<td align="center">'.yn($obj->billed).'</td>';
-			if (! $i) $totalarray['nbfield']++;
+			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Action column
 		print '<td class="nowrap" align="center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
-			$selected=0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 
-		$total+=$obj->total_ht;
-		$subtotal+=$obj->total_ht;
+		$total += $obj->total_ht;
+		$subtotal += $obj->total_ht;
 		$i++;
 	}
 

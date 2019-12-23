@@ -670,10 +670,9 @@ class CommandeFournisseur extends CommonOrder
             2 => 'status3',
             3 => 'status3',
             4 => 'status3',
-            5 => 'status6',
+            5 => 'status4',
             6 => 'status5',
             7 => 'status5',
-
             9 => 'status5',
         );
 
@@ -2420,18 +2419,19 @@ class CommandeFournisseur extends CommonOrder
         if ($resql)
         {
             // Trigger names for each status
-            $trigger_name[0] = 'DRAFT';
-            $trigger_name[1] = 'VALIDATED';
-            $trigger_name[2] = 'APPROVED';
-            $trigger_name[3] = 'ORDERED'; // Ordered
-            $trigger_name[4] = 'RECEIVED_PARTIALLY';
-            $trigger_name[5] = 'RECEIVED_COMPLETELY';
-            $trigger_name[6] = 'CANCELED';
-            $trigger_name[7] = 'CANCELED';
-            $trigger_name[9] = 'REFUSED';
+        	$triggerName = array();
+            $triggerName[0] = 'DRAFT';
+            $triggerName[1] = 'VALIDATED';
+            $triggerName[2] = 'APPROVED';
+            $triggerName[3] = 'ORDERED'; // Ordered
+            $triggerName[4] = 'RECEIVED_PARTIALLY';
+            $triggerName[5] = 'RECEIVED_COMPLETELY';
+            $triggerName[6] = 'CANCELED';
+            $triggerName[7] = 'CANCELED';
+            $triggerName[9] = 'REFUSED';
 
             // Call trigger
-            $result = $this->call_trigger("ORDER_SUPPLIER_STATUS_".$trigger_name[$status], $user);
+            $result = $this->call_trigger("ORDER_SUPPLIER_STATUS_".$triggerName[$status], $user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
@@ -2891,9 +2891,9 @@ class CommandeFournisseur extends CommonOrder
             $resql = $db->query($sql);
             if ($resql)
             {
-                if ($db->num_rows($query))
+                if ($db->num_rows($resql))
                 {
-                    $obj = $db->fetch_object($query);
+                    $obj = $db->fetch_object($resql);
 
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
@@ -3589,7 +3589,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (!$error)
             {
                 $this->db->commit();
-                return $result;
+                return 1;
             }
             else
             {

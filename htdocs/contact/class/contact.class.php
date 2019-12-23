@@ -9,7 +9,7 @@
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,22 +65,42 @@ class Contact extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-		'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'firstname'     =>array('type'=>'varchar(128)', 'label'=>'Firstname',        'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>11, 'searchall'=>1),
-		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
-		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
-		'datec'         =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
-		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
+		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'Phone perso', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'Phone mobile', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
+		'priv' =>array('type'=>'smallint(6)', 'label'=>'Priv', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
+		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>195),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>200),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 	);
 
-	public $civility_id;      	// In fact we store civility_code
+	public $civility_id; // In fact we store civility_code
 	public $civility_code;
 	public $civility;
 
@@ -92,14 +112,14 @@ class Contact extends CommonObject
 	public $zip;
 	public $town;
 
-	public $state_id;	        	// Id of department
-	public $state_code;		    	// Code of department
-	public $state;			        // Label of department
+	public $state_id; // Id of department
+	public $state_code; // Code of department
+	public $state; // Label of department
 
-    public $poste;                 // Position
+    public $poste; // Position
 
-	public $socid;					// fk_soc
-	public $statut;					// 0=inactif, 1=actif
+	public $socid; // fk_soc
+	public $statut; // 0=inactif, 1=actif
 
 	public $code;
 
@@ -181,9 +201,9 @@ class Contact extends CommonObject
      * Old copy
      * @var Contact
      */
-	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
+	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
-	public $roles=array();
+	public $roles = array();
 
 
 	/**
@@ -193,8 +213,38 @@ class Contact extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf, $langs;
+
 		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->mailing->enabled)) $this->fields['no_email']['enabled'] = 0;
+		if (!empty($conf->global->SOCIETE_DISABLE_CONTACTS)) $this->fields['thirdparty']['enabled'] = 0;
 		$this->statut = 1; // By default, status is enabled
+
+		// Unset fields that are disabled
+		foreach ($this->fields as $key => $val)
+		{
+			if (isset($val['enabled']) && empty($val['enabled']))
+			{
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		/*if (is_object($langs))
+		{
+			foreach($this->fields as $key => $val)
+			{
+				if (is_array($val['arrayofkeyval']))
+				{
+					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					{
+						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+					}
+				}
+			}
+		}*/
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -208,28 +258,28 @@ class Contact extends CommonObject
         // phpcs:enable
 		global $user;
 
-		$this->nb=array();
+		$this->nb = array();
 		$clause = "WHERE";
 
 		$sql = "SELECT count(sp.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
-		    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-		    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		    $sql .= ", ".MAIN_DB_PREFIX."societe as s";
+		    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			$clause = "AND";
 		}
-		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
-		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
-        if ($user->socid > 0) $sql.=" AND sp.fk_soc = ".$user->socid;
+		$sql .= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
+		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
+        if ($user->socid > 0) $sql .= " AND sp.fk_soc = ".$user->socid;
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj=$this->db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["contacts"]=$obj->nb;
+				$this->nb["contacts"] = $obj->nb;
 			}
 			$this->db->free($resql);
 			return 1;
@@ -261,6 +311,7 @@ class Contact extends CommonObject
 		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
         $this->firstname = trim($this->firstname);
         if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
         if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
         if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
@@ -372,6 +423,10 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
+
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
@@ -386,7 +441,7 @@ class Contact extends CommonObject
 		$this->town = (empty($this->town) ? '' : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		if (empty($this->statut)) $this->statut = 0;
-		if (empty($this->civility_code) && ! is_numeric($this->civility_id)) $this->civility_code = $this->civility_id;   // For backward compatibility
+		if (empty($this->civility_code) && !is_numeric($this->civility_id)) $this->civility_code = $this->civility_id; // For backward compatibility
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
@@ -406,16 +461,16 @@ class Contact extends CommonObject
         $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
-		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
-		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
-		$sql .= ", phone_perso = ".(isset($this->phone_perso)?"'".$this->db->escape($this->phone_perso)."'":"null");
-		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
+		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
+		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "null");
+		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "null");
+		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", statut = ".$this->db->escape($this->statut);
-		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
-		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
-		$sql .= ", entity = " . $this->db->escape($this->entity);
+		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
+		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
+		$sql .= ", entity = ".$this->db->escape($this->entity);
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -525,15 +580,15 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (! $error && ! $notrigger)
+			if (!$error && !$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('CONTACT_MODIFY', $user);
+				$result = $this->call_trigger('CONTACT_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				$this->db->commit();
 				return 1;
@@ -757,37 +812,37 @@ class Contact extends CommonObject
 
         $langs->load("dict");
 
-		dol_syslog(get_class($this) . "::fetch id=" . $id . " ref_ext=" . $ref_ext . " email=" . $email, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch id=".$id." ref_ext=".$ref_ext." email=".$email, LOG_DEBUG);
 
 		if (empty($id) && empty($ref_ext) && empty($email))
 		{
-			$this->error='BadParameter';
+			$this->error = 'BadParameter';
 			return -1;
 		}
 
 		$langs->load("companies");
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
-		$sql.= " c.address, c.statut, c.zip, c.town,";
-		$sql.= " c.fk_pays as country_id,";
-		$sql.= " c.fk_departement as state_id,";
-		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
-		$sql.= " c.socialnetworks,";
-        $sql.= " c.photo,";
-		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
-		$sql.= " c.import_key,";
-		$sql.= " c.datec as date_creation, c.tms as date_modification,";
-		$sql.= " co.label as country, co.code as country_code,";
-		$sql.= " d.nom as state, d.code_departement as state_code,";
-		$sql.= " u.rowid as user_id, u.login as user_login,";
-		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
-		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if ($id) $sql.= " WHERE c.rowid = ". $id;
+		$sql .= " c.address, c.statut, c.zip, c.town,";
+		$sql .= " c.fk_pays as country_id,";
+		$sql .= " c.fk_departement as state_id,";
+		$sql .= " c.birthday,";
+		$sql .= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
+		$sql .= " c.socialnetworks,";
+        $sql .= " c.photo,";
+		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
+		$sql .= " c.import_key,";
+		$sql .= " c.datec as date_creation, c.tms as date_modification,";
+		$sql .= " co.label as country, co.code as country_code,";
+		$sql .= " d.nom as state, d.code_departement as state_code,";
+		$sql .= " u.rowid as user_id, u.login as user_login,";
+		$sql .= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
+		if ($id) $sql .= " WHERE c.rowid = ".$id;
 		else
 		{
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
@@ -799,47 +854,47 @@ class Contact extends CommonObject
 			}
 		}
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id				= $obj->rowid;
-				$this->entity			= $obj->entity;
-				$this->ref				= $obj->rowid;
-				$this->ref_ext			= $obj->ref_ext;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
+				$this->ref = $obj->rowid;
+				$this->ref_ext = $obj->ref_ext;
 
 				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
+				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
-                $this->lastname			= $obj->lastname;
-				$this->firstname		= $obj->firstname;
-				$this->address			= $obj->address;
-				$this->zip				= $obj->zip;
-				$this->town				= $obj->town;
+                $this->lastname = $obj->lastname;
+				$this->firstname = $obj->firstname;
+				$this->address = $obj->address;
+				$this->zip = $obj->zip;
+				$this->town = $obj->town;
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->state_id			= $obj->state_id;
-				$this->state_code		= $obj->state_code;
-				$this->state			= $obj->state;
+				$this->state_id = $obj->state_id;
+				$this->state_code = $obj->state_code;
+				$this->state = $obj->state;
 
-				$this->country_id 		= $obj->country_id;
-				$this->country_code		= $obj->country_id?$obj->country_code:'';
-				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+				$this->country_id = $obj->country_id;
+				$this->country_code = $obj->country_id ? $obj->country_code : '';
+				$this->country			= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
-				$this->statut			= $obj->statut;
+				$this->statut = $obj->statut;
 
-				$this->phone_pro		= trim($obj->phone);
-				$this->fax				= trim($obj->fax);
-				$this->phone_perso		= trim($obj->phone_perso);
-				$this->phone_mobile		= trim($obj->phone_mobile);
+				$this->phone_pro = trim($obj->phone);
+				$this->fax = trim($obj->fax);
+				$this->phone_perso = trim($obj->phone_perso);
+				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
 				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
@@ -847,14 +902,14 @@ class Contact extends CommonObject
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
-				$this->birthday			= $this->db->jdate($obj->birthday);
-				$this->note				= $obj->note_private;		// deprecated
+				$this->birthday = $this->db->jdate($obj->birthday);
+				$this->note				= $obj->note_private; // deprecated
 				$this->note_private		= $obj->note_private;
-				$this->note_public		= $obj->note_public;
+				$this->note_public = $obj->note_public;
 				$this->default_lang		= $obj->default_lang;
-				$this->user_id			= $obj->user_id;
+				$this->user_id = $obj->user_id;
 				$this->user_login		= $obj->user_login;
-				$this->canvas			= $obj->canvas;
+				$this->canvas = $obj->canvas;
 
 				$this->import_key		= $obj->import_key;
 
@@ -1617,7 +1672,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
 
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);

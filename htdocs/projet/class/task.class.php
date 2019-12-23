@@ -1985,7 +1985,7 @@ class Task extends CommonObject
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
 		$sql .= " AND p.fk_statut = 1";
 		$sql .= " AND t.fk_projet = p.rowid";
-		$sql .= " AND t.progress < 100"; // tasks to do
+		$sql .= " AND (t.progress IS NULL OR t.progress < 100)"; // tasks to do
 		if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")";
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";

@@ -4,6 +4,7 @@ StripeDesc=Ofereça aos clientes uma página de pagamento on-line do Stripe para
 StripeOrCBDoPayment=Pagar com cartão de crédito ou boleto
 STRIPE_PAYONLINE_SENDEMAIL=Notificação por e-mail após uma tentativa de pagamento (sucesso ou falha)
 YouWillBeRedirectedOnStripe=Você será redirecionado na página de boleto protegida para inserir as informações do cartão de crédito
+ToOfferALinkForOnlinePayment=URL para %s pagamento
 SetupStripeToHavePaymentCreatedAutomatically=Configure seu boleto com url <b> %s </b> para que o pagamento seja criado automaticamente quando validado por boleto
 STRIPE_CGI_URL_V2=Url de boleto CGI módulo para pagamento
 NewStripePaymentReceived=Pagamento de novo boleto recebido

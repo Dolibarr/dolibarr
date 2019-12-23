@@ -25,7 +25,7 @@
  */
 
 /**
- *      \file       htdocs/admin/commandefournisseurdispatch_extrafields.php
+ *      \file       htdocs/admin/commande_fournisseur_dispatch_extrafields.php
  *		\ingroup    reception
  *		\brief      Page to setup extra fields of reception
  */

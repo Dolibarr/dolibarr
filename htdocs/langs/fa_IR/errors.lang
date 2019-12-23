@@ -196,6 +196,7 @@ ErrorPhpMailDelivery=بررسی کنید شما تعداد بیش‌از حدی 
 ErrorUserNotAssignedToTask=کاربر برای امکان محاسبۀ زمان صرف شده باید به یک وظیفه نسبت داده شود.
 ErrorTaskAlreadyAssigned=وظیفه قبلا به کاربر محول شده است
 ErrorModuleFileSeemsToHaveAWrongFormat=ظاهرا بستۀ واحد وضعیت نامناسبی دارد
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
 ErrorFilenameDosNotMatchDolibarrPackageRules=نام بستۀ واحد (<strong>%s</strong>) با نام مطلوب نگارش همخوان نیست: <strong>%s</strong>
 ErrorDuplicateTrigger=خطا، نام ماشه-تریگر %s تکراری است. قبلا از %s بارگذاری شده است.
 ErrorNoWarehouseDefined=خطا، هیچ انباری تعریف نشده است.
@@ -219,6 +220,9 @@ ErrorURLMustStartWithHttp=نشانی اینترنتی %s باید با http:// 
 ErrorNewRefIsAlreadyUsed=خطا، ارجاع جدید قبلا استفاده شده است
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 ErrorSearchCriteriaTooSmall=Search criteria too small.
+ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
+ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
+ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد
@@ -244,3 +248,4 @@ WarningAnEntryAlreadyExistForTransKey=یک ورودی برای این کلید �
 WarningNumberOfRecipientIsRestrictedInMassAction=هشدار، در هنگام انجام عملیات انبوده روی فهرست‌ها، تعداد دریافت‌کنندگان مختلف به <b>%s</b> محدود است.
 WarningDateOfLineMustBeInExpenseReportRange=هشدار، تاریخ مربوط به سطر در بازۀ گزارش هزینه‌ها نیست
 WarningProjectClosed=طرح بسته است. ابتدا باید آن را باز کنید
+WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.

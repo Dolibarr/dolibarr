@@ -560,7 +560,7 @@ if ($resql)
         dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
 
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $morehtmlref = '<div class="refidno">';
         $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
@@ -720,7 +720,7 @@ if ($resql)
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
