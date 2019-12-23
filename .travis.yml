@@ -68,6 +68,8 @@ matrix:
     env: DB=mariadb
   - php: '7.2'
     env: DB=mariadb
+  - php: '7.3'
+    env: DB=mariadb
   - php: '5.6'
     env: DB=postgresql
   - php: '7.0'
@@ -75,6 +77,8 @@ matrix:
   - php: '7.1'
     env: DB=postgresql
   - php: '7.2'
+    env: DB=postgresql
+  - php: '7.3'
     env: DB=postgresql
   - php: nightly
     env: DB=postgresql
