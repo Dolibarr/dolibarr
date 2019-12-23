@@ -71,9 +71,11 @@ class FormOther
     public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
     {
         // phpcs:enable
-        $sql = "SELECT rowid, label";
+    	global $conf;
+
+    	$sql = "SELECT rowid, label, fk_user";
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
-        $sql .= " WHERE type = '".$type."'";
+        $sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
         $sql .= " ORDER BY rowid";
         $result = $this->db->query($sql);
@@ -99,6 +101,11 @@ class FormOther
                     print '<option value="'.$obj->rowid.'">';
                 }
                 print $obj->label;
+                if (! empty($conf->global->EXPORTS_SHARE_MODELS) && $fk_user == $obj->fk_user) {
+                	$tmpuser = new User($this->db);
+                	$tmpuser->fetch($fk_user);
+                	print ' ('.$tmpuser->getFullName().')';
+                }
                 print '</option>';
                 $i++;
             }
