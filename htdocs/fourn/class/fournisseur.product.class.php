@@ -434,7 +434,7 @@ class ProductFournisseur extends Product
                 $sql .= ")";
 
 				$this->product_fourn_price_id = 0;
-					
+
                 $resql = $this->db->query($sql);
                 if ($resql) {
                     $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
@@ -939,8 +939,6 @@ class ProductFournisseur extends Product
      */
     public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
-        global $conf;
-
         $sql = "SELECT";
         $sql.= " pfpl.rowid, pfp.ref_fourn as supplier_ref, pfpl.datec, u.lastname,";
         $sql.= " pfpl.price, pfpl.quantity";
@@ -961,9 +959,17 @@ class ProductFournisseur extends Product
         {
             $retarray = array();
 
-            while ($record = $this->db->fetch_array($resql))
+            while ($obj = $this->db->fetch_object($resql))
             {
-                $retarray[]=$record;
+                $tmparray = array();
+                $tmparray['rowid'] = $obj->rowid;
+                $tmparray['supplier_ref'] = $obj->supplier_ref;
+                $tmparray['datec'] = $this->db->jdate($obj->datec);
+                $tmparray['lastname'] = $obj->lastname;
+                $tmparray['price'] = $obj->price;
+                $tmparray['quantity'] = $obj->quantity;
+
+            	$retarray[]=$tmparray;
             }
 
             $this->db->free($resql);
@@ -991,7 +997,7 @@ class ProductFournisseur extends Product
         $langs->load("suppliers");
         if (count($productFournLogList) > 0) {
             $out .= '<table class="nobordernopadding" width="100%">';
-            $out .= '<tr><td class="liste_titre">'.$langs->trans("Date").'</td>';
+            $out .= '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Date").'</td>';
             $out .= '<td class="liste_titre right">'.$langs->trans("Price").'</td>';
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
@@ -1032,7 +1038,7 @@ class ProductFournisseur extends Product
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
-            $label.= '<br>';
+            $label.= '<br><br>';
             $label.= '<u>' . $langs->trans("History") . '</u>';
             $label.= $this->displayPriceProductFournisseurLog($logPrices);
         }
