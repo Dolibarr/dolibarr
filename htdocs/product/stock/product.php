@@ -666,8 +666,15 @@ if ($id > 0 || $ref)
 
 			// Number of product from customer order already sent (partial shipping)
 			if (!empty($conf->expedition->enabled)) {
+                require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+                $filterShipmentStatus = '';
+                if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+                    $filterShipmentStatus = Expedition::STATUS_VALIDATED  . ',' . Expedition::STATUS_CLOSED;
+                } elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+                    $filterShipmentStatus = Expedition::STATUS_CLOSED;
+                }
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
-				$result = $object->load_stats_sending(0, '2', 1);
+				$result = $object->load_stats_sending(0, '2', 1, $filterShipmentStatus);
 				$helpondiff .= $langs->trans("ProductQtyInShipmentAlreadySent") . ': ' . $object->stats_expedition['qty'];
 			}
 
