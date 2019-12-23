@@ -519,14 +519,12 @@ if ($step == 3 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
@@ -798,13 +796,12 @@ if ($step == 4 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
@@ -1273,13 +1270,12 @@ if ($step == 5 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
@@ -1378,9 +1374,9 @@ if ($step == 5 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnTargetTables"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
@@ -1717,13 +1713,12 @@ if ($step == 6 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';

@@ -43,12 +43,13 @@ class Export
     public $array_export_sql_order=array();        // Tableau des "requetes sql"
 
     public $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
-    public $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
-    public $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
+    public $array_export_TypeFields=array();	   // Tableau des listes de champ+Type de filtre
+    public $array_export_FilterValue=array();	   // Tableau des listes de champ+Valeur a filtrer
     public $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
     public $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
-    public $array_export_special=array();          // Tableau des operations speciales sur champ
-    public $array_export_examplevalues=array();    // array with examples
+    public $array_export_special=array();          // array of special operations to do on field
+    public $array_export_examplevalues=array();    // array with examples for fields
+	public $array_export_help=array();			   // array with tooltip help for fields
 
     // To store export modules
     public $hexa;
@@ -186,6 +187,8 @@ class Export
 									$this->array_export_special[$i]=(! empty($module->export_special_array[$r])?$module->export_special_array[$r]:'');
             						// Array of examples
             						$this->array_export_examplevalues[$i]=$module->export_examplevalues_array[$r];
+            						// Array of help tooltips
+            						$this->array_export_help[$i]=(! empty($module->export_help_array[$r])?$module->export_help_array[$r]:'');
 
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];

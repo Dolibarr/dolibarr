@@ -71,7 +71,9 @@ class FormOther
     public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
     {
         // phpcs:enable
-        $sql = "SELECT rowid, label";
+        global $conf, $langs, $user;
+
+        $sql = "SELECT rowid, label, fk_user";
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql .= " WHERE type = '".$type."'";
 		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
@@ -79,7 +81,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat minwidth200" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -90,19 +92,28 @@ class FormOther
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
+
+                $label = $obj->label;
+                if (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                	$tmpuser = new User($this->db);
+                	$tmpuser->fetch($obj->fk_user);
+                	$label .=  ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
+                }
+
                 if ($selected == $obj->rowid)
                 {
-                    print '<option value="'.$obj->rowid.'" selected>';
+                    print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
                 }
                 else
                 {
-                    print '<option value="'.$obj->rowid.'">';
+                    print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
-                print $obj->label;
+                print $label;
                 print '</option>';
                 $i++;
             }
             print "</select>";
+            print ajax_combobox($htmlname);
         }
         else {
             dol_print_error($this->db);
@@ -130,7 +141,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat minwidth200" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -154,6 +165,7 @@ class FormOther
                 $i++;
             }
             print "</select>";
+            print ajax_combobox($htmlname);
         }
         else {
             dol_print_error($this->db);
