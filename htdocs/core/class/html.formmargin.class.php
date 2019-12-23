@@ -63,6 +63,8 @@ class FormMargin
 	{
 		global $conf, $db;
 
+        require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
 		// Default returned array
 		$marginInfos = array(
 				'pa_products' => 0,
