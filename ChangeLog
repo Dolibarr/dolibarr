@@ -137,6 +137,7 @@ NEW: #4301
 
 For Developers or integrators:
 
+NEW: Compatible with PHP 7.4 
 NEW: Code for extrafields uses the new array $extrafields->attributes
 NEW: Can set a filter on object linked in modulebuilder.
 NEW: Can defined a position of numbering submodules for thirdparties
