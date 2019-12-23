@@ -45,6 +45,9 @@ $action = GETPOST('action', 'alpha');
  * View
  */
 
+$arrayofcss = array('/takepos/css/pos.css');
+$arrayofjs=array();
+
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
@@ -62,13 +65,13 @@ $( document ).ready(function() {
 <body>
 <br>
 <center>
-<input type="text" id="desc" name="desc" style="width:40%;font-size: 200%;" placeholder="<?php echo $langs->trans('Description'); ?>">
+<input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">
 <?php
-if ($action == "freezone") echo '<input type="text" id="number" name="number" style="width:15%;font-size: 200%;" placeholder="'.$langs->trans('Price').'">';
+if ($action == "freezone") echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans('Price').'">';
 if ($action == "addnote") echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';
 ?>
-<input type="hidden" name="place" value="<?php echo $place; ?>">
-<input type="button" class="button" style="width:15%; font-size: 200%;" value="OK" onclick="Save();">
+<input type="hidden" name="place" class="takepospay" value="<?php echo $place; ?>">
+<input type="button" class="button takepospay clearboth" value="OK" onclick="Save();">
 </center>
 
 </body>

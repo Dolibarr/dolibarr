@@ -37,7 +37,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users", "companies", "agenda", "commercial"));
+$langs->loadLangs(array("users", "companies", "agenda", "commercial", "other"));
 
 $action = GETPOST('action', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
@@ -377,7 +377,7 @@ if ($resql)
 	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -618,7 +618,7 @@ if ($resql)
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late = 0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
@@ -631,7 +631,7 @@ if ($resql)
 
 		// End date
 		if (!empty($arrayfields['a.datep2']['checked'])) {
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}

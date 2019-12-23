@@ -33,7 +33,10 @@ TicketDictSeverity=Ticket - Severities
 TicketTypeShortBUGSOFT=软件故障
 TicketTypeShortBUGHARD=硬件故障
 TicketTypeShortCOM=商业问题
-TicketTypeShortINCIDENT=请求帮助
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=项目
 TicketTypeShortOTHER=其他
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=查看所有票据
 TicketViewNonClosedOnly=仅查看有效票据
 TicketStatByStatus=票据按状态
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=不在创建时通知公司
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

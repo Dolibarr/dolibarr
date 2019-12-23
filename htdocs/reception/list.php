@@ -544,7 +544,7 @@ if ($resql)
 	$i = 0;
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="page" value="'.$page.'">';
@@ -781,7 +781,7 @@ if ($resql)
     		print $reception->getNomUrl(1);
     		$filename = dol_sanitizeFileName($reception->ref);
     		$filedir = $conf->reception->dir_output.'/'.dol_sanitizeFileName($reception->ref);
-    		$urlsource = $_SERVER['PHP_SELF'].'?id='.$reception->rowid;
+    		$urlsource = $_SERVER['PHP_SELF'].'?id='.$reception->id;
     		print $formfile->getDocumentsLink($reception->element, $filename, $filedir);
     		print "</td>\n";
 

@@ -52,7 +52,7 @@ function societe_prepare_head(Societe $object)
 
     if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
-	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire)
 		{
 		    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0; // TODO
@@ -228,7 +228,7 @@ function societe_prepare_head(Societe $object)
 
         $head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
         $head[$h][1] = $title;
-        if ($foundonexternalonlinesystem) $head[$h][1] .= ' <span class="badge">...</span>';
+        if ($foundonexternalonlinesystem) $head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
        	elseif ($nbBankAccount > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
@@ -644,7 +644,7 @@ function getFormeJuridiqueLabel($code)
 
 /**
  *  Return list of countries that are inside the EEC (European Economic Community)
- *  TODO Add a field into country dictionary.
+ *  Note: Try to keep this function as a "memory only" function for performance reasons.
  *
  *  @return     array					Array of countries code in EEC
  */
@@ -991,7 +991,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     print load_fiche_titre($title, $newcardbutton, '');
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -1199,7 +1199,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             // Status
             if (!empty($arrayfields['t.statut']['checked']))
             {
-            	print '<td align="center">'.$contactstatic->getLibStatut(5).'</td>';
+            	print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
             }
 
             // Extra fields
@@ -1753,7 +1753,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             }
 
             // Status
-            $out .= '<td class="nowrap" align="center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
+            $out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
 
             // Actions
             $out .= '<td></td>';
@@ -1838,7 +1838,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print '<td>'.$obj->town.'</td>';
 			print '<td>'.$obj->code_client.'</td>';
 
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
 			print img_edit();
 			print '</a></td>';

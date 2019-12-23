@@ -114,6 +114,7 @@ class Facturation
         $localtaxarray = getLocalTaxesFromRate($vatrowid, 0, $societe, $mysoc, 1);
 
         // Clean vat code
+        $reg = array();
         $vat_src_code = '';
         if (preg_match('/\((.*)\)/', $txtva, $reg))
         {

@@ -9,7 +9,6 @@ Permission56005=Veja ingressos de todos os terceiros (não são efetivos para us
 TicketDictType=Tiquetes - Tipos
 TicketDictCategory=Tiquetes - Grupos
 TicketDictSeverity=Tiquete - Severidades
-TicketTypeShortINCIDENT=Pedido de assistencia
 TicketTypeShortOTHER=Outros
 MenuTicketMyAssign=Meus bilhetes
 MenuTicketMyAssignNonClosed=Meus bilhetes abertos

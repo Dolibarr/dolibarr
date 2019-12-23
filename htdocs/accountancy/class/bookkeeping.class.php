@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class BookKeeping extends CommonObject
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-
-	/**
-	 * @var string[] Array of Error codes (or messages)
-	 */
-	public $errors = array();
-
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -235,13 +225,13 @@ class BookKeeping extends CommonObject
 			$this->label_operation = trim($this->label_operation);
 		}
 		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
+			$this->debit = (float) $this->debit;
 		}
 		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
+			$this->credit = (float) $this->credit;
 		}
 		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
+			$this->montant = (float) $this->montant;
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -258,8 +248,8 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
-		if (empty($this->debit)) $this->debit = 0;
-		if (empty($this->credit)) $this->credit = 0;
+		if (empty($this->debit)) $this->debit = 0.0;
+		if (empty($this->credit)) $this->credit = 0.0;
 
 		// Check parameters
 		if (($this->numero_compte == "") || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
@@ -1376,29 +1366,39 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkeeping by year
 	 *
-	 * @param  string $delyear		Year to delete
+	 * @param  int	  $delyear		Year to delete
 	 * @param  string $journal		Journal to delete
 	 * @param  string $mode 		Mode
+	 * @param  int	  $delmonth     Month
 	 * @return int					<0 if KO, >0 if OK
 	 */
-    public function deleteByYearAndJournal($delyear = '', $journal = '', $mode = '')
+    public function deleteByYearAndJournal($delyear = 0, $journal = '', $mode = '', $delmonth = 0)
     {
-		global $conf;
+    	global $langs;
 
-		if (empty($delyear) && empty($journal))
+    	if (empty($delyear) && empty($journal))
 		{
+			$this->error = 'ErrorOneFieldRequired';
 			return -1;
+		}
+		if (!empty($delmonth) && empty($delyear))
+		{
+			$this->error = 'YearRequiredIfMonthDefined';
+			return -2;
 		}
 
 		$this->db->begin();
 
-		// first check if line not yet in bookkeeping
+		// Delete record in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE 1 = 1";
-		if (!empty($delyear)) $sql .= " AND YEAR(doc_date) = ".$delyear; // FIXME Must use between
+		$sql.= dolSqlDateFilter('doc_date', 0, $delmonth, $delyear);
 		if (!empty($journal)) $sql .= " AND code_journal = '".$this->db->escape($journal)."'";
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
+
+		// TODO: In a future we must forbid deletion if record is inside a closed fiscal period.
+
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {

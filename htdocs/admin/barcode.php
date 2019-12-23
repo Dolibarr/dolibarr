@@ -196,7 +196,7 @@ print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 if (empty($conf->use_javascript_ajax))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="updateengine">';
 }
 
@@ -306,7 +306,7 @@ print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
 print '<table class="noborder centpercent">';

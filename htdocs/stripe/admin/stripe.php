@@ -111,11 +111,15 @@ if ($action == 'setvalue' && $user->admin)
 
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0)
+	if (!$result > 0) {
 		$error++;
-	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0)
-		$error++;
+	}
+	if (empty($conf->use_javascript_ajax)) {
+		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!$result > 0) {
+			$error++;
+		}
+	}
 
 	if (!$error) {
 		$db->commit();
@@ -156,14 +160,14 @@ print load_fiche_titre($langs->trans("ModuleSetup").' Stripe', $linkback);
 $head = stripeadmin_prepare_head();
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'stripeaccount', '', -1);
 
 $stripearrayofwebhookevents = array('payout.created', 'payout.paid', 'charge.pending', 'charge.refunded', 'charge.succeeded', 'charge.failed', 'payment_intent.succeeded', 'payment_intent.payment_failed', 'payment_method.attached', 'payment_method.updated', 'payment_method.card_automatically_updated', 'payment_method.detached', 'source.chargeable', 'customer.deleted');
 
-print $langs->trans("StripeDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("StripeDesc")."</span><br>\n";
 
 print '<br>';
 
@@ -452,7 +456,7 @@ print '</table>';
 
 dol_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 

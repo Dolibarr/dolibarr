@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018           Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       resource/index.php
+ *      \file       htdocs/resource/list.php
  *      \ingroup    resource
  *      \brief      Page to manage resource objects
  */
@@ -50,56 +50,56 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
-if (! is_array($search_array_options)) $search_array_options = array();
-$search_ref=GETPOST("search_ref");
-$search_type=GETPOST("search_type");
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+if (!is_array($search_array_options)) $search_array_options = array();
+$search_ref = GETPOST("search_ref");
+$search_type = GETPOST("search_type");
 
-$filter=array();
+$filter = array();
 
-if ($search_ref != ''){
-	$param.='&search_ref='.$search_ref;
-	$filter['t.ref']=$search_ref;
+if ($search_ref != '') {
+	$param .= '&search_ref='.$search_ref;
+	$filter['t.ref'] = $search_ref;
 }
-if ($search_type != ''){
-	$param.='&search_type='.$search_type;
-	$filter['ty.label']=$search_type;
+if ($search_type != '') {
+	$param .= '&search_type='.$search_type;
+	$filter['ty.label'] = $search_type;
 }
-if ($search_label != '') 		$param.='&search_label='.$search_label;
+if ($search_label != '') 		$param .= '&search_label='.$search_label;
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/', '', $key);
-	$typ=$extrafields->attributes[$object->table_element]['type'][$tmpkey];
+	$crit = $val;
+	$tmpkey = preg_replace('/search_options_/', '', $key);
+	$typ = $extrafields->attributes[$object->table_element]['type'][$tmpkey];
 	if ($val != '') {
-		$param.='&search_options_'.$tmpkey.'='.urlencode($val);
+		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	$mode_search=0;
-	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
-	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
+	$mode_search = 0;
+	if (in_array($typ, array('int', 'double', 'real'))) $mode_search = 1; // Search on a numeric
+	if (in_array($typ, array('sellist', 'link')) && $crit != '0' && $crit != '-1') $mode_search = 2; // Search on a foreign key int
+	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1'))
 	{
 		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 
 
 $hookmanager->initHooks(array('resourcelist'));
 
-if (empty($sortorder)) $sortorder="ASC";
-if (empty($sortfield)) $sortfield="t.ref";
+if (empty($sortorder)) $sortorder = "ASC";
+if (empty($sortfield)) $sortfield = "t.ref";
 if (empty($arch)) $arch = 0;
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$page = GETPOST("page");
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if( ! $user->rights->resource->read) {
+if (!$user->rights->resource->read) {
         accessforbidden();
 }
 $arrayfields = array(
@@ -115,10 +115,10 @@ $arrayfields = array(
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -166,7 +166,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

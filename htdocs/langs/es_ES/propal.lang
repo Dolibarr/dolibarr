@@ -83,3 +83,4 @@ DefaultModelPropalToBill=Modelo por defecto al cerrar un presupuesto (a facturar
 DefaultModelPropalClosed=Modelo por defecto al cerrar un presupuesto (no facturado)
 ProposalCustomerSignature=Aceptación por escrito, sello de la empresa, fecha y firma
 ProposalsStatisticsSuppliers=Estadísticas presupuestos de proveedores
+CaseFollowedBy=Caso seguido por

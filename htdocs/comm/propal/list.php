@@ -456,7 +456,7 @@ if ($resql)
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -628,7 +628,7 @@ if ($resql)
 	if (!empty($arrayfields['ava.rowid']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectAvailabilityDelay($search_availability, 'search_availability', '', 1);
+		$form->selectAvailabilityDelay($search_availability, 'search_availability', '', 1);
 		print ajax_combobox('search_availability');
 		print '</td>';
 	}
@@ -879,7 +879,7 @@ if ($resql)
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
@@ -890,7 +890,7 @@ if ($resql)
 		{
 			if (!is_array($typenArray) || empty($typenArray)) $typenArray = $formcompany->typent_array(1);
 
-			print '<td align="center">';
+			print '<td class="center">';
 			print $typenArray[$obj->typent_code];
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -899,7 +899,7 @@ if ($resql)
 		// Date proposal
 		if (!empty($arrayfields['p.date']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), 'day');
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
@@ -910,7 +910,7 @@ if ($resql)
 		{
 			if ($obj->dfv)
 			{
-				print '<td align="center">'.dol_print_date($db->jdate($obj->dfv), 'day');
+				print '<td class="center">'.dol_print_date($db->jdate($obj->dfv), 'day');
 				print '</td>';
 			}
 			else
@@ -924,112 +924,112 @@ if ($resql)
 		{
 			if ($obj->ddelivery)
 			{
-				print '<td align="center">'.dol_print_date($db->jdate($obj->ddelivery), 'day');
+				print '<td class="center">'.dol_print_date($db->jdate($obj->ddelivery), 'day');
 				print '</td>';
 			}
 			else
 			{
 				print '<td>&nbsp;</td>';
 			}
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Availability
-		if (! empty($arrayfields['ava.rowid']['checked']))
+		if (!empty($arrayfields['ava.rowid']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$form->form_availability('', $obj->availability, 'none', 1);
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Amount HT
-		if (! empty($arrayfields['p.total_ht']['checked']))
+		if (!empty($arrayfields['p.total_ht']['checked']))
 		{
 			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
-			  if (! $i) $totalarray['nbfield']++;
-			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_ht';
+			  if (!$i) $totalarray['nbfield']++;
+			  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht';
 			  $totalarray['val']['p.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
-		if (! empty($arrayfields['p.total_vat']['checked']))
+		if (!empty($arrayfields['p.total_vat']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_vat)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_vat';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_vat';
 			$totalarray['val']['p.total_vat'] += $obj->total_vat;
 		}
 		// Amount TTC
-		if (! empty($arrayfields['p.total_ttc']['checked']))
+		if (!empty($arrayfields['p.total_ttc']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_ttc';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ttc';
 			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
 		}
 		// Amount invoiced
-        if(! empty($arrayfields['p.total_ht_invoiced']['checked'])) {
+        if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) {
             $totalInvoiced = 0;
             $p = new Propal($db);
             $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
 
-            if(! empty($TInvoiceData)) {
-                foreach($TInvoiceData as $invoiceData) {
+            if (!empty($TInvoiceData)) {
+                foreach ($TInvoiceData as $invoiceData) {
                     $invoice = new Facture($db);
                     $invoice->fetch($invoiceData->facid);
 
-                    if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
+                    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
                     $totalInvoiced += $invoice->total_ht;
                 }
             }
 
             print '<td class="right">'.price($totalInvoiced)."</td>\n";
-            if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_ht_invoiced';
+            if (!$i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht_invoiced';
             $totalarray['val']['p.total_ht_invoiced'] += $obj->total_ht_invoiced;
         }
         // Amount invoiced
-        if(! empty($arrayfields['p.total_invoiced']['checked'])) {
+        if (!empty($arrayfields['p.total_invoiced']['checked'])) {
             $totalInvoiced = 0;
             $p = new Propal($db);
             $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
 
-            if(! empty($TInvoiceData)) {
-                foreach($TInvoiceData as $invoiceData) {
+            if (!empty($TInvoiceData)) {
+                foreach ($TInvoiceData as $invoiceData) {
                     $invoice = new Facture($db);
                     $invoice->fetch($invoiceData->facid);
 
-                    if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
+                    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
                     $totalInvoiced += $invoice->total_ttc;
                 }
             }
 
             print '<td class="right">'.price($totalInvoiced)."</td>\n";
-            if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_invoiced';
+            if (!$i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
             $totalarray['val']['p.total_invoiced'] += $obj->total_invoiced;
         }
 
-		$userstatic->id=$obj->fk_user_author;
-		$userstatic->login=$obj->login;
+		$userstatic->id = $obj->fk_user_author;
+		$userstatic->login = $obj->login;
 
 		// Author
-		if (! empty($arrayfields['u.login']['checked']))
+		if (!empty($arrayfields['u.login']['checked']))
 		{
 			print '<td class="center nowraponall">';
 			if ($userstatic->id) print $userstatic->getLoginUrl(1);
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
-		if (! empty($arrayfields['sale_representative']['checked']))
+		if (!empty($arrayfields['sale_representative']['checked']))
 		{
 			// Sales representatives
 			print '<td>';
 			if ($obj->socid > 0)
 			{
-				$listsalesrepresentatives=$companystatic->getSalesRepresentatives($user);
+				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				if ($listsalesrepresentatives < 0) dol_print_error($db);
-				$nbofsalesrepresentative=count($listsalesrepresentatives);
+				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > 3)   // We print only number
 				{
 					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$companystatic->id.'">';

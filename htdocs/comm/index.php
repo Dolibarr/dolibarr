@@ -119,7 +119,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i = 0;
@@ -251,7 +251,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
         print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
-        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 
         if ($num > 0)
         {
@@ -333,7 +333,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftOrders").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 
 		if ($num > 0)
 		{
@@ -422,7 +422,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande-
         print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
-        print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+        print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 
         if ($num > 0)
         {

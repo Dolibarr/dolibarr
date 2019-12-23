@@ -23,9 +23,9 @@
  */
 
 /**
- *	\file	   fichinterrec/class/fichinter-rec.class.php
- *	\ingroup	facture
- *	\brief	  Fichier de la classe des factures recurentes
+ *  \file       htdocs/fichinter/class/fichinterrec.class.php
+ *  \ingroup    facture
+ *  \brief      Fichier de la classe des factures recurentes
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';

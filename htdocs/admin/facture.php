@@ -605,7 +605,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
     print '<br>';
     print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"), '', '');
     print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+    print '<input type="hidden" name="token" value="'.newToken().'" />';
     print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
     print '<table id="default-pdf-modules-by-type-table" class="noborder centpercent">';
     print '<tr class="liste_titre">';
@@ -646,7 +646,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 
 print '<table class="noborder centpercent">';
 
@@ -747,7 +747,7 @@ print "</tr>\n";
 
 // Force date validation
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ForceInvoiceDate");
@@ -765,7 +765,7 @@ foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
@@ -787,7 +787,7 @@ print '</form>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBill"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';

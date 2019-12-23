@@ -21,7 +21,7 @@
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newsign.php
+ *     	\file       htdocs/public/onlinesign/newonlinesign.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
@@ -149,7 +149,7 @@ if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'i
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosign">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";

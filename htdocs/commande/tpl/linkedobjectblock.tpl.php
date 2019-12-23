@@ -18,7 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf)) {
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -36,14 +36,14 @@ $langs->load("orders");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
-$total=0;
-$ilink=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0;
+$ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass='oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
+    $trclass = 'oddeven';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
     echo '<tr class="'.$trclass.'" >';
     echo '<td class="linkedcol-element" >'.$langs->trans("CustomerOrder");
     if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
@@ -62,14 +62,14 @@ foreach($linkedObjectBlock as $key => $objectlink)
     echo '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
     echo '<td class="linkedcol-action right">';
     // For now, shipments must stay linked to order, so link is not deletable
-    if($object->element != 'shipping') {
-        echo '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
+    if ($object->element != 'shipping') {
+        echo '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
     }
     echo '</td>';
     echo "</tr>\n";
 }
 if (count($linkedObjectBlock) > 1) {
-    echo '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':'').'">';
+    echo '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
     echo '<td>'.$langs->trans("Total").'</td>';
     echo '<td></td>';
     echo '<td class="center"></td>';

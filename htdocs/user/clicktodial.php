@@ -91,7 +91,7 @@ if ($id > 0)
 
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');

@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
+$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 $id = GETPOST('id', 'int');
 
 // Security check
@@ -43,51 +43,51 @@ if ($user->socid > 0)
 	$action = '';
 	$socid = $user->socid;
 }
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 // Other security check
 $childids = $user->getAllChildIds();
-$childids[]=$user->id;
+$childids[] = $user->id;
 if ($userid > 0)
 {
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous) && ! in_array($userid, $childids))
+	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous) && !in_array($userid, $childids))
 	{
 		accessforbidden();
 		exit;
 	}
 }
 
-$nowyear=strftime("%Y", dol_now());
-$year = GETPOST('year')>0?GETPOST('year'):$nowyear;
+$nowyear = strftime("%Y", dol_now());
+$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$startyear = $year - 1;
+$endyear = $year;
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
+$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
 
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 
 llxHeader();
 
-$title=$langs->trans("TripsAndExpensesStatistics");
-$dir=$conf->deplacement->dir_temp;
+$title = $langs->trans("TripsAndExpensesStatistics");
+$dir = $conf->deplacement->dir_temp;
 
 print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 
-$useridtofilter=$userid;	// Filter from parameters
+$useridtofilter = $userid; // Filter from parameters
 if (empty($useridtofilter))
 {
-	$useridtofilter=$childids;
-	if (! empty($user->rights->deplacement->readall) || ! empty($user->rights->deplacement->lire_tous)) $useridtofilter=0;
+	$useridtofilter = $childids;
+	if (!empty($user->rights->deplacement->readall) || !empty($user->rights->deplacement->lire_tous)) $useridtofilter = 0;
 }
 
 $stats = new DeplacementStats($db, $socid, $useridtofilter);
@@ -104,13 +104,13 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;file
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px1->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px1->SetLegend($legend);
@@ -120,7 +120,7 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("Number"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->mode='depth';
+	$px1->mode = 'depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
@@ -136,13 +136,13 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px2->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px2->SetLegend($legend);
@@ -153,7 +153,7 @@ if (! $mesg)
 	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
-	$px2->mode='depth';
+	$px2->mode = 'depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
 	$px2->draw($filenameamount, $fileurlamount);
@@ -177,13 +177,13 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px3->SetData($data);
-    $i = $startyear;$legend=array();
+    $i = $startyear; $legend = array();
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px3->SetLegend($legend);
@@ -194,7 +194,7 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->mode='depth';
+    $px3->mode = 'depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
     $px3->draw($filename_avg, $fileurl_avg);
@@ -203,16 +203,16 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
-    $arrayyears[$val['year']]=$val['year'];
+$arrayyears = array();
+foreach ($data as $val) {
+    $arrayyears[$val['year']] = $val['year'];
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 
-$h=0;
+$h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -232,18 +232,18 @@ print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter='';
+$filter = '';
 print $form->select_company($socid, 'socid', $filter, 1, 1, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-$include='';
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $include='hierarchy';
+$include = '';
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $include = 'hierarchy';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -255,17 +255,17 @@ print '<br><br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="border centpercent">';
 print '<tr height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("Number").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="center">'.$langs->trans("Number").'</td>';
+print '<td class="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
+	while ($year && $oldyear > $year + 1)
 	{	// If we have empty year
 		$oldyear--;
 		print '<tr height="24">';
@@ -281,7 +281,7 @@ foreach ($data as $val)
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';

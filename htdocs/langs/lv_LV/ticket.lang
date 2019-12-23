@@ -33,7 +33,10 @@ TicketDictSeverity=Pieteikuma svarīgums
 TicketTypeShortBUGSOFT=Dysfontionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Tirdzniecības jautājums
-TicketTypeShortINCIDENT=Palīdzības pieprasījums
+
+TicketTypeShortHELP=Funkcionālās palīdzības pieprasījums
+TicketTypeShortISSUE=Izdošana, kļūda vai problēma
+TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
 TicketTypeShortPROJET=Projekts
 TicketTypeShortOTHER=Cits
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=Nav atrastas nelasītas biļetes
 TicketViewAllTickets=Skatīt visus pieteikumus
 TicketViewNonClosedOnly=Skatīt tikai atvērtos pieteikumus
 TicketStatByStatus=Pieteikumi pēc statusa
+OrderByDateAsc=Kārtot pēc augošā datuma
+OrderByDateDesc=Kārtot pēc dilstošā datuma
+ShowAsConversation=Rādīt kā sarunu sarakstu
+MessageListViewType=Rādīt kā tabulu sarakstu
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Apstipriniet statusa maiņu: %s?
 TicketLogStatusChanged=Statuss mainīts: %s līdz %s
 TicketNotNotifyTiersAtCreate=Neinformēt uzņēmumu par radīšanu
 Unread=Nelasīts
+TicketNotCreatedFromPublicInterface=Nav pieejams. Biļete netika izveidota no publiskās saskarnes.
+PublicInterfaceNotEnabled=Publiskā saskarne nebija iespējota
+ErrorTicketRefRequired=Nepieciešams biļetes atsauces nosaukums
 
 #
 # Logs
@@ -277,7 +287,7 @@ TicketNotificationEmailBody=Šī ir automātiska ziņa, kas informē jūs, ka bi
 TicketNotificationRecipient=Paziņojuma saņēmējs
 TicketNotificationLogMessage=Log ziņojums
 TicketNotificationEmailBodyInfosTrackUrlinternal=Skatīt biļeti interfeisu
-TicketNotificationNumberEmailSent=Nosūtītā e-pasta adrese: %s
+TicketNotificationNumberEmailSent=Paziņojuma e-pasts nosūtīts: %s
 
 ActionsOnTicket=Notikumi biļetē
 

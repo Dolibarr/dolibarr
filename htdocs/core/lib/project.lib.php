@@ -111,7 +111,7 @@ function project_prepare_head($object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
 		$h++;
 	}
@@ -1645,7 +1645,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						$cssweekend = 'weekend';
 					}
 
-					$tableCell = '<td align="center" class="hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
 					$placeholder = '';
 					if ($alreadyspent)
 					{
@@ -1990,11 +1990,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 }
 
 /**
- * @param   task                $task               Task            the task object
- * @param   label               $label              bool|string     true = auto, false = dont display, string = replace output
- * @param   progressNumber      $progressNumber     bool|string     true = auto, false = dont display, string = replace output
- * @param   hideOnProgressNull  $hideOnProgressNull bool            hide if progress is null
- * @param   spaced              $spaced             bool            used to add space at bottom (made by css)
+ * @param   Task        $task               the task object
+ * @param   bool|string $label              true = auto, false = dont display, string = replace output
+ * @param   bool|string $progressNumber     true = auto, false = dont display, string = replace output
+ * @param   bool        $hideOnProgressNull hide if progress is null
+ * @param   bool        $spaced             used to add space at bottom (made by css)
  * @return string
  * @see getTaskProgressBadge()
  */
@@ -2071,22 +2071,26 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         else {
             if ($task->hasDelay()) $out .= img_warning($langs->trans("Late")).' ';
 
-            $out .= !empty($diff) ? $diff.' ' : '';
+			$url = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$task->id;
 
+            $out .= !empty($diff) ? $diff.' ' : '';
+			$out .= '<a href="'.$url.'" >';
             $out .= '<b title="'.$langs->trans('TimeSpent').'" >';
             if ($task->duration_effective) $out .= convertSecondToTime($task->duration_effective, $timespentoutputformat);
             else $out .= '--:--';
             $out .= '</b>';
+			$out .= '</a>';
 
             $out .= '/';
 
+			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';
             if ($task->planned_workload) $out .= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
             else $out .= '--:--';
+			$out .= '</a>';
         }
         $out .= '    </span>';
     }
-
 
 
     $out .= '</span>';
@@ -2095,7 +2099,9 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if ($diffval >= 0) {
     	// good
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
-    	$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+    	if (!empty($task->progress)) {
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+		}
     	$out .= '        </div>';
     }
     else
@@ -2113,10 +2119,10 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     return $out;
 }
 /**
- * @param task      $task      Task     the task object
- * @param label     $label     string   empty = auto (progress), string = replace output
- * @param tooltip   $tooltip   string   empty = auto , string = replace output
- * @return string
+ * @param   Task    $task       the task object
+ * @param   string  $label      empty = auto (progress), string = replace output
+ * @param   string  $tooltip    empty = auto , string = replace output
+ * @return  string
  * @see getTaskProgressView()
  */
 function getTaskProgressBadge($task, $label = '', $tooltip = '')

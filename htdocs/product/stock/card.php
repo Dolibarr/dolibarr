@@ -249,7 +249,7 @@ if ($action == 'create')
 	dol_set_focus('input[name="libelle"]');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -355,10 +355,10 @@ else
 
 			$formconfirm = '';
 
-			// Confirm delete third party
+			// Confirm delete warehouse
 			if ($action == 'delete')
 			{
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->libelle), "confirm_delete", '', 0, 2);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", '', 0, 2);
 			}
 
 			// Call Hook formConfirm
@@ -371,14 +371,14 @@ else
 			print $formconfirm;
 
 			// Warehouse card
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			$morehtmlref='<div class="refidno">';
-			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
-        	$morehtmlref.='</div>';
+			$morehtmlref = '<div class="refidno">';
+			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+        	$morehtmlref .= '</div>';
 
             $shownav = 1;
-            if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -389,10 +389,10 @@ else
         	print '<table class="border centpercent">';
 
 			// Parent entrepot
-			$e = new Entrepot($db);
-			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
+			$parentwarehouse = new Entrepot($db);
+			if (!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
-				print $e->getNomUrl(3);
+				print $parentwarehouse->getNomUrl(3);
 				print '</td></tr>';
 			}
 
@@ -430,8 +430,8 @@ else
 			// Last movement
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -439,10 +439,10 @@ else
 				} else {
 					dol_print_error($db);
 				}
-				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
-					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+					print dol_print_date($lastmovementdate, 'dayhour').' ';
+					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 				} else {
 					print $langs->trans("None");
 				}
@@ -657,7 +657,7 @@ else
 			$langs->trans("WarehouseEdit");
 
 			print '<form action="card.php" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -668,7 +668,7 @@ else
 			print '<table class="border centpercent">';
 
 			// Ref
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
 

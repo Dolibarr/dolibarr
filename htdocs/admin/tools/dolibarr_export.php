@@ -131,7 +131,7 @@ print '<br>';
 
 print "<!-- Dump of a server -->\n";
 print '<form method="post" action="export.php" name="dump">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
@@ -224,6 +224,13 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<option value="POSTGRESQL">POSTGRESQL</option>';
     print '</select>';
     print '<br>';
+
+    print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />';
+    print '<label for="checkbox_use_quick">';
+    print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
+	print '</label>';
+	print '<br/>';
+
     print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
     print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
     print '-->';
@@ -531,7 +538,7 @@ print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
 print '<form method="post" action="export_files.php" name="dump">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';

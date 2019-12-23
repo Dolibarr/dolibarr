@@ -180,7 +180,7 @@ if ($id)
 		$rej = new RejetPrelevement($db, $user);
 
 		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<table class="border centpercent">';
 

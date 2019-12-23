@@ -2,7 +2,7 @@
 Delivery=Giao hàng
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Phiếu giao hàng
+DeliveryOrder=Delivery receipt
 DeliveryDate=Ngày giao hàng
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=Đã hủy
 StatusDeliveryDraft=Dự thảo
 StatusDeliveryValidated=Đã nhận
 # merou PDF model
-NameAndSignature=Tên và chữ ký:
+NameAndSignature=Name and Signature:
 ToAndDate=Gửi___________________________________ vào ____ / _____ / __________
 GoodStatusDeclaration=Đã nhận được hàng hoá trên trong tình trạng tốt,
-Deliverer=Người giao:
+Deliverer=Deliverer:
 Sender=Người gửi
 Recipient=Người nhận
 ErrorStockIsNotEnough=Không có đủ tồn kho
 Shippable=Vận chuyển được
 NonShippable=Không vận chuyển được
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

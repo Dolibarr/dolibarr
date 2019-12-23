@@ -169,3 +169,7 @@ FindYourSEPAMandate=Aquest és el vostre mandat de SEPA per autoritzar a la nost
 AutoReportLastAccountStatement=Ompliu automàticament el camp "nombre d'extracte bancari" amb l'últim número de l'extracte al fer la conciliació
 CashControl=Tancar Efectiu del Punt de Venda
 NewCashFence=Nou tancament d'efectiu
+BankColorizeMovement=Color de moviments
+BankColorizeMovementDesc=Si aquesta funció està habilitada, podeu triar un color de fons específic per als moviments de dèbit o de crèdit
+BankColorizeMovementName1=Color de fons pel moviment de dèbit
+BankColorizeMovementName2=Color de fons pel moviment de crèdit
