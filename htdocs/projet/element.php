@@ -83,16 +83,15 @@ if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf-
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
 	$dates=dol_get_first_day($tmp['year'], 1);
 }
-if ($id == '' && $projectid == '' && $ref == '')
+if ($id == '' && $ref == '')
 {
-	dol_print_error('', 'Bad parameter');
-	exit;
+	setEventMessage($langs->trans('ErrorBadParameters'), 'errors');
+	header('Location: list.php');
+	exit();
 }
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
-$projectid=$id;	// For backward compatibility
 
 $object = new Project($db);
 
@@ -102,7 +101,7 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 // Security check
 $socid=$object->socid;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet', $projectid, 'projet&project');
+$result = restrictedArea($user, 'projet',  $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
 
@@ -513,7 +512,7 @@ elseif ($action == "unlink")
 {
 
 	$tablename = GETPOST("tablename", "aZ09");
-    $projectField = GETPOST("projectfield", "aZ09");
+    $projectField = GETPOST('projectfield', 'aZ09') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOST("elementselect", "int");
 
 	$result = $object->remove_element($tablename, $elementselectid, $projectField);
@@ -532,7 +531,7 @@ $showdatefilter=0;
 if (! $showdatefilter)
 {
 	print '<div class="center centpercent">';
-    print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
     print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
@@ -755,7 +754,7 @@ foreach ($listofreferent as $key => $value)
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field)?$project_field:'fk_projet');
-			if (! $selectList || ($selectList<0))
+			if ($selectList<0)
 			{
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			}
@@ -763,7 +762,7 @@ foreach ($listofreferent as $key => $value)
 			{
 				// Define form with the combo list of elements to link
 			    $addform.='<div class="inline-block valignmiddle">';
-			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
 			    $addform.='<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
 			    $addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform.='<input type="hidden" name="action" value="addelement">';
@@ -890,7 +889,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' .  $object->id . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}
