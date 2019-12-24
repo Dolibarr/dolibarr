@@ -131,6 +131,8 @@ if ($action == 'setdisabledirectinput') {
 	}
 }
 
+// Deprecated
+/*
 if ($action == 'setenabledraftexport') {
 	$setenabledraftexport = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
@@ -142,6 +144,7 @@ if ($action == 'setenabledraftexport') {
 		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
+*/
 
 if ($action == 'setenablesubsidiarylist') {
     $setenablesubsidiarylist = GETPOST('value', 'int');
@@ -236,6 +239,8 @@ if (!empty($user->admin))
     }
     print '</tr>';
 
+    // Deprecated
+	/*
 	print '<tr>';
 	print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
@@ -248,6 +253,7 @@ if (!empty($user->admin))
 		print '</a></td>';
 	}
 	print '</tr>';
+	*/
 
 	print '<tr>';
 	print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
