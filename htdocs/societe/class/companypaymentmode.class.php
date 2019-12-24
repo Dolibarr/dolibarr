@@ -110,6 +110,7 @@ class CompanyPaymentMode extends CommonObject
 		'preapproval_key' =>array('type'=>'varchar(255)', 'label'=>'Preapproval key', 'enabled'=>1, 'visible'=>-2, 'position'=>160),
 		'total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>165),
 		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'Stripe card ref', 'enabled'=>1, 'visible'=>-2, 'position'=>170),
+		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'Stripe account', 'enabled'=>1, 'visible'=>-2, 'position'=>171),
 		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>175),
 		'starting_date' =>array('type'=>'date', 'label'=>'Starting date', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'ending_date' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>1, 'visible'=>-2, 'position'=>185),

@@ -34,5 +34,5 @@
 
 -- For v12
 
-
+ALTER TABLE llx_societe_rib ADD COLUMN stripe_account varchar(128);
 
