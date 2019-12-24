@@ -21,7 +21,7 @@
  */
 
 /**
- * \file scripts/user/sync_members_types_ldap2dolibarr.php
+ * \file scripts/members/sync_members_types_ldap2dolibarr.php
  * \ingroup ldap member
  * \brief Script to update members types into Dolibarr from LDAP
  */

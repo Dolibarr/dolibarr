@@ -1163,7 +1163,7 @@ if ($action == 'create')
 	$object->date_contrat = dol_now();
 
 	print '<form name="form_contract" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
@@ -1383,7 +1383,7 @@ else
 		if (!empty($object->brouillon) && $user->rights->contrat->creer)
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
 		}
 
@@ -1425,7 +1425,7 @@ else
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
@@ -1528,7 +1528,7 @@ else
 		{
 			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline - 1]->id.'">';
 			print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
@@ -1949,7 +1949,7 @@ else
 			if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne'))
 			{
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
@@ -2003,7 +2003,7 @@ else
 				print '<!-- Form to disabled a line -->'."\n";
 				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'" method="post">';
 
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="closeline">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
@@ -2064,7 +2064,7 @@ else
 
 			print "\n";
 			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
-			<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+			<input type="hidden" name="token" value="'.newToken().'">
 			<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">

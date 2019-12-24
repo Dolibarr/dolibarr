@@ -765,7 +765,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 
         print '<!-- Show the search input text -->'."\n";
         print '<div class="margintoponly">';
-		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
         ?>

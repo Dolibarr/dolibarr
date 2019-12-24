@@ -146,7 +146,7 @@ llxHeader('', $title, '', '', 0, 0, '', '', $morequerystring);
 
 //$fsearch.='<br>';
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 //$fsearch.='  <input type="text" name="min" value="'.$min.'">';

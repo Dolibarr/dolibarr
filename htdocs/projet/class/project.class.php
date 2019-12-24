@@ -180,14 +180,14 @@ class Project extends CommonObject
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'fk_opp_status' =>array('type'=>'integer', 'label'=>'Fk opp status', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'Opp percent', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'note_private' =>array('type'=>'text', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>85),
-		'note_public' =>array('type'=>'text', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>90),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
 		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget amount', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'Opp amount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportKey', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'Usage bill time', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'Usage opportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
@@ -1938,7 +1938,7 @@ class Project extends CommonObject
 	{
 	    global $conf;
 
-        if (!($this->statut == 1)) return false;
+        if (!($this->statut == self::STATUS_VALIDATED)) return false;
         if (!$this->datee && !$this->date_end) return false;
 
         $now = dol_now();

@@ -2149,7 +2149,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
  * @param 	int			$socid 			Id of third party if known
  * @param 	int			$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on)
  * @param	int			$max			Max number of characters to show
- * @param	int			$showinvalid	Show warning if syntax email is wrong
+ * @param	int			$showinvalid	1=Show warning if syntax email is wrong
  * @param	int			$withpicto		Show picto
  * @return	string						HTML Link
  */
@@ -2191,7 +2191,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		}
 	}
 
-	$rep = '<div class="nospan float" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("EMail"), 'object_email.png').' ' : '').$newemail.'</div>';
+	$rep = '<div class="nospan" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("EMail"), 'object_email.png').' ' : '').$newemail.'</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
@@ -3099,7 +3099,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
-				$facolor = '#227722';
+				$morecss = 'font-status4';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
@@ -3349,7 +3349,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  */
 function img_action($titlealt, $numaction)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if (empty($titlealt) || $titlealt == 'default')
 	{
@@ -3374,7 +3374,7 @@ function img_action($titlealt, $numaction)
  */
 function img_pdf($titlealt = 'default', $size = 3)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Show');
 
@@ -3390,7 +3390,7 @@ function img_pdf($titlealt = 'default', $size = 3)
  */
 function img_edit_add($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Add');
 
@@ -3405,7 +3405,7 @@ function img_edit_add($titlealt = 'default', $other = '')
  */
 function img_edit_remove($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Remove');
 
@@ -3422,7 +3422,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  */
 function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
@@ -3439,7 +3439,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  */
 function img_view($titlealt = 'default', $float = 0, $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('View');
 
@@ -3457,7 +3457,7 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  */
 function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
@@ -3474,7 +3474,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
  */
 function img_printer($titlealt = "default", $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 	if ($titlealt == "default") $titlealt = $langs->trans("Print");
 	return img_picto($titlealt, 'printer.png', $other);
 }
@@ -3488,7 +3488,7 @@ function img_printer($titlealt = "default", $other = '')
  */
 function img_split($titlealt = 'default', $other = 'class="pictosplit"')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Split');
 
@@ -3504,7 +3504,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
  */
 function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($usealttitle)
 	{
@@ -3523,7 +3523,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
  */
 function img_info($titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Informations');
 
@@ -3540,7 +3540,7 @@ function img_info($titlealt = 'default')
  */
 function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
@@ -3556,11 +3556,11 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
  */
 function img_error($titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($titlealt, 'error.png', 'class="valigntextbottom"');
+	return img_picto($titlealt, 'error.png');
 }
 
 /**
@@ -3572,7 +3572,7 @@ function img_error($titlealt = 'default')
  */
 function img_next($titlealt = 'default', $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
@@ -3589,7 +3589,7 @@ function img_next($titlealt = 'default', $moreatt = '')
  */
 function img_previous($titlealt = 'default', $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
@@ -3607,7 +3607,7 @@ function img_previous($titlealt = 'default', $moreatt = '')
  */
 function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Down');
 
@@ -3624,7 +3624,7 @@ function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
  */
 function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Up');
 
@@ -3641,7 +3641,7 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
  */
 function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
 
@@ -3658,7 +3658,7 @@ function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
  */
 function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Right');
 
@@ -3674,7 +3674,7 @@ function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
  */
 function img_allow($allow, $titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Active');
 
@@ -3774,7 +3774,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
- *  @param	string	$morecss		More CSS
+ *  @param	string	$morecss		More CSS ('', 'warning', 'error')
  *	@return	string					String with info text
  */
 function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = '')
@@ -3916,7 +3916,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (empty($dolibarr_main_prod)) print $out;
 	else	// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 	{
-		print 'This website is currently temporarly offline.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		print 'This website or feature is currently temporarly not available.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
@@ -4237,7 +4237,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		if ($totalnboflines)	// If we know total nb of lines
 		{
 			// Define nb of extra page links before and after selected page + ... + first or last
-			$maxnbofpage = (empty($conf->dol_optimize_smallscreen) ? 4 : 1);
+			$maxnbofpage = (empty($conf->dol_optimize_smallscreen) ? 4 : 0);
 
 			if ($limit > 0) $nbpages = ceil($totalnboflines / $limit);
 			else $nbpages = 1;
@@ -5470,7 +5470,7 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0)
 {
-	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>\n+/ims', '<br>', $stringtoclean);
+	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
 	if ($strip_tags) {

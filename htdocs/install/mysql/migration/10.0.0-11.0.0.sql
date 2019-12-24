@@ -59,6 +59,15 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
+UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
+
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
+
+ALTER TABLE llx_societe_account ADD COLUMN site_account varchar(128);
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_holiday MODIFY COLUMN ref varchar(30) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref SET NOT NULL;
@@ -460,9 +469,11 @@ CREATE TABLE llx_mrp_mo(
     note_public text,
     note_private text,
     date_creation datetime NOT NULL,
+    date_valid datetime NULL,
     tms timestamp,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
+    fk_user_valid integer,
     model_pdf varchar(255),
     import_key varchar(14),
     status integer NOT NULL,
@@ -473,6 +484,9 @@ CREATE TABLE llx_mrp_mo(
     fk_project integer
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo ADD COLUMN date_valid datetime NULL;
+ALTER TABLE llx_mrp_mo ADD COLUMN fk_user_valid integer;
 
 ALTER TABLE llx_bom_bom ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_mrp_mo ADD COLUMN model_pdf varchar(255);

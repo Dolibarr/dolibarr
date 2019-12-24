@@ -214,8 +214,8 @@ $head = categories_prepare_head($object, $type);
 
 
 dol_fiche_head($head, 'card', $title, -1, 'category');
-
-$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
+$linkback = '<a href="'.$backtolist.'\">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter=" type = ".$object->type;
 $object->ref = $object->label;
 $morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
@@ -364,7 +364,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 		{
 			print '<br>';
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -380,7 +380,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 		}
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -445,7 +445,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 	else
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -510,7 +510,7 @@ if ($type == Categorie::TYPE_CUSTOMER)
 	else
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -577,7 +577,7 @@ if ($type == Categorie::TYPE_MEMBER)
 	else
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -644,7 +644,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	else
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -711,7 +711,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
     else
     {
     	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
     	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
     	print '<input type="hidden" name="type" value="'.$typeid.'">';
     	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -779,7 +779,7 @@ if ($type == Categorie::TYPE_PROJECT)
 	else
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';

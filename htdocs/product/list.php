@@ -502,7 +502,7 @@ if ($resql)
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -964,7 +964,7 @@ if ($resql)
 		// Weight
 		if (!empty($arrayfields['p.weight']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->weight;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -972,7 +972,7 @@ if ($resql)
 		// Length
 		if (!empty($arrayfields['p.length']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->length;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -980,7 +980,7 @@ if ($resql)
 		// Surface
 		if (!empty($arrayfields['p.surface']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->surface;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -988,7 +988,7 @@ if ($resql)
 		// Volume
 		if (!empty($arrayfields['p.volume']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->volume;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;

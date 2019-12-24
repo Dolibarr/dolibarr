@@ -248,7 +248,7 @@ if ($socid > 0)
 	$head = societe_prepare_head($object);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -1062,7 +1062,7 @@ if ($socid > 0)
 					{
 					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td align="center">';
+					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 					print '</td>';
 					print '<td>&nbsp;</td>';

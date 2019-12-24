@@ -271,7 +271,7 @@ if ($object->id)
     		}
 
     		print '<form name="filemerge" action="'.DOL_URL_ROOT.'/product/document.php?id='.$object->id.'" method="post">';
-    		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    		print '<input type="hidden" name="token" value="'.newToken().'">';
     		print '<input type="hidden" name="action" value="filemerge">';
     		if (count($filetomerge->lines) == 0) {
     			print $langs->trans('PropalMergePdfProductChooseFile');

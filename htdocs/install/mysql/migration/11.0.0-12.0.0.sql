@@ -1,5 +1,5 @@
 --
--- Be careful with the order of the requests.
+-- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 12.0.0 or higher.
 --
@@ -25,10 +25,14 @@
 -- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
--- Note: fields with type BLOB/TEXT can't have a default value.
+-- Note: fields with type BLOB/TEXT can't have default value.
+
 
 -- Missing in v11
+
+
+
+-- For v12
 ALTER TABLE llx_bookmark DROP INDEX uk_bookmark_url;
 ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT; -- change from VARCHAR(255) to allow longer URLs
 ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, title);
-

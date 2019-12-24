@@ -291,6 +291,7 @@ class Tickets extends DolibarrApi
         $result = $db->query($sql);
         if ($result) {
             $num = $db->num_rows($result);
+            $i = 0;
             while ($i < $num) {
                 $obj = $db->fetch_object($result);
                 $ticket_static = new Ticket($db);

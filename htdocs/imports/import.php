@@ -434,7 +434,7 @@ if ($step == 2 && $datatoimport)
 
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport", img_picto('', 'filenew')).'</span><br><br>';
@@ -519,14 +519,12 @@ if ($step == 3 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
@@ -545,7 +543,7 @@ if ($step == 3 && $datatoimport)
     print '<br>';
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<input type="hidden" value="'.$step.'" name="step">';
@@ -798,13 +796,12 @@ if ($step == 4 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
@@ -854,7 +851,7 @@ if ($step == 4 && $datatoimport)
     // List of source fields
     print '<!-- List of source fields -->'."\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="4">';
     print '<input type="hidden" name="format" value="'.$format.'">';
@@ -865,8 +862,8 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
     print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
-    print '<div class="marginbottomonly opacitymedium">';
-    print $langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).' ';
+    print '<div class="marginbottomonly">';
+    print '<span class="opacitymedium">'.$langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).'</span> ';
     $htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</div>';
@@ -1139,7 +1136,7 @@ if ($step == 4 && $datatoimport)
 		print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("SaveImportModel").'</span></div>';
 
 		print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_import_model">';
 		print '<input type="hidden" name="step" value="'.$step.'">';
 		print '<input type="hidden" name="format" value="'.$format.'">';
@@ -1273,13 +1270,12 @@ if ($step == 5 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
@@ -1378,9 +1374,9 @@ if ($step == 5 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnTargetTables"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
@@ -1717,13 +1713,12 @@ if ($step == 6 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
 
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';

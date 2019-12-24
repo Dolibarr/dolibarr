@@ -396,11 +396,12 @@ foreach ($configfileparameters as $key => $value)
 			{
 			    //print $conf->file->instance_unique_id;
 			    global $dolibarr_main_cookie_cryptkey;
-			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey;
+			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey;	// Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 			    print $valuetoshow;
 			    if (empty($valuetoshow)) {
 			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 			    }
+			    print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
 			}
 			else
 			{

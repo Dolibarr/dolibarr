@@ -670,10 +670,9 @@ class CommandeFournisseur extends CommonOrder
             2 => 'status3',
             3 => 'status3',
             4 => 'status3',
-            5 => 'status6',
+            5 => 'status4',
             6 => 'status5',
             7 => 'status5',
-
             9 => 'status5',
         );
 
@@ -2892,9 +2891,9 @@ class CommandeFournisseur extends CommonOrder
             $resql = $db->query($sql);
             if ($resql)
             {
-                if ($db->num_rows($query))
+                if ($db->num_rows($resql))
                 {
-                    $obj = $db->fetch_object($query);
+                    $obj = $db->fetch_object($resql);
 
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
@@ -3590,7 +3589,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (!$error)
             {
                 $this->db->commit();
-                return $result;
+                return 1;
             }
             else
             {

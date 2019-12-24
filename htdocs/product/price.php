@@ -838,7 +838,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			if (preg_match('/editlabelsellingprice/', $action))
 			{
 			    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="token" value="'.newToken().'">';
 			    print '<input type="hidden" name="action" value="setlabelsellingprice">';
 			    print '<input type="hidden" name="pricelevel" value="'.$i.'">';
 			    print $langs->trans("SellingPrice").' '.$i.' - ';
@@ -1317,7 +1317,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		<?php
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1350,7 +1350,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		{
 			print '<tr class="oddeven">';
 			print '<td>';
-			print $form->textwithpicto($langs->trans('SellingPrice').' '.$i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			$text = $langs->trans('SellingPrice').' '.$i;
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
 
 			// VAT

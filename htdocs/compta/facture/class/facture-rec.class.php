@@ -1291,7 +1291,6 @@ class FactureRec extends CommonInvoice
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-
 		return $this->LibStatut($this->frequency ? 1 : 0, $this->suspended, $mode, $alreadypaid, empty($this->type) ? 0 : $this->type);
 	}
 
@@ -1312,19 +1311,30 @@ class FactureRec extends CommonInvoice
 		global $langs;
 		$langs->load('bills');
 
+		$labelStatus = $langs->trans('Active');
+		$statusType = 'status0';
+
 		//print "$recur,$status,$mode,$alreadypaid,$type";
 		if ($mode == 0)
 		{
 			$prefix = '';
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
-				else return $langs->trans('Active');
+				if ($status == self::STATUS_SUSPENDED) {
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$labelStatus = $langs->trans('Active');
+				}
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
-				else return $langs->trans("Draft");
+				if ($status == self::STATUS_SUSPENDED) {
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$labelStatus = $langs->trans("Draft");
+				}
 			}
 		}
 		elseif ($mode == 1)
@@ -1332,26 +1342,46 @@ class FactureRec extends CommonInvoice
 			$prefix = 'Short';
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
-				else return $langs->trans('Active');
+				if ($status == self::STATUS_SUSPENDED) {
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$labelStatus = $langs->trans('Active');
+				}
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
-				else return $langs->trans("Draft");
+				if ($status == self::STATUS_SUSPENDED) {
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$labelStatus = $langs->trans("Draft");
+				}
 			}
 		}
 		elseif ($mode == 2)
 		{
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Active'), 'statut4').' '.$langs->trans('Active');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status4';
+					$labelStatus = $langs->trans('Active');
+				}
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status0';
+					$labelStatus = $langs->trans('Draft');
+				}
 			}
 		}
 		elseif ($mode == 3)
@@ -1359,13 +1389,25 @@ class FactureRec extends CommonInvoice
 			if ($recur)
 			{
 				$prefix = 'Short';
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6');
-				else return img_picto($langs->trans('Active'), 'statut4');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status4';
+					$labelStatus = $langs->trans('Active');
+				}
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6');
-				else return img_picto($langs->trans('Draft'), 'statut0');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status0';
+					$labelStatus = $langs->trans('Draft');
+				}
 			}
 		}
 		elseif ($mode == 4)
@@ -1373,13 +1415,25 @@ class FactureRec extends CommonInvoice
 			$prefix = '';
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Active'), 'statut4').' '.$langs->trans('Active');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status4';
+					$labelStatus = $langs->trans('Active');
+				}
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status0';
+					$labelStatus = $langs->trans('Draft');
+				}
 			}
 		}
 		elseif ($mode == 5 || $mode == 6)
@@ -1388,15 +1442,31 @@ class FactureRec extends CommonInvoice
 			if ($mode == 5) $prefix = 'Short';
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut6');
-				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'), 'statut4');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status4';
+					$labelStatus = $langs->trans('Active');
+				}
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut6');
-				else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'), 'statut0');
+				if ($status == self::STATUS_SUSPENDED) {
+					$statusType = 'status6';
+					$labelStatus = $langs->trans('Disabled');
+				}
+				else {
+					$statusType = 'status0';
+					$labelStatus = $langs->trans('Draft');
+				}
 			}
 		}
+
+		if (empty($labelStatusShort)) $labelStatusShort = $labelStatus;
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**

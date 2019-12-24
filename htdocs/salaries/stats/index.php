@@ -22,7 +22,7 @@
  *  \brief      Page for statistics of module salaries
  */
 
-require '../../../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 
@@ -213,7 +213,7 @@ print '<br><br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("Number").'</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';

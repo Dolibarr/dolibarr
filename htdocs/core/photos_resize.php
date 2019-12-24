@@ -446,7 +446,7 @@ print '<br>'."\n";
 
 print '<!-- Form to resize -->'."\n";
 print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
@@ -498,7 +498,7 @@ if (!empty($conf->use_javascript_ajax))
 	print '</div>';
 	print '</div><br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':

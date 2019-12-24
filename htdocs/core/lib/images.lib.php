@@ -33,7 +33,7 @@ $quality = 80;
  *      Return if a filename is file name of a supported image format
  *
  *      @param	string	$file       Filename
- *      @return int         		-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported by this PHP
+ *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported by this PHP
  */
 function image_format_supported($file)
 {
@@ -57,12 +57,12 @@ function image_format_supported($file)
     {
         if (!function_exists($imgfonction))
         {
-            // Fonctions de conversion non presente dans ce PHP
+            // Fonctions of conversion not available in this PHP
             return 0;
         }
     }
 
-    // Filename is a format image and supported by this PHP
+    // Filename is a format image and supported for conversion by this PHP
     return 1;
 }
 

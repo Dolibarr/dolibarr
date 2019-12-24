@@ -86,7 +86,7 @@ print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
 echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</form>';

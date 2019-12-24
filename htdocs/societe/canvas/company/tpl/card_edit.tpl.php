@@ -39,7 +39,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="socid" value="<?php echo $this->control->tpl['id']; ?>">
 <?php if ($this->control->tpl['auto_customercode'] || $this->control->tpl['auto_suppliercode']) { ?>
 <input type="hidden" name="code_auto" value="1">

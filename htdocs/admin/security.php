@@ -213,7 +213,7 @@ dol_fiche_head($head, 'passwords', $langs->trans("Security"), -1);
 
 // Choix du gestionnaire du generateur de mot de passe
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
@@ -246,7 +246,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
 foreach ($arrayhandler as $key => $module)
@@ -400,14 +400,14 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 // Cryptage mot de passe
 print '<br>';
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Disable clear password in database

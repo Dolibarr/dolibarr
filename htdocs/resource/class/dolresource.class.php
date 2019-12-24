@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file      	resource/class/resource.class.php
+ *  \file      	htdocs/resource/class/dolresource.class.php
  *  \ingroup    resource
  *  \brief      Class file for resource object
  */

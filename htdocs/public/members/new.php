@@ -507,7 +507,7 @@ dol_htmloutput_errors($errmsg);
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" / >';
+print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
 

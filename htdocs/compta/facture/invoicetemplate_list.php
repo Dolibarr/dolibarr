@@ -328,7 +328,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
-	print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
 
 	$i = 0;
 
@@ -564,22 +564,22 @@ if ($resql)
 			}
 			if (!empty($arrayfields['recurring']['checked']))
 			{
-			    print '<td align="center">'.yn($objp->frequency ? 1 : 0).'</td>';
+			    print '<td class="center">'.yn($objp->frequency ? 1 : 0).'</td>';
 			    if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['f.frequency']['checked']))
 			{
-			    print '<td align="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
+			    print '<td class="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
 			    if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['f.unit_frequency']['checked']))
 			{
-			    print '<td align="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
+			    print '<td class="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
 			    if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['f.nb_gen_done']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				print ($objp->frequency > 0 ? $objp->nb_gen_done.($objp->nb_gen_max > 0 ? ' / '.$objp->nb_gen_max : '') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -587,7 +587,7 @@ if ($resql)
 			// Date last generation
 			if (!empty($arrayfields['f.date_last_gen']['checked']))
 			{
-			    print '<td align="center">';
+			    print '<td class="center">';
 			    print ($objp->frequency > 0 ? dol_print_date($db->jdate($objp->date_last_gen), 'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			    print '</td>';
 			    if (!$i) $totalarray['nbfield']++;
@@ -595,7 +595,7 @@ if ($resql)
 			// Date next generation
 			if (!empty($arrayfields['f.date_when']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<div class="nowraponall">';
 				print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached() ? '<strike>' : '').dol_print_date($db->jdate($objp->date_when), 'day').($invoicerectmp->isMaxNbGenReached() ? '</strike>' : '') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				if (!$invoicerectmp->isMaxNbGenReached())
@@ -612,14 +612,14 @@ if ($resql)
 			}
 			if (!empty($arrayfields['f.datec']['checked']))
 			{
-			    print '<td align="center">';
+			    print '<td class="center">';
 			    print dol_print_date($db->jdate($objp->datec), 'dayhour');
 			    print '</td>';
 			    if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['f.tms']['checked']))
 			{
-			    print '<td align="center">';
+			    print '<td class="center">';
 			    print dol_print_date($db->jdate($objp->tms), 'dayhour');
 			    print '</td>';
 			    if (!$i) $totalarray['nbfield']++;
@@ -634,13 +634,13 @@ if ($resql)
 			print $hookmanager->resPrint;
 			// Status
 			if (!empty($arrayfields['status']['checked'])) {
-			    print '<td align="center">';
+			    print '<td class="center">';
 			    print $invoicerectmp->getLibStatut(3, 0);
 			    print '</td>';
 			    if (!$i) $totalarray['nbfield']++;
 			}
 			// Action column
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($user->rights->facture->creer && empty($invoicerectmp->suspended))
 			{
 				if ($invoicerectmp->isMaxNbGenReached())

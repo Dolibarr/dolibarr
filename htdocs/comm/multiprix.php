@@ -86,7 +86,7 @@ if ($_socid > 0)
 	if ($objsoc->client == 2) $tabchoice = 'prospect';
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
 
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');

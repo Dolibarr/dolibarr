@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/core/db/sqlite.class.php
+ *	\file       htdocs/core/db/sqlite3.class.php
  *	\brief      Class file to manage Dolibarr database access for a SQLite database
  */
 

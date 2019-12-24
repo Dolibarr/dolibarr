@@ -96,7 +96,7 @@ $arrayfields = array(
 	't.fk_product'=>array('label'=>$langs->trans("Product"), 'checked'=>1),
 	't.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>1),
 	't.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>1),
-	//'t.import_key'=>array('label'=>$langs->trans("ImportKey"), 'checked'=>1),
+	//'t.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>1),
 	//'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
 	//'t.fk_user_creat'=>array('label'=>$langs->trans("UserCreationShort"), 'checked'=>0, 'position'=>500),
 	//'t.fk_user_modif'=>array('label'=>$langs->trans("UserModificationShort"), 'checked'=>0, 'position'=>500),
@@ -293,7 +293,7 @@ if ($resql)
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

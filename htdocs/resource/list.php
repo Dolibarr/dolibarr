@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018           Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       resource/index.php
+ *      \file       htdocs/resource/list.php
  *      \ingroup    resource
  *      \brief      Page to manage resource objects
  */
@@ -166,7 +166,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

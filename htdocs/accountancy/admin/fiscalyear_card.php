@@ -158,7 +158,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -207,7 +207,7 @@ if ($action == 'create')
 			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 

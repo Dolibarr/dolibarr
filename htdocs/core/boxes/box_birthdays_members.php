@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_adherent_birthdays.php
+ *	\file       htdocs/core/boxes/box_birthdays_members.php
  *	\ingroup    member
  *	\brief      Box for member birthdays
  */

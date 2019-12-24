@@ -146,7 +146,7 @@ if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
 llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
 
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
 $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';

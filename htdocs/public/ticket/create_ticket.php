@@ -26,7 +26,7 @@ if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOLOGIN'))        define("NOLOGIN", 1);     // This means this output page does not require to be logged.
+if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 
 require '../../main.inc.php';
@@ -58,15 +58,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
  */
 
 // Add file in email form
-if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
+if (GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
     ////$res = $object->fetch('','',GETPOST('track_id'));
     ////if($res > 0)
     ////{
-    include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp directory TODO Use a dedicated directory for temp mails files
     $vardir = $conf->ticket->dir_output;
-    $upload_dir_tmp = $vardir . '/temp';
+    $upload_dir_tmp = $vardir.'/temp';
     if (!dol_is_dir($upload_dir_tmp)) {
         dol_mkdir($upload_dir_tmp);
     }
@@ -77,11 +77,11 @@ if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
 
 // Remove file
 if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
-    include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp directory
-    $vardir = $conf->ticket->dir_output . '/';
-    $upload_dir_tmp = $vardir . '/temp';
+    $vardir = $conf->ticket->dir_output.'/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     // TODO Delete only files that was uploaded from email form
     dol_remove_file_process($_POST['removedfile'], 0, 0);
@@ -156,7 +156,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             $user = new User($db);
         }
 
-        $object->context['disableticketemail']=1;		// Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+        $object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 
         $id = $object->create($user);
         if ($id <= 0) {
@@ -172,7 +172,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             }
         }
 
-        if (! $error)
+        if (!$error)
         {
         	$object->db->commit();
         	$action = "infos_success";
@@ -182,13 +182,13 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 	    	$action = 'create_ticket';
 	    }
 
-	    if (! $error)
+	    if (!$error)
 	    {
             $res = $object->fetch($id);
             if ($res) {
                 // Create form object
-                include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-                include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                 $formmail = new FormMail($db);
 
                 // Init to avoid errors
@@ -203,21 +203,23 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 // Send email to customer
 
-                $subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . '] ' . $langs->transnoentities('TicketNewEmailSubject');
-                $message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')) . "\n\n";
-                $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket') . "\n";
+                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject');
+                $message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody'))."\n\n";
+                $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket')."\n";
 
-                $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
-                $infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>') . "\n";
-                $infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl') . "\n\n";
+                $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+                $infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>')."\n";
+                $infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl')."\n\n";
 
                 $message .= dol_nl2br($infos_new_ticket);
                 $message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
                 $sendto = GETPOST('email', 'alpha');
 
-                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
+                $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
                 $replyto = $from;
+				$sendtocc = '';
+				$deliveryreceipt = 0;
 
                 $message = dol_nl2br($message);
 
@@ -225,7 +227,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
                     $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                 }
-                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+                include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
                 if ($mailfile->error || $mailfile->errors) {
                     setEventMessages($mailfile->error, $mailfile->errors, 'errors');
@@ -243,17 +245,17 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 if ($sendto)
                 {
-	                $subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . '] ' . $langs->transnoentities('TicketNewEmailSubjectAdmin');
-	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id) . "\n\n";
-	                $message_admin .= '<ul><li>' . $langs->trans('Title') . ' : ' . $object->subject . '</li>';
-	                $message_admin .= '<li>' . $langs->trans('Type') . ' : ' . $object->type_label . '</li>';
-	                $message_admin .= '<li>' . $langs->trans('Category') . ' : ' . $object->category_label . '</li>';
-	                $message_admin .= '<li>' . $langs->trans('Severity') . ' : ' . $object->severity_label . '</li>';
-	                $message_admin .= '<li>' . $langs->trans('From') . ' : ' . $object->origin_email . '</li>';
+	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin');
+	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
+	                $message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
+	                $message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
+	                $message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
+	                $message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+	                $message_admin .= '<li>'.$langs->trans('From').' : '.$object->origin_email.'</li>';
 
 	                if (is_array($extrafields->attributes[$object->table_element]['label']))
 	                {
-	                	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	                	{
 	                		$enabled = 1;
 	                		if ($qualified && isset($extrafields->attributes[$object->table_element]['list'][$key]))
@@ -266,18 +268,18 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 	                			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
 	                		}
 
-	                		$qualified=true;
+	                		$qualified = true;
 	                		if (empty($enabled) || $enabled == 2) $qualified = false;
 	                		if (empty($perms)) $qualified = false;
-	                		if ($qualified) $message_admin .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
+	                		if ($qualified) $message_admin .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
 	                	}
 	                }
 
 	                $message_admin .= '</ul>';
-	                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
-	                $message_admin .= '<p><a href="' . dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
+	                $message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+	                $message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
+	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 	                $replyto = $from;
 
 	                $message_admin = dol_nl2br($message_admin);
@@ -286,7 +288,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 	                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 	                }
-	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+	                include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
 	                if ($mailfile->error || $mailfile->errors) {
                         setEventMessages($mailfile->error, $mailfile->errors, 'errors');
@@ -300,19 +302,19 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             }
 
             // Copy files into ticket directory
-            $destdir = $conf->ticket->dir_output . '/' . $object->track_id;
-            if (! dol_is_dir($destdir)) {
+            $destdir = $conf->ticket->dir_output.'/'.$object->track_id;
+            if (!dol_is_dir($destdir)) {
             	dol_mkdir($destdir);
             }
             foreach ($filename as $i => $val) {
-            	dol_move($filepath[$i], $destdir . '/' . $filename[$i], 0, 1);
+            	dol_move($filepath[$i], $destdir.'/'.$filename[$i], 0, 1);
             	$formmail->remove_attached_files($i);
             }
 
             //setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
 
             // Make a redirect to avoid to have ticket submitted twice if we make back
-            setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>'), null, 'warnings');
+            setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>'.$object->track_id.'</strong>'), null, 'warnings');
             setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
             header("Location: index.php");
 			exit;
@@ -333,7 +335,7 @@ $formticket = new FormTicket($db);
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)
 {
-    print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
+    print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
     $db->close();
     exit();
 }
@@ -359,14 +361,19 @@ if ($action != "infos_success") {
 
     $formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
-    if (empty($defaultref)) {
-        $defaultref = '';
-    }
-
     print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
-    print '<div class="info marginleftonly marginrightonly">' . $langs->trans('TicketPublicInfoCreateTicket') . '</div>';
-    $formticket->showForm();
+    if (empty($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)) {
+    	$langs->load("errors");
+    	print '<div class="error">';
+    	print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
+    	print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
+    	print '<div>';
+    }
+    else {
+	    print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
+    	$formticket->showForm();
+    }
 }
 
 print '</div>';

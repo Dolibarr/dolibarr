@@ -462,7 +462,7 @@ if ($action == 'new')
 
 		$num = $db->num_rows($resql);
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
@@ -502,7 +502,7 @@ if ($action == 'new')
 				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
 				// Link to payment
-				print '<td align="center">';
+				print '<td class="center">';
 				$paymentstatic->id = $value["paymentid"];
 				$paymentstatic->ref = $value["paymentid"];
 				if ($paymentstatic->id)
@@ -515,7 +515,7 @@ if ($action == 'new')
 				}
 				print '</td>';
 				// Link to bank transaction
-				print '<td align="center">';
+				print '<td class="center">';
 				$accountlinestatic->rowid = $value["id"];
 				if ($accountlinestatic->rowid)
 				{
@@ -527,7 +527,7 @@ if ($action == 'new')
 				}
 				print '</td>';
 
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 				print '</td>';
 				print '</tr>';
@@ -581,7 +581,7 @@ else
     if ($action == 'editdate')
     {
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="setdate">';
         print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -608,7 +608,7 @@ else
     if ($action == 'editrefext')
     {
         print '<form name="setrefext" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="setrefext">';
         print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -685,14 +685,14 @@ else
     		while ($objp = $db->fetch_object($resql))
     		{
     			print '<tr class="oddeven">';
-    			print '<td align="center">'.$i.'</td>';
-    			print '<td align="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>'; // Date operation
-    			print '<td align="center">'.($objp->num_chq ? $objp->num_chq : '&nbsp;').'</td>';
+    			print '<td class="center">'.$i.'</td>';
+    			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>'; // Date operation
+    			print '<td class="center">'.($objp->num_chq ? $objp->num_chq : '&nbsp;').'</td>';
     			print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
     			print '<td>'.dol_trunc($objp->banque, 24).'</td>';
     			print '<td class="right">'.price($objp->amount).'</td>';
     			// Link to payment
-    			print '<td align="center">';
+    			print '<td class="center">';
     			$paymentstatic->id = $objp->pid;
     			$paymentstatic->ref = $objp->pid;
     			if ($paymentstatic->id)
@@ -705,7 +705,7 @@ else
     			}
     			print '</td>';
     			// Link to bank transaction
-    			print '<td align="center">';
+    			print '<td class="center">';
     			$accountlinestatic->rowid = $objp->rowid;
     			if ($accountlinestatic->rowid)
     			{

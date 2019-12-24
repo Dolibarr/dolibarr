@@ -82,7 +82,9 @@ if (empty($pageid))
     {
         $object->fetch(0, $website);
     }
+
     $objectpage=new WebsitePage($db);
+    /* Not required for CSS file
     $array=$objectpage->fetchAll($object->id);
 
     if (is_array($array) && count($array) > 0)
@@ -90,13 +92,16 @@ if (empty($pageid))
         $firstrep=reset($array);
         $pageid=$firstrep->id;
     }
+    */
 }
+/* Not required for CSS file
 if (empty($pageid))
 {
     $langs->load("website");
     print $langs->trans("PreviewOfSiteNotYetAvailable");
     exit;
 }
+*/
 
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;

@@ -125,15 +125,16 @@ class Stripe extends CommonObject
 	/**
 	 * getStripeCustomerAccount
 	 *
-	 * @param	int		$id		Id of third party
-	 * @param	int		$status		Status
-	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 * @param	int		$id				Id of third party
+	 * @param	int		$status			Status
+	 * @param	string	$site_account 	Value to use to identify with account to use on site when site can offer several accounts. For example: 'pk_live_123456' when using Stripe service.
+	 * @return	string					Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 */
-	public function getStripeCustomerAccount($id, $status = 0)
+	public function getStripeCustomerAccount($id, $status = 0, $site_account = '')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
-		return $societeaccount->getCustomerAccount($id, 'stripe', $status); // Get thirdparty cus_...
+		return $societeaccount->getCustomerAccount($id, 'stripe', $status, $site_account); // Get thirdparty cus_...
 	}
 
 
@@ -158,12 +159,17 @@ class Stripe extends CommonObject
 
 		$customer = null;
 
+		// Force to use the correct API key
+		global $stripearrayofkeysbyenv;
+		\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 		$sql = "SELECT sa.key_account as key_account, sa.entity"; // key_account is cus_....
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
 		$sql .= " WHERE sa.fk_soc = ".$object->id;
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
-		$sql .= " AND key_account IS NOT NULL AND key_account <> ''";
+		$sql .= " AND (sa.site_account IS NULL OR sa.site_account = '' OR sa.site_account = '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."')";
+		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
 
 		dol_syslog(get_class($this)."::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -173,10 +179,6 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
-
-				// Force to use the correct API key
-				global $stripearrayofkeysbyenv;
-				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
 				dol_syslog(get_class($this)."::customerStripe found stripe customer key_account = ".$tiers.". We will try to read it on Stripe with publishable_key = ".$stripearrayofkeysbyenv[$status]['publishable_key']);
 
@@ -244,8 +246,8 @@ class Stripe extends CommonObject
 					}
 
 					// Create customer in Dolibarr
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
+					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
 					if (!$resql)
 					{

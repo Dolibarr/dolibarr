@@ -150,7 +150,7 @@ $head = member_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
