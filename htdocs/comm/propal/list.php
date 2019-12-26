@@ -273,7 +273,7 @@ $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.c
 $sql.= " typent.code as typent_code,";
 $sql.= " ava.rowid as availability,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
-$sql.= ' p.rowid, p.entity, p.note_private, p.note_public, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= " p.rowid, p.entity, p.note_private, p.note_public, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,";
 $sql.= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql.= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql.= ' u.login';
@@ -764,8 +764,8 @@ if ($resql)
 
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
-        $objectstatic->note_private=$obj->note_private;
-        $objectstatic->note_public=$obj->note_public;
+        $objectstatic->note_private = $obj->note_private;
+        $objectstatic->note_public = $obj->note_public;
 
 		$companystatic->id=$obj->socid;
 		$companystatic->name=$obj->name;
