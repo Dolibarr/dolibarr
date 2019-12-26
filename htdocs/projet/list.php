@@ -701,8 +701,10 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print "</tr>\n";
 
 $i = 0;
-$totalarray = array();
-$totalarray['val'] = array();
+$totalarray = array(
+    'nbfield' => 0,
+    'val' => array(),
+);
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
