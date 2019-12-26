@@ -269,14 +269,14 @@ $help_url='EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
-$sql.= " typent.code as typent_code,";
-$sql.= " ava.rowid as availability,";
-$sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql .= " typent.code as typent_code,";
+$sql .= " ava.rowid as availability,";
+$sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " p.rowid, p.entity, p.note_private, p.note_public, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,";
-$sql.= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
-$sql.= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
-$sql.= ' u.login';
+$sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
+$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
+$sql .= ' u.login';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
@@ -762,8 +762,8 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$objectstatic->id=$obj->rowid;
-		$objectstatic->ref=$obj->ref;
+		$objectstatic->id = $obj->rowid;
+		$objectstatic->ref = $obj->ref;
         $objectstatic->note_private = $obj->note_private;
         $objectstatic->note_public = $obj->note_public;
 
