@@ -22,12 +22,12 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
-if (! is_object($form)) $form=new Form($db);
+if (!is_object($form)) $form = new Form($db);
 
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_edit.tpl.php -->
@@ -38,7 +38,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
-    if (abs($val['visible']) != 1 && abs($val['visible']) != 4) continue;
+	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
 
@@ -55,8 +55,8 @@ foreach($object->fields as $key => $val)
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key, 'none'):$object->$key;
 	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
-	else print $object->showInputField($val, $key, $value, '', '', '', 0);
+	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0, $object->table_element);
+	else print $object->showInputField($val, $key, $value, '', '', '', 0, $object->table_element);
 	print '</td>';
 	print '</tr>';
 }

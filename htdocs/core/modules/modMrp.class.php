@@ -19,10 +19,10 @@
  */
 
 /**
- * 	\defgroup   mrp     Module Mrp
+ *  \defgroup   mrp     Module Mrp
  *  \brief      Mrp module descriptor.
  *
- *  \file       htdocs/mrp/core/modules/modMrp.class.php
+ *  \file       htdocs/core/modules/modMrp.class.php
  *  \ingroup    mrp
  *  \brief      Description and activation file for module Mrp
  */
@@ -62,7 +62,7 @@ class modMrp extends DolibarrModules
         // Used only if file README.md and README-LL.md not found.
         $this->descriptionlong = "Module to Manage Manufacturing Orders (MO)";
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-        $this->version = 'dolibarr';
+        $this->version = 'experimental';
         // Url to the file with your last numberversion of this module
         //$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -352,8 +352,8 @@ class modMrp extends DolibarrModules
         }
 
         $sql = array(
-        	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
-        	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
+        	//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
+        	//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
         );
 
         return $this->_init($sql, $options);

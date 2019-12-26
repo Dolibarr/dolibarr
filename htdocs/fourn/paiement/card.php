@@ -139,7 +139,7 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
 // TODO: get the appropriate permisson
-$permissioncreate = true;
+$permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -184,7 +184,7 @@ if ($result > 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	/*print '<tr>';
 	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -275,7 +275,7 @@ if ($result > 0)
 		$i = 0;
 		$total = 0;
 		print '<b>'.$langs->trans("Invoices").'</b><br>';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';

@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_accountancy_last_manual_entries extends ModeleBoxes
 {
-    public $boxcode="accountancy_last_manual_entries";
-    public $boximg="object_invoice";
-    public $boxlabel="BoxLastManualEntries";
+    public $boxcode = "accountancy_last_manual_entries";
+    public $boximg = "object_invoice";
+    public $boxlabel = "BoxLastManualEntries";
     public $depends = array("accounting");
 
 	/**
@@ -60,7 +60,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->accounting->mouvements->lire);
+        $this->hidden = !($user->rights->accounting->mouvements->lire);
     }
 
     /**
@@ -133,14 +133,14 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					);
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($amount, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedManualEntries"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedManualEntries"));
 
                 $this->db->free($result);
             } else {

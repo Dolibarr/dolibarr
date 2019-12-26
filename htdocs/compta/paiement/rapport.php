@@ -92,7 +92,7 @@ print load_fiche_titre($titre, '', 'invoicing');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
 $cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
 $syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());

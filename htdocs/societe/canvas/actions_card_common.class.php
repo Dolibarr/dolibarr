@@ -82,7 +82,7 @@ abstract class ActionsCardCommon
     public function assign_values(&$action, $id = 0, $ref = '')
     {
         // phpcs:enable
-        global $conf, $langs, $user, $mysoc, $canvas;
+        global $conf, $langs, $db, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;
 
         if ($action == 'add' || $action == 'update') $this->assign_post($action);

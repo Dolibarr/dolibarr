@@ -154,7 +154,7 @@ class box_comptes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="liste_total right"',
+                        'td' => 'class="liste_total right nowraponall"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $line++;

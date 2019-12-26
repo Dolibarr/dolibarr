@@ -98,7 +98,7 @@ else
     	$userstatic->statut=$val['statut'];
         $userstatic->email=$val['email'];
         $userstatic->gender=$val['gender'];
-    	$userstatic->societe_id=$val['fk_soc'];
+    	$userstatic->socid=$val['fk_soc'];
     	$userstatic->admin=$val['admin'];
     	$userstatic->entity=$val['entity'];
     	$userstatic->photo=$val['photo'];
@@ -157,7 +157,7 @@ else
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';

@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/core/boxes/box_activite.php
+ *  \file       htdocs/core/boxes/box_project.php
  *  \ingroup    projet
  *  \brief      Module to show Projet activity of the current Year
  */
@@ -123,7 +123,7 @@ class box_project extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
                         'text' => $objp->title,
                     );
 

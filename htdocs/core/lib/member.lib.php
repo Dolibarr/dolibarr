@@ -59,7 +59,7 @@ function member_prepare_head(Adherent $object)
 		$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id;
 		$head[$h][1] = $langs->trans("Subscriptions");
 		$head[$h][2] = 'subscription';
-		if ($nbSubscription > 0) $head[$h][1].= ' <span class="badge">'.$nbSubscription.'</span>';
+		if ($nbSubscription > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbSubscription.'</span>';
 		$h++;
 	}
 
@@ -76,7 +76,7 @@ function member_prepare_head(Adherent $object)
     $head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
-    if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+    if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$h++;
 
     // Attachments
@@ -87,7 +87,7 @@ function member_prepare_head(Adherent $object)
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
-    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'document';
     $h++;
 

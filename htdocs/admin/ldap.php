@@ -107,11 +107,11 @@ $form=new Form($db);
 
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Liste de synchro actives
 print '<tr class="liste_titre">';

@@ -203,7 +203,7 @@ dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'sending');
 
 print load_fiche_titre($langs->trans("SendingsNumberingModules"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -332,7 +332,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -466,7 +466,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("OtherOptions"));
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_param">';
 
 print "<table class=\"noborder\" width=\"100%\">";

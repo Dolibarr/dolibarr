@@ -219,9 +219,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //{
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
@@ -244,7 +244,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfReceptions").'</td>';
@@ -289,7 +289,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td class="center">';
+print '<table class="border centpercent"><tr valign="top"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -310,7 +310,7 @@ dol_fiche_end();
 
 // TODO USe code similar to commande/stats/index.php instead of this one.
 /*
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">'.$langs->trans("Year").'</td>';
 print '<td width="40%" class="center">'.$langs->trans("NbOfReceptions").'</td></tr>';
 

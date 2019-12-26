@@ -176,12 +176,12 @@ if ($action == 'create')
     print load_fiche_titre($langs->trans("NewEstablishment"));
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
 	// Name
 	print '<tr>';
@@ -274,11 +274,11 @@ if (($id || $ref) && $action == 'edit')
         	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
         	print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref
             print "<tr>";

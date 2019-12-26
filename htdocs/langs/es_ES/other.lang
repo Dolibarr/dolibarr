@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Tercero creado por el recolector de e-mails de
 ContactCreatedByEmailCollector=Contacto/dirección creada por el recolector de e-mails del MSGID de e-mail %s
 ProjectCreatedByEmailCollector=Proyecto creado por el recolector de e-mails del MSGID de e-mail %s
 TicketCreatedByEmailCollector=Ticket creado por el recolector de e-mails del MSGID de e-mail %s
+OpeningHoursFormatDesc=Use un - para separar las horas de apertura y cierre. <br> Use un espacio para ingresar diferentes rangos. <br> Ejemplo: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Área de exportaciones

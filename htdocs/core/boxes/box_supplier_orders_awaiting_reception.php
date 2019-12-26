@@ -130,19 +130,19 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                     $thirdpartytmp->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $supplierorderstatic->getNomUrl(1),
                     	'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right nowrap"',
+                        'td' => 'class="right nowraponall"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 

@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=多國幣別
+ErrorAddRateFail=增加的利率錯誤
+ErrorAddCurrencyFail=增加的幣別錯誤
+ErrorDeleteCurrencyFail=刪除失敗的錯誤
+multicurrency_syncronize_error=同步錯誤：%s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=使用文件的日期尋找貨幣匯率，而不是使用最新的已知匯率
+multicurrency_useOriginTx=從另一個項目新增項目時，請保持原始項目的原始匯率（否則使用最新的已知匯率）
+CurrencyLayerAccount=匯率應用程式介面
+CurrencyLayerAccount_help_to_synchronize=您必須在網站%s上新增一個帳戶才能使用此功能。 <br>獲取您的<b>API密鑰</b> 。 <br>如果您使用免費帳戶，則無法更改<b>來源貨幣</b> （默認情況下為USD）。 <br>如果您的主要貨幣不是美元，則應用程序將自動對其進行重新計算。 <br><br>您每月只能進行1000次同步。
+multicurrency_appId=API密鑰
+multicurrency_appCurrencySource=來源貨幣
+multicurrency_alternateCurrencySource=備用來源貨幣
+CurrenciesUsed=已使用幣別
+CurrenciesUsed_help_to_add=增加您需要在<b>提案</b> ， <b>訂單</b>等上使用的不同貨幣和費率。
+rate=利率
+MulticurrencyReceived=已收，原來幣別
+MulticurrencyRemainderToTake=剩餘金額，原始貨幣
+MulticurrencyPaymentAmount=付款金額，原來幣別
+AmountToOthercurrency=金額（以接收帳戶的貨幣表示）

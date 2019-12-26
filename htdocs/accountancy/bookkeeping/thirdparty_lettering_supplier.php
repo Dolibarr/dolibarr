@@ -21,7 +21,7 @@
  */
 
 /**
- * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
+ * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettering_supplier.php
  * \ingroup 	Accountancy (Double entries)
  * \brief 		Tab to setup lettering
  */
@@ -89,7 +89,7 @@ $lettering = new Lettering($db);
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result<0)
+if ($result < 0)
 {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -126,8 +126,8 @@ if ($action == 'autolettrage') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$title=$object->name." - ".$langs->trans('TabLetteringSupplier');
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = $object->name." - ".$langs->trans('TabLetteringSupplier');
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
@@ -159,7 +159,7 @@ $solde = 0;
 // Count total nb of records and calc total sum
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
-if (! $resql)
+if (!$resql)
 {
 	dol_print_error($db);
 	exit;
@@ -195,6 +195,7 @@ if ($resql) {
 
     $param="&socid=".$socid;
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '" method="POST">';
+    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
     $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
@@ -202,7 +203,7 @@ if ($resql) {
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
 	/*
     print '<tr class="liste_titre">';

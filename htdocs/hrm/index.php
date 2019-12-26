@@ -62,7 +62,7 @@ $max=3;
  */
 
 // Update sold
-if (! empty($conf->holiday->enabled) && ! empty($setupcompanynotcomplete))
+if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete))
 {
 	$result = $holiday->updateBalance();
 }
@@ -73,18 +73,18 @@ if (! empty($conf->holiday->enabled) && ! empty($setupcompanynotcomplete))
  */
 
 $childids = $user->getAllChildIds();
-$childids[]=$user->id;
+$childids[] = $user->id;
 
 llxHeader('', $langs->trans('HRMArea'));
 
 print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
 
-if (! empty($setupcompanynotcomplete))
+if (!empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
-	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 
 	llxFooter();
 	exit;
@@ -113,7 +113,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
@@ -134,25 +134,25 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 }
 
 
-if (! empty($conf->holiday->enabled))
+if (!empty($conf->holiday->enabled))
 {
 	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 	{
 		$user_id = $user->id;
 
         print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder nohover" width="100%">';
+	    print '<table class="noborder nohover centpercent">';
 	    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
 	    print '<tr class="oddeven">';
 	    print '<td colspan="3">';
 
-	    $out='';
-	    $typeleaves=$holiday->getTypes(1, 1);
-	    foreach($typeleaves as $key => $val)
+	    $out = '';
+	    $typeleaves = $holiday->getTypes(1, 1);
+	    foreach ($typeleaves as $key => $val)
 	    {
 	    	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
 	    	$nb_holiday += $nb_type;
-	    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+	    	$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 	    }
 	    print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 	    print $out;
@@ -161,7 +161,7 @@ if (! empty($conf->holiday->enabled))
 	    print '</tr>';
 	    print '</table></div><br>';
 	}
-	elseif (! is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+	elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 	{
 		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 	}
@@ -287,22 +287,22 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		{
 			$total_ttc = $totalam = $total = 0;
 
-			$expensereportstatic=new ExpenseReport($db);
-			$userstatic=new User($db);
+			$expensereportstatic = new ExpenseReport($db);
+			$userstatic = new User($db);
 			while ($i < $num && $i < $max)
 			{
 				$obj = $db->fetch_object($result);
 
-				$expensereportstatic->id=$obj->rowid;
-				$expensereportstatic->ref=$obj->ref;
+				$expensereportstatic->id = $obj->rowid;
+				$expensereportstatic->ref = $obj->ref;
 
-				$userstatic->id=$obj->uid;
-				$userstatic->lastname=$obj->lastname;
-				$userstatic->firstname=$obj->firstname;
-                $userstatic->email=$obj->email;
-				$userstatic->login=$obj->login;
-				$userstatic->statut=$obj->statut;
-				$userstatic->photo=$obj->photo;
+				$userstatic->id = $obj->uid;
+				$userstatic->lastname = $obj->lastname;
+				$userstatic->firstname = $obj->firstname;
+                $userstatic->email = $obj->email;
+				$userstatic->login = $obj->login;
+				$userstatic->statut = $obj->statut;
+				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';

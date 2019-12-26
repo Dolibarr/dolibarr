@@ -169,7 +169,7 @@ dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Ref
 /*print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
@@ -235,13 +235,13 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder" width="100%">';
+	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
     print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
@@ -267,7 +267,7 @@ if ($resql)
 			// Expected to pay
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
-			print '<td align="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";

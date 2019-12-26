@@ -234,11 +234,11 @@ print $langs->trans("TransferDesc");
 print "<br><br>";
 
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<input type="hidden" name="action" value="add">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
 print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';

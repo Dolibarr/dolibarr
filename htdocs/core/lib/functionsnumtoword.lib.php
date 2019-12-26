@@ -17,7 +17,7 @@
  * or see https://www.gnu.org/
  */
 /**
- *	\file			htdocs/core/lib/functionsnumbertoword.lib.php
+ *  \file			htdocs/core/lib/functionsnumtoword.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */

@@ -110,7 +110,7 @@ if ($_POST)
 			$cartesianarray = cartesianArray($adapted_values);
 			foreach ($cartesianarray as $currcomb)
 			{
-				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
+				$res = $combination->createProductCombination($user, $product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
 				    $error++;
 				    setEventMessages($combination->error, $combination->errors, 'errors');

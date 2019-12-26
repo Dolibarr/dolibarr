@@ -120,7 +120,7 @@ if (! function_exists("ldap_connect"))
 
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
 dol_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
@@ -129,7 +129,7 @@ print $langs->trans("LDAPDescUsers").'<br>';
 print '<br>';
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
@@ -158,7 +158,7 @@ print '</tr>';
 
 print '</table>';
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';

@@ -154,18 +154,16 @@ if ($result)
 
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->banque->modifier)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewVariousPayment').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -175,7 +173,7 @@ if ($result)
 	print_barre_liste($langs->trans("VariousPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 
@@ -200,7 +198,7 @@ if ($result)
 	print '</td>';
 
 	// Account
-	if (! empty($conf->banque->enabled))
+	if (!empty($conf->banque->enabled))
 	{
 		print '<td class="liste_titre">';
 		$form->select_comptes($search_account, 'search_account', 0, '', 1);
@@ -208,11 +206,11 @@ if ($result)
 	}
 
 	// Accounting account
-	if (! empty($conf->accounting->enabled))
+	if (!empty($conf->accounting->enabled))
 	{
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
-		print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, array (), 1, 1, 'maxwidth200');
+		print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, array(), 1, 1, 'maxwidth200');
 		print '</div>';
 		print '</td>';
 	}
@@ -236,102 +234,107 @@ if ($result)
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep,v.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
-	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
+	if (!empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	if (!empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
 
-	$totalarray=array();
+	$totalarray = array();
 	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
 
-		$variousstatic->id=$obj->rowid;
-		$variousstatic->ref=$obj->rowid;
+		$variousstatic->id = $obj->rowid;
+		$variousstatic->ref = $obj->rowid;
 
 		// Ref
 		print "<td>".$variousstatic->getNomUrl(1)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 
 		// Label payment
 		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 
 		// Date payment
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 
 		// Type
 		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+		if (! $i) $totalarray['nbfield']++;
 
 		// Account
-		if (! empty($conf->banque->enabled))
+		if (!empty($conf->banque->enabled))
 		{
 			print '<td>';
 			if ($obj->bid > 0)
 			{
-				$accountstatic->id=$obj->bid;
-				$accountstatic->ref=$obj->bref;
-				$accountstatic->number=$obj->bnumber;
+				$accountstatic->id = $obj->bid;
+				$accountstatic->ref = $obj->bref;
+				$accountstatic->number = $obj->bnumber;
 
-				if (! empty($conf->accounting->enabled)) {
-					$accountstatic->account_number=$obj->bank_account_number;
+				if (!empty($conf->accounting->enabled)) {
+					$accountstatic->account_number = $obj->bank_account_number;
 
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 				}
 
-				$accountstatic->label=$obj->blabel;
+				$accountstatic->label = $obj->blabel;
 				print $accountstatic->getNomUrl(1);
 			}
 			else print '&nbsp;';
 			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Accounting account
-		if (! empty($conf->accounting->enabled)) {
+		if (!empty($conf->accounting->enabled)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
 			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Debit
-		print "<td class=\"right\">";
+		print '<td class="nowrap right">';
 		if ($obj->sens == 0)
 		{
 			print price($obj->amount);
-			$totalarray['totaldeb'] += $obj->amount;
+			$totalarray['val']['total_deb'] += $obj->amount;
 		}
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='total_deb';
 		print "</td>";
 
 		// Credit
-		print "<td class=\"right\">";
+		print '<td class="nowrap right">';
 		if ($obj->sens == 1)
 		{
 			print price($obj->amount);
-			$totalarray['totalcred'] += $obj->amount;
+			$totalarray['val']['total_cred'] += $obj->amount;
 		}
-		print "</td>";
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='total_cred';
+		print '</td>' ;
+		print '<td></td>';
 
-		print "<td></td>";
+		if (! $i) $totalarray['nbfield']++;
+
+		print "</tr>\n";
 
 		$i++;
 	}
 
-	$colspan=4;
-	if (! empty($conf->banque->enabled)) $colspan++;
-	if (! empty($conf->accounting->enabled)) $colspan++;
-
-	print '<tr class="liste_total">';
-	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td class="liste_total right">'.price($totalarray['totaldeb'])."</td>";
-	print '<td class="liste_total right">'.price($totalarray['totalcred'])."</td>";
-	print '<td></td>';
-	print '</tr>';
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	print "</table>";
 	print '</div>';

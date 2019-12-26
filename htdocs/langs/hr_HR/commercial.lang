@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Trgovina
-CommercialArea=Trgovina
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Kupac
 Customers=Kupci
 Prospect=Potencijalni kupac
@@ -18,7 +18,7 @@ TaskRDVWith=Sastanak sa %s
 ShowTask=Prikaži zadatak
 ShowAction=Prikaži događaj
 ActionsReport=Izvješće događaja
-ThirdPartiesOfSaleRepresentative=Third parties with sales representative
+ThirdPartiesOfSaleRepresentative=Treće osobe zastupljene od prodajnog predstavnika
 SaleRepresentativesOfThirdParty=Sales representatives of third party
 SalesRepresentative=Prodajni predstavnik
 SalesRepresentatives=Prodajni predstavnici

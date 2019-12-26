@@ -446,8 +446,8 @@ if ($id)
     $fieldlist=explode(',', $tabfield[$id]);
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<table class="noborder centpercent">';
 
     // Form to add a new line
     if ($tabname[$id])
@@ -528,11 +528,11 @@ if ($id)
             print '<br>';
 
             print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="page" value="'.$page.'">';
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
 
             // Title of lines
             print '<tr class="liste_titre">';
@@ -625,7 +625,7 @@ if ($id)
 
                     // Delete link
                     if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete">'.img_delete().'</a></td>';
-                    else print '<td align="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
+                    else print '<td class="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
                     print "</tr>\n";
                 }

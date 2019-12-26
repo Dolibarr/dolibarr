@@ -51,9 +51,9 @@ $object = new SupplierProposal($db);
  * Actions
  */
 
-$permissionnote=$user->rights->supplier_proposal->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
@@ -106,7 +106,7 @@ if ($id > 0 || ! empty($ref))
 		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		                $morehtmlref.='</form>';
@@ -134,7 +134,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			$cssclass="titlefield";
+			$cssclass = "titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 			print '</div>';

@@ -116,7 +116,7 @@ class box_boms extends ModeleBoxes
                     $productstatic->ref = $objp->product_ref;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $bomstatic->getNomUrl(1),
                         'asis' => 1,
                     );
