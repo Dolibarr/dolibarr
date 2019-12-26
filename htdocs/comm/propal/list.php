@@ -764,8 +764,8 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-    $objectstatic->note_private = $obj->note_private;
-    $objectstatic->note_public = $obj->note_public;
+		$objectstatic->note_private = $obj->note_private;
+		$objectstatic->note_public = $obj->note_public;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
