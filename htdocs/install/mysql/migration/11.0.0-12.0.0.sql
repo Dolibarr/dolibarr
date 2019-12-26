@@ -36,3 +36,22 @@
 
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_account varchar(128);
 
+
+create table llx_object_lang
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_object      integer      DEFAULT 0 NOT NULL,
+  type_object    varchar(32)  NOT NULL,					-- 'thirdparty', 'contact', '...'
+  property       varchar(32)  NOT NULL,
+  lang           varchar(5)   DEFAULT 0 NOT NULL,
+  value          text,
+  import_key varchar(14) DEFAULT NULL
+)ENGINE=innodb;
+
+
+
+ALTER TABLE llx_object_lang ADD UNIQUE INDEX uk_object_lang (fk_object, type_object, property, lang);
+
+
+
+
