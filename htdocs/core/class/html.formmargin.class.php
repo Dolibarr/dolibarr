@@ -98,7 +98,7 @@ class FormMargin
 
 			$pv = $line->total_ht;
 			$pa_ht = ($pv < 0 ? - $line->pa_ht : $line->pa_ht);      // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
-			if ($object->type == Facture::TYPE_SITUATION) {
+			if ($object->element == 'facture' && $object->type == Facture::TYPE_SITUATION) {
 				$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
 			} else {
 				$pa = $line->qty * $pa_ht;
