@@ -425,18 +425,6 @@ if ($id > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
-		print '<script type="text/javascript">'."\n";
-		print '  	function popEcheancier() {'."\n";
-		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="98%" frameborder="0" src="createschedule.php?loanid='.$object->id.'"></iframe></div>\');'."\n";
-		print '  		$div.dialog({'."\n";
-		print '  			modal:true'."\n";
-		print '  			,width:"90%"'."\n";
-		print '  			,height:$(window).height() - 160'."\n";
-		print '  		});'."\n";
-		print '  	}'."\n";
-		print '</script>';
-
-
 		// Loan card
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -792,8 +780,6 @@ if ($id > 0)
 				// Edit
 				if ($object->paid == 0 && $user->rights->loan->write)
 				{
-					// print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
-
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 				}
 
