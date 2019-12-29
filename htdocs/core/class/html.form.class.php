@@ -1153,14 +1153,14 @@ class Form
 		}
 
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
 			$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid=s.fk_pays";
 		}
 		$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 		if (! empty($user->socid)) $sql.= " AND s.rowid = ".$user->socid;
 		if ($filter) $sql.= " AND (".$filter.")";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND sc.fk_user = " .$user->id;
 		if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status <> 0";
 		// Add criteria
 		if ($filterkey && $filterkey != '')
