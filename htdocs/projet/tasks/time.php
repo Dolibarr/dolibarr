@@ -375,132 +375,132 @@ if ($action == 'confirm_generateinvoice')
 
 		if (!$error)
 		{
-	  if ($generateinvoicemode=='onelineperuser') {
-			  $arrayoftasks = array();
-			  foreach ($toselect as $key => $value)
-			  {
-				// Get userid, timepent
-				$object->fetchTimeSpent($value);
-				$arrayoftasks[$object->timespent_fk_user]['timespent'] += $object->timespent_duration;
-				$arrayoftasks[$object->timespent_fk_user]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
-			  }
-
-			  foreach ($arrayoftasks as $userid => $value)
-			  {
-				$fuser->fetch($userid);
-				//$pu_ht = $value['timespent'] * $fuser->thm;
-				$username = $fuser->getFullName($langs);
-
-				// Define qty per hour
-				$qtyhour = round($value['timespent'] / 3600, 2);
-				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
-
-				// If no unit price known
-				if (empty($pu_ht))
-				{
-					$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+			if ($generateinvoicemode=='onelineperuser') {
+					$arrayoftasks = array();
+				foreach ($toselect as $key => $value)
+					{
+					// Get userid, timepent
+					$object->fetchTimeSpent($value);
+					$arrayoftasks[$object->timespent_fk_user]['timespent'] += $object->timespent_duration;
+					$arrayoftasks[$object->timespent_fk_user]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
 
-				// Add lines
-				$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
-
-				// Update lineid into line of timespent
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-				$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
-				$result = $db->query($sql);
-				if (!$result)
+				foreach ($arrayoftasks as $userid => $value)
 				{
-					$error++;
-					setEventMessages($db->lasterror(), null, 'errors');
-					break;
+					$fuser->fetch($userid);
+					//$pu_ht = $value['timespent'] * $fuser->thm;
+					$username = $fuser->getFullName($langs);
+
+					// Define qty per hour
+					$qtyhour = round($value['timespent'] / 3600, 2);
+					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+
+					// If no unit price known
+					if (empty($pu_ht))
+					{
+						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+					}
+
+					// Add lines
+					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+
+					// Update lineid into line of timespent
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+					$result = $db->query($sql);
+					if (!$result)
+					{
+						$error++;
+						setEventMessages($db->lasterror(), null, 'errors');
+						break;
+					}
 				}
-			  }
-	  }
-	  elseif ($generateinvoicemode=='onelineperperiod') {
-			  $arrayoftasks = array();
-			  foreach ($toselect as $key => $value)
-			  {
-				// Get userid, timepent
-				$object->fetchTimeSpent($value);
-				$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
-				$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
-				$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
-				$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
-			  }
-
-			  foreach ($arrayoftasks as $timespent_id => $value)
-			  {
-		  $userid = $value['user'];
-				$fuser->fetch($userid);
-				//$pu_ht = $value['timespent'] * $fuser->thm;
-				$username = $fuser->getFullName($langs);
-
-				// Define qty per hour
-				$qtyhour = round($value['timespent'] / 3600, 2);
-				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
-
-				// If no unit price known
-				if (empty($pu_ht))
-				{
-					$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
-				}
-
-				// Add lines
-				$lineid = $tmpinvoice->addline($value['note'], $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
-
-				// Update lineid into line of timespent
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-				$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
-				$result = $db->query($sql);
-				if (!$result)
-				{
-					$error++;
-					setEventMessages($db->lasterror(), null, 'errors');
-					break;
-				}
-			  }
-	  }
-	  elseif ($generateinvoicemode=='onelinepertask') {
-			  $arrayoftasks = array();
-			  foreach ($toselect as $key => $value)
-			  {
-				// Get userid, timepent
-				$object->fetchTimeSpent($value);
-		  // $object->id is the task id
-				$arrayoftasks[$object->id]['timespent'] += $object->timespent_duration;
-				$arrayoftasks[$object->id]['totalvaluetodivideby3600'] += $object->timespent_duration * $object->timespent_thm;
-			  }
-
-			  foreach ($arrayoftasks as $task_id => $value)
-			  {
-			  $ftask = new Task($db);
-		  $ftask->fetch($task_id);
-				// Define qty per hour
-				$qtyhour = round($value['timespent'] / 3600, 2);
-				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
-
-				// If no unit price known
-				if (empty($pu_ht))
-				{
-					$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+			}
+			elseif ($generateinvoicemode=='onelineperperiod') {
+					$arrayoftasks = array();
+				foreach ($toselect as $key => $value)
+					{
+					// Get userid, timepent
+					$object->fetchTimeSpent($value);
+					$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
+					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
+					$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
+					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 				}
 
-				// Add lines
-		  $lineName = $ftask->ref.' - '.$ftask->label;
-				$lineid = $tmpinvoice->addline($lineName, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
-
-				// Update lineid into line of timespent
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-				$sql .= ' WHERE rowid in ('.join(',', $toselect).')';
-				$result = $db->query($sql);
-				if (!$result)
+				foreach ($arrayoftasks as $timespent_id => $value)
 				{
-					$error++;
-					setEventMessages($db->lasterror(), null, 'errors');
-					break;
+					$userid = $value['user'];
+					$fuser->fetch($userid);
+					//$pu_ht = $value['timespent'] * $fuser->thm;
+					$username = $fuser->getFullName($langs);
+
+					// Define qty per hour
+					$qtyhour = round($value['timespent'] / 3600, 2);
+					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+
+					// If no unit price known
+					if (empty($pu_ht))
+					{
+						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+					}
+
+					// Add lines
+					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+
+					// Update lineid into line of timespent
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+					$result = $db->query($sql);
+					if (!$result)
+					{
+						$error++;
+						setEventMessages($db->lasterror(), null, 'errors');
+						break;
+					}
 				}
-			  }
-	  }
+			}
+			elseif ($generateinvoicemode=='onelinepertask') {
+					$arrayoftasks = array();
+				foreach ($toselect as $key => $value)
+					{
+					// Get userid, timepent
+					$object->fetchTimeSpent($value);
+					// $object->id is the task id
+					$arrayoftasks[$object->id]['timespent'] += $object->timespent_duration;
+					$arrayoftasks[$object->id]['totalvaluetodivideby3600'] += $object->timespent_duration * $object->timespent_thm;
+				}
+
+				foreach ($arrayoftasks as $task_id => $value)
+				{
+					$ftask = new Task($db);
+					$ftask->fetch($task_id);
+					// Define qty per hour
+					$qtyhour = round($value['timespent'] / 3600, 2);
+					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+
+					// If no unit price known
+					if (empty($pu_ht))
+					{
+						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+					}
+
+					// Add lines
+					$lineName = $ftask->ref.' - '.$ftask->label;
+					$lineid = $tmpinvoice->addline($lineName, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+
+					// Update lineid into line of timespent
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql .= ' WHERE rowid in ('.join(',', $toselect).')';
+					$result = $db->query($sql);
+					if (!$result)
+					{
+						$error++;
+						setEventMessages($db->lasterror(), null, 'errors');
+						break;
+					}
+				}
+			}
 		}
 
 		if (!$error)
