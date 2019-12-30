@@ -1877,6 +1877,9 @@ class Product extends CommonObject
         if (empty($newnpr)) {
             $newnpr = 0;
         }
+        if (empty($newminprice)) {
+        	$newminprice = 0;
+        }
 
         // Check parameters
         if ($newvat == '') {
