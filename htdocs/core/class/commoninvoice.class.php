@@ -351,7 +351,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$this->id;
 				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or credit note
 			}
-			
+
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
