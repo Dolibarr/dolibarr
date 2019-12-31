@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -62,17 +62,17 @@ function checkLinkedElements($sourcetype, $targettype)
 	$targettable=$targettype;
 
 	if ($sourcetype == 'shipping') $sourcetable = 'expedition';
-	else if ($targettype == 'shipping') $targettable = 'expedition';
+	elseif ($targettype == 'shipping') $targettable = 'expedition';
 	if ($sourcetype == 'delivery') $sourcetable = 'livraison';
-	else if ($targettype == 'delivery') $targettable = 'livraison';
+	elseif ($targettype == 'delivery') $targettable = 'livraison';
 	if ($sourcetype == 'order_supplier') $sourcetable = 'commande_fournisseur';
-	else if ($targettype == 'order_supplier') $targettable = 'commande_fournisseur';
+	elseif ($targettype == 'order_supplier') $targettable = 'commande_fournisseur';
 	if ($sourcetype == 'invoice_supplier') $sourcetable = 'facture_fourn';
-	else if ($targettype == 'invoice_supplier') $targettable = 'facture_fourn';
+	elseif ($targettype == 'invoice_supplier') $targettable = 'facture_fourn';
 
 	$out = $langs->trans('SourceType').': '.$sourcetype.' => '.$langs->trans('TargetType').': '.$targettype.' ';
 
-	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX .'element_element';
+	$sql = 'SELECT rowid, fk_source, fk_target FROM '.MAIN_DB_PREFIX .'element_element';
 	$sql.= ' WHERE sourcetype="'.$sourcetype.'" AND targettype="'.$targettype.'"';
 	$resql=$db->query($sql);
 	if ($resql)
@@ -134,12 +134,11 @@ function clean_data_ecm_directories()
 				$sqlupdate="UPDATE ".MAIN_DB_PREFIX."ecm_directories set label='".$newlabel."' WHERE rowid=".$id;
 				print '<tr><td>'.$sqlupdate."</td></tr>\n";
 				$resqlupdate=$db->query($sqlupdate);
-				if (! $resqlupdate) dol_print_error($db,'Failed to update');
+				if (! $resqlupdate) dol_print_error($db, 'Failed to update');
 			}
 		}
 	}
-	else dol_print_error($db,'Failed to run request');
+	else dol_print_error($db, 'Failed to run request');
 
 	return;
 }
-

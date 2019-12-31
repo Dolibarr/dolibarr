@@ -14,12 +14,12 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 
-ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber, entity);
+ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_soc (fk_soc);
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_author (fk_user_author);

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,9 +23,11 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
+
 /**
- *	\class      ActionsCardCompany
- *	\brief      Class with controller methods for thirdparty canvas
+ *	ActionsCardCompany
+ *
+ *	Class with controller methods for thirdparty canvas
  */
 class ActionsCardCompany extends ActionsCardCommon
 {
@@ -38,7 +40,7 @@ class ActionsCardCompany extends ActionsCardCommon
      *    @param	string	$canvas			Name of canvas
      *    @param	string	$card			Name of tab (sub-canvas)
 	 */
-	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
         $this->db				= $db;
         $this->dirmodule		= $dirmodule;
@@ -67,7 +69,7 @@ class ActionsCardCompany extends ActionsCardCommon
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -76,13 +78,13 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id=0, $ref='')
+    public function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 
-		$ret = $this->getObject($id,$ref);
+		$ret = $this->getObject($id, $ref);
 
 		parent::assign_values($action);
 
@@ -109,18 +111,18 @@ class ActionsCardCompany extends ActionsCardCommon
 		{
 			for ($i=1; $i<=4; $i++)
 			{
-				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->country_code);
-				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i],$this->object->country_code);
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
+				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i, 'idprof'.$i, $this->tpl['profid'.$i], $this->object->country_code);
 			}
 
 			// Type
-			$this->tpl['select_companytype']	= $form->selectarray("typent_id",$formcompany->typent_array(0), $this->object->typent_id);
+			$this->tpl['select_companytype']	= $form->selectarray("typent_id", $formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
-			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code,$this->object->country_code);
+			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_code);
 
 			// Workforce
-			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
+			$this->tpl['select_workforce'] = $form->selectarray("effectif_id", $formcompany->effectif_array(0), $this->object->effectif_id);
 
 			// VAT intra
 			$s='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
@@ -131,11 +133,11 @@ class ActionsCardCompany extends ActionsCardCommon
 				if ($conf->use_javascript_ajax)
 				{
 					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$this->tpl['tva_intra'] =  $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+					$this->tpl['tva_intra'] =  $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				}
 				else
 				{
-					$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+					$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 				}
 			}
 			else
@@ -148,14 +150,14 @@ class ActionsCardCompany extends ActionsCardCommon
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "1,action-delete");
 			}
 
 			for ($i=1; $i<=4; $i++)
 			{
-				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->country_code);
-				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i,$this->object);
-				$this->tpl['urlprofid'.$i]		= $this->object->id_prof_url($i,$this->object);
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
+				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i, $this->object);
+				$this->tpl['urlprofid'.$i]		= $this->object->id_prof_url($i, $this->object);
 			}
 
 			// TVA intra
@@ -170,11 +172,11 @@ class ActionsCardCompany extends ActionsCardCommon
 					if ($conf->use_javascript_ajax)
 					{
 						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-						$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					}
 					else
 					{
-						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 					}
 				}
 				else
@@ -200,7 +202,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
 			}
 		}
-	}
+    }
 
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
@@ -215,8 +217,8 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *  @param      string	$dbt_select		Field name for select if not rowid. (optional)
 	 *  @return		int						1
 	 */
-	function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
-	{
-		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
-	}
+    public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+    {
+        return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+    }
 }

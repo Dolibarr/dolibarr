@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *    \file       ticket/core/modules/ticket/mod_ticket_universal.php
+ *    \file       htdocs/core/modules/ticket/mod_ticket_universal.php
  *    \ingroup    ticket
  *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
@@ -31,7 +31,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 {
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
     public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -53,18 +53,18 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	public $name='Universal';
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return string      Texte descripif
      */
     public function info()
     {
-        global $conf, $langs;
+        global $db, $conf, $langs;
 
         // Load translation files required by the page
         $langs->loadLangs(array("ticket","admin"));
 
-        $form = new Form($this->db);
+        $form = new Form($db);
 
         $texte = $langs->trans('GenericNumRefModelDesc') . "<br>\n";
         $texte .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -81,9 +81,9 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
         // Parametrage du prefix
         $texte .= '<tr><td>' . $langs->trans("Mask") . ':</td>';
-        $texte .= '<td align="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKET_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
+        $texte .= '<td class="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKET_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
 
-        $texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="Button"></td>';
+        $texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="Button"></td>';
 
         $texte .= '</tr>';
 
@@ -94,7 +94,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return string      Example
      */

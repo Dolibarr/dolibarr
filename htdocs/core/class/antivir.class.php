@@ -15,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *      \file       htdocs/core/class/antivir.class.php
  *      \brief      File of class to scan viruses
- *      \author	    Laurent Destailleur.
  */
 
 /**
@@ -55,12 +54,12 @@ class AntiVir
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db=$db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -69,7 +68,7 @@ class AntiVir
 	 *	@param	string	$file		File to scan
 	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
-	function dol_avscan_file($file)
+	public function dol_avscan_file($file)
 	{
         // phpcs:enable
 		global $conf;
@@ -93,6 +92,8 @@ class AntiVir
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode?"on":"off"));
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline=exec($fullcommand, $output, $return_var);
+
+		if (is_null($output)) $output=array();
 
         //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 
@@ -126,7 +127,7 @@ class AntiVir
 		}
 		*/
 
-		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',',$output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',', $output));
 
 		$returncodevirus=1;
 		if ($return_var == $returncodevirus)	// Virus found
@@ -153,7 +154,7 @@ class AntiVir
 	 *	@param	string	$file		File to scan
 	 *	@return	string				Full command line to run
 	 */
-	function getCliCommand($file)
+	public function getCliCommand($file)
 	{
 		global $conf;
 
@@ -166,17 +167,17 @@ class AntiVir
 		$command=$conf->global->MAIN_ANTIVIRUS_COMMAND;
 		$param=$conf->global->MAIN_ANTIVIRUS_PARAM;
 
-		$param=preg_replace('/%maxreclevel/',$maxreclevel,$param);
-		$param=preg_replace('/%maxfiles/',$maxfiles,$param);
-		$param=preg_replace('/%maxratio/',$maxratio,$param);
-		$param=preg_replace('/%bz2archivememlim/',$bz2archivememlim,$param);
-		$param=preg_replace('/%maxfilesize/',$maxfilesize,$param);
-		$param=preg_replace('/%file/',trim($file),$param);
+		$param=preg_replace('/%maxreclevel/', $maxreclevel, $param);
+		$param=preg_replace('/%maxfiles/', $maxfiles, $param);
+		$param=preg_replace('/%maxratio/', $maxratio, $param);
+		$param=preg_replace('/%bz2archivememlim/', $bz2archivememlim, $param);
+		$param=preg_replace('/%maxfilesize/', $maxfilesize, $param);
+		$param=preg_replace('/%file/', trim($file), $param);
 
-		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
+		if (! preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM))
 			$param=$param." ".escapeshellarg(trim($file));
 
-		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
+		if (preg_match("/\s/", $command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
 
 		$ret=$command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';

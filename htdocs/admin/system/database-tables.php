@@ -16,32 +16,32 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/admin/system/database-tables.php
- *	\brief      Page d'infos des tables de la base
+ *	\brief      Page with information on database tables
  */
 
 require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 if ($action == 'convert')
 {
-    $sql="ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
+    $sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
 	$db->query($sql);
 }
 if ($action == 'convertutf8')
 {
-    $sql="ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+    $sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
     $db->query($sql);
 }
 
@@ -52,34 +52,34 @@ if ($action == 'convertutf8')
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
+print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
 
 
 // Define request to get table description
-$base=0;
-if (preg_match('/mysql/i',$conf->db->type))
+$base = 0;
+if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS";
-	$base=1;
+	$base = 1;
 }
-else if ($conf->db->type == 'pgsql')
+elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname, contype FROM pg_constraint;";
-	$base=2;
+	$base = 2;
 }
-else if ($conf->db->type == 'mssql')
+elseif ($conf->db->type == 'mssql')
 {
 	//$sqls[0] = "";
 	//$base=3;
 }
-else if ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
+elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 {
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;
 }
 
 
-if (! $base)
+if (!$base)
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
@@ -93,14 +93,14 @@ else
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
 		print '<td>'.$langs->trans("Format").'</td>';
-		print '<td align="right">'.$langs->trans("NbOfRecord").'</td>';
-		print '<td align="right">Avg_row_length</td>';
-		print '<td align="right">Data_length</td>';
-		print '<td align="right">Max_Data_length</td>';
-		print '<td align="right">Index_length</td>';
-		print '<td align="right">Increment</td>';
-		print '<td align="right">Last check</td>';
-		print '<td align="right">Collation</td>';
+		print '<td class="right">'.$langs->trans("NbOfRecord").'</td>';
+		print '<td class="right">Avg_row_length</td>';
+		print '<td class="right">Data_length</td>';
+		print '<td class="right">Max_Data_length</td>';
+		print '<td class="right">Index_length</td>';
+		print '<td class="right">Increment</td>';
+		print '<td class="right">Last check</td>';
+		print '<td class="right">Collation</td>';
 		print "</tr>\n";
 
 		$sql = "SHOW TABLE STATUS";
@@ -109,7 +109,7 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$i=0;
+			$i = 0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
@@ -134,7 +134,7 @@ else
 				print '<td align="right">'.$obj->Auto_increment.'</td>';
 				print '<td align="right">'.$obj->Check_time.'</td>';
 				print '<td align="right">'.$obj->Collation;
-				if (isset($obj->Collation) && ($obj->Collation == "utf8mb4_general_ci" || $obj->Collation == "utf8mb4_unicode_ci"))
+				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci"))))
 				{
 				    print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
 				}
@@ -161,23 +161,23 @@ else
 		print "</tr>\n";
 
 		$sql = "SELECT relname, seq_tup_read, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del";
-		$sql.= " FROM pg_stat_user_tables";
+		$sql .= " FROM pg_stat_user_tables";
 
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$i=0;
+			$i = 0;
 			while ($i < $num)
 			{
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
-				print '<td align="right">'.$row[1].'</td>';
-				print '<td align="right">'.$row[2].'</td>';
-				print '<td align="right">'.$row[3].'</td>';
-				print '<td align="right">'.$row[4].'</td>';
-				print '<td align="right">'.$row[5].'</td>';
+				print '<td class="right">'.$row[1].'</td>';
+				print '<td class="right">'.$row[2].'</td>';
+				print '<td class="right">'.$row[3].'</td>';
+				print '<td class="right">'.$row[4].'</td>';
+				print '<td class="right">'.$row[5].'</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -189,8 +189,8 @@ else
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-    print '<div class="div-table-responsive-no-min">';
-	  print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -202,8 +202,7 @@ else
 		if ($resql)
 		{
 			while ($row = $db->fetch_row($resql)) {
-
-				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
+				$rescount = $db->query("SELECT COUNT(*) FROM ".$row[0]);
 				if ($rescount) {
 					$row_count = $db->fetch_row($rescount);
 					$count = $row_count[0];

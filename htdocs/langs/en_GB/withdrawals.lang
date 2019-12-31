@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Payment status must be set to 'credited' before declaring reject on specific lines.
-NbOfInvoiceToWithdrawWithInfo=No. of customer invoices with direct debit payment orders having defined bank account information
 AmountToWithdraw=Amount to pay
 NoInvoiceToWithdraw=No customer invoice with open 'Direct Debit requests' is waiting. Go on tab '%s' on invoice card to make a request.
 MakeWithdrawRequest=Make a Direct Debit payment request
@@ -14,8 +13,6 @@ OrderWaiting=Waiting for action
 NotifyTransmision=Payment Transmission
 NotifyCredit=Payment Credit
 WithdrawalFileNotCapable=Unable to generate Payment receipt file for your country %s (Your country is not supported)
-ShowWithdraw=Show Payment
-IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one payment not yet processed, it won't be set as paid to allow prior Payment management.
 DoStandingOrdersBeforePayments=This tab allows you to request a direct debit payment order. Once done, go into menu Bank->Direct Debit orders to manage the direct debit payment order. When the payment order is closed, payment on the invoice will be automatically recorded, and the invoice closed if the outstanding balance is null.
 WithdrawalFile=Payment file
 WithdrawRequestAmount=The amount of Direct Debit request:

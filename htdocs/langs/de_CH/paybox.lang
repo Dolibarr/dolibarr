@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - paybox
 ThisIsInformationOnPayment=Informationen zu der vorzunehmenden Zahlunge
-YourPaymentHasBeenRecorded=Hiermit Bestätigen wir die Zahlung ausgeführt wurde. Vielen Dank.
-YourPaymentHasNotBeenRecorded=Die Zahlung wurde abgebrochen und nicht ausgeführt. Vielen Dank.
+YourPaymentHasBeenRecorded=Diese Seite bestätigt, dass Ihre Zahlung erfasst wurde. Vielen Dank.
 PAYBOX_CGI_URL_V2=Url für das Paybox Zahlungsmodul "CGI Modul"
-PAYBOX_PAYONLINE_SENDEMAIL=Status-Email nach einer Zahlung (erfolgreich oder nicht)
+VendorName=Name des Anbieters

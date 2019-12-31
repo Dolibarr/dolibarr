@@ -9,7 +9,7 @@ PHPUNIT
 To use make phpunit analysis, you must:
 
 * Install PHPUnit
-If using Eclipse, you must also add an entry as external tool for phpunit programm with:
+If using Eclipse, you must also add an entry as external tool for phpunit program with:
 -Name:      PHPUnit
 -Location:  Linux:   /usr/bin/php
             Windows: C:\Program Files (x86)\wamp\bin\php\php5.2.8\php.exe

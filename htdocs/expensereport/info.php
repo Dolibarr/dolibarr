@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 $langs->load("trips");
 
 // Security check
-$id = GETPOST('id','int');
-if ($user->societe_id) $socid=$user->societe_id;
+$id = GETPOST('id', 'int');
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -45,12 +45,12 @@ $form = new Form($db);
 
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
 $helpurl="EN:Module_Expense_Reports";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($id > 0 || ! empty($ref))
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id,$ref);
+	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);

@@ -16,5 +16,6 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source à expé
 # Autoclassify supplier order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classer la ou les proposition(s) commerciale(s) fournisseur sources facturées quand une facture fournisseur est validée (et si le montant de la facture est le même que le total des propositions sources liées)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la ou les commande(s) fournisseur(s) de source(s) à facturée(s) lorsque la facture fournisseur est validée (et si le montant de la facture est le même que le montant total des commandes liées)
+descWORKFLOW_BILL_ON_RECEPTION=Classer la/les réception(s) facturée(s) à la validation d'une facture fournisseur 
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique

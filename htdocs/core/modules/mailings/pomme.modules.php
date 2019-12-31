@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,12 +30,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_pomme extends MailingTargets
 {
-	var $name='DolibarrUsers';                      // Identifiant du module mailing
+	public $name='DolibarrUsers';                      // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	var $require_module=array();                    // Module mailing actif si modules require_module actifs
-	var $require_admin=1;                           // Module mailing actif pour user admin ou non
-	var $picto='user';
+	public $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $require_module=array();                    // Module mailing actif si modules require_module actifs
+	public $require_admin=1;                           // Module mailing actif pour user admin ou non
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='user';
 
 	/**
      * @var DoliDB Database handler.
@@ -48,7 +52,7 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		$this->db=$db;
 	}
@@ -62,7 +66,7 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+    public function getSqlArrayForStats()
 	{
 		global $conf, $langs;
 
@@ -88,7 +92,7 @@ class mailing_pomme extends MailingTargets
      *	@param	string	$sql		SQL request to use to count
      *	@return	int					Number of recipients
      */
-	function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
@@ -108,7 +112,7 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @return     string      Retourne zone select
 	 */
-	function formFilter()
+    public function formFilter()
 	{
 		global $langs;
 
@@ -140,28 +144,22 @@ class mailing_pomme extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return     string      Url lien
 	 */
-	function url($id)
+    public function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$id.'">'.img_object('',"user").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$id.'">'.img_object('', "user").'</a>';
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id, $filtersarray=array())
+    public function add_to_target($mailing_id)
 	{
         // phpcs:enable
-		// Deprecation warning
-	    if ($filtersarray) {
-		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
-	    }
-
 	    global $conf, $langs;
 		$langs->load("companies");
 
@@ -197,17 +195,17 @@ class mailing_pomme extends MailingTargets
 				if ($old <> $obj->email)
 				{
 					$cibles[$j] = array(
-                    			'email' => $obj->email,
-                    			'fk_contact' => $obj->fk_contact,
-                    			'lastname' => $obj->lastname,
-                    			'firstname' => $obj->firstname,
-                    			'other' =>
-					            ($langs->transnoentities("Login").'='.$obj->login).';'.
-                                ($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
-					            ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
-                                'source_url' => $this->url($obj->id),
-                                'source_id' => $obj->id,
-                                'source_type' => 'user'
+                    	'email' => $obj->email,
+                    	'fk_contact' => $obj->fk_contact,
+                    	'lastname' => $obj->lastname,
+                    	'firstname' => $obj->firstname,
+                    	'other' =>
+					        ($langs->transnoentities("Login").'='.$obj->login).';'.
+                            ($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
+					        ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
+                        'source_url' => $this->url($obj->id),
+                        'source_id' => $obj->id,
+                        'source_type' => 'user'
 					);
 					$old = $obj->email;
 					$j++;
@@ -223,6 +221,6 @@ class mailing_pomme extends MailingTargets
 			return -1;
 		}
 
-		return parent::add_to_target($mailing_id, $cibles);
-	}
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
+    }
 }

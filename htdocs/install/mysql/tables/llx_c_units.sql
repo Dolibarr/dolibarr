@@ -14,14 +14,16 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
 create table llx_c_units(
 	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	code varchar(3),
+	scale integer,
 	label varchar(50),
 	short_label varchar(5),
+	unit_type varchar(10),
 	active tinyint DEFAULT 1 NOT NULL
-)ENGINE=innodb;
+) ENGINE=innodb;

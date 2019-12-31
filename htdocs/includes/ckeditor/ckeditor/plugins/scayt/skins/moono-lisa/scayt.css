@@ -10,8 +10,13 @@
 
 #scayt_about_
 {
-    width: 190px;
     margin: 30px auto 0 auto;
+}
+
+#scayt_about_ p
+{
+	text-align: center;
+	margin-bottom: 10px;
 }
 
 .cke_dialog_contents_body div[name=dictionaries] .cke_dialog_ui_hbox_last > a.cke_dialog_ui_button

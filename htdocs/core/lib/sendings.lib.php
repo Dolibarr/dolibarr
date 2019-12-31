@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ function shipping_prepare_head($object)
 	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire)
 	{
 		// delivery link
-		$object->fetchObjectLinked($object->id,$object->element);
+		$object->fetchObjectLinked($object->id, $object->element);
 		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0)        // If there is a delivery
 		{
 		    // Take first one element of array
@@ -71,10 +71,10 @@ function shipping_prepare_head($object)
 	        $objectsrc = new Commande($db);
 	        $objectsrc->fetch($object->origin_id);
 	    }
-	    $nbContact = count($objectsrc->liste_contact(-1,'internal')) + count($objectsrc->liste_contact(-1,'external'));
+	    $nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
     	$head[$h][2] = 'contact';
     	$h++;
 	}
@@ -82,11 +82,11 @@ function shipping_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -95,7 +95,7 @@ function shipping_prepare_head($object)
     if (!empty($object->note_public)) $nbNote++;
 	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
 
@@ -103,9 +103,9 @@ function shipping_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery', 'remove');
 
 	return $head;
 }
@@ -158,9 +158,9 @@ function delivery_prepare_head($object)
     $tmpObjectId = $object->id;
     $object->id = $object->origin_id;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery', 'remove');
 
 	$object->id = $tmpObjectId;
 	return $head;
@@ -174,9 +174,9 @@ function delivery_prepare_head($object)
  * @param	string		$filter			Filter
  * @return	int							<0 if KO, >0 if OK
  */
-function show_list_sending_receive($origin,$origin_id,$filter='')
+function show_list_sending_receive($origin, $origin_id, $filter = '')
 {
-	global $db, $conf, $langs, $bc;
+	global $db, $conf, $langs;
 	global $form;
 
 	$product_static=new Product($db);
@@ -215,14 +215,14 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			if ($filter) print load_fiche_titre($langs->trans("OtherSendingsForSameOrder"));
 			else print load_fiche_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 
-			print '<table class="liste" width="100%">';
+			print '<table class="liste centpercent">';
 			print '<tr class="liste_titre">';
-			//print '<td align="left">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td align="left">'.$langs->trans("SendingSheet").'</td>';
-			print '<td align="left">'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
-			print '<td align="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
+			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
+			print '<td>'.$langs->trans("SendingSheet").'</td>';
+			print '<td>'.$langs->trans("Description").'</td>';
+			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
 			if (! empty($conf->stock->enabled))
 			{
                 print '<td>'.$langs->trans("Warehouse").'</td>';
@@ -236,8 +236,8 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			if (! empty($conf->livraison_bon->enabled))
 			{
 				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-				//print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-				print '<td align="right">'.$langs->trans("DeliveryDate").'</td>';
+				//print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td class="right">'.$langs->trans("DeliveryDate").'</td>';
 			}
 			print "</tr>\n";
 
@@ -248,8 +248,8 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				print '<tr class="oddeven">';
 
 				// Sending id
-				print '<td align="left" class="nowrap">';
-				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a>';
+				print '<td class="nowrap left">';
+				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
 
 				// Description
@@ -272,7 +272,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
-							$outputlangs = new Translate("",$conf);
+							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
 						}
 
@@ -293,10 +293,10 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($objp->date_start, $objp->date_end);
 
 					// Add description in form
 					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -309,31 +309,31 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				else
 				{
 					print "<td>";
-					if ($objp->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
-					else $text = img_object($langs->trans('Product'),'product');
+					if ($objp->fk_product_type==1) $text = img_object($langs->trans('Service'), 'service');
+					else $text = img_object($langs->trans('Product'), 'product');
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text,$objp->description,3,'','',$i);
+						print $form->textwithtooltip($text, $objp->description, 3, '', '', $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($objp->date_start, $objp->date_end);
 					print "</td>\n";
 				}
 
-				//print '<td align="center">'.$objp->qty_asked.'</td>';
+				//print '<td class="center">'.$objp->qty_asked.'</td>';
 
 				// Date creation
-				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
+				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
 
 				// Date shipping creation
-				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->date_delivery),'day').'</td>';
+				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
 				// Qty shipped
-				print '<td align="center">'.$objp->qty_shipped.'</td>';
+				print '<td class="center">'.$objp->qty_shipped.'</td>';
 
 				// Warehouse
 				if (! empty($conf->stock->enabled))
@@ -384,7 +384,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				{
 					include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 					$expedition->id=$objp->sendingid;
-					$expedition->fetchObjectLinked($expedition->id,$expedition->element);
+					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
 					//var_dump($expedition->linkedObjects);
 
 					$receiving='';
@@ -403,14 +403,14 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						//print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
-						//print '<td align="center">';
+						//print '<td class="center">';
 						// TODO No solution for the moment to link a line det of receipt with a line det of shipping,
 						// so no way to know the qty received for this line of shipping.
 						//print $langs->trans("FeatureNotYetAvailable");
 						//print '</td>';
 						// Date shipping real
-						print '<td align="right">';
-						print dol_print_date($receiving->date_delivery,'day');
+						print '<td class="right">';
+						print dol_print_date($receiving->date_delivery, 'day');
 						print '</td>';
 					}
 					else
@@ -435,4 +435,3 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 	return 1;
 }
-

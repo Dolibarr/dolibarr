@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 
 /*
@@ -55,7 +55,7 @@ if ($result)
 {
     while ($obj = $db->fetch_object($result))
     {
-        preg_match('/([0-9]+)$/i',$obj->name,$reg);
+        preg_match('/([0-9]+)$/i', $obj->name, $reg);
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
 }
@@ -79,7 +79,7 @@ if ($action == 'add' || GETPOST("modify"))
 		if ($_POST["modify"])
 		{
 			// Supprime boite box_external_rss de definition des boites
-/*	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
+            /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$boxlabel."'";
 	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
 
@@ -89,7 +89,7 @@ if ($action == 'add' || GETPOST("modify"))
 				dol_print_error($db,"sql=$sql");
 				exit;
 	        }
-*/
+            */
 		}
 		else
 		{
@@ -151,7 +151,7 @@ if ($_POST["delete"])
 				if (! $resql)
 				{
 					$db->rollback();
-					dol_print_error($db,"sql=".$sql);
+					dol_print_error($db, "sql=".$sql);
 					exit;
 				}
 
@@ -163,13 +163,13 @@ if ($_POST["delete"])
 		else
 		{
 			$db->rollback();
-			dol_print_error($db,"sql=".$sql);
+			dol_print_error($db, "sql=".$sql);
 			exit;
         }
 
 
-		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . GETPOST("norss", 'int'), $conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . GETPOST("norss", 'int'), $conf->entity);
+		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), $conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), $conf->entity);
 
         if ($result1 && $result2)
         {
@@ -190,7 +190,7 @@ if ($_POST["delete"])
  * View
  */
 
-llxHeader('',$langs->trans("ExternalRSSSetup"));
+llxHeader('', $langs->trans("ExternalRSSSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
@@ -198,9 +198,9 @@ print '<br>';
 
 // Formulaire ajout
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
@@ -242,7 +242,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		preg_match('/^([0-9]+)/i',$obj->note,$reg);
+		preg_match('/^([0-9]+)/i', $obj->note, $reg);
 		$idrss = $reg[1];
 		$keyrsstitle="EXTERNAL_RSS_TITLE_".$idrss;
 		$keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
@@ -254,12 +254,12 @@ if ($resql)
 		print "<br>";
 		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 
-		print '<table class="noborder" width="100%">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<table class="noborder centpercent">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
-        print '<td align="right">';
+        print '<td class="right">';
         print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
 		print " &nbsp; ";
 		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
@@ -300,7 +300,6 @@ if ($resql)
 		// Logo
 	    if ($result > 0 && empty($rss->error))
 	    {
-
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';

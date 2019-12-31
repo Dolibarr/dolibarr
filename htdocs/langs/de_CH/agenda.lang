@@ -1,15 +1,52 @@
 # Dolibarr language file - Source file is en_US - agenda
 Agenda=Terminplanung
+EventReports=Ereignisberichte
 ToUserOfGroup=Für alle Benutzer in der Gruppe
 MenuDoneActions=Alle abgeschl. Termine
 MenuDoneMyActions=Meine abgeschl. Termine
 ViewCal=Kalenderansicht
 ViewPerUser=Benutzeransicht
 ViewPerType=Ansicht pro Typ
-AgendaAutoActionDesc=Definieren Sie hier Ereignisse für die Dolibarr einen Kalendereintrag erstellen soll. Ist nichts aktviert, umfasst der Terminkalender nur manuell eingetragene Termine. Automatisch generierte Aktionen die durch Module erstellt werden (Freigabe, Statuswechsel,...), werden nicht im Kalender gespeichert.
+AgendaAutoActionDesc=Gib hier an, welche Ereignisse automatisch in den Kalender eingetragen werden sollen.\nWenn du nichts anwählst, werden keine Geschäftsvorgänge, wie Freigaben oder Statusänderungen, eingetragen.
+AgendaSetupOtherDesc=Hier gibst Du die Exportoptionen zu externen Kalendern, wie Google Calendar oder Thunderbird an.
+EventRemindersByEmailNotEnabled=Benachrichtigungen sind in den Moduleinstellungen deaktiviert (%s).
+NewCompanyToDolibarr=Partner %s erzeugt
+COMPANY_DELETEInDolibarr=Partner %s gelöscht.
+MemberModifiedInDolibarr=Mitglied %s bearbeitet
+MemberResiliatedInDolibarr=Mitlglied %s geschlossen.
+MemberSubscriptionAddedInDolibarr=Abonnement %s für Mitlglied %s hinzugefügt
+MemberSubscriptionModifiedInDolibarr=Abonnement %s für Mitglied %s bearbeitet
 ShipmentValidatedInDolibarr=Versand %s in Dolibarr geprüft
+ShipmentClassifyClosedInDolibarr=Lieferung %s auf verrechnet gesetzt
+ShipmentUnClassifyCloseddInDolibarr=Lieferung %s auf wiedereröffnet gesetzt
+ShipmentBackToDraftInDolibarr=Lieferung %s ist wieder im Entwurfsstatus.
+OrderCreatedInDolibarr=Bestellung %s erzeugt
 OrderCanceledInDolibarr=Auftrag storniert %s
-ShippingSentByEMail=Lieferung %s per Email versendet
+ProposalSentByEMail=Offerte %s per E-Mail versandt
+ContractSentByEMail=Contract %s per E-Mail versandt
+OrderSentByEMail=Bestellung %sper E-Mail versandt
+InvoiceSentByEMail=Kundenrechnung %sper E-Mail versandt
+SupplierOrderSentByEMail=Lieferantenbestellung %sper E-Mail versandt
+SupplierInvoiceSentByEMail=Lieferantenrechnung %sper E-Mail versandt
+ShippingSentByEMail=Lieferung %s per E-Mail versandt
+PRODUCT_CREATEInDolibarr=Produkt %s erzeugt
+PRODUCT_MODIFYInDolibarr=Produkt %s bearbeitet
+EXPENSE_REPORT_CREATEInDolibarr=Spesenabrechnung %s erzeugt
+EXPENSE_REPORT_VALIDATEInDolibarr=Spesenabrechnung %s geprüft
+EXPENSE_REPORT_APPROVEInDolibarr=Spesenabrechnung %s freigegeben
+EXPENSE_REPORT_REFUSEDInDolibarr=Spesenabrechnung %s zurückgewiesen
+PROJECT_MODIFYInDolibarr=Projekt %s bearbeitet
+TICKET_CREATEInDolibarr=Ticket %s erzeugt
+TICKET_MODIFYInDolibarr=Ticket %s bearbeitet
+TICKET_CLOSEInDolibarr=Ticket %s geschlossen.
+TICKET_DELETEInDolibarr=Ticket %s gelöscht
+AgendaModelModule=Vorlagen zum Ereignis
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ,zum Aktionen, die nicht vom Benutzer <b>%s</b> sind, anzuzeigen.
+AgendaUrlOptions4=<b>logint=%s</b> ,um Einträge für dem Benutzer <b>%s</b> zugewiesene Aktionen anzuzeigen.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um Aktionen vom Projekt <b>__PROJECT_ID__</b> anzuzeigen.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, um automatische Einträge auszublenden.
 AgendaHideBirthdayEvents=Geburtstage von Kontakten verstecken
+ExtSitesEnableThisTool=Externe Kalender gemäss systemweiten Einstellungen anzeigen. Externe Kalender, die Benutzer definiert haben, sind davon nicht betroffen.
 DateActionBegin=Beginnzeit des Ereignis
+ConfirmCloneEvent=Willst du das Ereignis <b>%s</b> wirklich duplizieren?
 DateStartPlusOne=Anfangsdatum + 1 Stunde

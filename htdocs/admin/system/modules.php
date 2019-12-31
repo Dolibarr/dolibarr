@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,9 +38,9 @@ if (! $user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("AvailableModules"),'','title_setup');
+print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
-print $langs->trans("ToActivateModule").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span><br>';
 print "<br>\n";
 
 $modules = array();
@@ -103,11 +103,11 @@ foreach($modulesdir as $dir)
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';
-print '<td align="center">'.$langs->trans("IdModule").'</td>';
+print '<td class="center">'.$langs->trans("IdModule").'</td>';
 print '<td>'.$langs->trans("IdPermissions").'</td>';
 print '</tr>';
 $var=false;
@@ -122,19 +122,19 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="14px"',1);
-       	else print img_object($alt,$picto[$numero],'width="14px"');
+       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+       	else print img_object($alt, $picto[$numero], 'width="14px"');
     }
     else
     {
-      	print img_object($alt,$picto[$numero],'width="14px"');
+      	print img_object($alt, $picto[$numero], 'width="14px"');
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
 	// Version
 	print '<td>'.$modules[$numero]->getVersion().'</td>';
 	// Id
-	print '<td align="center">'.$numero.'</td>';
+	print '<td class="center">'.$numero.'</td>';
 	// Permissions
 	if ($modules[$numero]->rights)
 	{

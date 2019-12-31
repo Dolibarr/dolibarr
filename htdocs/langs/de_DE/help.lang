@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki Unterstützung
+CommunitySupport=Forum-/Wiki-Unterstützung
 EMailSupport=E-Mail-Unterstützung
-RemoteControlSupport=Fernwartungs-Support
+RemoteControlSupport=Online- / Fernwartungssupport
 OtherSupport=Weitere Unterstützung
-ToSeeListOfAvailableRessources=Hier sehen Sie die verfügbaren Ressourcen:
-HelpCenter=Hilfe-Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+ToSeeListOfAvailableRessources=Verfügbare Ressourcen:
+HelpCenter=Hilfebereich
+DolibarrHelpCenter=Hilfe- und Supportbereich
+ToGoBackToDolibarr=Um zur Startseite von Dolibarr zurückzukehren klicken Sie bitte <a href="%s">hier</a>.
+TypeOfSupport=Art des Supports
 TypeSupportCommunauty=Community (kostenlos)
 TypeSupportCommercial=Kommerzieller Support
 TypeOfHelp=Hilfe-Typ
@@ -15,9 +15,9 @@ NeedHelpCenter=Benötigen Sie Hilfe oder Unterstützung?
 Efficiency=Effizienz
 TypeHelpOnly=Ausschließlich Hilfe
 TypeHelpDev=Hilfe & Entwicklung
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Hilfe, Entwicklung & Ausbildung
+BackToHelpCenter=Klicken Sie hier, um zur <a href="%s">Hilfeseite</a> zurückzukehren. 
+LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisch ausgewählten, Trainer über einen Klick auf sein Widget kontaktieren (Status und Maximalpreis aktualisieren sich automatisch):
 PossibleLanguages=Unterstützte Sprachen
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=Für offizielle Dolibarr Unterstützung in Ihrer Sprache: br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Helfen auch Sie dem Dolibarr-Projekt und unterstützen uns mit einer Spende. 
+SeeOfficalSupport=Für offiziellen Dolibarr-Support in Ihrer Sprache: <br><b><a href="%s" target="_blank">%s</a></b>

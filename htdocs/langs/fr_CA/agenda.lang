@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 ToUserOfGroup=À n'importe quel utilisateur du groupe
-AgendaAutoActionDesc=Définissez ici les événements pour lesquels vous souhaitez que Dolibarr crée automatiquement un événement dans l'agenda. Si rien n'est vérifié, seules les actions manuelles seront incluses dans l'agenda et visibles dans l'agenda. Le suivi automatique des actions commerciales réalisées sur les objets (validation, changement d'état) ne sera pas sauvegardé.
 NewCompanyToDolibarr=Le tiers %s a été créé
 PropalClassifiedBilledInDolibarr=Proposition %s classée facturée
 InvoicePaidInDolibarr=La facture %s a changé en payé
@@ -13,7 +12,6 @@ ShipmentUnClassifyCloseddInDolibarr=Expédition %s classée rouverte
 ShipmentDeletedInDolibarr=Envoi %s supprimé
 OrderCreatedInDolibarr=L'ordre %s a été créé
 OrderDeliveredInDolibarr=Commande %s classée Délivrée
-ShippingSentByEMail=Bon expédition %s envoyé par EMail
 ProposalDeleted=Proposition supprimée
 AgendaModelModule=Modèles de document pour l'événement
 AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts
@@ -21,7 +19,6 @@ AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts
 ExportDataset_event1=Liste évênements de l'agenda
 VisibleTimeRange=Plage d'heures visibles
 VisibleDaysRange=Plage de jours visibles
-CloneAction=Dupliquer événement
 ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner l'événement <b>%s</b>?
 RepeatEvent=Répéter événement
 DateStartPlusOne=Date de début +1 heure

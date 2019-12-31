@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -45,11 +45,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -57,7 +57,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$this->tab_top = 60;
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -68,17 +68,17 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-        // Recupere emmetteur
+        // Retrieves transmitter
         $this->emetteur=$mysoc;
-        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
+        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define column position
         $this->line_height = 5;
 		$this->line_per_page = 40;
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction to generate document on disk
 	 *
@@ -88,7 +88,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate		$outputlangs	Lang output object
      *	@return	int     						1=ok, 0=ko
 	 */
-	function write_file($object, $_dir, $number, $outputlangs)
+	public function write_file($object, $_dir, $number, $outputlangs)
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -98,10 +98,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         $sav_charset_output=$outputlangs->charset_output;
         if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-        // Load traductions files requiredby by page
+        // Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "products", "compta"));
 
-		$dir = $_dir . "/".get_exdir($number,0,1,0,$object,'cheque').$number;
+		$dir = $_dir . "/".get_exdir($number, 0, 1, 0, $object, 'cheque').$number;
 
 		if (! is_dir($dir))
 		{
@@ -109,7 +109,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 			if ($result < 0)
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}
 		}
@@ -125,7 +125,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$hookmanager->initHooks(array('pdfgeneration'));
 		$parameters=array('file'=>$file, 'outputlangs'=>$outputlangs);
 		global $action;
-		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
 		// Create PDF instance
         $pdf=pdf_getInstance($this->format);
@@ -133,7 +133,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
         $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
         if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
-        $pdf->SetAutoPageBreak(1,0);
+        $pdf->SetAutoPageBreak(1, 0);
 
         if (class_exists('TCPDF'))
         {
@@ -144,7 +144,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->Open();
 		$pagenb=0;
-		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetDrawColor(128, 128, 128);
 
 		$pdf->SetTitle($outputlangs->transnoentities("CheckReceipt")." ".$number);
 		$pdf->SetSubject($outputlangs->transnoentities("CheckReceipt"));
@@ -176,12 +176,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->Body($pdf, $pagenb, $pages, $outputlangs);
 
 		// Pied de page
-		$this->_pagefoot($pdf,'',$outputlangs);
-		if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+		$this->_pagefoot($pdf, '', $outputlangs);
+		if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 		$pdf->Close();
 
-		$pdf->Output($file,'F');
+		$pdf->Output($file, 'F');
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
@@ -192,7 +192,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$hookmanager->initHooks(array('pdfgeneration'));
 		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 		global $action;
-		$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0)
+		{
+		    $this->error = $hookmanager->error;
+		    $this->errors = $hookmanager->errors;
+		}
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -200,11 +205,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->result = array('fullpath'=>$file);
 
         $outputlangs->charset_output=$sav_charset_output;
-	    return 1;   // Pas d'erreur
+	    return 1;   // No error
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Generate Header
 	 *
@@ -214,48 +219,48 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object language for output
 	 *	@return	void
 	 */
-	function Header(&$pdf, $page, $pages, $outputlangs)
+	public function Header(&$pdf, $page, $pages, $outputlangs)
 	{
         // phpcs:enable
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("compta", "banks"));
 
 		$title = $outputlangs->transnoentities("CheckReceipt");
-		$pdf->SetFont('','B', $default_font_size);
-        $pdf->SetXY(10,8);
-        $pdf->MultiCell(0,2,$title,0,'L');
+		$pdf->SetFont('', 'B', $default_font_size);
+        $pdf->SetXY(10, 8);
+        $pdf->MultiCell(0, 2, $title, 0, 'L');
 
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(10,15);
-		$pdf->MultiCell(22,2,$outputlangs->transnoentities("Ref"),0,'L');
-        $pdf->SetXY(32,15);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(10, 15);
+		$pdf->MultiCell(22, 2, $outputlangs->transnoentities("Ref"), 0, 'L');
+        $pdf->SetXY(32, 15);
+		$pdf->SetFont('', '', $default_font_size);
         $pdf->MultiCell(60, 2, $outputlangs->convToOutputCharset($this->ref.($this->ref_ext?" - ".$this->ref_ext:'')), 0, 'L');
 
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(10,20);
-        $pdf->MultiCell(22,2,$outputlangs->transnoentities("Date"),0,'L');
-        $pdf->SetXY(32,20);
-        $pdf->SetFont('','', $default_font_size);
-        $pdf->MultiCell(60, 2, dol_print_date($this->date,"day",false,$outputlangs));
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(10, 20);
+        $pdf->MultiCell(22, 2, $outputlangs->transnoentities("Date"), 0, 'L');
+        $pdf->SetXY(32, 20);
+        $pdf->SetFont('', '', $default_font_size);
+        $pdf->MultiCell(60, 2, dol_print_date($this->date, "day", false, $outputlangs));
 
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(10,26);
-        $pdf->MultiCell(22,2,$outputlangs->transnoentities("Owner"),0,'L');
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(32,26);
-        $pdf->MultiCell(80,2,$outputlangs->convToOutputCharset($this->account->proprio),0,'L');
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(10, 26);
+        $pdf->MultiCell(22, 2, $outputlangs->transnoentities("Owner"), 0, 'L');
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(32, 26);
+        $pdf->MultiCell(80, 2, $outputlangs->convToOutputCharset($this->account->proprio), 0, 'L');
 
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(10,32);
-        $pdf->MultiCell(0,2,$outputlangs->transnoentities("Account"),0,'L');
-        pdf_bank($pdf,$outputlangs,32,32,$this->account,1);
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(10, 32);
+        $pdf->MultiCell(0, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+        pdf_bank($pdf, $outputlangs, 32, 32, $this->account, 1);
 
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(114,15);
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(114, 15);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
         $pdf->Rect(9, 14, 192, 35);
@@ -274,45 +279,45 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->line(140, $posy, 140, $posy+6);
 		$pdf->line(170, $posy, 170, $posy+6);
 
-		$pdf->SetFont('','', $default_font_size);
-		$pdf->SetXY(10,$posy+1);
+		$pdf->SetFont('', '', $default_font_size);
+		$pdf->SetXY(10, $posy+1);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("NumberOfCheques"), 0, 'L');
 
-		$pdf->SetFont('','B', $default_font_size);
-        $pdf->SetXY(57,$posy+1);
+		$pdf->SetFont('', 'B', $default_font_size);
+        $pdf->SetXY(57, $posy+1);
         $pdf->MultiCell(40, 2, $this->nbcheque, 0, 'L');
 
-		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(148,$posy+1);
+		$pdf->SetFont('', '', $default_font_size);
+        $pdf->SetXY(148, $posy+1);
 		$pdf->MultiCell(40, 2, $langs->trans("Total"));
 
-		$pdf->SetFont('','B', $default_font_size);
+		$pdf->SetFont('', 'B', $default_font_size);
 		$pdf->SetXY(170, $posy+1);
 		$pdf->MultiCell(31, 2, price($this->amount), 0, 'C', 0);
 
 		// Tableau
-		$pdf->SetFont('','', $default_font_size - 2);
+		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->SetXY(11, $this->tab_top+2);
-		$pdf->MultiCell(40,2,$outputlangs->transnoentities("Num"), 0, 'L');
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Num"), 0, 'L');
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
 
 		$pdf->SetXY(41, $this->tab_top+2);
-        $pdf->MultiCell(40,2,$outputlangs->transnoentities("Bank"), 0, 'L');
+        $pdf->MultiCell(40, 2, $outputlangs->transnoentities("Bank"), 0, 'L');
 		$pdf->line(100, $this->tab_top, 100, $this->tab_top + $this->tab_height + 10);
 
         $pdf->SetXY(101, $this->tab_top+2);
-        $pdf->MultiCell(40,2,$outputlangs->transnoentities("CheckTransmitter"), 0, 'L');
+        $pdf->MultiCell(40, 2, $outputlangs->transnoentities("CheckTransmitter"), 0, 'L');
 		$pdf->line(180, $this->tab_top, 180, $this->tab_top + $this->tab_height + 10);
 
 		$pdf->SetXY(180, $this->tab_top+2);
-		$pdf->MultiCell(20,2,$outputlangs->transnoentities("Amount"), 0, 'R');
+		$pdf->MultiCell(20, 2, $outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 8, 201, $this->tab_top + 8);
 
 		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output array
 	 *
@@ -322,16 +327,16 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object lang
 	 *	@return	void
 	 */
-	function Body(&$pdf, $pagenb, $pages, $outputlangs)
+	public function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{
         // phpcs:enable
 		// x=10 - Num
 		// x=30 - Banque
 		// x=100 - Emetteur
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetFont('', '', $default_font_size - 1);
 		$oldprowid = 0;
-		$pdf->SetFillColor(220,220,220);
+		$pdf->SetFillColor(220, 220, 220);
 		$yp = 0;
 		$lineinpage=0;
 		$num=count($this->lines);
@@ -346,10 +351,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'L', 0);
 
 			$pdf->SetXY(40, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'L', 0);
+			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq), 44), 0, 'L', 0);
 
 			$pdf->SetXY(100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'L', 0);
+			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq), 50), 0, 'L', 0);
 
 			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
@@ -364,24 +369,24 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
                 $pdf->AddPage();
                 $pagenb++;
                 $this->Header($pdf, $pagenb, $pages, $outputlangs);
-                $pdf->SetFont('','', $default_font_size - 1);
+                $pdf->SetFont('', '', $default_font_size - 1);
                 $pdf->MultiCell(0, 3, '');      // Set interline to 3
-                $pdf->SetTextColor(0,0,0);
+                $pdf->SetTextColor(0, 0, 0);
 			}
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	void
+	 *  @param	PDF			$pdf     			PDF
+	 *  @param	Object		$object				Object to show
+	 *  @param	Translate	$outputlangs		Object lang for output
+	 *  @param	int			$hidefreetext		1=Hide free text
+	 *  @return	void
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -393,9 +398,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
 		if (! empty($conf->global->$paramfreetext))
 		{
-		    $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+		    $newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray);
 		}
 
-		return pdf_pagefoot($pdf,$outputlangs,$newfreetext,$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, $newfreetext, $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

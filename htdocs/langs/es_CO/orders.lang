@@ -1,3 +1,9 @@
 # Dolibarr language file - Source file is en_US - orders
+Order=Orden
+PdfOrderTitle=Orden
+SuppliersOrders=Ordenes de compra
 StatusOrderCanceledShort=Cancelado
 StatusOrderCanceled=Cancelado
+StatusOrderDraft=Borrador (necesita ser validado)
+TypeContact_commande_external_BILLING=Contacto factura cliente
+TypeContact_commande_external_SHIPPING=Contacto de envío del cliente

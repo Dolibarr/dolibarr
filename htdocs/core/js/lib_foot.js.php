@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -21,13 +21,13 @@
  * \brief      File that include javascript functions (included if option use_javascript activated)
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN'))         define('NOLOGIN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 session_cache_limiter('public');
 
@@ -50,9 +50,10 @@ if (empty($conf->dol_no_mouse_hover))
 {
 	print 'jQuery(".classfortooltip").tooltip({
 				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-				hide: { delay: 50 },
+				hide: { delay: 250 },
 				tooltipClass: "mytooltip",
 				content: function () {
+                    console.log("Return title for popup");
             		return $(this).prop(\'title\');		/* To force to get title as is */
           		}
 			});'."\n";
@@ -147,6 +148,7 @@ print '
 				/* Set handler to add page_y param on output (click on href links or submit button) */
 				jQuery(".reposition").click(function() {
 					var page_y = $(document).scrollTop();
+
 					if (page_y > 0)
 					{
 						if (this.href)
@@ -156,10 +158,9 @@ print '
 						}
 						else
 						{
-							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update form field page_y with value "+page_y);
+							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field page_y with value "+page_y);
 							jQuery("input[type=hidden][name=page_y]").val(page_y);
 						}
 					}
 				});
 			});'."\n";
-

@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,8 +32,8 @@ if (($id > 0 || (! empty($ref) && ! in_array($action, array('create', 'createtas
 {
 	if (($id > 0 && is_numeric($id)) || ! empty($ref))	// To discard case when id is list of ids like '1,2,3...'
 	{
-	    $ret = $object->fetch($id, $ref);
-	    if ($ret > 0)
+		$ret = $object->fetch($id, $ref);
+		if ($ret > 0)
 	    {
 	        $object->fetch_thirdparty();
 	        $id = $object->id;

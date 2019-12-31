@@ -73,23 +73,19 @@ EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Default range number
-
+UploadANewFileNow=Upload a new document now
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 AucuneLigne=There is no expense report declared yet
-
 ModePaiement=Payment mode
-
 VALIDATOR=User responsible for approval
 VALIDOR=Approved by
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Paid by
 REFUSEUR=Denied by
 CANCEL_USER=Deleted by
-
 MOTIF_REFUS=Reason
 MOTIF_CANCEL=Reason
-
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
 DATE_CANCEL=Cancelation date
@@ -113,7 +109,6 @@ NoTripsToExportCSV=No expense report to export for this period.
 ExpenseReportPayment=Expense report payment
 ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay
-CloneExpenseReport=Clone expense report
 ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?
 ExpenseReportsIk=Expense report milles index
 ExpenseReportsRules=Expense report rules
@@ -140,7 +135,6 @@ OnExpense=Expense line
 ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Range %d
-
 ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=by day (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 nolimitbyEX_EXP=by line (no limitation)
-
 CarCategory=Category of car
 ExpenseRangeOffset=Offset amount: %s
 RangeIk=Mileage range
+AttachTheNewLineToTheDocument=Attach the line to an uploaded document

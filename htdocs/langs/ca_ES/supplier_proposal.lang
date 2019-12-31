@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Pressupostos de proveïdor
-supplier_proposalDESC=Gestiona les sol·licituds de preus als proveïdors
+supplier_proposalDESC=Gestiona les peticions de preu de proveïdors
 SupplierProposalNew=Nova petició de preu
 CommRequest=Petició de preu
 CommRequests=Peticions de preu
@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Acceptat
 SupplierProposalStatusNotSignedShort=Rebutjat
 CopyAskFrom=Crea una petició de preu copiant una petició existent
 CreateEmptyAsk=Crea una petició buida
-CloneAsk=Clona la petició de preu
 ConfirmCloneAsk=Estàs segur que vols clonar el preu de sol·licitud <b>%s</b>?
 ConfirmReOpenAsk=Estàs segur que vols tornar enrere i obrir el preu de sol·licitud <b>%s</b>?
 SendAskByMail=Envia petició de preu per e-mail

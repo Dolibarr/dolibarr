@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -48,7 +48,7 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesOtherTest extends PHPUnit_Framework_TestCase
+class WebservicesOtherTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -61,7 +61,7 @@ class WebservicesOtherTest extends PHPUnit_Framework_TestCase
      *
      * @return DateLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -161,7 +161,7 @@ class WebservicesOtherTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -181,7 +181,7 @@ class WebservicesOtherTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code']);
 
         // Test method that does not exists
         $WS_METHOD='methodthatdoesnotexists';
@@ -189,7 +189,7 @@ class WebservicesOtherTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;

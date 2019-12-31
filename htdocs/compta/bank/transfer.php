@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (! $user->rights->banque->transfer)
   accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $error = 0;
 
 
@@ -49,10 +49,10 @@ if ($action == 'add')
 {
 	$langs->load("errors");
 
-	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
-	$label = GETPOST('label','alpha');
-	$amount= GETPOST('amount','alpha');
-	$amountto= GETPOST('amountto','alpha');
+	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	$label = GETPOST('label', 'alpha');
+	$amount= GETPOST('amount', 'alpha');
+	$amountto= GETPOST('amountto', 'alpha');
 
 	if (! $label)
 	{
@@ -64,12 +64,12 @@ if ($action == 'add')
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
-	if (! GETPOST('account_from','int'))
+	if (! GETPOST('account_from', 'int'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
-	if (! GETPOST('account_to','int'))
+	if (! GETPOST('account_to', 'int'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
@@ -79,10 +79,10 @@ if ($action == 'add')
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom=new Account($db);
-		$accountfrom->fetch(GETPOST('account_from','int'));
+		$accountfrom->fetch(GETPOST('account_from', 'int'));
 
 		$accountto=new Account($db);
-		$accountto->fetch(GETPOST('account_to','int'));
+		$accountto->fetch(GETPOST('account_to', 'int'));
 
 		if ($accountto->currency_code == $accountfrom->currency_code)
 		{
@@ -120,9 +120,9 @@ if ($action == 'add')
 			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amountto), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
 
-		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (! ($result > 0)) $error++;
-		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (! ($result > 0)) $error++;
 
 			if (! $error)
@@ -222,10 +222,10 @@ $amount='';
 
 if ($error)
 {
-	$account_from =	GETPOST('account_from','int');
-	$account_to	= GETPOST('account_to','int');
-	$label = GETPOST('label','alpha');
-	$amount = GETPOST('amount','alpha');
+	$account_from =	GETPOST('account_from', 'int');
+	$account_to	= GETPOST('account_to', 'int');
+	$label = GETPOST('label', 'alpha');
+	$amount = GETPOST('amount', 'alpha');
 }
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');
@@ -234,11 +234,11 @@ print $langs->trans("TransferDesc");
 print "<br><br>";
 
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<input type="hidden" name="action" value="add">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
 print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';

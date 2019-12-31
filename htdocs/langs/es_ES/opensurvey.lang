@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Encuesta
 Surveys=Encuestas
-OrganizeYourMeetingEasily=Organice sus reuniones y encuestas fácilmente. Primero seleccione el tipo de encuesta...
+OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select the type of poll...
 NewSurvey=Nueva encuesta
 OpenSurveyArea=Área encuestas
 AddACommentForPoll=Puede añadir un comentario en la encuesta...
@@ -58,4 +58,4 @@ MoreChoices=Introduzca más opciones para los votantes
 SurveyExpiredInfo=La encuesta se ha cerrado o el periodo para la votación de ha terminado.
 EmailSomeoneVoted=%s  ha rellenado una línea.\nPuede encontrar su encuesta en el enlace:\n%s 
 ShowSurvey=Mostrar encuesta
-UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment
+UserMustBeSameThanUserUsedToVote=Debe haber votado y usar el mismo nombre de usuario con el que solía votar para publicar un comentario

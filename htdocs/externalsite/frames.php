@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -49,6 +49,7 @@ if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL))
 	llxHeader();
 	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
+	exit;
 }
 
 if (! empty($keyforcontent))
@@ -63,7 +64,7 @@ if (! empty($keyforcontent))
 		$langs->load("errors");
 		print $langs->trans("ErrorBadSyntaxForParamKeyForContent", 'EXTERNAL_SITE_CONTENT_', 'EXTERNAL_SITE_URL_');
 	}
-	else if (empty($conf->global->$keyforcontent))
+	elseif (empty($conf->global->$keyforcontent))
 	{
 		$langs->load("errors");
 		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);

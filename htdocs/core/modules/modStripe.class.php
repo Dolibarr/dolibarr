@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ class modStripe extends DolibarrModules
      *
      *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -50,7 +50,7 @@ class modStripe extends DolibarrModules
         // It is used to group modules in module setup page
         $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Module to offer an online payment page by credit card with Stripe";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -82,8 +82,8 @@ class modStripe extends DolibarrModules
         // New pages on tabs
         $this->tabs = array();
 
-        // Boxes
-        $this->boxes = array();			// List of boxes
+        // List of boxes
+        $this->boxes = array();
         $r=0;
 
         // Permissions
@@ -92,8 +92,8 @@ class modStripe extends DolibarrModules
 
         // Main menu entries
         $r=0;
-       /* $this->menu[$r]=array(
-        	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        /* $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
         	'leftmenu'=>'customers_bills_payment_stripe',
         	'type'=>'left',			                // This is a Left menu entry
@@ -151,8 +151,21 @@ class modStripe extends DolibarrModules
 			'user' => 0
 		);
 
+        $r++;
+	    $this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripePayoutList',
+			'url' => '/stripe/payout.php',
+			'langs' => 'stripe',
+			'position' => 103,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'perms' => '$user->rights->banque->lire',
+			'target' => '',
+			'user' => 0
+		);
+
         // Exports
         $r=1;
     }
 }
-
