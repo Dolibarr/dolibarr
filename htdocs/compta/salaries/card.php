@@ -44,6 +44,12 @@ $id=GETPOST("id", 'int');
 $action=GETPOST('action', 'aZ09');
 $cancel= GETPOST('cancel', 'aZ09');
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
+
+$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+$datesp = dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
+$dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -71,34 +77,30 @@ if ($cancel)
 if ($action == 'classin' && $user->rights->banque->modifier)
 {
 	$object->fetch($id);
-	$object->setProject(GETPOST('projectid'));
+	$object->setProject($projectid);
 }
 
 if ($action == 'add' && empty($cancel))
 {
 	$error=0;
 
-	$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
-	$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
-	$datesp=dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
-	$dateep=dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
 	if (empty($datev)) $datev=$datep;
 
 	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
-	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
-	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user", "int") : 0;
+	$object->accountid=GETPOST("accountid", "int") > 0 ? GETPOST("accountid", "int") : 0;
+	$object->fk_user=GETPOST("fk_user", "int") > 0 ? GETPOST("fk_user", "int") : 0;
 	$object->datev=$datev;
 	$object->datep=$datep;
-	$object->amount=price2num(GETPOST("amount"));
-	$object->label=GETPOST("label");
+	$object->amount=price2num(GETPOST("amount", "alpha"));
+	$object->label=GETPOST("label", "alphanohtml");
 	$object->datesp=$datesp;
 	$object->dateep=$dateep;
-	$object->note=GETPOST("note");
+	$object->note=GETPOST("note", "none");
 	$object->type_payment=($type_payment > 0 ? $type_payment : 0);
-	$object->num_payment=GETPOST("num_payment");
+	$object->num_payment=GETPOST("num_payment", "alphanohtml");
 	$object->fk_user_author=$user->id;
-	$object->fk_project= GETPOST('fk_project', 'int');
+	$object->fk_project= $projectid;
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
@@ -303,7 +305,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
 
 		print '</td></tr>';
 	}
@@ -313,14 +315,14 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($_POST["accountid"], "accountid", 0, '', 1);  // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
 	print '<tr><td>';
 	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype", '', 2);
+	$form->select_types_paiements(GETPOST("paymenttype", "aZ09"), "paymenttype", '', 2);
 	print '</td></tr>';
 
 	// Number
