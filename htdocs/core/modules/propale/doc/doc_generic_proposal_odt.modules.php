@@ -205,7 +205,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$texte .= '</table>';
 			}
 		}
-        // Add select to upload a new template file. TODO Copy this feature on other admin pages.
+        // Add input to upload a new template file.
         $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
         $texte .= '<input type="hidden" value="PROPALE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
         $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
