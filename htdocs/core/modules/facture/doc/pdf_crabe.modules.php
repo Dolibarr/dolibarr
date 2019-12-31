@@ -595,7 +595,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 					    $progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 					    $pdf->SetXY($this->posxprogress, $curY);
-				        $pdf->MultiCell($this->postotalht - $this->posxprogress - 1, 3, $progress, 0, 'R');
+				        $pdf->MultiCell($this->postotalht - $this->posxprogress + 1, 3, $progress, 0, 'R');
 					}
 
 					// Total HT line
