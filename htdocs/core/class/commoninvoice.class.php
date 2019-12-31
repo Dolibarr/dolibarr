@@ -336,7 +336,7 @@ abstract class CommonInvoice extends CommonObject
 				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				$i++;
 			}
-			
+
 			//look for credit notes and discounts and deposits
 			$sql = 0;
 			if ($this->element == 'facture' || $this->element == 'invoice')
@@ -363,11 +363,11 @@ abstract class CommonInvoice extends CommonObject
 					while ($i < $num)
 					{
 						$obj = $this->db->fetch_object($resql);
-						if ($multicurrency) { 
-							$retarray[]=array('amount'=>$obj->multicurrency_amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref); 
+						if ($multicurrency) {
+							$retarray[]=array('amount'=>$obj->multicurrency_amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
 						}
-						else { 
-							$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref); 
+						else {
+							$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
 						}
 						$i++;
 					}
@@ -380,7 +380,7 @@ abstract class CommonInvoice extends CommonObject
 				}
 				$this->db->free($resql);
 			}
-			
+
 			return $retarray;
 		}
 		else
