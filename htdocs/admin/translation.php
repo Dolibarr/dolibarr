@@ -208,14 +208,14 @@ $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
-    $enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
 }
 else
 {
     // Button on, click to disable
-    $enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
     $enabledisablehtml .= '</a>';
 }

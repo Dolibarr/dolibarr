@@ -847,7 +847,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$permissiontowrite = $user->rights->societe->creer;
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid', 'Publishable key '.$site_account);
+			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 			print '</td><td>';
 			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 			if (!empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
@@ -859,7 +859,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 				}
-				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
 			}
 			print '</td><td class="right">';
 			if (empty($stripecu))
@@ -913,7 +913,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				$url = 'https://dashboard.stripe.com/connect/accounts/'.$stripesupplieracc;
 			}
-			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
 		}
 		print '</td><td class="right">';
 		if (empty($stripesupplieracc))
@@ -1065,7 +1065,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								{
 									$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
-								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
 							}
 							print '</td>';
 							print '<td>';
