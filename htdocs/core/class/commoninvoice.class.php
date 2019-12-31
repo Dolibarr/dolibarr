@@ -337,7 +337,7 @@ abstract class CommonInvoice extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-			
+
 			//look for credit notes and discounts and deposits
 			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice')
