@@ -336,6 +336,43 @@ abstract class CommonInvoice extends CommonObject
 				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				$i++;
 			}
+			//look for credit notes and discounts
+			if ($this->element == 'facture' || $this->element == 'invoice')
+			{
+				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
+				$sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or credit note
+			}
+			elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+			{
+				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
+				$sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$this->id;
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or credit note
+			}
+			
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i=0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($multicurrency) { $retarray[]=array('amount'=>$obj->multicurrency_amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref); }
+					else { $retarray[]=array('amount'=>$obj->amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref); }
+					$i++;
+				}
+				$this->db->free($resql);
+				return $retarray;
+			}
+			else
+			{
+				$this->error = $this->db->lasterror();
+				dol_print_error($this->db);
+				return array();
+			}
 			$this->db->free($resql);
 			return $retarray;
 		}
