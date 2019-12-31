@@ -233,10 +233,14 @@ function LoadProducts(position, issubcat) {
 	console.log("LoadProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
-	$('#catimg'+position).animate({opacity: '0.5'}, 1);
-	$('#catimg'+position).animate({opacity: '1'}, 100);
-	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
-	else currentcat=$('#catdiv'+position).data('rowid');
+	if (position=="supplements") currentcat="supplements";
+	else
+	{
+		$('#catimg'+position).animate({opacity: '0.5'}, 1);
+		$('#catimg'+position).animate({opacity: '1'}, 100);
+		if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
+		else currentcat=$('#catdiv'+position).data('rowid');
+	}
     if (currentcat == undefined) return;
 	pageproducts=0;
 	ishow=0; //product to show counter
@@ -353,7 +357,7 @@ function ClickProduct(position) {
 		console.log("Click on product at position "+position+" for idproduct "+idproduct);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct, function() {
+		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
@@ -722,6 +726,10 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
 	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
+	}
+	if ($conf->global->TAKEPOS_SUPPLEMENTS)
+	{
+	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
 	}
 }
 
