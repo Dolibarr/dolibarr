@@ -342,14 +342,14 @@ abstract class CommonInvoice extends CommonObject
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
 				$sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
-				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or credit note
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			}
 			elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 			{
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$this->id;
-				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or credit note
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			}
 
 			$resql=$this->db->query($sql);
