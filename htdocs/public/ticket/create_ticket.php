@@ -203,7 +203,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 // Send email to customer
 
-                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject');
+                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref);
                 $message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody'))."\n\n";
                 $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket')."\n";
 
@@ -245,7 +245,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 if ($sendto)
                 {
-	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin');
+	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref);
 	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
 	                $message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 	                $message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -314,7 +314,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             //setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
 
             // Make a redirect to avoid to have ticket submitted twice if we make back
-            setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>'.$object->track_id.'</strong>'), null, 'warnings');
+            setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>'.$object->track_id.'</strong>', '<strong>' . $object->ref . '</strong>'), null, 'warnings');
             setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
             header("Location: index.php");
 			exit;
