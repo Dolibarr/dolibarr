@@ -92,7 +92,8 @@ class IntracommReport extends CommonObject
 	 * @param $mode O pour création, R pour régénération (apparemment toujours 0 dans la cadre des échanges XML selon la doc)
 	 * @param $type introduction ou expedition
 	 */
-	function getXML($mode='O', $type='introduction', $periode_reference='') {
+	function getXML($mode = 'O', $type = 'introduction', $periode_reference = '')
+	{
 
 		global $db, $conf, $mysoc;
 
@@ -138,9 +139,9 @@ class IntracommReport extends CommonObject
 		if(!empty($res)) return $e->asXML();
 		else return 0;
 	}
-	
+
 	// $type_declaration tjrs = "expedition" à voir si ça évolue
-	function getXMLDes($period_year, $period_month, $type_declaration='expedition')
+	function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
 		global $db, $conf, $mysoc;
 
@@ -162,7 +163,8 @@ class IntracommReport extends CommonObject
 		else return 0;
 	}
 
-	function addItemsFact(&$declaration, $type, $periode_reference, $exporttype='deb') {
+	function addItemsFact(&$declaration, $type, $periode_reference, $exporttype = 'deb')
+	{
 
 		global $db, $conf;
 
@@ -187,7 +189,6 @@ class IntracommReport extends CommonObject
 			}
 
 			while($res = $db->fetch_object($resql)) {
-
 				if ($exporttype == 'des')
 				{
 					$this->addItemXMlDes($declaration, $res, '', $i);
@@ -196,29 +197,27 @@ class IntracommReport extends CommonObject
 				{
 					if(empty($res->fk_pays)) {
 						// On n'arrête pas la boucle car on veut savoir quels sont tous les tiers qui n'ont pas de pays renseigné
-						$this->errors[] = 'Pays non renseigné pour le tiers <a href="'.dol_buildpath('/societe/soc.php',1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
+						$this->errors[] = 'Pays non renseigné pour le tiers <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
 					} else {
 						if($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
 						} else $this->addItemXMl($declaration, $res, '', $i);
-					}	
+					}
 				}
 
 				$i++;
-
 			}
 
 			if(!empty($TLinesFraisDePort)) $this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
 
 			if(count($this->errors) > 0) return 0;
-
 		}
 
 		return 1;
-
 	}
 
-	function getSQLFactLines($type, $periode_reference, $exporttype='deb') {
+	function getSQLFactLines($type, $periode_reference, $exporttype = 'deb')
+	{
 
 		global $mysoc, $conf;
 
@@ -254,10 +253,10 @@ class IntracommReport extends CommonObject
 				AND f.datef BETWEEN "'.$periode_reference.'-01" AND "'.$periode_reference.'-'.date('t').'"';
 
 		return $sql;
-
 	}
 
-	function addItemXMl(&$declaration, &$res, $code_douane_spe='', $i) {
+	function addItemXMl(&$declaration, &$res, $code_douane_spe = '', $i)
+	{
 
 		$item = $declaration->addChild('Item');
 		$item->addChild('ItemNumber', $i);
@@ -277,10 +276,9 @@ class IntracommReport extends CommonObject
 		$nature_of_transaction->addChild('natureOfTransactionBCode', 1);
 		$item->addChild('modeOfTransportCode', $res->mode_transport);
 		$item->addChild('regionCode', substr($res->zip, 0, 2));
-
 	}
 
-	function addItemXMlDes($declaration, &$res, $code_douane_spe='', $i)
+	function addItemXMlDes($declaration, &$res, $code_douane_spe = '', $i)
 	{
 		$item = $declaration->addChild('ligne_des');
 		$item->addChild('numlin_des', $i);
@@ -291,7 +289,8 @@ class IntracommReport extends CommonObject
 	/**
 	 * Cette fonction ajoute un item en récupérant le code douane du produit ayant le plus haut montant dans la facture
 	 */
-	function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i) {
+	function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
+	{
 
 		global $db, $conf;
 
@@ -309,7 +308,6 @@ class IntracommReport extends CommonObject
 		}
 
 		foreach($TLinesFraisDePort as $res) {
-
 			$sql = 'SELECT p.customcode
 					FROM '.MAIN_DB_PREFIX.$tabledet.' d
 					INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = d.'.$field_link.')
@@ -338,11 +336,11 @@ class IntracommReport extends CommonObject
 			$this->addItemXMl($declaration, $res, $ress->customcode, $i);
 
 			$i++;
-
 		}
 	}
 
-	function getNextNumeroDeclaration() {
+	function getNextNumeroDeclaration()
+	{
 
 		global $db;
 		$resql = $db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
@@ -352,12 +350,14 @@ class IntracommReport extends CommonObject
 	}
 
 	// La doc impose que le numéro soit un entier positif d'un maximum de 6 caractères
-	static function getNumeroDeclaration($numero) {
+	static function getNumeroDeclaration($numero)
+	{
 
 		return str_pad($numero, 6, 0, STR_PAD_LEFT);
 	}
 
-	function generateXMLFile() {
+	function generateXMLFile()
+	{
 
 		$name = $this->periode.'.xml';
 		$fname = sys_get_temp_dir().'/'.$name;
@@ -374,6 +374,5 @@ class IntracommReport extends CommonObject
 	    header('Content-Length: ' . filesize($fname));
 	    readfile($fname);
 		exit;
-
 	}
 }

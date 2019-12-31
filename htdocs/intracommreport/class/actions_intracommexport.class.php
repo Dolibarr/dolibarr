@@ -70,7 +70,7 @@ class Actionsintracommreport
 
 		if (in_array('somecontext', explode(':', $parameters['context'])))
 		{
-		  // do something only for the context 'somecontext'
+			// do something only for the context 'somecontext'
 		}
 
 		if (! $error)

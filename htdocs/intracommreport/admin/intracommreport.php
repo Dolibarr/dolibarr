@@ -195,9 +195,9 @@ print '<div class="inline-block divButAction">';
 print '<input type="submit" name="bt_save" class="butAction" value="'.$langs->trans('Save').'" />';
 print '</div>';
 print '</div>';
-	
+
 print '</form>';
-	
+
 dol_fiche_end();
 
 // End of page

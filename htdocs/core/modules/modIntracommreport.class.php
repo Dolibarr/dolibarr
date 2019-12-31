@@ -125,6 +125,5 @@ class modIntracommreport extends DolibarrModules
 
 		// Exports
 		$r=1;
-
 	}
 }

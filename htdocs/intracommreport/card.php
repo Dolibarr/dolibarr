@@ -147,8 +147,8 @@ if ($action == 'create')
     print $langs->trans("AnalysisPeriod");
     print '</td>';
     print '<td>';
-    print $formother->select_month($month ? date('M') : $month,'month',0, 1, 'widthauto valignmiddle ');
-    print $formother->select_year($year ? date('Y') : $year,'year',0, 3, 3);
+    print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ');
+    print $formother->select_year($year ? date('Y') : $year, 'year', 0, 3, 3);
     print '</td>';
     print '</tr>';
 
