@@ -336,7 +336,8 @@ abstract class CommonInvoice extends CommonObject
 				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				$i++;
 			}
-
+			$this->db->free($resql);
+			
 			//look for credit notes and discounts and deposits
 			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice')
