@@ -101,7 +101,7 @@ class Categorie extends CommonObject
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
-	 * @TODO Move to const array when PHP 5.6 will be our minimum target
+	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_FK = array(
 		'product'  => 'product',

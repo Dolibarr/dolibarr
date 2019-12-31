@@ -309,7 +309,7 @@ if ($action == 'create')
     print load_fiche_titre($langs->trans("NewMenu"), '', 'title_setup');
 
     print '<form action="./edit.php?action=add&menuId='.GETPOST('menuId', 'int').'" method="post" name="formmenucreate">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
     dol_fiche_head();
 
@@ -430,7 +430,7 @@ elseif ($action == 'edit')
     print '<br>';
 
     print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
     print '<input type="hidden" name="menuId" value="'.GETPOST('menuId', 'int').'">';
 

@@ -89,7 +89,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Zone recherche produit/service
  */
 print '<form method="post" action="index.php?type='.$type.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 

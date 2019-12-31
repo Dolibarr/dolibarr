@@ -286,6 +286,7 @@ function dol_json_decode($json, $assoc = false)
  */
 function _unval($val)
 {
+	$reg = array();
 	while (preg_match('/\\\u([0-9A-F]{2})([0-9A-F]{2})/i', $val, $reg))
 	{
 	    // single, escaped unicode character
@@ -313,7 +314,7 @@ function utf162utf8($utf16)
 	    return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
 	}
 
-	$bytes = (ord($utf16{0}) << 8) | ord($utf16{1});
+	$bytes = (ord($utf16[0]) << 8) | ord($utf16[1]);
 
 	switch(true) {
     	case ((0x7F & $bytes) == $bytes):
@@ -352,7 +353,7 @@ function utf162utf8($utf16)
 function utf82utf16($utf8)
 {
 	// oh please oh please oh please oh please oh please
-	if(function_exists('mb_convert_encoding')) {
+	if (function_exists('mb_convert_encoding')) {
 	    return mb_convert_encoding($utf8, 'UTF-16', 'UTF-8');
 	}
 
@@ -365,12 +366,12 @@ function utf82utf16($utf8)
 		case 2:
 			// return a UTF-16 character from a 2-byte UTF-8 char
 			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-			return chr(0x07 & (ord($utf8{0}) >> 2)) . chr((0xC0 & (ord($utf8{0}) << 6)) | (0x3F & ord($utf8{1})));
+			return chr(0x07 & (ord($utf8[0]) >> 2)) . chr((0xC0 & (ord($utf8[0]) << 6)) | (0x3F & ord($utf8[1])));
 
 		case 3:
 			// return a UTF-16 character from a 3-byte UTF-8 char
 			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-			return chr((0xF0 & (ord($utf8{0}) << 4)) | (0x0F & (ord($utf8{1}) >> 2))) . chr((0xC0 & (ord($utf8{1}) << 6)) | (0x7F & ord($utf8{2})));
+			return chr((0xF0 & (ord($utf8[0]) << 4)) | (0x0F & (ord($utf8[1]) >> 2))) . chr((0xC0 & (ord($utf8[1]) << 6)) | (0x7F & ord($utf8[2])));
 	}
 
 	// ignoring UTF-32 for now, sorry

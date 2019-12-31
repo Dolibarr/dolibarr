@@ -21,7 +21,7 @@
  */
 
 /**
- * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
+ * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettering_supplier.php
  * \ingroup 	Accountancy (Double entries)
  * \brief 		Tab to setup lettering
  */

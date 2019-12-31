@@ -446,7 +446,7 @@ if ($id)
     $fieldlist=explode(',', $tabfield[$id]);
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<table class="noborder centpercent">';
 
     // Form to add a new line
@@ -528,7 +528,7 @@ if ($id)
             print '<br>';
 
             print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="page" value="'.$page.'">';
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 

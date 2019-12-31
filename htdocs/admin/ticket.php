@@ -291,7 +291,7 @@ print '</table><br>';
 
 if (!$conf->use_javascript_ajax) {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setvarother">';
 }
 
@@ -403,7 +403,7 @@ print load_fiche_titre($langs->trans("Notification"));
 print '<table class="noborder centpercent">';
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
 
 print '<tr class="liste_titre">';
@@ -432,23 +432,23 @@ print '</td>';
 print '</tr>';
 */
 
-// @TODO Use module notification instead...
+// @todo Use module notification instead...
+
+// Email d'envoi des notifications
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TicketEmailNotificationFrom").'</td>';
+print '<td class="left">';
+print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'"></td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 // Email de réception des notifications
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
-print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM).'" size="20" ></td>';
+print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM).'" size="20" ></td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Email d'envoi des notifications
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
-print '<td class="left">';
-print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'" size="20" ></td>';
-print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

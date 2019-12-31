@@ -39,6 +39,7 @@ $action=GETPOST('action', 'aZ09');
  *	Actions
  */
 
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];

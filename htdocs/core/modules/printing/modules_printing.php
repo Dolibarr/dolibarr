@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/mailings/modules_printing.php
+ *      \file       htdocs/core/modules/printing/modules_printing.php
  *      \ingroup    printing
  *      \brief      File with parent class of printing modules
  */

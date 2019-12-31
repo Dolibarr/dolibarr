@@ -978,7 +978,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
+        print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
         if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
@@ -1196,7 +1196,7 @@ else
                 	if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) $edit = true;
 
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">'."\n";
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
+                    print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
                 }

@@ -1366,29 +1366,39 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkeeping by year
 	 *
-	 * @param  string $delyear		Year to delete
+	 * @param  int	  $delyear		Year to delete
 	 * @param  string $journal		Journal to delete
 	 * @param  string $mode 		Mode
+	 * @param  int	  $delmonth     Month
 	 * @return int					<0 if KO, >0 if OK
 	 */
-    public function deleteByYearAndJournal($delyear = '', $journal = '', $mode = '')
+    public function deleteByYearAndJournal($delyear = 0, $journal = '', $mode = '', $delmonth = 0)
     {
-		global $conf;
+    	global $langs;
 
-		if (empty($delyear) && empty($journal))
+    	if (empty($delyear) && empty($journal))
 		{
+			$this->error = 'ErrorOneFieldRequired';
 			return -1;
+		}
+		if (!empty($delmonth) && empty($delyear))
+		{
+			$this->error = 'YearRequiredIfMonthDefined';
+			return -2;
 		}
 
 		$this->db->begin();
 
-		// first check if line not yet in bookkeeping
+		// Delete record in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE 1 = 1";
-		if (!empty($delyear)) $sql .= " AND YEAR(doc_date) = ".$delyear; // FIXME Must use between
+		$sql.= dolSqlDateFilter('doc_date', 0, $delmonth, $delyear);
 		if (!empty($journal)) $sql .= " AND code_journal = '".$this->db->escape($journal)."'";
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
+
+		// TODO: In a future we must forbid deletion if record is inside a closed fiscal period.
+
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {

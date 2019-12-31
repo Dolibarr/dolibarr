@@ -147,7 +147,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .progress-bar-green,
 .progress-bar-success {
-    background-color: #00a65a;
+    background-color: <?php echo $badgeSuccess ?>;
 }
 .progress-striped .progress-bar-green,
 .progress-striped .progress-bar-success {
@@ -167,7 +167,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .progress-bar-yellow,
 .progress-bar-warning {
-    background-color: #bc9526;
+    background-color: <?php echo $badgeWarning ?>;
 }
 .progress-striped .progress-bar-yellow,
 .progress-striped .progress-bar-warning {
@@ -177,7 +177,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .progress-bar-red,
 .progress-bar-danger {
-    background-color: #dd4b39;
+    background-color: <?php echo $badgeDanger ?>;
 }
 .progress-striped .progress-bar-red,
 .progress-striped .progress-bar-danger {

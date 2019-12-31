@@ -21,7 +21,7 @@
  * 	\defgroup   bom     Module Bom
  *  \brief      Bom module descriptor.
  *
- *  \file       htdocs/bom/core/modules/modBom.class.php
+ *  \file       htdocs/core/modules/modBom.class.php
  *  \ingroup    bom
  *  \brief      Description and activation file for module Bom
  */

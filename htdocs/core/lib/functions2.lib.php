@@ -1347,7 +1347,7 @@ function hexbin($hexa)
     $strLength = dol_strlen($hexa);
     for ($i = 0; $i < $strLength; $i++)
     {
-        $bin .= str_pad(decbin(hexdec($hexa{$i})), 4, '0', STR_PAD_LEFT);
+        $bin .= str_pad(decbin(hexdec($hexa[$i])), 4, '0', STR_PAD_LEFT);
     }
     return $bin;
 }

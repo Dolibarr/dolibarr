@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - admin
+AntiVirusCommandExample=Ejemplo para ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Ejemplo para ClamAv: /usr/bin/clamscan
+ExampleOfDirectoriesForModelGen=Ejemplo de sintaxis:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
-DictionaryVAT=Tasa de IGV (Impuesto sobre ventas en EEUU)
+DictionaryVAT=Tasa de IGV o tasa de impuesto a las ventas
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
-OptionVatMode=Opción de carga de IGV
+OptionVatMode=IGV adeudado
 OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

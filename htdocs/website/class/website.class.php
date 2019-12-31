@@ -20,7 +20,7 @@
  */
 
 /**
- * \file    website/website.class.php
+ * \file    htdocs/website/class/website.class.php
  * \ingroup website
  * \brief   File for the CRUD class of website (Create/Read/Update/Delete)
  */

@@ -208,7 +208,7 @@ print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setu
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
 
@@ -488,7 +488,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("User").'</td>';

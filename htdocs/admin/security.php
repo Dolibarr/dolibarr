@@ -213,7 +213,7 @@ dol_fiche_head($head, 'passwords', $langs->trans("Security"), -1);
 
 // Choix du gestionnaire du generateur de mot de passe
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
@@ -400,7 +400,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 // Cryptage mot de passe
 print '<br>';
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
 print '<table class="noborder centpercent">';

@@ -11,17 +11,8 @@ YourEMail=E-mail pro potvrzení platby
 Creditor=Věřitel
 PaymentCode=Platební kód
 PayBoxDoPayment=Pay with Paybox
-ToPay=Proveďte platbu
 YouWillBeRedirectedOnPayBox=Budete přesměrováni na zabezpečené stránky Paybox pro vstupní informace o kreditní kartě
 Continue=Další
-ToOfferALinkForOnlinePayment=URL pro %s platby
-ToOfferALinkForOnlinePaymentOnOrder=URL nabízí %s on-line platební uživatelské rozhraní pro objednávky zákazníka
-ToOfferALinkForOnlinePaymentOnInvoice=URL nabízí %s on-line platební uživatelské rozhraní pro zákaznické faktury
-ToOfferALinkForOnlinePaymentOnContractLine=URL nabízí %s on-line platební uživatelské rozhraní pro řádky smluv
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL nabízí %s on-line platební uživatelské rozhraní pro volnou částku
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL nabízí %s on-line platební uživatelské rozhraní pro členské předplatné
-ToOfferALinkForOnlinePaymentOnDonation=URL, která nabízí online platbu %s, uživatelské rozhraní pro platbu daru
-YouCanAddTagOnUrl=Můžete také přidat parametr URL <b>&tag = <i>hodnota</i></b> na některou z těchto URL (nutné pouze pro volné platby) a přidat vlastní komentář platby.
 SetupPayBoxToHavePaymentCreatedAutomatically=Nastavte svůj Paybox pomocí url <b> %s </b> aby se platba automaticky vytvořila při ověření Payboxu.
 YourPaymentHasBeenRecorded=Tato stránka potvrzuje, že platba byla zaznamenána. Děkuju.
 YourPaymentHasNotBeenRecorded=Platba nebyla zaznamenána a transakce byla zrušena. Děkuji.

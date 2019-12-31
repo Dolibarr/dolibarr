@@ -131,7 +131,7 @@ print '<br>';
 
 print "<!-- Dump of a server -->\n";
 print '<form method="post" action="export.php" name="dump">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
@@ -538,7 +538,7 @@ print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
 print '<form method="post" action="export_files.php" name="dump">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';

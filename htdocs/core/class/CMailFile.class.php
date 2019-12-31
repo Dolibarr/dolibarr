@@ -467,7 +467,7 @@ class CMailFile
 			} else {
 				$this->message->setBody($msg, 'text/plain');
 				// And optionally an alternative body
-				$this->message->addPart($msg, 'text/html');
+				$this->message->addPart(dol_nl2br($msg), 'text/html');
 			}
 
 			if ($this->atleastonefile)
@@ -1489,6 +1489,7 @@ class CMailFile
 	 *										     If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
 	 *                                           If format 4: 'John Doe' or 'john@doe.com' if no label exists
      *                                           If format 5: <a href="mailto:john@doe.com">John Doe</a> or <a href="mailto:john@doe.com">john@doe.com</a> if no label exists
+     * @see getArrayAddress()
 	 */
 	public static function getValidAddress($address, $format, $encode = 0, $maxnumberofemail = 0)
 	{
@@ -1560,6 +1561,7 @@ class CMailFile
 	 *
 	 * @param   string      $address        Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
 	 * @return  array                       array of email => name
+	 * @see getValidAddress()
 	 */
 	public function getArrayAddress($address)
 	{

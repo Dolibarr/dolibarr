@@ -67,21 +67,21 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT rowid, code, libelle as label, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -453,21 +453,21 @@ class Setup extends DolibarrApi
     {
         $list = array();
         $sql = "SELECT t.rowid, t.code, t.libelle, t.description, t.tracking";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -1104,22 +1104,22 @@ class Setup extends DolibarrApi
 		$list = array();
         //TODO link with multicurrency module
         $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
-        $sql.= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
-        $sql.= " AND t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
+        $sql .= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -1286,9 +1286,9 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-        $sql .= " WHERE t.active = ".$active;
-    	if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+        $sql .= " WHERE t.active = ".(int) $active;
+    	// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+    	// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
     	// Add sql filters
     	if ($sqlfilters)
     	{
@@ -1473,7 +1473,7 @@ class Setup extends DolibarrApi
     			$includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
     			// Defined qualified files (must be same than into generate_filelist_xml.php)
-    			$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+    			$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
     			$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
     			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 

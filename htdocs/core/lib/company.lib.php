@@ -644,7 +644,7 @@ function getFormeJuridiqueLabel($code)
 
 /**
  *  Return list of countries that are inside the EEC (European Economic Community)
- *  TODO Add a field into country dictionary.
+ *  Note: Try to keep this function as a "memory only" function for performance reasons.
  *
  *  @return     array					Array of countries code in EEC
  */
@@ -991,7 +991,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     print load_fiche_titre($title, $newcardbutton, '');
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';

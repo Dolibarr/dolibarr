@@ -1112,7 +1112,7 @@ class ActionComm extends CommonObject
 
     /**
      *  Load all objects with filters.
-     *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
+     *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
      *
      *  @param		DoliDb	$db				Database handler
      *  @param		int		$socid			Filter by thirdparty
@@ -1765,6 +1765,13 @@ class ActionComm extends CommonObject
                     }
                     $diff++;
                 }
+
+				$parameters=array('filters' => $filters, 'eventarray' => &$eventarray);
+				$reshook=$hookmanager->executeHooks('addMoreEventsExport', $parameters);    // Note that $action and $object may have been modified by hook
+				if ($reshook > 0)
+				{
+					$eventarray = $hookmanager->resArray;
+				}
             }
             else
             {
@@ -1858,7 +1865,9 @@ class ActionComm extends CommonObject
         $this->location = 'Location';
         $this->transparency = 1; // 1 means opaque
         $this->priority = 1;
-        $this->note = 'Note';
+        $this->note = "This is a 'public' note";
+		$this->note_public = "This is a 'public' note.";
+		$this->note_private = "This is a 'private' note.";
 
         $this->userownerid = $user->id;
         $this->userassigned[$user->id] = array('id'=>$user->id, 'transparency'=> 1);

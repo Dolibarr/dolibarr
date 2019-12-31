@@ -1106,7 +1106,7 @@ class Reception extends CommonObject
      */
     public function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 		$result = '';
         $label = '<u>'.$langs->trans("ShowReception").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;

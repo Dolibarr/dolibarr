@@ -233,10 +233,14 @@ function LoadProducts(position, issubcat) {
 	console.log("LoadProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
-	$('#catimg'+position).animate({opacity: '0.5'}, 1);
-	$('#catimg'+position).animate({opacity: '1'}, 100);
-	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
-	else currentcat=$('#catdiv'+position).data('rowid');
+	if (position=="supplements") currentcat="supplements";
+	else
+	{
+		$('#catimg'+position).animate({opacity: '0.5'}, 1);
+		$('#catimg'+position).animate({opacity: '1'}, 100);
+		if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
+		else currentcat=$('#catdiv'+position).data('rowid');
+	}
     if (currentcat == undefined) return;
 	pageproducts=0;
 	ishow=0; //product to show counter
@@ -353,7 +357,7 @@ function ClickProduct(position) {
 		console.log("Click on product at position "+position+" for idproduct "+idproduct);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct, function() {
+		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
@@ -723,6 +727,10 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
+	if ($conf->global->TAKEPOS_SUPPLEMENTS)
+	{
+	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
+	}
 }
 
 if ($conf->global->TAKEPOSCONNECTOR) {
@@ -765,7 +773,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 
         print '<!-- Show the search input text -->'."\n";
         print '<div class="margintoponly">';
-		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
         ?>
