@@ -161,10 +161,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
    			$texte .= '</div>';
 		}
         // Add input to upload a new template file.
-        $texte.= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
-        $texte.= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-        $texte.= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
-        $texte.= '</div>';
+        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+        $texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+        $texte .= '</div>';
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
