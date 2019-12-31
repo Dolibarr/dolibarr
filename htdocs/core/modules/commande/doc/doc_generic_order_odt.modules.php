@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,11 +177,11 @@ class doc_generic_order_odt extends ModelePDFCommandes
    			}
    			$texte .= '</div>';
 		}
-        // Add select to upload a new template file. TODO Copy this feature on other admin pages.
-        $texte.= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
-        $texte.= '<input type="hidden" value="COMMANDE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-        $texte.= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
-        $texte.= '</div>';
+        // Add input to upload a new template file.
+        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+        $texte .= '<input type="hidden" value="COMMANDE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+        $texte .= '</div>';
 
 		$texte .= '</td>';
 
