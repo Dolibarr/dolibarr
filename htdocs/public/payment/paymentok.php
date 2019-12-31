@@ -471,18 +471,26 @@ if ($ispaymentok)
 
 						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
 						{
-							dol_syslog("No stripe profile found, so we add it", LOG_DEBUG, 0, '_payment');
+							dol_syslog("No stripe profile found, so we add it for TRANSACTIONID = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
-							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
-							$stripecu = $ch->customer;							// value 'cus_....'
+							try {
+								$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
+								$stripecu = $ch->customer;							// value 'cus_....'
 
-							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-							$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
-							$resql = $db->query($sql);
-							if (! $resql)
-							{
+								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+								$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
+								$resql = $db->query($sql);
+								if (! $resql)
+								{
+									$error++;
+									$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+									$postactionmessages[] = $errmsg;
+									$ispostactionok = -1;
+								}
+							}
+							catch(Exception $e) {
 								$error++;
-								$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+								$errmsg='Failed to save customer stripe id in database ; '.$e->getMessage();
 								$postactionmessages[] = $errmsg;
 								$ispostactionok = -1;
 							}
