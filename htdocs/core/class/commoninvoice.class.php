@@ -338,7 +338,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			//look for credit notes and discounts and deposits
-			$sql = 0;
+			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice')
 			{
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
