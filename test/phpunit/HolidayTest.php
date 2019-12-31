@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -350,5 +350,19 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 
         $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
         $this->assertTrue($result, 'result should be true, there is no overlapping');
+    }
+
+    /**
+     * testUpdateBalance
+     *
+     * @return void
+     */
+    public function testUpdateBalance()
+    {
+    	$localobjecta=new Holiday($this->savdb);
+
+    	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
+
+    	$localobjecta->updateBalance();
     }
 }

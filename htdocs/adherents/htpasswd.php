@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *  	\file 		htdocs/adherents/htpasswd.php
  *      \ingroup    member
- *      \brief      Page d'export htpasswd du fichier des adherents
- *      \author     Rodolphe Quiedeville
+ *      \brief      Export page htpasswd of the membership file
  */
 
 require '../main.inc.php';
@@ -43,7 +42,7 @@ if (empty($sortorder)) {  $sortorder="ASC"; }
 if (empty($sortfield)) {  $sortfield="d.login"; }
 if (! isset($statut))
 {
-	$statut = 1 ;
+	$statut = 1;
 }
 
 if (! isset($cotis))
@@ -55,7 +54,7 @@ if (! isset($cotis))
 
 $sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
-$sql .= " WHERE d.statut = $statut ";
+$sql .= " WHERE d.statut = ".$statut;
 if ($cotis==1)
 {
 	$sql .= " AND datefin > '".$db->idate($now)."'";

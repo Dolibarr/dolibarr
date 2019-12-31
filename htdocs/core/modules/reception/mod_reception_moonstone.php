@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018		Quentin Vial-Gouteyron	<quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2019		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/reception/modules_reception.php';
  */
 class mod_reception_moonstone extends ModelNumRefReception
 {
-    public $version='dolibarr';
+    public $version = 'dolibarr';
     public $error = '';
     public $nom = 'Moonstone';
 
@@ -40,15 +41,15 @@ class mod_reception_moonstone extends ModelNumRefReception
      */
     public function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstreception" value="RECEPTION_MOONSTONE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';

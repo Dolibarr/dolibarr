@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,10 @@ TicketDictSeverity=برگه‌ها - سطح اهمیت
 TicketTypeShortBUGSOFT=اشکال نرم‌افزاری
 TicketTypeShortBUGHARD=اشکال نرم‌افزاری
 TicketTypeShortCOM=سوال تجاری
-TicketTypeShortINCIDENT=درخواست پشتیبانی
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=طرح
 TicketTypeShortOTHER=سایر
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=نمایش همۀ برگه‌ها
 TicketViewNonClosedOnly=نمایش محدود به برگه‌های پشتیبانی باز
 TicketStatByStatus=برگه‌ها بر حسب وضعیت
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=تائید تغییر وضعیت به: %s ؟
 TicketLogStatusChanged=وضعیت تغییر پیدا کرد: %s به %s
 TicketNotNotifyTiersAtCreate=عدم اطلاع‌رسانی به شرکت در هنگام ساخت
 Unread=خوانده نشده
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

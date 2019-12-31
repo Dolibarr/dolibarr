@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
-$statut=(GETPOST("statut", 'intcomma')!='')?GETPOST("statut", 'intcomma'):"-1";
+$search_status=(GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-1";
 $search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST('search_ref', 'alpha');
 $search_company=GETPOST('search_company', 'alpha');
@@ -55,11 +55,11 @@ if (!$user->rights->don->lire) accessforbidden();
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_all="";
-    $search_ref="";
-	$search_company="";
-	$search_name="";
-	$search_amount="";
+	$search_all = "";
+    $search_ref = "";
+	$search_company = "";
+	$search_name = "";
+	$search_amount = "";
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -87,13 +87,13 @@ $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
-$sql.= " d.amount, d.fk_statut as statut, ";
+$sql.= " d.amount, d.fk_statut as status,";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
-if ($statut != '' && $statut != '-1')
+if ($search_status != '' && $search_status != '-1')
 {
-	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
+	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
 }
 if (trim($search_ref) != '')
 {
@@ -111,9 +111,9 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql.= natural_search('d.amount', $search_amount, 1);
+if ($search_amount) $sql .= natural_search('d.amount', $search_amount, 1);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -127,7 +127,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -135,9 +135,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = '&statut='.$statut;
-    //if ($page > 0) $param.= '&page='.$page;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	$param = '';
+	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+	if ($search_status && $search_status != -1) $param .= '&search_status='.urlencode($search_status);
+	if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_company) $param .= '&search_company='.urlencode($search_company);
+	if ($search_name) $param .= '&search_name='.urlencode($search_name);
+	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 
 	$newcardbutton='';
 	if ($user->rights->don->creer)
@@ -147,14 +151,14 @@ if ($resql)
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton);
 
 	if ($search_all)
     {
@@ -171,13 +175,13 @@ if ($resql)
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
-    print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
+        print '</td>';
     } else {
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
-    print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+        print '</td>';
     }
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
@@ -185,7 +189,7 @@ if ($resql)
     print '<td class="liste_titre left">';
     print '&nbsp;';
     print '</td>';
-    if (! empty($conf->projet->enabled))
+    if (!empty($conf->projet->enabled))
     {
         print '<td class="liste_titre right">';
         print '&nbsp;';
@@ -202,16 +206,16 @@ if ($resql)
     print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+        print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
     } else {
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
+        print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
     }
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "fk_projet", "", $param, "", $sortfield, $sortorder);
+	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -228,37 +232,36 @@ if ($resql)
 		$donationstatic->lastname=$objp->lastname;
 		$donationstatic->firstname=$objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-
-    $company=new Societe($db);
-    $result=$company->fetch($objp->socid);
-    if  (!empty($objp->socid) && $company->id > 0)  {
-        print "<td>".$company->getNomUrl(1)."</td>";
-    } else {
-        print "<td>".$objp->societe."</td>";
-    }
-    } else {
-        print "<td>".$objp->societe."</td>";
-    }
+        if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+            $company=new Societe($db);
+            $result=$company->fetch($objp->socid);
+            if  (!empty($objp->socid) && $company->id > 0)  {
+                print "<td>".$company->getNomUrl(1)."</td>";
+            } else {
+                print "<td>".$objp->societe."</td>";
+            }
+        } else {
+            print "<td>".$objp->societe."</td>";
+        }
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
-		if (! empty($conf->projet->enabled))
+		if (!empty($conf->projet->enabled))
 		{
 			print "<td>";
 			if ($objp->pid)
 			{
-				$projectstatic->id=$objp->pid;
-				$projectstatic->ref=$objp->ref;
-				$projectstatic->id=$objp->pid;
-				$projectstatic->public=$objp->public;
-				$projectstatic->title=$objp->title;
+				$projectstatic->id = $objp->pid;
+				$projectstatic->ref = $objp->ref;
+				$projectstatic->id = $objp->pid;
+				$projectstatic->public = $objp->public;
+				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
 			}
 			else print '&nbsp;';
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';
-		print '<td class="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
+		print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
         print '<td></td>';
 		print "</tr>";
 		$i++;

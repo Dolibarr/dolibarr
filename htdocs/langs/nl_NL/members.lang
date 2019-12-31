@@ -29,6 +29,7 @@ MenuMembersUpToDate=Bijgewerkte leden
 MenuMembersNotUpToDate=Niet bijgewerkte leden
 MenuMembersResiliated=Verwijderde leden
 MembersWithSubscriptionToReceive=Leden die abonnement moeten ontvangen
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Inschrijvingsdatum
 DateEndSubscription=Einddatum abonnement
 EndSubscription=Einde abonnement

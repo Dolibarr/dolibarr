@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,7 +82,9 @@ if (empty($pageid))
     {
         $object->fetch(0, $website);
     }
+
     $objectpage=new WebsitePage($db);
+    /* Not required for CSS file
     $array=$objectpage->fetchAll($object->id);
 
     if (is_array($array) && count($array) > 0)
@@ -90,13 +92,16 @@ if (empty($pageid))
         $firstrep=reset($array);
         $pageid=$firstrep->id;
     }
+    */
 }
+/* Not required for CSS file
 if (empty($pageid))
 {
     $langs->load("website");
     print $langs->trans("PreviewOfSiteNotYetAvailable");
     exit;
 }
+*/
 
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;

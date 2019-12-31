@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
  * \ingroup		Double entry accounting
  * \brief		Module to activate the double entry accounting module
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  * Description and activation class for module accounting expert
@@ -53,7 +53,7 @@ class modAccounting extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'dolibarr';
 
-		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'accounting';
 
 		// Data directories to create when module is enabled
@@ -63,12 +63,12 @@ class modAccounting extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependencies
-		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modFacture", "modBanque", "modTax"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
 		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
-		$this->langfiles = array("accountancy","compta");
+		$this->langfiles = array("accountancy", "compta");
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -136,7 +136,7 @@ class modAccounting extends DolibarrModules
 				"1",
 				"", 0, 'current', 0
 		);
-		$this->const[11] = array (
+		$this->const[11] = array(
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
 				"%d%m%Y",
@@ -162,7 +162,10 @@ class modAccounting extends DolibarrModules
 		$this->module_parts = array();
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = array(
+			0=>array('file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'accountancyindex'),
+			1=>array('file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'accountancyindex')
+		);
 
 		// Permissions
 		$this->rights_class = 'accounting';
@@ -178,14 +181,6 @@ class modAccounting extends DolibarrModules
         $this->rights[$r][5] = '';
         $r++;
 
-		$this->rights[$r][0] = 50430;
-		$this->rights[$r][1] = 'Define and close a fiscal year';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'fiscalyear';
-		$this->rights[$r][5] = '';
-		$r++;
-
         $this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
@@ -193,16 +188,6 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'bind';
 		$this->rights[$r][5] = 'write';
 		$r++;
-
-		/*
-		$this->rights[$r][0] = 50402;
-		$this->rights[$r][1] = 'Make binding with products and invoices';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'dispatch_advanced';
-		$r++;
-        */
 
 		$this->rights[$r][0] = 50411;
 		$this->rights[$r][1] = 'Read operations in Ledger';
@@ -252,6 +237,13 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'lire';
 		$r++;
 
+		$this->rights[$r][0] = 50430;
+		$this->rights[$r][1] = 'Manage fiscal periods, validate movements and close periods';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'fiscalyear';
+		$this->rights[$r][5] = 'write';
+		$r++;
 
 		// Menus
 		//-------

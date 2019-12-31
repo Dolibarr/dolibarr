@@ -29,6 +29,7 @@ MenuMembersUpToDate=Ajour medlemmer
 MenuMembersNotUpToDate=Uaktuel medlemmer
 MenuMembersResiliated=Afsluttede medlemmer
 MembersWithSubscriptionToReceive=Medlemmer med abonnement for at modtage
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Subscription dato
 DateEndSubscription=Subscription slutdato
 EndSubscription=End abonnement

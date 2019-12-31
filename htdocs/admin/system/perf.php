@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,6 +70,18 @@ else
 }
 print '<br>';
 
+// Module log
+print '<br>';
+print '<strong>'.$langs->trans("Syslog").'</strong>: ';
+$test=empty($conf->syslog->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+else
+{
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
 // Module debugbar
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
@@ -77,7 +89,7 @@ $test=empty($conf->debugbar->enabled);
 if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
 else
 {
-    print img_picto('', 'warning').' '.$langs->trans("DebugBarModuleActivated");
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
     //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
@@ -110,20 +122,20 @@ $test=function_exists('xcache_info');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("XCacheInstalled");
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "XCache");
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
 $test=function_exists('eaccelerator_info');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("EAcceleratorInstalled");
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "Eaccelerator");
 }
 $test=function_exists('opcache_get_status');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "ZendOPCache");  // Should be by default starting with PHP 5.5
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
@@ -510,9 +522,9 @@ if ($resql)
 	$nb=$obj->nb;
 	if ($nb > $limitforoptim)
 	{
-		if (empty($conf->global->THIRDPARTY_DONOTSEARCH_ANYWHERE))
+		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'THIRDPARTY_DONOTSEARCH_ANYWHERE');
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
 		}
 		else
 		{

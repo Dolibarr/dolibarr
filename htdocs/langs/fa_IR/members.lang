@@ -29,6 +29,7 @@ MenuMembersUpToDate=تا اعضای تاریخ
 MenuMembersNotUpToDate=از اعضای تاریخ
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=کاربران با اشتراک برای دریافت
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=تاریخ ثبت نام
 DateEndSubscription=تاریخ پایان ثبت نام
 EndSubscription=اشتراک پایان

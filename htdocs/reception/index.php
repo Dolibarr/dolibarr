@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,12 +57,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("Reception").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 /*
@@ -93,7 +94,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	if ($num)
 	{
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ReceptionsToValidate").'</th></tr>';
 		$i = 0;
@@ -116,7 +118,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -143,7 +145,8 @@ if ($resql)
 		$langs->load("orders");
 
 		$i = 0;
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").'</th></tr>';
 		while ($i < $num)
@@ -172,7 +175,7 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -203,7 +206,8 @@ if ( $resql )
 	if ($num)
 	{
 		$i = 0;
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersOrdersInProcess").'</th></tr>';
 		while ($i < $num)
@@ -231,7 +235,7 @@ if ( $resql )
             print '</tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 else dol_print_error($db);
@@ -263,7 +267,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("LastReceptions", $num).'</th></tr>';
 		while ($i < $num)
@@ -289,7 +294,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 	$db->free($resql);
 }

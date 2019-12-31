@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -22,13 +22,13 @@ AccountancyCodeAsset = Muhasebe kodu (varlık)
 AccountancyCodeDepreciationAsset = Muhasebe kodu (amortisman varlık hesabı)
 AccountancyCodeDepreciationExpense = Muhasebe kodu (amortisman gideri hesabı)
 NewAssetType=Yeni varlık türü
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
+AssetsTypeSetup=Varlık türü ayarları
+AssetTypeModified=Varlık türü değiştirildi
 AssetType=Varlık türü
 AssetsLines=Varlıklar
 DeleteType=Sil
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+DeleteAnAssetType=Bir varlık türü sil
+ConfirmDeleteAssetType=Bu varlık türünü silmek istediğinizden emin misiniz?
 ShowTypeCard='%s' türünü göster
 
 # Module label 'ModuleAssetsName'
@@ -42,7 +42,7 @@ ModuleAssetsDesc = Varlık açıklaması
 AssetsSetup = Varlık kurulumu
 Settings = Ayarlar
 AssetsSetupPage = Varlık kurulum sayfası
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+ExtraFieldsAssetsType = Tamamlayıcı öznitelikler (Varlık türü)
 AssetsType=Varlık türü
 AssetsTypeId=Varlık türü ID'si
 AssetsTypeLabel=Varlık türü etiketi
@@ -53,7 +53,7 @@ AssetsTypes=Varlık türleri
 #
 MenuAssets = Varlıklar
 MenuNewAsset = Yeni varlık
-MenuTypeAssets = Yeni varlıklar
+MenuTypeAssets = Varlık türleri
 MenuListAssets = Liste
 MenuNewTypeAssets = Yeni
 MenuListTypeAssets = Liste

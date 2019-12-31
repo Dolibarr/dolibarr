@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -31,9 +31,12 @@ TicketDictType=Pieteikumu veids
 TicketDictCategory=Pieteikumu - grupas
 TicketDictSeverity=Pieteikuma svarīgums
 TicketTypeShortBUGSOFT=Dysfontionnement logiciel
-TicketTypeShortBUGHARD=Dysfontionnement matériel
+TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Tirdzniecības jautājums
-TicketTypeShortINCIDENT=Palīdzības pieprasījums
+
+TicketTypeShortHELP=Funkcionālās palīdzības pieprasījums
+TicketTypeShortISSUE=Izdošana, kļūda vai problēma
+TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
 TicketTypeShortPROJET=Projekts
 TicketTypeShortOTHER=Cits
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=Nav atrastas nelasītas biļetes
 TicketViewAllTickets=Skatīt visus pieteikumus
 TicketViewNonClosedOnly=Skatīt tikai atvērtos pieteikumus
 TicketStatByStatus=Pieteikumi pēc statusa
+OrderByDateAsc=Kārtot pēc augošā datuma
+OrderByDateDesc=Kārtot pēc dilstošā datuma
+ShowAsConversation=Rādīt kā sarunu sarakstu
+MessageListViewType=Rādīt kā tabulu sarakstu
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Apstipriniet statusa maiņu: %s?
 TicketLogStatusChanged=Statuss mainīts: %s līdz %s
 TicketNotNotifyTiersAtCreate=Neinformēt uzņēmumu par radīšanu
 Unread=Nelasīts
+TicketNotCreatedFromPublicInterface=Nav pieejams. Biļete netika izveidota no publiskās saskarnes.
+PublicInterfaceNotEnabled=Publiskā saskarne nebija iespējota
+ErrorTicketRefRequired=Nepieciešams biļetes atsauces nosaukums
 
 #
 # Logs
@@ -269,15 +279,15 @@ TicketPublicInterfaceForbidden=Pieteikumu publiskā saskarne nav iespējota
 ErrorEmailOrTrackingInvalid=Slikta vērtība izsekošanas ID vai e-pasta ziņojumam
 OldUser=Vecais lietotājs
 NewUser=Jauns lietotājs
-NumberOfTicketsByMonth=Biļešu skaits mēnesī
-NbOfTickets=Biļešu skaits
+NumberOfTicketsByMonth=Pieteikumu skaits mēnesī
+NbOfTickets=Pieteikumu skaits
 # notifications
 TicketNotificationEmailSubject=Pieteikums %s ir atjaunots
 TicketNotificationEmailBody=Šī ir automātiska ziņa, kas informē jūs, ka biļete %s tikko atjaunināta
 TicketNotificationRecipient=Paziņojuma saņēmējs
 TicketNotificationLogMessage=Log ziņojums
 TicketNotificationEmailBodyInfosTrackUrlinternal=Skatīt biļeti interfeisu
-TicketNotificationNumberEmailSent=Nosūtītā e-pasta adrese: %s
+TicketNotificationNumberEmailSent=Paziņojuma e-pasts nosūtīts: %s
 
 ActionsOnTicket=Notikumi biļetē
 

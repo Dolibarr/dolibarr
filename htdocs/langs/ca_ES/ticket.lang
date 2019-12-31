@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,10 @@ TicketDictSeverity=Tiquet - Severitats
 TicketTypeShortBUGSOFT=Disfunció de la lògica
 TicketTypeShortBUGHARD=Disfunció de matèries
 TicketTypeShortCOM=Qüestió comercial
-TicketTypeShortINCIDENT=Sol·licitud d'assistència
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Incidència, error o problema
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Projecte
 TicketTypeShortOTHER=Altres
 
@@ -86,7 +89,7 @@ TicketParamModule=Configuració del mòdul de variables
 TicketParamMail=Configuració de correu electrònic
 TicketEmailNotificationFrom=Notificació de correu electrònic procedent de
 TicketEmailNotificationFromHelp=S'utilitza en la resposta del tiquet per exemple
-TicketEmailNotificationTo=Notificacions de correu a 
+TicketEmailNotificationTo=Notificacions de correu electrònic a 
 TicketEmailNotificationToHelp=Enviar notificacions per correu electrònic a aquesta adreça.
 TicketNewEmailBodyLabel=Missatge de text enviat després de crear un bitllet
 TicketNewEmailBodyHelp=El text especificat aquí s'inserirà en el correu electrònic confirmant la creació d'un nou tiquet des de la interfície pública. La informació sobre la consulta del tiquet s'afegeix automàticament.
@@ -106,7 +109,7 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Aquest text apareixerà a sobre de
 ExtraFieldsTicket=Extra atributs
 TicketCkEditorEmailNotActivated=L'editor HTML no està activat. Poseu FCKEDITOR_ENABLE_MAIL contingut a 1 per obtenir-lo.
 TicketsDisableEmail=No enviïs missatges de correu electrònic per a la creació de bitllets o la gravació de missatges
-TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per desactivar totes les (*all*) notificacions per correu electrònic
+TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per desactivar totes les *all* notificacions per correu electrònic
 TicketsLogEnableEmail=Activa el 'log' (registre d'activitat) per correu electrònic
 TicketsLogEnableEmailHelp=En cada canvi, s'enviarà un correu ** a cada contacte ** associat al tiquet.
 TicketParams=Paràmetres
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No s’ha trobat cap bitllet sense llegir
 TicketViewAllTickets=Consultar tots els tiquets
 TicketViewNonClosedOnly=Mostra només els tiquets oberts
 TicketStatByStatus=Tiquets per estat
+OrderByDateAsc=Ordena per data ascendent
+OrderByDateDesc=Ordena per data descendent
+ShowAsConversation=Show as conversation list
+MessageListViewType=Mostra com a llista de taula
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Confirmar el canvi d'estatus : %s ?
 TicketLogStatusChanged=Estatus canviat : %s a %s
 TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
 Unread=No llegit
+TicketNotCreatedFromPublicInterface=No disponible El tiquet no s&#39;ha creat des de la interfície pública.
+PublicInterfaceNotEnabled=La interfície pública no s&#39;ha activat
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

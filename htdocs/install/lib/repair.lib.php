@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -72,7 +72,7 @@ function checkLinkedElements($sourcetype, $targettype)
 
 	$out = $langs->trans('SourceType').': '.$sourcetype.' => '.$langs->trans('TargetType').': '.$targettype.' ';
 
-	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX .'element_element';
+	$sql = 'SELECT rowid, fk_source, fk_target FROM '.MAIN_DB_PREFIX .'element_element';
 	$sql.= ' WHERE sourcetype="'.$sourcetype.'" AND targettype="'.$targettype.'"';
 	$resql=$db->query($sql);
 	if ($resql)

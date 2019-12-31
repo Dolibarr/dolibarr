@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,7 @@ $begin=GETPOST('begin', 'alpha');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
@@ -59,13 +59,13 @@ llxHeader('', $langs->trans("Contacts"));
 
 if ($type == "c" || $type == "p")
 {
-  $label = $langs->trans("Customers");
-  $urlfiche="card.php";
+    $label = $langs->trans("Customers");
+    $urlfiche="card.php";
 }
 if ($type == "f")
 {
-  $label = $langs->trans("Suppliers");
-  $urlfiche="card.php";
+    $label = $langs->trans("Suppliers");
+    $urlfiche="card.php";
 }
 
 /*
@@ -88,29 +88,29 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (dol_strlen($stcomm))
 {
-  $sql.= " AND s.fk_stcomm=".$db->escape($stcomm);
+    $sql.= " AND s.fk_stcomm=".$db->escape($stcomm);
 }
 
 if (! empty($search_lastname))
 {
-  $sql.= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+    $sql.= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
 
 if (! empty($search_firstname))
 {
-  $sql.= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
+    $sql.= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 
 if (! empty($search_company))
 {
-  $sql.= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
+    $sql.= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 
 if (! empty($contactname)) // acces a partir du module de recherche
 {
-  $sql.= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
-  $sortfield = "p.name";
-  $sortorder = "ASC";
+    $sql.= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
+    $sortfield = "p.name";
+    $sortorder = "ASC";
 }
 
 $sql.= $db->order($sortfield, $sortorder);
@@ -128,7 +128,7 @@ if ($resql)
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, "", $sortfield, $sortorder);

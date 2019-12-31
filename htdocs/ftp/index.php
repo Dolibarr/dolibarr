@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 $langs->loadLangs(array('ftp', 'companies', 'other'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ftp', '');
 
 // Get parameters
@@ -359,7 +359,7 @@ llxHeader();
 // Add logic to shoow/hide buttons
 if ($conf->use_javascript_ajax)
 {
-?>
+	?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
@@ -381,7 +381,7 @@ jQuery(document).ready(function() {
 
 </script>
 
-<?php
+	<?php
 }
 
 $form=new Form($db);
@@ -447,7 +447,7 @@ else
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
 		// Construit liste des repertoires
@@ -669,7 +669,6 @@ if ($conn_id)
 {
     if (! empty($conf->global->FTP_CONNECT_WITH_SFTP))
     {
-
     }
     elseif (! empty($conf->global->FTP_CONNECT_WITH_SSL))
     {

@@ -26,3 +26,4 @@ ErrorSeverityCode=Erro grave de código
 PaypalLiveEnabled=Modo "ao vivo" do PayPal ativado (caso contrário, modo teste/sandbox)
 PostActionAfterPayment=Poste as ações após os pagamentos
 CardOwner=Titular do cartão
+PayPalBalance=Crédito Paypal

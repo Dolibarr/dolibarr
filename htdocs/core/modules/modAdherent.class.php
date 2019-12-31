@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@
  *      \ingroup    member
  *      \brief      File descriptor or module Member
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Class to describe and enable module Adherent
@@ -57,7 +57,7 @@ class modAdherent extends DolibarrModules
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->picto='user';
+        $this->picto = 'user';
 
         // Data directories to create when module is enabled
         $this->dirs = array("/adherent/temp");
@@ -66,16 +66,16 @@ class modAdherent extends DolibarrModules
         $this->config_page_url = array("adherent.php@adherents");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-        $this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of module ids to disable if this one is disabled
-        $this->conflictwith = array('modMailmanSpip');	// List of module class names as string this module is in conflict with
-        $this->langfiles = array("members","companies");
-        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false; // A condition to hide module
+        $this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array(); // List of module ids to disable if this one is disabled
+        $this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
+        $this->langfiles = array("members", "companies");
+        $this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
         // Constants
         $this->const = array();
-        $r=0;
+        $r = 0;
 
         $this->const[$r][0] = "ADHERENT_ADDON_PDF";
         $this->const[$r][1] = "chaine";
@@ -181,7 +181,10 @@ class modAdherent extends DolibarrModules
 
         // Boxes
         //-------
-        $this->boxes = array(0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'));
+        $this->boxes = array(
+			0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_birthdays_members.php','enabledbydefaulton'=>'Home')
+		);
 
         // Permissions
         //------------
@@ -250,12 +253,12 @@ class modAdherent extends DolibarrModules
 
         // Menus
         //-------
-        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
         // Exports
         //--------
-        $r=0;
+        $r = 0;
 
         // $this->export_code[$r]          Unique code identifying the export (all modules combined)
         // $this->export_label[$r]         Libelle by default if translation of key "ExportXXX" not found (XXX = Code)
@@ -381,7 +384,7 @@ class modAdherent extends DolibarrModules
      */
     public function init($options = '')
     {
-        global $conf,$langs;
+        global $conf, $langs;
 
         // Permissions
         $this->remove($options);

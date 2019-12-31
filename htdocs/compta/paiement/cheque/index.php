@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'banque', '', '');
 
 
@@ -46,7 +46,7 @@ $accountstatic=new Account($db);
 
 llxHeader('', $langs->trans("ChequesArea"));
 
-print load_fiche_titre($langs->trans("ChequesArea"));
+print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -61,7 +61,7 @@ $sql.= " AND b.amount > 0";
 
 $resql = $db->query($sql);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
@@ -101,7 +101,7 @@ $sql.= $db->plimit($max);
 $resql = $db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
 	print '<th>'.$langs->trans("Date")."</th>";

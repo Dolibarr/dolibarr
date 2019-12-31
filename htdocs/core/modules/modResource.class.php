@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module to manage resources into Dolibarr ERP/CRM
  */
@@ -313,7 +313,7 @@ class modResource extends DolibarrModules
 	 *
 	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-	private function loadTables()
+	protected function loadTables()
 	{
 		return $this->_load_tables('/resource/sql/');
 	}

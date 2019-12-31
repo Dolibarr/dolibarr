@@ -29,6 +29,7 @@ MenuMembersUpToDate=Güncel üyeler
 MenuMembersNotUpToDate=Tarihi geçmiş üyeler
 MenuMembersResiliated=Sona ermiş üyeler
 MembersWithSubscriptionToReceive=Abonelik alacal üyeler
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Abonelik tarihi
 DateEndSubscription=Abonelik bitiş tarihi
 EndSubscription=Abonelik bitir

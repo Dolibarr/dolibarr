@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 
@@ -33,39 +33,39 @@
  */
 function show_skin($fuser, $edit = 0)
 {
-    global $conf,$langs,$db;
+    global $conf, $langs, $db;
     global $bc;
 
-	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
     $formother = new FormOther($db);
 
-    $dirskins=array('/includes/ckeditor/ckeditor/skins');
-    if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
+    $dirskins = array('/includes/ckeditor/ckeditor/skins');
+    if (!empty($conf->modules_parts['theme']))		// Using this feature slow down application
     {
-    	foreach($conf->modules_parts['theme'] as $reldir)
+    	foreach ($conf->modules_parts['theme'] as $reldir)
     	{
-	    	$dirskins=array_merge($dirskins, (array) ($reldir.'theme'));
+	    	$dirskins = array_merge($dirskins, (array) ($reldir.'theme'));
     	}
     }
-    $dirskins=array_unique($dirskins);
+    $dirskins = array_unique($dirskins);
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
-    $selected_theme='';
-    if (empty($conf->global->FCKEDITOR_SKIN)) $selected_theme='moono-lisa';
-    else $selected_theme=$conf->global->FCKEDITOR_SKIN;
+    $selected_theme = '';
+    if (empty($conf->global->FCKEDITOR_SKIN)) $selected_theme = 'moono-lisa';
+    else $selected_theme = $conf->global->FCKEDITOR_SKIN;
 
-    $colspan=2;
+    $colspan = 2;
 
-    $thumbsbyrow=6;
-    print '<table class="noborder" width="100%">';
+    $thumbsbyrow = 6;
+    print '<table class="noborder centpercent">';
 
-    $var=false;
+    $var = false;
 
     // Title
    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
    	print '<th class="right">';
-   	$url='http://ckeditor.com/addons/skins/all';
+   	$url = 'http://ckeditor.com/addons/skins/all';
    	/*print '<a href="'.$url.'" target="_blank">';
    	print $langs->trans('DownloadMoreSkins');
    	print '</a>';*/
@@ -74,7 +74,7 @@ function show_skin($fuser, $edit = 0)
 	print '<tr class="oddeven">';
    	print '<td>'.$langs->trans("ThemeDir").'</td>';
    	print '<td>';
-   	foreach($dirskins as $dirskin)
+   	foreach ($dirskins as $dirskin)
    	{
    		echo '"'.$dirskin.'" ';
    	}
@@ -86,22 +86,22 @@ function show_skin($fuser, $edit = 0)
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
-    $i=0;
-    foreach($dirskins as $dir)
+    $i = 0;
+    foreach ($dirskins as $dir)
     {
     	//print $dirroot.$dir;exit;
-    	$dirskin=dol_buildpath($dir, 0);	// This include loop on $conf->file->dol_document_root
-    	$urltheme=dol_buildpath($dir, 1);
+    	$dirskin = dol_buildpath($dir, 0); // This include loop on $conf->file->dol_document_root
+    	$urltheme = dol_buildpath($dir, 1);
 
     	if (is_dir($dirskin))
     	{
-    		$handle=opendir($dirskin);
+    		$handle = opendir($dirskin);
     		if (is_resource($handle))
     		{
-    			while (($subdir = readdir($handle))!==false)
+    			while (($subdir = readdir($handle)) !== false)
     			{
     				if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) <> '.'
-    						&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i', $subdir))
+    						&& substr($subdir, 0, 3) <> 'CVS' && !preg_match('/common|phones/i', $subdir))
     				{
     					// Disable not stable themes (dir ends with _exp or _dev)
     					if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
@@ -110,11 +110,11 @@ function show_skin($fuser, $edit = 0)
     					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					if ($subdir == $selected_theme)
     					{
-    						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="fckeditor_skin" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+    						print '<input '.($edit ? '' : 'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="fckeditor_skin" value="'.$subdir.'"> <b>'.$subdir.'</b>';
     					}
     					else
     					{
-    						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="fckeditor_skin" value="'.$subdir.'"> '.$subdir;
+    						print '<input '.($edit ? '' : 'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="fckeditor_skin" value="'.$subdir.'"> '.$subdir;
     					}
 						print '</div>';
 

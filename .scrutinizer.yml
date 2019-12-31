@@ -1,6 +1,12 @@
 # .scrutinizer.yml
+#build:
+#    - php-scrutinizer-run
 build:
-    - php-scrutinizer-run
+    nodes:
+        analysis:
+            tests:
+                override:
+                    - php-scrutinizer-run
           
 imports:
     - javascript
@@ -32,6 +38,7 @@ tools:
                 - doc/*
                 - test/*
                 - htdocs/includes/*
+                - htdocs/core/class/lessc.class.php
             paths:
                 - htdocs/
                 - scripts/

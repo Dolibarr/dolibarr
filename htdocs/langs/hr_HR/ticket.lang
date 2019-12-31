@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,10 @@ TicketDictSeverity=Ticket - Severities
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Request for assistance
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Ostalo
 
@@ -67,7 +70,7 @@ Closed=Zatvoreno
 Deleted=Deleted
 
 # Dict
-Type=Tip
+Type=Vrsta
 Category=Analytic code
 Severity=Severity
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -146,7 +153,7 @@ TicketCard=Ticket card
 CreateTicket=Create ticket
 EditTicket=Edit ticket
 TicketsManagement=Tickets Management
-CreatedBy=Created by
+CreatedBy=Izradio
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
@@ -173,7 +180,7 @@ LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
-TicketAddIntervention=Kreiraj intervenciju
+TicketAddIntervention=Izradi intervenciju
 CloseTicket=Close ticket
 CloseATicket=Close a ticket
 ConfirmCloseAticket=Confirm ticket closing
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

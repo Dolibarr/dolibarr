@@ -2,6 +2,7 @@
 ProductRef=Produkt ref.
 ProductLabel=Produktmärkning
 ProductLabelTranslated=Översatt produktetikett
+ProductDescription=Product description
 ProductDescriptionTranslated=Översatt produktbeskrivning
 ProductNoteTranslated=Översatt produktnotat
 ProductServiceCard=Produkter / tjänster

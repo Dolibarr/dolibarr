@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - printing
 Module64000Desc=Direktdrucksystem aktivieren
 PrintingSetup=Direktdrucksystem einrichten
+PrintingDesc=Dieses Modul kann Dokumente direkt an einen Drucker schicken. Der Druckbutton erscheint in entsprechenden Modulen.
 MenuDirectPrinting=Direktdruck - Jobs
 PrintingDriverDesc=Konfigurationsvariablen für den Druckertreiber.
 FileWasSentToPrinter=Die Datei %s wurde an den Drucker gesendet
@@ -9,8 +10,10 @@ NoActivePrintingModuleFound=Ich habe keinen Druckertreiber gefunden. Bitte kontr
 PleaseSelectaDriverfromList=Wähle einen Treiber aus der Liste.
 PleaseConfigureDriverfromList=Richte den gewählten Druckertreiber ein.
 PRINTGCP_INFO=Google OAuth Schnittstelle einrichten
+PrintGCPDesc=Dieser Treiber schickt Dokumente via Google Cloud Print an einen Drucker.
 GCP_OwnerName=Besitzer
 GCP_connectionStatus=On- oder Offline?
+PrintIPPDesc=Dieser Treiber schickt Dokumente direkt an einen CUPS - Drucker in einer Linuxumgebung.
 PRINTIPP_USER=Benutzer
 NoDefaultPrinterDefined=Du hast keinen Standarddrucker defininert.
 DefaultPrinter=Standarddrucker
@@ -20,6 +23,7 @@ IPP_State_reason1=Statusgrund1
 IPP_BW=schwarz / weiss
 IPP_Media=Druckmedium
 DirectPrintingJobsDesc=Hier siehst du die laufenden Druckjobs aller verfügbaren Drucker.
+GoogleAuthNotConfigured=Google OAuth ist nicht konfiguriert. Aktiviere das Modul OAuth und trage dort Google ID / Secret ein.
 GoogleAuthConfigured=Die Google OAuth - Zugangsdaten sind im Modul OAuth eingetragen.
 PrintingDriverDescprintgcp=Konfigurationsvariablen für Google Cloud Print.
 PrintingDriverDescprintipp=Cups Driver - Konfigurationsvariablen

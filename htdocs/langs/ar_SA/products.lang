@@ -2,6 +2,7 @@
 ProductRef=مرجع المنتج
 ProductLabel=وصف المنتج
 ProductLabelTranslated=تسمية المنتج مترجمة
+ProductDescription=Product description
 ProductDescriptionTranslated=ترجمة وصف المنتج
 ProductNoteTranslated=ترجمة مذكرة المنتج
 ProductServiceCard=منتجات / بطاقة الخدمات

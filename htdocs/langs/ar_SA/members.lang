@@ -29,6 +29,7 @@ MenuMembersUpToDate=حتى الآن من أعضاء
 MenuMembersNotUpToDate=وحتى الآن من أصل أعضاء
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=أعضاء مع اشتراك لتلقي
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=تاريخ الاكتتاب
 DateEndSubscription=تاريخ انتهاء الاكتتاب
 EndSubscription=انتهاء الاكتتاب

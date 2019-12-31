@@ -29,6 +29,7 @@ MenuMembersUpToDate=Naprakész tagoknak
 MenuMembersNotUpToDate=Elavult tagok
 MenuMembersResiliated=Kilépett tagok
 MembersWithSubscriptionToReceive=Tagok előfizetés kapni
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Előfizetés dátum
 DateEndSubscription=Előfizetés záró dátum
 EndSubscription=Vége előfizetés

@@ -18,7 +18,6 @@ InvoiceProFormaAsk=Factura de proforma
 InvoiceProFormaDesc=<b> Factura proforma </b> es una imagen de una factura real pero no tiene valor contable.
 InvoiceReplacement=Factura de reemplazo
 InvoiceReplacementAsk=Factura de reemplazo para la factura.
-InvoiceReplacementDesc=<b> Factura de reemplazo </b> se utiliza para cancelar y reemplazar completamente una factura que no haya recibido ningún pago. <br> <br> Nota: Solo se pueden reemplazar las facturas que no tengan ningún pago. Si la factura que reemplaza aún no está cerrada, se cerrará automáticamente a "abandonada".
 InvoiceAvoir=Nota de crédito
 InvoiceAvoirAsk=Nota de crédito para corregir factura
 invoiceAvoirWithLines=Crear nota de crédito con líneas de la factura de origen.

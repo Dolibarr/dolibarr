@@ -14,14 +14,14 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table of 'accounts' for accountancy expert module
 -- ============================================================================
 
 create table llx_accounting_account
 (
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  rowid                     bigint AUTO_INCREMENT PRIMARY KEY,
   entity                    integer DEFAULT 1 NOT NULL,
   datec                     datetime,
   tms                       timestamp,

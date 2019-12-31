@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=N° de documentos en el directorio
+ECMNbOfDocs=Nº de documentos en el directorio.
 ECMAddSection=Agregar directorio
 ECMCreationDate=Fecha de creación
 ECMNbOfSubDir=Cantidad de subdirectorios
@@ -20,6 +20,8 @@ ECMDocsByProjects=Documentos vinculados a proyectos
 ECMDocsByUsers=Documentos vinculados a usuarios
 ECMDocsByInterventions=Documentos vinculados a intervenciones
 ECMDocsByExpenseReports=Documentos vinculados a informes de gastos
+ECMDocsByHolidays=Documentos vinculados a vacaciones
+ECMDocsBySupplierProposals=Documentos vinculados a propuestas de proveedores.
 ECMNoDirectoryYet=Sin directorio creado
 DeleteSection=Eliminar directorio
 ConfirmDeleteSection=¿Puedes confirmar que quieres borrar el directorio <b>%s</b>?

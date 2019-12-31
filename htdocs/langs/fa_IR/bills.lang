@@ -25,7 +25,7 @@ InvoiceProFormaAsk=پیش‌صورت‌حساب
 InvoiceProFormaDesc=<b>پیش‌صورت‌حساب</b> تصویری درست از یک صورت‌حساب است اما ارزش حساب‌داری ندارد.
 InvoiceReplacement=صورت‌حساب تعویض
 InvoiceReplacementAsk=صورت‌حساب تعویض برای صورت‌حساب
-InvoiceReplacementDesc=<b>صورت‌حساب تعویض</b> برای لغو یا جایگزینی کامل یک صورت‌حساب در هنگامی که هیچ مبلغی هنوز دریافت نشده است. <br><br> نکته: تنها صورت‌حساب‌های پرداخت‌نشده قابل تعویض هستند. در صورتی که صورت‌حسابی که تعویض می‌کنید هنوز بسته نشده، به طور خودکار به صورت "معلق" بسته خواهد شد.
+InvoiceReplacementDesc=<b>فاکتور تعویض</b> در هنگام جایگزینی یک صورت‌حساب که هرگز برای آن پرداختی وجود ندارد استفاده می‌شود. <br><br> توجه: تنها صورت‌حساب‌های بدون پرداخت قابلیت جایگزین شدن دارند. در صورتی که صورت‌حسابی که جایگزین می‌کنید هنوز بسته نشده باشد، به طور خودکار به شکل "معلق" بسته خواهد شد.
 InvoiceAvoir=یادداشت اعتباری
 InvoiceAvoirAsk=یادداشت اعتباری برای اصلاح صورت‌حساب
 InvoiceAvoirDesc=<b>یادداشت اعتباری</b> یک صورت‌حساب منفی است که این واقعیت را اصلاح می‌کند که یک صورت‌حساب مبلغی متفاوت از مبلغی که واقعا پرداخت شده نشان می‌دهد (مثلا مشتری به اشتباه مبلغی بیش از مبلغ صورت‌حساب پرداخت کرده، یا این‌که مبلغ کامل را به دلیل بازگرداندن بعضی از کالاها پرداخت نخواهد کرد).
@@ -66,10 +66,10 @@ paymentInInvoiceCurrency=به واحد‌پولی صورت‌حساب
 PaidBack=پرداخت برگردانده شد
 DeletePayment=حذف پرداخت
 ConfirmDeletePayment=آیا مطمئنید که می‌خواهید این پرداخت را حذف کنید؟
-ConfirmConvertToReduc=Do you want to convert this %s into an absolute discount?
-ConfirmConvertToReduc2=The amount will be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
-ConfirmConvertToReducSupplier=Do you want to convert this %s into an absolute discount?
-ConfirmConvertToReducSupplier2=The amount will be saved among all discounts and could be used as a discount for a current or a future invoice for this vendor.
+ConfirmConvertToReduc=آیا می‌خواهید این %s را به یک تخفیفت مطلق تبدیل کنید؟
+ConfirmConvertToReduc2=این مبلغ در میان همۀ تخفیف‌ها ذخیره خواهد شد و می‌تواند به‌عنوان یک صورت‌حساب فعلی یا آینده برای این مشتری مورد استفاده قرار گیرد.
+ConfirmConvertToReducSupplier=آیا می‌خواهید این %s را به یک تخفیفت مطلق تبدیل کنید؟
+ConfirmConvertToReducSupplier2=این مبلغ در میان همۀ تخفیف‌ها ذخیره خواهد شد و می‌تواند به‌عنوان یک صورت‌حساب فعلی یا آینده برای این فروشنده مورد استفاده قرار گیرد.
 SupplierPayments=پرداخت‌های فروشندگان
 ReceivedPayments=پول‌های دریافتی
 ReceivedCustomersPayments=پول‌های دریافت شده از مشتریان
@@ -95,6 +95,7 @@ PaymentHigherThanReminderToPay=پرداخت بیشتر از یادآوری بر�
 HelpPaymentHigherThanReminderToPay=توجه! مبلغ پرداخت یک یا چند صورت‌حساب پرداختی بیش از مبلغ قابل پرداخت است. <br> ورودی خود را ویرایش نمائید، در غیر این‌صورت ساخت یک یادداشت اعتباری را برای مبلغ اضافی دریافت شده برای هر صورت‌حساب را بررسی و تائید کنید.
 HelpPaymentHigherThanReminderToPaySupplier=توجه! مبلغ پرداخت یک یا چند صورت‌حساب پرداختی بیش از مبلغ قابل پرداخت است. <br> ورودی خود را ویرایش نمائید، در غیر این‌صورت ساخت یک یادداشت اعتباری را برای مبلغ اضافی پرداخت شده برای هر صورت‌حساب را بررسی و تائید کنید.
 ClassifyPaid=طبقه‌بندی "پرداخت شده"
+ClassifyUnPaid=Classify 'Unpaid'
 ClassifyPaidPartially=طبقه‌بندی "پرداخت ناقص "
 ClassifyCanceled=طبقه‌بندی "معلق"
 ClassifyClosed=طبقه‌بندی "بسته شده"
@@ -214,6 +215,20 @@ ShowInvoiceReplace=نمایش صورت‌حساب جایگزین
 ShowInvoiceAvoir=نمایش یادداشت اعتباری
 ShowInvoiceDeposit=نمایش صورت‌حساب پیش‌پرداخت
 ShowInvoiceSituation=نمایش صورت‌حساب وضعیت
+UseSituationInvoices=Allow situation invoice
+UseSituationInvoicesCreditNote=Allow situation invoice credit note
+Retainedwarranty=Retained warranty
+RetainedwarrantyDefaultPercent=Retained warranty default percent
+ToPayOn=To pay on %s
+toPayOn=to pay on %s
+RetainedWarranty=Retained Warranty
+PaymentConditionsShortRetainedWarranty=Retained warranty payment terms
+DefaultPaymentConditionsRetainedWarranty=Default retained warranty payment terms
+setPaymentConditionsShortRetainedWarranty=Set retained warranty payment terms
+setretainedwarranty=Set retained warranty
+setretainedwarrantyDateLimit=Set retained warranty date limit
+RetainedWarrantyDateLimit=Retained warranty date limit
+RetainedWarrantyNeed100Percent=The situation invoice need to be at 100%% progress to be displayed on PDF
 ShowPayment=نمایش پرداخت
 AlreadyPaid=قبلا پرداخت‌شده است
 AlreadyPaidBack=مبلغ قبلا بازگردانده شده است

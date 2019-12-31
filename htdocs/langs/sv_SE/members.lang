@@ -29,6 +29,7 @@ MenuMembersUpToDate=Hittills medlemmar
 MenuMembersNotUpToDate=Föråldrad medlemmar
 MenuMembersResiliated=Avslutade medlemmar
 MembersWithSubscriptionToReceive=Medlemmar med abonnemang för att ta emot
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Teckningsdag
 DateEndSubscription=Prenumeration slutdatum
 EndSubscription=Avsluta prenumeration

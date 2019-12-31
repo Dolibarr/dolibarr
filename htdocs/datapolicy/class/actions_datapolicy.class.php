@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseom.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -120,7 +120,6 @@ class ActionsDatapolicy
                 $object->note_private = $object->note_private . '<br/>' . $langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
                 if ($object->update($object->id, $user, 0)) {
-
                     // On supprime les contacts associé
                     $sql = "DELETE FROM " . MAIN_DB_PREFIX . "socpeople WHERE fk_soc = " . $object->id;
                     $this->db->query($sql);
@@ -313,7 +312,6 @@ class ActionsDatapolicy
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
         if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
-
         }
 
         return $ret;
@@ -386,7 +384,7 @@ class ActionsDatapolicy
      * @param Object	 	$object			Object
      * @param string		$action			Actions
      * @param HookManager	$hookmanager	Hook manager
-     * @return void
+     * @return int
      */
     public function printCommonFooter($parameters, &$object, &$action, $hookmanager)
     {
@@ -408,14 +406,12 @@ class ActionsDatapolicy
                 $jsscript .= "$('#forme_juridique_code, #typent_id').change(function(){ hideRgPD(); });" . PHP_EOL;
                 $jsscript .= '</script>';
             } elseif (GETPOST('action') == 'confirm_delete' && GETPOST('confirm') == 'yes' && GETPOST('socid') > 0) {
-
                 // La suppression n'a pas été possible
                 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
                 $societe = new Societe($this->db);
                 $societe->fetch(GETPOST('socid'));
                 // On vérifie si il est utilisé
                 if ((in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $societe->typent_id == 8) && $societe->isObjectUsed(GETPOST('socid'))) {
-
                     require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
                     $form = new Form($this->db);
                     echo $form->formconfirm($_SERVER["PHP_SELF"] . "?socid=" . GETPOST('socid'), substr($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE"), 0, strlen($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE")) - 2), $langs->trans("DATAPOLICIES_POPUP_ANONYME_TEXTE"), 'anonymiser', '', '', 1);
@@ -428,7 +424,6 @@ class ActionsDatapolicy
                 $societe->fetch(GETPOST('socid'));
 
                 if (!in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) && $societe->typent_id != 8) {
-
                     require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
                     $jsscript .= '<script>';
                     $jsscript .= "var elementToHide = 'td.societe_extras_datapolicy_opposition_traitement, td.societe_extras_datapolicy_opposition_prospection, td.societe_extras_datapolicy_consentement';" . PHP_EOL;

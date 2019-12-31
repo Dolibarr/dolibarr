@@ -6,7 +6,7 @@ TMenuTools=Tools
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Birthday
 BirthdayDate=Birthday date
-DateToBirth=Date of birth
+DateToBirth=Birth date
 BirthdayAlertOn=birthday alert active
 BirthdayAlertOff=birthday alert inactive
 TransKey=Translation of the key TransKey
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Exports area

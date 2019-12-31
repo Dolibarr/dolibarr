@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +77,7 @@ print '</div>';
 print '</div>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 

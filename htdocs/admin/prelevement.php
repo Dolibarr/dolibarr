@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -208,9 +208,9 @@ print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setu
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
@@ -355,7 +355,7 @@ foreach ($dirmodels as $reldir)
                                 // Active
                                 if (in_array($name, $def))
                                 {
-                                    print '<td align="center">'."\n";
+                                    print '<td class="center">'."\n";
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
                                     print img_picto($langs->trans("Enabled"),'switch_on');
                                     print '</a>';
@@ -363,13 +363,13 @@ foreach ($dirmodels as $reldir)
                                 }
                                 else
                                 {
-                                    print '<td align="center">'."\n";
+                                    print '<td class="center">'."\n";
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                                     print "</td>";
                                 }
 
                                 // Default
-                                print '<td align="center">';
+                                print '<td class="center">';
                                 if ($conf->global->PAYMENTORDER_ADDON_PDF == $name)
                                 {
                                     print img_picto($langs->trans("Default"),'on');
@@ -397,12 +397,12 @@ foreach ($dirmodels as $reldir)
                                 $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 
-                                print '<td align="center">';
+                                print '<td class="center">';
                                 print $form->textwithpicto('',$htmltooltip,1,0);
                                 print '</td>';
 
                                 // Preview
-                                print '<td align="center">';
+                                print '<td class="center">';
                                 if ($module->type == 'pdf')
                                 {
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
@@ -488,8 +488,8 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("User").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';

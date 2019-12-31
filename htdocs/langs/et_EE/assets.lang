@@ -11,49 +11,49 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+Assets = Varad
+NewAsset = Uus vara
+AccountancyCodeAsset = Raamatupidamise kood (vara)
+AccountancyCodeDepreciationAsset = Raamatupidamise kood (amortisatsioonivara konto)
+AccountancyCodeDepreciationExpense = Raamatupidamise kood (amortisatsioonikulu konto)
+NewAssetType=Uus vara tüüp
+AssetsTypeSetup=Varade tüübi seadistamine
+AssetTypeModified=Varade tüüp on muudetud
+AssetType=Vara tüüp
+AssetsLines=Varad
 DeleteType=Kustuta
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+DeleteAnAssetType=Kustuta vara tüüp
+ConfirmDeleteAssetType=Kas soovite kindlasti selle vara tüübi kustutada?
 ShowTypeCard=Kuva tüüp '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Varad
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Varade kirjeldus
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Varade seadistamine
+Settings = Seaded
+AssetsSetupPage = Varade seadistamise leht
+ExtraFieldsAssetsType = Täiendavad atribuudid (vara tüüp)
+AssetsType=Vara tüüp
+AssetsTypeId=Varade tüübi ID
+AssetsTypeLabel=Varade tüübi silt
+AssetsTypes=Varade liigid
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
+MenuAssets = Varad
+MenuNewAsset = Uus vara
+MenuTypeAssets = Tüüp varasid
 MenuListAssets = Loend
 MenuNewTypeAssets = Uus
 MenuListTypeAssets = Loend
@@ -61,5 +61,5 @@ MenuListTypeAssets = Loend
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+NewAssetType=Uus vara tüüp
+NewAsset=Uus vara

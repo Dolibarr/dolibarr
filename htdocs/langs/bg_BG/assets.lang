@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -22,7 +22,7 @@ AccountancyCodeAsset = Счетоводен код (актив)
 AccountancyCodeDepreciationAsset = Счетоводен код (сметка за амортизационни активи)
 AccountancyCodeDepreciationExpense = Счетоводен код (сметка за амортизационни разходи)
 NewAssetType=Нов вид актив
-AssetsTypeSetup=Настройка на тип активи
+AssetsTypeSetup=Настройка на вид активи
 AssetTypeModified=Видът на актива е променен
 AssetType=Вид актив
 AssetsLines=Активи
@@ -42,17 +42,17 @@ ModuleAssetsDesc = Описание на активи
 AssetsSetup = Настройка на активи
 Settings = Настройки
 AssetsSetupPage = Страница за настройка на активите
-ExtraFieldsAssetsType = Допълнителни атрибути (Вид на актива)
+ExtraFieldsAssetsType = Допълнителни атрибути (вид актив)
 AssetsType=Вид актив
-AssetsTypeId=№ на актива
-AssetsTypeLabel=Вид актив етикет
+AssetsTypeId=Идентификатор на вида актива
+AssetsTypeLabel=Етикет на вида актив
 AssetsTypes=Видове активи
 
 #
 # Menu
 #
 MenuAssets = Активи
-MenuNewAsset = Нов Актив
+MenuNewAsset = Нов актив
 MenuTypeAssets = Вид активи
 MenuListAssets = Списък
 MenuNewTypeAssets = Нов

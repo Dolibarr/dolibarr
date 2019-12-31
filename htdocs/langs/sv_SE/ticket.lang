@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,10 @@ TicketDictSeverity=Ticket - Severiteter
 TicketTypeShortBUGSOFT=Programfel
 TicketTypeShortBUGHARD=Hårdvarufel
 TicketTypeShortCOM=Kommersiell fråga
-TicketTypeShortINCIDENT=Begäran om hjälp
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Andra
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=Visa alla biljetter
 TicketViewNonClosedOnly=Visa bara öppna biljetter
 TicketStatByStatus=Biljetter efter status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Bekräfta statusändringen: %s?
 TicketLogStatusChanged=Status ändrad: %s till %s
 TicketNotNotifyTiersAtCreate=Meddela inte företaget på create
 Unread=Oläst
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

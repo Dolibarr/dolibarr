@@ -16,12 +16,13 @@ StripeDoPayment=Betal med stripe
 YouWillBeRedirectedOnStripe=Du blir omdirigert til en sikret Stripeside for å legge inn kredittkortinformasjon
 Continue=Neste
 ToOfferALinkForOnlinePayment=URL for %s betaling
-ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby et %s online betalingsgrensesnitt for en salgsordre
-ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby et %s brukergrensesnitt for online betaling av kundefaktura
-ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby et %s brukergrensesnitt for online betaling av en kontraktlinje
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby et %s brukergrensesnitt for online betaling av et fribeløp beløp
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby et %s brukergrensesnitt for online betaling av medlemsabonnement
-YouCanAddTagOnUrl=Du kan også legge til URL-parameter <b>&tag=<i>verdier</i></b> til noen av disse URLene (kreves kun ved betaling av fribeløp) for å legge til dine egne merknader til betalingen kommentar.
+ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby en %s online betalingsside for en salgsordre
+ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby en %s online betalingsside for en kundefaktura
+ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby en %s online betalingsside for en kontraktslinje
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby en %s online betalingsside av ethvert beløp uten eksisterende objekt
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby en %s online betalingsside for et medlemsabonnement
+ToOfferALinkForOnlinePaymentOnDonation=URL for å tilby en %s online betalingsside for betaling av en donasjon
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Sett opp Stripe med url <b> %s</b> for å få betaling opprettet automatisk når den er validert av Stripe.
 AccountParameter=Kontoparametre
 UsageParameter=Parametre for bruk
@@ -65,3 +66,5 @@ StripeUserAccountForActions=Brukerkonto til bruk for e-postvarsling av noen Stri
 StripePayoutList=Liste over Stripe utbetalinger
 ToOfferALinkForTestWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (test-modus)
 ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (live-modus)
+PaymentWillBeRecordedForNextPeriod=Betalingen blir registrert for neste periode.
+ClickHereToTryAgain=<a href="%s">Klikk her for å prøve igjen ...</a>

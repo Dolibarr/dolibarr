@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -47,23 +47,23 @@ abstract class ModeleAction extends CommonDocGenerator
         global $conf;
 
         $type='action';
-        $liste=array();
+        $list=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        $list=getListOfModels($db, $type, $maxfilenamelength);
 
-        return $liste;
+        return $list;
     }
 }
 
 // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
- *  Create an product document on disk using template defined into PRODUCT_ADDON_PDF
+ *  Create a product document on disk using template defined into PRODUCT_ADDON_PDF
  *
- *  @param	DoliDB		$db  			objet base de donnee
+ *  @param	DoliDB		$db  			data base object
  *  @param	Object		$object			Object fichinter
- *  @param	string		$modele			force le modele a utiliser ('' par defaut)
- *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param	string		$modele			forces the model to use ('' by default)
+ *  @param	Translate	$outputlangs	lang object to use for translation
  *  @param  int			$hidedetails    Hide details of lines
  *  @param  int			$hidedesc       Hide description
  *  @param  int			$hideref        Hide ref
@@ -79,7 +79,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 
 	$srctemplatepath='';
 
-	// Positionne modele sur le nom du modele de fichinter a utiliser
+	// Position modele on the name of fichinter model to use
 	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->ACTION_EVENT_ADDON_PDF))

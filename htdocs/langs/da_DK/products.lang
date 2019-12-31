@@ -2,6 +2,7 @@
 ProductRef=Produkt ref.
 ProductLabel=Produktmærke
 ProductLabelTranslated=Oversat produktmærke
+ProductDescription=Product description
 ProductDescriptionTranslated=Oversat produktbeskrivelse
 ProductNoteTranslated=Oversat produkt notat
 ProductServiceCard=Produkter / Tjenester kortet

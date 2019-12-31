@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,9 +57,9 @@ class box_contracts extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->contrat->lire);
+        $this->hidden = ! ($user->rights->contrat->lire);
     }
 
     /**
@@ -70,7 +70,7 @@ class box_contracts extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $db, $conf;
+    	global $user, $langs, $conf;
 
     	$this->max=$max;
 
@@ -80,25 +80,26 @@ class box_contracts extends ModeleBoxes
 
     	if ($user->rights->contrat->lire)
     	{
-        	$contractstatic=new Contrat($db);
-        	$thirdpartytmp=new Societe($db);
+        	$contractstatic=new Contrat($this->db);
+        	$thirdpartytmp=new Societe($this->db);
 
     	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql.= ", c.ref_customer, c.ref_supplier";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE c.fk_soc = s.rowid";
     		$sql.= " AND c.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
     		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
     		else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-    		$sql.= $db->plimit($max, 0);
+    		$sql.= $this->db->plimit($max, 0);
 
-    		$resql = $db->query($sql);
+    		$resql = $this->db->query($sql);
     		if ($resql)
     		{
-    			$num = $db->num_rows($resql);
+    			$num = $this->db->num_rows($resql);
     			$now=dol_now();
 
     			$line = 0;
@@ -107,16 +108,18 @@ class box_contracts extends ModeleBoxes
 
                 while ($line < $num)
                 {
-    				$objp = $db->fetch_object($resql);
+    				$objp = $this->db->fetch_object($resql);
 
-    				$datec=$db->jdate($objp->datec);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
+    				$datec=$this->db->jdate($objp->datec);
+    				$dateterm=$this->db->jdate($objp->fin_validite);
+    				$dateclose=$this->db->jdate($objp->date_cloture);
     				$late = '';
 
     				$contractstatic->statut=$objp->fk_statut;
     				$contractstatic->id=$objp->rowid;
     				$contractstatic->ref=$objp->ref;
+    				$contractstatic->ref_customer = $objp->ref_customer;
+    				$contractstatic->ref_supplier = $objp->ref_supplier;
     				$result=$contractstatic->fetch_lines();
 
     				$thirdpartytmp->name = $objp->name;
@@ -133,7 +136,7 @@ class box_contracts extends ModeleBoxes
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contractstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis'=>1
@@ -165,12 +168,12 @@ class box_contracts extends ModeleBoxes
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
-                $db->free($resql);
+                $this->db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

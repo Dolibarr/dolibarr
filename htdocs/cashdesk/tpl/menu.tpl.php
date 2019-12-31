@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -74,8 +74,8 @@ print '<li class="menu_choix1"><a href="affIndex.php?menutpl=facturation&id=NOUV
 // Open new tab on backoffice (this is not a disconnect from POS)
 print '<li class="menu_choix2"><a href=".." target="backoffice"><span class="hideonsmartphone">'.$langs->trans("BackOffice").'</span></a></li>';
 // Disconnect
-print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['firstname'].' '.$_SESSION['lastname'];
-print ' <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a><br>';
+print '<li class="menu_choix0"><div class="cashdeskloginuser marginbottomonly valignmiddle"><div class="inline-block valignmiddle">'.$langs->trans("User").': '.$_SESSION['firstname'].' '.$_SESSION['lastname'].'</div>';
+print '<div class="inline-block valignmiddle"> <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a></div></div>';
 print '<form id="frmThirdparty" class="formulaire1 inline-block" method="post" action="facturation_verif.php?action=change_thirdparty">';
 print $langs->trans("CashDeskThirdParty").': ';
 print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', '(s.client IN (1,3) AND s.status = 1)', '', 0, 0, null, 0, 'valignmiddle inline-block');

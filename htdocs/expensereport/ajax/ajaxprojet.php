@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -69,8 +69,8 @@ if (GETPOST('fk_projet') != '')
 		{
 		    $label=$row['ref'].' - '.$row['title'];
 		    $row_array['label'] = $label;
-			 $row_array['value'] = $label;
-	       $row_array['key'] = $row['rowid'];
+			$row_array['value'] = $label;
+	        $row_array['key'] = $row['rowid'];
 
 	        array_push($return_arr, $row_array);
 	    }

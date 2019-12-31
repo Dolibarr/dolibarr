@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,7 +45,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Search User
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
 print '<tr><td>';
@@ -125,8 +125,9 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
 	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	print '<td></td>';
 	print '</tr>';
 	$i = 0;
 
@@ -143,7 +144,7 @@ if ($resql)
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
 		$fuserstatic->skype = $obj->skype;
-		$fuserstatic->societe_id = $obj->fk_soc;
+		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id=$obj->fk_soc;
 		$companystatic->name=$obj->name;
@@ -195,7 +196,7 @@ if ($resql)
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
-		print '<td class="right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
         print '<td class="right">';
         print $fuserstatic->getLibStatut(3);
         print '</td>';

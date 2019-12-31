@@ -17,11 +17,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *	\file       htdocs/core/db/sqlite.class.php
+ *	\file       htdocs/core/db/sqlite3.class.php
  *	\brief      Class file to manage Dolibarr database access for a SQLite database
  */
 
@@ -149,9 +149,9 @@ class DoliDBSqlite3 extends DoliDB
         {
             if ($type == 'auto')
             {
-              if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
+                if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
             }
 
             if ($type == 'dml')
@@ -453,7 +453,11 @@ class DoliDBSqlite3 extends DoliDB
         }
         //print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-        if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+        if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+        {
+        	$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+        	dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+        }
         if (empty($query)) return false;    // Return false = error if empty request
 
         // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)

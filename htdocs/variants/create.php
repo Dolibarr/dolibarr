@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -32,7 +32,6 @@ if ($_POST) {
 	if (empty($ref) || empty($label)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
-
 		$prodattr = new ProductAttribute($db);
 		$prodattr->label = $label;
 		$prodattr->ref = $ref;
@@ -71,7 +70,7 @@ print load_fiche_titre($title);
 dol_fiche_head();
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 

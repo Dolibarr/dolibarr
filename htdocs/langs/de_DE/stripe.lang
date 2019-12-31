@@ -12,16 +12,17 @@ YourEMail=E-Mail-Adresse für die Zahlungsbestätigung
 STRIPE_PAYONLINE_SENDEMAIL=E-Mail-Benachrichtigung nach einem Zahlungsversuch (erfolgreich oder fehlgeschlagen)
 Creditor=Zahlungsempfänger
 PaymentCode=Zahlungscode
-StripeDoPayment=Pay with Stripe
+StripeDoPayment=Zahlen mit Stripe
 YouWillBeRedirectedOnStripe=Zur Eingabe Ihrer Kreditkartendaten werden Sie auf die sichere Bezahlseite von Stripe weitergeleitet.
 Continue=Nächster
 ToOfferALinkForOnlinePayment=URL für %s Zahlung
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL um Ihren Kunden eine %s Online-Bezahlseite für Rechnungen anzubieten
-ToOfferALinkForOnlinePaymentOnContractLine=URL um Ihren Kunden eine %s Online-Bezahlseite für Vertragspositionen anzubieten
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Bezahlseite für frei wählbare Beträge anzubieten
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Mitgliedern eine %s Online-Bezahlseite für Mitgliedsbeiträge
-YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Richten Sie Stripe mit der URL <b>%s</b> ein, um nach Freigabe durch Stripe eine Zahlung anzulegen.
 AccountParameter=Konto Parameter
 UsageParameter=Einsatzparameter
@@ -65,3 +66,5 @@ StripeUserAccountForActions=User account to use for email notification of some S
 StripePayoutList=List of Stripe payouts
 ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

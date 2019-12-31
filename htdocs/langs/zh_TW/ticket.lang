@@ -12,28 +12,31 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
 #
 
-Module56000Name=Tickets
-Module56000Desc=Ticket system for issue or request management
+Module56000Name=服務單
+Module56000Desc=用於問題或要求管理的服務單系統
 
-Permission56001=See tickets
-Permission56002=Modify tickets
-Permission56003=Delete tickets
-Permission56004=Manage tickets
-Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+Permission56001=查看服務單
+Permission56002=修改服務單
+Permission56003=刪除服務單
+Permission56004=管理服務單
+Permission56005=查看所有合作方的服務單（對外部用戶無效，始終僅限於他們所依賴的合作方）
 
-TicketDictType=Ticket - Types
-TicketDictCategory=Ticket - Groupes
-TicketDictSeverity=Ticket - Severities
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Request for assistance
+TicketDictType=服務單-類型
+TicketDictCategory=服務單-組別
+TicketDictSeverity=服務單-嚴重程度
+TicketTypeShortBUGSOFT=軟體故障
+TicketTypeShortBUGHARD=設備故障
+TicketTypeShortCOM=商業問題
+
+TicketTypeShortHELP=請求有用的幫助
+TicketTypeShortISSUE=錯誤或問題
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=項目
 TicketTypeShortOTHER=其他
 
@@ -56,7 +59,7 @@ OriginEmail=Email source
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=Not read
+NotRead=未讀
 Read=閱讀
 Assigned=Assigned
 InProgress=進行中
@@ -68,7 +71,7 @@ Deleted=Deleted
 
 # Dict
 Type=類型
-Category=Analytic code
+Category=分析代碼
 Severity=Severity
 
 # Email templates
@@ -137,11 +140,15 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
 #
-Ticket=Ticket
+Ticket=票
 TicketCard=Ticket card
 CreateTicket=Create ticket
 EditTicket=Edit ticket
@@ -150,7 +157,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=分析代碼
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

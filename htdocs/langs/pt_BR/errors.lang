@@ -72,7 +72,6 @@ ErrorSpecialCharNotAllowedForField=O campo "%s" não aceita caracteres especiais
 ErrorNumRefModel=Uma referência existe no banco de dados (% s) e não é compatível com esta regra de numeração. Remover registro ou referência renomeado para ativar este módulo.
 ErrorQtyTooLowForThisSupplier=Quantidade muito baixa para este fornecedor ou nenhum preço definido neste produto para este fornecedor
 ErrorOrdersNotCreatedQtyTooLow=Algumas encomendas não foram criadas por causa de quantidades muito baixas
-ErrorModuleSetupNotComplete=A configuração do módulo parece estar incompleta. Vá para Início >> Configuração >> Módulos para completá-la.
 ErrorBadMaskFailedToLocatePosOfSequence=Erro, máscara sem número de sequência
 ErrorBadMaskBadRazMonth=Erro, valor de redefinição ruim
 ErrorMaxNumberReachForThisMask=Número máximo atingido para esta máscara

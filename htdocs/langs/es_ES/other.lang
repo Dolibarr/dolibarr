@@ -184,12 +184,14 @@ NumberOfCustomerInvoices=Número de facturas a clientes
 NumberOfSupplierProposals=Número de presupuestos de proveedores
 NumberOfSupplierOrders=Número de pedidos a proveedores
 NumberOfSupplierInvoices=Número de facturas de proveedores
+NumberOfContracts=Número de contratos
 NumberOfUnitsProposals=Número de unidades en los presupuestos a clientes
 NumberOfUnitsCustomerOrders=Número de unidades en los pedidos de clientes
 NumberOfUnitsCustomerInvoices=Número de unidades en las facturas a clientes
 NumberOfUnitsSupplierProposals=Número de unidades en los presupuestos de proveedores
 NumberOfUnitsSupplierOrders=Número de unidades en los pedidos a proveedores
 NumberOfUnitsSupplierInvoices=Número de unidades en las facturas de proveedores
+NumberOfUnitsContracts=Número de unidades en los contratos
 EMailTextInterventionAddedContact=Se le ha asignado la intervención %s
 EMailTextInterventionValidated=Ficha intervención %s validada
 EMailTextInvoiceValidated=Factura %s ha sido validada.
@@ -250,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Tercero creado por el recolector de e-mails de
 ContactCreatedByEmailCollector=Contacto/dirección creada por el recolector de e-mails del MSGID de e-mail %s
 ProjectCreatedByEmailCollector=Proyecto creado por el recolector de e-mails del MSGID de e-mail %s
 TicketCreatedByEmailCollector=Ticket creado por el recolector de e-mails del MSGID de e-mail %s
+OpeningHoursFormatDesc=Use un - para separar las horas de apertura y cierre. <br> Use un espacio para ingresar diferentes rangos. <br> Ejemplo: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Área de exportaciones

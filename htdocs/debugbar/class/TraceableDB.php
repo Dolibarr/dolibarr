@@ -143,7 +143,7 @@ class TraceableDB extends DoliDB
 	 */
 	public static function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return $this->db->convertSQLFromMysql($line);
+		return self::$db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -333,9 +333,9 @@ class TraceableDB extends DoliDB
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
-			'is_success'    => $resql,
-			'error_code'    => ! $resql ? $this->db->lasterrno() : null,
-			'error_message' => ! $resql ? $this->db->lasterror() : null
+			'is_success'    => $resql ? true : false,
+			'error_code'    => $resql ? null : $this->db->lasterrno(),
+			'error_message' => $resql ? null : $this->db->lasterror()
 		);
 	}
 
