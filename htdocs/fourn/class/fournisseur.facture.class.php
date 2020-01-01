@@ -1639,7 +1639,7 @@ class FactureFournisseur extends CommonInvoice
 	        			$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 	        			if ($result > 0)
 	        			{
-	        				$pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
+	        				if (empty($pu)) $pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
 	        				$ref_supplier = $prod->ref_supplier; // Ref supplier price set by get_buyprice
 	        				// is remise percent not keyed but present for the product we add it
 	        				if ($remise_percent == 0 && $prod->remise_percent != 0)
@@ -1691,6 +1691,7 @@ class FactureFournisseur extends CommonInvoice
 	        $localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 	        // Clean vat code
+	        $reg = array();
 	        $vat_src_code = '';
 	        if (preg_match('/\((.*)\)/', $txtva, $reg))
 	        {
