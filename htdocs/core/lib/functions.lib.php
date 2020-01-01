@@ -4677,6 +4677,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	dol_syslog("get_localtax tva=".$vatrate." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer) ? $thirdparty_buyer->id : '')."/country_code=".(is_object($thirdparty_buyer) ? $thirdparty_buyer->country_code : '')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
 	$vatratecleaned = $vatrate;
+	$reg = array();
 	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
 	{
 		$vatratecleaned = trim($reg[1]);

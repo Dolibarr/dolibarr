@@ -1537,7 +1537,7 @@ if (empty($reshook))
 										if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 
 										// View third's localtaxes for NOW and do not use value from origin.
-										// TODO Is this really what we want ? Yes if source if template invoice but what if proposal or order ?
+										// TODO Is this really what we want ? Yes if source is template invoice but what if proposal or order ?
 										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 

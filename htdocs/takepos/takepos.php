@@ -34,11 +34,12 @@ if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
@@ -69,6 +70,13 @@ if ($conf->browser->layout == 'phone')
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+
+/*
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+$soc = new Societe($db);
+if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+else $soc->fetch($conf->global->$constforcompanyid);
+*/
 
 
 /*
