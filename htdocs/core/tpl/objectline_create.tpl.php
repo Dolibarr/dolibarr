@@ -363,7 +363,7 @@ if ($nolinesbefore) {
 		<td class="nobottom linecoluht_currency right">
 			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"]) ?GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
-	<?php
+		<?php
 	}
 	if (!empty($inputalsopricewithtax)) {
 		$coldisplay++;
@@ -371,7 +371,7 @@ if ($nolinesbefore) {
 		<td class="nobottom linecoluttc right">
 			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"]) ?GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
-	<?php
+		<?php
 	}
 	$coldisplay++;
 	?>
