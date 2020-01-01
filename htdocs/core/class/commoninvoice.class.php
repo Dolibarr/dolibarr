@@ -107,7 +107,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 * 	Return amount of payments already done
+	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
+	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Amount of payment already done, <0 if KO

@@ -221,7 +221,7 @@ class Translate
 
 		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
 		{
-			dol_syslog("Error: ".get_class($this)."::Load was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
+			dol_syslog("Error: ".get_class($this)."::load was called for domain=".$domain." but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
 			return -1;
 		}
 
@@ -428,7 +428,7 @@ class Translate
 
 		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
 		{
-			dol_syslog("Error: ".get_class($this)."::Load was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
+			dol_syslog("Error: ".get_class($this)."::loadFromDatabase was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
 			return -1;
 		}
 
