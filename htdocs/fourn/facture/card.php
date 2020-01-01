@@ -101,6 +101,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 
 $permissionnote = $user->rights->fournisseur->facture->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->fournisseur->facture->creer; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->rights->fournisseur->facture->creer; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd = $user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
@@ -1143,7 +1144,7 @@ if (empty($reshook))
 		else
 		{
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = '';
+			$price_ht = GETPOST('price_ht');
 			$tva_tx = '';
 		}
 
@@ -1209,6 +1210,7 @@ if (empty($reshook))
 			$idprod = 0;
 			if (GETPOST('idprodfournprice', 'alpha') == -1 || GETPOST('idprodfournprice', 'alpha') == '') $idprod = -99; // Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
+			$reg = array();
 			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg))
 			{
 				$idprod = $reg[1];
@@ -1250,7 +1252,20 @@ if (empty($reshook))
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
-				$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+				if ($price_ht != '' || $price_ht_devise != '') {
+					$price_base_type = 'HT';
+					$pu = price2num($price_ht, 'MU');
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+				} else {
+					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
+						$pu = $productsupplier->fourn_pu;
+						$pu_ht_devise = 0;
+					} else {
+						$pu = $productsupplier->fourn_pu;
+						$pu_ht_devise = $productsupplier->fourn_multicurrency_unitprice;
+					}
+				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
 
@@ -1260,7 +1275,6 @@ if (empty($reshook))
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-				$pu = $productsupplier->fourn_pu;
 				if (empty($pu)) $pu = 0; // If pu is '' or null, we force to have a numeric value
 
 				$result = $object->addline(
@@ -1283,8 +1297,9 @@ if (empty($reshook))
 					$array_options,
 					$productsupplier->fk_unit,
 					0,
-                    $productsupplier->fourn_multicurrency_unitprice,
-                    $ref_supplier
+                    $pu_ht_devise,
+                    $ref_supplier,
+					''
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
