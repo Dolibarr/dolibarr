@@ -4922,13 +4922,14 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
+	$sql  = "SELECT t.taux as rate, t.code, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
 	else
 	{
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
+		$reg = array();
 		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "x.x (yy)"
 		{
 			$vatratecleaned = $reg[1];
@@ -4946,17 +4947,20 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
+
+		$vateratestring = $obj->rate.($obj->code ? ' ('.$obj->code.')' : '');
+
 		if ($local == 1)
 		{
-			return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			return array($obj->localtax1_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		elseif ($local == 2)
 		{
-			return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			return array($obj->localtax2_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		else
 		{
-			return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			return array($obj->localtax1_type, get_localtax($vateratestring, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vateratestring, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 	}
 
