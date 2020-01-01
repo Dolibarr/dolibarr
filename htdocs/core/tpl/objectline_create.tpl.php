@@ -356,35 +356,36 @@ if ($nolinesbefore) {
 		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"]) ?GETPOST("price_ht", 'alpha', 2) : ''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	<?php
+	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluht_currency right">
 			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"]) ?GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
-	<?php }
+	<?php
+	}
 	if (!empty($inputalsopricewithtax)) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluttc right">
 			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"]) ?GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
-	<?php }
+	<?php
+	}
 	$coldisplay++;
 	?>
 	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1); ?>">
 	</td>
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
-	{
+	if (! empty($conf->global->PRODUCT_USE_UNITS)) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
-	{
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	$coldisplay++;
@@ -397,8 +398,7 @@ if ($nolinesbefore) {
 		$coldisplay++;
 		print '<td></td>';
 	}
-	if (!empty($usemargins))
-	{
+	if (!empty($usemargins)) {
 		if (!empty($user->rights->margins->creer)) {
 			$coldisplay++;
 			?>
@@ -486,19 +486,19 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
 	<?php
-		if (!empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-					$("input[name='np_marginRate']:first").blur(function(e) {
-					return checkFreeLine(e, "np_marginRate");
-					});
-					<?php
-		}
-		if (!empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-					$("input[name='np_markRate']:first").blur(function(e) {
-					return checkFreeLine(e, "np_markRate");
-					});
-					<?php
-		}
-		?>
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+		$("input[name='np_marginRate']:first").blur(function(e) {
+		return checkFreeLine(e, "np_marginRate");
+		});
+		<?php
+	}
+	if (!empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+		$("input[name='np_markRate']:first").blur(function(e) {
+		return checkFreeLine(e, "np_markRate");
+		});
+		<?php
+	}
+	?>
 	});
 
 	/* TODO This does not work for number with thousand separator that is , */

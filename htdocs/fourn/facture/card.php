@@ -482,7 +482,7 @@ if (empty($reshook))
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
 			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
-			
+
 			// Loop on each vat rate
 			$i = 0;
 			foreach ($object->lines as $line)
@@ -557,7 +557,7 @@ if (empty($reshook))
 						$total_creditnote_and_deposit += $obj->amount_ttc;
 					}
 				} else dol_print_error($db);
-				
+
 				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
