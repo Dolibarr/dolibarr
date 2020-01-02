@@ -345,9 +345,23 @@ if ($action == 'confirm_generateinvoice')
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'string');
         $invoiceToUse = GETPOST('invoiceid', 'int');
 
+        $prodDurationHours = 1.0;
 		if ($idprod > 0)
 		{
 			$tmpproduct->fetch($idprod);
+            if ($tmpproduct->duration_unit=='i')
+                $prodDurationHours = 1./60;
+            if ($tmpproduct->duration_unit=='h')
+                $prodDurationHours = 1.;
+            if ($tmpproduct->duration_unit=='d')
+                $prodDurationHours = 24.;
+            if ($tmpproduct->duration_unit=='w')
+                $prodDurationHours = 24.*7;
+            if ($tmpproduct->duration_unit=='m')
+                $prodDurationHours = 24.*30;
+            if ($tmpproduct->duration_unit=='y')
+                $prodDurationHours = 24.*365;
+            $prodDurationHours *= $tmpproduct->duration_value;
 
 			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
 			$pu_ht = empty($dataforprice['pu_ht']) ? 0 : $dataforprice['pu_ht'];
@@ -408,7 +422,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour/$prodDurationHours, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -452,7 +466,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, $qtyhour/$prodDurationHours, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -493,7 +507,7 @@ if ($action == 'confirm_generateinvoice')
 
 					// Add lines
 					$lineName = $ftask->ref.' - '.$ftask->label;
-					$lineid = $tmpinvoice->addline($lineName, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($lineName, $pu_ht, $qtyhour/$prodDurationHours, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
