@@ -59,3 +59,5 @@ Manufactured=Manufactured
 TheProductXIsAlreadyTheProductToProduce=The product to add is already the product to produce.
 ForAQuantityOf1=For a quantity to produce of 1
 ConfirmValidateMo=Are you sure you want to validate this Manufacturing Order?
+ConfirmProductionDesc=By clicking on '%s', you will validate the consumption and/or production for the quantities set. This will also update the stock and record stock movements.
+ProductionForRefAndDate=Production %s - %s
