@@ -1010,6 +1010,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			print '<td>'.$langs->trans('LocalID').'</td>';
 		}
+		print '<td>'.$langs->trans('Label').'</td>';
 		print '<td>'.$langs->trans('StripeID').'</td>';
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
@@ -1061,6 +1062,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<tr class="oddeven">';
 							print '<td>';
 							print $companypaymentmodetemp->id;
+							print '</td>';
+							print '<td>';
+							print $companypaymentmodetemp->label;
 							print '</td>';
 							print '<td>';
 							print $companypaymentmodetemp->stripe_card_ref;
