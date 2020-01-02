@@ -162,6 +162,7 @@ class CompanyPaymentMode extends CommonObject
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
 	public $stripe_card_ref;
+	public $stripe_account;
 
 	/**
 	 * @var int Status
