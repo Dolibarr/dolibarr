@@ -1160,6 +1160,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '<td>';
 					print '</td>';
 				}
+				print '<td>';
+				print '</td>';
 				// Src ID
 				print '<td>';
 				$connect = '';
