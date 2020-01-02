@@ -444,7 +444,7 @@ class CompanyPaymentMode extends CommonObject
 
 				$this->db->begin();
 
-				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
+				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0, tms = tms";
 				$sql2.= " WHERE default_rib <> 0 AND fk_soc = ".$obj->fk_soc;
 				if ($type) $sql2.= " AND type = '".$this->db->escape($type)."'";
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
