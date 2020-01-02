@@ -2552,7 +2552,7 @@ if (!function_exists("llxFooter"))
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
-		// You can use &forceping=1 in parameters to force the ping.
+		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
@@ -2562,14 +2562,14 @@ if (!function_exists("llxFooter"))
 			|| GETPOST('forceping', 'alpha'))
 			{
 				if (strpos('alpha', DOL_VERSION) > 0) {
-					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It is an alpha version -->\n";
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
 				}
-				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]))
+				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]))	// Cookie is set when we uncheck the checkbox in the installation wizard.
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
-					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
+					print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 					?>
 		    			<script>
@@ -2618,7 +2618,7 @@ if (!function_exists("llxFooter"))
 				else
 				{
 					$now = dol_now();
-					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It was disabled -->\n";
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');

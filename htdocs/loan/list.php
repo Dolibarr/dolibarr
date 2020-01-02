@@ -49,7 +49,8 @@ if (!$sortorder) $sortorder = "DESC";
 $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
-$filtre = GETPOST("filtre");
+
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Purge search criteria
@@ -77,10 +78,6 @@ $sql .= " WHERE l.entity = ".$conf->entity;
 if ($search_amount)	$sql .= natural_search("l.capital", $search_amount, 1);
 if ($search_ref) 	$sql .= " AND l.rowid = ".$db->escape($search_ref);
 if ($search_label)	$sql .= natural_search("l.label", $search_label);
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
-}
 $sql .= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -108,10 +105,10 @@ if ($resql)
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref) $param.="&amp;search_ref=".urlencode($search_ref);
-	if ($search_label) $param.="&amp;search_label=".urlencode($search_user);
-	if ($search_amount) $param.="&amp;search_amount=".urlencode($search_amount_ht);
-	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+	if ($search_ref) $param.="&search_ref=".urlencode($search_ref);
+	if ($search_label) $param.="&search_label=".urlencode($search_label);
+	if ($search_amount) $param.="&search_amount=".urlencode($search_amount);
+	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 
 	$newcardbutton='';
 	if ($user->rights->loan->write)
@@ -129,6 +126,8 @@ if ($resql)
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+
+	$moreforfilter = '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -157,7 +156,7 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	while ($i < min($num, $limit))
+	while ($i < ($limit ? min($num, $limit) : $num))
 	{
 		$obj = $db->fetch_object($resql);
 		$loan_static->id = $obj->rowid;
@@ -188,6 +187,14 @@ if ($resql)
 		print "</tr>\n";
 
 		$i++;
+	}
+
+	// If no record found
+	if ($num == 0)
+	{
+		$colspan = 7;
+		//foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 
 	print "</table>";
