@@ -343,6 +343,7 @@ if ($action == 'confirm_generateinvoice')
 		$db->begin();
 		$idprod = GETPOST('productid', 'int');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'string');
+        $invoiceToUse = GETPOST('invoiceid', 'int');
 
 		if ($idprod > 0)
 		{
@@ -366,12 +367,17 @@ if ($action == 'confirm_generateinvoice')
 		$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$tmpinvoice->fk_project = $projectstatic->id;
 
-		$result = $tmpinvoice->create($user);
-		if ($result <= 0)
-		{
-			$error++;
-			setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
-		}
+        if ($invoiceToUse) {
+            $tmpinvoice->fetch($invoiceToUse);
+        }
+        else {
+		    $result = $tmpinvoice->create($user);
+		    if ($result <= 0)
+		    {
+		    	$error++;
+		    	setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
+		    }
+        }
 
 		if (!$error)
 		{
@@ -947,6 +953,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print '</td>';
 				print '</tr>';
 			}
+			print '<tr>';
+			print '<td class="titlefield">';
+			print $langs->trans('InvoiceToUse');
+			print '</td>';
+			print '<td>';
+            $form->selectInvoice('invoice', '', 'invoiceid',24,0,$langs->trans('NewInvoice'),
+        1,0,0,'maxwidth500','','all');
+			print '</td>';
+			print '</tr>';
 			/*print '<tr>';
 			print '<td>';
 			print $langs->trans('ValidateInvoices');
