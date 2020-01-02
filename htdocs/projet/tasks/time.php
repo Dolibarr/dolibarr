@@ -412,7 +412,7 @@ if ($action == 'confirm_generateinvoice')
 					$username = $fuser->getFullName($langs);
 
 					// Define qty per hour
-					$qtyhour = round($value['timespent'] / 3600, 2);
+					$qtyhour = $value['timespent'] / 3600;
 					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 					// If no unit price known
@@ -422,7 +422,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour/$prodDurationHours, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour/$prodDurationHours,2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -456,7 +456,7 @@ if ($action == 'confirm_generateinvoice')
 					$username = $fuser->getFullName($langs);
 
 					// Define qty per hour
-					$qtyhour = round($value['timespent'] / 3600, 2);
+					$qtyhour = $value['timespent'] / 3600;
 					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 					// If no unit price known
@@ -466,7 +466,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, $qtyhour/$prodDurationHours, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, round($qtyhour/$prodDurationHours,2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -496,7 +496,7 @@ if ($action == 'confirm_generateinvoice')
 					$ftask = new Task($db);
 					$ftask->fetch($task_id);
 					// Define qty per hour
-					$qtyhour = round($value['timespent'] / 3600, 2);
+					$qtyhour = $value['timespent'] / 3600;
 					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 					// If no unit price known
@@ -507,7 +507,7 @@ if ($action == 'confirm_generateinvoice')
 
 					// Add lines
 					$lineName = $ftask->ref.' - '.$ftask->label;
-					$lineid = $tmpinvoice->addline($lineName, $pu_ht, $qtyhour/$prodDurationHours, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($lineName, $pu_ht, round($qtyhour/$prodDurationHours,2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -972,8 +972,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print $langs->trans('InvoiceToUse');
 			print '</td>';
 			print '<td>';
-            $form->selectInvoice('invoice', '', 'invoiceid',24,0,$langs->trans('NewInvoice'),
-        1,0,0,'maxwidth500','','all');
+            $form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'),
+			1, 0, 0, 'maxwidth500', '', 'all');
 			print '</td>';
 			print '</tr>';
 			/*print '<tr>';
