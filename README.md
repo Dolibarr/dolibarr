@@ -1,10 +1,7 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
-
-|7|8|9|10|develop|
-|----------|----------|----------|----------|----------|
-|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/7.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/9.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/10.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)|
+![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
 
 Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
