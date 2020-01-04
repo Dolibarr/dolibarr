@@ -123,12 +123,11 @@ $sql.= ' SUM(s.reel) as stock_physique';
 if (! empty($conf->global->PRODUCT_USE_UNITS)) $sql.= ', u.short_label as unit_short';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
-$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on s.fk_entrepot = e.rowid';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on s.fk_entrepot = e.rowid AND e.entity IN ('.getEntity('entrepot').')';
 if (! empty($conf->global->PRODUCT_USE_UNITS)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
-$sql.= " AND e.entity IN (".getEntity('entrepot').")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
