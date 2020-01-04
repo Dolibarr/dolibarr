@@ -1464,7 +1464,8 @@ class MoLine extends CommonObjectLine
 	 * @param  string $role      Get lines linked to current line with the selected role ('consumed', 'produced', ...)
 	 * @return array             Array of lines
 	 */
-	public function fetchLinesLinked($role) {
+	public function fetchLinesLinked($role)
+	{
 		$array = array();
 
 		$sql = 'SELECT rowid, qty ';
