@@ -346,7 +346,7 @@ class MouvementStock extends CommonObject
 		{
 			$fk_project = 0;
 			if(!empty($this->origin)) {			// This is set by caller for tracking reason
-				$origintype = $this->origin->element;
+				$origintype = empty($this->origin->origin_type)?$this->origin->element:$this->origin->origin_type;
 				$fk_origin = $this->origin->id;
 				if($origintype == 'project') $fk_project = $fk_origin;
 				else
@@ -945,10 +945,14 @@ class MouvementStock extends CommonObject
 			default:
 				if ($origintype)
 				{
-					$result=dol_include_once('/'.$origintype.'/class/'.$origintype.'.class.php');
+                    // Separate originetype with "|" : left part is module name, right part is class name
+                    $origintype_array = explode('|', $origintype);
+                    $modulename = $origintype_array[0];
+                    $classname = ucfirst(empty($origintype_array[1]) ? $modulename : $origintype_array[1]);
+					$result=dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 					if ($result)
 					{
-						$classname = ucfirst($origintype);
+						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
 				}
