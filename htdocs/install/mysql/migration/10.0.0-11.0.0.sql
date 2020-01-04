@@ -73,7 +73,7 @@ UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 -- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref SET NOT NULL;
 
 ALTER TABLE llx_c_email_senderprofile MODIFY COLUMN active tinyint DEFAULT 1 NOT NULL;
- 
+
 insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
 
 INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
@@ -527,19 +527,6 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
 
-CREATE TABLE llx_categorie_actioncomm
-(
-  fk_categorie integer NOT NULL,
-  fk_actioncomm integer NOT NULL,
-  import_key varchar(14)
-) ENGINE=innodb;
-
-ALTER TABLE llx_categorie_actioncomm ADD PRIMARY KEY pk_categorie_actioncomm (fk_categorie, fk_actioncomm);
-ALTER TABLE llx_categorie_actioncomm ADD INDEX idx_categorie_actioncomm_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_actioncomm ADD INDEX idx_categorie_actioncomm_fk_actioncomm (fk_actioncomm);
-
-ALTER TABLE llx_categorie_actioncomm ADD CONSTRAINT fk_categorie_actioncomm_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_actioncomm ADD CONSTRAINT fk_categorie_actioncomm_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm (id);
 
 CREATE TABLE llx_mrp_production(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -549,7 +536,7 @@ CREATE TABLE llx_mrp_production(
 	fk_warehouse integer,
 	qty integer NOT NULL DEFAULT 1,
     qty_frozen smallint DEFAULT 0,
-    disable_stock_change smallint DEFAULT 0, 
+    disable_stock_change smallint DEFAULT 0,
 	batch varchar(30),
 	role varchar(10),      			-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
