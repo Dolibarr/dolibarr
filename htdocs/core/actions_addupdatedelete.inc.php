@@ -142,8 +142,8 @@ if ($action == 'update' && !empty($permissiontoadd))
 			} else {
 				$value = '';
 			}
-		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
-			$value = price2num(GETPOST($key));
+		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
+            $value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
