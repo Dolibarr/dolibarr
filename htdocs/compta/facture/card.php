@@ -3747,17 +3747,23 @@ elseif ($id > 0 || !empty($ref))
 		$i++;
 		$close[$i]['code'] = 'badcustomer';
 		$i++;
+		$close[$i]['code'] = 'other';
+		$i++;
 		// Help
 		$i = 0;
 		$close[$i]['label'] = $langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPaidPartiallyReasonDiscountVatDesc");
 		$i++;
 		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 		$i++;
+		$close[$i]['label'] = $langs->trans("Other");
+		$i++;
 		// Texte
 		$i = 0;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+		$i++;
+		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 		$i++;
 		// arrayreasons[code]=reason
 		foreach ($close as $key => $val) {

@@ -59,6 +59,8 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
+
 ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
 
@@ -520,10 +522,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',653);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',654);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
+DELETE FROM llx_c_action_trigger where code LIKE 'MO_%';
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
 
