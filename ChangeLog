@@ -2,6 +2,25 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 10.0.6 compared to 10.0.5 *****
+FIX Regression of 10.0.5 to create/edit proposals and orders.
+FIX: #12760 #12763 #12755 #12765 #12751
+FIX: add product qty in shipment already sent (fix for option STOCK_CALCULATE_ON_SHIPMENT_NEW)
+FIX: an issue that shows all entities stock
+FIX: class Facture undefined in displaying margin information
+FIX: error 500 when getting margin info for objects other than invoices
+FIX: Loan card - Wrong language key used
+FIX: Missing language key for MAIN_MAXTABS_IN_CARD
+FIX: product with empty stock were not visible
+FIX: remove backward compatibility projectid and uses object id instead
+FIX: Some issues on salary payment
+FIX: Some problems on conciliation with others modules
+FIX: typo on language key
+FIX: url new for task time spent in project element tab
+FIX: uses GETPOSTISSET instead of GETPOST for projectfield
+FIX: var transkey not defined in input hidden
+FIX: wrong var name and avoid warning
+
 ***** ChangeLog for 10.0.5 compared to 10.0.4 *****
 FIX: 10.0: add URL param "restore_last_search_values=1" to all backlinks pointing to lists
 FIX: 10.0: do not display single-letter values (indicating duration unit without value) in product list
