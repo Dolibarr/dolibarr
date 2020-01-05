@@ -1615,15 +1615,15 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 // Edit BAN
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-	print '<div class="fichecenter">';
-
 	print '<div class="underbanner clearboth"></div>';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
@@ -1683,11 +1683,13 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	print "</textarea></td></tr>";
 
 	print '</table>';
+	print '</div>';
 
 	if ($conf->prelevement->enabled)
 	{
 		print '<br>';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
 
 		if (empty($companybankaccount->rum)) $companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
@@ -1705,9 +1707,9 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 		print '</td></tr>';
 
 		print '</table>';
+		print '</div>';
 	}
 
-	print '</div>';
 
 	dol_fiche_end();
 
@@ -1769,7 +1771,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 // Create BAN
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

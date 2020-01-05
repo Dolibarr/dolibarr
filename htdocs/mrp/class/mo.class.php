@@ -505,7 +505,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Erase and update the line to produce
+	 * Erase and update the line to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @return int             <0 if KO, >0 if OK
@@ -557,7 +557,11 @@ class Mo extends CommonObject
 						$moline = new MoLine($this->db);
 
 						$moline->fk_mo = $this->id;
-						$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+						if ($line->qty_frozen) {
+							$moline->qty = $line->qty;		// Qty to consume does not depends on quantity to produce
+						} else {
+							$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+						}
 						if ($moline->qty <= 0) {
 							$error++;
 							$this->error = "BadValueForquantityToConsume";
@@ -980,10 +984,16 @@ class Mo extends CommonObject
 			global $langs;
 			//$langs->load("mrp");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans("ToProduce").')';
 			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
 			$this->labelStatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatusShort[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
+			$this->labelStatusShort[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
 		$statusType = 'status'.$status;
@@ -992,7 +1002,7 @@ class Mo extends CommonObject
 		if ($status == self::STATUS_PRODUCED) $statusType = 'status5';
 		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -1446,6 +1456,25 @@ class MoLine extends CommonObjectLine
 
 			return -1;
 		}
+	}
+
+	/**
+	 * Get list of lines linked to current line for a defined role
+	 *
+	 * @param  string $role      Get lines linked to current line with the selected role ('consumed', 'produced', ...)
+	 * @return array             Array of lines
+	 */
+	public function fetchLinesLinked($role)
+	{
+		$array = array();
+
+		$sql = 'SELECT rowid, qty ';
+		$sql .= $this->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
+
+		return $array;
 	}
 
 	/**

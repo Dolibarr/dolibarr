@@ -1876,6 +1876,9 @@ class Product extends CommonObject
         if (empty($newminprice)) {
         	$newminprice = 0;
         }
+        if (empty($newminprice)) {
+        	$newminprice=0;
+        }
 
         // Check parameters
         if ($newvat == '') {
@@ -2677,7 +2680,7 @@ class Product extends CommonObject
      *  Charge tableau des stats expedition client pour le produit/service
      *
      * @param   int         $socid                  Id societe pour filtrer sur une societe
-     * @param   string      $filtrestatut           Id statut pour filtrer sur un statut
+     * @param   string      $filtrestatut           [=''] Ids order status separated by comma
      * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
      * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
      * @return  int         <0 if KO, >0 if OK (Tableau des stats)

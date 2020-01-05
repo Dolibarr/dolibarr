@@ -2,6 +2,33 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 10.0.5 compared to 10.0.4 *****
+FIX: 10.0: add URL param "restore_last_search_values=1" to all backlinks pointing to lists
+FIX: 10.0: do not display single-letter values (indicating duration unit without value) in product list
+FIX: #12473
+FIX: #12481 : fix ticket creation from thirdparty, mission $socid var
+FIX: #12482
+FIX: #12644
+FIX: #12665 Mass invoice validation with stock management
+FIX: #12688
+FIX: #12745
+FIX: add and modify category translate form with posted values on errors
+FIX: add URL param "restore_last_search_values=1" to all backlinks that point to a list
+FIX: CommandeFournisseurLigne update function must not be able to return other value than 1 if success
+FIX: contact card state address selected after filling address
+FIX: dol_string_nohtmltag when there is html with windows EOL "<br>\r\n"
+FIX: filter language is an array
+FIX: first col at wrong position in Export 2007 (new)
+FIX: getrights() request
+FIX: Invoice Situation integration into Margin
+FIX: missing nl2br conversion
+FIX: not fee in payout list
+FIX: product_fourn_price_id was assigned too late for logPrice() function
+FIX: Reduce number of request for list of products
+FIX: set due date in object in create invoice
+FIX: units traductions for selectUnits() function
+FIX: when we need to bill several orders, order lines unit is not on bill lines
+NEW: 9.0: allow users to use the mysqldump '--quick' option
 
 ***** ChangeLog for 11.0.0 compared to 10.0.0 *****
 For Users:
