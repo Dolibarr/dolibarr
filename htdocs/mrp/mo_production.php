@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 dol_include_once('/mrp/class/mo.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
@@ -152,6 +153,11 @@ if (empty($reshook))
     }
 
     if ($action == 'confirm_consumeandproduceall') {
+    	$stockmove = new MouvementStock($db);
+
+    	$labelmovement = GETPOST('inventorylabel', 'alphanohtml');
+    	$codemovement  = GETPOST('inventorycode', 'alphanohtml');
+
     	$db->begin();
 
     	// Process line to consume
@@ -177,9 +183,24 @@ if (empty($reshook))
     				}
 
     				if (! $error) {
+    					// Record consumption
+    					$moline = new MoLine($db);
 
+    					$result = $moline->create($user);
+    					if ($result <= 0) {
+    						$error++;
+    						setEventMessages($moline->error, $moline->errors, 'errors');
+    					}
+    				}
 
-
+    				if (! $error) {
+    					// Record stock movement
+    					$id_product_batch = 0;
+    					$result = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+    					if ($result <= 0) {
+    						$error++;
+    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+    					}
     				}
 
     				$i++;
@@ -210,9 +231,24 @@ if (empty($reshook))
     				}
 
     				if (! $error) {
+						// Record production
+    					$moline = new MoLine($db);
 
+    					$result = $moline->create($user);
+    					if ($result <= 0) {
+    						$error++;
+    						setEventMessages($moline->error, $moline->errors, 'errors');
+    					}
+    				}
 
-
+    				if (! $error) {
+    					// Record stock movement
+    					$id_product_batch = 0;
+    					$result = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+    					if ($result <= 0) {
+    						$error++;
+    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+    					}
     				}
 
     				$i++;
@@ -222,7 +258,13 @@ if (empty($reshook))
 
     	if (! $error) {
     		// Update status of MO
-
+    		$qtyremaintoconsume = 0;
+    		$qtyremaintoproduce = 0;
+    		if ($qtyremaintoconsume == 0 && $qtyremaintoproduce == 0) {
+    			$object->setStatut($object::STATUS_INPROGRESS);
+    		} else {
+    			$object->setStatut($object::STATUS_PRODUCED);
+    		}
     	}
 
     	if ($error) {
@@ -455,12 +497,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		if ($action == 'consumeandproduceall')
 		{
-			$defaultstockmovementlabel = $langs->trans("ProductionForRefAndDate", $object->ref, dol_print_date(dol_now(), 'standard'));
-			$defaultstockmovementcode = $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRefAndDate", $object->ref, dol_print_date(dol_now(), 'standard'));
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
 
 			print '<div class="center">';
 			print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
-			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="label" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
+			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
 			print $langs->trans("InventoryCode").': <input type="text" class="minwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
 			print '<input type="checkbox" name="autoclose" value="1" checked="checked"> '.$langs->trans("AutoCloseMO").'<br>';
 			print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
@@ -495,7 +537,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<td>'.$langs->trans("Product").'</td>';
     	print '<td>'.$langs->trans("Qty").'</td>';
     	print '<td>'.$langs->trans("QtyAlreadyConsumed").'</td>';
-    	print '<td></td>';
+    	print '<td>';
+    	if ($action == 'consumeandproduceall') print $langs->trans("Warehouse");
+    	print '</td>';
     	if ($conf->productbatch->enabled) {
     		print '<td>';
     		if ($action == 'consumeandproduceall') print $langs->trans("Batch");
@@ -529,7 +573,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		}
     	    		print '</td>';
     	    		print '<td>'.$alreadyconsumed.'</td>';
-    	    		print '<td></td>';	// Warehouse
+    	    		print '<td>';
+    	    		print '</td>';	// Warehouse
     	    		if ($conf->productbatch->enabled) {
     	    			print '<td></td>';	// Lot
     	    		}
@@ -604,7 +649,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<td>'.$langs->trans("Product").'</td>';
     	print '<td>'.$langs->trans("Qty").'</td>';
     	print '<td>'.$langs->trans("QtyAlreadyProduced").'</td>';
-    	print '<td></td>';
+    	print '<td>';
+    	if ($action == 'consumeandproduceall') print $langs->trans("Warehouse");
+    	print '</td>';
     	if ($conf->productbatch->enabled) {
     		print '<td>';
     		if ($action == 'consumeandproduceall') print $langs->trans("Batch");
