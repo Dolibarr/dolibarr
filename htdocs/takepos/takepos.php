@@ -434,6 +434,7 @@ function New() {
 
 function Search2() {
 	console.log("Search2 Call ajax search to replace products");
+	if(window.event.keyCode == 13) ClickProduct(0);
 	pageproducts=0;
 	jQuery(".wrapper2 .catwatermark").hide();
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {

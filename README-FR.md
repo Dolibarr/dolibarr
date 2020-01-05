@@ -1,5 +1,8 @@
 # DOLIBARR ERP & CRM
 
+![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
+![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
+
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans).
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
 

@@ -117,8 +117,6 @@ $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->enti
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters = array();
