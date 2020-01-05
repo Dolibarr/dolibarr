@@ -1202,7 +1202,7 @@ if ($source == 'contractline')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
+	$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
 	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1367,7 +1367,7 @@ if ($source == 'membersubscription')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
+	$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
 	$fulltag = dol_string_unaccent($fulltag);
 
@@ -1531,7 +1531,7 @@ if ($source == 'donation')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
+	$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
 	$fulltag = dol_string_unaccent($fulltag);
 
