@@ -273,10 +273,8 @@ if (empty($reshook))
     	} else {
     		$db->commit();
     	}
-
     }
 }
-
 
 
 
