@@ -182,25 +182,39 @@ if (empty($reshook))
     					}
     				}
 
-    				if (! $error) {
-    					// Record consumption
-    					$moline = new MoLine($db);
-
-    					$result = $moline->create($user);
-    					if ($result <= 0) {
-    						$error++;
-    						setEventMessages($moline->error, $moline->errors, 'errors');
-    					}
-    				}
-
-    				if (! $error) {
+    				$idstockmove = 0;
+    				if (! $error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
     					// Record stock movement
     					$id_product_batch = 0;
-    					$result = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
-    					if ($result <= 0) {
+    					$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+    					if ($idstockmove < 0) {
     						$error++;
     						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
     					}
+    				}
+var_dump('eee '.$error);
+    				if (! $error) {
+    					$pos = 0;
+    					// Record consumption
+    					$moline = new MoLine($db);
+    					$moline->fk_mo = $object->id;
+    					$moline->position = $pos;
+    					$moline->fk_product = $line->fk_product;
+    					$moline->fk_warehouse = GETPOST('idwarehouse-'.$line->id.'-'.$i);
+    					$moline->qty = GETPOST('qty-'.$line->id.'-'.$i);
+    					$moline->batch = GETPOST('batch-'.$line->id.'-'.$i);
+    					$moline->role = 'consumed';
+    					$moline->fk_mrp_production = $line->id;
+    					$moline->fk_stock_movement = $idstockmove;
+    					$moline->fk_user_creat = $user->id;
+
+    					$resultmoline = $moline->create($user);
+    					if ($resultmoline <= 0) {
+    						$error++;
+    						setEventMessages($moline->error, $moline->errors, 'errors');
+    					}
+
+    					$pos++;
     				}
 
     				$i++;
@@ -230,25 +244,39 @@ if (empty($reshook))
     					}
     				}
 
-    				if (! $error) {
-						// Record production
-    					$moline = new MoLine($db);
-
-    					$result = $moline->create($user);
-    					if ($result <= 0) {
-    						$error++;
-    						setEventMessages($moline->error, $moline->errors, 'errors');
-    					}
-    				}
-
-    				if (! $error) {
+    				$idstockmove = 0;
+    				if (! $error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
     					// Record stock movement
     					$id_product_batch = 0;
-    					$result = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
-    					if ($result <= 0) {
+    					$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), GETPOST('qtytoproduce-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+    					if ($idstockmove < 0) {
     						$error++;
     						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
     					}
+    				}
+    				var_dump('fff '.$error);
+    				if (! $error) {
+    					$pos = 0;
+						// Record production
+    					$moline = new MoLine($db);
+    					$moline->fk_mo = $object->id;
+    					$moline->position = $pos;
+    					$moline->fk_product = $line->fk_product;
+    					$moline->fk_warehouse = GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i);
+    					$moline->qty = GETPOST('qtytoproduce-'.$line->id.'-'.$i);
+    					$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
+    					$moline->role = 'produced';
+    					$moline->fk_mrp_production = $line->id;
+    					$moline->fk_stock_movement = $idstockmove;
+    					$moline->fk_user_creat = $user->id;
+
+    					$resultmoline = $moline->create($user);
+    					if ($resultmoline <= 0) {
+    						$error++;
+    						setEventMessages($moline->error, $moline->errors, 'errors');
+    					}
+
+    					$pos++;
     				}
 
     				$i++;
