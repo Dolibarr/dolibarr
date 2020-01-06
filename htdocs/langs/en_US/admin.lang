@@ -1248,6 +1248,7 @@ AskForPreferredShippingMethod=Ask for preferred shipping method for Third Partie
 FieldEdition=Edition of field %s
 FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 GetBarCode=Get barcode
+NumberingModules=Numbering models
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest a generated password. Password must be typed in manually.

@@ -21,12 +21,12 @@
  */
 
 /**
- * \file       htdocs/core/modules/bom/mod_bom_advanced.php
- * \ingroup    bom
+ * \file       htdocs/core/modules/mymodule/mod_myobject_advanced.php
+ * \ingroup    mymodule
  * \brief      File containing class for advanced numbering model of MyObject
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
+dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
 
 /**
@@ -71,15 +71,15 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		$texte.= '<input type="hidden" name="maskconstBom" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskBom" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMyObject" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -137,9 +137,9 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 			return 0;
 		}
 
-		$date = ($object->date_bom ? $object->date_bom : $object->date);
+		$date = $object->date;
 
-		$numFinal=get_next_value($db, $mask, 'bom_bom', 'ref', '', null, $date);
+		$numFinal=get_next_value($db, $mask, 'mymodule_myobject', 'ref', '', null, $date);
 
 		return  $numFinal;
 	}

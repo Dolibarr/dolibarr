@@ -18,11 +18,12 @@
  */
 
 /**
- *  \file       htdocs/core/modules/bom/mod_bom_standard.php
- *  \ingroup    bom
+ *  \file       htdocs/core/modules/mymodule/mod_myobject_standard.php
+ *  \ingroup    mymodule
  *  \brief      File of class to manage MyObject numbering rules standard
  */
-require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
+dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
+
 
 /**
  *	Class to manage customer order numbering rules standard
@@ -85,7 +86,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bom";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -119,7 +120,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		// D'abord on recupere la valeur max
 		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -132,7 +133,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		}
 		else
 		{
-			dol_syslog("mod_bom_standard::getNextValue", LOG_DEBUG);
+			dol_syslog("mod_myobject_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -143,7 +144,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s", $max+1);
 
-		dol_syslog("mod_bom_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog("mod_myobject_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 }
