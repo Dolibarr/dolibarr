@@ -97,7 +97,7 @@ class MouvementStock extends CommonObject
 	 *	@param		int		$entrepot_id	Id of warehouse
 	 *	@param		int		$qty			Qty of movement (can be <0 or >0 depending on parameter type)
 	 *	@param		int		$type			Direction of movement:
-	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
+	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
 	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
