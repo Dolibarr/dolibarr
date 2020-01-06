@@ -3573,7 +3573,7 @@ abstract class CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::setStatus ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
