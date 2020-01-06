@@ -192,7 +192,7 @@ if (empty($reshook))
     						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
     					}
     				}
-var_dump('eee '.$error);
+
     				if (! $error) {
     					$pos = 0;
     					// Record consumption
@@ -254,7 +254,7 @@ var_dump('eee '.$error);
     						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
     					}
     				}
-    				var_dump('fff '.$error);
+
     				if (! $error) {
     					$pos = 0;
 						// Record production
@@ -289,9 +289,13 @@ var_dump('eee '.$error);
     		$qtyremaintoconsume = 0;
     		$qtyremaintoproduce = 0;
     		if ($qtyremaintoconsume == 0 && $qtyremaintoproduce == 0) {
-    			$object->setStatut($object::STATUS_INPROGRESS);
+    			$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
     		} else {
-    			$object->setStatut($object::STATUS_PRODUCED);
+    			$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+    		}
+    		if ($result <= 0) {
+    			$error++;
+    			setEventMessages($object->error, $object->errors, 'errors');
     		}
     	}
 
@@ -524,12 +528,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($action == 'consumeandproduceall')
 		{
 			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRefAndDate", $object->ref, dol_print_date(dol_now(), 'standard'));
-			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref;
 
 			print '<div class="center">';
 			print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
 			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
-			print $langs->trans("InventoryCode").': <input type="text" class="minwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
+			print $langs->trans("InventoryCode").': <input type="text" class="maxwidth150" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
 			print '<input type="checkbox" name="autoclose" value="1" checked="checked"> '.$langs->trans("AutoCloseMO").'<br>';
 			print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
 			print ' &nbsp; ';

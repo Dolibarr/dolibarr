@@ -3522,6 +3522,7 @@ abstract class CommonObject
 		if ($elementTable == 'user') $fieldstatus = "statut";
 		if ($elementTable == 'expensereport') $fieldstatus = "fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus = "status";
+		if (is_array($this->fields) && array_key_exists('status', $this->fields)) $fieldstatus = 'status';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql .= " SET ".$fieldstatus." = ".$status;
