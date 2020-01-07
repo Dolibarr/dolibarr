@@ -674,9 +674,9 @@ if ($resql)
     }
 
     $param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-    if ($id > 0)                 $param .= '&id='.$id;
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+    if ($id > 0)                 $param .= '&id='.urlencode($id);
     if ($search_movement)        $param .= '&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param .= '&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_type_mouvement)	 $param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
@@ -684,10 +684,8 @@ if ($resql)
     if ($search_product)         $param .= '&search_product='.urlencode($search_product);
     if ($search_batch)           $param .= '&search_batch='.urlencode($search_batch);
     if ($search_warehouse > 0)   $param .= '&search_warehouse='.urlencode($search_warehouse);
-    if (!empty($sref))           $param .= '&sref='.urlencode($sref); // FIXME $sref is not defined
-    if (!empty($snom))           $param .= '&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)            $param .= '&search_user='.urlencode($search_user);
-    if ($idproduct > 0)          $param .= '&idproduct='.$idproduct;
+    if ($idproduct > 0)          $param .= '&idproduct='.urlencode($idproduct);
     // Add $param from extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 

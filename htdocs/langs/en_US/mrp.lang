@@ -60,6 +60,6 @@ TheProductXIsAlreadyTheProductToProduce=The product to add is already the produc
 ForAQuantityOf1=For a quantity to produce of 1
 ConfirmValidateMo=Are you sure you want to validate this Manufacturing Order?
 ConfirmProductionDesc=By clicking on '%s', you will validate the consumption and/or production for the quantities set. This will also update the stock and record stock movements.
-ProductionForRefAndDate=Production %s - %s
+ProductionForRef=Production of %s
 AutoCloseMO=Close automatically the Manufacturing Order if quantities to consume and to produce are reached  
 NoStockChangeOnServices=No stock change on services

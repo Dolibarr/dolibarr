@@ -577,9 +577,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		if ($action == 'consumeandproduceall')
 		{
-			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRefAndDate", $object->ref, dol_print_date(dol_now(), 'standard'));
+			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
 			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
-			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref;
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
 
 			print '<div class="center">';
 			print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
@@ -654,8 +654,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		}
     	    		print '</td>';
     	    		print '<td>'.$alreadyconsumed.'</td>';
-    	    		print '<td>';
-    	    		print '</td>';	// Warehouse
+    	    		print '<td>';	// Warehouse
+    	    		if ($alreadyconsumed) {
+	    	    		print '<script>';
+	    	    		print 'jQuery(document).ready(function() {
+								jQuery("#expandtoproduce'.$line->id.'").click(function() {
+									console.log("Expand mrp_production line '.$line->id.'");
+									jQuery(".expanddetail'.$line->id.'").toggle();
+								});
+							});';
+	    	    		print '</script>';
+	    	    		if (empty($conf->use_javascript_ajax)) print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
+	    	    		print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce'.$line->id.'"');
+	    	    		if (empty($conf->use_javascript_ajax)) print '</a>';
+    	    		}
+    	    		print '</td>';
     	    		if ($conf->productbatch->enabled) {
     	    			print '<td></td>';	// Lot
     	    		}
@@ -757,7 +770,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
     				print '<td>'.$line->qty.'</td>';
     				print '<td>'.$alreadyproduced.'</td>';
-    				print '<td></td>';	// Warehouse
+    				print '<td>';	// Warehouse
+    				if ($alreadyproduced) {
+    					print '<script>';
+    					print 'jQuery(document).ready(function() {
+							jQuery("#expand'.$line->id.'").click(function() {
+								console.log("Expand mrp_production line '.$line->id.'");
+								jQuery(".expanddetail'.$line->id.'").toggle();
+							});
+						});';
+    					print '</script>';
+    					if (empty($conf->use_javascript_ajax)) print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
+    					print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expand'.$line->id.'"');
+    					if (empty($conf->use_javascript_ajax)) print '</a>';
+    				}
+    				print '</td>';
     				if ($conf->productbatch->enabled) {
     					print '<td></td>';	// Lot
     				}
