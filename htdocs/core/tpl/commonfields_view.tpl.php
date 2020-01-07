@@ -84,7 +84,9 @@ foreach ($object->fields as $key => $val)
 		continue;
 	}
 
-	if (abs($val['visible']) != 1) continue; // Discard such field from form
+	// Discard if extrafield is a hidden field on form
+	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) continue;
+
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !$val['enabled']) continue; // We don't want this field
 	if (in_array($key, array('ref', 'status'))) continue; // Ref and status are already in dol_banner
 
