@@ -170,9 +170,11 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 }
 elseif ($modecompta == "BOOKKEEPING")
 {
+	// TODO
 }
 elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
+	// TODO
 }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
@@ -387,39 +389,53 @@ if (count($amount)) {
 
         // Amount w/o VAT
         print '<td class="right">';
-        if ($modecompta != 'CREANCES-DETTES')
-        {
+        if ($modecompta == 'RECETTES-DEPENSES') {
             if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
+                //print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
             } else {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
+                //print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
             }
-        } else {
+        }
+        elseif ($modecompta == 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
             } else {
-                print '<a href="#">';
+                //print '<a href="#">';
             }
             print price($amount_ht[$key]);
+            if ($key > 0) print '</a>';
         }
         print '</td>';
 
         // Amount with VAT
         print '<td class="right">';
-        if ($modecompta != 'CREANCES-DETTES') {
+        if ($modecompta == 'RECETTES-DEPENSES') {
             if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
+                //print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
             } else {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
+                //print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
             }
-        } else {
+        }
+        elseif ($modecompta == 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
             } else {
-                print '<a href="#">';
+                //print '<a href="#">';
             }
         }
         print price($amount[$key]);
+        if ($modecompta == 'RECETTES-DEPENSES') {
+        	if ($key > 0) {
+        		//print '</a>';
+        	} else {
+        		//print '</a>';
+        	}
+        }
+        elseif ($modecompta == 'CREANCES-DETTES') {
+        	if ($key > 0) {
+        		print '</a>';
+        	}
+        }
         print '</td>';
 
         // Percent

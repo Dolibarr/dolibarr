@@ -182,25 +182,39 @@ if (empty($reshook))
     					}
     				}
 
-    				if (! $error) {
-    					// Record consumption
-    					$moline = new MoLine($db);
-
-    					$result = $moline->create($user);
-    					if ($result <= 0) {
+    				$idstockmove = 0;
+    				if (! $error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
+    					// Record stock movement
+    					$id_product_batch = 0;
+    					$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+    					if ($idstockmove < 0) {
     						$error++;
-    						setEventMessages($moline->error, $moline->errors, 'errors');
+    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
     					}
     				}
 
     				if (! $error) {
-    					// Record stock movement
-    					$id_product_batch = 0;
-    					$result = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
-    					if ($result <= 0) {
+    					$pos = 0;
+    					// Record consumption
+    					$moline = new MoLine($db);
+    					$moline->fk_mo = $object->id;
+    					$moline->position = $pos;
+    					$moline->fk_product = $line->fk_product;
+    					$moline->fk_warehouse = GETPOST('idwarehouse-'.$line->id.'-'.$i);
+    					$moline->qty = GETPOST('qty-'.$line->id.'-'.$i);
+    					$moline->batch = GETPOST('batch-'.$line->id.'-'.$i);
+    					$moline->role = 'consumed';
+    					$moline->fk_mrp_production = $line->id;
+    					$moline->fk_stock_movement = $idstockmove;
+    					$moline->fk_user_creat = $user->id;
+
+    					$resultmoline = $moline->create($user);
+    					if ($resultmoline <= 0) {
     						$error++;
-    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+    						setEventMessages($moline->error, $moline->errors, 'errors');
     					}
+
+    					$pos++;
     				}
 
     				$i++;
@@ -230,25 +244,39 @@ if (empty($reshook))
     					}
     				}
 
-    				if (! $error) {
-						// Record production
-    					$moline = new MoLine($db);
-
-    					$result = $moline->create($user);
-    					if ($result <= 0) {
+    				$idstockmove = 0;
+    				if (! $error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
+    					// Record stock movement
+    					$id_product_batch = 0;
+    					$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), GETPOST('qtytoproduce-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+    					if ($idstockmove < 0) {
     						$error++;
-    						setEventMessages($moline->error, $moline->errors, 'errors');
+    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
     					}
     				}
 
     				if (! $error) {
-    					// Record stock movement
-    					$id_product_batch = 0;
-    					$result = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), GETPOST('qty-'.$line->id.'-'.$i), 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
-    					if ($result <= 0) {
+    					$pos = 0;
+						// Record production
+    					$moline = new MoLine($db);
+    					$moline->fk_mo = $object->id;
+    					$moline->position = $pos;
+    					$moline->fk_product = $line->fk_product;
+    					$moline->fk_warehouse = GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i);
+    					$moline->qty = GETPOST('qtytoproduce-'.$line->id.'-'.$i);
+    					$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
+    					$moline->role = 'produced';
+    					$moline->fk_mrp_production = $line->id;
+    					$moline->fk_stock_movement = $idstockmove;
+    					$moline->fk_user_creat = $user->id;
+
+    					$resultmoline = $moline->create($user);
+    					if ($resultmoline <= 0) {
     						$error++;
-    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+    						setEventMessages($moline->error, $moline->errors, 'errors');
     					}
+
+    					$pos++;
     				}
 
     				$i++;
@@ -261,9 +289,13 @@ if (empty($reshook))
     		$qtyremaintoconsume = 0;
     		$qtyremaintoproduce = 0;
     		if ($qtyremaintoconsume == 0 && $qtyremaintoproduce == 0) {
-    			$object->setStatut($object::STATUS_INPROGRESS);
+    			$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
     		} else {
-    			$object->setStatut($object::STATUS_PRODUCED);
+    			$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+    		}
+    		if ($result <= 0) {
+    			$error++;
+    			setEventMessages($object->error, $object->errors, 'errors');
     		}
     	}
 
@@ -273,10 +305,8 @@ if (empty($reshook))
     	} else {
     		$db->commit();
     	}
-
     }
 }
-
 
 
 
@@ -498,12 +528,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($action == 'consumeandproduceall')
 		{
 			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRefAndDate", $object->ref, dol_print_date(dol_now(), 'standard'));
-			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref;
 
 			print '<div class="center">';
 			print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
 			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
-			print $langs->trans("InventoryCode").': <input type="text" class="minwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
+			print $langs->trans("InventoryCode").': <input type="text" class="maxwidth150" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
 			print '<input type="checkbox" name="autoclose" value="1" checked="checked"> '.$langs->trans("AutoCloseMO").'<br>';
 			print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
 			print ' &nbsp; ';
