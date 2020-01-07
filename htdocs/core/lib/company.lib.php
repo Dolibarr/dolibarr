@@ -1335,6 +1335,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql .= ", o.ref";
+        elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) $sql .= ", o.ref";
+
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
@@ -1359,6 +1361,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql .= ", ".MAIN_DB_PREFIX."ticket as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') $sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') $sql .= ", ".MAIN_DB_PREFIX."contrat as o";
+        elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) $sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 
         $sql .= " WHERE a.entity IN (".getEntity('agenda').")";
         if ($force_filter_contact === false) {
@@ -1392,6 +1395,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
             {
             	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
+            	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element)
+            {
+            	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element)."'";
             	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
         }
@@ -1712,7 +1720,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
-            // Objet lie
+            // Linked object
             $out .= '<td>';
             if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
             {

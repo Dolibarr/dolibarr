@@ -1797,7 +1797,7 @@ function getSoapParams()
  * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
- * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', ...)
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'myobject@mymodule', ...)
  * @param 	int		$withpicto		Picto to show
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
@@ -1807,28 +1807,35 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	global $db, $conf, $langs;
 
 	$ret = '';
+	$regs = array();
 
-	// Parse element/subelement (ex: project_task)
-	$module = $element = $subelement = $objecttype;
+	// If we ask an resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $objecttype, $regs)) {
+		$myobject = $regs[1];
+		$module = $regs[2];
+	}
+
+	// Parse $objecttype (ex: project_task)
+	$module = $myobject = $objecttype;
 	if (preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 	{
-		$module = $element = $regs[1];
-		$subelement = $regs[2];
+		$module = $regs[1];
+		$myobject = $regs[2];
 	}
 
 	// Generic case for $classpath
-	$classpath = $element.'/class';
+	$classpath = $module.'/class';
 
 	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module='facture';
-		$subelement='facture';
+		$myobject='facture';
 	}
 	elseif ($objecttype == 'commande' || $objecttype == 'order') {
 		$classpath = 'commande/class';
 		$module='commande';
-		$subelement='commande';
+		$myobject='commande';
 	}
 	elseif ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
@@ -1838,52 +1845,52 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	}
 	elseif ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
-		$subelement = 'expedition';
+		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	}
 	elseif ($objecttype == 'delivery') {
 		$classpath = 'livraison/class';
-		$subelement = 'livraison';
+		$myobject = 'livraison';
 		$module = 'livraison_bon';
 	}
 	elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module='contrat';
-		$subelement='contrat';
+		$myobject='contrat';
 	}
 	elseif ($objecttype == 'member') {
 		$classpath = 'adherents/class';
 		$module='adherent';
-		$subelement='adherent';
+		$myobject='adherent';
 	}
 	elseif ($objecttype == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module='cabinetmed';
-		$subelement='cabinetmedcons';
+		$myobject='cabinetmedcons';
 	}
 	elseif ($objecttype == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module='ficheinter';
-		$subelement='fichinter';
+		$myobject='fichinter';
 	}
 	elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
 		$module='projet';
-		$subelement='task';
+		$myobject='task';
 	}
 	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$module='stock';
-		$subelement='stock';
+		$myobject='stock';
 	}
 	elseif ($objecttype == 'inventory') {
 		$classpath = 'product/inventory/class';
 		$module='stock';
-		$subelement='inventory';
+		$myobject='inventory';
 	}
 
 	// Generic case for $classfile and $classname
-	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	$classfile = strtolower($myobject); $classname = ucfirst($myobject);
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname;
 
 	if ($objecttype == 'invoice_supplier') {
@@ -1903,6 +1910,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 	}
+
 	if (!empty($conf->$module->enabled))
 	{
 		$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
@@ -2048,12 +2056,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 /**
  *	Get an array with properties of an element
  *
- * @param   string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
+ * @param   string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@mymodule'...
  * @return  array					(module, classpath, element, subelement, classfile, classname)
  */
 function getElementProperties($element_type)
 {
-    // Parse element/subelement (ex: project_task)
+	$regs = array();
+
+	// Parse element/subelement (ex: project_task)
     $module = $element_type;
     $element = $element_type;
     $subelement = $element_type;
