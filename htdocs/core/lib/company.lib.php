@@ -1620,7 +1620,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$caction = new CActionComm($db);
 		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
 
-        foreach ($histo as $key=>$value)
+        foreach ($histo as $key => $value)
         {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
@@ -1729,7 +1729,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             else $out .= '&nbsp;';
             $out .= '</td>';
 
-            // Contact pour cette action
+            // Contact(s) for action
             if (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
                 $contactstatic->lastname = $histo[$key]['lastname'];
@@ -1738,15 +1738,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                 $out .= '<td width="120">'.$contactstatic->getNomUrl(1, '', 10).'</td>';
             } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$out .= '<td>';
-				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					$contact = new Contact($db);
+				$contact = new Contact($db);
+				foreach ($histo[$key]['socpeopleassigned'] as $cid => $value) {
 					$result = $contact->fetch($cid);
 
 					if ($result < 0)
 						dol_print_error($db, $contact->error);
 
 					if ($result > 0) {
-						$out .= $contact->getNomUrl(1);
+						$out .= $contact->getNomUrl(1, '', 16);
 						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
 							if (!empty($contact->phone_pro))
 								$out .= '('.dol_print_phone($contact->phone_pro).')';
