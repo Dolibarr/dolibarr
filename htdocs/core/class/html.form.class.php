@@ -606,7 +606,7 @@ class Form
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('addMoreMassActions',$parameters);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('addMoreMassActions', $parameters);    // Note that $action and $object may have been modified by hook
 		// check if there is a mass action
 		if (count($arrayofaction) == 0 && empty($hookmanager->resPrint)) return;
 		if (empty($reshook))
