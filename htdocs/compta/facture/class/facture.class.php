@@ -445,7 +445,16 @@ class Facture extends CommonInvoice
 		}
 
 		// Define due date if not already defined
-		$datelim=(empty($forceduedate)?$this->calculate_date_lim_reglement():$forceduedate);
+        if (empty($forceduedate)) {
+            $duedate = $this->calculate_date_lim_reglement();
+            /*if ($duedate < 0) {	Regression, a date can be negative if before 1970.
+                dol_syslog(__METHOD__ . ' Error in calculate_date_lim_reglement. We got ' . $duedate, LOG_ERR);
+                return -1;
+            }*/
+            $this->date_lim_reglement = $duedate;
+        } else {
+            $this->date_lim_reglement = $forceduedate;
+        }
 
 		// Insert into database
 		$socid  = $this->socid;
@@ -497,7 +506,7 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
-		$sql.= ", '".$this->db->idate($datelim)."', '".$this->db->escape($this->modelpdf)."'";
+		$sql.= ", '".$this->db->idate($this->date_lim_reglement)."', '".$this->db->escape($this->modelpdf)."'";
 		$sql.= ", ".($this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null");
 		$sql.= ", ".($this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null");
 		$sql.= ", ".($this->situation_final?$this->situation_final:0);
@@ -1652,7 +1661,7 @@ class Facture extends CommonInvoice
 		$sql.= " datef=".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql.= " date_pointoftax=".(strval($this->date_pointoftax)!='' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql.= " paye=".(isset($this->paye)?$this->db->escape($this->paye):"null").",";
+		$sql.= " paye=".(isset($this->paye)?$this->db->escape($this->paye):0).",";
 		$sql.= " remise_percent=".(isset($this->remise_percent)?$this->db->escape($this->remise_percent):"null").",";
 		$sql.= " remise_absolue=".(isset($this->remise_absolue)?$this->db->escape($this->remise_absolue):"null").",";
 		$sql.= " close_code=".(isset($this->close_code)?"'".$this->db->escape($this->close_code)."'":"null").",";

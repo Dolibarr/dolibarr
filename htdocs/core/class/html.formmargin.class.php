@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2015-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,11 @@ class FormMargin
 
 			$pv = $line->total_ht;
 			$pa_ht = ($pv < 0 ? - $line->pa_ht : $line->pa_ht);      // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
-			$pa = $line->qty * $pa_ht;
+			if ($object->element == 'facture' && $object->type == $object::TYPE_SITUATION) {
+				$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
+			} else {
+				$pa = $line->qty * $pa_ht;
+			}
 
 			// calcul des marges
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise

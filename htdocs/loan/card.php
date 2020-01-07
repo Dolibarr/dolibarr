@@ -624,7 +624,7 @@ if ($id > 0)
 		else
 		{
 			print '<td class="nowrap">';
-			print $langs->trans("LoanAccountancyCapitalCode");
+			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
 			if (! empty($conf->accounting->enabled))

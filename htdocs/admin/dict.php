@@ -1985,9 +1985,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class='quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
+            $transkey='';
 			if (in_array($fieldlist[$field], array('label','libelle')))
 			{
-			    $transkey='';
 			    // Special case for labels
 			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 			        $transkey="Civility".strtoupper($obj->code);
