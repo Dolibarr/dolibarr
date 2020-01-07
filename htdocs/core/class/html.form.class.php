@@ -4129,6 +4129,7 @@ class Form
 			}
 
 			// Now add questions
+			$moreonecolumn = '';
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
 			foreach ($formquestion as $key => $input)
 			{
@@ -4202,13 +4203,14 @@ class Form
 
 					elseif ($input['type'] == 'onecolumn')
 					{
-						$more .= '<div class="tagtr"><div class="tagtd">';
-						$more .= $input['value'];
-						$more .= '</div></div>'."\n";
+						$moreonecolumn .= '<div class="margintoponly">';
+						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= '</div>'."\n";
 					}
 				}
 			}
 			$more .= '</div>'."\n";
+			$more .= $moreonecolumn;
 		}
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
