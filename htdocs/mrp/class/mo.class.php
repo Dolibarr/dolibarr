@@ -468,6 +468,55 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 * Get list of lines linked to current line for a defined role.
+	 *
+	 * @param  	string 	$role      	Get lines linked to current line with the selected role ('consumed', 'produced', ...)
+	 * @param	int		$lineid		Id of production line to filter childs
+	 * @return 	array             	Array of lines
+	 */
+	public function fetchLinesLinked($role, $lineid = 0)
+	{
+		$resarray = array();
+		$mostatic = new MoLine($this->db);
+
+		$sql = 'SELECT ';
+		$sql .= $mostatic->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$mostatic->table_element.' as t';
+		$sql .= " WHERE t.role = '".$this->db->escape($role)."'";
+		if ($lineid > 0) $sql .= ' AND t.fk_mrp_production = '.$lineid;
+		else $sql .= 'AND t.fk_mo = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i=0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$resarray[] = array(
+						'rowid'=> $obj->rowid,
+						'qty' => $obj->qty,
+						'role' => $obj->role,
+						'fk_product' => $obj->fk_product,
+						'fk_warehouse' => $obj->fk_warehouse,
+						'batch' => $obj->batch,
+						'fk_stock_movement' => $obj->fk_stock_movement
+					);
+				}
+
+				$i++;
+			}
+
+			return $resarray;
+		} else {
+			$this->error = $this->db->lasterror();
+			var_dump($this->error);
+			return array();
+		}
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
@@ -1456,25 +1505,6 @@ class MoLine extends CommonObjectLine
 
 			return -1;
 		}
-	}
-
-	/**
-	 * Get list of lines linked to current line for a defined role
-	 *
-	 * @param  string $role      Get lines linked to current line with the selected role ('consumed', 'produced', ...)
-	 * @return array             Array of lines
-	 */
-	public function fetchLinesLinked($role)
-	{
-		$array = array();
-
-		$sql = 'SELECT rowid, qty ';
-		$sql .= $this->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
-		else $sql .= ' WHERE 1 = 1';
-
-		return $array;
 	}
 
 	/**
