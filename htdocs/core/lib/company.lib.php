@@ -1705,13 +1705,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
             // Date
             $out .= '<td class="center nowrap">';
-            $out .= dol_print_date($histo[$key]['datestart'], 'dayhour');
+            $out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
             if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
             {
                 $tmpa = dol_getdate($histo[$key]['datestart'], true);
                 $tmpb = dol_getdate($histo[$key]['dateend'], true);
-                if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour');
-                else $out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour');
+                if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
+                else $out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
             }
             $late = 0;
             if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) $late = 1;

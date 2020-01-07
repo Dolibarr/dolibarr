@@ -750,6 +750,7 @@ if ($resql)
     }
     if (!empty($arrayfields['m.datem']['checked']))
     {
+    	// Date
     	print '<td class="liste_titre nowraponall">';
 	    print '<input class="flat" type="text" size="2" maxlength="2" placeholder="'.dol_escape_htmltag($langs->trans("Month")).'" name="month" value="'.$month.'">';
     	if (empty($conf->productbatch->enabled)) print '&nbsp;';
@@ -1006,7 +1007,7 @@ if ($resql)
         if (!empty($arrayfields['m.datem']['checked']))
         {
 	        // Date
-	        print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+	        print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
         }
         if (!empty($arrayfields['p.ref']['checked']))
         {
