@@ -46,6 +46,7 @@ $ref = GETPOST('ref', 'alpha');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
+$cssprint = GETPOST("optioncss", 'alpha');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
@@ -308,14 +309,18 @@ else
 			// Print form confirm
 			print $formconfirm;
 
-			// Warehouse card
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
 			$morehtmlref='<div class="refidno">';
 			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
         	$morehtmlref.='</div>';
 
-            $shownav = 1;
+            if ($cssprint != "print") { // if print mode : hide button & menu
+            	$shownav = 1;
+            	// Warehouse card
+				$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+            }else{
+            	$shownav = 0;
+            	$linkback = 0 ;
+            }
             if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
@@ -408,28 +413,31 @@ else
 			/* Barre d'action                                                             */
 			/*                                                                            */
 			/* ************************************************************************** */
+			
+			if ($cssprint != "print") { // if print mode : hide button & menu
+				
+				print "<div class=\"tabsAction\">\n";
 
-			print "<div class=\"tabsAction\">\n";
-
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-			if (empty($reshook))
-			{
-				if (empty($action))
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				if (empty($reshook))
 				{
-					if ($user->rights->stock->creer)
-						print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
-					else
-						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
+					if (empty($action))
+					{
+						if ($user->rights->stock->creer)
+							print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
+						else
+							print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
 
-					if ($user->rights->stock->supprimer)
-						print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
-					else
-						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
+						if ($user->rights->stock->supprimer)
+							print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+						else
+							print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
+					}
 				}
-			}
 
-			print "</div>";
+				print "</div>";
+			}
 
 
 			/* ************************************************************************** */
@@ -452,12 +460,14 @@ else
             if (empty($conf->global->PRODUIT_MULTIPRICES)) {
                 print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
             }
-			if ($user->rights->stock->mouvement->creer) {
-                print_liste_field_titre('');
-            }
-			if ($user->rights->stock->creer) {
-                print_liste_field_titre('');
-            }
+			if ($cssprint != "print") { // if print mode : hide button & menu
+				if ($user->rights->stock->mouvement->creer) {
+					print_liste_field_titre('');
+				}
+				if ($user->rights->stock->creer) {
+					print_liste_field_titre('');
+				}
+			}
 			print "</tr>\n";
 
 			$totalunit=0;
@@ -540,21 +550,21 @@ else
                         print '</td>';
                     }
                     $totalvaluesell+=price2num($pricemin*$objp->value, 'MT');
+					if ($cssprint != "print") { // if print mode : hide button & menu
+						if ($user->rights->stock->mouvement->creer)
+						{
+							print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+							print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
+							print "</a></td>";
+						}
 
-                    if ($user->rights->stock->mouvement->creer)
-					{
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
-						print "</a></td>";
+						if ($user->rights->stock->creer)
+						{
+							print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+							print $langs->trans("StockCorrection");
+							print "</a></td>";
+						}
 					}
-
-					if ($user->rights->stock->creer)
-					{
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print $langs->trans("StockCorrection");
-						print "</a></td>";
-					}
-
 					print "</tr>";
 					$i++;
 				}
@@ -572,8 +582,10 @@ else
                     print '<td class="liste_total">&nbsp;</td>';
                     print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
                 }
-                print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
+				if ($cssprint != "print") { // if print mode : hide button & menu
+					print '<td class="liste_total">&nbsp;</td>';
+					print '<td class="liste_total">&nbsp;</td>';
+				}
 				print '</tr>';
 			}
 			else
