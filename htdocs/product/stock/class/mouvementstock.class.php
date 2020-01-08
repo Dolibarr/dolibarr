@@ -90,7 +90,8 @@ class MouvementStock extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Add a movement of stock (in one direction only)
+	 *	Add a movement of stock (in one direction only).
+	 *  $this->origin can be also be set to save the source object of movement.
 	 *
 	 *	@param		User	$user			User object
 	 *	@param		int		$fk_product		Id of product
