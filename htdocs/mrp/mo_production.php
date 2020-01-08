@@ -157,7 +157,7 @@ if (empty($reshook))
     	$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
     }
 
-    if (in_array($action, array('confirm_consume', 'confirm_produce', 'confirm_consumeandproduceall'))) {
+    if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall'))) {
     	$stockmove = new MouvementStock($db);
 
     	$labelmovement = GETPOST('inventorylabel', 'alphanohtml');
@@ -256,13 +256,13 @@ if (empty($reshook))
 	    						$error++;
 	    					}
 	    				}
-
+	    				var_dump(GETPOST('batchtoproduce-'.$line->id.'-'.$i));
 	    				$idstockmove = 0;
 	    				if (! $error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
 	    					// Record stock movement
 	    					$id_product_batch = 0;
 	    					$stockmove->origin = $object;
-	    					$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+	    					$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 	    					if ($idstockmove < 0) {
 	    						$error++;
 	    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -516,7 +516,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_fiche_end();
 
 
-	if (! in_array($action, array('consume', 'produce', 'consumeandproduceall')))
+	if (! in_array($action, array('consumeorproduce', 'consumeandproduceall')))
 	{
 		print '<div class="tabsAction">';
 
@@ -524,27 +524,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Note that $action and $object may be modified by hook
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 		if (empty($reshook)) {
-			// Consume
-
+			// Consume or produce
 			if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
 				if ($permissiontoproduce) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=consume">'.$langs->trans('Consume').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=consumeorproduce">'.$langs->trans('ConsumeOrProduce').'</a>';
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Consume').'</a>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ConsumeOrProduce').'</a>';
 				}
 			} elseif ($object->status == Mo::STATUS_DRAFT) {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateBefore").'">'.$langs->trans('Consume').'</a>';
-			}
-
-			// Produce
-			if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
-				if ($permissiontoproduce) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=produce">'.$langs->trans('Produce').'</a>';
-				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Produce').'</a>';
-				}
-			} elseif ($object->status == Mo::STATUS_DRAFT) {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateBefore").'">'.$langs->trans('Produce').'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateBefore").'">'.$langs->trans('ConsumeOrProduce').'</a>';
 			}
 
 			// ConsumeAndProduceAll
@@ -571,7 +559,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 	}
 
-	if (in_array($action, array('consume', 'produce', 'consumeandproduceall')))
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall')))
 	{
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -620,11 +608,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<td>'.$langs->trans("Qty").'</td>';
     	print '<td>'.$langs->trans("QtyAlreadyConsumed").'</td>';
     	print '<td>';
-    	if (in_array($action, array('consume', 'produce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
+    	if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
     	print '</td>';
     	if ($conf->productbatch->enabled) {
     		print '<td>';
-    		if (in_array($action, array('consume', 'produce', 'consumeandproduceall'))) print $langs->trans("Batch");
+    		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Batch");
     		print '</td>';
     	}
     	print '</tr>';
@@ -678,12 +666,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		// Show detailed of already consumed with js code to collapse
     	    		//$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 
-    	    		if (in_array($action, array('consume', 'produce', 'consumeandproduceall'))) {
+    	    		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
     	    			$i = 1;
     	    			print '<tr>';
     	    			print '<td>'.$langs->trans("ToConsume").'</td>';
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
-    	    			if ($action == 'produce') $preselected = 0;
+    	    			if ($action == 'consumeorproduce' && ! GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
     	    			print '<td><input type="text" class="width50" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     	    			print '<td></td>';
     	    			print '<td>';
@@ -747,11 +735,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<td>'.$langs->trans("Qty").'</td>';
     	print '<td>'.$langs->trans("QtyAlreadyProduced").'</td>';
     	print '<td>';
-    	if (in_array($action, array('consume', 'produce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
+    	if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
     	print '</td>';
     	if ($conf->productbatch->enabled) {
     		print '<td>';
-    		if (in_array($action, array('consume', 'produce', 'consumeandproduceall'))) print $langs->trans("Batch");
+    		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Batch");
     		print '</td>';
     	}
     	print '</tr>';
@@ -793,11 +781,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				}
     				print '</tr>';
 
-    				if (in_array($action, array('consume', 'produce', 'consumeandproduceall'))) {
+    				if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
     					print '<tr>';
     					print '<td>'.$langs->trans("ToProduce").'</td>';
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
-    					if ($action == 'consume') $preselected = 0;
+    					if ($action == 'consumeorproduce' && ! GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
     					print '<td><input type="text" class="width50" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     					print '<td></td>';
     					print '<td>';
@@ -829,7 +817,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</div>';
 	}
 
-	if (in_array($action, array('consume', 'produce', 'consumeandproduceall')))
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall')))
 	{
 		print "</form>\n";
 	}
