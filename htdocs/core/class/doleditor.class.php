@@ -225,7 +225,8 @@ class DolEditor
                                                             breakAfterClose : true
                                                         });
                                                 }
-                                            }';
+                                            },
+									disableNativeSpellChecker: false';
 
             	if ($this->uselocalbrowser)
             	{
