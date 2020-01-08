@@ -942,6 +942,10 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$origin = new Project($this->db);
 				break;
+			case 'mo':
+				require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+				$origin = new Mo($this->db);
+				break;
 
 			default:
 				if ($origintype)

@@ -693,7 +693,7 @@ if ($conf->use_javascript_ajax)
 	print '<tr class="liste_total">';
     print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 	print $langs->trans("Total");
-	print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+	print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 	print '</td>';
 
 	for ($idw = 0; $idw < 7; $idw++)
@@ -810,7 +810,7 @@ if (count($tasksarray) > 0)
 		print '<tr class="liste_total">
                 <td class="liste_total" colspan="'.($colspan+$addcolspan).'">';
 				print $langs->trans("Total");
-				print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+				print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 				print '</td>';
 
 		for ($idw = 0; $idw < 7; $idw++)

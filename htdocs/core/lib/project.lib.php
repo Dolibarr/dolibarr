@@ -1072,7 +1072,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 					if ($projectstatic->title)
 					{
 						print ' - ';
-						print $projectstatic->title;
+						print '<span class="secondary">'.$projectstatic->title.'</span>';
 					}
 					/*
                     $colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
@@ -1451,7 +1451,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					if ($projectstatic->title)
 					{
 						print ' - ';
-						print $projectstatic->title;
+						print '<span class="secondary">'.$projectstatic->title.'</span>';
 					}
 
                     /*$colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
