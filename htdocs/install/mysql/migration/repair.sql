@@ -201,6 +201,13 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 
+-- Fix: delete orphelin links in llx_bank_url
+DELETE from llx_bank_url where type = 'payment' and url_id not in (select rowid from llx_paiement);
+DELETE from llx_bank_url where type = 'payment_supplier' and url_id not in (select rowid from llx_paiementfourn);
+DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid from llx_societe);
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
+
 -- Fix link on parent that were removed
 DROP table tmp_user;
 CREATE TABLE tmp_user as (select * from llx_user);
