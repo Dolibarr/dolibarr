@@ -469,7 +469,10 @@ update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product
 update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
  
- 
+
+DELETE FROM llx_mrp_production where qty = 0;
+
+
 UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
 
  

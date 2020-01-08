@@ -462,6 +462,9 @@ select.flat, form.flat select {
 .opacitymediumbycolor {
 	color: rgba(0, 0, 0, 0.4);
 }
+.opacitylow {
+	opacity: 0.6;
+}
 .opacityhigh {
 	opacity: 0.2;
 }
