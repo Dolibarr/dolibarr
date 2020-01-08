@@ -107,7 +107,7 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__'",
     ),
 	'supplier_invoice'=>array(
-		'@payment',
+		'@supplier_payment',
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__'",
     ),
