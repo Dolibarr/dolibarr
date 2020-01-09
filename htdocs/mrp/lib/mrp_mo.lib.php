@@ -43,6 +43,12 @@ function moPrepareHead($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Production");
+	$arrayproduced = $object->fetchLinesLinked('produced', 0);
+	$nbProduced = 0;
+	foreach($arrayproduced as $lineproduced) {
+		$nbProduced += $lineproduced['qty'];
+	}
+	$head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbProduced.' / '.$object->qty.'</span>';
 	$head[$h][2] = 'production';
 	$h++;
 

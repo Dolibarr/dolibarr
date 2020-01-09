@@ -62,6 +62,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
@@ -135,6 +136,10 @@ if (empty($reshook))
     		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     	}
     }
+    if ($cancel && ! empty($backtopageforcancel)) {
+    	$backtopage = $backtopageforcancel;
+    }
+
     $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
     // Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -202,7 +207,8 @@ if ($action == 'create')
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
 	dol_fiche_head(array(), '');
 
@@ -304,8 +310,9 @@ if (($id || $ref) && $action == 'edit')
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
 	dol_fiche_head();
 

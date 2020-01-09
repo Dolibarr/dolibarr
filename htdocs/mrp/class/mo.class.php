@@ -496,6 +496,7 @@ class Mo extends CommonObject
 				if ($obj) {
 					$resarray[] = array(
 						'rowid'=> $obj->rowid,
+						'date'=> $this->db->jdate($obj->date_creation),
 						'qty' => $obj->qty,
 						'role' => $obj->role,
 						'fk_product' => $obj->fk_product,

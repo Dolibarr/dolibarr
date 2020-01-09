@@ -554,6 +554,7 @@ ALTER TABLE llx_mrp_production MODIFY COLUMN qty real NOT NULL DEFAULT 1;
 
 ALTER TABLE llx_mrp_production ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_mrp_production ADD COLUMN disable_stock_change smallint DEFAULT 0;
+
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_mo FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement FOREIGN KEY (fk_stock_movement) REFERENCES llx_stock_mouvement (rowid);

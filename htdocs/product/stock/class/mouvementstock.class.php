@@ -318,14 +318,18 @@ class MouvementStock extends CommonObject
     		    {
     		        if ($batch != $batchcursor) continue;
     		        $foundforbatch=1;
-    		        if ($prodbatch->qty < abs($qty)) $qtyisnotenough=1;
+    		        if ($prodbatch->qty < abs($qty)) $qtyisnotenough = $prodbatch->qty;
         		    break;
     		    }
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
     		        $langs->load("stocks");
-    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
-    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
+    		        include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+    		        $tmpwarehouse = new Entrepot($this->db);
+    		        $tmpwarehouse->fetch($entrepot_id);
+
+    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
+    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
         		    $this->db->rollback();
         		    return -8;
     		    }
