@@ -60,6 +60,7 @@ foreach ($object->fields as $key => $val)
 	print '<td class="valuefield fieldname_'.$key;
 	if ($val['type'] == 'text') print ' wordbreak';
 	print '">';
+
 	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);
 	print '</td>';
