@@ -3986,6 +3986,10 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	padding-left: 8px;
 	margin-right: 5px;
 }
+.websitebar input#previewpageurl {
+    line-height: 1em;
+}
+
 
 
 /* ============================================================================== */
