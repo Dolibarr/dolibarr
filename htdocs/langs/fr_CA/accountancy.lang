@@ -107,6 +107,7 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services v
 GroupByAccountAccounting=Groupe par compte comptable
 NotMatch=Pas encore défini
 DeleteMvt=Effacer les lignes du grand livre
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 FinanceJournal=Journal des finances
 ExpenseReportsJournal=Journal des rapports de dépenses
 DescFinanceJournal=Journal de banque comprenant tous les types de règlements autres que espèce\t

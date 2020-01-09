@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=For lite søkekriterier.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objekter må ha status 'Aktiv' for å være deaktivert
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objekter må ha status 'Utkast' eller 'Deaktivert' for å være aktivert
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.

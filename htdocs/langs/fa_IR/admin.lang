@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=مصالحۀ بانکی در جری
 Delays_MAIN_DELAY_MEMBERS=وجه اشتراک معوق
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=چک‌هائی که نقد نشده‌اند
 Delays_MAIN_DELAY_EXPENSEREPORTS=گزارش‌هزینه‌های منتظر تائید
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=پیش از شروع استفاده از Dolibarr ابتدا باید مقادیر مختلفی را تعریف کنید و واحد‌های مختلف فعال/پیکربندی شوند
 SetupDescription2=دو واحد بعدی الزامی هستند (دو ورودی اول در فهرست برپاسازی):
 SetupDescription3=<a href="%s">%s->%s</a><br> مؤلفه‌های بنیادین مورد استفاده برای تعیین‌ رفتار پیش‌فرض برنامۀ شما (مثلا برای قابلیت‌های مربوط به کشور).

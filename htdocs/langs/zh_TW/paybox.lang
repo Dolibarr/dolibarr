@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=PayBox模塊設置
+PayBoxSetup=PayBox模組設定
 PayBoxDesc=該模塊提供的網頁，以便在付款<a href="http://www.paybox.com" target="_blank">Paybox</a>客戶。這可以用來為一個自由付款或就某一Dolibarr對象（發票，訂貨，付款...）
 FollowingUrlAreAvailableToMakePayments=以下網址可提供給客戶的網頁上，能夠作出Dolibarr支付對象
 PaymentForm=付款方式
@@ -13,7 +13,7 @@ PaymentCode=付款代碼
 PayBoxDoPayment=用Paybox付款
 YouWillBeRedirectedOnPayBox=您將被重定向擔保Paybox頁，輸入您的信用卡信息
 Continue=未來
-SetupPayBoxToHavePaymentCreatedAutomatically=使用網址<b>%s</b>設置您的Paybox,以便在通過Paybox驗證後自動新增付款
+SetupPayBoxToHavePaymentCreatedAutomatically=使用網址<b>%s</b>設定您的Paybox,以便在通過Paybox驗證後自動新增付款
 YourPaymentHasBeenRecorded=本頁面確認您的付款已記錄。謝謝。
 YourPaymentHasNotBeenRecorded=您的付款尚未記錄，交易已被取消。謝謝。
 AccountParameter=帳戶參數

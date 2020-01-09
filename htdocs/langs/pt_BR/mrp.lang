@@ -35,7 +35,6 @@ EstimatedDurationDesc=Duração estimada para fabricar este produto usando esta 
 StatusMOProduced=Produzido
 QtyFrozen=Qtd. congelada
 QuantityFrozen=Quantidade congelada
-DisableStockChange=Desativar alteração no estoque
 WarehouseForProduction=Armazém para fabricação
 CreateMO=Criar MO
 TheProductXIsAlreadyTheProductToProduce=O produto a ser adicionado já é o produto a ser produzido.

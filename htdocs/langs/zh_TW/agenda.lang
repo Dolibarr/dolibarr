@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=物料清單(BOM)未驗證
 BOM_CLOSEInDolibarr=物料清單(BOM)已禁用
 BOM_REOPENInDolibarr=物料清單(BOM)重新打開
 BOM_DELETEInDolibarr=物料清單(BOM)已刪除
-MO_VALIDATEInDolibarr=MO已驗證
-MO_PRODUCEDInDolibarr=MO已生產
-MO_DELETEInDolibarr=MO已刪除
+MRP_MO_VALIDATEInDolibarr=MO已驗證
+MRP_MO_PRODUCEDInDolibarr=MO已生產
+MRP_MO_DELETEInDolibarr=MO已刪除
 ##### End agenda events #####
 AgendaModelModule=事件的文件範本
 DateActionStart=開始日期
