@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -139,19 +139,19 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 			$result = $db->query($sql);
 
-			if($db->num_rows($result) > 0):
-			$objp = $db->fetch_object($result);
-			$newref = $objp->max;
-			$newref++;
-			while(strlen($newref) < $num_car):
-				$newref = "0".$newref;
-			endwhile;
-			else:
-				$newref = 1;
-			while(strlen($newref) < $num_car):
-				$newref = "0".$newref;
-			endwhile;
-			endif;
+            if ($db->num_rows($result) > 0) {
+                $objp = $db->fetch_object($result);
+                $newref = $objp->max;
+                $newref++;
+                while (strlen($newref) < $num_car) {
+                    $newref = "0".$newref;
+                }
+            } else {
+                $newref = 1;
+                while (strlen($newref) < $num_car) {
+                    $newref = "0".$newref;
+                }
+            }
 
 			$ref_number_int = ($newref+1)-1;
 

@@ -110,3 +110,6 @@ UserLogged=Usuario conectado
 DateEmployment=Fecha de inicio de empleo
 DateEmploymentEnd=Fecha de finalización de empleo
 CantDisableYourself=No puede deshabilitar su propio registro de usuario
+ForceUserExpenseValidator=Forzar validador de informes de gastos
+ForceUserHolidayValidator=Forzar validador de solicitud de días libres
+ValidatorIsSupervisorByDefault=Por defecto, el validador es el supervisor del usuario. Mantener vacío para mantener este comportamiento.

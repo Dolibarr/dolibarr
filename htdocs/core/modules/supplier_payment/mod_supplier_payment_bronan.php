@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- * \file       htdocs/core/modules/payment/mod_payment_bronan.php
+ * \file       htdocs/core/modules/supplier_payment/mod_supplier_payment_bronan.php
  * \ingroup    supplier_payment
  * \brief      File containing class for numbering module Bronan
  */

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Security check
 $orderid = GETPOST('orderid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $hookmanager = new HookManager($db);
@@ -51,23 +51,24 @@ $langs->loadLangs(array("suppliers", "orders"));
 llxHeader('', $langs->trans("SuppliersOrdersArea"));
 
 $commandestatic = new CommandeFournisseur($db);
-$userstatic=new User($db);
+$userstatic = new User($db);
 $formfile = new FormFile($db);
 
-print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
+print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 
@@ -76,14 +77,14 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  */
 
 $sql = "SELECT count(cf.rowid), fk_statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND cf.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " GROUP BY cf.fk_statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE cf.fk_soc = s.rowid";
+$sql .= " AND cf.entity = ".$conf->entity;
+if ($user->socid) $sql .= ' AND cf.fk_soc = '.$user->socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -91,10 +92,10 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$total=0;
-	$totalinprocess=0;
-	$dataseries=array();
-	$vals=array();
+	$total = 0;
+	$totalinprocess = 0;
+	$dataseries = array();
+	$vals = array();
 	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
 	//	-> 6=Canceled -> (reopen) 2=Approved
@@ -103,29 +104,29 @@ if ($resql)
 		$row = $db->fetch_row($resql);
 		if ($row)
 		{
-			if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5)
+			if ($row[1] != 7 && $row[1] != 6 && $row[1] != 5)
 			{
-				$vals[$row[1]]=$row[0];
-				$totalinprocess+=$row[0];
+				$vals[$row[1]] = $row[0];
+				$totalinprocess += $row[0];
 			}
-			$total+=$row[0];
+			$total += $row[0];
 		}
 		$i++;
 	}
 	$db->free($resql);
 
-	print '<table class="noborder nohover" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	foreach (array(0,1,2,3,4,5,6) as $statut)
+	foreach (array(0, 1, 2, 3, 4, 5, 6) as $status)
 	{
-		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
-		if (! $conf->use_javascript_ajax)
+		$dataseries[] = array($commandestatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+		if (!$conf->use_javascript_ajax)
 		{
-
 			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
 			print "</tr>\n";
 		}
 	}
@@ -141,7 +142,7 @@ if ($resql)
 		$dolgraph->SetType(array('pie'));
 		$dolgraph->setWidth('100%');
 		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total?0:1);
+		print $dolgraph->show($total ? 0 : 1);
 
 		print '</td></tr>';
 	}
@@ -149,7 +150,7 @@ if ($resql)
 	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else
 {
@@ -164,14 +165,14 @@ else
  */
 
 $sql = "SELECT count(cf.rowid), fk_statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " GROUP BY cf.fk_statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE cf.fk_soc = s.rowid";
+$sql .= " AND s.entity = ".$conf->entity;
+if ($user->socid) $sql .= ' AND cf.fk_soc = '.$user->socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -179,7 +180,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="liste centpercent">';
 
 	print '<tr class="liste_titre"><th>'.$langs->trans("Status").'</th>';
 	print '<th class="right">'.$langs->trans("Nb").'</th>';
@@ -196,7 +198,7 @@ if ($resql)
 		print "</tr>\n";
 		$i++;
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 	$db->free($resql);
 }
 else
@@ -209,22 +211,23 @@ else
  * Draft orders
  */
 
-if (! empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 0";
-	if (! empty($socid)) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE c.fk_soc = s.rowid";
+	$sql .= " AND c.entity = ".$conf->entity;
+	$sql .= " AND c.fk_statut = 0";
+	if (!empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
@@ -243,7 +246,7 @@ if (! empty($conf->fournisseur->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -252,16 +255,16 @@ if (! empty($conf->fournisseur->enabled))
  * List of users allowed
  */
 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-$sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
-$sql.= ", ".MAIN_DB_PREFIX."rights_def as rd";
-$sql.= " WHERE u.rowid = ur.fk_user";
-$sql.= " AND (u.entity IN (0,".$conf->entity.")";
-$sql.= " AND rd.entity = ".$conf->entity.")";
-$sql.= " AND ur.fk_id = rd.id";
-$sql.= " AND module = 'fournisseur'";
-$sql.= " AND perms = 'commande'";
-$sql.= " AND subperms = 'approuver'";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u,";
+$sql .= " ".MAIN_DB_PREFIX."user_rights as ur";
+$sql .= ", ".MAIN_DB_PREFIX."rights_def as rd";
+$sql .= " WHERE u.rowid = ur.fk_user";
+$sql .= " AND (u.entity IN (0,".$conf->entity.")";
+$sql .= " AND rd.entity = ".$conf->entity.")";
+$sql .= " AND ur.fk_id = rd.id";
+$sql .= " AND module = 'fournisseur'";
+$sql .= " AND perms = 'commande'";
+$sql .= " AND subperms = 'approuver'";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -269,7 +272,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
@@ -279,16 +283,16 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td>';
-		$userstatic->id=$obj->rowid;
-		$userstatic->lastname=$obj->lastname;
-		$userstatic->firstname=$obj->firstname;
-		$userstatic->email=$obj->email;
+		$userstatic->id = $obj->rowid;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->email = $obj->email;
 		print $userstatic->getNomUrl(1);
 		print '</td>';
 		print "</tr>\n";
 		$i++;
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 	$db->free($resql);
 }
 else
@@ -303,24 +307,25 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Last modified orders
 */
-$max=5;
+$max = 5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.tms, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
+$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE c.fk_soc = s.rowid";
+$sql .= " AND c.entity = ".$conf->entity;
 //$sql.= " AND c.fk_statut > 2";
-if (! empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " ORDER BY c.tms DESC";
-$sql.= $db->plimit($max, 0);
+if (!empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql .= " ORDER BY c.tms DESC";
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
@@ -335,8 +340,8 @@ if ($resql)
 			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
-			$commandestatic->id=$obj->rowid;
-			$commandestatic->ref=$obj->ref;
+			$commandestatic->id = $obj->rowid;
+			$commandestatic->ref = $obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
@@ -348,9 +353,9 @@ if ($resql)
 			print '</td>';
 
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$filename = dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
@@ -363,7 +368,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
 
@@ -388,7 +393,8 @@ if ($resql)
 {
 $num = $db->num_rows($resql);
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></th></tr>';
 
@@ -432,7 +438,7 @@ $i++;
 }
 }
 
-print "</table><br>";
+print "</table></div><br>";
 }
 */
 

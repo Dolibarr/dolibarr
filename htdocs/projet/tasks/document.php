@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,7 +46,7 @@ $project_ref = GETPOST('project_ref', 'alpha');
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 //$result=restrictedArea($user,'projet',$id,'');
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -284,9 +284,11 @@ if ($object->id > 0)
 	    $morehtmlref.='<br>';
 
 	    // Third party
-	    $morehtmlref.=$langs->trans("ThirdParty").': ';
-	    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
-	    $morehtmlref.='</div>';
+	    $morehtmlref .= $langs->trans("ThirdParty") . ': ';
+	    if (is_object($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0) {
+	    	$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
+	    }
+	    $morehtmlref .= '</div>';
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);

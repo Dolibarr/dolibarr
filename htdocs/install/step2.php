@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,6 +64,8 @@ if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.fo
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	// test for travis
+	if (!empty($argv[1]) && $argv[1] == "set") $action = "set";
 }
 
 dolibarr_install_syslog("- step2: entering step2.php page");

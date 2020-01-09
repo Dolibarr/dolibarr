@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -150,7 +150,7 @@ $h++;
 
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'handler', $langs->trans("Menus"), -1);
@@ -159,115 +159,62 @@ print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
 print "<br>\n";
 
 
-if ($action == 'edit')
-{
-	clearstatcache();
+clearstatcache();
 
-	// Gestionnaires de menu
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
-	print '<td>';
-	print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
-	print '</td>';
-	print '<td>';
-	print $form->textwithpicto($langs->trans("ExternalUsers"), $langs->trans("InternalExternalDesc"));
-	print '</td>';
-	print '</tr>';
+// Gestionnaires de menu
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
+print '<td>';
+print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
+print '</td>';
+print '<td>';
+print $form->textwithpicto($langs->trans("ExternalUsers"), $langs->trans("InternalExternalDesc"));
+print '</td>';
+print '</tr>';
 
-	// Menu top
-	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
-	print '<td>';
-	$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled');
-	print '</td>';
-	print '<td>';
-	$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled');
-	print '</td>';
-	print '</tr>';
+// Menu top
+print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
+print '<td>';
+$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled');
+print '</td>';
+print '<td>';
+$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled');
+print '</td>';
+print '</tr>';
 
-	// Menu smartphone
-	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-	print '<td>';
-	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
-	print '</td>';
-	print '<td>';
-	$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled');
-	print '</td>';
-	print '</tr>';
+// Menu smartphone
+print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+print '<td>';
+$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
 
-	print '</table>';
-}
-else
-{
-	// Gestionnaires de menu
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
-	print '<td>';
-	print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
-	print '</td>';
-	print '<td>';
-	print $form->textwithpicto($langs->trans("ExternalUsers"), $langs->trans("InternalExternalDesc"));
-	print '</td>';
-	print '</tr>';
-
-
-	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
-	print $filelib;
-	print '</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED));
-	print $filelib;
-	print '</td>';
-	print '</tr>';
-
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
-	print $filelib;
-	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
+if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
 	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE)))
-	{
-		print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
-	}
-	print '</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
-	print $filelib;
-	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE)))
-	{
-		print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
-	}
-	print '</td>';
-	print '</tr>';
-
-	print '</table>';
+{
+	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
+
+print '</td>';
+print '<td>';
+$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled');
+
+if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE)))
+{
+	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
+}
+
+print '</td>';
+print '</tr>';
+
+print '</table>';
 
 dol_fiche_end();
 
-
-if ($action == 'edit')
-{
-	print '<div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
-}
+print '<div class="center">';
+print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print '</form>';
-
-
-if ($action != 'edit')
-{
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-	print '</div>';
-}
 
 // End of page
 llxFooter();

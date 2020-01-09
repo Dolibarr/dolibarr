@@ -30,6 +30,10 @@ class mailing_thirdparties extends MailingTargets
 	public $require_admin=0;
 
 	public $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='company';
 
 	/**
@@ -288,29 +292,28 @@ class mailing_thirdparties extends MailingTargets
 		}
 
 		$s.='</select> ';
-                $s.= $langs->trans('ProspectCustomer');
-                $s.=': <select name="filter_client" class="flat">';
-                $s.= '<option value="-1">&nbsp;</option>';
-                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-                {
-                    $s.= '<option value="2">'.$langs->trans('Prospect').'</option>';
-                }
-                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
-                    $s.= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
-                }
-                if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-                    $s.= '<option value="1">'.$langs->trans('Customer').'</option>';
-                }
-                $s.= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
+        $s.= $langs->trans('ProspectCustomer');
+        $s.=': <select name="filter_client" class="flat">';
+        $s.= '<option value="-1">&nbsp;</option>';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+            $s.= '<option value="2">'.$langs->trans('Prospect').'</option>';
+        }
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+            $s.= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
+        }
+        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+            $s.= '<option value="1">'.$langs->trans('Customer').'</option>';
+        }
+        $s.= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
 
-                $s.='</select> ';
+        $s.= '</select> ';
 
-                $s.=$langs->trans("Status");
-                $s.=': <select name="filter_status" class="flat">';
-                $s.='<option value="-1">&nbsp;</option>';
-                $s.='<option value="1" selected>'.$langs->trans("Enabled").'</option>';
-                $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
-		$s.='</select>';
+        $s.= $langs->trans("Status");
+        $s.= ': <select name="filter_status" class="flat">';
+        $s.= '<option value="-1">&nbsp;</option>';
+        $s.= '<option value="1" selected>'.$langs->trans("Enabled").'</option>';
+        $s.= '<option value="0">'.$langs->trans("Disabled").'</option>';
+        $s.= '</select>';
 		return $s;
 	}
 

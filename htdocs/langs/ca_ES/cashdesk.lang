@@ -75,3 +75,5 @@ DirectPayment=Pagament directe
 DirectPaymentButton=Botó de pagament directe en efectiu
 InvoiceIsAlreadyValidated=La factura ja està validada
 NoLinesToBill=No hi ha línies a facturar
+CustomReceipt=Rebut personalitzat
+ReceiptName=Nom del rebut

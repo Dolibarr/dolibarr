@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,22 +32,22 @@ $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('supplierbalencelist','globalcard'));
+$hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 
 /*
  * View
  */
 
 $form = new Form($db);
-$userstatic=new User($db);
+$userstatic = new User($db);
 
 llxHeader();
 
@@ -62,26 +62,26 @@ if ($socid > 0)
     $head = societe_prepare_head($societe);
 
     dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	dol_fiche_end();
 
-    if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
+    if (!empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
     {
         // Invoice list
         print load_fiche_titre($langs->trans("SupplierPreview"));
 
-        print '<table class="noborder tagtable liste" width="100%">';
+        print '<table class="noborder tagtable liste centpercent">';
 
         $sql = "SELECT s.nom, s.rowid as socid, f.ref_supplier, f.amount, f.datef as df,";
-        $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
-        $sql.= " u.login, u.rowid as userid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
-	$sql.= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
-        $sql.= " AND f.fk_user_valid = u.rowid";
-        $sql.= " ORDER BY f.datef DESC";
+        $sql .= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
+        $sql .= " u.login, u.rowid as userid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
+        $sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
+        $sql .= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
+        $sql .= " AND f.fk_user_valid = u.rowid";
+        $sql .= " ORDER BY f.datef DESC";
 
-        $resql=$db->query($sql);
+        $resql = $db->query($sql);
         if ($resql)
         {
             $num = $db->num_rows($resql);
@@ -96,7 +96,7 @@ if ($socid > 0)
             print '<td>&nbsp;</td>';
             print '</tr>';
 
-            if (! $num > 0)
+            if (!$num > 0)
             {
                 print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
             }
@@ -104,12 +104,12 @@ if ($socid > 0)
             $solde = 0;
 
             // Boucle sur chaque facture
-            for ($i = 0 ; $i < $num ; $i++)
+            for ($i = 0; $i < $num; $i++)
             {
                 $objf = $db->fetch_object($resql);
 
                 $fac = new FactureFournisseur($db);
-                $ret=$fac->fetch($objf->facid);
+                $ret = $fac->fetch($objf->facid);
                 if ($ret < 0)
                 {
                     print $fac->error."<br>";
@@ -136,12 +136,12 @@ if ($socid > 0)
 
                 // Payments
                 $sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
-                $sql.= " p.fk_user_author, u.login, u.rowid as userid";
-                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-                $sql.= " ".MAIN_DB_PREFIX."paiementfourn as p";
-                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
-                $sql.= " WHERE pf.fk_paiementfourn = p.rowid";
-                $sql.= " AND pf.fk_facturefourn = ".$fac->id;
+                $sql .= " p.fk_user_author, u.login, u.rowid as userid";
+                $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
+                $sql .= " ".MAIN_DB_PREFIX."paiementfourn as p";
+                $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
+                $sql .= " WHERE pf.fk_paiementfourn = p.rowid";
+                $sql .= " AND pf.fk_facturefourn = ".$fac->id;
 
                 $resqlp = $db->query($sql);
                 if ($resqlp)

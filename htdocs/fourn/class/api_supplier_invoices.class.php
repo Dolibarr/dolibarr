@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -208,7 +208,7 @@ class SupplierInvoices extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->invoice->$field = $value;
         }
-        if(! array_keys($request_data, 'date')) {
+        if(! array_key_exists('date', $request_data)) {
             $this->invoice->date = dol_now();
         }
 

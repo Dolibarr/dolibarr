@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ $ref = GETPOST('ref', 'alpha');
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -104,7 +104,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -228,9 +228,9 @@ if ($id > 0 || ! empty($ref))
 	                    print "</td>\n";
 	                    print '<td>'.$societestatic->getNomUrl(1).'</td>';
 	                    print "<td>".$objp->code_client."</td>\n";
-						print '<td align="center">';
+						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
-						print  '<td align="center">'.$objp->qty."</td>\n";
+						print  '<td class="center">'.$objp->qty."</td>\n";
 	                    print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut, $objp->facture, 5).'</td>';
 						print "</tr>\n";
@@ -241,7 +241,7 @@ if ($id > 0 || ! empty($ref))
                 if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
                 else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
                 print '<td colspan="3"></td>';
-                print '<td align="center">'.$total_qty.'</td>';
+                print '<td class="center">'.$total_qty.'</td>';
                 print '<td align="right">'.price($total_ht).'</td>';
                 print '<td></td>';
                 print "</table>";

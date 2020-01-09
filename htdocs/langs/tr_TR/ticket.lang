@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,10 @@ TicketDictSeverity=Destek Bildirimi - Önemler
 TicketTypeShortBUGSOFT=Yazılım arızası
 TicketTypeShortBUGHARD=Donanım arızası
 TicketTypeShortCOM=Ticari soru
-TicketTypeShortINCIDENT=Yardım talebi
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Proje
 TicketTypeShortOTHER=Diğer
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=Okunmamış destek bildirimi bulunamadı
 TicketViewAllTickets=Tüm destek bildirimlerini görüntüle
 TicketViewNonClosedOnly=Sadece açık destek bildirimlerini görüntüle
 TicketStatByStatus=Duruma göre destek bildirimleri
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Durum değişikliğini onayla: %s?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Okunmamış
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs

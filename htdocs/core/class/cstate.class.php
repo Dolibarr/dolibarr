@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ class Cstate // extends CommonObject
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -56,12 +56,12 @@ class Cstate // extends CommonObject
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='';
+	public $nom = '';
 
 	/**
 	 * @var string name
 	 */
-	public $name='';
+	public $name = '';
 
 	public $active;
 
@@ -89,36 +89,36 @@ class Cstate // extends CommonObject
     public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code_departement)) $this->code_departement=trim($this->code_departement);
-		if (isset($this->nom)) $this->nom=trim($this->nom);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->code_departement)) $this->code_departement = trim($this->code_departement);
+		if (isset($this->nom)) $this->nom = trim($this->nom);
+		if (isset($this->active)) $this->active = trim($this->active);
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_departements(";
-		$sql.= "rowid,";
-		$sql.= "code_departement,";
-		$sql.= "nom,";
-		$sql.= "active";
-        $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
-		$sql.= " ".(! isset($this->code_departement)?'NULL':"'".$this->db->escape($this->code_departement)."'").",";
-		$sql.= " ".(! isset($this->nom)?'NULL':"'".$this->db->escape($this->nom)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'")."";
-		$sql.= ")";
+		$sql .= "rowid,";
+		$sql .= "code_departement,";
+		$sql .= "nom,";
+		$sql .= "active";
+        $sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
+		$sql .= " ".(!isset($this->code_departement) ? 'NULL' : "'".$this->db->escape($this->code_departement)."'").",";
+		$sql .= " ".(!isset($this->nom) ? 'NULL' : "'".$this->db->escape($this->nom)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (! $error) {
+        if (!$error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_departements");
 
             //if (! $notrigger) {
@@ -137,13 +137,13 @@ class Cstate // extends CommonObject
         // Commit or rollback
         if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -164,23 +164,23 @@ class Cstate // extends CommonObject
     {
     	global $langs;
         $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.code_departement,";
-		$sql.= " t.nom,";
-		$sql.= " t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_departements as t";
-        if ($id)   $sql.= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql.= " WHERE t.code_departement = '".$this->db->escape($code)."'";
+		$sql .= " t.rowid,";
+		$sql .= " t.code_departement,";
+		$sql .= " t.nom,";
+		$sql .= " t.active";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_departements as t";
+        if ($id)   $sql .= " WHERE t.rowid = ".$id;
+        elseif ($code) $sql .= " WHERE t.code_departement = '".$this->db->escape($code)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
 				$this->code_departement = $obj->code_departement;
 				$this->nom = $obj->nom;
 				$this->active = $obj->active;
@@ -191,7 +191,7 @@ class Cstate // extends CommonObject
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+      	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -207,12 +207,12 @@ class Cstate // extends CommonObject
     public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code_departement)) $this->code_departement=trim($this->code_departement);
-		if (isset($this->nom)) $this->nom=trim($this->nom);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->code_departement)) $this->code_departement = trim($this->code_departement);
+		if (isset($this->nom)) $this->nom = trim($this->nom);
+		if (isset($this->active)) $this->active = trim($this->active);
 
 
 		// Check parameters
@@ -220,16 +220,16 @@ class Cstate // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_departements SET";
-		$sql.= " code_departement=".(isset($this->code_departement)?"'".$this->db->escape($this->code_departement)."'":"null").",";
-		$sql.= " nom=".(isset($this->nom)?"'".$this->db->escape($this->nom)."'":"null").",";
-		$sql.= " active=".(isset($this->active)?$this->active:"null")."";
-        $sql.= " WHERE rowid=".$this->id;
+		$sql .= " code_departement=".(isset($this->code_departement) ? "'".$this->db->escape($this->code_departement)."'" : "null").",";
+		$sql .= " nom=".(isset($this->nom) ? "'".$this->db->escape($this->nom)."'" : "null").",";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		//if (! $error)
 		//{
@@ -271,16 +271,16 @@ class Cstate // extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_departements";
-		$sql.= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		//if (! $error)
 		//{
@@ -301,13 +301,13 @@ class Cstate // extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{

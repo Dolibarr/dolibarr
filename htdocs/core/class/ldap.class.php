@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -1362,12 +1362,12 @@ class Ldap
 		}
 	}
 
-   /**
-    * 	UserAccountControl Flgs to more human understandable form...
-    *
-    *	@param	string		$uacf		UACF
-    *	@return	void
-    */
+    /**
+     * 	UserAccountControl Flgs to more human understandable form...
+     *
+     *	@param	string		$uacf		UACF
+     *	@return	void
+     */
     public function parseUACF($uacf)
 	{
 		//All flags array
@@ -1408,12 +1408,12 @@ class Ldap
 		return($retval);
 	}
 
-   /**
-    * 	SamAccountType value to text
-    *
-    *	@param	string	$samtype	SamType
-    *	@return	string				Sam string
-    */
+    /**
+     * 	SamAccountType value to text
+     *
+     *	@param	string	$samtype	SamType
+     *	@return	string				Sam string
+     */
     public function parseSAT($samtype)
 	{
 		$stypes = array(

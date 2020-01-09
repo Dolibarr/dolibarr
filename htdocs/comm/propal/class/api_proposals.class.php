@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -227,7 +227,7 @@ class Proposals extends DolibarrApi
 	    }
 
 		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		    throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	    }
 	    $this->propal->getLinesArray();
 	    $result = array();
@@ -255,7 +255,7 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->fetch($id);
 		if (! $result) {
-		   throw new RestException(404, 'Commercial Proposal not found');
+		    throw new RestException(404, 'Commercial Proposal not found');
 		}
 
 		if (! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {

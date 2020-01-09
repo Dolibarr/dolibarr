@@ -3,12 +3,208 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 11.0.0 compared to 10.0.0 *****
+***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For Users:
 
 
-For Developers:
+For Developers or integrators:
 
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* PHP 5.5 is no more supported. Minimum PHP is now 5.6+.
+
+  
+  
+***** ChangeLog for 11.0.0 compared to 10.0.0 *****
+For Users:
+
+NEW: Module BOM is now stable.
+NEW: Module MO - Manufacturing Order available with experimental status.
+NEW: Can set the Address/Contact by default on third parties.
+NEW: Add a dictionary to edit list of Social networks.
+NEW: A nicer dashboard for open elements on Home page.
+NEW: Add task widget and add task progress bar
+NEW: Support of deployment of metapackages
+NEW: Menu "Export accounting document" to generate a zip with all documents requested by a bookkeeper is now stable.
+NEW: Add button "Save and Stay" in website editor of pages.
+NEW: Accountancy - Can add specific widget in this accountancy area.
+NEW: Accountancy - Add export model LDCompta V9 & higher
+NEW: Accountancy - Add permission on export, delete operations in ledger
+NEW: add ability to edit price without tax before adding a line of a predefined product.
+NEW: Add a tab to setup "Opening hours" of company (information only).
+NEW: Add attendee to ical export + cleanup.
+NEW: Add bank data of users into the expense report exports.
+NEW: add clone customers prices in clone product or service.
+NEW: Add column of module source and POS terminal in the invoice list.
+NEW: Add column last modification date into the table of targets for emailing.
+NEW: Add column VAT rate in product list
+NEW: add constant DISPATCH_FORCE_QTY_INPUT
+NEW: Add constant MAIN_DISABLE_GLOBAL_WORKBOARD to disable workboard in home page
+NEW: add country code in import product model
+NEW: Add 'Direct Cash Payment' button in TakePOS
+NEW: Add odt support to supplier orders
+NEW: Add feature to search a string into website containers
+NEW: Add GET and POST /supplierinvoices/payments REST API endpoints.
+NEW: Show progress bar for declared progression of tasks.
+NEW: Add last change date in page "Other setup". Can sort page on name/date.
+NEW: Add link to export targets of an emailings into a CSV file.
+NEW: Add link to the public interface on the ticket card.
+NEW: Add location into event tooltip. Use full day for fullday events
+NEW: add MAIN_LANGUAGES_ALLOWED constant to limit languages displayed.
+NEW: add MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS constant.
+NEW: add mass actions in shipment list.
+NEW: add minimum stock filter in load warehoues for product form.
+NEW: add name_alias in fields used for quick search.
+NEW: add new rule fetchidfromcodeandlabel for categories import.
+NEW: add office phone for salespresentatives
+NEW: add office phone & job on user tooltips
+NEW: Add option MAIN_PDF_FORCE_FONT_SIZE
+NEW: Add option MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS
+NEW: Add option WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL
+NEW: Add pagination on list of object of a category
+NEW: add parent category id or label in import category module
+NEW: add parent id or ref column in warehouse import
+NEW: Add search into template
+NEW: Add shipment widget
+NEW: Add statistics on product into contracts
+NEW: Add status of warehouse in the tooltip of a warehouse.
+NEW: add supplier's product list
+NEW: add units fields in buying price tab of product card
+NEW: Add units in select products lines
+NEW: Add upload document on account statement
+NEW: Add widgets for BOMs and MOs.
+NEW: Amount invoiced column in proposal list
+NEW: Ask the new label and new dates in confirm popup when cloning tax
+NEW: auto set closing date and user on invoice
+NEW: Avoid wrap between picto and text on getNomUrl
+NEW: Balance Stripe connect account for supplier
+NEW: Bank Add an option for colorize background color of debit or credit movement
+NEW: Beautify the select box of warehouses
+NEW: Add birthday widget for members
+NEW: Widgets uses fiscal year.
+NEW: Can change supplier when cloning a Purchase Order.
+NEW: can choose lines to keep while creating order from origin
+NEW: Can crop/resize image attached on a bank record
+NEW: Can edit date or RUM mandate.
+NEW: Can edit link to the translation page in website module
+NEW: Can edit the price of predefined product during adding in documents
+NEW: Can enter price tax incl on vendor proposal and purchase orders
+NEW: Can filter on description on bank account transaction lists.
+NEW: Can filter on label on invoice in accounting vendor binding pages
+NEW: Can load multilang translation in same step than fetch_lines
+NEW: Can restrict access using DAV module to some host IPs only
+NEW: Can restrict API usage to some IP only
+NEW: Can select website templates from available default templates with a preview.
+NEW: Can set a squarred icon on your company setup
+NEW: can specify hour start end for selectDate and step for minutes
+NEW: Categories/Tags are also available on warehouses
+NEW: Check if a resource is in use in an event
+NEW: Compute column value from others columns in import module
+NEW: Copy linked categories on product clone process.
+NEW: Default mode for Stripe is STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION
+NEW: Digitaria model for numbering accountancy thirdparty
+NEW: Display membership in takepos if member linked to the thirdparty
+NEW: Display supplier in objectline if defined
+NEW: Add default duration of subscriptions on members type
+NEW: Email template for Takepos (to send invoice)
+NEW: Expense request and holiday validator fields
+NEW: Export ledger table in Charlemagne format
+NEW: Extend option ORDER_ADD_ORDERS_WITH_PARENT_PROD_IF_INCDEC for all virtual product stats (renamed into PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)
+NEW: Value "None" to unbind an invoice line and its accounting account is more visible
+NEW: FCKeditor setup for tickets
+NEW: The default theme of TakePOS work better on smartphones.
+NEW: GeoIP v2 support is natively provided -> So IPv6 is supported
+NEW: List by closing date on order list and proposal list
+NEW: Look and feel v11: Some setup pages are by default direclty in edit mode.
+NEW: Management of retained warranty on situation invoices
+NEW: Mass email action on invoice list use billing contact if exists
+NEW: more living colors for charts and option for "color bind" people
+NEW: Supports multiple payments in a TakePOS sale
+NEW: multiselect with checkbox in categories/tags search for product list
+NEW: Option to allow to create members from third-party
+NEW: Platform compliance with Stripe Connect
+NEW: print / send email form in TakePOS
+NEW: Public holidays are now in a dictionary table (no more hard coded per country)
+NEW: Better performance by reducing the $companystatic calls on some pages.
+NEW: Replace the "info" tab on contract with the more complete "agenda" tab.
+NEW: Save user of last modification in donation record.
+NEW: Show html combo list instead input text for extrafields typed as list.
+NEW: Show POS application and the terminal used on invoice card.
+NEW: Add categories/tags for stocks.
+NEW: Support Net Measure in product's card.php
+NEW: Extrafields separator can be collapsed or not
+NEW: Extrafields support on Leave requests.
+NEW: Extrafields support on Salaries.
+NEW: Extrafields support in Product supplier prices.
+NEW: Add extrafields for warehouses
+NEW: Add extrafields in export of expense report (and holiday)
+NEW: The integrity checker now show also the expected size of files.
+NEW: The order method in purchase order is now mandatory when recording an order.
+NEW: update / delete stripe account for supplier
+NEW: Use the gender of member for picto in member lists.
+NEW: Use the squarre logo as favicon of pages
+NEW: VAT list - Add date start & date end in filters
+NEW: widget box for supplier orders awaiting reception
+NEW: Update translations
+NEW: #4301
+
+For Developers or integrators:
+
+NEW: Compatible with PHP 7.4 
+NEW: Code for extrafields uses the new array $extrafields->attributes
+NEW: Can set a filter on object linked in modulebuilder.
+NEW: Can defined a position of numbering submodules for thirdparties
+NEW: Add option multiselect for developers on the selector of language.
+NEW: Add a manifest.json.php file for web app.
+NEW: Support of deployement of metapackages
+NEW: Removed deprecated code that create linked object from ->origin
+NEW: experimental zapier for dolibarr
+NEW: Accountancy - Add hook bookkeepinglist on general ledger
+NEW: Can update product type with the update method.
+NEW: add API shipment mode dictionnary
+NEW: Add API to get Country by code and iso
+NEW: Add API to get objects by ref, ref_ext, ...
+NEW: Add anonymous telemetry
+NEW: Add a category to a contact in API
+NEW: Add fk projet on stock movement
+NEW: Add hidden option to set fields for the quick search on products.
+NEW: add hook on commongeneratedocument
+NEW: Add hook on fileupload.class.php to enable modules to override…
+NEW: Add hooks on index pages
+NEW: adding 'formObjectOptions' hooks loading at card.php of adherents module
+NEW: Add method getStructuredData for website
+NEW: Add payments GET and POST REST API endpoints for supplierinvoices.
+NEW: Add POST /bankaccounts/transfer REST API endpoint.
+NEW: add "printBucktrackInfo" hook, an external module can add info
+NEW: Add trigger DIRECT_DEBIT_ORDER_CREATE on widthdraw is missing
+NEW: API to post documents for "product" and Delete document
+NEW: add new function "setEntity()" and better compatibility with Multicompany
+NEW: Can add a button "Create" after combo of object with modulebuilder.
+NEW: contacts type dictionnary in api_setup.class.php
+NEW: Look and feel v11: Introduce CSS "trforbreak"
+NEW: list of measuring units API
+NEW: get social networks  dictionary by API
+NEW: Get thirdparty's salesrepresentatives by API
+NEW: get user connected informations in REST API
+NEW: mode for list thirdparty API (add easy filter for supplier only)
+NEW: purchase_prices API
+NEW: Provides more complete demo data
+NEW: Module builder can generate CSS of JS file.
+NEW: Use a dedicated css for the pencil to edit a field.
+NEW: multilangs in fetch_lines
+NEW: Add more complete info for triggers actioncom
+NEW: add multicurrency rate at currency list API
+NEW: Add 2 hidden options to set the default sorting (sort and order) on document page.
+NEW: Add hidden option to update supplier buying price during receptions.
+NEW: Add hidden option PROPOSAL_SHOW_INVOICED_AMOUNT (not reliable if one invoice is done on several order or several proposal)
+NEW: Add hidden option SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT for add possibility to update supplier buying price in the reception on a supplier order
+NEW: Add hidden option THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER to copy extrafields from third party to order.
+NEW: Add hidden options to send by email even for object with draft status.
+NEW: Update jquery library to 3.4.1
+NEW: Upgrade ACE editor to v1.4.6
 
 WARNING:
 
@@ -22,10 +218,139 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated method actioncomm->add(), use create() instead
 * If you have developed your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
 * Removed function dol_micro_time. Use native PHP microtime instead.
+* The trigger BON_PRELEVEMENT_CREATE has been renamed into DIRECT_DEBIT_ORDER_CREATE.
+* The constant INVOICE_SHOW_POS_IN_EXPORT has been renamed into INVOICE_SHOW_POS.
+* If your logo is no more visible on the menu bar, you must upload a new logo into 'Home-Setup-Company/Organization' to have it visible again. 
+* All properties 'libstatut', 'labelstatut', 'labelstatus' were renamed into 'labelStatus'. 
+* All properties 'labelstatusshort' and 'labelstatut_short' were renamed into 'labelStatusShort'. 
+* All properties 'type_libelle' were renamed into 'type_label'.
+* Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
+* The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
 
+
+***** ChangeLog for 10.0.5 compared to 10.0.4 *****
+FIX: 10.0: add URL param "restore_last_search_values=1" to all backlinks pointing to lists
+FIX: 10.0: do not display single-letter values (indicating duration unit without value) in product list
+FIX: #12473
+FIX: #12481 : fix ticket creation from thirdparty, mission $socid var
+FIX: #12482
+FIX: #12644
+FIX: #12665 Mass invoice validation with stock management
+FIX: #12688
+FIX: #12745
+FIX: add and modify category translate form with posted values on errors
+FIX: add URL param "restore_last_search_values=1" to all backlinks that point to a list
+FIX: CommandeFournisseurLigne update function must not be able to return other value than 1 if success
+FIX: contact card state address selected after filling address
+FIX: dol_string_nohtmltag when there is html with windows EOL "<br>\r\n"
+FIX: filter language is an array
+FIX: first col at wrong position in Export 2007 (new)
+FIX: getrights() request
+FIX: Invoice Situation integration into Margin
+FIX: missing nl2br conversion
+FIX: not fee in payout list
+FIX: product_fourn_price_id was assigned too late for logPrice() function
+FIX: Reduce number of request for list of products
+FIX: set due date in object in create invoice
+FIX: units traductions for selectUnits() function
+FIX: when we need to bill several orders, order lines unit is not on bill lines
+NEW: 9.0: allow users to use the mysqldump '--quick' option
+
+***** ChangeLog for 10.0.4 compared to 10.0.3 *****
+FIX: The pdf templates were using the large logo making PDF too large (and edition of proposal, order, invoice VERY slow)
+FIX: #12258
+FIX: #12319 Restore feature ACCOUNTANCY_AUTOFILL_ACCOUNT_WITH_GENERIC.
+FIX: #12356
+FIX: #12372
+FIX: #12385
+FIX: Advisory ID: usd20190053
+FIX: Advisory ID: usd20190067
+FIX: Avoid fatal error when creating thumb from PDF
+FIX: compatibility with Multicompany
+FIX: display job of contact list
+FIX: Extrafields missing in export of expense report
+FIX: Hook getAccessForbiddenMessage was missing parameters
+FIX: limit 20 prevent to see all products/services
+FIX: Search on leave request ref
+FIX: security check. A user can see holiday with link without permissions
+FIX: Set unpaid of expense report
+FIX: shipping extrafields line
+FIX: the SELECT examine more than MAX_JOIN_SIZE rows #12305
+FIX: triggers: directories read with opendir() never closed
+FIX: we need to be able to recalculate tva only if invoice not in accountancy
+FIX: wrong invoice id for fetchObjetctLinked
+
+***** ChangeLog for 10.0.3 compared to 10.0.2 *****
+IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
+The unit were not saved correctly in database making calculation on shipments wrong. 
+Update to this version must be done if you use them and have installed version 10.0.0, 10.0.1 or 10.0.2 and set some products after installing or upgrading to one of this version.
+Once update is done you must then edit (manually) the product that has bad unit to set the correct unit to have features restored.
+
+FIX: #11702 
+FIX: #11861 No consistent code to manage measuring units
+FIX: #11942
+FIX: #12026
+FIX: #12040
+FIX: #12041
+FIX: #12054
+FIX: #12083
+FIX: #12088
+FIX: CVE-2019-17578 CVE-2019-17577 CVE-2019-17576
+FIX: Clean the + of categories on the product view only in POS module
+FIX: access to public interface when origin email has an alias.
+FIX: Alias name is not into the email recipient label.
+FIX: allow standalone credit note even if no invoice
+FIX: an admin can not access his own permissions after enabling advanced permissions
+FIX: Attachement of linked files on ticket when sending a message
+FIX: avoid non numeric warning
+FIX: Bad currency var used in stripe for connect
+FIX: Bad list of ticket on public interface for ticket emailcollector
+FIX: Can't modify vendor invoice if transfered into accountancy
+FIX: change product type must be allowed if we activate hidden conf
+FIX: colspan on VAT quadri report
+FIX: CSS
+FIX: Debug feature orderstoinvoice for suppliers
+FIX: do not output return code on screen after a select of bank account
+FIX: Edit of ticket module parameters erased others
+FIX: empty cache when we want to load specific warehouses in select
+FIX: escape email alias
+FIX:  expedition.class.php
+FIX: Export of leave request show the number of open days
+FIX: Filtering the HTTP Header "Accept-Language".
+FIX: Filter on project on ticket list
+FIX: Filter "Open all" of ticket was ko.
+FIX: Force downlaod of file with .noexe as octet-stream mime type
+FIX: form not closed.
+FIX: hidden conf to prevent from changing product_type
+FIX: If product account not suggested during bind, it is not preselected
+FIX: If we share invoice, we need to see discount created from a deposit on each entity
+FIX: Import of product using units
+FIX: label of thirdparty is wrong on open project list
+FIX: Look and feel v10
+FIX: missing begin()
+FIX: missing "$this->id" in "fetch" function
+FIX: navigation on ticket tab of projects
+FIX: new invoice with generic thirdparty in takepos
+FIX: Pb in units of shipments
+FIX: regression with option to hide picto on top menu
+FIX: selection of project i am contact of.
+FIX: Send email from expense report card.
+FIX: shipping card: missing user error messages when classifying closed or billed
+FIX: SQL injection on qty
+FIX: stripe payment when there is a quote into address
+FIX: Substitution of __PROJECT_XXX__ not done
+FIX: TakePOS no invoice validation control and good payment translate
+FIX: the access of the bank account of one user
+FIX: top menu right padding
+FIX: Update of leave request when CSRF with token is on
+FIX: Var not enough sanitized
+FIX: wrong test
+FIX: XSS
+FIX: Payment from POS ware not recorded.
+FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
+     VAT that includes a deposit without vat. 
 
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****
-
 FIX: #10460 compatibility with MariaDB 10.4
 FIX: #11401 Adherent unknown language key
 FIX: #11422 Can't edit his own events with standard rights
@@ -43,17 +368,17 @@ FIX: #11752
 FIX: #11789 FIX: #11790
 FIX: #11804 list of tickets from a customer card display ALL tickets
 FIX: #11834
-FIX: Add char $ and ; in sanitizing of filenames.
-FIX: Add comment before protected functions
-FIX: Add log and type of content in dolWebsiteOutput and
-FIX: Add repair.php option 'restore' to restore user picture after v10
+FIX: add char $ and ; in sanitizing of filenames
+FIX: add comment before protected functions
+FIX: add log and type of content in dolWebsiteOutput and
+FIX: add repair.php option 'restore' to restore user picture after v10
 FIX: amount opened on thirdparty card dont care of credit note not converted
-FIX: Api of documents work with value 'thirdparty'
+FIX: API of documents work with value 'thirdparty'
 FIX: author in message / ticket API
-FIX: avoid sql error if fk_project is empty during update
+FIX: avoid SQL error if fk_project is empty during update
 FIX: avoid Warning: A non-numeric value encountered
-FIX: bad consistency in list of invoice for direct debit order.
-FIX: Bad error management in zip compress and web site export
+FIX: bad consistency in list of invoice for direct debit order
+FIX: bad error management in zip compress and web site export
 FIX: bad substitution for extrafields type checkbox
 FIX: better help message with multicompany
 FIX: calculation of $products_dispatched
@@ -62,11 +387,11 @@ FIX: Can't delete a draft leave even if it should
 FIX: Can't save setup of mailman module
 FIX: column jabberid missing
 FIX: Confirmation of deletion
-FIX: Consistency in direct debit order lists.
+FIX: Consistency in direct debit order lists
 FIX: Content send before header warning
 FIX: credit note can be split
 FIX: credit note used on list
-FIX: Css was saved on wrong website.
+FIX: CSS was saved on wrong website
 FIX: delivery extrafields
 FIX: Disabling a website does not put it offline
 FIX: display only stripe sources for customer
@@ -83,13 +408,13 @@ FIX: Fatal situation if payment removed on expense report. Action
 FIX: filepath of generated documents doesn't handle products with special characters
 FIX: for MAIN_MAXTABS_IN_CARD = $i card
 FIX: gzip and bzip2 must use option -f
-FIX: It was possible to create cashfence without entering data.
+FIX: it was possible to create cashfence without entering data
 FIX: javascript error when using dol_use_jmobile=1
 FIX: logout redirect to takepos.php
 FIX: Look and feel v10
 FIX: Make protected all pfd models functions
 FIX: management of extrafields in modulebuilder
-FIX: Missing div for buttons in tax, loan, various payment modules
+FIX: missing div for buttons in tax, loan, various payment modules
 FIX: missing include (dol_convert_file not found)
 FIX: Missing some replacements in website module
 FIX: missing test on permission on button to delete ledger record
@@ -113,13 +438,13 @@ FIX: Return code of pdf_einstein.modules.php and proformat
 FIX: round for application fee in stripe
 FIX: Sens of the balance (Debit - Credit in accountancy not contrary)
 FIX: Several pb in export of documents
-FIX: SQL syntax error and CSRF check on vat reports
+FIX: SQL syntax error and CSRF check on VAT reports
 FIX: takepos layout clear or focus search
-FIX: too many record in sql request. Whena criteria is a filter, we must
+FIX: too many record in sql request. When a criteria is a filter, we must
 FIX: Translation of month
 FIX: USEDOLIBARREDITOR not always set
 FIX: VAT number for Monaco (it uses FR)
-FIX: vulenrability in uploading file found by 美创科技安全实验室
+FIX: vulnerability in uploading file found by 美创科技安全实验室
 FIX: wrong display (and hidden input) for already dispatched quantity
 FIX: wrong parameters (same error in branch 9, 10, develop)
 FIX: Wrong variable. Must be PROJECT_HIDE_UNSELECTABLES

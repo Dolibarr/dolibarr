@@ -36,4 +36,4 @@ ResourceTypeCode=Resource type code
 ImportDataset_resource_1=Resources
 
 ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s use in %s event
+ErrorResourceUseInEvent=%s used in %s event

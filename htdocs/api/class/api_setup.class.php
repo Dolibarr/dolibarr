@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -46,6 +46,68 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of ordering methods.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number {@min 0}
+     * @param int       $active     Payment type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     *
+     * @url     GET dictionary/ordering_methods
+     *
+     * @return array [List of ordering methods]
+     *
+     * @throws 400 RestException
+     * @throws 200 OK
+     */
+    public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+
+        $sql = "SELECT rowid, code, libelle as label, module";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
+        $sql .= " WHERE t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(400, $this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of payments types.
      *
      * @param string    $sortfield  Sort field
@@ -67,22 +129,22 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT id, code, type, libelle as label, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
-        $sql.= " WHERE t.entity IN (".getEntity('c_paiement').")";
-        $sql.= " AND t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_paiement').")";
+        $sql .= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
             }
-              $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+              $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -136,19 +198,19 @@ class Setup extends DolibarrApi
         // Note: The filter is not applied in the SQL request because it must
         // be applied to the translated names, not to the names in database.
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country as t";
-        $sql.=" WHERE 1 = 1";
+        $sql .= " WHERE 1 = 1";
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -198,12 +260,63 @@ class Setup extends DolibarrApi
      */
     public function getCountryByID($id, $lang = '')
     {
+        return $this->_fetchCcountry($id, '', '', $lang);
+    }
+
+    /**
+     * Get country by Code.
+     *
+     * @param string    $code      Code of country
+     * @param string    $lang      Code of the language the name of the
+     *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/countries/byCode/{code}
+     *
+     * @throws RestException
+     */
+    public function getCountryByCode($code, $lang = '')
+    {
+        return $this->_fetchCcountry('', $code, '', $lang);
+    }
+
+    /**
+     * Get country by Iso.
+     *
+     * @param string    $iso       ISO of country
+     * @param string    $lang      Code of the language the name of the
+     *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/countries/byISO/{iso}
+     *
+     * @throws RestException
+     */
+    public function getCountryByISO($iso, $lang = '')
+    {
+        return $this->_fetchCcountry('', '', $iso, $lang);
+    }
+
+    /**
+    * Get country.
+    *
+    * @param int       $id        ID of country
+    * @param string    $code      Code of country
+    * @param string    $iso       ISO of country
+    * @param string    $lang      Code of the language the name of the
+    *                             country must be translated to
+    * @return array 			   Array of cleaned object properties
+    *
+    * @throws RestException
+    */
+    private function _fetchCcountry($id, $code = '', $iso = '', $lang = '')
+    {
         $country = new Ccountry($this->db);
 
-        if ($country->fetch($id) < 0) {
+        $result = $country->fetch($id, $code, $iso);
+        if ($result < 0) {
             throw new RestException(503, 'Error when retrieving country : '.$country->error);
-        }
-        elseif ($country->fetch($id) == 0) {
+        } elseif ($result == 0) {
             throw new RestException(404, 'country not found');
         }
 
@@ -234,21 +347,21 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT rowid, code, label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_availability as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_availability as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
             }
-                  $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+                  $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -321,6 +434,66 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of shipment methods.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     *
+     * @return array List of shipment methods
+     *
+     * @url     GET dictionary/shipment_methods
+     *
+     * @throws RestException
+     */
+    public function getListOfShipmentMethods($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+        $sql = "SELECT t.rowid, t.code, t.libelle, t.description, t.tracking";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+        $sql .= " WHERE t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of shipment methods : '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of events types.
      *
      * @param string    $sortfield  Sort field
@@ -329,7 +502,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $type       To filter on type of event
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array				List of events types
      *
@@ -342,23 +515,23 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT id, code, type, libelle as label, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as t";
-        $sql.= " WHERE t.active = ".$active;
-        if ($type) $sql.=" AND t.type LIKE '%" . $this->db->escape($type) . "%'";
-        if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as t";
+        $sql .= " WHERE t.active = ".$active;
+        if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+        if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -385,6 +558,70 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of contacts types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $type       To filter on type of contact
+     * @param string    $module     To filter on module contacts
+     * @param int       $active     Contact's type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array	  List of Contacts types
+     *
+     * @url     GET dictionary/contact_types
+     *
+     * @throws RestException
+     */
+    public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+
+        $sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
+        $sql .= " WHERE t.active = ".$active;
+        if ($type) $sql .= " AND type LIKE '%".$this->db->escape($type)."%'";
+        if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of contacts types : '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of civilities.
      *
      * @param string    $sortfield  Sort field
@@ -392,9 +629,9 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Civility is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return array				List of civility types
+     * @return array		List of civility types
      *
      * @url     GET dictionary/civilities
      *
@@ -405,22 +642,22 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT rowid, code, label, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_civility as t";
-        $sql.= " WHERE t.active = ".$active;
-        if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_civility as t";
+        $sql .= " WHERE t.active = ".$active;
+        if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -466,31 +703,33 @@ class Setup extends DolibarrApi
     {
         $list = array();
         $sql = "SELECT t.code_iso, t.label, t.unicode";
-        if (!empty($multicurrency)) $sql.= " , cr.date_sync, cr.rate ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
+        if (!empty($multicurrency)) $sql .= " , cr.date_sync, cr.rate ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
         if (!empty($multicurrency)) {
-        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
-        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
+            $sql .= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
+            $sql .= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
         }
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " WHERE t.active = ".$active;
         if (!empty($multicurrency)) {
-        $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
-        if (!empty($multicurrency) && $multicurrency != 2) $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+            $sql .= " AND m.entity IN (".getEntity('multicurrency').")";
+            if (!empty($multicurrency) && $multicurrency != 2) {
+                $sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+            }
         }
 
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -533,27 +772,27 @@ class Setup extends DolibarrApi
     {
         $list = array();
 
-        if ($type == 'thirdparty') $type='societe';
-        if ($type == 'contact') $type='socpeople';
+        if ($type == 'thirdparty') $type = 'societe';
+        if ($type == 'contact') $type = 'socpeople';
 
         $sql = "SELECT t.rowid, t.name, t.label, t.type, t.size, t.elementtype, t.fieldunique, t.fieldrequired, t.param, t.pos, t.alwayseditable, t.perms, t.list, t.fielddefault, t.fieldcomputed";
-        $sql.= " FROM ".MAIN_DB_PREFIX."extrafields as t";
-        $sql.= " WHERE t.entity IN (".getEntity('extrafields').")";
-        if (! empty($type)) $sql.= " AND t.elementtype = '".$this->db->escape($type)."'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+        $sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
+        if (!empty($type)) $sql .= " AND t.elementtype = '".$this->db->escape($type)."'";
         // Add sql filters
         if ($sqlfilters)
         {
-        	if (! DolibarrApi::_checkFilters($sqlfilters))
+        	if (!DolibarrApi::_checkFilters($sqlfilters))
         	{
         		throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
         	}
-        	$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-        	$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        	$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+        	$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
         	if ($this->db->num_rows($resql))
@@ -561,19 +800,19 @@ class Setup extends DolibarrApi
         		while ($tab = $this->db->fetch_object($resql))
         		{
         			// New usage
-        			$list[$tab->elementtype][$tab->name]['type']=$tab->type;
-        			$list[$tab->elementtype][$tab->name]['label']=$tab->label;
-        			$list[$tab->elementtype][$tab->name]['size']=$tab->size;
-        			$list[$tab->elementtype][$tab->name]['elementtype']=$tab->elementtype;
-        			$list[$tab->elementtype][$tab->name]['default']=$tab->fielddefault;
-        			$list[$tab->elementtype][$tab->name]['computed']=$tab->fieldcomputed;
-        			$list[$tab->elementtype][$tab->name]['unique']=$tab->fieldunique;
-        			$list[$tab->elementtype][$tab->name]['required']=$tab->fieldrequired;
-        			$list[$tab->elementtype][$tab->name]['param']=($tab->param ? unserialize($tab->param) : '');
-        			$list[$tab->elementtype][$tab->name]['pos']=$tab->pos;
-        			$list[$tab->elementtype][$tab->name]['alwayseditable']=$tab->alwayseditable;
-        			$list[$tab->elementtype][$tab->name]['perms']=$tab->perms;
-        			$list[$tab->elementtype][$tab->name]['list']=$tab->list;
+        			$list[$tab->elementtype][$tab->name]['type'] = $tab->type;
+        			$list[$tab->elementtype][$tab->name]['label'] = $tab->label;
+        			$list[$tab->elementtype][$tab->name]['size'] = $tab->size;
+        			$list[$tab->elementtype][$tab->name]['elementtype'] = $tab->elementtype;
+        			$list[$tab->elementtype][$tab->name]['default'] = $tab->fielddefault;
+        			$list[$tab->elementtype][$tab->name]['computed'] = $tab->fieldcomputed;
+        			$list[$tab->elementtype][$tab->name]['unique'] = $tab->fieldunique;
+        			$list[$tab->elementtype][$tab->name]['required'] = $tab->fieldrequired;
+        			$list[$tab->elementtype][$tab->name]['param'] = ($tab->param ? unserialize($tab->param) : '');
+        			$list[$tab->elementtype][$tab->name]['pos'] = $tab->pos;
+        			$list[$tab->elementtype][$tab->name]['alwayseditable'] = $tab->alwayseditable;
+        			$list[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
+        			$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
         		}
         	}
         }
@@ -582,7 +821,7 @@ class Setup extends DolibarrApi
             throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
         }
 
-        if (! count($list))
+        if (!count($list))
         {
         	throw new RestException(404, 'No extrafield found');
         }
@@ -613,23 +852,23 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT rowid AS id, zip, town, fk_county, fk_pays AS fk_country";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as t";
-        $sql.= " AND t.active = ".$active;
-        if ($zipcode) $sql.=" AND t.zip LIKE '%" . $this->db->escape($zipcode) . "%'";
-        if ($town)    $sql.=" AND t.town LIKE '%" . $this->db->escape($town) . "%'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_ziptown as t";
+        $sql .= " AND t.active = ".$active;
+        if ($zipcode) $sql .= " AND t.zip LIKE '%".$this->db->escape($zipcode)."%'";
+        if ($town)    $sql .= " AND t.town LIKE '%".$this->db->escape($town)."%'";
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -677,22 +916,22 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT rowid as id, code, sortorder, libelle as label, libelle_facture as descr, type_cdr, nbjour, decalage, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql.= " WHERE t.entity IN (".getEntity('c_payment_term').")";
-        $sql.= " AND t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_payment_term').")";
+        $sql .= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-                $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+                $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -738,18 +977,18 @@ class Setup extends DolibarrApi
         $list = array();
 
         $sql = "SELECT rowid as id, code, libelle as label, description, tracking, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
-        $sql.= " WHERE t.entity IN (".getEntity('c_shipment_mode').")";
-        $sql.= " AND t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_shipment_mode').")";
+        $sql .= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-                $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+                $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
@@ -786,7 +1025,7 @@ class Setup extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Measuring unit is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array				List of measuring unit
      *
@@ -799,21 +1038,21 @@ class Setup extends DolibarrApi
         $list = array();
         //TODO link with multicurrency module
         $sql = "SELECT t.rowid, t.code, t.label,t.short_label, t.active, t.scale, t.unit_type";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_units as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -839,6 +1078,73 @@ class Setup extends DolibarrApi
         return $list;
     }
 
+    /**
+     * Get the list of social networks.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Social network is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array				List of social networks
+     *
+     * @url     GET dictionary/socialnetworks
+     *
+     * @throws RestException
+     */
+    public function getListOfsocialNetworks($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        global $conf;
+
+        if (empty($conf->socialnetworks->enabled)) {
+            throw new RestException(400, 'API not available: this dictionary is not enabled by setup');
+        }
+
+		$list = array();
+        //TODO link with multicurrency module
+        $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
+        $sql .= " AND t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of social networks: '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
+
      /**
      * Get the list of tickets categories.
      *
@@ -859,21 +1165,21 @@ class Setup extends DolibarrApi
     	$list = array();
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-      $sql.= " WHERE t.active = ".$active;
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
+        $sql .= " WHERE t.active = ".$active;
     	// Add sql filters
     	if ($sqlfilters)
     	{
-    		if (! DolibarrApi::_checkFilters($sqlfilters))
+    		if (!DolibarrApi::_checkFilters($sqlfilters))
     		{
     			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
     		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
     	}
 
 
-    	$sql.= $this->db->order($sortfield, $sortorder);
+    	$sql .= $this->db->order($sortfield, $sortorder);
 
     	if ($limit) {
     		if ($page < 0) {
@@ -919,21 +1225,21 @@ class Setup extends DolibarrApi
     	$list = array();
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
-        $sql.= " WHERE t.active = ".$active;
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
+        $sql .= " WHERE t.active = ".$active;
     	// Add sql filters
     	if ($sqlfilters)
     	{
-    		if (! DolibarrApi::_checkFilters($sqlfilters))
+    		if (!DolibarrApi::_checkFilters($sqlfilters))
     		{
     			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
     		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
     	}
 
 
-    	$sql.= $this->db->order($sortfield, $sortorder);
+    	$sql .= $this->db->order($sortfield, $sortorder);
 
     	if ($limit) {
     		if ($page < 0) {
@@ -979,23 +1285,23 @@ class Setup extends DolibarrApi
     	$list = array();
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-        $sql.= " WHERE t.active = ".$active;
-    	if ($type) $sql.=" AND t.type LIKE '%" . $this->db->escape($type) . "%'";
-    	if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
+        $sql .= " WHERE t.active = ".(int) $active;
+    	// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+    	// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
     	// Add sql filters
     	if ($sqlfilters)
     	{
-    		if (! DolibarrApi::_checkFilters($sqlfilters))
+    		if (!DolibarrApi::_checkFilters($sqlfilters))
     		{
     			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
     		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
     	}
 
 
-    	$sql.= $this->db->order($sortfield, $sortorder);
+    	$sql .= $this->db->order($sortfield, $sortorder);
 
     	if ($limit) {
     		if ($page < 0) {
@@ -1021,6 +1327,20 @@ class Setup extends DolibarrApi
     	return $list;
     }
 
+    /**
+     * Get properties of company
+     *
+     * @url	GET /company
+     *
+     * @return  array|mixed Data without useless information
+     *
+     */
+    public function getCompany()
+    {
+        global $mysoc;
+
+        return $this->_cleanObjectDatas($mysoc);
+    }
 
     /**
      * Do a test of integrity for files and setup.
@@ -1036,7 +1356,7 @@ class Setup extends DolibarrApi
     {
     	global $langs, $conf;
 
-    	if (! DolibarrApiAccess::$user->admin
+    	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
     		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
@@ -1054,13 +1374,13 @@ class Setup extends DolibarrApi
     	$file_list = array('missing' => array(), 'updated' => array());
 
     	// Local file to compare to
-    	$xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
+    	$xmlshortfile = GETPOST('xmlshortfile') ?GETPOST('xmlshortfile') : '/install/filelist-'.DOL_VERSION.'.xml';
     	$xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
     	// Remote file to compare to
     	$xmlremote = ($target == 'default' ? '' : $target);
-    	if (empty($xmlremote) && ! empty($conf->global->MAIN_FILECHECK_URL)) $xmlremote = $conf->global->MAIN_FILECHECK_URL;
-    	$param='MAIN_FILECHECK_URL_'.DOL_VERSION;
-    	if (empty($xmlremote) && ! empty($conf->global->$param)) $xmlremote = $conf->global->$param;
+    	if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) $xmlremote = $conf->global->MAIN_FILECHECK_URL;
+    	$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
+    	if (empty($xmlremote) && !empty($conf->global->$param)) $xmlremote = $conf->global->$param;
     	if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 
     	if ($target == 'local')
@@ -1071,7 +1391,7 @@ class Setup extends DolibarrApi
     		}
     		else
     		{
-    			throw new RestException(500, $langs->trans('XmlNotFound') . ': ' . $xmlfile);
+    			throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
     		}
     	}
     	else
@@ -1079,7 +1399,7 @@ class Setup extends DolibarrApi
     		$xmlarray = getURLContent($xmlremote);
 
     		// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
-    		if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
+    		if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     		{
     			$xmlfile = $xmlarray['content'];
     			//print "xmlfilestart".$xmlfile."endxmlfile";
@@ -1087,7 +1407,7 @@ class Setup extends DolibarrApi
     		}
     		else
     		{
-    			$errormsg=$langs->trans('XmlNotFound') . ': ' . $xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
+    			$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
     			throw new RestException(500, $errormsg);
     		}
     	}
@@ -1103,83 +1423,83 @@ class Setup extends DolibarrApi
     		// Forced constants
     		if (is_object($xml->dolibarr_constants[0]))
     		{
-    			$out.=load_fiche_titre($langs->trans("ForcedConstants"));
+    			$out .= load_fiche_titre($langs->trans("ForcedConstants"));
 
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Constant") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("Value") . '</td>';
-    			$out.='</tr>'."\n";
+    			$out .= '<div class="div-table-responsive-no-min">';
+    			$out .= '<table class="noborder">';
+    			$out .= '<tr class="liste_titre">';
+    			$out .= '<td>#</td>';
+    			$out .= '<td>'.$langs->trans("Constant").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedValue").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("Value").'</td>';
+    			$out .= '</tr>'."\n";
 
     			$i = 0;
     			foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
     			{
-    				$constname=$constant['name'];
-    				$constvalue=(string) $constant;
-    				$constvalue = (empty($constvalue)?'0':$constvalue);
+    				$constname = $constant['name'];
+    				$constvalue = (string) $constant;
+    				$constvalue = (empty($constvalue) ? '0' : $constvalue);
     				// Value found
-    				$value='';
-    				if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
-    				$valueforchecksum=(empty($value)?'0':$value);
+    				$value = '';
+    				if ($constname && $conf->global->$constname != '') $value = $conf->global->$constname;
+    				$valueforchecksum = (empty($value) ? '0' : $value);
 
-    				$checksumconcat[]=$valueforchecksum;
+    				$checksumconcat[] = $valueforchecksum;
 
     				$i++;
-    				$out.='<tr class="oddeven">';
-    				$out.='<td>'.$i.'</td>' . "\n";
-    				$out.='<td>'.$constname.'</td>' . "\n";
-    				$out.='<td align="center">'.$constvalue.'</td>' . "\n";
-    				$out.='<td align="center">'.$valueforchecksum.'</td>' . "\n";
-    				$out.="</tr>\n";
+    				$out .= '<tr class="oddeven">';
+    				$out .= '<td>'.$i.'</td>'."\n";
+    				$out .= '<td>'.$constname.'</td>'."\n";
+    				$out .= '<td class="center">'.$constvalue.'</td>'."\n";
+    				$out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
+    				$out .= "</tr>\n";
     			}
 
-    			if ($i==0)
+    			if ($i == 0)
     			{
-    				$out.='<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    				$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
-    			$out.='</table>';
-    			$out.='</div>';
+    			$out .= '</table>';
+    			$out .= '</div>';
 
-    			$out.='<br>';
+    			$out .= '<br>';
     		}
 
     		// Scan htdocs
     		if (is_object($xml->dolibarr_htdocs_dir[0]))
     		{
     			//var_dump($xml->dolibarr_htdocs_dir[0]['includecustom']);exit;
-    			$includecustom=(empty($xml->dolibarr_htdocs_dir[0]['includecustom'])?0:$xml->dolibarr_htdocs_dir[0]['includecustom']);
+    			$includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
     			// Defined qualified files (must be same than into generate_filelist_xml.php)
-    			$regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-    			$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+    			$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
+    			$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
     			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
     			// Fill file_list with files in signature, new files, modified files
-    			$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat);		// Fill array $file_list
+    			$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
     			// Complete with list of new files
     			foreach ($scanfiles as $keyfile => $valfile)
     			{
-    				$tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
-    				if (! in_array($tmprelativefilename, $file_list['insignature']))
+    				$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
+    				if (!in_array($tmprelativefilename, $file_list['insignature']))
     				{
-    					$md5newfile=@md5_file($valfile['fullname']);    // Can fails if we don't have permission to open/read file
-    					$file_list['added'][]=array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+    					$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
+    					$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
     				}
     			}
 
     			// Files missings
-    			$out.=load_fiche_titre($langs->trans("FilesMissing"));
+    			$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Filename") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
-    			$out.='</tr>'."\n";
+    			$out .= '<div class="div-table-responsive-no-min">';
+    			$out .= '<table class="noborder">';
+    			$out .= '<tr class="liste_titre">';
+    			$out .= '<td>#</td>';
+    			$out .= '<td>'.$langs->trans("Filename").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '</tr>'."\n";
     			$tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
     			if (is_array($tmpfilelist) && count($tmpfilelist))
     			{
@@ -1187,36 +1507,36 @@ class Setup extends DolibarrApi
     				foreach ($tmpfilelist as $file)
     				{
     					$i++;
-    					$out.='<tr class="oddeven">';
-    					$out.='<td>'.$i.'</td>' . "\n";
-    					$out.='<td>'.$file['filename'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-    					$out.="</tr>\n";
+    					$out .= '<tr class="oddeven">';
+    					$out .= '<td>'.$i.'</td>'."\n";
+    					$out .= '<td>'.$file['filename'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= "</tr>\n";
     				}
     			}
     			else
     			{
-    				$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    				$out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
-    			$out.='</table>';
-    			$out.='</div>';
+    			$out .= '</table>';
+    			$out .= '</div>';
 
-    			$out.='<br>';
+    			$out .= '<br>';
 
     			// Files modified
-    			$out.=load_fiche_titre($langs->trans("FilesModified"));
+    			$out .= load_fiche_titre($langs->trans("FilesModified"));
 
-    			$totalsize=0;
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Filename") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("Size") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
-    			$out.='</tr>'."\n";
+    			$totalsize = 0;
+    			$out .= '<div class="div-table-responsive-no-min">';
+    			$out .= '<table class="noborder">';
+    			$out .= '<tr class="liste_titre">';
+    			$out .= '<td>#</td>';
+    			$out .= '<td>'.$langs->trans("Filename").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
+    			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
+    			$out .= '</tr>'."\n";
     			$tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
     			if (is_array($tmpfilelist2) && count($tmpfilelist2))
     			{
@@ -1224,49 +1544,49 @@ class Setup extends DolibarrApi
     				foreach ($tmpfilelist2 as $file)
     				{
     					$i++;
-    					$out.='<tr class="oddeven">';
-    					$out.='<td>'.$i.'</td>' . "\n";
-    					$out.='<td>'.$file['filename'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['md5'].'</td>' . "\n";
+    					$out .= '<tr class="oddeven">';
+    					$out .= '<td>'.$i.'</td>'."\n";
+    					$out .= '<td>'.$file['filename'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
-    					$out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
-    					$out.="</tr>\n";
+    					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
+    					$out .= '<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+    					$out .= "</tr>\n";
     				}
-    				$out.='<tr class="liste_total">';
-    				$out.='<td></td>' . "\n";
-    				$out.='<td>'.$langs->trans("Total").'</td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
-    				$out.='<td class="right"></td>' . "\n";
-    				$out.="</tr>\n";
+    				$out .= '<tr class="liste_total">';
+    				$out .= '<td></td>'."\n";
+    				$out .= '<td>'.$langs->trans("Total").'</td>'."\n";
+    				$out .= '<td align="center"></td>'."\n";
+    				$out .= '<td align="center"></td>'."\n";
+    				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
+    				$out .= '<td class="right"></td>'."\n";
+    				$out .= "</tr>\n";
     			}
     			else
     			{
-    				$out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    				$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
-    			$out.='</table>';
-    			$out.='</div>';
+    			$out .= '</table>';
+    			$out .= '</div>';
 
-    			$out.='<br>';
+    			$out .= '<br>';
 
     			// Files added
-    			$out.=load_fiche_titre($langs->trans("FilesAdded"));
+    			$out .= load_fiche_titre($langs->trans("FilesAdded"));
 
     			$totalsize = 0;
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Filename") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("Size") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
-    			$out.='</tr>'."\n";
+    			$out .= '<div class="div-table-responsive-no-min">';
+    			$out .= '<table class="noborder">';
+    			$out .= '<tr class="liste_titre">';
+    			$out .= '<td>#</td>';
+    			$out .= '<td>'.$langs->trans("Filename").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
+    			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
+    			$out .= '</tr>'."\n";
     			$tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
     			if (is_array($tmpfilelist3) && count($tmpfilelist3))
     			{
@@ -1274,32 +1594,32 @@ class Setup extends DolibarrApi
     				foreach ($tmpfilelist3 as $file)
     				{
     					$i++;
-    					$out.='<tr class="oddeven">';
-    					$out.='<td>'.$i.'</td>' . "\n";
-    					$out.='<td>'.$file['filename'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['md5'].'</td>' . "\n";
+    					$out .= '<tr class="oddeven">';
+    					$out .= '<td>'.$i.'</td>'."\n";
+    					$out .= '<td>'.$file['filename'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
-    					$out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
-    					$out.="</tr>\n";
+    					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
+    					$out .= '<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+    					$out .= "</tr>\n";
     				}
-    				$out.='<tr class="liste_total">';
-    				$out.='<td></td>' . "\n";
-    				$out.='<td>'.$langs->trans("Total").'</td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
-    				$out.='<td class="right"></td>' . "\n";
-    				$out.="</tr>\n";
+    				$out .= '<tr class="liste_total">';
+    				$out .= '<td></td>'."\n";
+    				$out .= '<td>'.$langs->trans("Total").'</td>'."\n";
+    				$out .= '<td align="center"></td>'."\n";
+    				$out .= '<td align="center"></td>'."\n";
+    				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
+    				$out .= '<td class="right"></td>'."\n";
+    				$out .= "</tr>\n";
     			}
     			else
     			{
-    				$out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    				$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
-    			$out.='</table>';
-    			$out.='</div>';
+    			$out .= '</table>';
+    			$out .= '</div>';
 
 
     			// Show warning
@@ -1332,24 +1652,24 @@ class Setup extends DolibarrApi
     			if (count($file_list['added']))
     			{
     				$resultcode = 'warning';
-    				$resultcomment='FileIntegrityIsOkButFilesWereAdded';
+    				$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
     				//$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-    				$outcurrentchecksum =  $checksumget;
+    				$outcurrentchecksum = $checksumget;
     			}
     			else
     			{
     				$resultcode = 'ok';
-    				$resultcomment='Success';
+    				$resultcomment = 'Success';
     				//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
-    				$outcurrentchecksum =  $checksumget;
+    				$outcurrentchecksum = $checksumget;
     			}
     		}
     		else
     		{
     			$resultcode = 'error';
-    			$resultcomment='Error';
+    			$resultcomment = 'Error';
     			//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
-    			$outcurrentchecksum =  $checksumget;
+    			$outcurrentchecksum = $checksumget;
     		}
     	}
     	else {

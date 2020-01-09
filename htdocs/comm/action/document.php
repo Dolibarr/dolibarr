@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,8 +45,8 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
-if ($user->societe_id > 0)
+if ($user->socid) $socid=$user->socid;
+if ($user->socid > 0)
 {
 	unset($_GET["action"]);
 	$action='';
@@ -159,7 +159,7 @@ if ($object->id > 0)
 	}
 	$morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'id', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 

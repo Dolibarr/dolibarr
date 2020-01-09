@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,7 +53,7 @@ $cancel=GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
 
@@ -299,7 +299,7 @@ if ($result)
         }
 
         print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
@@ -314,7 +314,7 @@ if ($result)
 		print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         $i++;
 
@@ -632,14 +632,14 @@ if ($result)
             print '<hr>'."\n";
 
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="setreconcile">';
             print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
             print '<div class="fichecenter">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
             if ($user->rights->banque->consolidate)

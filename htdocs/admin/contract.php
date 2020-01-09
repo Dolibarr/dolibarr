@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","errors","contracts"));
+$langs->loadLangs(array("admin", "errors", "contracts"));
 
 if (!$user->admin) accessforbidden();
 
@@ -37,11 +37,11 @@ $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type='contract';
+$type = 'contract';
 
 if (empty($conf->global->CONTRACT_ADDON))
 {
-    $conf->global->CONTRACT_ADDON='mod_contract_serpis';
+    $conf->global->CONTRACT_ADDON = 'mod_contract_serpis';
 }
 
 
@@ -54,12 +54,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask')
 {
     $maskconst = GETPOST('maskconstcontract', 'alpha');
-    $maskvalue =  GETPOST('maskcontract', 'alpha');
+    $maskvalue = GETPOST('maskcontract', 'alpha');
     if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 
-    if (! $res > 0) $error++;
+    if (!$res > 0) $error++;
 
- 	if (! $error)
+ 	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -71,20 +71,20 @@ if ($action == 'updateMask')
 
 elseif ($action == 'specimen') // For contract
 {
-	$modele= GETPOST('module', 'alpha');
+	$modele = GETPOST('module', 'alpha');
 
 	$contract = new Contrat($db);
 	$contract->initAsSpecimen();
 
 	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
+	$file = ''; $classname = ''; $filefound = 0;
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
+	    $file = dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file))
 		{
-			$filefound=1;
+			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
@@ -157,15 +157,15 @@ elseif ($action == 'setmod')
 
 elseif ($action == 'set_other')
 {
-	$freetext= GETPOST('CONTRACT_FREE_TEXT', 'none');	// No alpha here, we want exact string
+	$freetext = GETPOST('CONTRACT_FREE_TEXT', 'none'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
+	$draft = GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (! $res1 > 0 || ! $res2 > 0) $error++;
+	if (!$res1 > 0 || !$res2 > 0) $error++;
 
- 	if (! $error)
+ 	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -180,16 +180,16 @@ elseif ($action == 'set_other')
  * View
  */
 
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup');
 
-$head=contract_admin_prepare_head();
+$head = contract_admin_prepare_head();
 
 dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
 
@@ -199,7 +199,7 @@ dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
 
 print load_fiche_titre($langs->trans("ContractsNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -219,33 +219,31 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-
-			while (($file = readdir($handle))!==false)
+			while (($file = readdir($handle)) !== false)
 			{
-				if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
 				{
-					$file = substr($file, 0, dol_strlen($file)-4);
+					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 
 					$module = new $file($db);
 
 					// Show modules according to features level
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
 						// Show example of numbering model
 						print '<td class="nowrap">';
-						$tmp=$module->getExample();
+						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
-						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -262,21 +260,21 @@ foreach ($dirmodels as $reldir)
 						}
 						print '</td>';
 
-						$contract=new Contrat($db);
+						$contract = new Contrat($db);
 						$contract->initAsSpecimen();
 
 						// Info
-						$htmltooltip='';
-						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc, $contract);
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval = $module->getNextValue($mysoc, $contract);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            $htmltooltip .= ''.$langs->trans("NextValue").': ';
                             if ($nextval) {
-                                if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
                                     $nextval = $langs->trans($nextval);
-                                $htmltooltip.=$nextval.'<br>';
+                                $htmltooltip .= $nextval.'<br>';
                             } else {
-                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                                $htmltooltip .= $langs->trans($module->error).'<br>';
                             }
                         }
 
@@ -304,14 +302,14 @@ print load_fiche_titre($langs->trans("TemplatePDFContracts"), '', '');
 // Defini tableau def des modeles
 $def = array();
 $sql = "SELECT nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
-$sql.= " AND entity = ".$conf->entity;
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = '".$type."'";
+$sql .= " AND entity = ".$conf->entity;
+$resql = $db->query($sql);
 if ($resql)
 {
 	$i = 0;
-	$num_rows=$db->num_rows($resql);
+	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows)
 	{
 		$array = $db->fetch_array($resql);
@@ -325,7 +323,7 @@ else
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -339,43 +337,42 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    foreach (array('','/doc') as $valdir)
+    foreach (array('', '/doc') as $valdir)
     {
     	$dir = dol_buildpath($reldir."core/modules/contract".$valdir);
 
         if (is_dir($dir))
         {
-            $handle=opendir($dir);
+            $handle = opendir($dir);
             if (is_resource($handle))
             {
-                while (($file = readdir($handle))!==false)
+                while (($file = readdir($handle)) !== false)
                 {
-                    $filelist[]=$file;
+                    $filelist[] = $file;
                 }
                 closedir($handle);
                 arsort($filelist);
 
-                foreach($filelist as $file)
+                foreach ($filelist as $file)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
-                    		$name = substr($file, 4, dol_strlen($file) -16);
-	                        $classname = substr($file, 0, dol_strlen($file) -12);
+                    		$name = substr($file, 4, dol_strlen($file) - 16);
+	                        $classname = substr($file, 0, dol_strlen($file) - 12);
 
 	                        require_once $dir.'/'.$file;
 	                        $module = new $classname($db);
 
-	                        $modulequalified=1;
-	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+	                        $modulequalified = 1;
+	                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
 
 	                        if ($modulequalified)
 	                        {
 	                            print '<tr class="oddeven"><td width="100">';
-	                            print (empty($module->name)?$name:$module->name);
+	                            print (empty($module->name) ? $name : $module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module, 'info')) print $module->info($langs);
 	                            else print $module->description;
@@ -409,7 +406,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
@@ -459,26 +456,26 @@ print "<br>";
  */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_other">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
+foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+$htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnContracts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
 print '<br>';
-$variablename='CONTRACT_FREE_TEXT';
+$variablename = 'CONTRACT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
@@ -486,7 +483,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td></tr>'."\n";

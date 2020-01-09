@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -186,7 +186,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     $head[$h][2] = 'journal';
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
     dol_fiche_head($head, 'journal');
 

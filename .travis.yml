@@ -29,12 +29,12 @@ addons:
     - pgloader
 
 php:
-- '5.5'
 - '5.6'
 - '7.0'
 - '7.1'
 - '7.2'
 - '7.3'
+- '7.4'
 - nightly
 
 env:
@@ -59,21 +59,21 @@ matrix:
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
-  - php: '5.6'
-    env: DB=mariadb
   - php: '7.0'
     env: DB=mariadb
   - php: '7.1'
     env: DB=mariadb
   - php: '7.2'
     env: DB=mariadb
-  - php: '5.6'
-    env: DB=postgresql
+  - php: '7.3'
+    env: DB=mariadb
   - php: '7.0'
     env: DB=postgresql
   - php: '7.1'
     env: DB=postgresql
   - php: '7.2'
+    env: DB=postgresql
+  - php: '7.3'
     env: DB=postgresql
   - php: nightly
     env: DB=postgresql
@@ -125,7 +125,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] \
-     [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ]; then
+     [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
     composer -n require phpunit/phpunit ^5 \
                         jakub-onderka/php-parallel-lint ^0 \
                         jakub-onderka/php-console-highlighter ^0 \
@@ -200,6 +200,7 @@ before_script:
       mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
+      #pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_9 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
       echo pgloader mysql://root@127.0.0.1/travis postgresql:///travis
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
@@ -209,7 +210,6 @@ before_script:
       #echo 'select * from information_schema.table_constraints;' | psql travis
       #echo 'ALTER TABLE "llx_accounting_account" DROP CONSTRAINT "idx_16390_primary"' | psql travis
     fi
-    # TODO: SQLite
     echo
 
   - |
@@ -222,6 +222,7 @@ before_script:
     echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
+    echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
       echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
@@ -230,7 +231,6 @@ before_script:
       echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
       echo '$'dolibarr_main_db_port=\'5432\'';' >> $CONF_FILE
     fi
-    # TODO: SQLite
     echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
     cat $CONF_FILE
     echo
@@ -248,7 +248,7 @@ before_script:
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
@@ -285,7 +285,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 
@@ -299,9 +299,69 @@ script:
   set +e
   echo
 
-# TODO: Check Javascript (jshint?)
+- |
+  export INSTALL_FORCED_FILE=htdocs/install/install.forced.php
+  echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
+  # Ensure we catch errors
+  set +e
+  echo '<?php ' > $INSTALL_FORCED_FILE
+  echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
+    echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
+  fi
+  if [ "$DB" = 'postgresql' ]; then
+    echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
+  fi
+  echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_databaselogin=\'travis\'';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_databasepass=\'\'';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
+  echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
+  #cat $INSTALL_FORCED_FILE
 
-# TODO: Check CSS (csslint?)
+#- |
+#  echo "Installing Dolibarr"
+#  cd htdocs/install
+#  php step1.php $TRAVIS_BUILD_DIR/htdocs > $TRAVIS_BUILD_DIR/install.log
+#  php step2.php set >> $TRAVIS_BUILD_DIR/install.log
+#  if [ "$?" -ne "0" ]; then
+#    echo "SORRY, AN ERROR OCCURED DURING INSTALLATION PROCESS"
+#    cat $TRAVIS_BUILD_DIR/install.log
+#    exit 1
+#  fi
+#  cd ../..
+#  rm $INSTALL_FORCED_FILE
+#  #cat $TRAVIS_BUILD_DIR/install.log
+# set +e
+#  echo
+
+- |
+  echo "Setting up database to test migrations"
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
+    echo "MySQL"
+    mysql -e 'DROP DATABASE IF EXISTS travis;'
+    mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
+    mysql -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+    mysql -e 'FLUSH PRIVILEGES;'
+    mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+  fi
+  if [ "$DB" = 'postgresql' ]; then
+    #pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+    #pgloader mysql://root:pass@127.0.0.1/base postgresql://dolibarrowner@127.0.0.1/dolibarr
+    echo pgloader mysql://root@127.0.0.1/travis postgresql:///travis
+    pgloader mysql://root@127.0.0.1/travis postgresql:///travis
+    echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql travis
+    echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql travis
+    #echo 'select * from INFORMATION_SCHEMA.COLUMNS where table_name = 'llx_accountingaccount' | psql travis
+    #echo 'select * from information_schema.table_constraints;' | psql travis
+    #echo 'ALTER TABLE "llx_accounting_account" DROP CONSTRAINT "idx_16390_primary"' | psql travis
+  fi
+  echo
 
 - |
   echo "Upgrading Dolibarr"
@@ -341,9 +401,12 @@ script:
   php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
   php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
   php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
-  php upgrade.php 10.0.0 11.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
-  php upgrade2.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
-  php step5.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
+  php upgrade.php 10.0.0 11.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade10001100.log
+  php upgrade2.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade10001100-2.log
+  php step5.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade10001100-3.log
+  php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
+  php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
+  php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
   # Enable modules not enabled into original dump
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?

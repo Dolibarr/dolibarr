@@ -149,7 +149,13 @@ BoxesDesc=Widgets son componentes mostrando alguna información que tu puedes ag
 OnlyActiveElementsAreShown=Solo elementos de <a href="%s">\nmodulos habilitados</a> son\n mostrados.
 ModulesDesc=Los módulos/aplicaciones determinan qué funciones están disponibles en el software. Algunos módulos requieren que se otorguen permisos a los usuarios después de activar el módulo. Haga clic en el botón de encendido/apagado (al final de la línea del módulo) para habilitar/deshabilitar un módulo/aplicación.
 ModulesMarketPlaceDesc=Tu puedes encontrar mas módulos para descargar en sitios web externos en el Internet
-URL=Vínculo
+ModulesDeployDesc=Si los permisos en tu sistema de archivos lo permiten, puedes usar esta herramienta para utilizar un módulo externo. El módulo  entonces sera visible en la pestaña <strong>%s</strong>.
+ModulesMarketPlaces=Encontrar App/módulos externos
+ModulesDevelopYourModule=Desarrola tus propios app/módulos
+ModulesDevelopDesc=Tu también podrias desarrollar tu propio módulo o encontrar un socio que desarrolle uno por ti.
+DOLISTOREdescriptionLong=En vez de cambiar al sitio <a href="https://www.dolistore.com">www.dolistore.com</a>  para encontrar un módulo externo, tu puedes usar esta herramienta integrada que desempeñará la busqueda en el mercado externo   por ti (podria ser lento, necesario tener acceso a internet)...
+NotCompatible=Este módulo no parece ser compatible con tu Dolibarr %s (Min %s- Max %s).
+CompatibleAfterUpdate=Este  módulo requiere una actualización de tu Dolibarr %s (Min %s - Max %s).
 ActivateOn=Activar
 ActiveOn=Activado
 SourceFile=Archivo fuente

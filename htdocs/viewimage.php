@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -198,7 +198,7 @@ if (! empty($hashp))
 else
 {
 	// Basic protection (against external users only)
-	if ($user->societe_id > 0)
+	if ($user->socid > 0)
 	{
 		if ($sqlprotectagainstexternals)
 		{
@@ -210,7 +210,7 @@ else
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					if ($user->societe_id != $obj->fk_soc)
+					if ($user->socid != $obj->fk_soc)
 					{
 						$accessallowed=0;
 						break;

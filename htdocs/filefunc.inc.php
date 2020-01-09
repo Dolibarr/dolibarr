@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE', 'Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION', '11.0.0-alpha');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (! defined('DOL_VERSION')) define('DOL_VERSION', '12.0.0-alpha');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (! defined('EURO')) define('EURO', chr(128));
 

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -251,7 +251,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_UNVALIDATE')
         {
-           // Load translation files required by the page
+            // Load translation files required by the page
             $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceBackToDraftInDolibarr", $object->ref);
@@ -808,9 +808,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $object->actionmsg=$langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
 		    if ($object->oldcopy->fk_user_assign > 0)
 		    {
-		      $tmpuser=new User($this->db);
-		      $tmpuser->fetch($object->oldcopy->fk_user_assign);
-		      $object->actionmsg.="\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
+		        $tmpuser=new User($this->db);
+		        $tmpuser->fetch($object->oldcopy->fk_user_assign);
+		        $object->actionmsg.="\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
 		    }
 		    else
 		    {
@@ -954,8 +954,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		else
 		{
-            $error ="Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
-            $this->error=$error;
+            $this->error="Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
             $this->errors=$actioncomm->errors;
 
             dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);

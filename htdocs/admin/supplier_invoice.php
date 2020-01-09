@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,14 +40,14 @@ $langs->loadLangs(array("admin", "other", "orders"));
 if (!$user->admin)
 accessforbidden();
 
-$type=GETPOST('type', 'alpha');
-$value=GETPOST('value', 'alpha');
-$action=GETPOST('action', 'alpha');
+$type = GETPOST('type', 'alpha');
+$value = GETPOST('value', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 
-$specimenthirdparty=new Societe($db);
+$specimenthirdparty = new Societe($db);
 $specimenthirdparty->initAsSpecimen();
 
 
@@ -57,17 +57,17 @@ $specimenthirdparty->initAsSpecimen();
 
 if ($action == 'updateMask')
 {
-    $maskconstinvoice=GETPOST('maskconstinvoice', 'alpha');
-	$maskconstcredit=GETPOST('maskconstcredit', 'alpha');
-    $maskinvoice=GETPOST('maskinvoice', 'alpha');
-	$maskcredit=GETPOST('maskcredit', 'alpha');
+    $maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
+	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
+    $maskinvoice = GETPOST('maskinvoice', 'alpha');
+	$maskcredit = GETPOST('maskcredit', 'alpha');
 
     if ($maskconstinvoice)  $res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	if ($maskconstcredit)  $res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
 
-    if (! $res > 0) $error++;
+    if (!$res > 0) $error++;
 
-	if (! $error)
+	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
@@ -79,21 +79,21 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')  // For invoices
 {
-    $modele=GETPOST('module', 'alpha');
+    $modele = GETPOST('module', 'alpha');
 
     $facture = new FactureFournisseur($db);
     $facture->initAsSpecimen();
-    $facture->thirdparty=$specimenthirdparty;    // Define who should has build the invoice (so the supplier)
+    $facture->thirdparty = $specimenthirdparty; // Define who should has build the invoice (so the supplier)
 
     // Search template files
-    $file=''; $classname=''; $filefound=0;
-    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-    foreach($dirmodels as $reldir)
+    $file = ''; $classname = ''; $filefound = 0;
+    $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach ($dirmodels as $reldir)
     {
-    	$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/pdf_".$modele.".modules.php", 0);
+    	$file = dol_buildpath($reldir."core/modules/supplier_invoice/pdf/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
-    		$filefound=1;
+    		$filefound = 1;
     		$classname = "pdf_".$modele;
     		break;
     	}
@@ -176,13 +176,13 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT', 'none');	// No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT', 'none'); // No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-    if (! $res > 0) $error++;
+    if (!$res > 0) $error++;
 
-	if (! $error)
+	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
@@ -197,13 +197,13 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
  * View
  */
 
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader("", "");
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 
 print "<br>";
@@ -217,7 +217,7 @@ dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'company');
 
 print load_fiche_titre($langs->trans("SuppliersInvoiceNumberingModel"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -237,12 +237,11 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
-                if (substr($file, 0, 24) == 'mod_facture_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+                if (substr($file, 0, 24) == 'mod_facture_fournisseur_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
                 {
-                    $file = substr($file, 0, dol_strlen($file)-4);
+                    $file = substr($file, 0, dol_strlen($file) - 4);
 
                     require_once $dir.$file.'.php';
 
@@ -251,7 +250,7 @@ foreach ($dirmodels as $reldir)
                     if ($module->isEnabled())
                     {
                         // Show modules according to features level
-                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 
@@ -261,15 +260,15 @@ foreach ($dirmodels as $reldir)
 
                         // Show example of numbering model
                         print '<td class="nowrap">';
-                        $tmp=$module->getExample();
+                        $tmp = $module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
                             $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
                         }
-                        elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
@@ -280,25 +279,25 @@ foreach ($dirmodels as $reldir)
                         }
                         print '</td>';
 
-                        $invoice=new FactureFournisseur($db);
+                        $invoice = new FactureFournisseur($db);
                         $invoice->initAsSpecimen();
 
                         // Info
-                        $htmltooltip='';
-                        $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-                        $nextval=$module->getNextValue($mysoc, $invoice);
+                        $htmltooltip = '';
+                        $htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+                        $nextval = $module->getNextValue($mysoc, $invoice);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            $htmltooltip .= ''.$langs->trans("NextValue").': ';
                             if ($nextval) {
-                                if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
                                     $nextval = $langs->trans($nextval);
-                                $htmltooltip.=$nextval.'<br>';
+                                $htmltooltip .= $nextval.'<br>';
                             } else {
-                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                                $htmltooltip .= $langs->trans($module->error).'<br>';
                             }
                         }
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print $form->textwithpicto('', $htmltooltip, 1, 0);
                         print '</td>';
 
@@ -326,15 +325,15 @@ print load_fiche_titre($langs->trans("BillsPDFModules"), '', '');
 $def = array();
 
 $sql = "SELECT nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = 'invoice_supplier'";
-$sql.= " AND entity = ".$conf->entity;
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = 'invoice_supplier'";
+$sql .= " AND entity = ".$conf->entity;
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
     $i = 0;
-    $num_rows=$db->num_rows($resql);
+    $num_rows = $db->num_rows($resql);
     while ($i < $num_rows)
     {
         $array = $db->fetch_array($resql);
@@ -347,7 +346,7 @@ else
     dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Description").'</td>'."\n";
@@ -365,18 +364,17 @@ foreach ($dirmodels as $reldir)
 
     if (is_dir($dir))
     {
-
-        $handle=opendir($dir);
+        $handle = opendir($dir);
 
 
         if (is_resource($handle))
         {
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
                 if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                 {
-                    $name = substr($file, 4, dol_strlen($file) -16);
-                    $classname = substr($file, 0, dol_strlen($file) -12);
+                    $name = substr($file, 4, dol_strlen($file) - 16);
+                    $classname = substr($file, 0, dol_strlen($file) - 12);
 
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new FactureFournisseur($db));
@@ -384,7 +382,7 @@ foreach ($dirmodels as $reldir)
 
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";
-	                print (empty($module->name)?$name:$module->name);
+	                print (empty($module->name) ? $name : $module->name);
 	                print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
@@ -397,7 +395,7 @@ foreach ($dirmodels as $reldir)
                     // Active
                     if (in_array($name, $def))
                     {
-                        print '<td align="center">'."\n";
+                        print '<td class="center">'."\n";
                         //if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
                         //{
                             // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
@@ -413,13 +411,13 @@ foreach ($dirmodels as $reldir)
                     }
                     else
                     {
-                        print '<td align="center">'."\n";
+                        print '<td class="center">'."\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         print "</td>";
                     }
 
                     // Default
-                    print '<td align="center">';
+                    print '<td class="center">';
                     if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF == "$name")
                     {
                         //print img_picto($langs->trans("Default"),'on');
@@ -433,17 +431,17 @@ foreach ($dirmodels as $reldir)
                     print '</td>';
 
                     // Info
-                    $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-                    $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-                    $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-                    $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-                    $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-                    $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-                    print '<td align="center">';
+                    $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+                    $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+                    $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                    $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+                    $htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+                    $htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+                    print '<td class="center">';
                     print $form->textwithpicto('', $htmltooltip, 1, 0);
                     print '</td>';
-                    print '<td align="center">';
+                    print '<td class="center">';
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
                     print '</td>';
 
@@ -463,26 +461,26 @@ print '</table><br>';
  */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
+foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+$htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-$variablename='SUPPLIER_INVOICE_FREE_TEXT';
+$variablename = 'SUPPLIER_INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
@@ -490,7 +488,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td class="right">';
@@ -507,7 +505,7 @@ print '</form>';
  */
 
 print load_fiche_titre($langs->trans("Notifications"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60"></td>';

@@ -14,12 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/supplier_payment/doc/pdf_standard.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoice payment file with the standard model
  */
@@ -128,7 +128,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -144,7 +144,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-        // Defini position des colonnes
+        // Define column position
 		$this->posxdate=$this->marge_gauche+1;
 		$this->posxreffacturefourn=30;
 		$this->posxreffacture=65;
@@ -502,7 +502,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -619,7 +619,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -674,7 +674,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
-/*
+        /*
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -734,7 +734,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
-*/
+        */
 		if ($showaddress)
 		{
 			// Sender properties

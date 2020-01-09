@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -33,7 +33,10 @@ TicketDictSeverity=Тикет - Приоритети
 TicketTypeShortBUGSOFT=Софтуерна неизправност
 TicketTypeShortBUGHARD=Хардуерна неизправност
 TicketTypeShortCOM=Търговски въпрос
-TicketTypeShortINCIDENT=Молба за съдействие
+
+TicketTypeShortHELP=Молба за асистенция
+TicketTypeShortISSUE=Въпрос, грешка или проблем
+TicketTypeShortREQUEST=Заявка за подобрение
 TicketTypeShortPROJET=Проект
 TicketTypeShortOTHER=Друго
 
@@ -59,11 +62,11 @@ Notify_TICKET_SENTBYMAIL=Изпращане на тикет съобщениет
 NotRead=Непрочетен
 Read=Прочетен
 Assigned=Възложен
-InProgress=В процес
-NeedMoreInformation=Изчакване на информация
+InProgress=В изпълнение
+NeedMoreInformation=В очакване на подробности
 Answered=Отговорен
 Waiting=В изчакване
-Closed=Затворен
+Closed=Приключен
 Deleted=Изтрит
 
 # Dict
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=Не са открити непрочетени тикет�
 TicketViewAllTickets=Преглед на всички тикети
 TicketViewNonClosedOnly=Преглед на отворени тикети
 TicketStatByStatus=Тикети по статус
+OrderByDateAsc=Сортиране по възходяща дата
+OrderByDateDesc=Сортиране по низходяща дата
+ShowAsConversation=Показване като списък със съобщения
+MessageListViewType=Показване като списък с таблици
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Потвърдете промяната на стат�
 TicketLogStatusChanged=Статусът е променен: от %s на %s
 TicketNotNotifyTiersAtCreate=Да не се уведомява фирмата при създаване на тикета
 Unread=Непрочетен
+TicketNotCreatedFromPublicInterface=Не е налично. Тикетът не беше създаден от публичният интерфейс.
+PublicInterfaceNotEnabled=Публичният интерфейс не е активиран
+ErrorTicketRefRequired=Изисква се референтен номер на тикета
 
 #
 # Logs

@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *      \file       htdocs/core/modules/mailings/modules_printing.php
+ *      \file       htdocs/core/modules/printing/modules_printing.php
  *      \ingroup    printing
  *      \brief      File with parent class of printing modules
  */

@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *       \file       htdocs/core/ajax/fileupload.class.php
+ *       \file       htdocs/core/class/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
  */
 

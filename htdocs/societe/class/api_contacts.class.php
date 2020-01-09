@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -74,8 +74,11 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'No permission to read contacts');
 		}
-
-		$result = $this->contact->fetch($id);
+		if ($id ==0) {
+			$result = $this->contact->initAsSpecimen();
+		} else {
+			$result = $this->contact->fetch($id);
+		}
 
 		if (!$result)
 		{
@@ -289,7 +292,7 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
-
+        $this->contact->oldcopy = clone $this->contact;
 		return $this->contact->delete($id);
 	}
 

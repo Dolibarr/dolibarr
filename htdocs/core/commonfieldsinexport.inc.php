@@ -6,6 +6,7 @@ if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement))
     dol_print_error('', 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
     exit;
 }
+if (empty($keyforalias)) $keyforalias = 't';
 
 dol_include_once($keyforclassfile);
 if (class_exists($keyforclass))
@@ -15,10 +16,10 @@ if (class_exists($keyforclass))
 	// Add common fields
 	foreach($tmpobject->fields as $keyfield => $valuefield)
 	{
-		$fieldname = 't' . '.' . $keyfield;
+		$fieldname = $keyforalias . '.' . $keyfield;
 		$fieldlabel = ucfirst($valuefield['label']);
 		$typeFilter = "Text";
-		$typefield=preg_replace('/\(.*$/', '', $valuefield['type']);	// double(24,8) -> double
+		$typefield = preg_replace('/\(.*$/', '', $valuefield['type']);	// double(24,8) -> double
 		switch ($typefield) {
 			case 'int':
 			case 'integer':
@@ -46,10 +47,15 @@ if (class_exists($keyforclass))
 			 * break;
 			 */
 		}
+		$helpfield = '';
+		if (! empty($valuefield['help'])) {
+			$helpfield = preg_replace('/\(.*$/', '', $valuefield['help']);
+		}
 		if ($valuefield['enabled']) {
 			$this->export_fields_array[$r][$fieldname] = $fieldlabel;
 			$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
 			$this->export_entities_array[$r][$fieldname] = $keyforelement;
+			$this->export_help_array[$r][$fieldname] = $helpfield;
 		}
 	}
 }

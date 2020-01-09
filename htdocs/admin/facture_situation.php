@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,20 +73,26 @@ print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 $head = invoice_admin_prepare_head();
 dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
 
+
+print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").'</span><br><br>';
+
+
 /*
  *  Numbering module
  */
 
-print load_fiche_titre($langs->trans("InvoiceSituation"), '', '');
-$var=0;
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-_updateBtn();
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">';
 
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
 
 _printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));
 _printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE', $langs->trans('UseSituationInvoicesCreditNote'));
@@ -100,12 +106,9 @@ $metas = array(
 );
 _printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $langs->trans('RetainedwarrantyDefaultPercent'), '', $metas);
 
-
-
-
 // Conditions paiements
 $inputCount = empty($inputCount)?1:($inputCount+1);
-print '<tr class="impair">';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="right" width="300">';
@@ -115,6 +118,9 @@ print '</td></tr>';
 
 
 print '</table>';
+print '</div>';
+
+print '<br>';
 
 _updateBtn();
 
@@ -134,8 +140,8 @@ $db->close();
 function _updateBtn()
 {
     global $langs;
-    print '<div style="text-align: right;" >';
-    print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
+    print '<div class="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
     print '</div>';
 }
 
@@ -150,9 +156,9 @@ function _updateBtn()
  */
 function _printOnOff($confkey, $title = false, $desc = '')
 {
-    global $var, $bc, $langs;
-    $var=!$var;
-    print '<tr '.$bc[$var].'>';
+    global $langs;
+
+    print '<tr class="oddeven">';
     print '<td>'.($title?$title:$langs->trans($confkey));
     if (!empty($desc)) {
         print '<br><small>'.$langs->trans($desc).'</small>';
@@ -179,45 +185,45 @@ function _printOnOff($confkey, $title = false, $desc = '')
  */
 function _printInputFormPart($confkey, $title = false, $desc = '', $metas = array(), $type = 'input', $help = false)
 {
-    global $var, $bc, $langs, $conf, $db, $inputCount;
-    $var=!$var;
+    global $langs, $conf, $db, $inputCount;
+
     $inputCount = empty($inputCount)?1:($inputCount+1);
     $form=new Form($db);
-    
+
     $defaultMetas = array(
         'name' => 'value'.$inputCount
     );
-    
+
     if ($type!='textarea') {
         $defaultMetas['type']   = 'text';
         $defaultMetas['value']  = $conf->global->{$confkey};
     }
-    
-    
+
+
     $metas = array_merge($defaultMetas, $metas);
     $metascompil = '';
     foreach ($metas as $key => $values) {
         $metascompil .= ' '.$key.'="'.$values.'" ';
     }
-    
-    print '<tr '.$bc[$var].'>';
+
+    print '<tr class="oddeven">';
     print '<td>';
-    
+
     if (!empty($help)) {
         print $form->textwithtooltip(($title?$title:$langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
     } else {
         print $title?$title:$langs->trans($confkey);
     }
-    
+
     if (!empty($desc)) {
         print '<br><small>'.$langs->trans($desc).'</small>';
     }
-    
+
     print '</td>';
     print '<td class="center" width="20">&nbsp;</td>';
     print '<td class="right" width="300">';
     print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
-    
+
     print '<input type="hidden" name="action" value="setModuleOptions">';
     if ($type=='textarea') {
         print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';

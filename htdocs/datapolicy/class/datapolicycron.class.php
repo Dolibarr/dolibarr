@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -474,7 +474,6 @@ class DataPolicyCron
 
                 if ($resql && $db->num_rows($resql) > 0)
                 {
-
                     $num = $db->num_rows($resql);
                     $i = 0;
 
