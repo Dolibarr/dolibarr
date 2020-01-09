@@ -39,6 +39,8 @@ $object->fields = dol_sort_array($object->fields, 'position');
 
 foreach ($object->fields as $key => $val)
 {
+	if (!empty($keyforbreak) && $key == $keyforbreak) break; // key used for break on second column
+
 	// Discard if extrafield is a hidden field on form
 	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) continue;
 
@@ -62,8 +64,6 @@ foreach ($object->fields as $key => $val)
 	//print dol_escape_htmltag($object->$key, 1, 1);
 	print '</td>';
 	print '</tr>';
-
-	if (!empty($keyforbreak) && $key == $keyforbreak) break; // key used for break on second column
 }
 
 print '</table>';
@@ -80,8 +80,12 @@ foreach ($object->fields as $key => $val)
 {
 	if ($alreadyoutput)
 	{
-		if (!empty($keyforbreak) && $key == $keyforbreak) $alreadyoutput = 0; // key used for break on second column
-		continue;
+		if (!empty($keyforbreak) && $key == $keyforbreak) {
+			$alreadyoutput = 0; // key used for break on second column
+		}
+		else {
+			continue;
+		}
 	}
 
 	// Discard if extrafield is a hidden field on form
