@@ -649,8 +649,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
     	    		print '<td class="right">';
     	    		$help = '';
-    	    		if ($line->qty_frozen) $help.=($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
-    	    		if ($line->disable_stock_change) $help.=($help ? '<br>' : '').'<strong>'.$langs->trans("DisableStockChange").'</strong>: '.yn(1).' ('.(($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")).')';
+    	    		if ($line->qty_frozen) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
+    	    		if ($line->disable_stock_change) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("DisableStockChange").'</strong>: '.yn(1).' ('.(($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")).')';
     	    		if ($help) {
     	    			print $form->textwithpicto($line->qty, $help, -1);
     	    		} else {
