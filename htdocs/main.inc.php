@@ -1432,7 +1432,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
         if (!$disablejs && !empty($conf->use_javascript_ajax))
         {
             // CKEditor
-            if (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR'))
+        	if ((!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
