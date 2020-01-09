@@ -482,13 +482,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
 	    		if ($permissiontoadd)
 	    		{
-	    			if (is_array($object->lines) && count($object->lines) > 0)
+	    			if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 	    			{
 	    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").'</a>';
 	    			}
 	    			else
 	    			{
-	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    				$langs->load("errors");
+	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    			}
 	    		}
     		}

@@ -259,7 +259,7 @@ if (empty($reshook))
 	    						$error++;
 	    					}
 	    				}
-	    				var_dump(GETPOST('batchtoproduce-'.$line->id.'-'.$i));
+
 	    				$idstockmove = 0;
 	    				if (! $error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
 	    					// Record stock movement
