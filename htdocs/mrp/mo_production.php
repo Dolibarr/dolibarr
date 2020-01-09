@@ -169,24 +169,24 @@ if (empty($reshook))
     	$db->begin();
 
     	// Process line to consume
-    	foreach($object->lines as $line) {
+    	foreach ($object->lines as $line) {
     		if ($line->role == 'toconsume') {
     			$tmpproduct = new Product($db);
     			$tmpproduct->fetch($line->fk_product);
 
-    			$i=1;
+    			$i = 1;
     			while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
     				$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
     				if ($qtytoprocess != 0) {
 						// Check warehouse is set if we should have to
 	    				if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
-	    					if (! (GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
+	    					if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
 		    					$langs->load("errors");
 	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 	    						$error++;
 	    					}
-	    					if ($tmpproduct->status_batch && (! GETPOST('batch-'.$line->id.'-'.$i))) {
+	    					if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
 	    						$langs->load("errors");
 	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
 	    						$error++;
@@ -194,7 +194,7 @@ if (empty($reshook))
 	    				}
 
 	    				$idstockmove = 0;
-	    				if (! $error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
+	    				if (!$error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
 	    					// Record stock movement
 	    					$id_product_batch = 0;
 	    					$stockmove->origin = $object;
@@ -205,7 +205,7 @@ if (empty($reshook))
 	    					}
 	    				}
 
-	    				if (! $error) {
+	    				if (!$error) {
 	    					$pos = 0;
 	    					// Record consumption
 	    					$moline = new MoLine($db);
@@ -236,24 +236,24 @@ if (empty($reshook))
     	}
 
     	// Process line to produce
-    	foreach($object->lines as $line) {
+    	foreach ($object->lines as $line) {
     		if ($line->role == 'toproduce') {
     			$tmpproduct = new Product($db);
     			$tmpproduct->fetch($line->fk_product);
 
-    			$i=1;
+    			$i = 1;
     			while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
     				$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
 
     				if ($qtytoprocess != 0) {
 	    				// Check warehouse is set if we should have to
 	    				if (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
-	    					if (! (GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
+	    					if (!(GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
 	    						$langs->load("errors");
 	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 	    						$error++;
 	    					}
-	    					if ($tmpproduct->status_batch && (! GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
+	    					if ($tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
 	    						$langs->load("errors");
 	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
 	    						$error++;
@@ -261,7 +261,7 @@ if (empty($reshook))
 	    				}
 
 	    				$idstockmove = 0;
-	    				if (! $error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
+	    				if (!$error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
 	    					// Record stock movement
 	    					$id_product_batch = 0;
 	    					$stockmove->origin = $object;
@@ -272,7 +272,7 @@ if (empty($reshook))
 	    					}
 	    				}
 
-	    				if (! $error) {
+	    				if (!$error) {
 	    					$pos = 0;
 							// Record production
 	    					$moline = new MoLine($db);
@@ -302,16 +302,16 @@ if (empty($reshook))
     		}
     	}
 
-    	if (! $error) {
+    	if (!$error) {
     		$consumptioncomplete = true;
     		$productioncomplete = true;
 
     		if (GETPOST('autoclose', 'int')) {
-	    		foreach($object->lines as $line) {
+	    		foreach ($object->lines as $line) {
 	    			if ($line->role == 'toconsume') {
 	    				$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 	    				$alreadyconsumed = 0;
-	    				foreach($arrayoflines as $line2) {
+	    				foreach ($arrayoflines as $line2) {
 	    					$alreadyconsumed += $line2['qty'];
 	    				}
 
@@ -322,7 +322,7 @@ if (empty($reshook))
 	    			if ($line->role == 'toproduce') {
 	    				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
 	    				$alreadyproduced = 0;
-	    				foreach($arrayoflines as $line2) {
+	    				foreach ($arrayoflines as $line2) {
 	    					$alreadyproduced += $line2['qty'];
 	    				}
 
@@ -680,7 +680,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		print '<td>';	// Warehouse
     	    		print '</td>';
     	    		if ($conf->productbatch->enabled) {
-    	    			print '<td></td>';	// Lot
+    	    			print '<td></td>'; // Lot
     	    		}
     	    		print '</tr>';
 
@@ -811,7 +811,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '<td>';	// Warehouse
     				print '</td>';
     				if ($conf->productbatch->enabled) {
-    					print '<td></td>';	// Lot
+    					print '<td></td>'; // Lot
     				}
     				print '</tr>';
 
