@@ -11,7 +11,7 @@ You can freely use, study, modify or distribute it according to its Free Softwar
 
 You can use it as a standalone application or as a web application to be able to access it from the Internet or a LAN.
 
-![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.png)
+![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
 
 ## LICENSE
 
