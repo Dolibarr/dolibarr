@@ -222,7 +222,7 @@ if ($socid > 0)
 		$sql.= " u.login, u.rowid as user_id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE rc.fk_soc = " . $object->id;
-		$sql.= " AND rc.entity = " . $conf->entity;
+		$sql.= " AND rc.entity IN (".getEntity('discount').")";
 		$sql.= " AND u.rowid = rc.fk_user_author";
 		$sql.= " ORDER BY rc.datec DESC";
 
@@ -281,7 +281,7 @@ if ($socid > 0)
 		$sql.= " u.login, u.rowid as user_id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE rc.fk_soc = " . $object->id;
-		$sql.= " AND rc.entity = " . $conf->entity;
+		$sql.= " AND rc.entity IN (".getEntity('discount').")";
 		$sql.= " AND u.rowid = rc.fk_user_author";
 		$sql.= " ORDER BY rc.datec DESC";
 
