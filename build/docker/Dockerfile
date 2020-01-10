@@ -3,10 +3,11 @@ FROM php:7.2-apache
 ENV HOST_USER_ID 33
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
 
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libldap2-dev zlib1g-dev libicu-dev g++\
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libldap2-dev libzip-dev zlib1g-dev libicu-dev g++\
 	&& rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 	&& docker-php-ext-install gd \
+	&& docker-php-ext-install zip \
 	&& docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
         && docker-php-ext-install ldap \
         && docker-php-ext-install mysqli \

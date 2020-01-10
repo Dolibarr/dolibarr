@@ -491,7 +491,7 @@ class Mo extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			$i=0;
+			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
@@ -543,7 +543,7 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		if (! $error) {
+		if (!$error) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			$this->db->commit();
 			return 1;
@@ -602,14 +602,14 @@ class Mo extends CommonObject
 				}
 
 				// Lines to consume
-				if (! $error) {
+				if (!$error) {
 					foreach ($bom->lines as $line)
 					{
 						$moline = new MoLine($this->db);
 
 						$moline->fk_mo = $this->id;
 						if ($line->qty_frozen) {
-							$moline->qty = $line->qty;		// Qty to consume does not depends on quantity to produce
+							$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 						} else {
 							$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
 						}
@@ -1164,7 +1164,7 @@ class Mo extends CommonObject
 
 		if (!dol_strlen($modele)) {
 			//$modele = 'standard';
-			$modele = '';					// Remove this once a pdf_standard.php exists.
+			$modele = ''; // Remove this once a pdf_standard.php exists.
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
@@ -1175,7 +1175,7 @@ class Mo extends CommonObject
 
 		$modelpath = "core/modules/mrp/doc/";
 
-		if (empty($modele)) return 1;	// Remove this once a pdf_standard.php exists.
+		if (empty($modele)) return 1; // Remove this once a pdf_standard.php exists.
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}

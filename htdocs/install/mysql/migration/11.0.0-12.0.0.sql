@@ -51,6 +51,7 @@ create table llx_object_lang
 
 ALTER TABLE llx_object_lang ADD UNIQUE INDEX uk_object_lang (fk_object, type_object, property, lang);
 
+ALTER TABLE llx_accounting_account ADD COLUMN labelshort varchar(255) DEFAULT NULL after label;
 
 ALTER TABLE llx_subscription ADD COLUMN fk_user_creat   integer DEFAULT NULL;
 ALTER TABLE llx_subscription ADD COLUMN fk_user_valid   integer DEFAULT NULL;
