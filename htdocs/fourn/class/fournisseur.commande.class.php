@@ -1143,6 +1143,7 @@ class CommandeFournisseur extends CommonOrder
 	                    $this->lines[$i]->remise_percent,
 	                    'HT',
 	                    0,
+	                    $this->lines[$i]->product_type,
 	                    $this->lines[$i]->info_bits
 	                );
 	                if ($result < 0)
