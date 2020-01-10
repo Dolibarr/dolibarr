@@ -328,6 +328,7 @@ else
 
 //Debut du formulaire et bandeaux de tete
 print '<form name="formulaire" action="" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 

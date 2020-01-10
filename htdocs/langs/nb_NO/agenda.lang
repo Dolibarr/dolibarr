@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=BOM ikke validert
 BOM_CLOSEInDolibarr=BOM deaktivert
 BOM_REOPENInDolibarr=BOM gjenåpne
 BOM_DELETEInDolibarr=BOM slettet
-MO_VALIDATEInDolibarr=MO validert
-MO_PRODUCEDInDolibarr=MO produsert
-MO_DELETEInDolibarr=MO slettet
+MRP_MO_VALIDATEInDolibarr=MO validert
+MRP_MO_PRODUCEDInDolibarr=MO produsert
+MRP_MO_DELETEInDolibarr=MO slettet
 ##### End agenda events #####
 AgendaModelModule=Dokumentmaler for hendelse
 DateActionStart=Startdato

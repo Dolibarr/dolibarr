@@ -41,5 +41,6 @@ ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
 Sens=Significado
 Codejournal=Periódico
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas

@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Bankausgleich ausstehend
 Delays_MAIN_DELAY_MEMBERS=Verspäteter Mitgliedsbeitrag
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Scheckeinreichung nicht erfolgt
 Delays_MAIN_DELAY_EXPENSEREPORTS=zu genehmigende Spesenabrechnung
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Bevor Sie mit Dolibarr arbeiten können müssen grundlegende Einstellungen getätigt und Module freigeschalten / konfiguriert werden.
 SetupDescription2=Die folgenden zwei Punkte sind obligatorisch:
 SetupDescription3=<a href="%s">%s -> %s</a>. Basis-Parameter um das Standardverhalten Ihrer Anwendung anzupassen (beispielsweise länderbezogene Funktionen).

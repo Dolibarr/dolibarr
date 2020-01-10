@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=Спецификация е променена
 BOM_CLOSEInDolibarr=Спецификация е деактивирана
 BOM_REOPENInDolibarr=Спецификация е повторно отворена
 BOM_DELETEInDolibarr=Спецификация е изтрита
-MO_VALIDATEInDolibarr=Поръчка за производство е валидирана
-MO_PRODUCEDInDolibarr=Поръчка за производство е произведена
-MO_DELETEInDolibarr=Поръчка за производство е изтрита
+MRP_MO_VALIDATEInDolibarr=Поръчка за производство е валидирана
+MRP_MO_PRODUCEDInDolibarr=Поръчка за производство е произведена
+MRP_MO_DELETEInDolibarr=Поръчка за производство е изтрита
 ##### End agenda events #####
 AgendaModelModule=Шаблони за събитие
 DateActionStart=Начална дата

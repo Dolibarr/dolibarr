@@ -139,6 +139,7 @@ AccountingAccountGroupsDesc=Puede definir aquí algunos grupos de cuentas contab
 DeleteMvt=Eliminar líneas de libro mayor
 DelYear=Año para borrar
 DelJournal=Diario para eliminar
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 FinanceJournal=Diario de finanzas
 ExpenseReportsJournal=Diario de informes de gastos
 DescFinanceJournal=Diario financiero que incluye todos los tipos de pagos por cuenta bancaria

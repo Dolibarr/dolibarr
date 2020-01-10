@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Search criteria too small.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Pro tohoto člena bylo nastaveno heslo. Nebyl však vytvořen žádný uživatelský účet. Toto heslo je uloženo, ale nemůže být použito pro přihlášení k Dolibarr. Může být použito externím modulem / rozhraním, ale pokud nemáte pro člena definováno žádné přihlašovací jméno ani heslo, můžete vypnout možnost "Správa přihlášení pro každého člena" z nastavení modulu člena. Pokud potřebujete spravovat přihlašovací údaje, ale nepotřebujete žádné heslo, můžete toto pole ponechat prázdné, abyste se tomuto varování vyhnuli. Poznámka: E-mail může být také použit jako přihlašovací jméno, pokud je člen připojen k uživateli.

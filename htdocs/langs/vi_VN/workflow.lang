@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Thiết lập mô-đun quy trình
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=Chưa có sử đổi quy trình nào với những mô đun đang hoạt động
+WorkflowSetup=Thiết lập mô-đun Quy trình
+WorkflowDesc=Mô-đun này cung cấp một số hành động tự động. Theo mặc định, quy trình làm việc được mở (bạn có thể thực hiện mọi thứ theo thứ tự bạn muốn) nhưng ở đây bạn có thể kích hoạt một số hành động tự động.
+ThereIsNoWorkflowToModify=Không có sửa đổi quy trình làm việc có sẵn với các mô-đun kích hoạt.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tạo một khóa đơn khách hàng tự động sau khi hợp đồng được thông qua
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tự động tạo đơn đặt hàng bán sau khi đề xuất thương mại được ký (đơn đặt hàng mới sẽ có cùng số tiền với đề xuất)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tự động tạo hóa đơn khách hàng sau khi đề xuất thương mại được ký (hóa đơn mới sẽ có cùng số tiền với đề xuất)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tự động tạo hóa đơn khách hàng sau khi hợp đồng được xác nhận
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Tự động tạo hóa đơn khách hàng sau khi đơn đặt hàng bán được đóng (hóa đơn mới sẽ có cùng số tiền với đơn đặt hàng)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Phân loại đề xuất nguồn được liên kết là đã xuất hóa đơn khi đơn đặt hàng được đặt thành đã xuất hóa đơn (và nếu số lượng đơn đặt hàng bằng với tổng số tiền của đề xuất được liên kết đã ký)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Phân loại đề xuất nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của khách hàng được xác nhận (và nếu số tiền của hóa đơn giống với tổng số tiền của đề xuất được liên kết đã ký)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Phân loại đơn đặt hàng bán nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của khách hàng được xác nhận(và nếu số tiền hóa đơn giống với tổng số tiền của đơn hàng được liên kết)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Phân loại đơn đặt hàng bán nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của khách hàng được đặt thành thanh toán (và nếu số tiền của hóa đơn giống với tổng số tiền của đơn hàng được liên kết)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Phân loại đơn đặt hàng bán nguồn được liên kết khi vận chuyển khi một lô hàng được xác nhận (và nếu số tiền vận chuyển của tất cả các lô hàng giống như trong đơn hàng để cập nhật)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Phân loại đề xuất nhà cung cấp nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của nhà cung cấp được xác nhận (và nếu số tiền hóa đơn giống với tổng số tiền của đề xuất được liên kết)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Phân loại đơn đặt hàng mua nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của nhà cung cấp được xác nhận (và nếu số tiền hóa đơn giống với tổng số tiền của đơn hàng được liên kết)
 AutomaticCreation=Tạo tự động
 AutomaticClassification=Phân loại tự động

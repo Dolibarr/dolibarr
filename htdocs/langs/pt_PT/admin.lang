@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Pending bank reconciliation
 Delays_MAIN_DELAY_MEMBERS=Delayed membership fee
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Check deposit not done
 Delays_MAIN_DELAY_EXPENSEREPORTS=Expense report to approve
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Antes de começar a usar o Dolibarr, alguns parâmetros iniciais devem ser definidos e módulos ativados / configurados.
 SetupDescription2=The following two sections are mandatory (the two first entries in the Setup menu):
 SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
