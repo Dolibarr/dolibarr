@@ -441,14 +441,14 @@ if ($resql)
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	    //'presend'=>$langs->trans("SendByMail"),
 	);
-	if ($user->rights->produit->supprimer) $arrayofmassactions['predelete']="<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+    $rightskey='produit';
+	if ($type == Product::TYPE_SERVICE) $rightskey='service';
+	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete']="<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
-	$rightskey='produit';
-	if($type == Product::TYPE_SERVICE) $rightskey='service';
-	if($user->rights->{$rightskey}->creer)
+	if ($user->rights->{$rightskey}->creer)
 	{
 		$oldtype=$type;
 		if ($type === "") {
@@ -458,7 +458,7 @@ if ($resql)
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
         $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
-	$type=$oldtype;
+		$type=$oldtype;
     }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
