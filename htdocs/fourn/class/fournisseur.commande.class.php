@@ -191,7 +191,7 @@ class CommandeFournisseur extends CommonOrder
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
-            
+
             // Retreive all extrafield
             // fetch optionals attributes and labels
             require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -951,6 +951,7 @@ class CommandeFournisseur extends CommonOrder
 	                    $this->lines[$i]->remise_percent,
 	                    'HT',
 	                    0,
+	                    $this->lines[$i]->product_type,
 	                    $this->lines[$i]->info_bits
 	                );
 	                if ($result < 0)
