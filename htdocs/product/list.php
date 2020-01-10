@@ -424,13 +424,13 @@ if ($resql)
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($user->rights->produit->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+    $rightskey='produit';
+	if($type == Product::TYPE_SERVICE) $rightskey='service';
+	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
-	$rightskey='produit';
-	if($type == Product::TYPE_SERVICE) $rightskey='service';
 	if($user->rights->{$rightskey}->creer)
 	{
 		$label='NewProduct';
