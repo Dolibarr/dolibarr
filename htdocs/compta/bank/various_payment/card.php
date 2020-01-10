@@ -64,6 +64,7 @@ $object = new PaymentVarious($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('variouscard','globalcard'));
 
+
 /**
  * Actions
  */
@@ -214,6 +215,20 @@ if (empty($reshook))
 		else
 		{
 			setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
+		}
+	}
+
+	if ($action == 'setsubledger_account') {
+		$result = $object->fetch($id);
+
+		$object->subledger_account = (GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "");
+
+		$res = $object->update($user);
+		if ($res > 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -495,9 +510,9 @@ if ($id)
 
     // Subledger account
     print '<tr><td class="nowrap">';
-    print $langs->trans("SubledgerAccount");
+    print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, $user->rights->banque->modifier, 'string', '', 0);
     print '</td><td>';
-    print $object->subledger_account;
+    print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, $user->rights->banque->modifier, 'string', '', 0);
     print '</td></tr>';
 
 	if (!empty($conf->banque->enabled))
