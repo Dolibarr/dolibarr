@@ -427,6 +427,8 @@ if ($action == 'create')
 
 if ($id)
 {
+	$alreadyaccounted = $object->getVentilExportCompta();
+
 	$head=various_payment_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
@@ -510,9 +512,9 @@ if ($id)
 
     // Subledger account
     print '<tr><td class="nowrap">';
-    print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, $user->rights->banque->modifier, 'string', '', 0);
+    print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
     print '</td><td>';
-    print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, $user->rights->banque->modifier, 'string', '', 0);
+    print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
     print '</td></tr>';
 
 	if (!empty($conf->banque->enabled))
@@ -557,7 +559,11 @@ if ($id)
 	{
 		if (!empty($user->rights->banque->modifier))
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			if ($alreadyaccounted) {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			}
 		}
 		else
 		{
