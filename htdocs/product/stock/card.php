@@ -379,11 +379,11 @@ else
              	$shownav = 1;
              	// Warehouse card
 				$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-             }else{
+			}else{
              	$shownav = 0;
              	$linkback = 0 ;
-             }
-			
+			}
+
             if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
