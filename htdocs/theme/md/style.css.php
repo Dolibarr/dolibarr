@@ -462,6 +462,9 @@ select.flat, form.flat select {
 .opacitymediumbycolor {
 	color: rgba(0, 0, 0, 0.4);
 }
+.opacitylow {
+	opacity: 0.6;
+}
 .opacityhigh {
 	opacity: 0.2;
 }
@@ -4116,6 +4119,9 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	margin-left: 0px;
 	padding-left: 8px;
 	margin-right: 5px;
+}
+.websitebar input#previewpageurl {
+    line-height: 1em;
 }
 
 

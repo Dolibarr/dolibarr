@@ -1328,13 +1328,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $sql .= " a.fk_contact,";
         $sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
         $sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe')      $sql .= ", sp.lastname, sp.firstname";
+        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')))      $sql .= ", sp.lastname, sp.firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ }
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ }
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", m.lastname, m.firstname";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql .= ", o.ref";
+        elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) $sql .= ", o.ref";
+
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
@@ -1346,23 +1350,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             $sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".$objcon->id;
         }
 
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')))  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
             $sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
             $sql .= " ON er.resource_type = 'dolresource'";
             $sql .= " AND er.element_id = a.id";
             $sql .= " AND er.resource_id = ".$filterobj->id;
         }
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ }
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql .= ", ".MAIN_DB_PREFIX."product as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql .= ", ".MAIN_DB_PREFIX."ticket as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') $sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') $sql .= ", ".MAIN_DB_PREFIX."contrat as o";
+        elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) $sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 
         $sql .= " WHERE a.entity IN (".getEntity('agenda').")";
         if ($force_filter_contact === false) {
             if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql .= " AND a.fk_soc = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ }
             elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql .= " AND a.fk_project = ".$filterobj->id;
             elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
             {
@@ -1392,6 +1399,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
             {
             	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
+            	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element)
+            {
+            	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element)."'";
             	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
             }
         }
@@ -1612,7 +1624,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$caction = new CActionComm($db);
 		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
 
-        foreach ($histo as $key=>$value)
+        foreach ($histo as $key => $value)
         {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
@@ -1693,13 +1705,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
             // Date
             $out .= '<td class="center nowrap">';
-            $out .= dol_print_date($histo[$key]['datestart'], 'dayhour');
+            $out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
             if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
             {
                 $tmpa = dol_getdate($histo[$key]['datestart'], true);
                 $tmpb = dol_getdate($histo[$key]['dateend'], true);
-                if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour');
-                else $out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour');
+                if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
+                else $out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
             }
             $late = 0;
             if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) $late = 1;
@@ -1712,7 +1724,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
-            // Objet lie
+            // Linked object
             $out .= '<td>';
             if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
             {
@@ -1721,7 +1733,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             else $out .= '&nbsp;';
             $out .= '</td>';
 
-            // Contact pour cette action
+            // Contact(s) for action
             if (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
                 $contactstatic->lastname = $histo[$key]['lastname'];
@@ -1730,15 +1742,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                 $out .= '<td width="120">'.$contactstatic->getNomUrl(1, '', 10).'</td>';
             } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$out .= '<td>';
-				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					$contact = new Contact($db);
+				$contact = new Contact($db);
+				foreach ($histo[$key]['socpeopleassigned'] as $cid => $value) {
 					$result = $contact->fetch($cid);
 
 					if ($result < 0)
 						dol_print_error($db, $contact->error);
 
 					if ($result > 0) {
-						$out .= $contact->getNomUrl(1);
+						$out .= $contact->getNomUrl(1, '', 16);
 						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
 							if (!empty($contact->phone_pro))
 								$out .= '('.dol_print_phone($contact->phone_pro).')';

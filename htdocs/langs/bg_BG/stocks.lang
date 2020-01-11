@@ -215,4 +215,4 @@ StockDecrease=Намаляване на наличност
 InventoryForASpecificWarehouse=Инвентаризация за конкретен склад
 InventoryForASpecificProduct=Инвентаризация за конкретен продукт
 StockIsRequiredToChooseWhichLotToUse=Необходима е наличност, за да изберете коя партида да използвате.
-ForceTo=Force to
+ForceTo=Принуждаване до

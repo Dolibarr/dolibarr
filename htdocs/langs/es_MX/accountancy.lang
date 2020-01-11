@@ -39,6 +39,7 @@ LabelAccount=Descripción de la cuenta
 Sens=Significado
 DelYear=Año a borrar
 DelJournal=Diario a borrar
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 DescFinanceJournal=Diario financiero incluyendo todos los tipos de pagos por cuenta bancaria
 CustomerInvoicePayment=Pago de factura de cliente
 NewAccountingMvt=Nueva transacción

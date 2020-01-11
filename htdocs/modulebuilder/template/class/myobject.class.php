@@ -70,7 +70,7 @@ class MyObject extends CommonObject
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
@@ -83,6 +83,8 @@ class MyObject extends CommonObject
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
 	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -216,6 +218,12 @@ class MyObject extends CommonObject
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+
+		// Example to show how to set values of fields definition dynamically
+		/*if ($user->rights->mymodule->myobject->read) {
+			$this->fields['myfield']['visible'] = 1;
+			$this->fields['myfield']['noteditable'] = 0;
+		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val)
@@ -896,6 +904,64 @@ class MyObject extends CommonObject
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
+	}
+
+	/**
+	 *  Returns the reference to the following non used object depending on the active numbering module.
+	 *
+	 *  @return string      		Object free reference
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("mymodule@myobject");
+
+		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
+			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_mymobject_standard';
+		}
+
+		if (!empty($conf->global->MYMODULE_MYOBJECT_ADDON))
+		{
+			$mybool = false;
+
+			$file = $conf->global->MYMODULE_MYOBJECT_ADDON.".php";
+			$classname = $conf->global->MYMODULE_MYOBJECT_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+				$dir = dol_buildpath($reldir."core/modules/mymodule/");
+
+				// Load file with numbering class (if found)
+				$mybool |= @include_once $dir.$file;
+			}
+
+			if ($mybool === false)
+			{
+				dol_print_error('', "Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			$numref = $obj->getNextValue($this);
+
+			if ($numref != "")
+			{
+				return $numref;
+			}
+			else
+			{
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_MYMODULE_MYOBJECT_ADDON_NotDefined");
+			return "";
+		}
 	}
 
 	/**

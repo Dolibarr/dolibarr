@@ -476,9 +476,11 @@ if ($resql)
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	    //'presend'=>$langs->trans("SendByMail"),
 	);
-	if ($user->rights->produit->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
-	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
-	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+    $rightskey='produit';
+	if ($type == Product::TYPE_SERVICE) $rightskey='service';
+	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
 	if ($type === "") $perm = ($user->rights->produit->creer || $user->rights->service->creer);

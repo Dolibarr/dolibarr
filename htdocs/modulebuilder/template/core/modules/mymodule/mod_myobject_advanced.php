@@ -118,11 +118,10 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product		$objprod    Object product
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objprod, $object)
+    public function getNextValue($object)
     {
 		global $db,$conf;
 

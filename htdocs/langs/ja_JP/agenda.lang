@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=BOM unvalidated
 BOM_CLOSEInDolibarr=BOM disabled
 BOM_REOPENInDolibarr=BOM reopen
 BOM_DELETEInDolibarr=BOM deleted
-MO_VALIDATEInDolibarr=MO validated
-MO_PRODUCEDInDolibarr=MO produced
-MO_DELETEInDolibarr=MO deleted
+MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_PRODUCEDInDolibarr=MO produced
+MRP_MO_DELETEInDolibarr=MO deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=開始日

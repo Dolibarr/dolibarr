@@ -1907,13 +1907,10 @@ elseif (!empty($object->id))
 		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
-	if (!$formconfirm)
-	{
-		$parameters = array('lineid'=>$lineid);
-		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
-	}
+	$parameters = array('lineid'=>$lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;

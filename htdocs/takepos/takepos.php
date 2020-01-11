@@ -683,7 +683,7 @@ if ($resql) {
 if (empty($paiementsModes)) {
 	$langs->load('errors');
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal").' '.$_SESSION["takeposterminal"], null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 }
 if (count($maincategories) == 0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');

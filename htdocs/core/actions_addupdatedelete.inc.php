@@ -36,7 +36,12 @@ if ($cancel)
 {
 	/*var_dump($cancel);
 	var_dump($backtopage);exit;*/
-	if (!empty($backtopage))
+	if (!empty($backtopageforcancel))
+	{
+		header("Location: ".$backtopageforcancel);
+		exit;
+	}
+	elseif (!empty($backtopage))
 	{
 		header("Location: ".$backtopage);
 		exit;

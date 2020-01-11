@@ -127,6 +127,18 @@ if (GETPOST('target') == 'local')
 {
     if (dol_is_file($xmlfile))
     {
+    	// If file is a zip file (.../filelist-x.y.z.xml.zip), we uncompress it before
+    	if (preg_match('/\.zip$/i', $xmlfile)) {
+    		dol_mkdir($conf->admin->dir_temp);
+    		$xmlfilenew = preg_replace('/\.zip$/i', '', $xmlfile);
+    		$result = dol_uncompress($xmlfile, $conf->admin->dir_temp);
+    		if (empty($result['error'])) {
+    			$xmlfile = $conf->admin->dir_temp.'/'.basename($xmlfilenew);
+    		} else {
+    			print $langs->trans('FailedToUncompressFile').': '.$xmlfile;
+    			$error++;
+    		}
+    	}
         $xml = simplexml_load_file($xmlfile);
     }
     else

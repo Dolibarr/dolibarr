@@ -389,7 +389,6 @@ FieldsWithIsForPublic=Los campos con <b>%s</b> se muestran en la lista pública 
 AccordingToGeoIPDatabase=(De acuerdo a la conversión de GeoIP)
 RequiredField=campo requerido
 ToTest=Prueba
-ValidateBefore=La tarjeta debe ser validada antes de usar esta característica
 TotalizableDesc=Este campo es totalizable en lista.
 Hidden=Oculto
 Source=Fuente

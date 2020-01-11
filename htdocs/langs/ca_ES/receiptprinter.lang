@@ -43,5 +43,5 @@ DOL_CUT_PAPER_PARTIAL=Talla el tiquet parcialment
 DOL_OPEN_DRAWER=Obrir calaix de diners
 DOL_ACTIVATE_BUZZER=Activa timbre
 DOL_PRINT_QRCODE=Imprimeix el codi QR
-DOL_PRINT_LOGO=Print logo of my company
-DOL_PRINT_LOGO_OLD=Print logo of my company (old printers)
+DOL_PRINT_LOGO=Imprimeix el logotip de la meva empresa
+DOL_PRINT_LOGO_OLD=Imprimeix el logotip de la meva empresa (impressores antigues)

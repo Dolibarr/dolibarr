@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Search criteria too small.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.

@@ -57,6 +57,7 @@ NatureOfThirdParty=Trešo personu būtība
 NatureOfContact=Kontakta raksturs
 Address=Adrese
 State=Valsts / province
+StateCode=Valsts/provinces kods
 StateShort=Valsts
 Region=Rajons
 Region-State=Reģions - valsts
