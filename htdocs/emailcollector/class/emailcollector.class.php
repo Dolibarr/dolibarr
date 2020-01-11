@@ -679,7 +679,7 @@ class EmailCollector extends CommonObject
         $flags = '/service=imap'; // IMAP
         if ($ssl) $flags .= '/ssl'; // '/tls'
         $flags .= '/novalidate-cert';
-        //$flags.='/readonly';
+        $flags.='/readonly';
         //$flags.='/debug';
         if ($norsh || !empty($conf->global->IMPA_FORCE_NORSH)) $flags .= '/norsh';
 
