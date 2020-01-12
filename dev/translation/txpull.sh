@@ -16,7 +16,8 @@ then
 	echo "This pull remote transifex files to local dir."
 	echo "Note:  If you pull a language file (not source), file will be skipped if local file is newer."
 	echo "       Using -f will overwrite local file (does not work with 'all')."
-	echo "Usage: ./dev/translation/txpull.sh (all|xx_XX) [-r dolibarr.file] [-f] [-s]"
+	echo "       Using en_US as language parameter will update source language from transifex (en_US is excluded frol 'all')."
+	echo "Usage: ./dev/translation/txpull.sh (all|en_US|xx_XX) [-r dolibarr.file] [-f] [-s]"
 	exit
 fi
 
