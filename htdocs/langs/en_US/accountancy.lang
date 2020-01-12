@@ -160,7 +160,7 @@ ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
 TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
@@ -200,7 +200,7 @@ DeleteMvt=Delete Ledger lines
 DelMonth=Month to delete
 DelYear=Year to delete
 DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration inaccounting' to have the deleted record back in the ledger.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal

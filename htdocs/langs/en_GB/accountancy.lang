@@ -73,7 +73,6 @@ AccountingCategory=Personalised groups
 GroupByAccountAccounting=Group by finance account
 AccountingAccountGroupsDesc=Here you can define some groups of financial accounts. They will be used for personalised accounting reports.
 ByPersonalizedAccountGroups=By personalised groups
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to this transaction will be deleted)
 DescJournalOnlyBindedVisible=This is a view of records that are linked to a finance account and can be posted into the Ledger.
 FeeAccountNotDefined=Account for fees not defined
