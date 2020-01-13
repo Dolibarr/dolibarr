@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
  * Copyright (C) 2016	   Charlie Benke	   <charlie@patas-monkey.com>
- * Copyright (C) 2018      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODT_PATH">';
@@ -160,7 +160,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
    			}
    			$texte .= '</div>';
 		}
-
+        // Add input to upload a new template file.
+        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+        $texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+        $texte .= '</div>';
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
