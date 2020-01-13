@@ -3,7 +3,6 @@ ConfigAccountingExpert=Configuration du module de compta expert
 Processing=Exécution
 Lineofinvoice=Lignes de facture
 Doctype=Type de document
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
 TotalMarge=Marge de ventes totale
 Selectmodelcsv=Sélectionnez un modèle d'export

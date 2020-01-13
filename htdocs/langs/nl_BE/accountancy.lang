@@ -23,7 +23,6 @@ EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn
 Docdate=Datum
 Docref=Artikelcode
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 TotalVente=Totaal omzet voor belastingen
 AccountingJournalType2=Verkoop
 AccountingJournalType3=Inkoop

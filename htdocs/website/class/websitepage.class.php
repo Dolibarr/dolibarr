@@ -421,10 +421,10 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
 	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
-	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
+	 * @param	string	$newtitle			New title
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $keeptitleunchanged = 0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $newtitle = '')
 	{
 		global $hookmanager, $langs;
 
@@ -434,6 +434,18 @@ class WebsitePage extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$object = new self($this->db);
+
+		// Clean parameters
+		if (empty($newref) && ! empty($newtitle)) {
+			$newref=strtolower(dol_sanitizeFileName(preg_replace('/\s+/', '-', $newtitle), '-', 1));
+		}
+
+		// Check parameters
+		if (empty($newref)) {
+			$langs->load("errors");
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE"));
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -448,7 +460,7 @@ class WebsitePage extends CommonObject
 		$object->aliasalt = '';
 		$object->fk_user_creat = $user->id;
 		$object->date_creation = $now;
-		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
+		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
 		if (!empty($newlang)) $object->lang = $newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;

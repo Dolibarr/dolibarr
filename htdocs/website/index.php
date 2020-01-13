@@ -1563,12 +1563,18 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 	if ($action == 'confirm_createpagefromclone')
 	{
 		$istranslation = (GETPOST('is_a_translation', 'aZ09') == 'on' ? 1 : 0);
+		// Protection if it is a translation page
 		if ($istranslation)
 		{
 			if (GETPOST('newlang', 'aZ09') == $objectpage->lang)
 			{
 				$error++;
 				setEventMessages($langs->trans("LanguageMustNotBeSameThanClonedPage"), null, 'errors');
+				$action = 'preview';
+			}
+			if (GETPOST('newwebsite', 'int') != $object->id) {
+				$error++;
+				setEventMessages($langs->trans("WebsiteMustBeSameThanClonedPageIfTranslation"), null, 'errors');
 				$action = 'preview';
 			}
 		}
@@ -1592,7 +1598,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			}
 
 			$objectpage = new WebsitePage($db);
-			$resultpage = $objectpage->createFromClone($user, $pageid, GETPOST('pageurl', 'aZ09'), (GETPOST('newlang', 'aZ09') ?GETPOST('newlang', 'aZ09') : ''), $istranslation, $newwebsiteid);
+			$resultpage = $objectpage->createFromClone($user, $pageid, GETPOST('newpageurl', 'aZ09'), (GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''), $istranslation, $newwebsiteid, GETPOST('newtitle', 'alphanohtml'));
 			if ($resultpage < 0)
 			{
 				$error++;
@@ -2283,10 +2289,7 @@ if (!GETPOST('hide_websitemenu'))
 			if ($action == 'createfromclone') {
 				// Create an array for form
 				$formquestion = array(
-				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite"), 'value'=> 'copy_of_'.$object->ref),
-				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
-				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
-				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+					array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite"), 'value'=> 'copy_of_'.$object->ref)
 				);
 
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
@@ -2305,7 +2308,8 @@ if (!GETPOST('hide_websitemenu'))
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
 						array('type' => 'other', 'name' => 'newlang', 'label' => $langs->trans("Language"), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, 1, 0, 0, 'minwidth200', 0, 1)),
 						array('type' => 'other', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
-						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> 'copy_of_'.$objectpage->pageurl),
+						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
+						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> ''),
 					);
 
 				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
