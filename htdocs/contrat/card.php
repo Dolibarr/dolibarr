@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
@@ -417,12 +417,12 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$price_ht = price2num(GETPOST('price_ht'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
 		else
 		{
@@ -430,7 +430,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = GETPOST('qty'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef));
 		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
@@ -438,7 +438,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc))
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free' && empty($idprod) && empty($product_desc))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
