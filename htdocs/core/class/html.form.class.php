@@ -575,15 +575,14 @@ class Form
 	 * Generate select HTML to choose massaction
 	 *
 	 * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param	int		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param	array		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param   int     $alwaysvisible  1=select button always visible
-	 * @return	string					Select list
+	 * @return	string|void					Select list
 	 */
     public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0)
 	{
 		global $conf,$langs,$hookmanager;
 
-		if (count($arrayofaction) == 0) return;
 
 		$disabled=0;
 		$ret='<div class="centpercent center">';
@@ -592,6 +591,8 @@ class Form
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('addMoreMassActions', $parameters);    // Note that $action and $object may have been modified by hook
+		// check if there is a mass action
+		if (count($arrayofaction) == 0 && empty($hookmanager->resPrint)) return;
 		if (empty($reshook))
 		{
 			$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
