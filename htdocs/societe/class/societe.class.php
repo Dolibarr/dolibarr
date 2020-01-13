@@ -3637,6 +3637,15 @@ class Societe extends CommonObject
 		$this->phone = empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TEL;
 		$this->fax = empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? '' : $conf->global->MAIN_INFO_SOCIETE_FAX;
 		$this->url = empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? '' : $conf->global->MAIN_INFO_SOCIETE_WEB;
+
+		// Social networks
+		$this->facebook_url = empty($conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL;
+		$this->twitter_url = empty($conf->global->MAIN_INFO_SOCIETE_TWITTER_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TWITTER_URL;
+		$this->linkedin_url = empty($conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL;
+		$this->instagram_url = empty($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL;
+		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
+		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
+
 		// Id prof generiques
 		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;
 		$this->idprof2 = empty($conf->global->MAIN_INFO_SIRET) ? '' : $conf->global->MAIN_INFO_SIRET;
