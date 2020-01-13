@@ -1639,13 +1639,14 @@ function dol_bc($var, $moreclass = '')
 }
 
 /**
- *      Return a formated address (part address/zip/town/state) according to country rules
+ *      Return a formated address (part address/zip/town/state) according to country rules.
+ *      See https://en.wikipedia.org/wiki/Address
  *
  *      @param  Object		$object			A company or contact object
- * 	    @param	int			$withcountry		1=Add country into address string
- *      @param	string		$sep				Separator to use to build string
- *      @param	Translate	$outputlangs		Object lang that contains language for text translation.
- *      @param	int		$mode		0=Standard output, 1=Remove address
+ * 	    @param	int			$withcountry	1=Add country into address string
+ *      @param	string		$sep			Separator to use to build string
+ *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
+ *      @param	int			$mode			0=Standard output, 1=Remove address
  *      @return string						Formated string
  *      @see dol_print_address()
  */
@@ -1655,6 +1656,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
+
+	// See format of addresses on https://en.wikipedia.org/wiki/Address
 
 	// Address
 	if (empty($mode)) {
@@ -1692,7 +1695,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	{
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$ret .= ($object->town ? (($object->zip ? ' ' : '').$object->town) : '');
-		$ret .= ($object->state_id ? (' ('.($object->state_id).')') : '');
+		$ret .= ($object->state_code ? (' '.($object->state_code)) : '');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
