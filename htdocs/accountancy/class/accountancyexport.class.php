@@ -718,7 +718,7 @@ class AccountancyExport
 			print $line->piece_num.$separator;
 
 			// FEC:EcritureDate
-			print $date_doc.$separator;
+			print $date_creation.$separator;
 
 			// FEC:CompteNum
 			print $line->numero_compte.$separator;
