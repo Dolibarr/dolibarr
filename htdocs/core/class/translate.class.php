@@ -291,7 +291,6 @@ class Translate
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								if (empty($this->tab_translate[$key]))
 								{ // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
-									$value = preg_replace('/\\n/', "\n", $value); // Parse and render carriage returns
 									if ($key == 'DIRECTION') { // This is to declare direction of language
 										if ($alt < 2 || empty($this->tab_translate[$key])) { // We load direction only for primary files or if not yet loaded
 											$this->tab_translate[$key] = $value;
@@ -307,8 +306,8 @@ class Translate
 									    continue;
 									}
 									else {
-										$this->tab_translate[$key] = $value;
-										//if ($domain == 'orders') print "$tab[0] value $value<br>";
+										// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
 											$tabtranslatedomain[$key] = $value;
 										} // To save lang content in cache
@@ -491,9 +490,9 @@ class Translate
 						//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 						if (empty($this->tab_translate[$key]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 						{
-							$value=trim(preg_replace('/\\n/', "\n", $value));
+							// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+							$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 
-							$this->tab_translate[$key]=$value;
 							if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 						}
 
@@ -618,9 +617,8 @@ class Translate
                 }
             }
 
-            if (! preg_match('/^Format/', $key))
+            if (strpos($key, 'Format') !== 0)
             {
-            	//print $str;
             	$str=sprintf($str, $param1, $param2, $param3, $param4);	// Replace %s and %d except for FormatXXX strings.
             }
 

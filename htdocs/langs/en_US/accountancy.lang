@@ -160,7 +160,7 @@ ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
 TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait

@@ -75,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
+$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT);
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');

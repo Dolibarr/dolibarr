@@ -22,7 +22,7 @@ Following changes may create regressions for some external modules, but were nec
 For Users:
 
 NEW: Module BOM is now stable.
-NEW: Module MO - Manufacturing Order available with experimental status.
+NEW: Module MO (Manufacturing Order) is available with experimental status.
 NEW: Can set the Address/Contact by default on third parties.
 NEW: Add a dictionary to edit list of Social networks.
 NEW: A nicer dashboard for open elements on Home page.
