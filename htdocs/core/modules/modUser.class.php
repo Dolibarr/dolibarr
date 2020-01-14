@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,7 +46,7 @@ class modUser extends DolibarrModules
 		$this->numero = 0;
 
 		$this->family = "hr";		// Family for module (or "base" if core module)
-		$this->module_position = '10';
+		$this->module_position = '05';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";
@@ -69,7 +69,7 @@ class modUser extends DolibarrModules
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->langfiles = array("main","users","companies","members",'salaries');
+		$this->langfiles = array("main","users","companies","members","salaries","hrm");
 		$this->always_enabled = true;	// Can't be disabled
 
 		// Constants
@@ -225,7 +225,7 @@ class modUser extends DolibarrModules
 		    'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",
 		    'u.office_phone'=>'Phone','u.user_mobile'=>"Mobile",'u.office_fax'=>'Fax',
 		    'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature',
-		    'u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
+		    'u.fk_user'=>'HierarchicalResponsible','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
 		    'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey',
 		    'u.birth'=>'BirthdayDate',
 		    'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",
@@ -281,7 +281,7 @@ class modUser extends DolibarrModules
 			'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",
 		    'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",
 		    'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature',
-		    'u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
+		    'u.fk_user'=>'HierarchicalResponsible','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
 			'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey',
 		    'u.birth'=>'BirthdayDate',
 		    'u.datec'=>"DateCreation",

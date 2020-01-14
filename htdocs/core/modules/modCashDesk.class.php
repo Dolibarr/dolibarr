@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,7 +99,7 @@ class modCashDesk extends DolibarrModules
 									'type'=>'top',			// This is a Top menu entry
 									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
-									'url'=>'/cashdesk/index.php?user=__LOGIN__',
+									'url'=>'/cashdesk/index.php?user=__USER_LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>900,
                                     'enabled'=>'$conf->cashdesk->enabled',

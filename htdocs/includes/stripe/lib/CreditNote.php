@@ -8,6 +8,7 @@ namespace Stripe;
  * @property string $id
  * @property string $object
  * @property int $amount
+ * @property string $customer_balance_transaction
  * @property int $created
  * @property string $currency
  * @property string $customer

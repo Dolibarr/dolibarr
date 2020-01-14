@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,7 +93,7 @@ class Menu
         $array_start = array_slice($this->liste, 0, ($idafter+1));
         $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
         $array_end   = array_slice($this->liste, ($idafter+1));
-        $this->liste=array_merge($array_start, $array_new, $array_end);
+        $this->liste = array_merge($array_start, $array_new, $array_end);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -105,7 +105,7 @@ class Menu
     public function remove_last()
     {
         // phpcs:enable
-        if (count($this->liste) > 1) {
+    	if (count($this->liste) > 1) {
             array_pop($this->liste);
         }
     }

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var resource Database handler */
+	/** @var bool|resource Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -160,10 +160,10 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-	 *	Annulation d'une transaction et retour aux anciennes valeurs
+	 *	Cancel a transaction and go back to initial data values
 	 *
 	 * 	@param	string			$log		Add more log to default log line
-	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@return	resource|int         		1 if cancelation is ok or transaction not open, 0 if error
 	 */
     public function rollback($log = '')
 	{
@@ -284,7 +284,7 @@ abstract class DoliDB implements Database
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
 		$string=preg_replace('/([^0-9])/i', '', $string);
 		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
+		$date=dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
 		return $date;
 	}
 

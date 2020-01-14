@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -131,7 +131,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->name = "muscadet";
 		$this->description = $langs->trans('SuppliersCommandModel');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -213,7 +213,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
-		global $user,$langs,$conf,$hookmanager,$mysoc,$nblignes;
+		global $user,$langs,$conf,$hookmanager,$mysoc,$nblines;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -222,13 +222,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE))
 		{
-			for ($i = 0 ; $i < $nblignes ; $i++)
+			for ($i = 0 ; $i < $nblines ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -307,7 +307,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -344,7 +344,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 				// Positionne $this->atleastonediscount si on a au moins une remise
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					if ($object->lines[$i]->remise_percent)
 					{
@@ -388,7 +388,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
 
-						// Rect prend une longueur en 3eme param
+						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
@@ -406,7 +406,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -418,7 +418,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -481,7 +481,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -591,7 +591,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -600,7 +600,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -687,7 +687,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -702,7 +702,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -713,12 +713,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
-	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -729,7 +729,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	integer
 	 */
-	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	    global $conf;
@@ -784,6 +784,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return $posy;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show total to pay
@@ -795,7 +796,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -999,6 +1000,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
 	 *   Show table for lines
 	 *
@@ -1012,7 +1014,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1041,11 +1043,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
@@ -1104,6 +1106,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1113,7 +1116,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1348,6 +1351,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *
@@ -1357,7 +1361,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

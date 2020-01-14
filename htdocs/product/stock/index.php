@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,6 +27,11 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('stockindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'productbatch'));
@@ -54,13 +60,14 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print "<tr class=\"liste_titre\">";
     print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print "<tr ".$bc[false]."><td>";
     print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>";
+    print "</table></div></form><br>";
 }
 
 
@@ -79,7 +86,8 @@ if ($result)
 
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Warehouses").'</th></tr>';
 
     if ($num)
@@ -99,6 +107,7 @@ if ($result)
         $db->free($result);
     }
     print "</table>";
+    print '</div>';
 }
 else
 {
@@ -131,7 +140,8 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print "<tr class=\"liste_titre\">";
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
@@ -179,10 +189,14 @@ if ($resql)
 	$db->free($resql);
 
 	print "</table>";
+    print '</div>';
 }
 
 //print '</td></tr></table>';
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardWarehouse', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

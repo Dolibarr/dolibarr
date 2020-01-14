@@ -16,20 +16,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/facture/modules_facture.php
  *	\ingroup    facture
- *	\brief      Fichier contenant la classe mere de generation des factures en PDF
- * 				et la classe mere de numerotation des factures
+ *	\brief      File that contains parent class for invoices models
+ *              and parent class for invoices numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Required because used in classes that inherit
 
 
 /**
@@ -66,7 +66,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 }
 
 /**
- *  Classe mere des modeles de numerotation des references de facture
+ *  Parent class of invoice reference numbering templates
  */
 abstract class ModeleNumRefFactures
 {
@@ -98,7 +98,7 @@ abstract class ModeleNumRefFactures
 	}
 
 	/**
-	 * Renvoi un exemple de numerotation
+	 * Return an example of numbering
 	 *
 	 * @return	string      Example
 	 */
@@ -110,10 +110,10 @@ abstract class ModeleNumRefFactures
 	}
 
 	/**
-	 * Test si les numeros deja en vigueur dans la base ne provoquent pas
-	 * de conflits qui empecheraient cette numerotation de fonctionner.
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
 	 *
-	 * @return	boolean     false si conflit, true si ok
+	 * @return	boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ $ref	= GETPOST('ref', 'alpha');
 $action	= GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
 
 $object = new SupplierProposal($db);
@@ -85,7 +85,7 @@ elseif ($action == 'swapstatut' && $permissiontoedit)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -115,13 +115,13 @@ elseif ($action == 'deletecontact' && $permissiontoedit)
  * View
  */
 
-$help_url='';
+$help_url = '';
 llxHeader('', $langs->trans("SupplierProposals"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 
 /* *************************************************************************** */
@@ -130,7 +130,7 @@ $userstatic=new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$langs->trans("SupplierProposal");
 
@@ -158,20 +158,21 @@ if ($id > 0 || ! empty($ref))
 		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		    if ($permissiontoedit)
 		    {
-		        if ($action != 'classify')
-		            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-		            $morehtmlref.=' : ';
-		        	if ($action == 'classify') {
-		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-		                $morehtmlref.='</form>';
-		            } else {
-		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-		            }
+		        if ($action != 'classify') {
+		        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.=' : ';
+				}
+	        	if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
 		    } else {
 		        if (! empty($object->fk_project)) {
 		            $proj = new Project($db);

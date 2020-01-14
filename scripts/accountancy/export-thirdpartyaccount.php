@@ -16,11 +16,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file 		htdocs/accountancy/admin/export-thirdpartyaccount.php
+ * \file 		scripts/accountancy/export-thirdpartyaccount.php
  * \ingroup		Accounting Expert
  * \brief		Page to detect empty accounting account
  */
@@ -57,16 +57,16 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		// We define date_start and date_end
 		$year_end = $year_start;
 		$month_start = GETPOST("month") ? GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-		if (! GETPOST('month')) {
-			if (! GETPOST("year") && $month_start > $month_current) {
-				$year_start --;
-				$year_end --;
+		if (!GETPOST('month')) {
+			if (!GETPOST("year") && $month_start > $month_current) {
+				$year_start--;
+				$year_end--;
 			}
 			$month_end = $month_start - 1;
 			if ($month_end < 1)
 				$month_end = 12;
 			else
-				$year_end ++;
+				$year_end++;
 		} else
 			$month_end = $month_start;
 		$date_start = dol_get_first_day($year_start, $month_start, false);
@@ -100,11 +100,11 @@ $periodlink = '';
 $exportlink = '';
 
 $nom = $langs->trans("ReportThirdParty");
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $description = $langs->trans("DescThirdPartyReport");
-$builddate=dol_now();
+$builddate = dol_now();
 
-$moreparam=array('action' => '');
+$moreparam = array('action' => '');
 report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam);
 
 print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
@@ -121,36 +121,36 @@ print '
 
 $sql = "(SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta as compta , ";
 $sql .= " s.fk_forme_juridique , s.fk_pays , s.phone , s.fax ,   f.datec , f.fk_soc , cp.label as country ";
-$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-$sql .= ", " . MAIN_DB_PREFIX . "facture as f";
-$sql .= ", " . MAIN_DB_PREFIX . "c_country as cp";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."facture as f";
+$sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
-if (! empty($date_start) && ! empty($date_end))
-	$sql .= " AND f.datec >= '" . $db->idate($date_start) . "' AND f.datec <= '" . $db->idate($date_end) . "'";
+if (!empty($date_start) && !empty($date_end))
+	$sql .= " AND f.datec >= '".$db->idate($date_start)."' AND f.datec <= '".$db->idate($date_end)."'";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
 if ($socid)
-	$sql .= " AND f.fk_soc = " . $socid;
+	$sql .= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY name";
 $sql .= ")";
 $sql .= "UNION (SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta_fournisseur as compta , ";
 $sql .= " s.fk_forme_juridique , s.fk_pays , s.phone , s.fax ,   ff.datec , ff.fk_soc , cp.label as country ";
-$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn as ff";
-$sql .= ", " . MAIN_DB_PREFIX . "c_country as cp";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as ff";
+$sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE ff.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
-if (! empty($date_start) && ! empty($date_end))
-	$sql .= " AND ff.datec >= '" . $db->idate($date_start) . "' AND ff.datec <= '" . $db->idate($date_end) . "'";
-$sql .= " AND ff.entity = " . $conf->entity;
+if (!empty($date_start) && !empty($date_end))
+	$sql .= " AND ff.datec >= '".$db->idate($date_start)."' AND ff.datec <= '".$db->idate($date_end)."'";
+$sql .= " AND ff.entity = ".$conf->entity;
 if ($socid)
-	$sql .= " AND f.fk_soc = " . $socid;
+	$sql .= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY name";
 $sql .= ")";
 
 $sql .= "ORDER BY name ASC";
 
-dol_syslog('accountancy/admin/thirdpartyaccount.php:: $sql=' . $sql);
+dol_syslog('accountancy/admin/thirdpartyaccount.php:: $sql='.$sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -158,21 +158,20 @@ if ($resql) {
 
 	// export csv
 	if (GETPOST('action', 'aZ09') == 'export_csv') {
-
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
 
 		$obj = $db->fetch_object($resql);
 
-		print '"' . $obj->compta . '",';
-		print '"' . $obj->address . '",';
-		print '"' . $obj->zip . '",';
-		print '"' . $obj->town . '",';
-		print '"' . $obj->country . '",';
-		print '"' . $obj->phone . '",';
-		print '"' . $obj->fax . '",';
+		print '"'.$obj->compta.'",';
+		print '"'.$obj->address.'",';
+		print '"'.$obj->zip.'",';
+		print '"'.$obj->town.'",';
+		print '"'.$obj->country.'",';
+		print '"'.$obj->phone.'",';
+		print '"'.$obj->fax.'",';
 		print "\n";
-		$i ++;
+		$i++;
 	}
 
 	/*
@@ -183,21 +182,21 @@ if ($resql) {
 
 	print '<br><br>';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print "</table>\n";
 	print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
 	print '</tr><tr><td colspan=2>';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="left">' . $langs->trans("ThirdParties") . '</td>';
-	print '<td class="left">' . $langs->trans("AccountNumber") . '</td>';
-	print '<td class="left">' . $langs->trans("RaisonSociale") . '</td>';
-	print '<td class="left">' . $langs->trans("Address") . '</td>';
-	print '<td class="left">' . $langs->trans("Zip") . '</td>';
-	print '<td class="left">' . $langs->trans("Town") . '</td>';
-	print '<td class="left">' . $langs->trans("Country") . '</td>';
-	print '<td class="left">' . $langs->trans("Contact") . '</td>';
-	print '<td class="left">' . $langs->trans("Phone") . '</td>';
-	print '<td class="left">' . $langs->trans("Fax") . '</td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="left">'.$langs->trans("ThirdParties").'</td>';
+	print '<td class="left">'.$langs->trans("AccountNumber").'</td>';
+	print '<td class="left">'.$langs->trans("RaisonSociale").'</td>';
+	print '<td class="left">'.$langs->trans("Address").'</td>';
+	print '<td class="left">'.$langs->trans("Zip").'</td>';
+	print '<td class="left">'.$langs->trans("Town").'</td>';
+	print '<td class="left">'.$langs->trans("Country").'</td>';
+	print '<td class="left">'.$langs->trans("Contact").'</td>';
+	print '<td class="left">'.$langs->trans("Phone").'</td>';
+	print '<td class="left">'.$langs->trans("Fax").'</td></tr>';
 
 	while ($obj = $db->fetch_object($resql))
 	{
@@ -210,18 +209,18 @@ if ($resql) {
 		$thirdpartystatic->status = $obj->status;
 		print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
-		print '<td class="left">' . $obj->compta . '</td>' . "\n";
+		print '<td class="left">'.$obj->compta.'</td>'."\n";
 		print '<td class="left"></td>';
-		print '<td class="left">' . $obj->address . '</td>';
-		print '<td class="left">' . $obj->zip . '</td>';
-		print '<td class="left">' . $obj->town . '</td>';
-		print '<td class="left">' . $obj->country . '</td>';
+		print '<td class="left">'.$obj->address.'</td>';
+		print '<td class="left">'.$obj->zip.'</td>';
+		print '<td class="left">'.$obj->town.'</td>';
+		print '<td class="left">'.$obj->country.'</td>';
 		print '<td class="left"></td>';
-		print '<td class="left">' . $obj->phone . '</td>';
-		print '<td class="left">' . $obj->fax . '</td>';
+		print '<td class="left">'.$obj->phone.'</td>';
+		print '<td class="left">'.$obj->fax.'</td>';
 		print "</tr>\n";
 
-		$i ++;
+		$i++;
 	}
 
 	print "</table>";

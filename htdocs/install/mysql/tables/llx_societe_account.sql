@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 --
 -- Table to store accounts of thirdparties on external websites (like on stripe field site = 'stripe')
 -- or on local website (fk_website).
@@ -20,13 +20,14 @@ CREATE TABLE llx_societe_account(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity	integer DEFAULT 1, 
-	key_account       varchar(128),
+	key_account       varchar(128),				-- the id of third party in external web site (for site_account if site_account defined)
 	login             varchar(128) NOT NULL, 
 	pass_encoding     varchar(24),
 	pass_crypted      varchar(128),
 	pass_temp         varchar(128),			    -- temporary password when asked for forget password
 	fk_soc integer,
 	site              varchar(128),				-- name of external web site
+	site_account      varchar(128),				-- a key to identify the account on external web site
 	fk_website        integer,					-- id of local web site
 	note_private      text,
 	date_last_login   datetime,

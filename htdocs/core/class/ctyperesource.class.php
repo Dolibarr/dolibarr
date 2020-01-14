@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -252,7 +252,7 @@ class Ctyperesource
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
+		    $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);

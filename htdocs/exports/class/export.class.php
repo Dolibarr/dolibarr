@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,12 +43,13 @@ class Export
     public $array_export_sql_order=array();        // Tableau des "requetes sql"
 
     public $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
-    public $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
-    public $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
+    public $array_export_TypeFields=array();	   // Tableau des listes de champ+Type de filtre
+    public $array_export_FilterValue=array();	   // Tableau des listes de champ+Valeur a filtrer
     public $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
     public $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
-    public $array_export_special=array();          // Tableau des operations speciales sur champ
-    public $array_export_examplevalues=array();    // array with examples
+    public $array_export_special=array();          // array of special operations to do on field
+    public $array_export_examplevalues=array();    // array with examples for fields
+	public $array_export_help=array();			   // array with tooltip help for fields
 
     // To store export modules
     public $hexa;
@@ -186,6 +187,8 @@ class Export
 									$this->array_export_special[$i]=(! empty($module->export_special_array[$r])?$module->export_special_array[$r]:'');
             						// Array of examples
             						$this->array_export_examplevalues[$i]=$module->export_examplevalues_array[$r];
+            						// Array of help tooltips
+            						$this->array_export_help[$i]=(! empty($module->export_help_array[$r])?$module->export_help_array[$r]:'');
 
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];
@@ -399,8 +402,7 @@ class Export
 			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Status':
-				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
-				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				$szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Boolean':
 				$szFilterField='<select name="'.$NameField.'" class="flat">';
@@ -540,7 +542,7 @@ class Export
     public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
     {
         // phpcs:enable
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
 		$indice=0;
 		asort($array_selected);
@@ -633,6 +635,14 @@ class Export
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias=str_replace(array('.', '-','(',')'), '_', $key);
 								if ($obj->$alias < 0) $obj->$alias='0';
+							}
+							// Operation GETNUMOPENDAYS (for Holiday module)
+							elseif ($this->array_export_special[$indice][$key]=='getNumOpenDays')
+							{
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-','(',')'), '_', $key);
+								$obj->$alias=num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
 							}
 							// Operation INVOICEREMAINTOPAY
 							elseif ($this->array_export_special[$indice][$key]=='getRemainToPay')

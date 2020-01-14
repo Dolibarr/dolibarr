@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,17 +24,13 @@
  * \ingroup cron
  * \brief Execute pendings jobs
  */
-if (! defined('NOTOKENRENEWAL'))
-	define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))
-	define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))
-	define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))
-	define('NOREQUIREAJAX', '1');
-if (! defined('NOLOGIN'))
-	define('NOLOGIN', '1');
-// if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
+
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
+
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -68,11 +64,13 @@ $userlogin = $argv[2];
 $version = DOL_VERSION;
 $error = 0;
 
+// Language Management
+$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
+
+
 /*
  * Main
  */
-
-$langs->loadLangs(array('main','dict'));
 
 // current date
 $now = dol_now();
@@ -148,31 +146,66 @@ if (! empty($id)) {
 $result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: " . $object->error;
-	dol_syslog("cron_run_jobs.php:: fetch Error " . $object->error, LOG_ERR);
+	dol_syslog("cron_run_jobs.php fetch Error " . $object->error, LOG_ERR);
 	exit(- 1);
 }
 
 $qualifiedjobs = array();
 foreach ($object->lines as $val) {
 	if (! verifCond($val->test))
+	{
 		continue;
+	}
 	$qualifiedjobs[] = $val;
 }
 
-// TODO Duplicate. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+// TODO Duplicate code. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
 $nbofjobs = count($qualifiedjobs);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
+    $savconf = dol_clone($conf);
+
 	// Loop over job
 	foreach ($qualifiedjobs as $line) {
-		dol_syslog("cron_run_jobs.php cronjobid: " . $line->id . " priority=" . $line->priority . " entity=" . $line->entity . " label=" . $line->label, LOG_DEBUG);
+		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
+		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
-		echo "cron_run_jobs.php cronjobid: " . $line->id . " priority=" . $line->priority . " entity=" . $line->entity . " label=" . $line->label;
+		// Force reload of setup for the current entity
+		if ((empty($line->entity)?1:$line->entity) != $conf->entity)
+		{
+			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload user and conf", LOG_DEBUG);
+		    echo " -> we change entity so we reload user and conf";
 
-		// If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
+		    $conf->entity = (empty($line->entity)?1:$line->entity);
+		    $conf->setValues($db);        // This make also the $mc->setValues($conf); that reload $mc->sharings
+
+		    // Force recheck that user is ok for the entity to process and reload permission for entity
+		    if ($conf->entity != $user->entity && $user->entity != 0)
+		    {
+    		    $result=$user->fetch('', $userlogin, '', 0, $conf->entity);
+    		    if ($result < 0)
+    		    {
+    		        echo "\nUser Error: ".$user->error."\n";
+    		        dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+    		        exit(-1);
+    		    }
+    		    else
+    		    {
+    		        if ($result == 0)
+    		        {
+    		            echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
+    		            dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
+    		            exit(-1);
+    		        }
+    		    }
+    		    $user->getrights();
+		    }
+		}
+
+		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now)) {
 			echo " - qualified";
 
@@ -200,7 +233,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 
 			echo " - result of run_jobs = " . $result;
 
-			// we re-program the next execution and stores the last execution time for this job
+			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
 			if ($result < 0) {
 				echo "Error cronjobid: " . $line->id . " cronjob->reprogram_job: " . $cronjob->error . "\n";
@@ -216,7 +249,11 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:" . dol_print_date($line->datenextrun, 'dayhourrfc') . " line->datestart:" . dol_print_date($line->datestart, 'dayhourrfc') . " line->dateend:" . dol_print_date($line->dateend, 'dayhourrfc') . " now:" . dol_print_date($now, 'dayhourrfc'));
 		}
 	}
-} else {
+
+	$conf = $savconf;
+}
+else
+{
 	echo "cron_run_jobs.php no qualified job found\n";
 }
 

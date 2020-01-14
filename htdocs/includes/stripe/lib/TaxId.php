@@ -12,7 +12,6 @@ namespace Stripe;
  * @property string $country
  * @property int $created
  * @property string $customer
- * @property bool $deleted
  * @property bool $livemode
  * @property string $type
  * @property string $value
@@ -27,10 +26,12 @@ class TaxId extends ApiResource
 
     /**
      * Possible string representations of a tax id's type.
-     * @link https://stripe.com/docs/api/customers/tax_id_object#tax_id_object-type
+     * @link https://stripe.com/docs/api/customer_tax_ids/object#tax_id_object-type
      */
     const TYPE_AU_ABN  = 'au_abn';
     const TYPE_EU_VAT  = 'eu_vat';
+    const TYPE_IN_GST  = 'in_gst';
+    const TYPE_NO_VAT  = 'no_vat';
     const TYPE_NZ_GST  = 'nz_gst';
     const TYPE_UNKNOWN = 'unknown';
 

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -280,7 +280,7 @@ class RejetPrelevement
 	 *
 	 * @param 	int		$amounts 	If you want to get the amount of the order for each invoice
 	 * @return	array				Array List of invoices related to the withdrawal line
-	 * @TODO	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
+	 * @todo	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
 	 */
 	private function getListInvoices($amounts = 0)
 	{

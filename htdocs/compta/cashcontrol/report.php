@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ include_once 'class/cashcontrol.class.php';
 $cashcontrol= new CashControl($db);
 $cashcontrol->fetch($id);
 
-$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortorder='ASC';
 $sortfield='b.datev,b.dateo,b.rowid';
 
@@ -152,7 +152,7 @@ if ($resql)
 	$cash=$bank=$cheque=$other=0;
 
     $totalarray=array();
-    while ($i < min($num, $limit))
+    while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
 
@@ -196,10 +196,18 @@ if ($resql)
     	// Bank account
         print '<td class="nowrap right">';
 		print $bankaccount->getNomUrl(1);
-		if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
-		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
-		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
-		else $other+=$objp->amount;
+		if ($cashcontrol->posmodule=="takepos"){
+			if ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber}==$bankaccount->id) $cash+=$objp->amount;
+			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$cashcontrol->posnumber}==$bankaccount->id) $bank+=$objp->amount;
+			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$cashcontrol->posnumber}==$bankaccount->id) $cheque+=$objp->amount;
+			else $other+=$objp->amount;
+		}
+		else{
+			if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
+			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
+			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
+			else $other+=$objp->amount;
+		}
 		print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 
@@ -208,22 +216,22 @@ if ($resql)
     	if ($objp->amount < 0)
     	{
     	    print price($objp->amount * -1);
-    	    $totalarray['totaldeb'] += $objp->amount;
+    	    $totalarray['val']['totaldebfield'] += $objp->amount;
     	}
     	print "</td>\n";
     	if (! $i) $totalarray['nbfield']++;
-    	if (! $i) $totalarray['totaldebfield']=$totalarray['nbfield'];
+    	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totaldebfield';
 
     	// Credit
     	print '<td class="right">';
     	if ($objp->amount > 0)
     	{
 			print price($objp->amount);
-    	    $totalarray['totalcred'] += $objp->amount;
+    	    $totalarray['val']['totalcredfield'] += $objp->amount;
     	}
     	print "</td>\n";
     	if (! $i) $totalarray['nbfield']++;
-    	if (! $i) $totalarray['totalcredfield']=$totalarray['nbfield'];
+    	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalcredfield';
 
 		print "</tr>";
 
@@ -231,24 +239,7 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totaldebfield']) || isset($totalarray['totalcredfield']))
-	{
-	    print '<tr class="liste_total">';
-	    $i=0;
-	    while ($i < $totalarray['nbfield'])
-	    {
-	        $i++;
-	        if ($i == 1)
-	        {
-	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-	        }
-	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
-	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
-	        else print '<td></td>';
-	    }
-	    print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	print "</table>";
 

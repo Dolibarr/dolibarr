@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -158,7 +158,7 @@ class SimpleOpenID
          }else{
          $identity = $u['scheme'] . '://' . $u['host'] . $u['path'];
          }
-         //*/
+        */
         $this->openid_url_identity = $a;
     }
 
@@ -299,7 +299,7 @@ class SimpleOpenID
      * @param string 	$url		URL
      * @param string	$method		Method
      * @param string	$params		Params
-     * @return boolean|unknown
+     * @return boolean|void			True if success, False if error
      */
     public function FSOCK_Request($url, $method = "GET", $params = "")
     {
@@ -556,8 +556,8 @@ class SimpleOpenID
             return false;
         }
         else
-       {
-               dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
+        {
+            dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
             $this->SetOpenIDServer($server);
             return $server;
         }

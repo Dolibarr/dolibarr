@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,23 +31,23 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportstats.class.ph
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
-$object_status=GETPOST('object_status');
+$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$object_status = GETPOST('object_status');
 
-$userid=GETPOST('userid', 'int');
-$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', $id, '');
 
 $nowyear=strftime("%Y", dol_now());
@@ -62,11 +62,11 @@ $endyear=$year;
  * View
  */
 
-$form=new Form($db);
-$tmpexpensereport=new ExpenseReport($db);
+$form = new Form($db);
+$tmpexpensereport = new ExpenseReport($db);
 
-$title=$langs->trans("TripsAndExpensesStatistics");
-$dir=$conf->expensereport->dir_temp;
+$title = $langs->trans("TripsAndExpensesStatistics");
+$dir = $conf->expensereport->dir_temp;
 
 llxHeader('', $title);
 
@@ -91,7 +91,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
 	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
 	$i=$startyear;$legend=array();
 	while ($i <= $endyear)
 	{
@@ -105,7 +104,6 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("Number"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
 
@@ -122,13 +120,13 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px2->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px2->SetLegend($legend);
@@ -139,7 +137,6 @@ if (! $mesg)
 	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
 	$px2->mode='depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
@@ -149,7 +146,7 @@ if (! $mesg)
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -164,13 +161,13 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px3->SetData($data);
-    $i = $startyear;$legend=array();
+    $i = $startyear; $legend = array();
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px3->SetLegend($legend);
@@ -181,7 +178,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
@@ -191,16 +187,16 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
-    $arrayyears[$val['year']]=$val['year'];
+$arrayyears = array();
+foreach ($data as $val) {
+    $arrayyears[$val['year']] = $val['year'];
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 
-$h=0;
+$h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/expensereport/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/expensereport/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -216,29 +212,28 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 /*
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter='';
-print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid,'socid','',1,1,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-$include='';
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $include='hierarchy';
+$include = '';
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $include = 'hierarchy';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$liststatus=$tmpexpensereport->statuts;
+$liststatus = $tmpexpensereport->statuts;
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -248,7 +243,7 @@ print '</form>';
 print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("Number").'</td>';
@@ -256,11 +251,11 @@ print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
+	while ($year && $oldyear > $year + 1)
 	{	// If we have empty year
 		$oldyear--;
 
@@ -279,7 +274,7 @@ foreach ($data as $val)
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';
@@ -289,7 +284,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

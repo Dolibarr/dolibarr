@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -66,8 +66,8 @@ else
 
 if ($action == 'add' || GETPOST("modify"))
 {
-    $external_rss_title = "external_rss_title_" . GETPOST("norss");
-    $external_rss_urlrss = "external_rss_urlrss_" . GETPOST("norss");
+    $external_rss_title = "external_rss_title_" . GETPOST("norss", 'int');
+    $external_rss_urlrss = "external_rss_urlrss_" . GETPOST("norss", 'int');
 
     if (! empty($_POST[$external_rss_urlrss]))
     {
@@ -79,7 +79,7 @@ if ($action == 'add' || GETPOST("modify"))
 		if ($_POST["modify"])
 		{
 			// Supprime boite box_external_rss de definition des boites
-/*	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
+            /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$boxlabel."'";
 	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
 
@@ -89,13 +89,13 @@ if ($action == 'add' || GETPOST("modify"))
 				dol_print_error($db,"sql=$sql");
 				exit;
 	        }
-*/
+            */
 		}
 		else
 		{
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-			$sql.= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss").' ('.GETPOST($external_rss_title)).")')";
+			$sql.= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
 	        if (! $db->query($sql))
 	        {
 	        	dol_print_error($db);
@@ -103,8 +103,8 @@ if ($action == 'add' || GETPOST("modify"))
 	        }
 		}
 
-		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"), GETPOST($external_rss_title), 'chaine', 0, '', $conf->entity);
-		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"), GETPOST($external_rss_urlrss), 'chaine', 0, '', $conf->entity);
+		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss", 'int'), GETPOST($external_rss_title, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss", 'int'), GETPOST($external_rss_urlrss, 'alpha'), 'chaine', 0, '', $conf->entity);
 
         if ($result1 && $result2)
         {
@@ -122,13 +122,13 @@ if ($action == 'add' || GETPOST("modify"))
 
 if ($_POST["delete"])
 {
-    if(GETPOST("norss"))
+    if (GETPOST("norss", 'int'))
     {
         $db->begin();
 
 		// Supprime boite box_external_rss de definition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-        $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss"))." %'";
+        $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss", 'int'))." %'";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -168,8 +168,8 @@ if ($_POST["delete"])
         }
 
 
-		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"), $conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"), $conf->entity);
+		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), $conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), $conf->entity);
 
         if ($result1 && $result2)
         {
@@ -198,9 +198,9 @@ print '<br>';
 
 // Formulaire ajout
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
@@ -254,8 +254,8 @@ if ($resql)
 		print "<br>";
 		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 
-		print '<table class="noborder" width="100%">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<table class="noborder centpercent">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
@@ -270,13 +270,13 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
-		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_" . $idrss . "\" value=\"" . $conf->global->$keyrsstitle . "\"></td>";
+		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_" . $idrss . "\" value=\"" . dol_escape_htmltag($conf->global->$keyrsstitle) . "\"></td>";
 		print "</tr>";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
-		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . $conf->global->$keyrssurl . "\"></td>";
+		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . dol_escape_htmltag($conf->global->$keyrssurl) . "\"></td>";
 		print "</tr>";
 
 
@@ -300,7 +300,6 @@ if ($resql)
 		// Logo
 	    if ($result > 0 && empty($rss->error))
 	    {
-
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';

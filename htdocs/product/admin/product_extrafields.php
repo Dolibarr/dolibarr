@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -61,7 +61,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $title = $langs->trans('ProductServiceSetup');
 $textobject = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
+if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$textobject = $langs->trans('Services');

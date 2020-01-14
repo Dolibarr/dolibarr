@@ -27,7 +27,6 @@ ErrorFailedToSendMail=Fehler beim Senden des Mails (Absender=%s, Empfänger=%s)
 ErrorDuplicateField=Dieser Wert muß einzigartig sein
 LevelOfFeature=Funktions-Level
 NotePublic=Notiz (öffentlich)
-Closed=geschlossen
 Closed2=geschlossen
 ToClone=Klonen
 Of=Von
@@ -84,3 +83,4 @@ Calendar=Kalender
 Events=Termine
 SearchIntoInterventions=Eingriffe
 AssignedTo=zugewisen an
+ContactDefault_order_supplier=Supplier Order

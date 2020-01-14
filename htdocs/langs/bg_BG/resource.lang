@@ -5,8 +5,8 @@ DeleteResource=Изтриване на ресурс
 ConfirmDeleteResourceElement=Потвърждаване на изтриване на ресурса за този елемент
 NoResourceInDatabase=Няма ресурс в базата данни.
 NoResourceLinked=Няма свързан ресурс
-
-ResourcePageIndex=Списък ресурси
+ActionsOnResource=Събития свързани с този ресурс
+ResourcePageIndex=Списък с ресурси
 ResourceSingular=Ресурс
 ResourceCard=Карта на ресурс
 AddResource=Създаване на ресурс
@@ -18,19 +18,19 @@ ResourcesLinkedToElement=Ресурси свързани към елемент
 
 ShowResource=Показване на ресурс
 
-ResourceElementPage=Ресурси на елемент
+ResourceElementPage=Ресурси
 ResourceCreatedWithSuccess=Ресурсът е успешно създаден
-RessourceLineSuccessfullyDeleted=Линията на ресурса е успешно изтрита
-RessourceLineSuccessfullyUpdated=Линията на ресурса е успешно обновена
-ResourceLinkedWithSuccess=Ресурсът е свързан успешно 
+RessourceLineSuccessfullyDeleted=Ресурсът е успешно изтрит
+RessourceLineSuccessfullyUpdated=Ресурсът е успешно актуализиран
+ResourceLinkedWithSuccess=Ресурсът е успешно свързан
 
 ConfirmDeleteResource=Потвърждаване на изтриването на този ресурс
 RessourceSuccessfullyDeleted=Ресурсът е успешно изтрит
-DictionaryResourceType=Тип на ресурси
+DictionaryResourceType=Типове ресурси
 
 SelectResource=Избиране на ресурс
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=Идентификатор на ресурс
+AssetNumber=Сериен номер
+ResourceTypeCode=Код за типа ресурс
 ImportDataset_resource_1=Ресурси

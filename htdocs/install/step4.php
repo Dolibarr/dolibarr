@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,11 +80,11 @@ $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->
 if ($db->ok)
 {
     print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
-	print '<input id="login" name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
+	print '<input id="login" name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
     print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
-    print '<input type="password" id="pass" name="pass"></td></tr>';
+    print '<input type="password" id="pass" name="pass" autocomplete="new-password"></td></tr>';
     print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordAgain").' :</label></td><td>';
-    print '<input type="password" id="pass_verif" name="pass_verif"></td></tr>';
+    print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password"></td></tr>';
     print '</table>';
 
     if (isset($_GET["error"]) && $_GET["error"] == 1)

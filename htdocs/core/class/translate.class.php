@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,11 +88,12 @@ class Translate
 
 		if (empty($srclang) || $srclang == 'auto')
 		{
+			// $_SERVER['HTTP_ACCEPT_LANGUAGE'] can be 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,it;q=0.6' but can contains also malicious content
 			$langpref=empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])?'':$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-			$langpref=preg_replace("/;([^,]*)/i", "", $langpref);
+			$langpref=preg_replace("/;([^,]*)/i", "", $langpref);	// Remove the 'q=x.y,' part
 			$langpref=str_replace("-", "_", $langpref);
 			$langlist=preg_split("/[;,]/", $langpref);
-			$codetouse=$langlist[0];
+			$codetouse=preg_replace('/[^_a-zA-Z]/', '', $langlist[0]);
 		}
 		else $codetouse=$srclang;
 
@@ -196,6 +197,7 @@ class Translate
 		$modulename = '';
 
 		// Search if a module directory name is provided into lang file name
+		$regs=array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $domain, $regs))
 		{
 			$newdomain = $regs[1];
@@ -219,11 +221,11 @@ class Translate
 
 		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
 		{
-			dol_syslog("Error: ".get_class($this)."::Load was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
+			dol_syslog("Error: ".get_class($this)."::load was called for domain=".$domain." but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
 			return -1;
 		}
 
-		foreach($this->dir as $keydir => $searchdir)
+		foreach($this->dir as $searchdir)
 		{
 			// Directory of translation files
 			$file_lang = $searchdir.($modulename?'/'.$modulename:'')."/langs/".$langofdir."/".$newdomain.".lang";
@@ -289,7 +291,6 @@ class Translate
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								if (empty($this->tab_translate[$key]))
 								{ // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
-									$value = preg_replace('/\\n/', "\n", $value); // Parse and render carriage returns
 									if ($key == 'DIRECTION') { // This is to declare direction of language
 										if ($alt < 2 || empty($this->tab_translate[$key])) { // We load direction only for primary files or if not yet loaded
 											$this->tab_translate[$key] = $value;
@@ -305,8 +306,8 @@ class Translate
 									    continue;
 									}
 									else {
-										$this->tab_translate[$key] = $value;
-										//if ($domain == 'orders') print "$tab[0] value $value<br>";
+										// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
 											$tabtranslatedomain[$key] = $value;
 										} // To save lang content in cache
@@ -426,7 +427,7 @@ class Translate
 
 		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
 		{
-			dol_syslog("Error: ".get_class($this)."::Load was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
+			dol_syslog("Error: ".get_class($this)."::loadFromDatabase was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
 			return -1;
 		}
 
@@ -489,9 +490,9 @@ class Translate
 						//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 						if (empty($this->tab_translate[$key]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 						{
-							$value=trim(preg_replace('/\\n/', "\n", $value));
+							// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+							$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 
-							$this->tab_translate[$key]=$value;
 							if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 						}
 
@@ -584,18 +585,18 @@ class Translate
 
 	/**
 	 *  Return text translated of text received as parameter (and encode it into HTML)
-	 *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-	 *              et si toujours pas trouve, il est retourne tel quel
-	 *              Les parametres de cette methode peuvent contenir de balises HTML.
+	 *              If there is no match for this text, we look in alternative file and if still not found,
+	 * 				it is returned as it is
+	 *              The parameters of this method can contain HTML tags
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
 	 *	@param	int		$maxsize	Max length of text
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
-     */
+	 */
     public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
     {
         global $conf;
@@ -616,9 +617,8 @@ class Translate
                 }
             }
 
-            if (! preg_match('/^Format/', $key))
+            if (strpos($key, 'Format') !== 0)
             {
-            	//print $str;
             	$str=sprintf($str, $param1, $param2, $param3, $param4);	// Replace %s and %d except for FormatXXX strings.
             }
 
@@ -645,9 +645,9 @@ class Translate
 
 	/**
 	 *  Return translated value of a text string
-	 *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-	 *               et si toujours pas trouve, il est retourne tel quel.
-	 *               Parameters of this method must not contains any HTML tags.
+	 *               If there is no match for this text, we look in alternative file and if still not found
+	 *               it is returned as is.
+	 *               Parameters of this method must not contain any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
 	 *  @param  string	$param1     chaine de param1
@@ -665,9 +665,9 @@ class Translate
 
 	/**
 	 *  Return translated value of a text string
-	 *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-	 *               et si toujours pas trouve, il est retourne tel quel.
-	 *               No convert to encoding charset of lang object is done.
+	 * 				 If there is no match for this text, we look in alternative file and if still not found,
+	 * 				 it is returned as is.
+	 *               No conversion to encoding charset of lang object is done.
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
@@ -779,6 +779,8 @@ class Translate
 			if (preg_match('/^[a-z]+_[A-Z]+/i', $dir))
 			{
 				$this->load("languages");
+
+				if (! empty($conf->global->MAIN_LANGUAGES_ALLOWED) && ! in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED)) ) continue;
 
 				if ($usecode == 2)
 				{

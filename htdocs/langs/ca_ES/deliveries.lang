@@ -2,7 +2,7 @@
 Delivery=Entrega
 DeliveryRef=Ref. d'entrega
 DeliveryCard=Fitxa de recepció
-DeliveryOrder=Comanda d'entrega
+DeliveryOrder=Rebut d'entrega
 DeliveryDate=Data d'entrega
 CreateDeliveryOrder=Genera el rebut d'entrega
 DeliveryStateSaved=Estat d'entrega desat
@@ -21,7 +21,7 @@ StatusDeliveryValidated=Rebut
 NameAndSignature=Nom i signatura:
 ToAndDate=En___________________________________ a ____/_____/__________
 GoodStatusDeclaration=Hem rebut les mercaderies indicades en bon estat,
-Deliverer=Destinatari:
+Deliverer=Emissor:
 Sender=Remitent
 Recipient=Destinatari
 ErrorStockIsNotEnough=No hi ha estoc suficient

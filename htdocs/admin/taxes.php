@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -134,10 +134,10 @@ if (empty($mysoc->tva_assuj))
 else
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
@@ -169,7 +169,7 @@ else
 
 	print '<br>';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
@@ -195,7 +195,7 @@ else
 	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="oddeven"><td class="titlefield">&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
 	// Products

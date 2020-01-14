@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,6 +25,10 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
+// TODO Remove this class (used in Expensereportik and ExpenseReportRule
+/**
+ * CoreObject
+ */
 class CoreObject extends CommonObject
 {
     public $withChild = true;
@@ -175,7 +179,7 @@ class CoreObject extends CommonObject
      */
     public function fetchChild()
     {
-        if($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
+        if ($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
         {
             foreach($this->childtables as &$childTable)
             {
@@ -235,8 +239,8 @@ class CoreObject extends CommonObject
     /**
      * Function to update object or create or delete if needed
      *
-     * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @param   User    $user   User object
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function update(User &$user)
     {
@@ -276,7 +280,7 @@ class CoreObject extends CommonObject
      * Function to create object in database
      *
      * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function create(User &$user)
     {
@@ -317,7 +321,7 @@ class CoreObject extends CommonObject
      * Function to delete object in database
      *
      * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function delete(User &$user)
     {
@@ -388,10 +392,10 @@ class CoreObject extends CommonObject
      */
     public function setDate($field, $date)
     {
-          if (empty($date))
-          {
-              $this->{$field} = 0;
-          }
+        if (empty($date))
+        {
+            $this->{$field} = 0;
+        }
         else
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

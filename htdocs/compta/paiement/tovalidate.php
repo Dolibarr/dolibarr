@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,10 +32,10 @@ if (! $user->rights->facture->lire)
   accessforbidden();
 
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 
@@ -103,7 +103,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);
@@ -121,7 +121,7 @@ if ($resql)
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td class="right">'.price($objp->amount).'</td>';
-        print '<td align="center">';
+        print '<td class="center">';
 
         if ($objp->statut == 0)
         {

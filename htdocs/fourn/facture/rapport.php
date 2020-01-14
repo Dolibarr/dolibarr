@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,16 +30,16 @@ $langs->loadLangs(array('bills'));
 
 // Security check
 $socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $action=GETPOST('action', 'aZ09');
 
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $dir = $conf->fournisseur->facture->dir_output.'/payments';
@@ -91,11 +91,11 @@ $titre=($year?$langs->trans("PaymentsReportsForYear", $year):$langs->trans("Paym
 
 llxHeader('', $titre);
 
-print load_fiche_titre($titre, '', 'title_accountancy.png');
+print load_fiche_titre($titre, '', 'invoicing');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
 $cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
 $syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());

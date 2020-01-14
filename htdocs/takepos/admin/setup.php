@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *	\brief      Setup page for TakePos module
  */
 
-require '../../main.inc.php';	// Load $user and permissions
+require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // If socid provided by ajax company selector
-if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
+if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 {
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
@@ -45,13 +45,13 @@ $langs->loadLangs(array("admin", "cashdesk"));
 global $db;
 
 $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql.= " AND active = 1";
-$sql.= " ORDER BY libelle";
+$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql .= " AND active = 1";
+$sql .= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
-if($resql){
-	while ($obj = $db->fetch_object($resql)){
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
 		array_push($paiements, $obj);
 	}
 }
@@ -62,39 +62,32 @@ if($resql){
 if (GETPOST('action', 'alpha') == 'set')
 {
 	$db->begin();
-	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
-
-	/*
-	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
-
-    $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE", (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB", (GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-    foreach($paiements as $modep) {
-        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
-		$res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-    }
-	$res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE", (GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", GETPOST('CASHDESK_NO_DECREASE_STOCK', 'alpha'), 'chaine', 0, '', $conf->entity);
-    */
+	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
 	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "TAKEPOSCONNECTOR", GETPOST('TAKEPOSCONNECTOR', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_DOLIBARR_PRINTER", GETPOST('TAKEPOS_DOLIBARR_PRINTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_VAT_GROUPPED", GETPOST('TAKEPOS_TICKET_VAT_GROUPPED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_PHONE_BASIC_LAYOUT", GETPOST('TAKEPOS_PHONE_BASIC_LAYOUT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS", GETPOST('TAKEPOS_SUPPLEMENTS', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
-
-	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
+	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
+		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+	if ($conf->global->TAKEPOS_ORDER_NOTES == 1)
 	{
 		$extrafields = new ExtraFields($db);
 		$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
@@ -102,9 +95,9 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 
- 	if (! $error)
+ 	if (!$error)
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -120,12 +113,12 @@ if (GETPOST('action', 'alpha') == 'set')
  * View
  */
 
-$form=new Form($db);
-$formproduct=new FormProduct($db);
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("CashDeskSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_prepare_head();
 dol_fiche_head($head, 'setup', 'TakePOS', -1);
@@ -134,10 +127,11 @@ print '<br>';
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -147,12 +141,12 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td colspan="2">';
-$array=array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
-print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS)?'0':$conf->global->TAKEPOS_NUM_TERMINALS), 0);
+$array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
+print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '0' : $conf->global->TAKEPOS_NUM_TERMINALS), 0);
 print "</td></tr>\n";
 
 // Services
-if (! empty($conf->service->enabled))
+if (!empty($conf->service->enabled))
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
@@ -176,16 +170,25 @@ print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEP
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
+if ($conf->receiptprinter->enabled) {
+    // Use Dolibarr printing
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("DolibarrReceiptPrinterModule");
+    print '<td colspan="2">';
+    print $form->selectyesno("TAKEPOS_DOLIBARR_PRINTER", $conf->global->TAKEPOS_DOLIBARR_PRINTER, 1);
+    print "</td></tr>\n";
+}
+
 // Use Takepos printing
 print '<tr class="oddeven"><td>';
-print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector" target="_blank">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOSCONNECTOR", $conf->global->TAKEPOSCONNECTOR, 1);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOSCONNECTOR){
+if ($conf->global->TAKEPOSCONNECTOR) {
 	print '<tr class="oddeven value"><td>';
-	print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+	print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
 	print '<td colspan="2">';
 	print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
 	print '</td></tr>';
@@ -200,9 +203,9 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
+if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR) {
 	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
 	print '</td></tr>';
@@ -212,6 +215,31 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
 	print '</td></tr>';
+}
+
+if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+{
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("BasicPhoneLayout");
+	print '<td colspan="2">';
+	print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
+	print '</td></tr>';
+
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("ProductSupplements");
+	print '<td colspan="2">';
+	print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
+	print '</td></tr>';
+
+	if ($conf->global->TAKEPOS_SUPPLEMENTS)
+	{
+		print '<tr class="oddeven"><td>';
+		print $langs->trans("SupplementCategory");
+		print '<td colspan="2">';
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
+		print "</td></tr>\n";
+	}
 }
 
 print '<tr class="oddeven"><td>';
@@ -224,127 +252,78 @@ print "</td></tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
 print '<td colspan="2">';
-$array=array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
-print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD)?'0':$conf->global->TAKEPOS_NUMPAD), 0);
+$array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
+// Direct Payment
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Header"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-print '</td><td>';
-$variablename='TAKEPOS_HEADER';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
-print "</td></tr>\n";
-
-print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Footer"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-print '</td><td>';
-$variablename='TAKEPOS_FOOTER';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
-print "</td></tr>\n";
-
-print '</table>';
-
-print '<br>';
-
-/*
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-if (!$conf->global->TAKEPOS_NUM_TERMINALS || $conf->global->TAKEPOS_NUM_TERMINALS=="1") print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
-else print '<td>'.$langs->trans("Terminal").' 1</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
+print $langs->trans('DirectPaymentButton');
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
-print '</td></tr>';
-if (! empty($conf->banque->enabled))
-{
-    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
-	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE, 'CASHDESK_ID_BANKACCOUNT_CHEQUE', 0, "courant=1", 1);
-	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
-	print '</td></tr>';
+print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
+print "</td></tr>\n";
 
-	foreach($paiements as $modep) {
-        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
-		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
-		print '<td colspan="2">';
-		$cour=preg_match('|^LIQ.*|', $modep->code)?2:1;
-		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
-		print '</td></tr>';
-	}
+// Custom Receipt
+print '<tr class="oddeven"><td>';
+print $langs->trans('CustomReceipt');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_CUSTOM RECEIPT", $conf->global->TAKEPOS_CUSTOM_RECEIPT, 1);
+print "</td></tr>\n";
+
+// Email template for send invoice
+print '<tr class="oddeven"><td>';
+print $langs->trans('EmailTemplate');
+print '<td colspan="2">';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1); // We set lang=null to get in priority record with no lang
+//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+$arrayofmessagename = array();
+if (is_array($formmail->lines_model)) {
+    foreach ($formmail->lines_model as $modelmail) {
+        //var_dump($modelmail);
+        $moreonlabel = '';
+        if (!empty($arrayofmessagename[$modelmail->label])) {
+            $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+        }
+        $arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+    }
 }
-
-if (! empty($conf->stock->enabled))
-{
-
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
-	if (empty($conf->productbatch->enabled)) {
-	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
-	}
-	else
-	{
-	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
-	       $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-	    }
-	    print $langs->trans("Yes").'<br>';
-	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
-	}
-	print '</td></tr>';
-
-	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
-
-
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
-	if (! $disabled)
-	{
-		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
-		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
-	}
-	else
-	{
-		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
-	}
-	print '</td></tr>';
-}
+//var_dump($arraydefaultmessage);
+//var_dump($arrayofmessagename);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
+print "</td></tr>\n";
 
 print '</table>';
+print '</div>';
+
+// Sumup options
+if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+	print '<br>';
+
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SumupAffiliate");
+	print '<td colspan="2">';
+	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
+	print "</td></tr>\n";
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SumupAppId");
+	print '<td colspan="2">';
+	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
+	print "</td></tr>\n";
+
+	print '</table>';
+	print '</div>';
+}
+
 print '<br>';
-*/
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
@@ -361,7 +340,7 @@ print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
-$url='https://www.dolistore.com/45-pos';
+$url = 'https://www.dolistore.com/45-pos';
     print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
 print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
@@ -378,7 +357,7 @@ print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
-$url='http://www.takepos.com';
+$url = 'http://www.takepos.com';
 print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
 print '<td>TakePOS original developers</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';

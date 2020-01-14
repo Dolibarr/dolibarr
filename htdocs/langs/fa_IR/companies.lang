@@ -28,7 +28,7 @@ AliasNames=سایر اسامی (نام تجاری، علامت‌تجاری و �
 AliasNameShort=سایر اسامی
 Companies=شرکت
 CountryIsInEEC=کشور مربوطه داخل جامعۀ اقتصادی اروپاست
-PriceFormatInCurrentLanguage=شکل مبالغ در زبان کنونی
+PriceFormatInCurrentLanguage=چگونگی نمایش قیمت در زبان و واحدپولی فعلی
 ThirdPartyName=نام شخص‌سوم
 ThirdPartyEmail=رایانامۀ شخص‌سوم
 ThirdParty=شخص‌سوم
@@ -54,8 +54,10 @@ Firstname=نام
 PostOrFunction=مرتبۀ شغلی
 UserTitle=عنوان
 NatureOfThirdParty=طبیعت شخص‌سوم
+NatureOfContact=Nature of Contact
 Address=نشانی
 State=ایالت / استان
+StateCode=State/Province code
 StateShort=استان
 Region=منطقه
 Region-State=منطقه - استان
@@ -95,8 +97,6 @@ LocalTax1IsNotUsedES= RE استفاده نمی‌شود
 LocalTax2IsUsed=استفاده از مالیات سوم
 LocalTax2IsUsedES= IRPF استفاده شده است
 LocalTax2IsNotUsedES= IRPF استفاده نمی شود
-LocalTax1ES=RE
-LocalTax2ES=IRPF
 WrongCustomerCode=کد مشتری نامعتبر است
 WrongSupplierCode=کد فروشنده نامعتبر است
 CustomerCodeModel=شکل کد مشتری
@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=تخفیف مطلق فروشندگان(وارد
 SupplierAbsoluteDiscountMy=تخفیف مطلق فروشندگان(واردشدۀ خودشما)
 DiscountNone=هیچ‌یک
 Vendor=فروشنده
+Supplier=فروشنده
 AddContact=ساخت طرف‌تماس
 AddContactAddress=ساخت طرف‌تماس/نشانی
 EditContact=ویرایش طرف‌تماس
@@ -298,6 +299,7 @@ FromContactName=نام:
 NoContactDefinedForThirdParty=طرف‌تماسی برای این شخص‌سوم تعریف نشده است
 NoContactDefined=طرف‌تماسی تعریف نشده است
 DefaultContact=طرف‌تماس/نشانی پیش‌فرض
+ContactByDefaultFor=Default contact/address for
 AddThirdParty=ساخت شخص‌سوم
 DeleteACompany=حذف یک شرکت
 PersonalInformations=اطلاعات شخصی
@@ -437,5 +439,6 @@ PaymentTypeCustomer=نوع پرداخت - مشتری
 PaymentTermsCustomer=شرایط پرداخت - مشتری
 PaymentTypeSupplier=نوع پرداخت - فروشنده
 PaymentTermsSupplier=شرایط پرداخت - فروشنده
+PaymentTypeBoth=Payment Type - Customer and Vendor
 MulticurrencyUsed=استفادۀ چند‌واحدپولی
 MulticurrencyCurrency=واحد‌پولی

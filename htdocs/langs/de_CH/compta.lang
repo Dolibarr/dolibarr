@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - compta
 FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
-PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Geschäftspartner verbunden
+PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch mit keinem Geschäftspartner verbunden
 Balance=Bilanz
 LT2SummaryES=EKSt. Übersicht
 VATCollected=Erhobene MwSt.

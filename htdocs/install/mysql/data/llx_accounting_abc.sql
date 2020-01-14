@@ -20,7 +20,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 
@@ -77,6 +77,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account MA PCG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
 
+-- Description of chart of account SE BAS-K1-MINI
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
+
+
 --DELETE FROM llx_accounting_system WHERE pcg_version = 'SYSCOHADA';
 
 -- Description of chart of account BJ SYSCOHADA
@@ -129,3 +133,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account DZ NSCF
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  13, 'NSCF', 'Nouveau système comptable financier', 1);
+
+-- Description of chart of account NL NL-VERKORT
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  17, 'NL-VERKORT', 'Verkort rekeningschema', 1);

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -127,7 +127,21 @@ $objmodel = new $classname($db);
 $dirname = $conf->bank->dir_temp;
 $filename = 'export-bank-receipts-' . $bankref . '-' . $num . '.' . $objmodel->extension;
 
-$array_fields = array('bankreceipt' => $outputlangs->transnoentitiesnoconv("AccountStatementShort"),'bankaccount' => $outputlangs->transnoentitiesnoconv("BankAccount"),'dateop' => $outputlangs->transnoentitiesnoconv("DateOperationShort"),'dateval' => $outputlangs->transnoentitiesnoconv("DateValueShort"),'type' => $outputlangs->transnoentitiesnoconv("Type"),'description' => $outputlangs->transnoentitiesnoconv("Description"),'thirdparty' => $outputlangs->transnoentitiesnoconv("Tiers"),'accountelem' => $outputlangs->transnoentitiesnoconv("Piece"),'debit' => $outputlangs->transnoentitiesnoconv("Debit"),'credit' => $outputlangs->transnoentitiesnoconv("Credit"),'soldbefore' => $outputlangs->transnoentitiesnoconv("BankBalanceBefore"),'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),'comment' => $outputlangs->transnoentitiesnoconv("Comment"));
+$array_fields = array(
+	'bankreceipt' => $outputlangs->transnoentitiesnoconv("AccountStatementShort"),
+	'bankaccount' => $outputlangs->transnoentitiesnoconv("BankAccount"),
+	'dateop' => $outputlangs->transnoentitiesnoconv("DateOperationShort"),
+	'dateval' => $outputlangs->transnoentitiesnoconv("DateValueShort"),
+	'type' => $outputlangs->transnoentitiesnoconv("Type"),
+	'description' => $outputlangs->transnoentitiesnoconv("Description"),
+	'thirdparty' => $outputlangs->transnoentitiesnoconv("Tiers"),
+	'accountelem' => $outputlangs->transnoentitiesnoconv("Piece"),
+	'debit' => $outputlangs->transnoentitiesnoconv("Debit"),
+	'credit' => $outputlangs->transnoentitiesnoconv("Credit"),
+	'soldbefore' => $outputlangs->transnoentitiesnoconv("BankBalanceBefore"),
+	'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),
+	'comment' => $outputlangs->transnoentitiesnoconv("Comment")
+);
 $array_selected = array('bankreceipt' => 'bankreceipt','bankaccount' => 'bankaccount','dateop' => 'dateop','dateval' => 'dateval','type' => 'type','description' => 'description','thirdparty' => 'thirdparty','accountelem' => 'accountelem','debit' => 'debit','credit' => 'credit','soldbefore' => 'soldbefore','soldafter' => 'soldafter','comment' => 'comment');
 $array_export_TypeFields = array('bankreceipt' => 'Text','bankaccount' => 'Text','dateop' => 'Date','dateval' => 'Date','type' => 'Text','description' => 'Text','thirdparty' => 'Text','accountelem' => 'Text','debit' => 'Number','credit' => 'Number','soldbefore' => 'Number','soldafter' => 'Number','comment' => 'Text');
 
@@ -239,10 +253,11 @@ if ($resql) {
 				$paymentstatic->fetch($links[$key]['url_id']);
 				$tmparray = $paymentstatic->getBillsArray('');
 				if (is_array($tmparray)) {
-					foreach ($tmparray as $key => $val) {
-						$invoicestatic->fetch($val);
-						if ($accountelem)
+					foreach ($tmparray as $tmpkey => $tmpval) {
+						$invoicestatic->fetch($tmpval);
+						if ($accountelem) {
 							$accountelem .= ', ';
+                        }
 						$accountelem .= $invoicestatic->ref;
 					}
 				}
@@ -250,28 +265,32 @@ if ($resql) {
 				$paymentsupplierstatic->fetch($links[$key]['url_id']);
 				$tmparray = $paymentsupplierstatic->getBillsArray('');
 				if (is_array($tmparray)) {
-					foreach ($tmparray as $key => $val) {
-						$invoicesupplierstatic->fetch($val);
-						if ($accountelem)
+					foreach ($tmparray as $tmpkey => $tmpval) {
+						$invoicesupplierstatic->fetch($tmpval);
+						if ($accountelem) {
 							$accountelem .= ', ';
+                        }
 						$accountelem .= $invoicesupplierstatic->ref;
 					}
 				}
 			} elseif ($links[$key]['type'] == 'payment_sc') {
 				$paymentsocialcontributionstatic->fetch($links[$key]['url_id']);
-				if ($accountelem)
+				if ($accountelem) {
 					$accountelem .= ', ';
+                }
 				$accountelem .= $langs->transnoentitiesnoconv("SocialContribution") . ' ' . $paymentsocialcontributionstatic->ref;
 			} elseif ($links[$key]['type'] == 'payment_vat') {
 				$paymentvatstatic->fetch($links[$key]['url_id']);
-				if ($accountelem)
+				if ($accountelem) {
 					$accountelem .= ', ';
+                }
 				$accountelem .= $langs->transnoentitiesnoconv("VATPayments") . ' ' . $paymentvatstatic->ref;
 			} elseif ($links[$key]['type'] == 'banktransfert') {
 				$comment = $outputlangs->transnoentitiesnoconv("Transfer");
 				if ($objp->amount > 0) {
-					if ($comment)
+					if ($comment) {
 						$comment .= ' ';
+                    }
 					$banklinestatic->fetch($links[$key]['url_id']);
 					$bankstatic->id = $banklinestatic->fk_account;
 					$bankstatic->label = $banklinestatic->bank_account_label;
@@ -283,8 +302,9 @@ if ($resql) {
 					$comment .= $bankstatic->getNomUrl(1, '');
 					$comment .= ')';
 				} else {
-					if ($comment)
+					if ($comment) {
 						$comment .= ' ';
+                    }
 					$bankstatic->id = $objp->bankid;
 					$bankstatic->label = $objp->bankref;
 					$comment .= ' (' . $langs->transnoentitiesnoconv("from") . ' ';
@@ -297,13 +317,15 @@ if ($resql) {
 					$comment .= ')';
 				}
 			} elseif ($links[$key]['type'] == 'company') {
-				if ($thirdparty)
+				if ($thirdparty) {
 					$thirdparty .= ', ';
+                }
 				$thirdparty .= dol_trunc($links[$key]['label'], 24);
 				$newline = 0;
 			} elseif ($links[$key]['type'] == 'member') {
-				if ($thirdparty)
+				if ($thirdparty) {
 					$accountelem .= ', ';
+                }
 				$thirdparty .= $links[$key]['label'];
 				$newline = 0;
 			}

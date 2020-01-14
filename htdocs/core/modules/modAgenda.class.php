@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -394,20 +394,26 @@ class modAgenda extends DolibarrModules
 			'cac.libelle'=>"ActionType",
 			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
 			'co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6',
-			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra');
+			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra',
+			'p.ref' => 'ProjectRef',
+		);
 		$this->export_TypeFields_array[$r]=array('ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
 			'ac.datep2'=>"Date",'ac.label'=>"Text",'ac.note'=>"Text",'ac.percent'=>"Numeric",
 			'ac.durationp'=>"Duree",
 			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
 			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
 			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text',
-			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
+			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text',
+			'p.ref' => 'Text',
+		);
 		$this->export_entities_array[$r]=array('ac.id'=>"action",'ac.ref_ext'=>"action",'ac.datec'=>"action",'ac.datep'=>"action",
 			'ac.datep2'=>"action",'ac.label'=>"action",'ac.note'=>"action",'ac.percent'=>"action",'ac.durationp'=>"action",
 			'cac.libelle'=>"action",
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
 			'co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company',
-			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',);
+			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',
+			'p.ref' => 'project',
+		);
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
@@ -417,6 +423,7 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
 		if (! empty($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
+		$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .=' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR ac.fk_soc IS NULL)';
 		if (empty($user->rights->agenda->allactions->read)) $this->export_sql_end[$r] .=' AND acr.fk_element = '.(empty($user)?0:$user->id);

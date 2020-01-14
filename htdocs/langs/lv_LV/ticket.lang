@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -31,9 +31,12 @@ TicketDictType=Pieteikumu veids
 TicketDictCategory=Pieteikumu - grupas
 TicketDictSeverity=Pieteikuma svarīgums
 TicketTypeShortBUGSOFT=Dysfontionnement logiciel
-TicketTypeShortBUGHARD=Dysfontionnement matériel
+TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Tirdzniecības jautājums
-TicketTypeShortINCIDENT=Palīdzības pieprasījums
+
+TicketTypeShortHELP=Funkcionālās palīdzības pieprasījums
+TicketTypeShortISSUE=Izdošana, kļūda vai problēma
+TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
 TicketTypeShortPROJET=Projekts
 TicketTypeShortOTHER=Cits
 
@@ -58,9 +61,10 @@ Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
 # Status
 NotRead=Nav lasāms
 Read=Lasīt
-Answered=Atbildēts
 Assigned=Piešķirts
 InProgress=Procesā
+NeedMoreInformation=Gaida informāciju
+Answered=Atbildēts
 Waiting=Gaida
 Closed=Slēgts
 Deleted=Dzēsts
@@ -132,9 +136,14 @@ TicketsIndex=Pieteikumi - mājās
 TicketList=Pieteikumu saraksts
 TicketAssignedToMeInfos=Šī lapa parāda pieteikumu sarakstu, kas izveidots vai piešķirts pašreizējam lietotājam
 NoTicketsFound=Nav atrasts neviens pieteikums
+NoUnreadTicketsFound=Nav atrastas nelasītas biļetes
 TicketViewAllTickets=Skatīt visus pieteikumus
 TicketViewNonClosedOnly=Skatīt tikai atvērtos pieteikumus
 TicketStatByStatus=Pieteikumi pēc statusa
+OrderByDateAsc=Kārtot pēc augošā datuma
+OrderByDateDesc=Kārtot pēc dilstošā datuma
+ShowAsConversation=Rādīt kā sarunu sarakstu
+MessageListViewType=Rādīt kā tabulu sarakstu
 
 #
 # Ticket card
@@ -220,6 +229,9 @@ TicketConfirmChangeStatus=Apstipriniet statusa maiņu: %s?
 TicketLogStatusChanged=Statuss mainīts: %s līdz %s
 TicketNotNotifyTiersAtCreate=Neinformēt uzņēmumu par radīšanu
 Unread=Nelasīts
+TicketNotCreatedFromPublicInterface=Nav pieejams. Biļete netika izveidota no publiskās saskarnes.
+PublicInterfaceNotEnabled=Publiskā saskarne nebija iespējota
+ErrorTicketRefRequired=Nepieciešams biļetes atsauces nosaukums
 
 #
 # Logs
@@ -239,9 +251,9 @@ ShowListTicketWithTrackId=Parādīt biļešu sarakstu no maršruta ID
 ShowTicketWithTrackId=Rādīt biļeti no maršruta ID
 TicketPublicDesc=Jūs varat izveidot atbalsta biļeti vai pārbaudīt no esoša ID.
 YourTicketSuccessfullySaved=Biļete ir veiksmīgi saglabāta!
-MesgInfosPublicTicketCreatedWithTrackId=Jauns pieteikums ir izveidots ar ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=Ir izveidots jauns pieteikums ar ID %s un Ref %s.
 PleaseRememberThisId=Lūdzu, saglabājiet izsekošanas numuru, kuru mēs vēlāk varētu jums lūgt.
-TicketNewEmailSubject=Pieteikuma izveides apstiprinājums
+TicketNewEmailSubject=Pieteikumu izveidošanas apstiprinājums - atsauce %s
 TicketNewEmailSubjectCustomer=Jauns atbalsta biļete
 TicketNewEmailBody=Šis ir automātisks e-pasts, lai apstiprinātu, ka esat reģistrējies jauns biļete.
 TicketNewEmailBodyCustomer=Šis ir automātiskais e-pasta ziņojums, kas apstiprina, ka jaunais biļete ir tikko izveidots jūsu kontā.
@@ -260,19 +272,22 @@ Subject=Virsraksts
 ViewTicket=Skatīt pieteikumu
 ViewMyTicketList=Skatīt manu pieteikumu sarakstu
 ErrorEmailMustExistToCreateTicket=Kļūda: e-pasta adrese nav atrodama mūsu datu bāzē
-TicketNewEmailSubjectAdmin=Izveidots jauns pieteikums
+TicketNewEmailSubjectAdmin=Izveidots jauns pieteikums - atsauce %s
 TicketNewEmailBodyAdmin=<p> Biļete tikko ir izveidota ar ID # %s, skatiet informāciju: </p>
 SeeThisTicketIntomanagementInterface=Skatiet biļeti vadības saskarnē
 TicketPublicInterfaceForbidden=Pieteikumu publiskā saskarne nav iespējota
 ErrorEmailOrTrackingInvalid=Slikta vērtība izsekošanas ID vai e-pasta ziņojumam
-
+OldUser=Vecais lietotājs
+NewUser=Jauns lietotājs
+NumberOfTicketsByMonth=Pieteikumu skaits mēnesī
+NbOfTickets=Pieteikumu skaits
 # notifications
 TicketNotificationEmailSubject=Pieteikums %s ir atjaunots
 TicketNotificationEmailBody=Šī ir automātiska ziņa, kas informē jūs, ka biļete %s tikko atjaunināta
 TicketNotificationRecipient=Paziņojuma saņēmējs
 TicketNotificationLogMessage=Log ziņojums
 TicketNotificationEmailBodyInfosTrackUrlinternal=Skatīt biļeti interfeisu
-TicketNotificationNumberEmailSent=Nosūtītā e-pasta adrese: %s
+TicketNotificationNumberEmailSent=Paziņojuma e-pasts nosūtīts: %s
 
 ActionsOnTicket=Notikumi biļetē
 

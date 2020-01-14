@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // Load translation files required by the page
@@ -60,7 +60,7 @@ if ($action == 'update')
             $error++;
     }
 
-    if (! $error)
+    if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null);
     } else {
@@ -76,11 +76,11 @@ llxHeader();
 
 $form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
@@ -88,33 +88,33 @@ $head = oauthadmin_prepare_head();
 dol_fiche_head($head, 'services', '', -1, 'technic');
 
 
-print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
-$i=0;
+$i = 0;
 
 // $list is defined into oauth.lib.php
 foreach ($list as $key)
 {
-    $supported=0;
-    if (in_array($key[0], array_keys($supportedoauth2array))) $supported=1;
-    if (! $supported) continue;     // show only supported
+    $supported = 0;
+    if (in_array($key[0], array_keys($supportedoauth2array))) $supported = 1;
+    if (!$supported) continue; // show only supported
 
     $i++;
 
-    print '<tr class="liste_titre'.($i > 1 ?' liste_titre_add':'').'">';
+    print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
     // Api Name
     $label = $langs->trans($key[0]);
     print '<td>'.$label.'</td>';
     print '<td>';
-    if (! empty($key[3])) print $langs->trans($key[3]);
+    if (!empty($key[3])) print $langs->trans($key[3]);
     print '</td>';
     print '</tr>';
 
     if ($supported)
     {
-        $redirect_uri=$urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
+        $redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
         print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';

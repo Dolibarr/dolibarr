@@ -1,27 +1,28 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Joslas moduļa iestatīšana
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Piedāvājiet klientiem Stripe tiešsaistes maksājumu lapu maksājumiem ar kredītkartēm / kredītkartēm, izmantojot <a href="http://www.stripe.com" target="_blank"> Stripe </a>. To var izmantot, lai ļautu saviem klientiem veikt ad-hoc maksājumus vai maksājumus, kas saistīti ar konkrētu Dolibarr objektu (rēķins, pasūtījums, ...)
 StripeOrCBDoPayment=Maksājiet ar kredītkarti vai Stripe
 FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lapu, lai klients varētu veikt maksājumu par Dolibarr objektiem
 PaymentForm=Maksājuma forma
 WelcomeOnPaymentPage=Laipni lūdzam mūsu tiešsaistes maksājumu pakalpojumu
 ThisScreenAllowsYouToPay=Šis logs ļauj jums veikt tiešsaistes maksājumu %s.
-ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas darīt
+ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas jādara
 ToComplete=Lai pabeigtu
 YourEMail=Nosūtīt saņemt maksājuma apstiprinājumu
-STRIPE_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
+STRIPE_PAYONLINE_SENDEMAIL=E-pasta paziņojums pēc maksājuma mēģinājuma (veiksmes vai neveiksmes)
 Creditor=Kreditoru
 PaymentCode=Maksājuma kods
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Maksājiet ar svītru
 YouWillBeRedirectedOnStripe=Jūs tiksiet novirzīts uz drošo lapu, lai ievadītu kredītkartes informāciju
 Continue=Nākamais
 ToOfferALinkForOnlinePayment=maksājumu %s URL
-ToOfferALinkForOnlinePaymentOnOrder=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klienta pasūtījuma
-ToOfferALinkForOnlinePaymentOnInvoice=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klientu rēķina
-ToOfferALinkForOnlinePaymentOnContractLine=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu līguma līnijas
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL piedāvāt %s tiešsaistes maksājumu lietotāja saskarni par brīvu summu
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu locekli abonementu
-YouCanAddTagOnUrl=Jūs varat arī pievienot url parametrs <b>&amp; Tag = <i>vērtība,</i></b> kādu no šiem URL (nepieciešams tikai bezmaksas samaksu), lai pievienotu savu maksājumu komentāru tagu.
+ToOfferALinkForOnlinePaymentOnOrder=URL, kas piedāvā %s tiešsaistes maksājuma lapu pārdošanas pasūtījumam
+ToOfferALinkForOnlinePaymentOnInvoice=URL, lai piedāvātu %s tiešsaistes maksājuma lapu klienta rēķinam
+ToOfferALinkForOnlinePaymentOnContractLine=URL, kas piedāvā %s tiešsaistes maksājuma lapu par līguma līniju
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL, lai piedāvātu %s tiešsaistes maksājumu lapu par jebkuru summu, kurai nav esoša objekta
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, lai piedāvātu %s tiešsaistes maksājuma lapu dalībnieka abonementam
+ToOfferALinkForOnlinePaymentOnDonation=URL, lai piedāvātu tiešsaistes maksājuma lapu %s ziedojuma samaksai
+YouCanAddTagOnUrl=Varat arī pievienot URL parametru <b>&amp; tag = <i>vērtību</i></b> jebkuram no šiem URL (obligāts tikai maksājumam, kas nav saistīts ar objektu), lai pievienotu savu maksājuma komentāra tagu. <br> Maksājumu URL, kuriem nav neviena objekta, varat pievienot arī parametru <strong>&amp; noidempotency = 1,</strong> lai vienu un to pašu saiti ar vienu tagu varētu izmantot vairākas reizes (dažos maksājuma režīmos var būt ierobežots maksājums līdz 1 par katru atšķirīgo saiti bez šī parametra).
 SetupStripeToHavePaymentCreatedAutomatically=Set up your Stripe ar url <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Stripe.
 AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
@@ -40,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhokas tiešraides atslēga
 ONLINE_PAYMENT_WAREHOUSE=Krājums, ko izmanto, lai krājumu samazinātu, kad tiek veikts tiešsaistes maksājums <br> (TODO Kad iespēja samazināt akciju tiek veikta, veicot darbību rēķinā, un tiešsaistes maksājums pats par sevi sagatavo rēķinu?)
 StripeLiveEnabled=Ieslēgta josla dzīvot (citādi tests / smilškastē režīms)
 StripeImportPayment=Importēšanas joslas maksājumi
-ExampleOfTestCreditCard=Testa kredītkartes piemērs: %s (derīgs), %s (kļūda CVC), %s (beidzies derīguma termiņš), %s (maksa neizdodas)
+ExampleOfTestCreditCard=Kredītkartes paraugs testam: %s =&gt; derīgs, %s =&gt; kļūda CVC, %s =&gt; beidzies, %s =&gt; maksa neizdodas
 StripeGateways=Joslas vārti
 OAUTH_STRIPE_TEST_ID=Stripe Connect klienta ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect klienta ID (ca _...)
@@ -61,4 +62,9 @@ ConfirmDeleteCard=Vai tiešām vēlaties izdzēst šo kredītkarti vai debetkart
 CreateCustomerOnStripe=Izveidojiet klientu joslā
 CreateCardOnStripe=Izveidojiet karti joslā
 ShowInStripe=Rādīt joslā
-StripeUserAccountForActions=Lietotāja konts, lai izmantotu dažu e-pasta paziņojumu par joslu notikumiem (Stripe payouts)
+StripeUserAccountForActions=Lietotāja konts, lai izmantotu e-pasta paziņojumu par dažiem Stripe notikumiem (Stripe izmaksas)
+StripePayoutList=Svītru izmaksu saraksts
+ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (testa režīms)
+ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
+PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
+ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>

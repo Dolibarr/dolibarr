@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -104,14 +104,14 @@ class ProductCombination
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->fk_product_parent = $result->fk_product_parent;
-		$this->fk_product_child = $result->fk_product_child;
-		$this->variation_price = $result->variation_price;
-		$this->variation_price_percentage = $result->variation_price_percentage;
-		$this->variation_weight = $result->variation_weight;
+		$this->id = $obj->rowid;
+		$this->fk_product_parent = $obj->fk_product_parent;
+		$this->fk_product_child = $obj->fk_product_child;
+		$this->variation_price = $obj->variation_price;
+		$this->variation_price_percentage = $obj->variation_price_percentage;
+		$this->variation_weight = $obj->variation_weight;
 
 		return 1;
 	}
@@ -167,7 +167,6 @@ class ProductCombination
 		$return = array();
 
 		while ($result = $this->db->fetch_object($query)) {
-
 			$tmp = new ProductCombination($this->db);
 			$tmp->id = $result->rowid;
 			$tmp->fk_product_parent = $result->fk_product_parent;
@@ -249,7 +248,7 @@ class ProductCombination
 		$parent = new Product($this->db);
 		$parent->fetch($this->fk_product_parent);
 
-		$this->updateProperties($parent);
+		$this->updateProperties($parent, $user);
 
 		return 1;
 	}
@@ -290,7 +289,6 @@ class ProductCombination
 		$this->db->begin();
 
 		foreach ($this->fetchAllByFkProductParent($fk_product_parent) as $prodcomb) {
-
 			$prodstatic = new Product($this->db);
 
 			$res = $prodstatic->fetch($prodcomb->fk_product_child);
@@ -317,11 +315,12 @@ class ProductCombination
 	 * Updates the weight of the child product. The price must be updated using Product::updatePrices
 	 *
 	 * @param Product $parent Parent product
+	 * @param	User	$user		Object user
 	 * @return int >0 OK <0 KO
 	 */
-	public function updateProperties(Product $parent)
+	public function updateProperties(Product $parent, User $user)
 	{
-		global $user, $conf;
+		global $conf;
 
 		$this->db->begin();
 
@@ -334,7 +333,6 @@ class ProductCombination
 		$child->label = $parent->label.$varlabel;
 
 		if ($child->update($child->id, $user) > 0) {
-
 			$new_vat = $parent->tva_tx;
 			$new_npr = $parent->tva_npr;
 
@@ -420,7 +418,6 @@ class ProductCombination
 		}
 
 		foreach ($prodcomb->fetchAllByFkProductParent($prodid) as $prc) {
-
 			$values = array();
 
 			foreach ($prodcomb2val->fetchByFkCombination($prc->id) as $value) {
@@ -498,6 +495,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * [...]
 	 * )
 	 *
+	 * @param User $user Object user
 	 * @param Product $product Parent product
 	 * @param array $combinations Attribute and value combinations.
 	 * @param array $variations Price and weight variations
@@ -506,9 +504,9 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * @param bool|float $forced_weightvar If the weight variation is forced
 	 * @return int <0 KO, >0 OK
 	 */
-	public function createProductCombination(Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
 	{
-		global $db, $user, $conf;
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
@@ -551,7 +549,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		// $combination contains list of attributes pairs key->value. Example: array('id Color'=>id Blue, 'id Size'=>id Small, 'id Option'=>id val a, ...)
 		//var_dump($combinations);
 		foreach ($combinations as $currcombattr => $currcombval) {
-
 			//This was checked earlier, so no need to double check
 			$prodattr->fetch($currcombattr);
 			$prodattrval->fetch($currcombval);
@@ -577,9 +574,9 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			}
 
 			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-			  $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+			    $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
 			} else {
-			  $newproduct->ref .= '_'.$prodattrval->ref;
+			    $newproduct->ref .= '_'.$prodattrval->ref;
 			}
 
 			//The first one should not contain a linebreak
@@ -664,11 +661,12 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
     /**
      * Copies all product combinations from the origin product to the destination product
      *
+	 * @param 	User 	$user	Object user
      * @param   int     $origProductId  Origin product id
      * @param   Product $destProduct    Destination product
      * @return  int                     >0 OK <0 KO
      */
-	public function copyAll($origProductId, Product $destProduct)
+	public function copyAll(User $user, $origProductId, Product $destProduct)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
@@ -683,7 +681,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		$combinations = $this->fetchAllByFkProductParent($origProductId);
 
 		foreach ($combinations as $combination) {
-
 			$variations = array();
 
 			foreach ($prodcomb2val->fetchByFkCombination($combination->id) as $tmp_pc2v) {
@@ -691,6 +688,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			}
 
             if ($this->createProductCombination(
+				$user,
 				$destProduct,
 				$variations,
 				array(),

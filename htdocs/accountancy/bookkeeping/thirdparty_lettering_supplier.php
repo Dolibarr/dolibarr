@@ -17,12 +17,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
- * \ingroup 	Advanced accountancy
+ * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettering_supplier.php
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Tab to setup lettering
  */
 require '../../main.inc.php';
@@ -83,13 +83,13 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 // Security check
 $socid = GETPOST("socid", 'int');
-// if ($user->societe_id) $socid=$user->societe_id;
+// if ($user->socid) $socid=$user->socid;
 
 $lettering = new Lettering($db);
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result<0)
+if ($result < 0)
 {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -99,7 +99,6 @@ if ($result<0)
  * Action
  */
 if ($action == 'lettering') {
-
 	$result = $lettering->updateLettering($toselect);
 
 	if ($result < 0) {
@@ -127,8 +126,8 @@ if ($action == 'autolettrage') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$title=$object->name." - ".$langs->trans('TabLetteringSupplier');
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = $object->name." - ".$langs->trans('TabLetteringSupplier');
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
@@ -139,7 +138,7 @@ dol_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'com
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
 dol_fiche_end();
 
@@ -160,7 +159,7 @@ $solde = 0;
 // Count total nb of records and calc total sum
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
-if (! $resql)
+if (!$resql)
 {
 	dol_print_error($db);
 	exit;
@@ -196,6 +195,7 @@ if ($resql) {
 
     $param="&socid=".$socid;
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '" method="POST">';
+    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
     $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
@@ -203,7 +203,7 @@ if ($resql) {
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
 	/*
     print '<tr class="liste_titre">';
@@ -248,7 +248,6 @@ if ($resql) {
 	$solde = 0;
 	$tmp = '';
 	while ($obj = $db->fetch_object($resql)) {
-
 		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
 		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 

@@ -1,10 +1,14 @@
 # Dolibarr language file - Source file is en_US - propal
+ProposalsOpened=Offene Angebote
 ProposalCard=Angebotskarte
+NewPropal=Neues Angebot
 Prospect=Lead
 LastPropals=%s neueste Angebote
 ProposalsStatistics=Angebote Statistiken
 PropalsOpened=Offen
+PropalStatusSigned=Unterzeichnet (ist zu verrechnen)
 PropalsToClose=Zu schliessende Angebote
+ListOfProposals=Liste der Angebote
 DefaultProposalDurationValidity=Standardmässige Gültigkeitsdatuer (Tage)
 AvailabilityPeriod=Verfügbarkeitszeitraum
 SetAvailability=Verfügbarkeitszeitraum definieren

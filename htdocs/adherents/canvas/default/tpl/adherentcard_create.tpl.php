@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -41,7 +41,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 <br>
 
 <form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="action" value="add">
 <?php if ($this->control->tpl['company_id']) { ?>
@@ -116,7 +116,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
-	<td colspan="3" valign="top"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
+	<td colspan="3" class="tdtop"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
 </tr>
 
 <tr>
