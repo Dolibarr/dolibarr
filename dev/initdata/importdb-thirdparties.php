@@ -145,202 +145,202 @@ $sql = "SELECT * FROM `$table` WHERE 1 "; //ORDER BY REMISE DESC,`LCIVIL` DESC";
 $resql = $db->query($sql);
 //$db->begin();
 if ($resql)
-    while ($fields = $db->fetch_array($resql)) {
-        $i++;
-        $errorrecord = 0;
+while ($fields = $db->fetch_array($resql)) {
+	$i++;
+	$errorrecord = 0;
 
-        if ($startlinenb && $i < $startlinenb)
-            continue;
-        if ($endlinenb && $i > $endlinenb)
-            continue;
+	if ($startlinenb && $i < $startlinenb)
+		continue;
+	if ($endlinenb && $i > $endlinenb)
+		continue;
 
-        $nboflines++;
+	$nboflines++;
 
-        $object = new Societe($db);
-        $object->import_key = $fields['CODE'];
-        $object->state = 1;
-        $object->client = 3;
-        $object->fournisseur = 0;
+	$object = new Societe($db);
+	$object->import_key = $fields['CODE'];
+	$object->state = 1;
+	$object->client = 3;
+	$object->fournisseur = 0;
 
-        $object->name = $fields['FCIVIL'] . ' ' . $fields['FNOM'];
-        //$object->name_alias = $fields[0] != $fields[13] ? trim($fields[0]) : '';
+	$object->name = $fields['FCIVIL'] . ' ' . $fields['FNOM'];
+	//$object->name_alias = $fields[0] != $fields[13] ? trim($fields[0]) : '';
 
-        $date = $fields['DATCREA'] ? $fields['DATCREA'] : ($fields['DATMOD'] ? $fields['DATMOD'] : '20200101');
-        $object->code_client = 'CU' . substr($date, 2, 2) . substr($date, 4, 2) . '-' . str_pad(substr($fields['CODE'], 0, 5), 5, "0", STR_PAD_LEFT);
-
-
-        $object->address = trim($fields['FADR1']);
-        if ($fields['FADR2'])
-            $object->address .= "\n" . trim($fields['FADR2']);
-        if ($fields['FADR3'])
-            $object->address .= "\n" . trim($fields['FADR3']);
-
-        $object->zip = trim($fields['FPOSTE']);
-        $object->town = trim($fields['FVILLE']);
-        if ($fields['FPAYS'])
-            $object->country_id = dol_getIdFromCode($db, trim(ucwords(strtolower($fields['FPAYS']))), 'c_country', 'label', 'rowid');
-        else
-            $object->country_id = 1;
-        $object->phone = trim($fields['FTEL']) ? trim($fields['FTEL']) : trim($fields['FCONTACT']);
-        $object->phone = substr($object->phone, 0, 20);
-        $object->fax = trim($fields['FFAX']) ? trim($fields['FFAX']) : trim($fields['FCONTACT']);
-        $object->fax = substr($object->fax, 0, 20);
-        $object->email = trim($fields['FMAIL']);
-//        $object->idprof2 = trim($fields[29]);
-        $object->tva_intra = str_replace(['.', ' '], '', $fields['TVAINTRA']);
-        $object->tva_intra = substr($object->tva_intra, 0, 20);
-        $object->default_lang = 'fr_FR';
-
-        $object->cond_reglement_id = dol_getIdFromCode($db, 'PT_ORDER', 'c_payment_term', 'code', 'rowid', 1);
-        $object->multicurrency_code = 'EUR';
-
-        if ($fields['REMISE'] != '0.00') {
-            $object->remise_percent = abs($fields['REMISE']);
-        }
-
-//        $object->code_client = $fields[9];
-//        $object->code_fournisseur = $fields[10];
+	$date = $fields['DATCREA'] ? $fields['DATCREA'] : ($fields['DATMOD'] ? $fields['DATMOD'] : '20200101');
+	$object->code_client = 'CU' . substr($date, 2, 2) . substr($date, 4, 2) . '-' . str_pad(substr($fields['CODE'], 0, 5), 5, "0", STR_PAD_LEFT);
 
 
-        if ($fields['FCIVIL']) {
-            $labeltype = in_array($fields['FCIVIL'], $civilPrivate) ? 'TE_PRIVATE' : 'TE_SMALL';
-            $object->typent_id = dol_getIdFromCode($db, $labeltype, 'c_typent', 'code');
-        }
+	$object->address = trim($fields['FADR1']);
+	if ($fields['FADR2'])
+		$object->address .= "\n" . trim($fields['FADR2']);
+	if ($fields['FADR3'])
+		$object->address .= "\n" . trim($fields['FADR3']);
 
-        // Set price level
-        $object->price_level = $fields['TARIF'] + 1;
-//        if ($labeltype == 'Revendeur')
-//            $object->price_level = 2;
+	$object->zip = trim($fields['FPOSTE']);
+	$object->town = trim($fields['FVILLE']);
+	if ($fields['FPAYS'])
+		$object->country_id = dol_getIdFromCode($db, trim(ucwords(strtolower($fields['FPAYS']))), 'c_country', 'label', 'rowid');
+	else
+		$object->country_id = 1;
+	$object->phone = trim($fields['FTEL']) ? trim($fields['FTEL']) : trim($fields['FCONTACT']);
+	$object->phone = substr($object->phone, 0, 20);
+	$object->fax = trim($fields['FFAX']) ? trim($fields['FFAX']) : trim($fields['FCONTACT']);
+	$object->fax = substr($object->fax, 0, 20);
+	$object->email = trim($fields['FMAIL']);
+	//        $object->idprof2 = trim($fields[29]);
+	$object->tva_intra = str_replace(['.', ' '], '', $fields['TVAINTRA']);
+	$object->tva_intra = substr($object->tva_intra, 0, 20);
+	$object->default_lang = 'fr_FR';
 
-        print "Process line nb " . $i . ", code " . $fields['CODE'] . ", name " . $object->name;
+	$object->cond_reglement_id = dol_getIdFromCode($db, 'PT_ORDER', 'c_payment_term', 'code', 'rowid', 1);
+	$object->multicurrency_code = 'EUR';
 
+	if ($fields['REMISE'] != '0.00') {
+		$object->remise_percent = abs($fields['REMISE']);
+	}
 
-        // Extrafields
-        $object->array_options['options_banque'] = $fields['BANQUE'];
-        $object->array_options['options_banque2'] = $fields['BANQUE2'];
-        $object->array_options['options_banquevalid'] = $fields['VALID'];
-
-        if (!$errorrecord) {
-            $ret = $object->create($user);
-            if ($ret < 0) {
-                print " - Error in create result code = " . $ret . " - " . $object->errorsToString();
-                $errorrecord++;
-                var_dump($object->code_client, $db);
-                die();
-            } else {
-                print " - Creation OK with name " . $object->name . " - id = " . $ret;
-            }
-        }
-
-        if (!$errorrecord) {
-            dol_syslog("Set price level");
-            $object->set_price_level($object->price_level, $user);
-        }
-        if (!$errorrecord && @$object->remise_percent) {
-            dol_syslog("Set remise client");
-            $object->set_remise_client($object->remise_percent, 'Importé', $user);
-        }
-
-        dol_syslog("Add contact");
-        // Insert an invoice contact if there is an invoice email != standard email
-        if (!$errorrecord && ($fields['LCIVIL'] || $fields['LNOM'])) {
-            $madame = array("MADAME",
-                "MADEMOISELLE",
-                "MELLE",
-                "MLLE",
-                "MM",
-                "Mme",
-                "MNE",
-            );
-            $monsieur = array("M",
-                "M ET MME",
-                "M MME",
-                "M.",
-                "M. MME",
-                "M. OU Mme",
-                "M.ou Madame",
-                "MONSEUR",
-                "MONSIER",
-                "MONSIEU",
-                "MONSIEUR",
-                "monsieur:mme",
-                "MONSIEUR¨",
-                "MONSIEZUR",
-                "MONSIUER",
-                "MONSKIEUR",
-                "MR",
-            );
-            $ret1 = $ret2 = 0;
-
-            $contact = new Contact($db);
-            if (in_array($fields['LCIVIL'], $madame)) {
-                // une dame
-                $contact->civility_id = 'MME';
-                $contact->lastname = $fields['LNOM'];
-            } elseif (in_array($fields['LCIVIL'], $monsieur)) {
-                // un monsieur
-                $contact->civility_id = 'MR';
-                $contact->lastname = $fields['LNOM'];
-            } elseif (in_array($fields['LCIVIL'], ['DOCTEUR'])) {
-                // un monsieur
-                $contact->civility_id = 'DR';
-                $contact->lastname = $fields['LNOM'];
-            } else {
-                // un a rattraper
-                $contact->lastname = $fields['LCIVIL'] . " " . $fields['LNOM'];
-            }
-            $contact->address = trim($fields['LADR1']);
-            if ($fields['LADR2'])
-                $contact->address .= "\n" . trim($fields['LADR2']);
-            if ($fields['LADR3'])
-                $contact->address .= "\n" . trim($fields['LADR3']);
-
-            $contact->zip = trim($fields['LPOSTE']);
-            $contact->town = trim($fields['LVILLE']);
-            if ($fields['FPAYS'])
-                $contact->country_id = dol_getIdFromCode($db, trim(ucwords(strtolower($fields['LPAYS']))), 'c_country', 'label', 'rowid');
-            else
-                $contact->country_id = 1;
-            $contact->email = $fields['LMAIL'];
-            $contact->phone = trim($fields['LTEL']) ? trim($fields['LTEL']) : trim($fields['LCONTACT']);
-            $contact->fax = trim($fields['LFAX']) ? trim($fields['LFAX']) : trim($fields['LCONTACT']);
-            $contact->socid = $object->id;
-
-            $ret1 = $contact->create($user);
-            if ($ret1 > 0) {
-                //$ret2=$contact->add_contact($object->id, 'BILLING');
-            }
-            if ($ret1 < 0 || $ret2 < 0) {
-                print " - Error in create contact result code = " . $ret1 . " " . $ret2 . " - " . $contact->errorsToString();
-                $errorrecord++;
-            } else {
-                print " - create contact OK";
-            }
-        }
+	//        $object->code_client = $fields[9];
+	//        $object->code_fournisseur = $fields[10];
 
 
-        //update date créa
-        if (!$errorrecord) {
-            $datec = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2);
-            $retd = $db->query("UPDATE `llx_societe` SET `datec` = '$datec 00:00:00' WHERE `rowid` = $object->id");
-            if ($retd < 1) {
-                print " - Error in update date créa result " . $object->errorsToString();
-                $errorrecord++;
-            } else {
-                print " - update date créa OK";
-            }
-        }
-        print "\n";
+	if ($fields['FCIVIL']) {
+		$labeltype = in_array($fields['FCIVIL'], $civilPrivate) ? 'TE_PRIVATE' : 'TE_SMALL';
+		$object->typent_id = dol_getIdFromCode($db, $labeltype, 'c_typent', 'code');
+	}
 
-        if ($errorrecord) {
-            print( 'Error on record nb ' . $i . " - " . $object->errorsToString() . "\n");
-            var_dump($db, $object, $contact);
-//            $db->rollback();
-            die();
-            $error++;    // $errorrecord will be reset
-        }
-        $j++;
-    } else
+	// Set price level
+	$object->price_level = $fields['TARIF'] + 1;
+	//        if ($labeltype == 'Revendeur')
+	//            $object->price_level = 2;
+
+	print "Process line nb " . $i . ", code " . $fields['CODE'] . ", name " . $object->name;
+
+
+	// Extrafields
+	$object->array_options['options_banque'] = $fields['BANQUE'];
+	$object->array_options['options_banque2'] = $fields['BANQUE2'];
+	$object->array_options['options_banquevalid'] = $fields['VALID'];
+
+	if (!$errorrecord) {
+		$ret = $object->create($user);
+		if ($ret < 0) {
+			print " - Error in create result code = " . $ret . " - " . $object->errorsToString();
+			$errorrecord++;
+			var_dump($object->code_client, $db);
+			die();
+		} else {
+			print " - Creation OK with name " . $object->name . " - id = " . $ret;
+		}
+	}
+
+	if (!$errorrecord) {
+		dol_syslog("Set price level");
+		$object->set_price_level($object->price_level, $user);
+	}
+	if (!$errorrecord && @$object->remise_percent) {
+		dol_syslog("Set remise client");
+		$object->set_remise_client($object->remise_percent, 'Importé', $user);
+	}
+
+	dol_syslog("Add contact");
+	// Insert an invoice contact if there is an invoice email != standard email
+	if (!$errorrecord && ($fields['LCIVIL'] || $fields['LNOM'])) {
+		$madame = array("MADAME",
+			"MADEMOISELLE",
+			"MELLE",
+			"MLLE",
+			"MM",
+			"Mme",
+			"MNE",
+		);
+		$monsieur = array("M",
+			"M ET MME",
+			"M MME",
+			"M.",
+			"M. MME",
+			"M. OU Mme",
+			"M.ou Madame",
+			"MONSEUR",
+			"MONSIER",
+			"MONSIEU",
+			"MONSIEUR",
+			"monsieur:mme",
+			"MONSIEUR¨",
+			"MONSIEZUR",
+			"MONSIUER",
+			"MONSKIEUR",
+			"MR",
+		);
+		$ret1 = $ret2 = 0;
+
+		$contact = new Contact($db);
+		if (in_array($fields['LCIVIL'], $madame)) {
+			// une dame
+			$contact->civility_id = 'MME';
+			$contact->lastname = $fields['LNOM'];
+		} elseif (in_array($fields['LCIVIL'], $monsieur)) {
+			// un monsieur
+			$contact->civility_id = 'MR';
+			$contact->lastname = $fields['LNOM'];
+		} elseif (in_array($fields['LCIVIL'], ['DOCTEUR'])) {
+			// un monsieur
+			$contact->civility_id = 'DR';
+			$contact->lastname = $fields['LNOM'];
+		} else {
+			// un a rattraper
+			$contact->lastname = $fields['LCIVIL'] . " " . $fields['LNOM'];
+		}
+		$contact->address = trim($fields['LADR1']);
+		if ($fields['LADR2'])
+			$contact->address .= "\n" . trim($fields['LADR2']);
+		if ($fields['LADR3'])
+			$contact->address .= "\n" . trim($fields['LADR3']);
+
+		$contact->zip = trim($fields['LPOSTE']);
+		$contact->town = trim($fields['LVILLE']);
+		if ($fields['FPAYS'])
+			$contact->country_id = dol_getIdFromCode($db, trim(ucwords(strtolower($fields['LPAYS']))), 'c_country', 'label', 'rowid');
+		else
+			$contact->country_id = 1;
+		$contact->email = $fields['LMAIL'];
+		$contact->phone = trim($fields['LTEL']) ? trim($fields['LTEL']) : trim($fields['LCONTACT']);
+		$contact->fax = trim($fields['LFAX']) ? trim($fields['LFAX']) : trim($fields['LCONTACT']);
+		$contact->socid = $object->id;
+
+		$ret1 = $contact->create($user);
+		if ($ret1 > 0) {
+			//$ret2=$contact->add_contact($object->id, 'BILLING');
+		}
+		if ($ret1 < 0 || $ret2 < 0) {
+			print " - Error in create contact result code = " . $ret1 . " " . $ret2 . " - " . $contact->errorsToString();
+			$errorrecord++;
+		} else {
+			print " - create contact OK";
+		}
+	}
+
+
+	//update date créa
+	if (!$errorrecord) {
+		$datec = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2);
+		$retd = $db->query("UPDATE `llx_societe` SET `datec` = '$datec 00:00:00' WHERE `rowid` = $object->id");
+		if ($retd < 1) {
+			print " - Error in update date créa result " . $object->errorsToString();
+			$errorrecord++;
+		} else {
+			print " - update date créa OK";
+		}
+	}
+	print "\n";
+
+	if ($errorrecord) {
+		print( 'Error on record nb ' . $i . " - " . $object->errorsToString() . "\n");
+		var_dump($db, $object, $contact);
+		//            $db->rollback();
+		die();
+		$error++;    // $errorrecord will be reset
+	}
+	$j++;
+} else
     die("error : $sql");
 
 $db->commit();

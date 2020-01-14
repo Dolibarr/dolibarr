@@ -116,7 +116,7 @@ foreach ($header as $value) {
 }
 $sqlCreate .= ", PRIMARY KEY (`id`)) ENGINE = InnoDB";
 $resql = $db->query($sqlCreate);
-if ($resql !== FALSE) {
+if ($resql !== false) {
     print "Table $table_name created\n";
 } else {
     var_dump($db->errno());
@@ -136,7 +136,7 @@ for ($i = 1; $i <= $record_numbers; $i++) {
     if ($endlinenb && $i > $endlinenb)
         continue;
     $row = dbase_get_record_with_names($fhandle, $i);
-    if ($row === FALSE || (isset($row["deleted"]) && $row["deleted"] == '1'))
+    if ($row === false || (isset($row["deleted"]) && $row["deleted"] == '1'))
         continue;
     $sqlInsert = "INSERT INTO `$table_name`($fields) VALUES (null,";
     array_shift($row); // remove delete column
@@ -152,8 +152,8 @@ for ($i = 1; $i <= $record_numbers; $i++) {
         var_dump($row, $db->errno());
         die();
     }
-//    $fields = (object) $row;
-//    var_dump($fields);
+	//    $fields = (object) $row;
+	//    var_dump($fields);
     continue;
 }
 die();
@@ -179,7 +179,8 @@ fclose($fhandleerr);
 
 exit($error);
 
-function replaceable_echo($message, $force_clear_lines = NULL) {
+function replaceable_echo($message, $force_clear_lines = null)
+{
     static $last_lines = 0;
 
     if (!is_null($force_clear_lines)) {
