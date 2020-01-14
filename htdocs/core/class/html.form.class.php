@@ -3008,7 +3008,8 @@ class Form
 	 *  @param	    int		$productid       	Id of product
 	 *  @param      string	$htmlname        	Name of HTML field
 	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
-	 *  @return	    void
+     * 
+	 *  @return	    string
 	 */
     public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
 	{

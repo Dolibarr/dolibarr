@@ -724,7 +724,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		// Supplier
 		print '<td class="right">';
-        $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
+        print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
         print '</td>';
 
 		// Fields from hook

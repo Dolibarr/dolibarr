@@ -50,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 dol_include_once('/mrp/class/mo.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
@@ -371,10 +372,10 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
-$formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $formproduct = new FormProduct($db);
 $tmpwarehouse = new Entrepot($db);
+$tmpbatch = new Productlot($db);
 
 llxHeader('', $langs->trans('Mo'), '');
 
@@ -606,7 +607,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print load_fiche_titre($langs->trans('Consumption'), '', '');
 
     	print '<div class="div-table-responsive-no-min">';
-    	print '<table id="tablelines" class="noborder noshadow nobottom centpercent">';
+    	print '<table id="tablelines" class="noborder noshadow centpercent'.' nobottom'.'">';
 
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("Product").'</td>';
@@ -664,7 +665,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								jQuery("#expandtoproduce'.$line->id.'").click(function() {
 									console.log("Expand mrp_production line '.$line->id.'");
 									jQuery(".expanddetail'.$line->id.'").toggle();';
-    	    			if ($nblinetoconsume == $nblinetoconsumecursor) {
+    	    			if ($nblinetoconsume == $nblinetoconsumecursor) {	// If it is the last line
     	    				print 'if (jQuery("#tablelines").hasClass("nobottom")) { jQuery("#tablelines").removeClass("nobottom"); } else { jQuery("#tablelines").addClass("nobottom"); }';
     	    			}
     	    			print '
@@ -674,6 +675,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			if (empty($conf->use_javascript_ajax)) print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
     	    			print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce'.$line->id.'"');
     	    			if (empty($conf->use_javascript_ajax)) print '</a>';
+    	    		} else {
+    	    			if ($nblinetoconsume == $nblinetoconsumecursor) {	// If it is the last line
+    	    				print '<script>jQuery("#tablelines").removeClass("nobottom");</script>';
+    	    			}
     	    		}
     	    		print ' '.$alreadyconsumed;
     	    		print '</td>';
@@ -695,10 +700,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '<td>';
     	    			if ($line2['fk_warehouse'] > 0) {
     	    				$tmpwarehouse->fetch($line2['fk_warehouse']);
-    	    				print $tmpwarehouse->getNomUrl();
+    	    				print $tmpwarehouse->getNomUrl(1);
     	    			}
     	    			print '</td>';
-    	    			print '<td>'.$line2['batch'].'</td>';
+    	    			// Lot Batch
+    	    			print '<td>';
+    	    			if ($line2['batch'] != '') {
+    	    				$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+    	    				print $tmpbatch->getNomUrl(1);
+    	    			}
+    	    			print '</td>';
     	    			print '</tr>';
     	    		}
 
@@ -721,6 +732,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			} else {
     	    				print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
     	    			}
+    	    			// Lot / Batch
     	    			print '</td>';
     	    			if ($conf->productbatch->enabled) {
 	    	    			print '<td>';
@@ -826,10 +838,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					print '<td>';
     					if ($line2['fk_warehouse'] > 0) {
     						$tmpwarehouse->fetch($line2['fk_warehouse']);
-    						print $tmpwarehouse->getNomUrl();
+    						print $tmpwarehouse->getNomUrl(1);
     					}
     					print '</td>';
-    					print '<td>'.$line2['batch'].'</td>';
+    					print '<td>';
+    					if ($line2['batch'] != '') {
+    						$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+    						print $tmpbatch->getNomUrl(1);
+    					}
+    					print '</td>';
     					print '</tr>';
     				}
 
