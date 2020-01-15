@@ -10,7 +10,6 @@ define('DBASE_TYPE_FOXPRO', 1);
 
 class DBase
 {
-
     private $fd;
     private $headerLength = 0;
     private $fields = array();
@@ -392,5 +391,4 @@ if (!function_exists('dbase_open')) {
 	{
         return $dbase_identifier->pack();
     }
-
 }
