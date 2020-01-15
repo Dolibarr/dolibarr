@@ -478,7 +478,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_BOM_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnBOMs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
@@ -501,7 +501,7 @@ print '</form>';
 //Use draft Watermark
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_BOM_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';

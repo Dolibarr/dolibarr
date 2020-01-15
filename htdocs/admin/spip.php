@@ -123,7 +123,7 @@ $head = mailmanspip_admin_prepare_head();
 if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	dol_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');

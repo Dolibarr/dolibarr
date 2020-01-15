@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
@@ -417,12 +417,12 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$price_ht = price2num(GETPOST('price_ht'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
 		else
 		{
@@ -430,7 +430,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = GETPOST('qty'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef));
 		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
@@ -438,7 +438,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc))
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free' && empty($idprod) && empty($product_desc))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
@@ -1002,7 +1002,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'CONTRACT_SENTBYMAIL';
+	$triggersendname = 'CONTRACT_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromcontract';
 	$trackid = 'con'.$object->id;
@@ -1163,7 +1163,7 @@ if ($action == 'create')
 	$object->date_contrat = dol_now();
 
 	print '<form name="form_contract" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
@@ -1383,7 +1383,7 @@ else
 		if (!empty($object->brouillon) && $user->rights->contrat->creer)
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
 		}
 
@@ -1425,7 +1425,7 @@ else
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
@@ -1528,7 +1528,7 @@ else
 		{
 			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline - 1]->id.'">';
 			print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
@@ -1949,7 +1949,7 @@ else
 			if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne'))
 			{
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
@@ -2003,7 +2003,7 @@ else
 				print '<!-- Form to disabled a line -->'."\n";
 				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'" method="post">';
 
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="closeline">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
@@ -2064,7 +2064,7 @@ else
 
 			print "\n";
 			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
-			<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+			<input type="hidden" name="token" value="'.newToken().'">
 			<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">

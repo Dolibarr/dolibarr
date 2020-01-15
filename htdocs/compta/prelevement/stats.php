@@ -120,7 +120,7 @@ if ($resql)
 	}
 
 	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print '<td class="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";

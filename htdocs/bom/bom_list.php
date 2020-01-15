@@ -71,6 +71,7 @@ if (!$sortfield) $sortfield = "t.".key($object->fields); // Set here default sea
 if (!$sortorder) $sortorder = "ASC";
 
 // Security check
+if (empty($conf->bom->enabled)) accessforbidden('Module not enabled');
 $socid = 0;
 if ($user->socid > 0)	// Protection if external user
 {
@@ -106,8 +107,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
+			$arrayfields["ef.".$key] = array(
+				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1),
+				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+			);
+		}
 	}
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -298,8 +305,8 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql = preg_replace('/, $/', '', $sql);
+$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
@@ -308,6 +315,10 @@ foreach ($search as $key => $val)
 {
 	if ($key == 'status' && $search[$key] == -1) continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
+		if ($search[$key] == '-1') $search[$key] = '';
+		$mode_search = 2;
+	}
 	if ($search[$key] != '') $sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -332,7 +343,7 @@ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
+$sql=preg_replace('/,\s*$/','', $sql);
 */
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -350,13 +361,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
 {
 	$num = $nbtotalofrecords;
 }
 else
 {
-	$sql .= $db->plimit($limit + 1, $offset);
+	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
 	if (!$resql)
@@ -369,7 +380,7 @@ else
 }
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -418,13 +429,13 @@ $arrayofmassactions =  array(
 	'enable'=>$langs->trans("Enable"),
 	'disable'=>$langs->trans("Disable"),
 );
-if ($user->rights->bom->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -488,7 +499,10 @@ foreach ($object->fields as $key => $val)
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
-		else print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		elseif (strpos($val['type'], 'integer:') === 0) {
+			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
+		}
+		elseif (! preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }
@@ -548,17 +562,13 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
-while ($i < min($num, $limit))
+while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) break; // Should not happen
 
 	// Store properties in $object
-	$object->id = $obj->rowid;
-	foreach ($object->fields as $key => $val)
-	{
-		if (property_exists($obj, $key)) $object->$key = $obj->$key;
-	}
+	$object->setVarsFromFetchObj($obj);
 
     // Show here line of result
     print '<tr class="oddeven">';
@@ -577,21 +587,20 @@ while ($i < min($num, $limit))
         {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') print $object->getLibStatut(5);
-			elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
-			else print $object->showOutputField($val, $key, $obj->$key, '');
+			else print $object->showOutputField($val, $key, $object->$key, '');
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 			if (!empty($val['isameasure']))
 			{
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
-				$totalarray['val']['t.'.$key] += $obj->$key;
+				$totalarray['val']['t.'.$key] += $object->$key;
 			}
         }
     }
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -599,13 +608,13 @@ while ($i < min($num, $limit))
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (in_array($object->id, $arrayofselected)) $selected = 1;
+		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
 	if (!$i) $totalarray['nbfield']++;
 
-	print '</tr>';
+	print '</tr>'."\n";
 
 	$i++;
 }
@@ -648,8 +657,8 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->bom->read;
-	$delallowed = $user->rights->bom->create;
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
 
 	print $formfile->showdocuments('massfilesarea_bom', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

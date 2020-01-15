@@ -27,15 +27,15 @@ include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("stocks","other"));
+$langs->loadLangs(array("stocks", "other"));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectcard';   // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
@@ -48,31 +48,31 @@ else
 }
 
 // Initialize technical objects
-$object=new Inventory($db);
+$object = new Inventory($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->stock->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
-$search=array();
-foreach($object->fields as $key => $val)
+$search_all = trim(GETPOST("search_all", 'alpha'));
+$search = array();
+foreach ($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action='view';
+if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
@@ -92,13 +92,13 @@ else
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-	$error=0;
+	$error = 0;
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 
@@ -119,7 +119,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	/*$trigger_name='MYOBJECT_SENTBYMAIL';
+	/*$triggersendname = 'MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
 	$trackid='myobject'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
@@ -132,7 +132,7 @@ if (empty($reshook))
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans('Inventory'), '');
 
@@ -164,7 +164,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline')
@@ -176,14 +176,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Call Hook formConfirm
 	$parameters = array('lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -191,9 +191,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' . DOL_URL_ROOT . '/product/inventory/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/inventory/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	/*
 	// Ref bis
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->inventory->creer, 'string', '', 0, 1);
@@ -214,7 +214,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                $morehtmlref.='</form>';
@@ -233,7 +233,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    }
 	}
 	*/
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -245,10 +245,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 	print '</div>';
@@ -262,8 +262,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    	$parameters = array();
+    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))

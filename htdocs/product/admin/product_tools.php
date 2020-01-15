@@ -135,7 +135,7 @@ if ($action == 'convert')
 							$newlevel=$level;
 
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$retm=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatratclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
+							$retm=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 							if ($retm < 0)
 							{
 								$error++;
@@ -293,7 +293,7 @@ if (empty($mysoc->country_code))
 else
 {
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="action" value="convert" />';
 
 	print '<table class="noborder centpercent">';

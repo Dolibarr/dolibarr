@@ -248,7 +248,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -327,7 +327,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
     dol_fiche_head('');
@@ -768,7 +768,7 @@ if ($rowid > 0)
 		$head = member_type_prepare_head($object);
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 

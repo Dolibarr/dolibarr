@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Regnskab
 Accounting=Regnskab
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
@@ -30,7 +31,7 @@ OverviewOfAmountOfLinesNotBound=Oversigt over antallet af linjer, der ikke er bu
 OverviewOfAmountOfLinesBound=Oversigt over antallet af linjer, der allerede er bundet til en regnskabsmæssig konto
 OtherInfo=Anden information
 DeleteCptCategory=Fjern regnskabskonto fra gruppe
-ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
+ConfirmDeleteCptCategory=Er du sikker på, du vil fjerne denne regnskabskonto fra gruppen?
 JournalizationInLedgerStatus=Status for bogføring
 AlreadyInGeneralLedger=Allerede bogført
 NotYetInGeneralLedger=Kladder der ikke er bogført endnu
@@ -42,7 +43,7 @@ CountriesInEEC=Lande i EØF
 CountriesNotInEEC=Lande ikke i EØF
 CountriesInEECExceptMe=Lande i EØF undtagen %s
 CountriesExceptMe=Alle lande undtagen %s
-AccountantFiles=Export accounting documents
+AccountantFiles=Eksporter regnskabs dokumenter
 
 MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
 MainAccountForSuppliersNotDefined=Hoved kontokort for leverandører, der ikke er defineret i opsætningen
@@ -97,6 +98,8 @@ MenuExpenseReportAccounts=Rapporter for udgiftskladder
 MenuLoanAccounts=Lånekonti
 MenuProductsAccounts=Varekonti
 MenuClosureAccounts=Closure accounts
+MenuAccountancyClosure=Closure
+MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=Varekonti
 TransferInAccounting=Transfer in accounting
 RegistrationInAccounting=Registration in accounting
@@ -164,12 +167,14 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Regnskabskonto for afventning
 DONATION_ACCOUNTINGACCOUNT=Regnskabskonto til registrering af donationer
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskabskonto som standard for købte varer (hvis ikke defineret for varen)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Regnskabskonto som standard for solgte varer (hvis ikke defineret for varen)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Regnskabskonto som standard for købte ydelser (hvis ikke defineret for varen)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Regnskabskonto som standard for solgte ydelser (hvis ikke defineret for varen)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
 
 Doctype=Dokumenttype
 Docdate=Dato
@@ -192,9 +197,10 @@ ByPersonalizedAccountGroups=Efter brugerdefinerede grupper
 ByYear=År
 NotMatch=Ikke angivet
 DeleteMvt=Slet posteringer i hovedbogen
+DelMonth=Month to delete
 DelYear=År, der skal slettes
 DelJournal=Kladde, der skal slettes
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=Dette vil slette transaktionen fra Ledger (alle linjer, der er relateret til samme transaktion vil blive slettet)
 FinanceJournal=Finanskladde
 ExpenseReportsJournal=Udgiftskladder
@@ -235,12 +241,18 @@ DescVentilDoneCustomer=Her findes list over fakturalinjer bundet til kunder og d
 DescVentilTodoCustomer=Bogfør fakturaer, der ikke allerede er bogført til en varekonto
 ChangeAccount=Skift regnskabskonto for vare/ydelse for valgte linjer med følgende regnskabskonto:
 Vide=-
-DescVentilSupplier=Se her listen over leverandørfaktura linjer, der er bundet eller endnu ikke bundet til en produkt regnskabskonto
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Bogfør udgiftsrapportlinjer, der ikke allerede er bogført, til en gebyrkonto
 DescVentilExpenseReport=Her vises listen over udgiftsrapporter linjer bundet (eller ej) til en gebyrkonto
 DescVentilExpenseReportMore=Hvis du opsætter regnskabskonto på typen af ​​udgiftsrapporter, vil applikationen kunne foretage hele bindingen mellem dine udgiftsrapporter og kontoen for dit kontoplan, kun med et klik med knappen <strong> "%s" </strong>. Hvis kontoen ikke var angivet i gebyrordbog, eller hvis du stadig har nogle linjer, der ikke er bundet til nogen konto, skal du lave en manuel binding fra menuen "<strong> %s</strong>".
 DescVentilDoneExpenseReport=Her vises listen over linjerne for udgiftsrapporter og deres gebyrkonto
+
+DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
+OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+ValidateMovements=Validate movements
+DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
+SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=Automatisk Bogføring
 AutomaticBindingDone=Automatisk Bogføring
@@ -256,6 +268,7 @@ ListOfProductsWithoutAccountingAccount=Liste over varer, der ikke er bundet til 
 ChangeBinding=Ret Bogføring
 Accounted=Regnskab i hovedbog
 NotYetAccounted=Endnu ikke indregnet i hovedbog
+ShowTutorial=Show Tutorial
 
 ## Admin
 ApplyMassCategories=Anvend massekategorier
@@ -264,7 +277,7 @@ CategoryDeleted=Kategori for regnskabskonto er blevet slettet
 AccountingJournals=Kontokladder
 AccountingJournal=Kontokladde
 NewAccountingJournal=Ny kontokladde
-ShowAccoutingJournal=Vis kontokladde
+ShowAccountingJournal=Vis kontokladde
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Diverse operationer
 AccountingJournalType2=Salg

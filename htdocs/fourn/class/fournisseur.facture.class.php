@@ -1639,7 +1639,7 @@ class FactureFournisseur extends CommonInvoice
 	        			$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 	        			if ($result > 0)
 	        			{
-	        				$pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
+	        				if (empty($pu)) $pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
 	        				$ref_supplier = $prod->ref_supplier; // Ref supplier price set by get_buyprice
 	        				// is remise percent not keyed but present for the product we add it
 	        				if ($remise_percent == 0 && $prod->remise_percent != 0)
@@ -1691,6 +1691,7 @@ class FactureFournisseur extends CommonInvoice
 	        $localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 	        // Clean vat code
+	        $reg = array();
 	        $vat_src_code = '';
 	        if (preg_match('/\((.*)\)/', $txtva, $reg))
 	        {
@@ -2804,15 +2805,70 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $fk_prev_id;
 
+	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
+	 * VAT %
+	 * @var float
+	 */
 	public $tva_tx;
+
+    /**
+	 * Local tax 1 %
+	 * @var float
+	 */
 	public $localtax1_tx;
+
+    /**
+	 * Local tax 2 %
+	 * @var float
+	 */
 	public $localtax2_tx;
+
+    /**
+	 * Quantity
+	 * @var double
+	 */
 	public $qty;
+
+    /**
+	 * Percent of discount
+	 * @var float
+	 */
 	public $remise_percent;
+
+    /**
+	 * Total amount without taxes
+	 * @var float
+	 */
 	public $total_ht;
+
+    /**
+	 * Total amount with taxes
+	 * @var float
+	 */
 	public $total_ttc;
+
+    /**
+	 * Total amount of taxes
+	 * @var float
+	 */
 	public $total_tva;
+
+    /**
+	 * Total local tax 1 amount
+	 * @var float
+	 */
 	public $total_localtax1;
+
+    /**
+	 * Total local tax 2 amount
+	 * @var float
+	 */
 	public $total_localtax2;
 
 	/**
@@ -2820,8 +2876,24 @@ class SupplierInvoiceLine extends CommonObjectLine
      */
 	public $fk_product;
 
+	/**
+	 * Type of the product. 0 for product 1 for service
+	 * @var int
+	 */
 	public $product_type;
+
+    /**
+	 * Label of the product
+	 * @var string
+	 */
 	public $product_label;
+
+    /**
+	 * List of cumulative options:
+	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
 	public $info_bits;
 
 	/**
@@ -2830,8 +2902,22 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $fk_parent_line;
 
 	public $special_code;
+
+	/**
+     * @var int rank of line
+     */
 	public $rang;
+
+    /**
+	 * Total local tax 1 amount
+	 * @var float
+	 */
 	public $localtax1_type;
+
+    /**
+	 * Total local tax 2 amount
+	 * @var float
+	 */
 	public $localtax2_type;
 
 	// Multicurrency

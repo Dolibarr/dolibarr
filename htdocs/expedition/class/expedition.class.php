@@ -1614,7 +1614,7 @@ class Expedition extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$result = '';
 		$label = '<u>'.$langs->trans("ShowSending").'</u>';
@@ -1979,6 +1979,12 @@ class Expedition extends CommonObject
 		global $conf, $langs, $user;
 
 		$error = 0;
+
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_CLOSED)
+		{
+			return 0;
+		}
 
 		$this->db->begin();
 

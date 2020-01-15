@@ -216,7 +216,7 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
@@ -300,12 +300,13 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef",  'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
 			'p.amount'=>'AmountPayment', 'pf.amount'=>'AmountPaymentDistributedOnInvoice', 'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber',
 			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
 		);
+		$this->export_help_array[$r] = array('f.paye'=>'InvoicePaidCompletelyHelp');
 		if (! empty($conf->multicurrency->enabled))
 		{
 		    $this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
@@ -313,6 +314,7 @@ class modFacture extends DolibarrModules
 		    $this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
 		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		    $this->export_examplevalues_array[$r]['f.multicurrency_code'] = 'EUR';
 		}
 		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
 		{

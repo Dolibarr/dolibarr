@@ -229,7 +229,7 @@ if ($action == 'create')
 	}
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<div id="selectmethod">';

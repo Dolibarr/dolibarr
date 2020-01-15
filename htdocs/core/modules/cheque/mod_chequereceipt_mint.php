@@ -17,7 +17,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/cheque/mod_chequereceipts_mint.php
+ * \file       htdocs/core/modules/cheque/mod_chequereceipt_mint.php
  * \ingroup    cheque
  * \brief      File containing class for numbering module Mint
  */

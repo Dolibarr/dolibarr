@@ -459,6 +459,12 @@ select.flat, form.flat select {
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
+.opacitymediumbycolor {
+	color: rgba(0, 0, 0, 0.4);
+}
+.opacitylow {
+	opacity: 0.6;
+}
 .opacityhigh {
 	opacity: 0.2;
 }
@@ -594,6 +600,7 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+	min-width: 54px;
 }
 
 .valigntop {
@@ -1056,6 +1063,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
 	.minwidth200imp { min-width: 200px !important; }
+    .minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
@@ -1107,10 +1115,10 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth100imp { min-width: 100px !important; }
     .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
+    .minwidth250imp { min-width: 250px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
     .minwidth500imp { min-width: 300px !important; }
-
 
     .linkedcol-element {
 		min-width: unset;
@@ -1123,9 +1131,10 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 70px !important; }
-    .minwidth100imp { min-width: 80px !important; }
-    .minwidth150imp { min-width: 100px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 110px !important; }
     .minwidth200imp { min-width: 110px !important; }
+    .minwidth250imp { min-width: 115px !important; }
     .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
@@ -1202,10 +1211,11 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
-	.minwidth75imp  { min-width: 60px !important; }
-    .minwidth100imp { min-width: 80px !important; }
-    .minwidth150imp { min-width: 90px !important; }
-    .minwidth200imp { min-width: 100px !important; }
+	.minwidth75imp  { min-width: 75px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 110px !important; }
+    .minwidth200imp { min-width: 110px !important; }
+    .minwidth250imp { min-width: 115px !important; }
     .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
@@ -1604,7 +1614,10 @@ div.nopadding {
 }
 .pictowarning {
     /* vertical-align: text-bottom; */
-    color: #9f4705;
+    color: <?php echo $badgeWarning; ?>;
+}
+.pictoerror {
+    color: <?php echo $badgeDanger ?>;
 }
 .pictomodule {
 	width: 14px;
@@ -2127,7 +2140,7 @@ form#login {
 	border-radius: 4px;
 	border:solid 1px rgba(80,80,80,.4);
 
-	border-top:solid 1px f8f8f8;
+	border-top:solid 1px #f8f8f8;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
 	border: none;
@@ -3715,6 +3728,9 @@ label.radioprivate {
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
+div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+    margin-right: 15px;
+}
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
@@ -4104,6 +4120,9 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	padding-left: 8px;
 	margin-right: 5px;
 }
+.websitebar input#previewpageurl {
+    line-height: 1em;
+}
 
 
 /* ============================================================================== */
@@ -4154,6 +4173,11 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .topmenuimage {
 	background-size: 24px auto;
 }
+
+td.cal_other_month {
+	opacity: 0.8;
+}
+
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
@@ -5288,8 +5312,16 @@ dd.dropdowndd ul li {
 
 
 /* ============================================================================== */
-/*  JMobile                                                                       */
+/*  JMobile - Android                                                             */
 /* ============================================================================== */
+
+.searchpage .tagtr .tagtd {
+    padding-bottom: 3px;
+}
+.searchpage .tagtr .tagtd .button {
+	background: unset;
+    border: unset;
+}
 
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
@@ -6040,6 +6072,10 @@ border-top-right-radius: 6px;
 	table.table-fiche-title .col-title div.titre{
 		line-height: unset;
 	}
+
+	input#addedfile {
+		width: 95%;
+	}
 }
 
 
@@ -6060,15 +6096,12 @@ border-top-right-radius: 6px;
 
 
 
-<?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php }
-
+<?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
-
+if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
 
 if (is_object($db)) $db->close();

@@ -6,7 +6,7 @@ TMenuTools=Tööriistad
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Sünnipäev
 BirthdayDate=Birthday date
-DateToBirth=Sünniaeg
+DateToBirth=Birth date
 BirthdayAlertOn=sünnipäeva hoiatus aktiivne
 BirthdayAlertOff=sünnipäeva hoiatus mitteaktiivne
 TransKey=Translation of the key TransKey
@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
 Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
 Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
 Notify_CONTRACT_VALIDATE=Leping kinnitatud
-Notify_FICHEINTER_VALIDATE=Sekkumine kinnitatud
+Notify_FICHINTER_VALIDATE=Sekkumine kinnitatud
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_SENTBYMAIL=Sekkumine saadetud postiga
 Notify_SHIPPING_VALIDATE=Saatmine kinnitatud
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Ekspordi ala

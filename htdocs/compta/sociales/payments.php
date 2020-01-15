@@ -81,7 +81,7 @@ if ($sortorder) $param .= '&sortorder='.$sortorder;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -170,7 +170,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			// Ref payment
 			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
 			// Date payment
-			print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
 	        // Type payment
     	    print '<td>';
     	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
@@ -272,7 +272,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				$tva_static->ref = $obj->rowid;
 		        print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
-		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
+		        print '<td class="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
 		        print '<td class="right">'.price($obj->amount)."</td>";
 		        print "</tr>\n";
 
@@ -373,7 +373,7 @@ while ($j < $numlt)
 				$tva_static->ref = $obj->rowid;
 				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
-				print '<td align="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
+				print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
 				print '<td class="right">'.price($obj->amount)."</td>";
 				print "</tr>\n";
 
@@ -455,7 +455,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
                 $sal_static->ref = $obj->rowid;
                 print '<td class="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
-                print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
                 print '<td class="right">'.price($obj->amount)."</td>";
                 print "</tr>\n";
 

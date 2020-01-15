@@ -66,7 +66,7 @@ dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';

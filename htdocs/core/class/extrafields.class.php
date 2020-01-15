@@ -557,7 +557,7 @@ class ExtraFields
 			}
 			else
 			{
-				print dol_print_error($this->db);
+				dol_print_error($this->db);
 				return -1;
 			}
 		}
@@ -813,7 +813,7 @@ class ExtraFields
 			else
 			{
 				$this->db->rollback();
-				print dol_print_error($this->db);
+				dol_print_error($this->db);
 				return -1;
 			}
 		}

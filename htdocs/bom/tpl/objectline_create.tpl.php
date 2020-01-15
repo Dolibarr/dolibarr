@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,10 +50,10 @@ $objectline = new BOMLine($this->db);
 
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
 
-$nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
+$nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
-    print '<tr class="liste_titre'.($nolinesbefore?'':' liste_titre_add_').' nodrag nodrop">';
-    if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+    print '<tr class="liste_titre nodrag nodrop">';
+    if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
         print '<td class="linecolnum center"></td>';
     }
     print '<td class="linecoldescription minwidth500imp">';
@@ -74,11 +74,11 @@ if ($nolinesbefore) {
 	print '<td class="linecoledit" colspan="'.$colspan.'">&nbsp;</td>';
     print '</tr>';
 }
-print '<tr class="pair nodrag nodrop nohoverpair'.($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'.'">';
-$coldisplay=0;
+print '<tr class="pair nodrag nodrop nohoverpair'.($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create'.'">';
+$coldisplay = 0;
 
 // Adds a line numbering column
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
     $coldisplay++;
     echo '<td class="bordertop nobottom linecolnum center"></td>';
 }
@@ -87,15 +87,15 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 {
 	if ($forceall >= 0 && $freelines) echo '<br>';
 	echo '<span class="prod_entry_mode_predef">';
-	$filtertype='';
-	if (! empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype='1';
+	$filtertype = '';
+	if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype = '1';
 
 	$statustoshow = -1;
-	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
+	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS))
 	{
 		// hide products in closed warehouse, but show products for internal transfer
 		$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
@@ -109,10 +109,10 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 }
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1).'">';
+print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
-if($conf->global->PRODUCT_USE_UNITS)
+if ($conf->global->PRODUCT_USE_UNITS)
 {
     $coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
@@ -121,11 +121,11 @@ if($conf->global->PRODUCT_USE_UNITS)
 }
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOST("qty_frozen", 'alpha')?' checked="checked"':'').'>';
+print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '').'>';
 print '</td>';
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha')?' checked="checked"':'').'">';
+print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '').'">';
 print '</td>';
 
 //$coldisplay++;

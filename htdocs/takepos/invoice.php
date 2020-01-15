@@ -43,6 +43,7 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
+$placeid = 0; // $placeid is ID of invoice
 
 if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone')
 {
@@ -83,10 +84,9 @@ function fail($message)
 
 
 
-$placeid = 0; // $placeid is id of invoice
-
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
+$selectedline = GETPOST('selectedline', 'int');
 $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay', 'alpha');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
@@ -120,6 +120,12 @@ if ($ret > 0)
 {
     $placeid = $invoice->id;
 }
+
+$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+
+$soc = new Societe($db);
+if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+else $soc->fetch($conf->global->$constforcompanyid);
 
 
 /*
@@ -226,14 +232,14 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 if ($action == 'history')
 {
-    $placeid = GETPOST('placeid', 'int');
+    $placeid = (int) GETPOST('placeid', 'int');
     $invoice = new Facture($db);
     $invoice->fetch($placeid);
 }
 
 if (($action == "addline" || $action == "freezone") && $placeid == 0)
 {
-	$invoice->socid = $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+	$invoice->socid = $conf->global->$constforcompanyid;
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
@@ -263,27 +269,51 @@ if ($action == "addline")
 	$customer = new Societe($db);
 	$customer->fetch($invoice->socid);
 
-    $price = $prod->price;
-    $tva_tx = $prod->tva_tx;
-    $price_ttc = $prod->price_ttc;
-    $price_base_type = $prod->price_base_type;
+	$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
-    if (!empty($conf->global->PRODUIT_MULTIPRICES))
-    {
-    	$price = $prod->multiprices[$customer->price_level];
-    	$tva_tx = $prod->multiprices_tva_tx[$customer->price_level];
-    	$price_ttc = $prod->multiprices_ttc[$customer->price_level];
-    	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
-    }
+	$price = $datapriceofproduct['pu_ht'];
+	$price_ttc = $datapriceofproduct['pu_ttc'];
+	//$price_min = $datapriceofproduct['price_min'];
+	$price_base_type = $datapriceofproduct['price_base_type'];
+	$tva_tx = $datapriceofproduct['tva_tx'];
+	$tva_npr = $datapriceofproduct['tva_npr'];
 
-    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+	// Local Taxes
+	$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
+	$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
+
+	if (! empty($conf->global->TAKEPOS_SUPPLEMENTS))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$cat = new Categorie($db);
+		$categories = $cat->containing($idproduct, 'product');
+		$found = (array_search($conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, array_column($categories, 'id')));
+		if ($found !== false) // If this product is a supplement
+		{
+			$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid=$selectedline";
+			$resql = $db->query($sql);
+			$row = $db->fetch_array($resql);
+			if ($row[0]==null) $parent_line=$selectedline;
+			else $parent_line=$row[0]; //If the parent line is already a supplement, add the supplement to the main  product
+		}
+	}
+
+    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, 0, '', 0, 100, '', null, 0);
+
     $invoice->fetch($placeid);
 }
 
 if ($action == "freezone") {
     $customer = new Societe($db);
     $customer->fetch($invoice->socid);
-    $invoice->addline($desc, $number, 1, get_default_tva($mysoc, $customer), 0, 0, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+
+    $tva_tx = get_default_tva($mysoc, $customer);
+
+    // Local Taxes
+    $localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
+    $localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
+
+    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -392,7 +422,8 @@ if ($action == "order" and $placeid != 0)
     $catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
     foreach ($invoice->lines as $line)
     {
-        if ($line->special_code == "4") { continue;
+        if ($line->special_code == "4") {
+        	continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
@@ -409,7 +440,8 @@ if ($action == "order" and $placeid != 0)
 
     foreach ($invoice->lines as $line)
     {
-        if ($line->special_code == "4") { continue;
+        if ($line->special_code == "4") {
+        	continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
@@ -618,6 +650,7 @@ if ($_SESSION["basiclayout"] != 1)
 }
 print "</tr>\n";
 
+
 if ($_SESSION["basiclayout"] == 1)
 {
 	if ($mobilepage == "cats")
@@ -689,6 +722,37 @@ if ($placeid > 0)
         $tmplines = array_reverse($invoice->lines);
         foreach ($tmplines as $line)
         {
+			if ($line->fk_parent_line!=false)
+			{
+				$htmlsupplements[$line->fk_parent_line].='<tr class="drag drop oddeven posinvoiceline';
+				if ($line->special_code == "4") $htmlsupplements[$line->fk_parent_line].=' order';
+				$htmlsupplements[$line->fk_parent_line].= '" id="'.$line->id.'">';
+				$htmlsupplements[$line->fk_parent_line].= '<td class="left">';
+				$htmlsupplements[$line->fk_parent_line].= img_picto('', 'rightarrow');
+				if ($line->product_label) $htmlsupplements[$line->fk_parent_line] .= $line->product_label;
+				if ($line->product_label && $line->desc) $htmlsupplements[$line->fk_parent_line] .= '<br>';
+				if ($line->product_label != $line->desc)
+				{
+					$firstline = dolGetFirstLineOfText($line->desc);
+					if ($firstline != $line->desc)
+					{
+						$htmlsupplements[$line->fk_parent_line] .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+					}
+					else
+					{
+						$htmlsupplements[$line->fk_parent_line] .= $line->desc;
+					}
+				}
+				$htmlsupplements[$line->fk_parent_line] .= '</td>';
+				if ($_SESSION["basiclayout"] != 1)
+				{
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.$line->qty.'</td>';
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.price($line->total_ttc).'</td>';
+				}
+				$htmlsupplements[$line->fk_parent_line] .= '</tr>'."\n";
+				continue;
+			}
             $htmlforlines = '';
 
             $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
@@ -720,12 +784,23 @@ if ($placeid > 0)
             if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
             if ($_SESSION["basiclayout"] != 1)
 			{
+				$moreinfo = '';
+				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);
+				if ($line->vat_src_code) $moreinfo .= '<br>'.$langs->trans("VATCode").': '.$line->vat_src_code;
+				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_vat);
+				//$moreinfo .= '<br>'.$langs->transcountry("VATRate", $mysoc->country_code).': '.price($line->);
+				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
+				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
+				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;
+
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">'.$line->qty.'</td>';
-				$htmlforlines .= '<td class="right">'.price($line->total_ttc).'</td>';
+				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">'.price($line->total_ttc).'</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
+			$htmlforlines .= $htmlsupplements[$line->id];
 
             print $htmlforlines;
         }
@@ -741,12 +816,9 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
+
+if ($invoice->socid != $conf->global->$constforcompanyid)
 {
-	$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-	$soc = new Societe($db);
-    if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-    else $soc->fetch($conf->global->$constforcompanyid);
     print '<!-- Show customer -->';
     print '<p class="right">';
     print $langs->trans("Customer").': '.$soc->name;

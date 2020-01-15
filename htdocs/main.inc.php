@@ -232,7 +232,7 @@ require_once 'master.inc.php';
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (!empty($conf->debugbar->enabled))
+if (!empty($conf->debugbar->enabled) && ! GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile']))
 {
     global $debugbar;
     include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
@@ -309,7 +309,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 	}
 	if (!$found)
 	{
-		print 'Access refused by IP protection';
+		print 'Access refused by IP protection. Your detected IP is '.$_SERVER['REMOTE_ADDR'];
 		exit;
 	}
 }
@@ -342,7 +342,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	}
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
+//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL'))
@@ -355,7 +355,7 @@ if (!defined('NOTOKENRENEWAL'))
 	$_SESSION['newtoken'] = $token;
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
+//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
 //$dolibarr_nocsrfcheck=1;
 // Check token
 //var_dump((! defined('NOCSRFCHECK')).' '.empty($dolibarr_nocsrfcheck).' '.(! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)).' '.$_SERVER['REQUEST_METHOD'].' '.(! GETPOSTISSET('token')));
@@ -880,7 +880,7 @@ if (!defined('NOLOGIN'))
 if (GETPOST('theme', 'alpha'))
 {
 	$conf->theme = GETPOST('theme', 'alpha', 1);
-	$conf->css  = "/theme/".$conf->theme."/style.css.php";
+	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
 
@@ -926,7 +926,7 @@ if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 if (!empty($conf->dol_use_jmobile) && in_array($conf->theme, array('bureau2crea', 'cameleo', 'amarok')))
 {
 	$conf->theme = 'eldy';
-	$conf->css  = "/theme/".$conf->theme."/style.css.php";
+	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
 if (!defined('NOREQUIRETRAN'))
@@ -1137,7 +1137,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
 	if (!defined('XFRAMEOPTIONS_ALLOWALL')) header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 	else header("X-Frame-Options: ALLOWALL");
-	//header("X-XSS-Protection: 1");      		// XSS protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
+	//header("X-XSS-Protection: 1");      		// XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 	if (!defined('FORCECSP'))
 	{
 		//if (! isset($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
@@ -1361,93 +1361,93 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// Output standard javascript links
-		if (! defined('DISABLE_JQUERY') && ! $disablejs && ! empty($conf->use_javascript_ajax))
+		if (!defined('DISABLE_JQUERY') && !$disablejs && !empty($conf->use_javascript_ajax))
 		{
 			// JQuery. Must be before other includes
 			print '<!-- Includes JS for JQuery -->'."\n";
-			if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script src="'.JS_JQUERY.'jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+			if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script src="'.JS_JQUERY.'jquery.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			/*if (! empty($conf->global->MAIN_FEATURES_LEVEL) && ! defined('JS_JQUERY_MIGRATE_DISABLED'))
 			{
 				if (defined('JS_JQUERY_MIGRATE') && constant('JS_JQUERY_MIGRATE')) print '<script src="'.JS_JQUERY_MIGRATE.'jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 				else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			}*/
-			if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+			if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			if (!defined('DISABLE_JQUERY_TABLEDND')) print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			// jQuery jnotify
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY'))
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY'))
 			{
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Flot
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && ! defined('DISABLE_JQUERY_FLOT'))
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
 			{
 				if (constant('JS_JQUERY_FLOT'))
 				{
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				}
 				else
 				{
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				}
 			}
 			// jQuery jeditable
-			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! defined('DISABLE_JQUERY_JEDITABLE'))
+			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE'))
 			{
 				print '<!-- JS to manage editInPlace feature -->'."\n";
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script>'."\n";
 				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
-				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n";	// Added in title attribute of span
-				print 'var placeholderInPlace = \'&nbsp;\';'."\n";	// If we put another string than $langs->trans("ClickToEdit") here, nothing is shown. If we put empty string, there is error, Why ?
+				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n"; // Added in title attribute of span
+				print 'var placeholderInPlace = \'&nbsp;\';'."\n"; // If we put another string than $langs->trans("ClickToEdit") here, nothing is shown. If we put empty string, there is error, Why ?
 				print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
 				print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
-				print 'var withInPlace = 300;';		// width in pixel for default string edit
+				print 'var withInPlace = 300;'; // width in pixel for default string edit
 				print '</script>'."\n";
-				print '<script src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
             // jQuery Timepicker
-            if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
+            if (!empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
             {
-            	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            	print '<script src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
+            	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+            	print '<script src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
             }
-            if (! defined('DISABLE_SELECT2') && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))     // jQuery plugin "mutiselect", "multiple-select", "select2", ...
+            if (!defined('DISABLE_SELECT2') && (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))     // jQuery plugin "mutiselect", "multiple-select", "select2", ...
             {
-            	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-            	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";	// We include full because we need the support of containerCssClass
+            	$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+            	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n"; // We include full because we need the support of containerCssClass
             }
 		}
 
-        if (! $disablejs && ! empty($conf->use_javascript_ajax))
+        if (!$disablejs && !empty($conf->use_javascript_ajax))
         {
             // CKEditor
-            if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && ! defined('DISABLE_CKEDITOR'))
+        	if ((!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
-                $pathckeditor = DOL_URL_ROOT . '/includes/ckeditor/ckeditor/';
-                $jsckeditor='ckeditor.js';
+                $pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
+                $jsckeditor = 'ckeditor.js';
                 if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
                 {
-                	$pathckeditor=constant('JS_CKEDITOR');
+                	$pathckeditor = constant('JS_CKEDITOR');
                 }
                 print '<script><!-- enable ckeditor by main.inc.php -->';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
-                print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext?'?'.$ext:''), 1).'\';'."\n";		// $themesubdir='' in standard usage
+                print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext ? '?'.$ext : ''), 1).'\';'."\n"; // $themesubdir='' in standard usage
                 print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print '</script>'."\n";
-                print '<script src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script src="'.$pathckeditor.$jsckeditor.($ext ? '?'.$ext : '').'"></script>'."\n";
                 print '<script>';
                 if (GETPOST('mode', 'aZ09') == 'Full_inline')
                 {
@@ -1656,7 +1656,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Link to module builder
 		if (!empty($conf->modulebuilder->enabled))
 		{
-			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_modulebuilder">';
+			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
@@ -2346,6 +2346,7 @@ function getHelpParamFor($helppagename, $langs)
 	else
 	{
 		// If WIKI URL
+		$reg = array();
 		if (preg_match('/^es/i', $langs->defaultlang))
 		{
 			$helpbaseurl = 'http://wiki.dolibarr.org/index.php/%s';
@@ -2389,7 +2390,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 
 	$ret = '';
 	$ret .= '<form action="'.$urlaction.'" method="post" class="searchform nowraponall tagtr">';
-	$ret .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$ret .= '<input type="hidden" name="mode" value="search">';
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	if ($showtitlebefore) $ret .= '<div class="tagtd left">'.$title.'</div> ';
@@ -2551,19 +2552,29 @@ if (!function_exists("llxFooter"))
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
+		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
+			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
-			|| (!empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
+				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| GETPOST('forceping', 'alpha'))
 			{
-				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
+				if (strpos('alpha', DOL_VERSION) > 0) {
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
+				}
+				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]))	// Cookie is set when we uncheck the checkbox in the installation wizard.
 				{
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
-					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
-					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+					print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
+					// Try to guess the distrib used
+					$distrib = 'standard';
+					if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') $distrib = 'doliwamp';
+					if (! empty($dolibarr_distrib)) $distrib = $dolibarr_distrib;
 					?>
 		    			<script>
 		    			jQuery(document).ready(function (tmp) {
@@ -2580,7 +2591,9 @@ if (!function_exists("llxFooter"))
 			    					  entity: "<?php echo (int) $conf->entity; ?>",
 			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
 			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
-			    					  php_version: "<?php echo phpversion(); ?>"
+			    					  php_version: "<?php echo phpversion(); ?>",
+			    					  os_version: "<?php echo version_os('smr'); ?>",
+			    					  distrib: "<?php echo $distrib ? $distrib : 'unknown'; ?>"
 			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");
@@ -2610,7 +2623,7 @@ if (!function_exists("llxFooter"))
 				else
 				{
 					$now = dol_now();
-					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It was disabled -->\n";
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');

@@ -960,7 +960,7 @@ function dol_unescapefile($filename)
  */
 function dolCheckVirus($src_file)
 {
-	global $conf;
+	global $conf, $db;
 
 	if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
@@ -995,7 +995,7 @@ function dolCheckVirus($src_file)
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
- *	@return int       			  		>0 if OK, <0 or string if KO
+ *	@return int|string       			>0 if OK, <0 or string if KO
  *  @see    dol_move()
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile')
@@ -2082,9 +2082,10 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
+ * @param	string	$rootdirinzip	Add a root dir level in zip file
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '')
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '')
 {
 	$foundhandler=0;
 
@@ -2145,7 +2146,8 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					{
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
-						$relativePath = substr($filePath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+
 						if (empty($excludefiles) || ! preg_match($excludefiles, $filePath))
 						{
 							// Add current file to archive

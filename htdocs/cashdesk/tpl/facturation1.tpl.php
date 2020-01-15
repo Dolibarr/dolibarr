@@ -41,7 +41,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 <!-- ========================= Cadre "Article" ============================= -->
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Article"); ?></legend>
 	<form id="frmFacturation" class="formulaire1" method="post" action="facturation_verif.php" autocomplete="off">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 
 		<input type="hidden" name="hdnSource" value="NULL" />
 
@@ -90,7 +90,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 	</form>
 
 	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<table class="center">
 			<tr>
 			<th><?php echo $langs->trans("Qty"); ?></th>
@@ -143,7 +143,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 <!-- ========================= Cadre "Amount" ============================= -->
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 	<input type="hidden" name="hdnChoix" value="" />
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+	<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Amount"); ?></legend>
 		<table class="centpercent">
 			<tr><th class="label1"><?php echo $langs->trans("TotalTicket"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("Change"); ?></th></tr>

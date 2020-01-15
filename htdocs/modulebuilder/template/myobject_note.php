@@ -59,7 +59,7 @@ $hookmanager->initHooks(array('myobjectnote', 'globalcard')); // Note that conf-
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
@@ -122,7 +122,7 @@ if ($id > 0 || !empty($ref))
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                $morehtmlref.='</form>';

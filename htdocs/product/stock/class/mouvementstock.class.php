@@ -90,14 +90,15 @@ class MouvementStock extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Add a movement of stock (in one direction only)
+	 *	Add a movement of stock (in one direction only).
+	 *  $this->origin can be also be set to save the source object of movement.
 	 *
 	 *	@param		User	$user			User object
 	 *	@param		int		$fk_product		Id of product
 	 *	@param		int		$entrepot_id	Id of warehouse
 	 *	@param		int		$qty			Qty of movement (can be <0 or >0 depending on parameter type)
 	 *	@param		int		$type			Direction of movement:
-	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
+	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
 	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
@@ -317,14 +318,18 @@ class MouvementStock extends CommonObject
     		    {
     		        if ($batch != $batchcursor) continue;
     		        $foundforbatch=1;
-    		        if ($prodbatch->qty < abs($qty)) $qtyisnotenough=1;
+    		        if ($prodbatch->qty < abs($qty)) $qtyisnotenough = $prodbatch->qty;
         		    break;
     		    }
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
     		        $langs->load("stocks");
-    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
-    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
+    		        include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+    		        $tmpwarehouse = new Entrepot($this->db);
+    		        $tmpwarehouse->fetch($entrepot_id);
+
+    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
+    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
         		    $this->db->rollback();
         		    return -8;
     		    }
@@ -940,6 +945,10 @@ class MouvementStock extends CommonObject
 			case 'project':
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$origin = new Project($this->db);
+				break;
+			case 'mo':
+				require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+				$origin = new Mo($this->db);
 				break;
 
 			default:

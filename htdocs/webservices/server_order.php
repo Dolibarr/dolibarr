@@ -444,10 +444,10 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande ?dol_print_date($order->date_commande, 'dayrfc') : '',
-					'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-					'date_validation' => $invoice->date_validation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
-					'date_modification' => $invoice->datem ?dol_print_date($invoice->datem, 'dayhourrfc') : '',
+					'date' => $order->date ?dol_print_date($order->date, 'dayrfc') : '',
+					'date_creation' => $order->date_creation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_validation' => $order->date_validation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_modification' => $order->date_modification ?dol_print_date($order->date_modification, 'dayhourrfc') : '',
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -476,13 +476,15 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 			else
 			{
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+                $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
 		else
 		{
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+            $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -529,10 +531,10 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 	{
 		$linesorders=array();
 
-		$sql.='SELECT c.rowid as orderid';
-		$sql.=' FROM '.MAIN_DB_PREFIX.'commande as c';
-		$sql.=" WHERE c.entity = ".$conf->entity;
-		if ($idthirdparty != 'all' ) $sql.=" AND c.fk_soc = ".$db->escape($idthirdparty);
+		$sql = 'SELECT c.rowid as orderid';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+		$sql .= " WHERE c.entity = ".$conf->entity;
+		if ($idthirdparty != 'all' ) $sql .= " AND c.fk_soc = ".$db->escape($idthirdparty);
 
 
 		$resql=$db->query($sql);
@@ -552,7 +554,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 				if( $socid && ( $socid != $order->socid) )
 				{
 					$error++;
-					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
+					$errorcode='PERMISSION_DENIED';
+                    $errorlabel=$order->socid.' User does not have permission for this request';
 				}
 
 				if(!$error)
@@ -674,7 +677,8 @@ function createOrder($authentication, $order)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+    $errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -817,7 +821,8 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 
 	// Init and check authentication
 	$objectresp=array();
-	$errorcode='';$errorlabel='';
+	$errorcode='';
+    $errorlabel='';
 	$error=0;
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
@@ -848,7 +853,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 					$db->rollback();
 					$error++;
 					$errorcode = 'KO';
-					$errorlabel = $newobject->error;
+					$errorlabel = $order->error;
 				}
 			}
 			else
@@ -856,7 +861,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 				$db->rollback();
 				$error++;
 				$errorcode = 'KO';
-				$errorlabel = $newobject->error;
+				$errorlabel = $order->error;
 			}
 		}
 		else
@@ -864,7 +869,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
-			$errorlabel = $newobject->error;
+			$errorlabel = $order->error;
 		}
 	}
 

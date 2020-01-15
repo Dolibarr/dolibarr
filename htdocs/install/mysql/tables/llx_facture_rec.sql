@@ -48,7 +48,7 @@ create table llx_facture_rec
   
   fk_projet          integer,             -- projet auquel est associe la facture
   
-  fk_cond_reglement  integer DEFAULT 0,  -- condition de reglement
+  fk_cond_reglement  integer  DEFAULT 1 NOT NULL,  -- condition de reglement
   fk_mode_reglement  integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
   date_lim_reglement date,				   -- date limite de reglement
   fk_account         integer,			  -- bank account id
