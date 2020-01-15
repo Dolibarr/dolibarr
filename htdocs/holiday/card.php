@@ -1278,9 +1278,13 @@ else
                     print '</td>';
                     print '</tr>';
                 }
+
                 // Nb of days
                 print '<tr>';
-                print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
+                print '<td class="nowrap">';
+                $htmlhelp = $langs->trans('NbUseDaysCPHelp');
+                print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
+                print '</td>';
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
                 print '</tr>';
 
