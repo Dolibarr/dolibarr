@@ -1283,6 +1283,10 @@ else
                 print '<tr>';
                 print '<td class="nowrap">';
                 $htmlhelp = $langs->trans('NbUseDaysCPHelp');
+                $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+                $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+                if ($includesaturday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+                if ($includesunday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
                 print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
                 print '</td>';
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
