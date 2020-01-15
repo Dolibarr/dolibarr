@@ -33,6 +33,10 @@
 
 
 -- For v12
+ALTER TABLE llx_bookmark DROP INDEX uk_bookmark_url;
+ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT; -- change from VARCHAR(255) to allow longer URLs
+ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, title);
+
 
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_account varchar(128);
 
@@ -53,7 +57,6 @@ ALTER TABLE llx_object_lang ADD UNIQUE INDEX uk_object_lang (fk_object, type_obj
 
 ALTER TABLE llx_accounting_account ADD COLUMN labelshort varchar(255) DEFAULT NULL after label;
 
+
 ALTER TABLE llx_subscription ADD COLUMN fk_user_creat   integer DEFAULT NULL;
 ALTER TABLE llx_subscription ADD COLUMN fk_user_valid   integer DEFAULT NULL;
-
-
