@@ -96,7 +96,7 @@ else
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
-if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]))
+if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]) && ! isset($_GET["mainmenu"]))
 {
     print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
     print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
@@ -171,6 +171,8 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 print '</td></tr>';
 print '</table>';
+
+print '<br>';
 
 // Get php_info array
 $phparray=phpinfo_array();
