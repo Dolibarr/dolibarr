@@ -59,6 +59,10 @@ $search_state = trim(GETPOST("search_state"));
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_billed = GETPOST("search_billed", 'int');
+$search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
+$search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
+$search_datereceipt_start = dol_mktime(0, 0, 0, GETPOST('search_datereceipt_startmonth', 'int'), GETPOST('search_datereceipt_startday', 'int'), GETPOST('search_datereceipt_startyear', 'int'));
+$search_datereceipt_end = dol_mktime(23, 59, 59, GETPOST('search_datereceipt_endmonth', 'int'), GETPOST('search_datereceipt_endday', 'int'), GETPOST('search_datereceipt_endyear', 'int'));
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -156,6 +160,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_country = '';
 	$search_type_thirdparty = '';
 	$search_billed = '';
+	$search_datedelivery_start = '';
+	$search_datedelivery_end = '';
+	$search_datereceipt_start = '';
+	$search_datereceipt_end = '';
 	$viewstatut = '';
     $toselect = '';
 	$search_array_options = array();
@@ -234,6 +242,10 @@ if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdp
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
+if ($search_datedelivery_start)	$sql .= " AND e.date_delivery >= '" . $db->idate($search_datedelivery_start) . "'";
+if ($search_datedelivery_end)	$sql .= " AND e.date_delivery <= '" . $db->idate($search_datedelivery_end) . "'";
+if ($search_datereceipt_start)	$sql .= " AND l.date_delivery >= '" . $db->idate($search_datereceipt_start) . "'";
+if ($search_datereceipt_end)	$sql .= " AND l.date_delivery <= '" . $db->idate($search_datereceipt_end) . "'";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 // Add where from extra fields
@@ -280,6 +292,10 @@ if ($resql)
 	if ($search_company)   $param .= "&amp;search_company=".urlencode($search_company);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
+	if ($search_datedelivery_start)	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
+	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
+	if ($search_datereceipt_start)	$param .= '&search_datereceipt_start='.urlencode($search_datereceipt_start);
+	if ($search_datereceipt_end)	$param .= '&search_datereceipt_end='.urlencode($search_datereceipt_end);
 	if ($viewstatut != '') $param .= '&viewstatut='.urlencode($viewstatut);
 	if ($optioncss != '')  $param .= '&amp;optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
@@ -391,7 +407,16 @@ if ($resql)
 	// Date delivery planned
 	if (!empty($arrayfields['e.date_delivery']['checked']))
 	{
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From') . ' ';
+		print $form->selectDate($search_delivery_start?$search_delivery_start:-1, 'search_delivery_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to') . ' ';
+		print $form->selectDate($search_delivery_end?$search_delivery_end:-1, 'search_delivery_end', 0, 0, 1);
+		print '</div>';
+		print '</td>';
 	}
 	if (!empty($arrayfields['l.ref']['checked']))
 	{
@@ -403,7 +428,16 @@ if ($resql)
 	if (!empty($arrayfields['l.date_delivery']['checked']))
 	{
 		// Date received
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From') . ' ';
+		print $form->selectDate($search_receipt_start?$search_receipt_start:-1, 'search_receipt_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to') . ' ';
+		print $form->selectDate($search_receipt_end?$search_receipt_end:-1, 'search_receipt_end', 0, 0, 1);
+		print '</div>';
+		print '</td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
