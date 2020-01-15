@@ -38,12 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 //show files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "categories", "companies", "bills", "trips"));
+$langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
 
 $action = GETPOST('action', 'alpha');
 $id = GETPOST('account', 'int');
@@ -202,6 +205,9 @@ $paymentvatstatic = new TVA($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
+$paymentdonationstatic=new PaymentDonation($db);
+$paymentloanstatic=new PaymentLoan($db);
+$paymentvariousstatic=new PaymentVarious($db);
 
 // Must be before button action
 $param = '';
@@ -512,7 +518,28 @@ else
 					print '</a>';
 					$newline = 0;
 				}
-				elseif ($links[$key]['type'] == 'banktransfert') {
+				elseif ($links[$key]['type']=='payment_donation')
+				{
+					$paymentdonationstatic->id=$links[$key]['url_id'];
+					$paymentdonationstatic->ref=$langs->trans("Payment");
+					print ' '.$paymentdonationstatic->getNomUrl(1);
+					$newline = 0;
+				}
+				elseif ($links[$key]['type']=='payment_loan')
+				{
+					$paymentloanstatic->id=$links[$key]['url_id'];
+					$paymentloanstatic->ref=$langs->trans("Payment");
+					print ' '.$paymentloanstatic->getNomUrl(1);
+					$newline = 0;
+				}
+				elseif ($links[$key]['type']=='payment_various')
+				{
+					$paymentvariousstatic->id=$links[$key]['url_id'];
+					$paymentvariousstatic->ref=$langs->trans("Payment");
+					print ' '.$paymentvariousstatic->getNomUrl(1);
+					$newline = 0;
+				}
+				elseif ($links[$key]['type']=='banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
 					if ($objp->amount > 0)
 					{

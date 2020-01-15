@@ -16,13 +16,13 @@ StripeDoPayment=Paga amb Stripe
 YouWillBeRedirectedOnStripe=Se us redirigirà a la pàgina de Stripe assegurada per introduir la informació de la vostra targeta de crèdit
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pagament %s
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
-ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+ToOfferALinkForOnlinePaymentOnOrder=URL per oferir una pàgina de pagament en línia %s per a una ordre de venda
+ToOfferALinkForOnlinePaymentOnInvoice=URL per oferir una pàgina de pagament en línia %s per a una factura de client
+ToOfferALinkForOnlinePaymentOnContractLine=URL per oferir una pàgina de pagament en línia %s per a una línia de contracte
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL per oferir una pàgina de pagament en línia %s de qualsevol quantitat sense cap objecte associat
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per oferir una pàgina de pagament en línia %s per a una subscripció per membres
+ToOfferALinkForOnlinePaymentOnDonation=URL per oferir una pàgina de pagament en línia %s per al pagament d’una donació
+YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b>&tag= <i>valor</i> </b> a qualsevol d'aquestes URLs (obligatori només per al pagament no vinculat a cap objecte) per afegir la vostra pròpia etiqueta de comentari de pagament. <br> Per a la URL de pagaments no vinculta a cap objecte existent, també podeu afegir el paràmetre <strong>&noidempotency=1</strong> de manera que el mateix enllaç amb una mateixa etiqueta es pot utilitzar diverses vegades (alguns modes de pagament poden limitar els intents de pagament a 1 per a cada enllaç si no s'utilitza aquest paràmetre)
 SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b>%s</b> per fer que el pagament es creï automàticament quan es valide mitjançant Stripe.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús

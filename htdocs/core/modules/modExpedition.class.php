@@ -65,8 +65,8 @@ class modExpedition extends DolibarrModules
 		                    "/expedition/sending/temp",
 		                    "/expedition/receipt",
 		                    "/expedition/receipt/temp",
-							"/doctemplates/shipment",
-							"/doctemplates/delivery"
+							"/doctemplates/shipments",
+							"/doctemplates/deliveries"
 		                    );
 
 		// Config pages
@@ -98,7 +98,7 @@ class modExpedition extends DolibarrModules
 
 		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/shipment";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/shipments";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -119,7 +119,7 @@ class modExpedition extends DolibarrModules
 
 		$this->const[$r][0] = "LIVRAISON_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/delivery";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/deliveries";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -127,7 +127,7 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][0] = "MAIN_SUBMODULE_EXPEDITION";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Enable shipments";
+		$this->const[$r][3] = "Enable delivery receipts";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -326,8 +326,8 @@ class modExpedition extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/shipment/template_shipment.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/shipment';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/shipments/template_shipment.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/shipments';
 		$dest = $dirodt.'/template_shipment.odt';
 
 		if (file_exists($src) && !file_exists($dest))

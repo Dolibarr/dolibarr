@@ -46,7 +46,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
         $this->name = preg_replace('/^Interface/i', '', get_class($this));
         $this->family = "ticket";
-        $this->description = "Triggers of the module ticket";
+        $this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
         $this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
         $this->picto = 'ticket';
     }

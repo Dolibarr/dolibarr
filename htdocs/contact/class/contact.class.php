@@ -181,6 +181,10 @@ class Contact extends CommonObject
 	public $phone_mobile;
 	public $fax;
 
+	/**
+	 * Private or public
+	 * @var int
+	 */
 	public $priv;
 
 	public $birthday;

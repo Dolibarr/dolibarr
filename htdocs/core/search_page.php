@@ -115,7 +115,7 @@ print "\n";
 print "<!-- Begin SearchForm -->\n";
 print '<div class="center"><div class="center" style="padding: 6px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
-print '<div id="blockvmenusearch">'."\n";
+print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $searchform;
 print '</div>'."\n";
 print '</div></div>';

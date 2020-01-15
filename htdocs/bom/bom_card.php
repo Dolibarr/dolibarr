@@ -97,11 +97,13 @@ if (empty($reshook))
     $backurlforlist = DOL_URL_ROOT.'/bom/bom_list.php';
 
     if (empty($backtopage) || ($cancel && empty($id))) {
-    	//var_dump($backurlforlist);exit;
-    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    	else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
+    	if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+    		if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    		else $backtopage = dol_buildpath('/bom/bom_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+    	}
     }
-	$triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
+
+    $triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -169,7 +171,9 @@ if (empty($reshook))
     		}
     		else
     		{
-    		    unset($_POST['qty_frozen']);
+    			unset($_POST['idprod']);
+    			unset($_POST['qty']);
+    			unset($_POST['qty_frozen']);
     		    unset($_POST['disable_stock_change']);
     		}
 		}
@@ -207,7 +211,9 @@ if (empty($reshook))
 		}
 		else
 		{
-		    unset($_POST['qty_frozen']);
+			unset($_POST['idprod']);
+			unset($_POST['qty']);
+			unset($_POST['qty_frozen']);
 		    unset($_POST['disable_stock_change']);
 		}
 	}
@@ -506,7 +512,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak = 'description';
+	$keyforbreak = 'efficiency';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -622,7 +628,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    			}
 	    			else
 	    			{
-	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    				$langs->load("errors");
+	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    			}
 	    		}
     		}
@@ -644,7 +651,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
 	    		if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write))
 	    		{
-	    			print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>';
+	    			print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>';
 	    		}
     		}
 

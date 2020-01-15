@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=Lista de materiales devalidada
 BOM_CLOSEInDolibarr=Lista de materiales desactivada
 BOM_REOPENInDolibarr=Lista de materiales reabierta
 BOM_DELETEInDolibarr=Lista de materiales eliminada
-MO_VALIDATEInDolibarr=OF validada
-MO_PRODUCEDInDolibarr=OF fabricada
-MO_DELETEInDolibarr=OF eliminada
+MRP_MO_VALIDATEInDolibarr=OF validada
+MRP_MO_PRODUCEDInDolibarr=OF fabricada
+MRP_MO_DELETEInDolibarr=OF eliminada
 ##### End agenda events #####
 AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio

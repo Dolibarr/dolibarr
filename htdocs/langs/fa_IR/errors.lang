@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Search criteria too small.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد

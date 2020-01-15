@@ -57,6 +57,7 @@ NatureOfThirdParty=Nature of Third party
 NatureOfContact=Nature of Contact
 Address=Adresa
 State=Država/provincija
+StateCode=State/Province code
 StateShort=Država
 Region=Regija
 Region-State=Region - State

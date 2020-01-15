@@ -59,6 +59,8 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
+
 ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
 
@@ -520,10 +522,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',653);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',654);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
+DELETE FROM llx_c_action_trigger where code LIKE 'MO_%';
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
 
@@ -534,7 +537,7 @@ CREATE TABLE llx_mrp_production(
 	position integer NOT NULL DEFAULT 0,
 	fk_product integer NOT NULL, 
 	fk_warehouse integer,
-	qty integer NOT NULL DEFAULT 1,
+	qty real NOT NULL DEFAULT 1,
     qty_frozen smallint DEFAULT 0,
     disable_stock_change smallint DEFAULT 0, 
 	batch varchar(30),
@@ -547,9 +550,11 @@ CREATE TABLE llx_mrp_production(
 	fk_user_modif integer, 
 	import_key varchar(14)
 ) ENGINE=innodb;
+ALTER TABLE llx_mrp_production MODIFY COLUMN qty real NOT NULL DEFAULT 1;
 
 ALTER TABLE llx_mrp_production ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_mrp_production ADD COLUMN disable_stock_change smallint DEFAULT 0;
+
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_mo FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement FOREIGN KEY (fk_stock_movement) REFERENCES llx_stock_mouvement (rowid);
@@ -559,3 +564,5 @@ ALTER TABLE llx_mrp_production ADD INDEX idx_mrp_production_fk_mo (fk_mo);
 ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_ref(ref, entity);
 
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
+
+ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;

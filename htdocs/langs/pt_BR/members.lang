@@ -116,3 +116,4 @@ ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produto utilizado para a linha de assinatu
 NoEmailSentToMember=Nenhum e-mail enviado para o membro
 MembershipPaid=Filiação paga pelo período atual (até %s)
 YouMayFindYourInvoiceInThisEmail=Você pode encontrar sua fatura anexada a este e-mail
+XMembersClosed=%s membro (s) fechado (s)

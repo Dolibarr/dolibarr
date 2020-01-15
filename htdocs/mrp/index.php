@@ -93,7 +93,7 @@ if ($conf->use_javascript_ajax)
 
     	print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
-    	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>'."\n";
+    	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("MO").'</th></tr>'."\n";
         if ($conf->use_javascript_ajax)
     	{
     		print '<tr><td class="center" colspan="2">';
