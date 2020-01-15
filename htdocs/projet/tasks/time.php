@@ -235,8 +235,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel
 			$result = $object->delTimeSpent($user);
 
 			$object->fetch($id, $ref);
-   		$object->timespent_note = $_POST["timespent_note_line"];
-		  $object->timespent_old_duration = $_POST["old_duration"];
+			$object->timespent_note = $_POST["timespent_note_line"];
+			$object->timespent_old_duration = $_POST["old_duration"];
 			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60;	// We store duration in seconds
 			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60;   // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
