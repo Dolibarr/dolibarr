@@ -838,7 +838,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
-	return dol_string_nospecial($unaccent ?dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -1561,13 +1561,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'facture', 'invoice', 'invoice_supplier', 'expensereport')))
+	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various')))
 	{
 		if (method_exists($object, 'getVentilExportCompta'))
 		{
 			$accounted = $object->getVentilExportCompta();
 			$langs->load("accountancy");
-			$morehtmlstatus .= '</div><div class="statusref statusrefbis">'.($accounted > 0 ? $langs->trans("Accounted") : '<span class="opacitymedium">'.$langs->trans("NotYetAccounted").'</span>');
+			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? $langs->trans("Accounted") : $langs->trans("NotYetAccounted")).'</span>';
 		}
 	}
 
@@ -1639,13 +1639,14 @@ function dol_bc($var, $moreclass = '')
 }
 
 /**
- *      Return a formated address (part address/zip/town/state) according to country rules
+ *      Return a formated address (part address/zip/town/state) according to country rules.
+ *      See https://en.wikipedia.org/wiki/Address
  *
  *      @param  Object		$object			A company or contact object
- * 	    @param	int			$withcountry		1=Add country into address string
- *      @param	string		$sep				Separator to use to build string
- *      @param	Translate	$outputlangs		Object lang that contains language for text translation.
- *      @param	int		$mode		0=Standard output, 1=Remove address
+ * 	    @param	int			$withcountry	1=Add country into address string
+ *      @param	string		$sep			Separator to use to build string
+ *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
+ *      @param	int			$mode			0=Standard output, 1=Remove address
  *      @return string						Formated string
  *      @see dol_print_address()
  */
@@ -1655,6 +1656,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
+
+	// See format of addresses on https://en.wikipedia.org/wiki/Address
 
 	// Address
 	if (empty($mode)) {
@@ -1692,7 +1695,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	{
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$ret .= ($object->town ? (($object->zip ? ' ' : '').$object->town) : '');
-		$ret .= ($object->state_id ? (' ('.($object->state_id).')') : '');
+		$ret .= ($object->state_code ? (' '.($object->state_code)) : '');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -3099,7 +3102,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
-				$morecss = 'font-status4';
+				$morecss .= ($morecss ? ' ' : '').'font-status4';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
@@ -3349,7 +3352,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  */
 function img_action($titlealt, $numaction)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if (empty($titlealt) || $titlealt == 'default')
 	{
@@ -3374,7 +3377,7 @@ function img_action($titlealt, $numaction)
  */
 function img_pdf($titlealt = 'default', $size = 3)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Show');
 
@@ -3390,7 +3393,7 @@ function img_pdf($titlealt = 'default', $size = 3)
  */
 function img_edit_add($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Add');
 
@@ -3405,7 +3408,7 @@ function img_edit_add($titlealt = 'default', $other = '')
  */
 function img_edit_remove($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Remove');
 
@@ -3422,7 +3425,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  */
 function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
@@ -3439,7 +3442,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  */
 function img_view($titlealt = 'default', $float = 0, $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('View');
 
@@ -3457,7 +3460,7 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  */
 function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
@@ -3474,7 +3477,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
  */
 function img_printer($titlealt = "default", $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 	if ($titlealt == "default") $titlealt = $langs->trans("Print");
 	return img_picto($titlealt, 'printer.png', $other);
 }
@@ -3488,7 +3491,7 @@ function img_printer($titlealt = "default", $other = '')
  */
 function img_split($titlealt = 'default', $other = 'class="pictosplit"')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Split');
 
@@ -3504,7 +3507,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
  */
 function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($usealttitle)
 	{
@@ -3523,7 +3526,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
  */
 function img_info($titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Informations');
 
@@ -3540,7 +3543,7 @@ function img_info($titlealt = 'default')
  */
 function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
@@ -3556,11 +3559,11 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
  */
 function img_error($titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($titlealt, 'error.png', 'class="valigntextbottom"');
+	return img_picto($titlealt, 'error.png');
 }
 
 /**
@@ -3572,7 +3575,7 @@ function img_error($titlealt = 'default')
  */
 function img_next($titlealt = 'default', $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
@@ -3589,7 +3592,7 @@ function img_next($titlealt = 'default', $moreatt = '')
  */
 function img_previous($titlealt = 'default', $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
@@ -3607,7 +3610,7 @@ function img_previous($titlealt = 'default', $moreatt = '')
  */
 function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Down');
 
@@ -3624,7 +3627,7 @@ function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
  */
 function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Up');
 
@@ -3641,7 +3644,7 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
  */
 function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
 
@@ -3658,7 +3661,7 @@ function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
  */
 function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Right');
 
@@ -3674,7 +3677,7 @@ function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
  */
 function img_allow($allow, $titlealt = 'default')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Active');
 
@@ -4677,6 +4680,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	dol_syslog("get_localtax tva=".$vatrate." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer) ? $thirdparty_buyer->id : '')."/country_code=".(is_object($thirdparty_buyer) ? $thirdparty_buyer->country_code : '')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
 	$vatratecleaned = $vatrate;
+	$reg = array();
 	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
 	{
 		$vatratecleaned = trim($reg[1]);
@@ -4921,13 +4925,14 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
+	$sql  = "SELECT t.taux as rate, t.code, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
 	else
 	{
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
+		$reg = array();
 		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "x.x (yy)"
 		{
 			$vatratecleaned = $reg[1];
@@ -4945,17 +4950,20 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
+
+		$vateratestring = $obj->rate.($obj->code ? ' ('.$obj->code.')' : '');
+
 		if ($local == 1)
 		{
-			return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			return array($obj->localtax1_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		elseif ($local == 2)
 		{
-			return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			return array($obj->localtax2_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		else
 		{
-			return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			return array($obj->localtax1_type, get_localtax($vateratestring, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vateratestring, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 	}
 
@@ -5470,7 +5478,7 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0)
 {
-	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>\n+/ims', '<br>', $stringtoclean);
+	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
 	if ($strip_tags) {
@@ -6031,6 +6039,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
+			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : '');
 
 			$birthday = dol_print_date($object->birth, 'day');
 
@@ -7656,6 +7665,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$operator = '=';
 				$newcrit = preg_replace('/([<>=]+)/', '', trim($crit));
 
+				$reg = array();
 				preg_match('/([<>=]+)/', trim($crit), $reg);
 				if ($reg[1])
 				{

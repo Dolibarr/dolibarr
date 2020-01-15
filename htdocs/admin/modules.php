@@ -825,10 +825,13 @@ if ($mode == 'common')
         	    $warningmessage = '';
 	        	if (!empty($arrayofwarnings[$modName]))
 	        	{
-                    print '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
+                    print '<!-- This module is a core module and it may have a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 	        	    foreach ($arrayofwarnings[$modName] as $keycountry => $cursorwarningmessage)
    	        	    {
-	        	        $warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code);
+   	        	    	if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry)))
+   	        	    	{
+	        	        	$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code);
+   	        	    	}
    	        	    }
 	        	}
         		if ($objMod->isCoreOrExternalModule() == 'external' && !empty($arrayofwarningsext))

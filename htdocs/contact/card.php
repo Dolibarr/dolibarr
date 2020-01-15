@@ -1020,7 +1020,7 @@ else
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
 
-                print $formcompany->select_state(GETPOSTISSET('state_id') ?GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
+                print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
                 print '</td></tr>';
             }
 
@@ -1364,7 +1364,7 @@ else
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 			print '<td colspan="3">';
-			print $form->showCategories($object->id, 'contact', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_CONTACT, 1);
 			print '</td></tr>';
 		}
 

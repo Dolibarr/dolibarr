@@ -23,10 +23,9 @@
  */
 
 /**
- *  \file			htdocs/core/modules/bom/modules_bom.php
- *  \ingroup		bom
- *  \brief			File that contains parent class for boms models
- *                  and parent class for boms numbering models
+ *  \file			htdocs/core/modules/mymodule/modules_myobject.php
+ *  \ingroup		mymodule
+ *  \brief			File that contains parent class for myobjects document models and parent class for myobjects numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -34,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
 
 
 /**
- *	Parent class for boms models
+ *	Parent class for documents models
  */
 abstract class ModelePDFMyObject extends CommonDocGenerator
 {
@@ -52,7 +51,7 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type = 'bom';
+		$type = 'mymodule_myobject';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -65,7 +64,7 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
 
 
 /**
- *  Parent class to manage numbering of BOMs
+ *  Parent class to manage numbering of MyObject
  */
 abstract class ModeleNumRefMyObject
 {
@@ -92,7 +91,7 @@ abstract class ModeleNumRefMyObject
 	public function info()
 	{
 		global $langs;
-		$langs->load("mrp");
+		$langs->load("mymodule@mymodule");
 		return $langs->trans("NoDescription");
 	}
 
@@ -104,7 +103,7 @@ abstract class ModeleNumRefMyObject
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("mrp");
+		$langs->load("mymodule@mymodule");
 		return $langs->trans("NoExample");
 	}
 

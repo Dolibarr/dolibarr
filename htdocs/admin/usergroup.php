@@ -34,7 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "users"));
-
 if (!$user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
@@ -244,10 +243,7 @@ foreach ($dirmodels as $reldir)
 			                    }
 					    		$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					    		$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
 					    		$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 
 
 	                            print '<td class="center">';

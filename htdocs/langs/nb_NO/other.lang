@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Leverandørfaktura betalt
 Notify_BILL_SUPPLIER_SENTBYMAIL=Leverandørfaktura sendt via post
 Notify_BILL_SUPPLIER_CANCELED=Leverandørfaktura kansellert
 Notify_CONTRACT_VALIDATE=Kontrakt validert
-Notify_FICHEINTER_VALIDATE=Intervensjon validert
+Notify_FICHINTER_VALIDATE=Intervensjon validert
 Notify_FICHINTER_ADD_CONTACT=Kontakt lagt til intervensjon
 Notify_FICHINTER_SENTBYMAIL=Intervensjon sendt med post
 Notify_SHIPPING_VALIDATE=Leveranse validert
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Tredjepart skapt av e-post samler fra e-post M
 ContactCreatedByEmailCollector=Kontakt/adresse opprettet av e-post samler fra e-post MSGID %s
 ProjectCreatedByEmailCollector=Prosjekt opprettet av e-post samler fra e-post MSGID %s
 TicketCreatedByEmailCollector=Supportseddel opprettet av e-post samler fra e-post MSGID %s
+OpeningHoursFormatDesc=Bruk en bindestrek for å skille åpning og stengetid. <br> Bruk et mellomrom for å angi forskjellige områder. <br> Eksempel: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Eksportområde

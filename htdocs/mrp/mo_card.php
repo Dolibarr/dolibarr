@@ -62,6 +62,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
@@ -117,8 +118,6 @@ $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->enti
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters = array();
@@ -137,9 +136,13 @@ if (empty($reshook))
     		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     	}
     }
+    if ($cancel && ! empty($backtopageforcancel)) {
+    	$backtopage = $backtopageforcancel;
+    }
+
     $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
-    // Actions cancel, add, update, delete or clone
+    // Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
     include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
     // Actions when linking object each other
@@ -204,7 +207,8 @@ if ($action == 'create')
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
 	dol_fiche_head(array(), '');
 
@@ -306,8 +310,9 @@ if (($id || $ref) && $action == 'edit')
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
 	dol_fiche_head();
 
@@ -361,7 +366,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$object->fetch_product();
-			$numref = $object->getNextNumRef($object->thirdparty);
+			$numref = $object->getNextNumRef($object->fk_product);
 		} else {
 			$numref = $object->ref;
 		}
@@ -487,7 +492,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->table_element_line))
 	{
     	// Show object lines
-    	$result = $object->getLinesArray();
+		//$result = $object->getLinesArray();
+		$object->fetchLines();
 
     	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
     	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
@@ -496,42 +502,61 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	<input type="hidden" name="id" value="' . $object->id.'">
     	';
 
-    	if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+    	/*if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
     	    include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
-    	}
+    	}*/
 
-    	print '<div class="div-table-responsive-no-min">';
-    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
+    	if (!empty($object->lines))
     	{
-    	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+    		print '<div class="div-table-responsive-no-min">';
+    		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-    	    print '<tr><td>TODO...</td></tr>';
-    	}
+    		print '<tr class="liste_titre">';
+    		print '<td class="liste_titre">'.$langs->trans("Summary").'</td>';
+    		print '<td></td>';
+    		print '</tr>';
 
-    	/*if (!empty($object->lines))
-    	{
-    		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/mrp/tpl');
-    	}
+    		print '<tr class="oddeven">';
+    		print '<td>'.$langs->trans("ToConsume").'</td>';
+    		print '<td>';
+    		if (!empty($object->lines))
+    		{
+    			$i = 0;
+    			foreach($object->lines as $line) {
+    				if ($line->role == 'toconsume') {
+    					if ($i) print ', ';
+    					$tmpproduct = new Product($db);
+    					$tmpproduct->fetch($line->fk_product);
+    					print $tmpproduct->getNomUrl(1);
+    					$i++;
+    				}
+    			}
+    		}
+    		print '</td>';
+    		print '</tr>';
 
-    	// Form to add new line
-    	if ($object->status == 0 && $permissiontoadd && $action != 'selectlines')
-    	{
-    	    if ($action != 'editline')
-    	    {
-    	        // Add products/services form
-    	        $object->formAddObjectLine(1, $mysoc, $soc, '/mrp/tpl');
+    		print '<tr class="oddeven">';
+    		print '<td>'.$langs->trans("ToProduce").'</td>';
+    		print '<td>';
+    		if (!empty($object->lines))
+    		{
+    			$i = 0;
+    			foreach($object->lines as $line) {
+    				if ($line->role == 'toproduce') {
+    					if ($i) print ', ';
+    					$tmpproduct = new Product($db);
+    					$tmpproduct->fetch($line->fk_product);
+    					print $tmpproduct->getNomUrl(1);
+    					$i++;
+    				}
+    			}
+    		}
+    		print '</td>';
+    		print '</tr>';
 
-    	        $parameters = array();
-    	        $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    	    }
-    	} */
-
-    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-    	{
     	    print '</table>';
+    	    print '</div>';
     	}
-    	print '</div>';
-
 
     	print "</form>\n";
 	}
@@ -555,18 +580,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
 	    		if ($permissiontoadd)
 	    		{
-	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    			// TODO Add test that production has not started
+	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 	    		}
     		}
 
             // Modify
-    		if ($permissiontoadd)
-    		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+    		if ($object->status == $object::STATUS_DRAFT) {
+	    		if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
+	    		}
+	    		else
+	    		{
+	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+	    		}
     		}
 
     		// Validate
@@ -574,13 +602,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
 	    		if ($permissiontoadd)
 	    		{
-	    		    if (is_array($object->lines) && count($object->lines) > 0)
+	    			if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 	    		    {
 	    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
 	    		    }
 	    		    else
 	    		    {
-	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    		    	$langs->load("errors");
+	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    		    }
 	    		}
     		}
@@ -591,10 +620,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->fk_soc.'&action=clone&object=mo">'.$langs->trans("ToClone").'</a>';
     		}
 
+    		// Cancel
+    		if ($permissiontoadd)
+    		{
+    			if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS)
+    			{
+    				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
+    			}
+
+    			if ($object->status == $object::STATUS_CANCELED)
+    			{
+    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
+    			}
+    		}
+
     		// Delete (need delete permission, or if draft, just need create/modify permission)
     		if ($permissiontodelete)
     		{
-    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
+    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}
     		else
     		{

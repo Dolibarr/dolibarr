@@ -105,6 +105,8 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND c.email != ''"; // Note that null != '' is false
 		$sql.= " AND c.no_email = 0";
+		$sql .= " AND (SELECT count(*) FROM ". MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = c.email) = 0";
+		// exclude unsubscribed users
 		$sql.= " AND c.statut = 1";
 
 		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
@@ -384,6 +386,8 @@ class mailing_contacts1 extends MailingTargets
     	$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND sp.email <> ''";
 		$sql.= " AND sp.no_email = 0";
+		$sql .= " AND (SELECT count(*) FROM ". MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = sp.email) = 0";
+		// Exclude unsubscribed email adresses
 		$sql.= " AND sp.statut = 1";
 		$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		// Filter on category

@@ -59,6 +59,13 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
+UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
+
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
 
 ALTER TABLE llx_societe_account ADD COLUMN site_account varchar(128);
@@ -464,9 +471,11 @@ CREATE TABLE llx_mrp_mo(
     note_public text,
     note_private text,
     date_creation datetime NOT NULL,
+    date_valid datetime NULL,
     tms timestamp,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
+    fk_user_valid integer,
     model_pdf varchar(255),
     import_key varchar(14),
     status integer NOT NULL,
@@ -477,6 +486,9 @@ CREATE TABLE llx_mrp_mo(
     fk_project integer
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo ADD COLUMN date_valid datetime NULL;
+ALTER TABLE llx_mrp_mo ADD COLUMN fk_user_valid integer;
 
 ALTER TABLE llx_bom_bom ADD COLUMN model_pdf varchar(255);
 ALTER TABLE llx_mrp_mo ADD COLUMN model_pdf varchar(255);
@@ -510,10 +522,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',653);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',654);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
+DELETE FROM llx_c_action_trigger where code LIKE 'MO_%';
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
 
@@ -524,7 +537,7 @@ CREATE TABLE llx_mrp_production(
 	position integer NOT NULL DEFAULT 0,
 	fk_product integer NOT NULL,
 	fk_warehouse integer,
-	qty integer NOT NULL DEFAULT 1,
+	qty real NOT NULL DEFAULT 1,
     qty_frozen smallint DEFAULT 0,
     disable_stock_change smallint DEFAULT 0,
 	batch varchar(30),
@@ -537,9 +550,11 @@ CREATE TABLE llx_mrp_production(
 	fk_user_modif integer,
 	import_key varchar(14)
 ) ENGINE=innodb;
+ALTER TABLE llx_mrp_production MODIFY COLUMN qty real NOT NULL DEFAULT 1;
 
 ALTER TABLE llx_mrp_production ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_mrp_production ADD COLUMN disable_stock_change smallint DEFAULT 0;
+
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_mo FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement FOREIGN KEY (fk_stock_movement) REFERENCES llx_stock_mouvement (rowid);
@@ -550,28 +565,4 @@ ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector
 
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
 
--- Category type
-CREATE TABLE llx_c_type_category
-(
-  rowid         integer PRIMARY KEY,
-  code          varchar(32) NOT NULL,
-  element_key   varchar(255) NOT NULL,
-  element_table varchar(255) NOT NULL,
-  object_class  varchar(255) NOT NULL,
-  object_table  varchar(255) NOT NULL
-)ENGINE=innodb;
-
-ALTER TABLE llx_c_type_category ADD UNIQUE INDEX uk_c_type_category(code);
-
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (0, 'product',      'product',   'product',     'Product',     'product');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (1, 'supplier',     'soc',       'fournisseur', 'Fournisseur', 'societe');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (2, 'customer',     'soc',       'societe',     'Societe',     'societe');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (3, 'member',       'member',    'member',      'Adherent',    'adherent');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (4, 'contact',      'socpeople', 'contact',     'Contact',     'socpeople');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (5, 'bank_account', 'account',   'account',     'Account',     'bank_account');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (6, 'project',      'project',   'project',     'Project',     'projet');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (7, 'user',         'user',      'user',        'User',        'user');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (8, 'bank_line',    'account',   'account',     'Account',     'bank_account');
-INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (9, 'warehouse',    'warehouse', 'warehouse',   'Entrepot',    'entrepot');
-
-ALTER TABLE llx_categorie CHANGE type type integer NOT NULL DEFAULT '1';
+ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;

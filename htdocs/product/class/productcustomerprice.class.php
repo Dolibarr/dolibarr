@@ -741,14 +741,19 @@ class Productcustomerprice extends CommonObject
     }
 
 	/**
-	 * Force update price on child price
+	 * Force update price on child companies so child company has same prices than parent.
 	 *
 	 * @param User $user that modifies
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, >0 if OK
+	 * @return int <0 if KO, 0 = action disabled, >0 if OK
 	 */
     public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
     {
+		global $conf;
+
+		if (! empty($conf->global->PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES)) {
+			return 0;
+		}
 
 		$error = 0;
 

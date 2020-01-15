@@ -459,6 +459,12 @@ select.flat, form.flat select {
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
+.opacitymediumbycolor {
+	color: rgba(0, 0, 0, 0.4);
+}
+.opacitylow {
+	opacity: 0.6;
+}
 .opacityhigh {
 	opacity: 0.2;
 }
@@ -1609,6 +1615,9 @@ div.nopadding {
 .pictowarning {
     /* vertical-align: text-bottom; */
     color: <?php echo $badgeWarning; ?>;
+}
+.pictoerror {
+    color: <?php echo $badgeDanger ?>;
 }
 .pictomodule {
 	width: 14px;
@@ -3719,6 +3728,9 @@ label.radioprivate {
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
+div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+    margin-right: 15px;
+}
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
@@ -4107,6 +4119,9 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	margin-left: 0px;
 	padding-left: 8px;
 	margin-right: 5px;
+}
+.websitebar input#previewpageurl {
+    line-height: 1em;
 }
 
 
@@ -5297,8 +5312,16 @@ dd.dropdowndd ul li {
 
 
 /* ============================================================================== */
-/*  JMobile                                                                       */
+/*  JMobile - Android                                                             */
 /* ============================================================================== */
+
+.searchpage .tagtr .tagtd {
+    padding-bottom: 3px;
+}
+.searchpage .tagtr .tagtd .button {
+	background: unset;
+    border: unset;
+}
 
 li.ui-li-divider .ui-link {
 	color: #FFF !important;

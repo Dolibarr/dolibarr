@@ -970,7 +970,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 
         print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-        print '<table class="border centpercent margintable">';
+        print '<table class="noborder centpercent margintable">';
         print '<tr class="liste_titre">';
         print '<td>';
         print $langs->trans('Properties');

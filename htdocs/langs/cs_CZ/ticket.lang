@@ -33,7 +33,10 @@ TicketDictSeverity=Vstupenka - závažnosti
 TicketTypeShortBUGSOFT=Logika Dysfonctionnement
 TicketTypeShortBUGHARD=Dysfonctionnement matériel -nějaký mišmaš ???
 TicketTypeShortCOM=Obchodní otázka
-TicketTypeShortINCIDENT=Žádost o pomoc
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Jiný
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=Zobrazit všechny vstupenky
 TicketViewNonClosedOnly=Zobrazit pouze otevřené vstupenky
 TicketStatByStatus=Vstupenky podle statusu
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Potvrďte změnu stavu: %s?
 TicketLogStatusChanged=Stav změněn: %s až %s
 TicketNotNotifyTiersAtCreate=Neinformovat společnost na vytvoření
 Unread=Nepřečtený
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
@@ -241,9 +251,9 @@ ShowListTicketWithTrackId=Zobrazí seznam lístků z ID stopy
 ShowTicketWithTrackId=Zobrazit jízdenku z ID stopy
 TicketPublicDesc=Můžete vytvořit lístek podpory nebo šek z existujícího ID.
 YourTicketSuccessfullySaved=Lístek byl úspěšně uložen!
-MesgInfosPublicTicketCreatedWithTrackId=Byl vytvořen nový lístek s ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=Udržujte prosím sledovací číslo, které bychom vás mohli požádat později.
-TicketNewEmailSubject=Potvrzení vytvoření vstupenky
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s
 TicketNewEmailSubjectCustomer=Nová podpora lístku
 TicketNewEmailBody=Jedná se o automatický e-mail, který potvrzuje, že jste zaregistrovali nový lístek.
 TicketNewEmailBodyCustomer=Jedná se o automatický e-mail, který potvrzuje, že byl do vašeho účtu právě vytvořen nový lístek.
@@ -262,7 +272,7 @@ Subject=Předmět
 ViewTicket=Zobrazit lístek
 ViewMyTicketList=Zobrazit seznam lístků
 ErrorEmailMustExistToCreateTicket=Chyba: e-mailová adresa nebyla nalezena v naší databázi
-TicketNewEmailSubjectAdmin=Vytvořen nový lístek
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s
 TicketNewEmailBodyAdmin=<p> Lístek byl právě vytvořen s ID # %s, viz informace: </p>
 SeeThisTicketIntomanagementInterface=Viz tiket v rozhraní pro správu
 TicketPublicInterfaceForbidden=Veřejné rozhraní pro vstupenky nebylo povoleno

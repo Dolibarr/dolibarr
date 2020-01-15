@@ -82,7 +82,7 @@ $cancel != $langs->trans("Cancel") &&
 	// check parameters
     $forcelangprod = GETPOST('forcelangprod', 'alpha');
     $libelle = GETPOST('libelle', 'alpha');
-    $desc = GETPOST('desc');
+    $desc = GETPOST('desc', 'none');
 
     if (empty($forcelangprod)) {
         $error++;
@@ -345,7 +345,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
     print $formadmin->select_language(GETPOST('forcelangprod', 'alpha'), 'forcelangprod', 0, $object->multilangs);
 	print '</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
-	print '<td><input name="libelle" size="40" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
+	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();

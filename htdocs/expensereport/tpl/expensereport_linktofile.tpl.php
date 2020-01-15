@@ -99,17 +99,19 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
             $checked='';
             //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
             // If a file was just uploaded, we check to preselect it
-            foreach($_FILES['userfile']['name'] as $tmpfile)
-            {
-                if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
-                {
-                    $checked=' checked';
-                    break;
-                }
-                elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
-                    $checked=' checked';
-                    break;
-                }
+            if (is_array($_FILES['userfile']['name'])) {
+	            foreach($_FILES['userfile']['name'] as $tmpfile)
+	            {
+	                if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
+	                {
+	                    $checked=' checked';
+	                    break;
+	                }
+	                elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
+	                    $checked=' checked';
+	                    break;
+	                }
+	            }
             }
             // If we edit a line already linked, then $filenamelinked is defined to the filename (without path) of linked file
             if (! empty($filenamelinked) && $filenamelinked == $file['relativename'])

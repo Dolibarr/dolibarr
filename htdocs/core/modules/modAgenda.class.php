@@ -219,165 +219,206 @@ class modAgenda extends DolibarrModules
         );
         $r++;
 
-		$this->menu[$r]=array('fk_menu'=>'r=0',
-													'type'=>'left',
-													'titre'=>'Actions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
-													'langs'=>'agenda',
-													'position'=>100,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=0',
+			'type'=>'left',
+			'titre'=>'Actions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
+			'langs'=>'agenda',
+			'position'=>100,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2,
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-													'type'=>'left',
-													'titre'=>'NewAction',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
-													'langs'=>'commercial',
-													'position'=>101,
-													'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=1',
+			'type'=>'left',
+			'titre'=>'NewAction',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
+			'langs'=>'commercial',
+			'position'=>101,
+			'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
 		// Calendar
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-													'type'=>'left',
-													'titre'=>'Calendar',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
-													'langs'=>'agenda',
-													'position'=>140,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=1',
+			'type'=>'left',
+			'titre'=>'Calendar',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
+			'langs'=>'agenda',
+			'position'=>140,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=3',
-													'type'=>'left',
-													'titre'=>'MenuToDoMyActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
-													'langs'=>'agenda',
-													'position'=>141,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=3',
+			'type'=>'left',
+			'titre'=>'MenuToDoMyActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
+			'langs'=>'agenda',
+			'position'=>141,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=3',
-													'type'=>'left',
-													'titre'=>'MenuDoneMyActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
-													'langs'=>'agenda',
-													'position'=>142,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=3',
+			'type'=>'left',
+			'titre'=>'MenuDoneMyActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
+			'langs'=>'agenda',
+			'position'=>142,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=3',
-													'type'=>'left',
-													'titre'=>'MenuToDoActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
-													'langs'=>'agenda',
-													'position'=>143,
-													'perms'=>'$user->rights->agenda->allactions->read',
-													'enabled'=>'$user->rights->agenda->allactions->read',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=3',
+			'type'=>'left',
+			'titre'=>'MenuToDoActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
+			'langs'=>'agenda',
+			'position'=>143,
+			'perms'=>'$user->rights->agenda->allactions->read',
+			'enabled'=>'$user->rights->agenda->allactions->read',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=3',
-													'type'=>'left',
-													'titre'=>'MenuDoneActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
-													'langs'=>'agenda',
-													'position'=>144,
-													'perms'=>'$user->rights->agenda->allactions->read',
-													'enabled'=>'$user->rights->agenda->allactions->read',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=3',
+			'type'=>'left',
+			'titre'=>'MenuDoneActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
+			'langs'=>'agenda',
+			'position'=>144,
+			'perms'=>'$user->rights->agenda->allactions->read',
+			'enabled'=>'$user->rights->agenda->allactions->read',
+			'target'=>'',
+			'user'=>2
+		);
 
 		// List
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-													'type'=>'left',
-													'titre'=>'List',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda',
-													'langs'=>'agenda',
-													'position'=>110,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=1',
+			'type'=>'left',
+			'titre'=>'List',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda',
+			'langs'=>'agenda',
+			'position'=>110,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=8',
-													'type'=>'left',
-													'titre'=>'MenuToDoMyActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
-													'langs'=>'agenda',
-													'position'=>111,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=8',
+			'type'=>'left',
+			'titre'=>'MenuToDoMyActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
+			'langs'=>'agenda',
+			'position'=>111,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=8',
-													'type'=>'left',
-													'titre'=>'MenuDoneMyActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
-													'langs'=>'agenda',
-													'position'=>112,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=8',
+			'type'=>'left',
+			'titre'=>'MenuDoneMyActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
+			'langs'=>'agenda',
+			'position'=>112,
+			'perms'=>'$user->rights->agenda->myactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=8',
-													'type'=>'left',
-													'titre'=>'MenuToDoActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
-													'langs'=>'agenda',
-													'position'=>113,
-													'perms'=>'$user->rights->agenda->allactions->read',
-													'enabled'=>'$user->rights->agenda->allactions->read',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=8',
+			'type'=>'left',
+			'titre'=>'MenuToDoActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
+			'langs'=>'agenda',
+			'position'=>113,
+			'perms'=>'$user->rights->agenda->allactions->read',
+			'enabled'=>'$user->rights->agenda->allactions->read',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
-		$this->menu[$r]=array('fk_menu'=>'r=8',
-													'type'=>'left',
-													'titre'=>'MenuDoneActions',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
-													'langs'=>'agenda',
-													'position'=>114,
-													'perms'=>'$user->rights->agenda->allactions->read',
-													'enabled'=>'$user->rights->agenda->allactions->read',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=8',
+			'type'=>'left',
+			'titre'=>'MenuDoneActions',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
+			'langs'=>'agenda',
+			'position'=>114,
+			'perms'=>'$user->rights->agenda->allactions->read',
+			'enabled'=>'$user->rights->agenda->allactions->read',
+			'target'=>'',
+			'user'=>2
+		);
 		$r++;
 		// Reports
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-													'type'=>'left',
-													'titre'=>'Reportings',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda',
-													'langs'=>'agenda',
-													'position'=>160,
-													'perms'=>'$user->rights->agenda->allactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
+		$this->menu[$r]=array(
+			'fk_menu'=>'r=1',
+			'type'=>'left',
+			'titre'=>'Reportings',
+			'mainmenu'=>'agenda',
+			'url'=>'/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda',
+			'langs'=>'agenda',
+			'position'=>160,
+			'perms'=>'$user->rights->agenda->allactions->read',
+			'enabled'=>'$conf->agenda->enabled',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
+		// Categories
+		$this->menu[$r]=array(
+			'fk_menu' => 'r=1',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'agenda',
+			'url'=>'/categories/index.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
+			'langs' => 'agenda',
+			'position' => 170,
+			'perms' => '$user->rights->agenda->allactions->read',
+			'enabled' => '$conf->categorie->enabled&&$conf->categorie->enabled',
+			'target' => '',
+			'user' => 2
+		);
 		$r++;
 
 
@@ -394,20 +435,26 @@ class modAgenda extends DolibarrModules
 			'cac.libelle'=>"ActionType",
 			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
 			'co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6',
-			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra');
+			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra',
+			'p.ref' => 'ProjectRef',
+		);
 		$this->export_TypeFields_array[$r]=array('ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
 			'ac.datep2'=>"Date",'ac.label'=>"Text",'ac.note'=>"Text",'ac.percent'=>"Numeric",
 			'ac.durationp'=>"Duree",
 			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
 			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
 			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text',
-			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
+			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text',
+			'p.ref' => 'Text',
+		);
 		$this->export_entities_array[$r]=array('ac.id'=>"action",'ac.ref_ext'=>"action",'ac.datec'=>"action",'ac.datep'=>"action",
 			'ac.datep2'=>"action",'ac.label'=>"action",'ac.note'=>"action",'ac.percent'=>"action",'ac.durationp'=>"action",
 			'cac.libelle'=>"action",
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
 			'co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company',
-			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',);
+			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',
+			'p.ref' => 'project',
+		);
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
@@ -417,6 +464,7 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
 		if (! empty($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
+		$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .=' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR ac.fk_soc IS NULL)';
 		if (empty($user->rights->agenda->allactions->read)) $this->export_sql_end[$r] .=' AND acr.fk_element = '.(empty($user)?0:$user->id);

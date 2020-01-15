@@ -543,8 +543,12 @@ if ($step == 2 && $datatoexport)
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
     print '<div class="valignmiddle marginbottomonly">';
     print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
-    if (empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
-	else $htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1);
+    if (empty($conf->global->EXPORTS_SHARE_MODELS)) {
+    	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
+    }
+    else {
+    	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1);
+    }
     print ' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</div>';
@@ -621,6 +625,10 @@ if ($step == 2 && $datatoexport)
     	if (!empty($objexport->array_export_TypeFields[0][$code]))
 		{
 		    $htmltext .= '<b>'.$langs->trans("Type").':</b> '.$objexport->array_export_TypeFields[0][$code].'<br>';
+		}
+		if (!empty($objexport->array_export_help[0][$code]))
+		{
+			$htmltext .= '<b>'.$langs->trans("Help").':</b> '.$langs->trans($objexport->array_export_help[0][$code]).'<br>';
 		}
 
 		if (isset($array_selected[$code]) && $array_selected[$code])
@@ -808,11 +816,15 @@ if ($step == 3 && $datatoexport)
 		}
 		if (!empty($objexport->array_export_examplevalues[0][$code]))
 		{
-		    $htmltext .= $langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		    $htmltext .= '<b>'.$langs->trans("SourceExample").':</b> '.$objexport->array_export_examplevalues[0][$code].'<br>';
 		}
 		if (!empty($objexport->array_export_TypeFields[0][$code]))
 		{
-		    $htmltext .= $langs->trans("Type").': <b>'.$objexport->array_export_TypeFields[0][$code].'</b><br>';
+		    $htmltext .= '<b>'.$langs->trans("Type").':</b> '.$objexport->array_export_TypeFields[0][$code].'<br>';
+		}
+		if (!empty($objexport->array_export_help[0][$code]))
+		{
+			$htmltext .= '<b>'.$langs->trans("Help").':</b> '.$langs->trans($objexport->array_export_help[0][$code]).'<br>';
 		}
 
 		print '<td>';
@@ -999,11 +1011,15 @@ if ($step == 4 && $datatoexport)
         }
         if (!empty($objexport->array_export_examplevalues[0][$code]))
         {
-            $htmltext .= $langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+            $htmltext .= '<b>'.$langs->trans("SourceExample").':</b> '.$objexport->array_export_examplevalues[0][$code].'<br>';
         }
         if (!empty($objexport->array_export_TypeFields[0][$code]))
         {
-            $htmltext .= $langs->trans("Type").': <b>'.$objexport->array_export_TypeFields[0][$code].'</b><br>';
+            $htmltext .= '<b>'.$langs->trans("Type").':</b> '.$objexport->array_export_TypeFields[0][$code].'<br>';
+        }
+        if (!empty($objexport->array_export_help[0][$code]))
+        {
+        	$htmltext .= '<b>'.$langs->trans("Help").':</b> '.$langs->trans($objexport->array_export_help[0][$code]).'<br>';
         }
 
         print '<td>';
@@ -1047,7 +1063,10 @@ if ($step == 4 && $datatoexport)
 	if (count($array_selected))
     {
 		print '<br>';
-        print $langs->trans("SaveExportModel");
+
+		print '<div class="marginbottomonly">';
+        print '<span class="opacitymedium">'.$langs->trans("SaveExportModel").'</span>';
+        print '</div>';
 
 		print '<form class="nocellnopadd" action="export.php" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

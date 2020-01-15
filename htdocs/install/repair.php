@@ -357,6 +357,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	$sql.=" WHERE name LIKE 'MAIN_MODULE_%_TPL' OR name LIKE 'MAIN_MODULE_%_CSS' OR name LIKE 'MAIN_MODULE_%_JS' OR name LIKE 'MAIN_MODULE_%_HOOKS'";
 	$sql.=" OR name LIKE 'MAIN_MODULE_%_TRIGGERS' OR name LIKE 'MAIN_MODULE_%_THEME' OR name LIKE 'MAIN_MODULE_%_SUBSTITUTIONS' OR name LIKE 'MAIN_MODULE_%_MODELS'";
 	$sql.=" OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE' OR name LIKE 'MAIN_MODULE_%_TABS_%'";
+	$sql.=" OR name LIKE 'MAIN_MODULE_%_MODULEFOREXTERNAL'";
 	$sql.=" ORDER BY name, entity";
 
 	$resql = $db->query($sql);
@@ -374,7 +375,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 				$obj=$db->fetch_object($resql);
 
 				$reg = array();
-				if (preg_match('/MAIN_MODULE_(.*)_(.*)/i', $obj->name, $reg))
+				if (preg_match('/MAIN_MODULE_([^_]+)_(.+)/i', $obj->name, $reg))
 				{
 					$name=$reg[1];
 					$type=$reg[2];
@@ -396,11 +397,11 @@ if ($ok && GETPOST('standard', 'alpha'))
 							{
 								$db->query($sqldelete);
 
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
 							}
 							else
 							{
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
 						}
 						else
@@ -415,6 +416,8 @@ if ($ok && GETPOST('standard', 'alpha'))
 
 			$db->commit();
 		}
+	} else {
+		dol_print_error($db);
 	}
 }
 

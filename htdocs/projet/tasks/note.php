@@ -205,7 +205,7 @@ if ($object->id > 0)
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border entpercent tableforfield">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
