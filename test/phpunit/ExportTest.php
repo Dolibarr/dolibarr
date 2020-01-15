@@ -237,21 +237,21 @@ class ExportTest extends PHPUnit\Framework\TestCase
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result,'Error in CSV export');
 
         $model='tsv';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in TSV export');
 
         $model='excel2007new';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in Excel2007new export');
 
         return true;
     }
