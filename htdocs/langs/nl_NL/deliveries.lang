@@ -2,7 +2,7 @@
 Delivery=Levering
 DeliveryRef=Referentie aflevering
 DeliveryCard=Afleverings kaart
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Ontvangstbewijs
 DeliveryDate=Leveringsdatum
 CreateDeliveryOrder=Genereer afleverbon
 DeliveryStateSaved=Status aflevering opgeslagen
@@ -18,14 +18,14 @@ StatusDeliveryCanceled=Geannuleerd
 StatusDeliveryDraft=Ontwerp
 StatusDeliveryValidated=Ontvangen
 # merou PDF model
-NameAndSignature=Name and Signature:
+NameAndSignature=Naam en handtekening:
 ToAndDate=Aan________________________________ op ____ / _____ / __________
 GoodStatusDeclaration=Hebben de bovenstaande goederen in goede conditie ontvangen,
-Deliverer=Deliverer:
+Deliverer=Afgeleverd door:
 Sender=Afzender
 Recipient=Ontvanger
 ErrorStockIsNotEnough=Er is niet genoeg voorraad
 Shippable=Zendklaar
 NonShippable=Niet verzendbaar
 ShowReceiving=Toon afleverbon
-NonExistentOrder=Nonexistent order
+NonExistentOrder=Niet bestaande order

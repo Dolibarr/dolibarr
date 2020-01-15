@@ -71,9 +71,9 @@ BOM_UNVALIDATEInDolibarr=Lista de Materiales no validada
 BOM_CLOSEInDolibarr=Lista de Materiales desactivada
 BOM_REOPENInDolibarr=Lista de Materiales re abierta
 BOM_DELETEInDolibarr=Lista de Materiales borrada
-MO_VALIDATEInDolibarr=Orden de Fabricación validada
-MO_PRODUCEDInDolibarr=Orden de Fabricación producida
-MO_DELETEInDolibarr=Orden de Fabricación borrada
+MRP_MO_VALIDATEInDolibarr=Orden de Fabricación validada
+MRP_MO_PRODUCEDInDolibarr=Orden de Fabricación producida
+MRP_MO_DELETEInDolibarr=Orden de Fabricación borrada
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.

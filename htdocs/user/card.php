@@ -2581,7 +2581,7 @@ else
 			if ($conf->accounting->enabled)
 			{
 				print "<tr>";
-				print '<td>'.$langs->trans("AccountancyCode").'</td>';
+				print '<td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
 				if ($caneditfield)
 				{
@@ -2647,7 +2647,7 @@ else
 			// Company / Contact
 			if (!empty($conf->societe->enabled))
 			{
-				print '<tr><td width="25%">'.$langs->trans("LinkToCompanyContact").'</td>';
+				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
 				if ($object->socid > 0)
 				{
@@ -2674,7 +2674,7 @@ else
 			if (!empty($conf->adherent->enabled))
 			{
 				$langs->load("members");
-				print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
 				if ($object->fk_member)
 				{

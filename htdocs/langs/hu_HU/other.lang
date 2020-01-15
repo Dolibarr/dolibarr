@@ -6,7 +6,7 @@ TMenuTools=Eszközök
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Születésnap
 BirthdayDate=Birthday date
-DateToBirth=Dátum a születési
+DateToBirth=Birth date
 BirthdayAlertOn=Születésnaposok aktív
 BirthdayAlertOff=Születésnaposok inaktív
 TransKey=Translation of the key TransKey
@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
 Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
 Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
 Notify_CONTRACT_VALIDATE=A szerződés a validált
-Notify_FICHEINTER_VALIDATE=Beavatkozás érvényesített
+Notify_FICHINTER_VALIDATE=Beavatkozás érvényesített
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_SENTBYMAIL=Beavatkozás küldése e-mailben
 Notify_SHIPPING_VALIDATE=Szállítás validált
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Az export területén

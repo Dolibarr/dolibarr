@@ -57,6 +57,7 @@ NatureOfThirdParty=Tredjeparts art
 NatureOfContact=Kontaktens art
 Address=Adresse
 State=Fylke(delstat)
+StateCode=State/Province code
 StateShort=Stat
 Region=Region
 Region-State=Region - Stat

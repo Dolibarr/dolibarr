@@ -1597,26 +1597,25 @@ class Product extends CommonObject
      * @param	Societe		$thirdparty_seller		Seller
      * @param	Societe		$thirdparty_buyer		Buyer
      * @param	int			$pqp					Id of product per price if a selection was done of such a price
-     * @return	array								Array of price information
+     * @return	array								Array of price information array('pu_ht'=> , 'pu_ttc'=> , 'tva_tx'=>'X.Y (code)', ...), 'tva_npr'=>0, ...)
      * @see get_buyprice(), find_min_price_product_fournisseur()
      */
     public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
     {
     	global $conf, $db;
 
-    			// Update if prices fields are defined
-				$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
-				$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
-				if (empty($tva_tx)) $tva_npr = 0;
+    	// Update if prices fields are defined
+    	$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
+    	$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
+    	if (empty($tva_tx)) $tva_npr = 0;
 
-				$pu_ht = $this->price;
-				$pu_ttc = $this->price_ttc;
-				$price_min = $this->price_min;
-				$price_base_type = $this->price_base_type;
+    	$pu_ht = $this->price;
+    	$pu_ttc = $this->price_ttc;
+    	$price_min = $this->price_min;
+    	$price_base_type = $this->price_base_type;
 
-				// If price per segment
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($thirdparty_buyer->price_level))
-				{
+    	// If price per segment
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($thirdparty_buyer->price_level)) {
 			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
@@ -1628,9 +1627,8 @@ class Product extends CommonObject
 				if (empty($tva_tx)) $tva_npr = 0;
 			}
 		}
-				// If price per customer
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-				{
+		// If price per customer
+		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);
@@ -1650,9 +1648,8 @@ class Product extends CommonObject
 				}
 			}
 		}
-				// If price per quantity
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
-				{
+		// If price per quantity
+		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 			if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
 			{
 				// Search price into product_price_by_qty from $this->id
@@ -1672,9 +1669,8 @@ class Product extends CommonObject
 				}
 			}
 		}
-				// If price per quantity and customer
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-				{
+		// If price per quantity and customer
+		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
 			{
 				// Search price into product_price_by_qty from $this->id
@@ -1876,6 +1872,12 @@ class Product extends CommonObject
         }
         if (empty($newnpr)) {
             $newnpr = 0;
+        }
+        if (empty($newminprice)) {
+        	$newminprice = 0;
+        }
+        if (empty($newminprice)) {
+        	$newminprice=0;
         }
 
         // Check parameters
@@ -2678,7 +2680,7 @@ class Product extends CommonObject
      *  Charge tableau des stats expedition client pour le produit/service
      *
      * @param   int         $socid                  Id societe pour filtrer sur une societe
-     * @param   string      $filtrestatut           Id statut pour filtrer sur un statut
+     * @param   string      $filtrestatut           [=''] Ids order status separated by comma
      * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
      * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
      * @return  int         <0 if KO, >0 if OK (Tableau des stats)

@@ -595,13 +595,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
+		print '<!-- type of action: '.$ruleaction['type'].' -->';
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
 		if (in_array($ruleaction['type'], array('recordevent')))
 		{
             print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		}
+		elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
+			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
+		}
 		print '</td>';
-		print '<td>';
+		print '<td class="wordbreak">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid)
 		{
 		    print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';

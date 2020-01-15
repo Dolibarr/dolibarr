@@ -361,7 +361,7 @@ if (empty($reshook))
 		else
 		{
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = '';
+			$price_ht = GETPOST('price_ht');
 			$tva_tx = '';
 		}
 
@@ -420,15 +420,14 @@ if (empty($reshook))
 			}
 		}
 
-		// Ecrase $pu par celui	du produit
-		// Ecrase $desc	par	celui du produit
-		// Ecrase $txtva  par celui du produit
-		if (($prod_entry_mode != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+		if ($prod_entry_mode != 'free' && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 		{
 			$productsupplier = new ProductFournisseur($db);
 
 			$idprod = 0;
 			if (GETPOST('idprodfournprice', 'alpha') == -1 || GETPOST('idprodfournprice', 'alpha') == '') $idprod = -99; // Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+
+			$reg = array();
 			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg))
 			{
 				$idprod = $reg[1];
@@ -470,7 +469,22 @@ if (empty($reshook))
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
-				$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+				if ($price_ht != '' || $price_ht_devise != '') {
+					$price_base_type = 'HT';
+					$pu = price2num($price_ht, 'MU');
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+				} else {
+					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
+						$pu = $productsupplier->fourn_pu;
+						$pu_ht_devise = 0;
+					} else {
+						$pu = $productsupplier->fourn_pu;
+						$pu_ht_devise = $productsupplier->fourn_multicurrency_unitprice;
+						/*var_dump($pu);
+						var_dump($pu_ht_devise);exit;*/
+					}
+				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
 
@@ -480,7 +494,6 @@ if (empty($reshook))
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-				$pu = $productsupplier->fourn_pu;
 				if (empty($pu)) $pu = 0; // If pu is '' or null, we force to have a numeric value
 
 				$result = $object->addline(
@@ -503,7 +516,9 @@ if (empty($reshook))
 					$date_end,
 					$array_options,
 					$productsupplier->fk_unit,
-                    $productsupplier->fourn_multicurrency_unitprice
+					$pu_ht_devise,
+					'',
+					0
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -1892,13 +1907,10 @@ elseif (!empty($object->id))
 		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
-	if (!$formconfirm)
-	{
-		$parameters = array('lineid'=>$lineid);
-		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
-	}
+	$parameters = array('lineid'=>$lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -2200,7 +2212,7 @@ elseif (!empty($object->id))
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (!empty($conf->multicurrency->enabled))
+	if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
 	{
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';

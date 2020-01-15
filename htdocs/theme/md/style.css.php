@@ -462,6 +462,9 @@ select.flat, form.flat select {
 .opacitymediumbycolor {
 	color: rgba(0, 0, 0, 0.4);
 }
+.opacitylow {
+	opacity: 0.6;
+}
 .opacityhigh {
 	opacity: 0.2;
 }
@@ -4117,6 +4120,9 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	padding-left: 8px;
 	margin-right: 5px;
 }
+.websitebar input#previewpageurl {
+    line-height: 1em;
+}
 
 
 /* ============================================================================== */
@@ -5306,8 +5312,16 @@ dd.dropdowndd ul li {
 
 
 /* ============================================================================== */
-/*  JMobile                                                                       */
+/*  JMobile - Android                                                             */
 /* ============================================================================== */
+
+.searchpage .tagtr .tagtd {
+    padding-bottom: 3px;
+}
+.searchpage .tagtr .tagtd .button {
+	background: unset;
+    border: unset;
+}
 
 li.ui-li-divider .ui-link {
 	color: #FFF !important;

@@ -31,3 +31,4 @@ SearchIntoSupplierInvoices=Facturas de proveedores
 SearchIntoSupplierOrders=Ordenes de compra
 SearchIntoCustomerProposals=Propuestas de clientes
 SearchIntoContracts=Los contratos
+ContactDefault_order_supplier=Supplier Order

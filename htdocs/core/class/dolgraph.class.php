@@ -899,7 +899,10 @@ class DolGraph
 		}
 
 		$legends=array();
-		$nblot=count($this->data[0])-1;    // -1 to remove legend
+		$nblot=0;
+		if (is_array($this->data) && is_array($this->data[0])) {
+			$nblot=count($this->data[0])-1;    // -1 to remove legend
+		}
 		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
 		$firstlot=0;
 		// Works with line but not with bars
@@ -1124,7 +1127,20 @@ class DolGraph
 		$this->stringtoshow .= '</script>'."\n";
 	}
 
-
+	/**
+	 * Output HTML string to total value
+	 *
+	 * @return	string							HTML string to total value
+	 */
+    public function total()
+	{
+		$value = 0;
+		foreach($this->data as $valarray)	// Loop on each x
+			{
+			$value += $valarray[1];
+		}
+		return $value;
+	}
 
 	/**
 	 * Output HTML string to show graph

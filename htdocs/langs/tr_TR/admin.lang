@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Bekleyen banka mutabakatı
 Delays_MAIN_DELAY_MEMBERS=Gecikmiş üyelik ücreti
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Yapılmayan çek ödemesi
 Delays_MAIN_DELAY_EXPENSEREPORTS=Onaylanacak gider raporu
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Dolibarr yazılımını kullanmaya başlamadan önce bazı başlangıç parametreleri tanımlanmalı, gerekli modüller etkinleştirilip/yapılandırılmalıdır. 
 SetupDescription2=Aşağıdaki iki bölümün kurulumu zorunludur (Ayarlar menüsündeki ilk iki kayıt)
 SetupDescription3=<a href="%s">%s -> %s</a><br>Uygulamanızın varsayılan davranışını özelleştirmek için kullanılan temel parametreler (örneğin ülkeyle ilişkili özellikler).

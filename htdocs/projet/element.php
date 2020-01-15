@@ -244,14 +244,6 @@ print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
 
-// Bill time
-if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-{
-	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	print yn($object->usage_bill_time);
-	print '</td></tr>';
-}
-
 // Categories
 if ($conf->categorie->enabled) {
     print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
@@ -463,7 +455,7 @@ $listofreferent = array(
 	'table'=>'projet_task',
 	'datefieldname'=>'task_date',
 	'disableamount'=>0,
-    'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?id='.$id,
+    'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id,
     'buttonnew'=>'AddTimeSpent',
     'testnew'=>$user->rights->projet->creer,
     'test'=>($conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS))),
@@ -538,7 +530,7 @@ if ($action=="addelement")
 elseif ($action == "unlink")
 {
 	$tablename = GETPOST("tablename", "aZ09");
-    $projectField = GETPOST('projectfield', 'aZ09') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
+    $projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOST("elementselect", "int");
 
 	$result = $object->remove_element($tablename, $elementselectid, $projectField);

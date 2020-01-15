@@ -62,12 +62,13 @@ class Mo extends CommonObject
 	const STATUS_VALIDATED = 1; // To produce
 	const STATUS_INPROGRESS = 2;
 	const STATUS_PRODUCED = 3;
-	const STATUS_CANCELED = -1;
+	const STATUS_CANCELED = 9;
 
 
 
 	/**
-	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -94,12 +95,13 @@ class Mo extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM",),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce"),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'maxwidth300'),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75'),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1),
-	    'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth300'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1,),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>52, 'css'=>'maxwidth300'),
 	    'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
@@ -108,10 +110,9 @@ class Mo extends CommonObject
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
 		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap'),
 		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1,),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '-1'=>'Canceled')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
 	);
 	public $rowid;
 	public $ref;
@@ -468,6 +469,56 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 * Get list of lines linked to current line for a defined role.
+	 *
+	 * @param  	string 	$role      	Get lines linked to current line with the selected role ('consumed', 'produced', ...)
+	 * @param	int		$lineid		Id of production line to filter childs
+	 * @return 	array             	Array of lines
+	 */
+	public function fetchLinesLinked($role, $lineid = 0)
+	{
+		$resarray = array();
+		$mostatic = new MoLine($this->db);
+
+		$sql = 'SELECT ';
+		$sql .= $mostatic->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$mostatic->table_element.' as t';
+		$sql .= " WHERE t.role = '".$this->db->escape($role)."'";
+		if ($lineid > 0) $sql .= ' AND t.fk_mrp_production = '.$lineid;
+		else $sql .= 'AND t.fk_mo = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$resarray[] = array(
+						'rowid'=> $obj->rowid,
+						'date'=> $this->db->jdate($obj->date_creation),
+						'qty' => $obj->qty,
+						'role' => $obj->role,
+						'fk_product' => $obj->fk_product,
+						'fk_warehouse' => $obj->fk_warehouse,
+						'batch' => $obj->batch,
+						'fk_stock_movement' => $obj->fk_stock_movement
+					);
+				}
+
+				$i++;
+			}
+
+			return $resarray;
+		} else {
+			$this->error = $this->db->lasterror();
+			var_dump($this->error);
+			return array();
+		}
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
@@ -492,7 +543,7 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		if (! $error) {
+		if (!$error) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			$this->db->commit();
 			return 1;
@@ -505,7 +556,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Erase and update the line to produce
+	 * Erase and update the line to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @return int             <0 if KO, >0 if OK
@@ -551,13 +602,17 @@ class Mo extends CommonObject
 				}
 
 				// Lines to consume
-				if (! $error) {
+				if (!$error) {
 					foreach ($bom->lines as $line)
 					{
 						$moline = new MoLine($this->db);
 
 						$moline->fk_mo = $this->id;
-						$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+						if ($line->qty_frozen) {
+							$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
+						} else {
+							$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+						}
 						if ($moline->qty <= 0) {
 							$error++;
 							$this->error = "BadValueForquantityToConsume";
@@ -848,7 +903,7 @@ class Mo extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_VALIDATED)
+		if ($this->status != self::STATUS_VALIDATED && $this->status != self::STATUS_INPROGRESS)
 		{
 			return 0;
 		}
@@ -980,19 +1035,25 @@ class Mo extends CommonObject
 			global $langs;
 			//$langs->load("mrp");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans("ToProduce").')';
 			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
 			$this->labelStatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatusShort[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
+			$this->labelStatusShort[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
 		if ($status == self::STATUS_INPROGRESS) $statusType = 'status3';
-		if ($status == self::STATUS_PRODUCED) $statusType = 'status5';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		if ($status == self::STATUS_PRODUCED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -1103,7 +1164,7 @@ class Mo extends CommonObject
 
 		if (!dol_strlen($modele)) {
 			//$modele = 'standard';
-			$modele = '';					// Remove this once a pdf_standard.php exists.
+			$modele = ''; // Remove this once a pdf_standard.php exists.
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
@@ -1114,7 +1175,7 @@ class Mo extends CommonObject
 
 		$modelpath = "core/modules/mrp/doc/";
 
-		if (empty($modele)) return 1;	// Remove this once a pdf_standard.php exists.
+		if (empty($modele)) return 1; // Remove this once a pdf_standard.php exists.
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
@@ -1272,7 +1333,7 @@ class MoLine extends CommonObjectLine
 		'position' =>array('type'=>'integer', 'label'=>'Position', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_product' =>array('type'=>'integer', 'label'=>'Fk product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'fk_warehouse' =>array('type'=>'integer', 'label'=>'Fk warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'qty' =>array('type'=>'integer', 'label'=>'Qty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+		'qty' =>array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>140),

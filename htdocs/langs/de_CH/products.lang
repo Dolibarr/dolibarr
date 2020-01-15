@@ -2,6 +2,7 @@
 Create=Erstelle
 Reference=Referenz
 LastRecordedProducts=%s zuletzt erfasste Produkte
+MenuStocks=Warenbestände
 SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
 CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt werden, wenn Sie einen zu hohen Rabatt geben.
 ServicesArea=Leistungs-Übersicht
@@ -13,6 +14,7 @@ SellingPrices=Verkaufspreise
 BuyingPrices=Einkaufspreise
 CustomerPrices=Kunden Preise
 SuppliersPrices=Lieferantenpreise
+kilogram=Kilo
 unitS=Zweitens
 ServiceCodeModel=Vorlage für Dienstleistungs-Referenz
 FillBarCodeTypeAndValueFromProduct=Barcode-Typ und -Wert von einem Produkt wählen.

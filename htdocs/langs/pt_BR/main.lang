@@ -363,7 +363,6 @@ FieldsWithIsForPublic=Os campos com <b> %s </ b> são exibidos na lista pública
 AccordingToGeoIPDatabase=(de acordo com a conversão GeoIP)
 NotSupported=Não suportado
 RequiredField=Campo obrigatorio
-ValidateBefore=Precisa de um cartão valido antes de usar esta função
 Totalizable=Totalizável
 TotalizableDesc=Este campo é totalizável na lista
 Hidden=Escondido

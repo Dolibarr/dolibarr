@@ -252,4 +252,5 @@ SelectAThirdPartyFirst=Seleccione un tercero primero ...
 YouAreCurrentlyInSandboxMode=Actualmente se encuentra en el modo "sandbox" %s
 ContactDefault_agenda=Acción
 ContactDefault_commande=Orden
+ContactDefault_order_supplier=Supplier Order
 ContactDefault_propal=Propuesta

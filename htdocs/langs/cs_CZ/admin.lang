@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Nevyřízené zúčtování bank
 Delays_MAIN_DELAY_MEMBERS=Opožděný členský poplatek
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Zkontrolujte, zda není vklad hotový
 Delays_MAIN_DELAY_EXPENSEREPORTS=Zpráva o výdajích ke schválení
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Než začnete používat Dolibarr, je třeba definovat některé počáteční parametry a povolit / konfigurovat moduly.
 SetupDescription2=Následující dvě části jsou povinné (první dvě položky v nabídce Nastavení):
 SetupDescription3=<a href="%s">%s ->%s</a> <br> Základní parametry používané k přizpůsobení výchozího chování vaší aplikace (např. Pro funkce související se zemí).
