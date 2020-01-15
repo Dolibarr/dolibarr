@@ -78,13 +78,15 @@ $OkayPicturePath = "../../theme/eldy/img/tick.png";
 
 print '<tr><td width="220">'.$langs->trans("Version").'</td><td>';
 
-if (versioncompare(versionphparray(), array(5,5,0)) < 0)
+$arrayphpminversionerror = array(5,5,0);
+$arrayphpminversionwarning = array(5,5,0);
+if (versioncompare(versionphparray(), , $arrayphpminversionerror) < 0)
 {
     print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 }
-elseif (versioncompare(versionphparray(), array(5,5,0)) < 0)
+elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
 {
-    print '<img src="'.$WarningPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 }
 else
 {
@@ -109,7 +111,7 @@ print '<tr><td>Sessions support</td><td>';
 
 if (! function_exists("session_id"))
 {
-    print '<img src="../../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
+    print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 }
 else
 {
@@ -121,7 +123,7 @@ print '<tr><td>GD support</td><td>';
 
 if (! function_exists("imagecreate"))
 {
-    print '<img src="'.$WarningPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD");
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportGD");
 }
 else
 {
@@ -133,7 +135,7 @@ print '<tr><td>Curl support</td><td>';
 
 if (! function_exists("curl_init"))
 {
-    print '<img src="'.$WarningPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl");
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportCurl");
 }
 else
 {
@@ -145,7 +147,7 @@ print '<tr><td>UTF-8 support</td><td>';
 
 if (! function_exists("utf8_encode"))
 {
-    print '<img src="'.$WarningPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
 }
 else
 {
@@ -159,7 +161,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 {
 	if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
 	{
-        print '<img src="'.$WarningPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl");
+        print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportIntl");
 	}
 	else
 	{
