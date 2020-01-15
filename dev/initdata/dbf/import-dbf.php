@@ -179,6 +179,14 @@ fclose($fhandleerr);
 
 exit($error);
 
+
+/**
+ * replaceable_echo
+ *
+ * @param string 	$message			Message
+ * @param int 		$force_clear_lines	Force clear messages
+ * @return void
+ */
 function replaceable_echo($message, $force_clear_lines = null)
 {
     static $last_lines = 0;
@@ -187,6 +195,8 @@ function replaceable_echo($message, $force_clear_lines = null)
         $last_lines = $force_clear_lines;
     }
 
+    $toss = array();
+    $status = 0;
     $term_width = exec('tput cols', $toss, $status);
     if ($status) {
         $term_width = 64; // Arbitrary fall-back term width.

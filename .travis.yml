@@ -285,7 +285,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude dev/namespacemig --exclude dev/initdata/dbf/includes --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 

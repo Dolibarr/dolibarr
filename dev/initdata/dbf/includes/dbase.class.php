@@ -1,4 +1,9 @@
 <?php
+/**
+ * \file        dev/initdata/dbf/includes/dbase.class.php
+ * \ingroup     dev
+ * \brief       Class to manage DBF databases
+ */
 
 // source : https://github.com/donfbecker/php-dbase
 
@@ -8,6 +13,9 @@ define('DBASE_RDWR', 2);
 define('DBASE_TYPE_DBASE', 0);
 define('DBASE_TYPE_FOXPRO', 1);
 
+/**
+ * Class for DBase
+ */
 class DBase
 {
     private $fd;
