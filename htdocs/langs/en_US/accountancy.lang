@@ -160,7 +160,7 @@ ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
 TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
@@ -224,6 +224,7 @@ ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service

@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Afventer bankafstemning
 Delays_MAIN_DELAY_MEMBERS=Forsinket medlemsafgift
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tjek depositum ikke færdig
 Delays_MAIN_DELAY_EXPENSEREPORTS=Udgiftsrapporten godkendes
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Før du begynder at bruge Dolibarr, skal nogle indledende parametre defineres og moduler aktiveres / konfigureres.
 SetupDescription2=Følgende to afsnit er obligatoriske (de to første indgange i opsætningsmenuen):
 SetupDescription3=<a href="%s">%s -&gt; %s</a> <br> Grundlæggende parametre, der bruges til at tilpasse din applikations standardopførsel (f.eks. Til landrelaterede funktioner).

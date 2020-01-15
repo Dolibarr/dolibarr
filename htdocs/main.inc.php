@@ -1432,7 +1432,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
         if (!$disablejs && !empty($conf->use_javascript_ajax))
         {
             // CKEditor
-            if (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR'))
+        	if ((!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
@@ -2571,6 +2571,10 @@ if (!function_exists("llxFooter"))
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
+					// Try to guess the distrib used
+					$distrib = 'standard';
+					if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') $distrib = 'doliwamp';
+					if (! empty($dolibarr_distrib)) $distrib = $dolibarr_distrib;
 					?>
 		    			<script>
 		    			jQuery(document).ready(function (tmp) {
@@ -2588,7 +2592,8 @@ if (!function_exists("llxFooter"))
 			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
 			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
 			    					  php_version: "<?php echo phpversion(); ?>",
-			    					  os_version: "<?php echo version_os('smr'); ?>"
+			    					  os_version: "<?php echo version_os('smr'); ?>",
+			    					  distrib: "<?php echo $distrib ? $distrib : 'unknown'; ?>"
 			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");

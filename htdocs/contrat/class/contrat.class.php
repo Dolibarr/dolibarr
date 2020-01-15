@@ -1421,9 +1421,18 @@ class Contrat extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
-				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
+
+			$txtva = price2num($txtva);
+
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 			$remise_percent = price2num($remise_percent);
@@ -1456,15 +1465,7 @@ class Contrat extends CommonObject
 
 			$this->db->begin();
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-
-			// Clean vat code
-			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg))
-			{
-				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
-			}
+			$localtaxes_type = getLocalTaxesFromRate($txtva.($vat_src_code ? ' ('.$vat_src_code.')' : ''), 0, $this->societe, $mysoc);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva

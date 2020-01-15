@@ -208,7 +208,7 @@ class SupplierInvoices extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->invoice->$field = $value;
         }
-        if(! array_keys($request_data, 'date')) {
+        if(! array_key_exists('date', $request_data)) {
             $this->invoice->date = dol_now();
         }
 

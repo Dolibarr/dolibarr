@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Suchkriterium zu klein
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.

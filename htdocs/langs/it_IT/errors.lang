@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Criteri di ricerca troppo piccoli.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Gli oggetti devono avere lo stato 'Attivo' per essere disabilitati
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Gli oggetti devono avere lo stato 'Bozza' o 'Disabilitato' per essere abilitato
 ErrorNoFieldWithAttributeShowoncombobox=Nessun campo ha la proprietà 'mostra nel quadrato combo' nella definizione dell'oggetto '%s'. Non c'è modo di mostrare la lista combo.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Il parametro PHP upload_max_filesize (%s) è superiore al parametro PHP post_max_size (%s). Questa non è una configurazione coerente.
 WarningPasswordSetWithNoAccount=È stata impostata una password per questo membro. Tuttavia, nessun account utente è stato creato. Quindi questa password è memorizzata ma non può essere utilizzata per accedere a Dolibarr. Può essere utilizzato da un modulo / interfaccia esterno ma se non è necessario definire alcun accesso o password per un membro, è possibile disabilitare l&#39;opzione &quot;Gestisci un accesso per ciascun membro&quot; dall&#39;impostazione del modulo Membro. Se è necessario gestire un accesso ma non è necessaria alcuna password, è possibile mantenere vuoto questo campo per evitare questo avviso. Nota: l&#39;e-mail può essere utilizzata anche come accesso se il membro è collegato a un utente.

@@ -3206,13 +3206,13 @@ if ($action == 'create')
 
 		$thirdparty = $soc;
 		$discount_type = 0;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid'));
+		$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin', 'alpha').'&originid='.GETPOST('originid', 'int'));
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 		print '</td></tr>';
 	}
 
-	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td colspan="2">';
@@ -3223,14 +3223,14 @@ if ($action == 'create')
 	if (!empty($conf->global->INVOICE_POINTOFTAX_DATE))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans('DatePointOfTax').'</td><td colspan="2">';
-		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+		$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 		print $form->selectDate($date_pointoftax ? $date_pointoftax : -1, 'date_pointoftax', '', '', '', "add", 1, 1);
 		print '</td></tr>';
 	}
 
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements(isset($_POST['cond_reglement_id']) ? $_POST['cond_reglement_id'] : $cond_reglement_id, 'cond_reglement_id');
+	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	if (!empty($conf->global->INVOICE_USE_SITUATION))
@@ -3747,17 +3747,23 @@ elseif ($id > 0 || !empty($ref))
 		$i++;
 		$close[$i]['code'] = 'badcustomer';
 		$i++;
+		$close[$i]['code'] = 'other';
+		$i++;
 		// Help
 		$i = 0;
 		$close[$i]['label'] = $langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPaidPartiallyReasonDiscountVatDesc");
 		$i++;
 		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 		$i++;
+		$close[$i]['label'] = $langs->trans("Other");
+		$i++;
 		// Texte
 		$i = 0;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
+		$i++;
+		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 		$i++;
 		// arrayreasons[code]=reason
 		foreach ($close as $key => $val) {

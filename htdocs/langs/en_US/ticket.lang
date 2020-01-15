@@ -241,7 +241,7 @@ NoLogForThisTicket=No log for this ticket yet
 TicketLogAssignedTo=Ticket %s assigned to %s
 TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
 TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-opened
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages

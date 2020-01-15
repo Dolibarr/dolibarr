@@ -185,7 +185,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
 
         // Add extra fields
-        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe'";
+        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
@@ -350,7 +350,7 @@ class modCategorie extends DolibarrModules
 		); // We define here only fields that use another picto
 
         // Add extra fields
-        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople'";
+        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {

@@ -21,9 +21,10 @@ Following changes may create regressions for some external modules, but were nec
 ***** ChangeLog for 11.0.0 compared to 10.0.0 *****
 For Users:
 
-NEW: Module BOM is now stable (Module MO - Manufacturing Order is still in development).
+NEW: Module BOM is now stable.
+NEW: Module MO (Manufacturing Order) is available with experimental status.
 NEW: Can set the Address/Contact by default on third parties.
-NEW: Add a dictionary for list of Social networks
+NEW: Add a dictionary to edit list of Social networks.
 NEW: A nicer dashboard for open elements on Home page.
 NEW: Add task widget and add task progress bar
 NEW: Support of deployment of metapackages
@@ -226,6 +227,53 @@ Following changes may create regressions for some external modules, but were nec
 * Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
 * The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
 
+
+***** ChangeLog for 10.0.6 compared to 10.0.5 *****
+FIX Regression of 10.0.5 to create/edit proposals and orders.
+FIX: #12760 #12763 #12755 #12765 #12751
+FIX: add product qty in shipment already sent (fix for option STOCK_CALCULATE_ON_SHIPMENT_NEW)
+FIX: an issue that shows all entities stock
+FIX: class Facture undefined in displaying margin information
+FIX: error 500 when getting margin info for objects other than invoices
+FIX: Loan card - Wrong language key used
+FIX: Missing language key for MAIN_MAXTABS_IN_CARD
+FIX: product with empty stock were not visible
+FIX: remove backward compatibility projectid and uses object id instead
+FIX: Some issues on salary payment
+FIX: Some problems on conciliation with others modules
+FIX: typo on language key
+FIX: url new for task time spent in project element tab
+FIX: uses GETPOSTISSET instead of GETPOST for projectfield
+FIX: var transkey not defined in input hidden
+FIX: wrong var name and avoid warning
+
+***** ChangeLog for 10.0.5 compared to 10.0.4 *****
+FIX: 10.0: add URL param "restore_last_search_values=1" to all backlinks pointing to lists
+FIX: 10.0: do not display single-letter values (indicating duration unit without value) in product list
+FIX: #12473
+FIX: #12481 : fix ticket creation from thirdparty, mission $socid var
+FIX: #12482
+FIX: #12644
+FIX: #12665 Mass invoice validation with stock management
+FIX: #12688
+FIX: #12745
+FIX: add and modify category translate form with posted values on errors
+FIX: add URL param "restore_last_search_values=1" to all backlinks that point to a list
+FIX: CommandeFournisseurLigne update function must not be able to return other value than 1 if success
+FIX: contact card state address selected after filling address
+FIX: dol_string_nohtmltag when there is html with windows EOL "<br>\r\n"
+FIX: filter language is an array
+FIX: first col at wrong position in Export 2007 (new)
+FIX: getrights() request
+FIX: Invoice Situation integration into Margin
+FIX: missing nl2br conversion
+FIX: not fee in payout list
+FIX: product_fourn_price_id was assigned too late for logPrice() function
+FIX: Reduce number of request for list of products
+FIX: set due date in object in create invoice
+FIX: units traductions for selectUnits() function
+FIX: when we need to bill several orders, order lines unit is not on bill lines
+NEW: 9.0: allow users to use the mysqldump '--quick' option
 
 ***** ChangeLog for 10.0.4 compared to 10.0.3 *****
 FIX: The pdf templates were using the large logo making PDF too large (and edition of proposal, order, invoice VERY slow)

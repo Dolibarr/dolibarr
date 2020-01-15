@@ -6,7 +6,7 @@ TMenuTools=Nástroje
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Narodeniny
 BirthdayDate=Birthday date
-DateToBirth=Dátum narodenia
+DateToBirth=Birth date
 BirthdayAlertOn=narodeniny výstraha aktívna
 BirthdayAlertOff=narodeniny upozornenia neaktívne
 TransKey=Translation of the key TransKey
@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
 Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
 Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
 Notify_CONTRACT_VALIDATE=Zmluva overená
-Notify_FICHEINTER_VALIDATE=Intervencie overená
+Notify_FICHINTER_VALIDATE=Intervencie overená
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_SENTBYMAIL=Intervencie poštou
 Notify_SHIPPING_VALIDATE=Poštovné overená
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Vývoz plocha

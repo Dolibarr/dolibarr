@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=工作流程模組設置
+WorkflowSetup=工作流程模組設定
 WorkflowDesc=此模組提供了一些自動程序。默認情況下，工作流程是開啟的（您可以按想要的順序執行操作），但是在這裡您可以開啟一些自動程序。
 ThereIsNoWorkflowToModify=已啟動的模組無法可修改的工作流程。
 # Autocreate

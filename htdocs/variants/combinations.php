@@ -166,11 +166,14 @@ if ($_POST) {
 		$bulkaction = $massaction;
 		$error = 0;
 
-		$prodstatic = new Product($db);
+
 
 		$db->begin();
 
 		foreach ($toselect as $prodid) {
+			// need create new of Product to prevent rename dir behavior
+			$prodstatic = new Product($db);
+
 			if ($prodstatic->fetch($prodid) < 0) {
 				continue;
 			}

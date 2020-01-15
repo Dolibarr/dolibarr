@@ -69,6 +69,13 @@ DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 82;
 DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 83;
 DELETE FROM llx_c_regions WHERE fk_pays = 1 AND code_region = 91;
 
+ALTER TABLE llx_bookmark DROP INDEX uk_bookmark_url;
+ALTER TABLE llx_bookmark DROP INDEX uk_bookmark_title;
+
+ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT;
+
+ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, entity, title);
+
 
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_account varchar(128);
 
@@ -76,7 +83,7 @@ create table llx_object_lang
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_object      integer      DEFAULT 0 NOT NULL,
-  type_object    varchar(32)  NOT NULL,					-- 'thirdparty', 'contact', '...'
+  type_object    varchar(32)  NOT NULL,
   property       varchar(32)  NOT NULL,
   lang           varchar(5)   DEFAULT 0 NOT NULL,
   value          text,
@@ -84,8 +91,25 @@ create table llx_object_lang
 )ENGINE=innodb;
 
 
-
 ALTER TABLE llx_object_lang ADD UNIQUE INDEX uk_object_lang (fk_object, type_object, property, lang);
 
 
+CREATE TABLE llx_categorie_actioncomm
+(
+  fk_categorie integer NOT NULL,
+  fk_actioncomm integer NOT NULL,
+  import_key varchar(14)
+) ENGINE=innodb;
 
+ALTER TABLE llx_categorie_actioncomm ADD PRIMARY KEY pk_categorie_actioncomm (fk_categorie, fk_actioncomm);
+ALTER TABLE llx_categorie_actioncomm ADD INDEX idx_categorie_actioncomm_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_actioncomm ADD INDEX idx_categorie_actioncomm_fk_actioncomm (fk_actioncomm);
+
+ALTER TABLE llx_categorie_actioncomm ADD CONSTRAINT fk_categorie_actioncomm_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_actioncomm ADD CONSTRAINT fk_categorie_actioncomm_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm (id);
+
+
+ALTER TABLE llx_accounting_account ADD COLUMN labelshort varchar(255) DEFAULT NULL after label;
+
+ALTER TABLE llx_subscription ADD COLUMN fk_user_creat   integer DEFAULT NULL;
+ALTER TABLE llx_subscription ADD COLUMN fk_user_valid   integer DEFAULT NULL;

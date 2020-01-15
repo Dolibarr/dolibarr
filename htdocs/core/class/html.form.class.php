@@ -591,15 +591,14 @@ class Form
 	 * Generate select HTML to choose massaction
 	 *
 	 * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param	int		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param	array		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param   int     $alwaysvisible  1=select button always visible
-	 * @return	string					Select list
+	 * @return	string|void					Select list
 	 */
     public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (count($arrayofaction) == 0) return;
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
@@ -608,6 +607,8 @@ class Form
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreMassActions', $parameters); // Note that $action and $object may have been modified by hook
+		// check if there is a mass action
+		if (count($arrayofaction) == 0 && empty($hookmanager->resPrint)) return;
 		if (empty($reshook))
 		{
 			$ret .= '<option value="0"'.($disabled ? ' disabled="disabled"' : '').'>-- '.$langs->trans("SelectAction").' --</option>';
@@ -3007,7 +3008,7 @@ class Form
 	 *  @param	    int		$productid       	Id of product
 	 *  @param      string	$htmlname        	Name of HTML field
 	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
-	 *  @return	    void
+	 *  @return	    string
 	 */
     public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
 	{
@@ -4129,6 +4130,7 @@ class Form
 			}
 
 			// Now add questions
+			$moreonecolumn = '';
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
 			foreach ($formquestion as $key => $input)
 			{
@@ -4202,13 +4204,14 @@ class Form
 
 					elseif ($input['type'] == 'onecolumn')
 					{
-						$more .= '<div class="tagtr"><div class="tagtd">';
-						$more .= $input['value'];
-						$more .= '</div></div>'."\n";
+						$moreonecolumn .= '<div class="margintoponly">';
+						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= '</div>'."\n";
 					}
 				}
 			}
 			$more .= '</div>'."\n";
+			$more .= $moreonecolumn;
 		}
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
@@ -7839,4 +7842,171 @@ class Form
 
         return $out;
     }
+
+	/**
+	 *  Output a combo list with invoices qualified for a third party
+	 *
+	 *  @param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *  @param  int		$selected   	Id invoice preselected
+	 *  @param  string	$htmlname   	Name of HTML select
+	 *	@param	int		$maxlength		Maximum length of label
+	 *	@param	int		$option_only	Return only html options lines without the select tag
+	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
+     *  @param	int		$disabled		Disabled
+	 *  @param	string	$morecss        More css added to the select component
+	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
+	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
+	 *  @param	User	$usertofilter	User object to use for filtering
+	 *	@return int         			Nbr of project if OK, <0 if KO
+	 */
+    public function selectInvoice($socid = -1, $selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
+	{
+		global $user,$conf,$langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		if (is_null($usertofilter))
+		{
+			$usertofilter = $user;
+		}
+
+		$out='';
+
+		$hideunselectables = false;
+		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+
+		if (empty($projectsListId))
+		{
+			if (empty($usertofilter->rights->projet->all->lire))
+			{
+				$projectstatic=new Project($this->db);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
+			}
+		}
+
+		// Search all projects
+        $sql = 'SELECT f.rowid, f.ref as fref, "nolabel" as flabel, p.rowid as pid, f.ref,
+            p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql.= ' s.nom as name';
+		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
+		$sql.= ' '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= " WHERE p.entity IN (".getEntity('project').")";
+		$sql.= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
+		//if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
+		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+		$sql.= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			// Use select2 selector
+			if (! empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$out.=$comboenhancement;
+            	$morecss='minwidth200imp maxwidth500';
+			}
+
+			if (empty($option_only)) {
+				$out.= '<select class="valignmiddle flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'">';
+			}
+			if (! empty($show_empty)) {
+				$out.= '<option value="0" class="optiongrey">';
+				if (! is_numeric($show_empty)) $out.=$show_empty;
+				else $out.='&nbsp;';
+				$out.= '</option>';
+			}
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire))
+					{
+						// Do nothing
+					}
+					else
+					{
+						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED)
+						{
+							$i++;
+							continue;
+						}
+
+						$labeltoshow = '';
+
+						if ($showproject == 'all')
+						{
+							$labeltoshow.=dol_trunc($obj->ref, 18);     // Invoice ref
+							if ($obj->name) $labeltoshow.=' - '.$obj->name; // Soc name
+
+							$disabled=0;
+							if ($obj->fk_statut == Project::STATUS_DRAFT)
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Draft");
+							}
+							elseif ($obj->fk_statut == Project::STATUS_CLOSED)
+							{
+								if ($discard_closed == 2) $disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Closed");
+							}
+							elseif ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+							}
+						}
+
+						if (!empty($selected) && $selected == $obj->rowid)
+						{
+							$out.= '<option value="'.$obj->rowid.'" selected';
+							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+							$out.= '>'.$labeltoshow.'</option>';
+						}
+						else
+						{
+							if ($hideunselectables && $disabled && ($selected != $obj->rowid))
+							{
+								$resultat='';
+							}
+							else
+							{
+								$resultat='<option value="'.$obj->rowid.'"';
+								if ($disabled) $resultat.=' disabled';
+								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+								//else $labeltoshow.=' ('.$langs->trans("Private").')';
+								$resultat.='>';
+								$resultat.=$labeltoshow;
+								$resultat.='</option>';
+							}
+							$out.= $resultat;
+						}
+					}
+					$i++;
+				}
+			}
+			if (empty($option_only)) {
+				$out.= '</select>';
+			}
+
+			print $out;
+
+			$this->db->free($resql);
+			return $num;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 }

@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
@@ -374,6 +375,10 @@ if (empty($reshook) && $action == 'add')
 		{
 			if (!$object->error)
 			{
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam = '';
@@ -595,6 +600,10 @@ if (empty($reshook) && $action == 'update')
 
 			if ($result > 0)
 			{
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
 				unset($_SESSION['assignedtouser']);
 
 				$db->commit();
@@ -998,6 +1007,14 @@ if ($action == 'create')
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 		print $form->select_dolusers(GETPOST("doneby") ?GETPOST("doneby") : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
 		print '</td></tr>';
+	}
+
+	if ($conf->categorie->enabled) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print "</td></tr>";
 	}
 
 	print '</table>';
@@ -1411,6 +1428,19 @@ if ($id > 0)
 			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
 			print '</td></tr>';
 		}
+		// Tags-Categories
+        if ($conf->categorie->enabled) {
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+			$c = new Categorie($db);
+			$cats = $c->containing($object->id, Categorie::TYPE_ACTIONCOMM);
+			$arrayselected = array();
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print "</td></tr>";
+		}
 
 		print '</table>';
 
@@ -1461,6 +1491,7 @@ if ($id > 0)
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 		print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
 		print '</td></tr>';
+
 		// Object linked
 		if (!empty($object->fk_element) && !empty($object->elementtype))
 		{
@@ -1715,6 +1746,12 @@ if ($id > 0)
 				print $tmpuser->getNomUrl(1);
 			}
 			print '</td></tr>';
+		}
+		// Categories
+		if ($conf->categorie->enabled) {
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
+			print "</td></tr>";
 		}
 
 		print '</table>';
