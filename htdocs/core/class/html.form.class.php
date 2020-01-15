@@ -5910,6 +5910,7 @@ class Form
 		//var_dump($objecttmp->filter);
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
+		if ($prefixforautocompletemode == 'product') $prefixforautocompletemode='produit';
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
