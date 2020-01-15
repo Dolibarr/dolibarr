@@ -81,9 +81,9 @@ $type=$db->type;
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('', '', $help_url);
 
+print '<script type="text/javascript">
+jQuery(document).ready(function() {';
 ?>
-<script type="text/javascript">
-jQuery(document).ready(function() {
 
 	function hideoptions () {
 		jQuery("#mysql_options").hide();
@@ -242,7 +242,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
     print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
     print '</legend>';
-    print '<input type="checkbox" name="drop"'.((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked':''.' id="checkbox_dump_drop" />';
+    print '<input type="checkbox" name="drop"'.(((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked':'').' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';
@@ -534,6 +534,8 @@ print '</div>';
 print '</form>';
 print '</fieldset>';
 
+
+
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
@@ -548,7 +550,7 @@ print $langs->trans("BackupDescX").'<br><br>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
-print load_fiche_titre($title?$title:$langs->trans("BackupDumpWizard"));
+print load_fiche_titre($title?$title:$langs->trans("BackupZipWizard"));
 
 print '<label for="zipfilename_template">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix='documents';
