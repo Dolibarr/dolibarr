@@ -275,6 +275,7 @@ $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
+$sql .= ' p.note_public, p.note_private,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql .= ' u.login';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -764,6 +765,8 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
+		$objectstatic->note_public = $obj->note_public;
+		$objectstatic->note_private = $obj->note_private;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
@@ -784,18 +787,11 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowrap">';
-			print $objectstatic->getNomUrl(1, '', '', 0, 1);
+			print $objectstatic->getNomUrl(1, '', '', 0, 1, 1);
 			print '</td>';
 			// Warning
 			$warnornote = '';
 			if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) $warnornote .= img_warning($langs->trans("Late"));
-			if (!empty($obj->note_private))
-			{
-				$warnornote .= ($warnornote ? ' ' : '');
-				$warnornote .= '<span class="note">';
-				$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-				$warnornote .= '</span>';
-			}
 			if ($warnornote)
 			{
 				print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
