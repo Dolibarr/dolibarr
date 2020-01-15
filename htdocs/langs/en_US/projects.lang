@@ -255,3 +255,7 @@ ProjectFollowTasks=Follow tasks
 UsageOpportunity=Usage: Opportunity
 UsageTasks=Usage: Tasks
 UsageBillTimeShort=Usage: Bill time
+InvoiceToUse=Draft invoice to use
+NewInvoice=New invoice
+OneLinePerTask=One line per task
+OneLinePerPeriod=One line per period
