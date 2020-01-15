@@ -180,11 +180,11 @@ if ($action == 'install')
                 $modulename = preg_replace('/module_/', '', $original_file);
                 $modulename = preg_replace('/\-([0-9][0-9\.]*)\.zip$/i', '', $modulename);
                 // Search dir $modulename
-                $modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename; // Example .../mymodule
+                $modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename; // Example ./mymodule
 
                 if (!dol_is_dir($modulenamedir))
                 {
-                	$modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename; // Example .../htdocs/mymodule
+                	$modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename; // Example ./htdocs/mymodule
                     //var_dump($modulenamedir);
                     if (!dol_is_dir($modulenamedir))
                     {
