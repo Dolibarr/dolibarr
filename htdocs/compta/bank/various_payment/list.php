@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2019	Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -44,11 +44,15 @@ $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_amount_deb = GETPOST('search_amount_deb', 'alpha');
 $search_amount_cred = GETPOST('search_amount_cred', 'alpha');
 $search_account = GETPOST('search_account', 'int');
-$search_date = dol_mktime(0, 0, 0, GETPOST('date_docmonth', 'int'), GETPOST('date_docday', 'int'), GETPOST('date_docyear', 'int'));
-$search_accountancy_code = GETPOST("search_accountancy_code");
+$search_accountancy_account = GETPOST("search_accountancy_account");
+if ($search_accountancy_account == - 1) $search_accountancy_account = '';
+$search_accountancy_subledger = GETPOST("search_accountancy_subledger");
+if ($search_accountancy_subledger == - 1) $search_accountancy_subledger = '';
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -81,12 +85,14 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 {
 	$search_ref="";
 	$search_label="";
+	$search_date_start='';
+	$search_date_end='';
 	$search_amount_deb="";
 	$search_amount_cred="";
 	$search_account='';
+	$search_accountancy_account = '';
+	$search_accountancy_subledger = '';
 	$typeid="";
-	$search_date = '';
-	$search_accountancy_code = '';
 }
 
 /*
@@ -100,7 +106,7 @@ $formaccounting = new FormAccounting($db);
 $variousstatic = new PaymentVarious($db);
 $accountstatic = new Account($db);
 
-$sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code,";
+$sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code, v.subledger_account,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
@@ -110,14 +116,16 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.row
 $sql.= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
-if ($search_ref)					$sql.=" AND v.rowid=".$db->escape($search_ref);
-if ($search_label)					$sql.=natural_search(array('v.label'), $search_label);
-if ($search_amount_deb)				$sql.=natural_search("v.amount", $search_amount_deb, 1);
-if ($search_amount_cred)			$sql.=natural_search("v.amount", $search_amount_cred, 1);
-if ($search_account > 0)			$sql.=" AND b.fk_account=".$db->escape($search_account);
-if ($search_date)					$sql.=" AND v.datep = '".$db->idate($search_date)."'";
-if ($search_accountancy_code > 0)	$sql.=" AND v.accountancy_code=".$db->escape($search_accountancy_code);
-if ($typeid > 0) $sql .= " AND v.fk_typepayment=".$typeid;
+if ($search_ref)						$sql.= " AND v.rowid=".$db->escape($search_ref);
+if ($search_label)						$sql.= natural_search(array('v.label'), $search_label);
+if ($search_date_start)					$sql.= " AND v.datep >= '" . $db->idate($search_date_start) . "'";
+if ($search_date_end)           	    $sql.= " AND v.datep <= '" . $db->idate($search_date_end) . "'";
+if ($search_amount_deb)					$sql.= natural_search("v.amount", $search_amount_deb, 1);
+if ($search_amount_cred)				$sql.= natural_search("v.amount", $search_amount_cred, 1);
+if ($search_account > 0)				$sql.= " AND b.fk_account=".$db->escape($search_account);
+if ($search_accountancy_account > 0)	$sql.= " AND v.accountancy_code=".$db->escape($search_accountancy_account);
+if ($search_accountancy_subledger > 0)	$sql.= " AND v.subledger_account=".$db->escape($search_accountancy_subledger);
+if ($typeid > 0)						$sql.= " AND v.fk_typepayment=".$typeid;
 if ($filtre) {
 	$filtre=str_replace(":", "=", $filtre);
 	$sql .= " AND ".$filtre;
@@ -143,14 +151,16 @@ if ($result)
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref)			$param.='&search_ref='.urlencode($search_ref);
-	if ($search_label)			$param.='&search_label='.urlencode($search_label);
-	if ($typeid > 0)            $param.='&typeid='.urlencode($typeid);
-	if ($search_amount_deb)     $param.='&search_amount_deb='.urlencode($search_amount_deb);
-	if ($search_amount_cred)    $param.='&search_amount_cred='.urlencode($search_amount_cred);
-	if ($search_account > 0)			$param.='&search_amount='.urlencode($search_account);
-	//if ($search_date)					$param.='&search_date='.$search_date;
-	if ($search_accountancy_code > 0)	$param.='&search_accountancy_code='.urlencode($search_accountancy_code);
+	if ($search_ref)						$param.='&search_ref='.urlencode($search_ref);
+	if ($search_label)						$param.='&search_label='.urlencode($search_label);
+	if ($search_date_start)					$param.='&search_date_start='.urlencode($search_date_start);
+	if ($search_date_end)					$param.='&search_date_end='.urlencode($search_date_end);
+	if ($typeid > 0)            			$param.='&typeid='.urlencode($typeid);
+	if ($search_amount_deb)     			$param.='&search_amount_deb='.urlencode($search_amount_deb);
+	if ($search_amount_cred)    			$param.='&search_amount_cred='.urlencode($search_amount_cred);
+	if ($search_account > 0)				$param.='&search_amount='.urlencode($search_account);
+	if ($search_accountancy_account > 0)	$param.='&search_accountancy_account='.urlencode($search_accountancy_account);
+	if ($search_accountancy_subledger > 0)	$param.='&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
 
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
@@ -188,7 +198,13 @@ if ($result)
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date, 'date_doc', 0, 0, 1);
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+
 	print '</div>';
 	print '</td>';
 
@@ -208,9 +224,17 @@ if ($result)
 	// Accounting account
 	if (!empty($conf->accounting->enabled))
 	{
+		// Accounting account
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
-		print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, array(), 1, 1, 'maxwidth200');
+		print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array (), 1, 1, 'maxwidth200');
+		print '</div>';
+		print '</td>';
+
+		// Subledger account
+		print '<td class="liste_titre">';
+		print '<div class="nowrap">';
+		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, array (), 1, 1, 'maxwidth200');
 		print '</div>';
 		print '</td>';
 	}
@@ -234,8 +258,9 @@ if ($result)
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep,v.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
-	if (!empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	if (!empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
+	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccountingShort", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
+	if (! empty($conf->accounting->enabled)) print_liste_field_titre("SubledgerAccount", $_SERVER["PHP_SELF"], "v.subledger_account", "", $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
@@ -303,6 +328,13 @@ if ($result)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
+		// Accounting subledger account
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<td>' . length_accounta($obj->subledger_account) . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
 		// Debit
 		print '<td class="nowrap right">';
 		if ($obj->sens == 0)
@@ -312,7 +344,7 @@ if ($result)
 		}
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='total_deb';
-		print "</td>";
+		print '</td>';
 
 		// Credit
 		print '<td class="nowrap right">';
