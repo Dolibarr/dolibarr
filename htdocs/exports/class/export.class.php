@@ -52,10 +52,10 @@ class Export
 	public $array_export_help=array();			   // array with tooltip help for fields
 
     // To store export modules
-    public $hexa;
-    public $hexafiltervalue;
+    public $hexa;									// List of fields in the export profile
+    public $hexafiltervalue;						// List of search criteria in the export profile
     public $datatoexport;
-    public $model_name;
+    public $model_name;								// Name of export profile
 
     public $sqlusedforexport;
 

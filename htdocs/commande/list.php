@@ -804,6 +804,8 @@ if ($resql)
 		$generic_commande->total_ht = $obj->total_ht;
 		$generic_commande->total_tva = $obj->total_tva;
 		$generic_commande->total_ttc = $obj->total_ttc;
+		$generic_commande->note_public = $obj->note_public;
+		$generic_commande->note_private = $obj->note_private;
 
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
@@ -818,7 +820,7 @@ if ($resql)
 
 			$generic_commande->getLinesArray();		// This set ->lines
 
-			print $generic_commande->getNomUrl(1, ($viewstatut != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1);
+			print $generic_commande->getNomUrl(1, ($viewstatut != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
 
 			// Show shippable Icon (create subloop, so may be slow)
 			if ($conf->stock->enabled)
@@ -925,12 +927,6 @@ if ($resql)
 			// Warning late icon and note
 			if ($generic_commande->hasDelay()) {
 				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
-			}
-			if (!empty($obj->note_private) || !empty($obj->note_public))
-			{
-				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-				print '</span>';
 			}
 
 			$filename = dol_sanitizeFileName($obj->ref);

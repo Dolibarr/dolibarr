@@ -2248,9 +2248,10 @@ class FactureFournisseur extends CommonInvoice
      *	@param		string	$moretitle					Add more text to title tooltip
      *  @param	    int   	$notooltip					1=Disable tooltip
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param		int		$addlinktonotes				Add link to show notes
      * 	@return		string								String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
     {
         global $langs, $conf;
 
@@ -2317,6 +2318,22 @@ class FactureFournisseur extends CommonInvoice
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
         if ($withpicto != 2) $result.= ($max?dol_trunc($ref, $max):$ref);
         $result .= $linkend;
+
+        if ($addlinktonotes)
+        {
+        	$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+        	if ($txttoshow)
+        	{
+        		$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+        		$result .= ' <span class="note inline-block">';
+        		$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+        		$result .= img_picto('', 'note');
+        		$result .= '</a>';
+        		//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+        		//$result.='</a>';
+        		$result .= '</span>';
+        	}
+        }
 
         return $result;
     }
