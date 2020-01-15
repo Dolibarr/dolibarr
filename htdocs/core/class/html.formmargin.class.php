@@ -21,6 +21,8 @@
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
  */
 
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 
 /**
  *	Classe permettant la generation de composants html autre
