@@ -244,14 +244,6 @@ print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
 
-// Bill time
-if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-{
-	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	print yn($object->usage_bill_time);
-	print '</td></tr>';
-}
-
 // Categories
 if ($conf->categorie->enabled) {
     print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';

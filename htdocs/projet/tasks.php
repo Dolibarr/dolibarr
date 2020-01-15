@@ -90,7 +90,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
 $label = GETPOST('label', 'alpha');
-$description = GETPOST('description');
+$description = GETPOST('description', 'none');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
 $planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ?GETPOST('planned_workloadmin', 'int') : 0);
 $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
@@ -475,14 +475,6 @@ if ($id > 0 || !empty($ref))
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
     print nl2br($object->description);
     print '</td></tr>';
-
-    // Bill time
-    if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-    {
-    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-    	print yn($object->usage_bill_time);
-    	print '</td></tr>';
-    }
 
     // Categories
     if ($conf->categorie->enabled) {
