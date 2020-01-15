@@ -805,7 +805,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 	    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
 	    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	    if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
 	    elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
@@ -853,7 +853,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
     	        print $langs->trans('ServiceToUseOnLines');
     	        print '</td>';
     	        print '<td>';
-    	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
+    	        $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
     	        print '</td>';
     	        print '</tr>';
 	        }

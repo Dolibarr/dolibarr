@@ -36,13 +36,19 @@ if ($cancel)
 {
 	/*var_dump($cancel);
 	var_dump($backtopage);exit;*/
-	if (!empty($backtopage))
+	if (!empty($backtopageforcancel))
+	{
+		header("Location: ".$backtopageforcancel);
+		exit;
+	}
+	elseif (!empty($backtopage))
 	{
 		header("Location: ".$backtopage);
 		exit;
 	}
 	$action = '';
 }
+
 
 // Action to add record
 if ($action == 'add' && !empty($permissiontoadd))
@@ -141,8 +147,8 @@ if ($action == 'update' && !empty($permissiontoadd))
 			} else {
 				$value = '';
 			}
-		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
-			$value = price2num(GETPOST($key));
+		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
+            $value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}

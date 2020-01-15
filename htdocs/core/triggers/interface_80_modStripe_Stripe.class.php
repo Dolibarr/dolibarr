@@ -118,9 +118,6 @@ class InterfaceStripe
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
 
-		// Load translation files required by the page
-        $langs->loadLangs(array("members","other","users","mails"));
-
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
 

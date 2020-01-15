@@ -476,31 +476,35 @@ if ($resql)
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	    //'presend'=>$langs->trans("SendByMail"),
 	);
-	if ($user->rights->produit->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
-	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
-	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+    $rightskey='produit';
+	if ($type == Product::TYPE_SERVICE) $rightskey='service';
+	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
-	$rightskey = 'produit';
-	if ($type == Product::TYPE_SERVICE) $rightskey = 'service';
-	if ($user->rights->{$rightskey}->creer)
+	if ($type === "") $perm = ($user->rights->produit->creer || $user->rights->service->creer);
+	elseif ($type == Product::TYPE_SERVICE) $perm = $user->rights->service->creer;
+	elseif ($type == Product::TYPE_PRODUCT) $perm = $user->rights->produit->creer;
+	if ($perm)
 	{
 		$oldtype = $type;
-
+		$params = array();
+		if ($type === "") $params['forcenohideoftext'] = 1;
 		if ($type === "") {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0');
+			$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', 1, $params);
 			$type = Product::TYPE_SERVICE;
 		}
 		$label = 'NewProduct';
 		if ($type == Product::TYPE_SERVICE) $label = 'NewService';
-        $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
+		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', 1, $params);
 
         $type = $oldtype;
     }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -851,7 +855,7 @@ if ($resql)
 
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = $obj->ref_supplier;		// deprecated
+		$product_static->ref_fourn = $obj->ref_supplier; // deprecated
 		$product_static->ref_supplier = $obj->ref_supplier;
 		$product_static->label = $obj->label;
 		$product_static->type = $obj->fk_product_type;
@@ -884,7 +888,7 @@ if ($resql)
 			{
 				$option = 'nobatch';
 				if (empty($arrayfields['stock_virtual']['checked'])) $option .= ',novirtual';
-				$product_static->load_stock($option);             // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
+				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
 			}
 		}
 
@@ -962,7 +966,7 @@ if ($resql)
 		// Weight
 		if (!empty($arrayfields['p.weight']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->weight;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -970,7 +974,7 @@ if ($resql)
 		// Length
 		if (!empty($arrayfields['p.length']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->length;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -978,7 +982,7 @@ if ($resql)
 		// Surface
 		if (!empty($arrayfields['p.surface']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->surface;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
@@ -986,7 +990,7 @@ if ($resql)
 		// Volume
 		if (!empty($arrayfields['p.volume']['checked']))
 		{
-		    print '<td align="center">';
+		    print '<td class="center">';
 		    print $obj->volume;
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;

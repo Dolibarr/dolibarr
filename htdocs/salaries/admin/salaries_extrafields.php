@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/admin/salaries_extrafields.php
+ *      \file       htdocs/salaries/admin/salaries_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of salaries
  */

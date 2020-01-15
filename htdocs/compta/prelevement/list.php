@@ -192,7 +192,7 @@ if ($result)
 
         print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount)."</td>\n";
 

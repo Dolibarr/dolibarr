@@ -245,7 +245,7 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($conf->global->LIVRAISON_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print $form->textwithpicto('', $htmltooltip, 1, 0);
                         print '</td>';
 
@@ -408,12 +408,12 @@ foreach ($dirmodels as $reldir)
 		    				$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 		    				$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
 		    				$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				print $form->textwithpicto('', $htmltooltip, 1, 0);
 		    				print '</td>';
 
 		    				// Preview
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				if ($module->type == 'pdf')
 		    				{
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
@@ -454,7 +454,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnDeliveryReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';

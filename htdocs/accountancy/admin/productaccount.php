@@ -324,7 +324,7 @@ if ($result)
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -383,11 +383,11 @@ if ($result)
 	if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	// On sell
 	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
-		print '<td class="liste_titre">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1).'</td>';
 	}
 	// On buy
 	elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-		print '<td class="liste_titre">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1).'</td>';
 	}
 	// Current account
 	print '<td class="liste_titre">';

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
+$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT);
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');
@@ -127,6 +127,18 @@ if (GETPOST('target') == 'local')
 {
     if (dol_is_file($xmlfile))
     {
+    	// If file is a zip file (.../filelist-x.y.z.xml.zip), we uncompress it before
+    	if (preg_match('/\.zip$/i', $xmlfile)) {
+    		dol_mkdir($conf->admin->dir_temp);
+    		$xmlfilenew = preg_replace('/\.zip$/i', '', $xmlfile);
+    		$result = dol_uncompress($xmlfile, $conf->admin->dir_temp);
+    		if (empty($result['error'])) {
+    			$xmlfile = $conf->admin->dir_temp.'/'.basename($xmlfilenew);
+    		} else {
+    			print $langs->trans('FailedToUncompressFile').': '.$xmlfile;
+    			$error++;
+    		}
+    	}
         $xml = simplexml_load_file($xmlfile);
     }
     else
@@ -214,7 +226,7 @@ if (!$error && $xml)
         $includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
         // Defined qualified files (must be same than into generate_filelist_xml.php)
-        $regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+        $regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
         $regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
         $scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 

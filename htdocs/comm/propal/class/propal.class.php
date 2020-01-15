@@ -772,8 +772,8 @@ class Propal extends CommonObject
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->id					= $rowid;
-			$this->line->label				= $label;
+			$this->line->id = $rowid;
+			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
 			$this->line->product_type		= $type;
@@ -1544,6 +1544,7 @@ class Propal extends CommonObject
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (!empty($this->duree_validite)) $this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -1555,7 +1556,8 @@ class Propal extends CommonObject
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
-		$sql .= " datep=".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " datep=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
+		if (!empty($this->fin_validite)) $sql .= " fin_validite=".(strval($this->fin_validite) != '' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql .= " tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
@@ -1698,25 +1700,25 @@ class Propal extends CommonObject
 
 				$line->fk_product       = $objp->fk_product;
 
-				$line->ref				= $objp->product_ref;		// deprecated
-				$line->product_ref		= $objp->product_ref;
-				$line->libelle			= $objp->product_label;		// deprecated
-				$line->product_label	= $objp->product_label;
-				$line->product_desc     = $objp->product_desc; 		// Description produit
+				$line->ref = $objp->product_ref; // deprecated
+				$line->product_ref = $objp->product_ref;
+				$line->libelle = $objp->product_label; // deprecated
+				$line->product_label = $objp->product_label;
+				$line->product_desc     = $objp->product_desc; // Description produit
 				$line->product_tobatch  = $objp->product_tobatch;
-				$line->fk_product_type  = $objp->fk_product_type;	// deprecated
+				$line->fk_product_type  = $objp->fk_product_type; // deprecated
 				$line->fk_unit          = $objp->fk_unit;
 				$line->weight = $objp->weight;
 				$line->weight_units = $objp->weight_units;
 				$line->volume = $objp->volume;
 				$line->volume_units = $objp->volume_units;
 
-				$line->date_start  		= $this->db->jdate($objp->date_start);
-				$line->date_end  		= $this->db->jdate($objp->date_end);
+				$line->date_start = $this->db->jdate($objp->date_start);
+				$line->date_end = $this->db->jdate($objp->date_end);
 
 				// Multicurrency
-				$line->fk_multicurrency 		= $objp->fk_multicurrency;
-				$line->multicurrency_code 		= $objp->multicurrency_code;
+				$line->fk_multicurrency = $objp->fk_multicurrency;
+				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
@@ -1798,7 +1800,7 @@ class Propal extends CommonObject
 		$this->newref = $num;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET ref = '".$num."',";
+		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
@@ -2501,11 +2503,11 @@ class Propal extends CommonObject
 		if ($resql)
 		{
 			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
-			$trigger_name = 'PROPAL_CLOSE_REFUSED';
+			$triggerName = 'PROPAL_CLOSE_REFUSED';
 
 			if ($statut == self::STATUS_SIGNED)
 			{
-				$trigger_name = 'PROPAL_CLOSE_SIGNED';
+				$triggerName = 'PROPAL_CLOSE_SIGNED';
 				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
 
 				// The connected company is classified as a client
@@ -2522,7 +2524,7 @@ class Propal extends CommonObject
 			}
 			if ($statut == self::STATUS_BILLED)	// Why this ?
 			{
-				$trigger_name = 'PROPAL_CLASSIFY_BILLED';
+				$triggerName = 'PROPAL_CLASSIFY_BILLED';
 			}
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -2550,7 +2552,7 @@ class Propal extends CommonObject
 			if (!$notrigger && empty($error))
 			{
 				// Call trigger
-				$result = $this->call_trigger($trigger_name, $user);
+				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -3226,24 +3228,24 @@ class Propal extends CommonObject
 		{
 			global $langs;
 			$langs->load("propal");
-			$this->labelStatus[0]=$langs->trans("PropalStatusDraft");
-			$this->labelStatus[1]=$langs->trans("PropalStatusValidated");
-			$this->labelStatus[2]=$langs->trans("PropalStatusSigned");
-			$this->labelStatus[3]=$langs->trans("PropalStatusNotSigned");
-			$this->labelStatus[4]=$langs->trans("PropalStatusBilled");
-			$this->labelStatusShort[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelStatusShort[1]=$langs->trans("PropalStatusValidatedShort");
-			$this->labelStatusShort[2]=$langs->trans("PropalStatusSignedShort");
-			$this->labelStatusShort[3]=$langs->trans("PropalStatusNotSignedShort");
-			$this->labelStatusShort[4]=$langs->trans("PropalStatusBilledShort");
+			$this->labelStatus[0] = $langs->trans("PropalStatusDraft");
+			$this->labelStatus[1] = $langs->trans("PropalStatusValidated");
+			$this->labelStatus[2] = $langs->trans("PropalStatusSigned");
+			$this->labelStatus[3] = $langs->trans("PropalStatusNotSigned");
+			$this->labelStatus[4] = $langs->trans("PropalStatusBilled");
+			$this->labelStatusShort[0] = $langs->trans("PropalStatusDraftShort");
+			$this->labelStatusShort[1] = $langs->trans("PropalStatusValidatedShort");
+			$this->labelStatusShort[2] = $langs->trans("PropalStatusSignedShort");
+			$this->labelStatusShort[3] = $langs->trans("PropalStatusNotSignedShort");
+			$this->labelStatusShort[4] = $langs->trans("PropalStatusBilledShort");
 		}
 
-		$statusType='';
-		if ($status==self::STATUS_DRAFT) $statusType='status0';
-		elseif ($status==self::STATUS_VALIDATED) $statusType='status1';
-		elseif ($status==self::STATUS_SIGNED) $statusType='status3';
-		elseif ($status==self::STATUS_NOTSIGNED) $statusType='status5';
-		elseif ($status==self::STATUS_BILLED) $statusType='status6';
+		$statusType = '';
+		if ($status == self::STATUS_DRAFT) $statusType = 'status0';
+		elseif ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		elseif ($status == self::STATUS_SIGNED) $statusType = 'status3';
+		elseif ($status == self::STATUS_NOTSIGNED) $statusType = 'status5';
+		elseif ($status == self::STATUS_BILLED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -3265,42 +3267,42 @@ class Propal extends CommonObject
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
-			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+			$sql .= " WHERE sc.fk_user = ".$user->id;
 			$clause = " AND";
 		}
-		$sql.= $clause." p.entity IN (".getEntity('propal').")";
-		if ($mode == 'opened') $sql.= " AND p.fk_statut = ".self::STATUS_VALIDATED;
-		if ($mode == 'signed') $sql.= " AND p.fk_statut = ".self::STATUS_SIGNED;
-		if ($user->socid) $sql.= " AND p.fk_soc = ".$user->socid;
+		$sql .= $clause." p.entity IN (".getEntity('propal').")";
+		if ($mode == 'opened') $sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
+		if ($mode == 'signed') $sql .= " AND p.fk_statut = ".self::STATUS_SIGNED;
+		if ($user->socid) $sql .= " AND p.fk_soc = ".$user->socid;
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$langs->load("propal");
-			$now=dol_now();
+			$now = dol_now();
 
 			$delay_warning = 0;
 			$status = 0;
 			$label = $labelShort = '';
 			if ($mode == 'opened') {
-				$delay_warning=$conf->propal->cloture->warning_delay;
+				$delay_warning = $conf->propal->cloture->warning_delay;
 				$status = self::STATUS_VALIDATED;
 				$label = $langs->trans("PropalsToClose");
 				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
-				$delay_warning=$conf->propal->facturation->warning_delay;
+				$delay_warning = $conf->propal->facturation->warning_delay;
 				$status = self::STATUS_SIGNED;
-				$label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
+				$label = $langs->trans("PropalsToBill"); // We set here bill but may be billed or ordered
 				$labelShort = $langs->trans("ToBill");
 			}
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $delay_warning/60/60/24;
+			$response->warning_delay = $delay_warning / 60 / 60 / 24;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
 			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$status.'&mainmenu=commercial&leftmenu=propals';
@@ -3439,27 +3441,27 @@ class Propal extends CommonObject
         // phpcs:enable
 		global $user;
 
-		$this->nb=array();
+		$this->nb = array();
 		$clause = "WHERE";
 
 		$sql = "SELECT count(p.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql .= " WHERE sc.fk_user = ".$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." p.entity IN (".getEntity('propal').")";
+		$sql .= " ".$clause." p.entity IN (".getEntity('propal').")";
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj=$this->db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["proposals"]=$obj->nb;
+				$this->nb["proposals"] = $obj->nb;
 			}
 			$this->db->free($resql);
 			return 1;

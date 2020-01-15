@@ -38,7 +38,6 @@ class AccountancyCategory // extends CommonObject
 
 	/**
 	 * @var string 		Error string
-	 * @see             $errors
 	 */
 	public $error;
 

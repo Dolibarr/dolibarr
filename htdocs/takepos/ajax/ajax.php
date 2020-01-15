@@ -43,8 +43,9 @@ $id = GETPOST('id', 'int');
  * View
  */
 
-if ($action == "getProducts") {
+if ($action == 'getProducts') {
     $object = new Categorie($db);
+	if ($category=="supplements") $category=$conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY;
     $result = $object->fetch($category);
     if ($result > 0)
     {
@@ -65,7 +66,7 @@ if ($action == "getProducts") {
     	echo 'Failed to load category with id='.$category;
     }
 }
-elseif ($action == "search" && $term != '') {
+elseif ($action == 'search' && $term != '') {
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
@@ -81,10 +82,10 @@ elseif ($action == "search" && $term != '') {
 	}
 
     $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product as p';
-    if ($filteroncategids) {
-    	$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.')';
-    }
     $sql .= ' WHERE entity IN ('.getEntity('product').')';
+    if ($filteroncategids) {
+    	$sql.= ' AND rowid IN (SELECT DISTINCT fk_product FROM '.MAIN_DB_PREFIX.'categorie_product WHERE fk_categorie IN ('.$filteroncategids.'))';
+    }
     $sql .= ' AND tosell = 1';
     $sql .= natural_search(array('ref', 'label', 'barcode'), $term);
     $resql = $db->query($sql);

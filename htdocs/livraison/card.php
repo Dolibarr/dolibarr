@@ -336,7 +336,7 @@ else
 
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -400,7 +400,7 @@ else
 			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
 			            $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
 			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-			            $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			            $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 			            $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			            $morehtmlref .= '</form>';
@@ -436,7 +436,7 @@ else
 			/*
 			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
@@ -498,7 +498,7 @@ else
 			if ($action == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';

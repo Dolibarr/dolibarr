@@ -130,6 +130,35 @@ $modules = array(
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
+if (! isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
+	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7;				// Must be same value than into conf.class.php
+}
+if (! isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
+	$conf->global->MAIN_DELAY_TASKS_TODO = 7;				// Must be same value than into conf.class.php
+}
+if (! isset($conf->global->MAIN_DELAY_MEMBERS)) {
+	$conf->global->MAIN_DELAY_MEMBERS = 0;					// Must be same value than into conf.class.php
+}
+if (! isset($conf->global->MAIN_DELAY_ACTIONS_TODO)) {
+	$conf->global->MAIN_DELAY_ACTIONS_TODO = 7;				// Must be same value than into conf.class.php
+}
+if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+if (! isset($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS = 7;
+}
+if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+
+
 
 /*
  * Actions
@@ -178,12 +207,10 @@ print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceD
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
 print "<br>\n";
 
-$countrynotdefined = '<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
-
 if ($action == 'edit')
 {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
 
     print '<table class="noborder centpercent">';
@@ -234,7 +261,7 @@ else
     	{
     		foreach ($delays as $delay)
     		{
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
+    			$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
     			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('', $delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';

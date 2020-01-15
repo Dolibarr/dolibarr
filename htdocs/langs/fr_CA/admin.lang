@@ -152,6 +152,7 @@ HRMSetup=Configuration du module de GRH
 MustBeUnique=Doit être unique?
 MustBeInvoiceMandatory=Obligatoire de valider les factures?
 PaymentsPDFModules=Modèles de documents de paiement
+ForceInvoiceDate=Forcer la date de facturation à la date de validation
 PaymentsNumberingModule=Modèles de numérotation des paiements
 SupplierProposalSetup=Configuration du module de ​​demande de prix des fournisseurs
 SupplierProposalNumberingModules=Modèles de numérotation des demandes de prix des fournisseurs

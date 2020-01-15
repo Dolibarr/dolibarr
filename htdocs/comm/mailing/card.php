@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -725,7 +725,7 @@ if ($action == 'create')
 {
 	// EMailing in creation mode
 	print '<form name="new_mailing" action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
@@ -763,7 +763,7 @@ if ($action == 'create')
 	print '</br><br>';
 
 	print '<table class="border centpercent">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'], 'bgcolor', '', 0);
 	print '</td></tr>';
@@ -906,6 +906,11 @@ else
 			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			$email = CMailFile::getValidAddress($object->email_from, 2);
+			if ($email && !isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			}
 			print '</td></tr>';
 
 			// Errors to
@@ -913,6 +918,11 @@ else
 			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			$email = CMailFile::getValidAddress($object->email_errorsto, 2);
+			if ($email && !isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			}
 			print '</td></tr>';
 
 			// Nb of distinct emails
@@ -1179,7 +1189,7 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright = '';
 			if ($object->statut == 2) $morehtmlright .= ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
@@ -1255,7 +1265,7 @@ else
 			print "<br>\n";
 
 			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 

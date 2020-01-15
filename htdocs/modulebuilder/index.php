@@ -718,14 +718,28 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			if ($type == 'int(11)') $type='integer';
 			// notnull
 			$notnull = ($obj->Null == 'YES'?0:1);
+			if ($fieldname == 'fk_user_modif') $notnull = -1;
 			// label
 			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
-			if ($fieldname == 'rowid') $label='ID';
-			if ($fieldname == 'import_key') $label='ImportKey';
+			if ($fieldname == 'rowid') $label='TechnicalID';
+			if ($fieldname == 'import_key') $label='ImportId';
+			if ($fieldname == 'fk_soc') $label='ThirdParty';
+			if ($fieldname == 'tms') $label='DateModification';
+			if ($fieldname == 'datec') $label='DateCreation';
+			if ($fieldname == 'date_valid') $label='DateValidation';
+			if ($fieldname == 'datev') $label='DateValidation';
+			if ($fieldname == 'note_private') $label='NotePublic';
+			if ($fieldname == 'note_public') $label='NotePrivate';
+			if ($fieldname == 'fk_user_creat') $label='UserAuthor';
+			if ($fieldname == 'fk_user_modif') $label='UserModif';
+			if ($fieldname == 'fk_user_valid') $label='UserValidation';
 			// visible
 			$visible = -1;
 			if ($fieldname == 'entity') $visible = -2;
-			if (in_array($fieldname, array('model_pdf', 'note_public', 'note_private'))) $visible = 0;
+			if ($fieldname == 'import_key') $visible = -2;
+			if ($fieldname == 'fk_user_creat') $visible = -2;
+			if ($fieldname == 'fk_user_modif') $visible = -2;
+			if (in_array($fieldname, array('ref_ext', 'model_pdf', 'note_public', 'note_private'))) $visible = 0;
 			// enabled
 			$enabled = 1;
 			// default
@@ -734,6 +748,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			// position
 			$position = $i;
 			if (in_array($fieldname, array('status', 'statut', 'fk_status', 'fk_statut'))) $position = 500;
+			// index
+			$index = 0;
+			if ($fieldname == 'entity') $index=1;
 
 			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."',";
 			if ($default != '') $string.= " 'default'=>".$default.",";
@@ -741,7 +758,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$string.= " 'visible'=>".$visible;
 			if ($notnull) $string.= ", 'notnull'=>".$notnull;
 			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
-			$string.= ", 'position'=>".$position."),\n";
+			$string.= ", 'position'=>".$position;
+			if ($index) $string.= ", 'index'=>".$index;
+			$string.= "),\n";
 			$string.="<br>";
 			$i+=5;
 		}
@@ -1629,7 +1648,7 @@ if ($module == 'initmodule')
 {
 	// New module
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="initmodule">';
 	print '<input type="hidden" name="module" value="initmodule">';
 
@@ -1646,7 +1665,7 @@ elseif ($module == 'deletemodule')
 {
 	print '<!-- Form to init a module -->'."\n";
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="delete">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="confirm_deletemodule">';
 	print '<input type="hidden" name="module" value="deletemodule">';
 
@@ -1915,7 +1934,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -1951,7 +1970,7 @@ elseif (! empty($module))
 
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="addlanguage">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -1988,7 +2007,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -2032,7 +2051,7 @@ elseif (! empty($module))
 				print load_fiche_titre($langs->trans("ListOfDictionariesEntries"), '', '');
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="addproperty">';
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -2124,7 +2143,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -2197,7 +2216,7 @@ elseif (! empty($module))
 			{
 				// New object tab
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="initobject">';
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -2226,7 +2245,7 @@ elseif (! empty($module))
 			{
 				// Delete object tab
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="confirm_deleteobject">';
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -2464,7 +2483,7 @@ elseif (! empty($module))
 							//var_dump($reflectorpropdefault);
 
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread ? '@'.$dirread : '')).'">';
@@ -2678,7 +2697,7 @@ elseif (! empty($module))
 
 							            // New module
 							            print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-							            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+							            print '<input type="hidden" name="token" value="'.newToken().'">';
 							            print '<input type="hidden" name="action" value="savefile">';
 							            print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 							            print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -2728,7 +2747,7 @@ elseif (! empty($module))
 
 					// New module
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="savefile">';
 					print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 					print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -2773,7 +2792,7 @@ elseif (! empty($module))
 				print load_fiche_titre($langs->trans("ListOfMenusEntries"), '', '');
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="addproperty">';
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -2872,7 +2891,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -2913,7 +2932,7 @@ elseif (! empty($module))
 				print load_fiche_titre($langs->trans("ListOfPermissionsDefined"), '', '');
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="addproperty">';
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -2972,7 +2991,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3030,7 +3049,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3092,7 +3111,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3144,7 +3163,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3196,7 +3215,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3255,7 +3274,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3341,7 +3360,7 @@ elseif (! empty($module))
 
 		        // New module
 		        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		        print '<input type="hidden" name="token" value="'.newToken().'">';
 		        print '<input type="hidden" name="action" value="savefile">';
 		        print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 		        print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3379,7 +3398,7 @@ elseif (! empty($module))
 				print load_fiche_titre($langs->trans("CronJobProfiles"), '', '');
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="addproperty">';
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -3463,7 +3482,7 @@ elseif (! empty($module))
 
 				// New module
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="savefile">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3527,7 +3546,7 @@ elseif (! empty($module))
 
 		        // New module
 		        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		        print '<input type="hidden" name="token" value="'.newToken().'">';
 		        print '<input type="hidden" name="action" value="savefile">';
 		        print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 		        print '<input type="hidden" name="tab" value="'.$tab.'">';
@@ -3583,7 +3602,7 @@ elseif (! empty($module))
 		    print '<br>';
 
 		    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="generatedoc">';
-		    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		    print '<input type="hidden" name="token" value="'.newToken().'">';
 		    print '<input type="hidden" name="action" value="generatedoc">';
 		    print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 		    print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -3654,7 +3673,7 @@ elseif (! empty($module))
 			print '<br>';
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="generatepackage">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="generatepackage">';
 			print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';

@@ -456,7 +456,7 @@ if (empty($reshook))
 	}
 
 	// Actions to send emails
-	$trigger_name = 'PROJECT_SENTBYMAIL';
+	$triggersendname = 'PROJECT_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
@@ -503,7 +503,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print load_fiche_titre($titlenew, '', 'project');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -554,21 +554,21 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
-		print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+		print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 		$htmltext = $langs->trans("ProjectFollowOpportunity");
 		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 		print '<br>';
 	}
 	if (empty($conf->global->PROJECT_HIDE_TASKS))
 	{
-		print '<input type="checkbox" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+		print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 		$htmltext = $langs->trans("ProjectFollowTasks");
 		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 		print '<br>';
 	}
 	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
-		print '<input type="checkbox" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
+		print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
 		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 		print '<br>';
@@ -597,7 +597,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
 		}
 		else print $text;
-		if (!GETPOSTISSET('backtopage')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		if (!GETPOSTISSET('backtopage')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -712,6 +712,20 @@ if ($action == 'create' && $user->rights->projet->creer)
         	jQuery("#opp_status").change(function() {
         		change_percent();
         	});
+
+        	jQuery("#usage_task").change(function() {
+        		console.log("We click on usage task "+jQuery("#usage_task").is(":checked"));
+                if (! jQuery("#usage_task").is(":checked")) {
+                    jQuery("#usage_bill_time").prop("checked", false);
+                }
+        	});
+
+        	jQuery("#usage_bill_time").change(function() {
+        		console.log("We click on usage to bill time");
+                if (jQuery("#usage_bill_time").is(":checked")) {
+                    jQuery("#usage_task").prop("checked", true);
+                }
+        	});
         });
         </script>';
 }
@@ -775,7 +789,7 @@ elseif ($object->id > 0)
 
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';

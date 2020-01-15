@@ -482,7 +482,7 @@ if (empty($reshook))
     }
 
     // Actions to send emails
-	$trigger_name = 'CONTACT_SENTBYMAIL';
+	$triggersendname = 'CONTACT_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromcontact';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -609,7 +609,7 @@ else
             }
 
             print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (!empty($objsoc)) {
@@ -938,7 +938,7 @@ else
             }
 
             print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
@@ -1020,7 +1020,7 @@ else
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
 
-                print $formcompany->select_state(GETPOSTISSET('state_id') ?GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
+                print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
                 print '</td></tr>';
             }
 

@@ -107,7 +107,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 * 	Return amount of payments already done
+	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
+	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Amount of payment already done, <0 if KO
@@ -337,6 +338,51 @@ abstract class CommonInvoice extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			//look for credit notes and discounts and deposits
+			$sql = '';
+			if ($this->element == 'facture' || $this->element == 'invoice')
+			{
+				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
+				$sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
+			}
+			elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+			{
+				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
+				$sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$this->id;
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
+			}
+
+			if ($sql) {
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$num = $this->db->num_rows($resql);
+					$i=0;
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+						if ($multicurrency) {
+							$retarray[]=array('amount'=>$obj->multicurrency_amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
+						}
+						else {
+							$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
+						}
+						$i++;
+					}
+				}
+				else
+				{
+					$this->error = $this->db->lasterror();
+					dol_print_error($this->db);
+					return array();
+				}
+				$this->db->free($resql);
+			}
+
 			return $retarray;
 		}
 		else

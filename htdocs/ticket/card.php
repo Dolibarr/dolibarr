@@ -46,6 +46,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $id        = GETPOST('id', 'int');
+$socid     = GETPOST('socid', 'int');
 $track_id  = GETPOST('track_id', 'alpha', 3);
 $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
@@ -592,7 +593,7 @@ $permissiontoadd = $user->rights->ticket->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 // Actions to send emails
-$trigger_name = 'TICKET_SENTBYMAIL';
+$triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
 $trackid = 'tic'.$object->id;
@@ -691,7 +692,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
                  */
                 print '<table class="border centpercent">';
 
-                $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+                $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
                 // Ref
                 print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -799,7 +800,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
        				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
        				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
        				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-       				$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+       				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
        				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
        				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
        				$morehtmlref .= '</form>';
@@ -819,7 +820,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         $morehtmlref .= '</div>';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php"><strong>'.$langs->trans("BackToList").'</strong></a> ';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php?restore_lastsearch_values=1"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
         dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref);
 
@@ -891,7 +892,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         // Show user list to assignate one if status is "read"
         if (GETPOST('set', 'alpha') == "assign_ticket" && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
             print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$url_page_current.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="assign_user">';
             print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
             print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
@@ -913,7 +914,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print '</td><td colspan="5">';
         if ($user->rights->ticket->write && $action == 'progression') {
             print '<form action="'.$url_page_current.'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="track_id" value="'.$track_id.'">';
             print '<input type="hidden" name="action" value="set_progression">';
             print '<input type="text" class="flat" size="20" name="progress" value="'.$object->progress.'">';
@@ -963,13 +964,13 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         // Classification of ticket
         print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="change_property">';
         print '<input type="hidden" name="property" value="'.$property['dict'].'">';
         print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 
         print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-        print '<table class="border centpercent margintable">';
+        print '<table class="noborder centpercent margintable">';
         print '<tr class="liste_titre">';
         print '<td>';
         print $langs->trans('Properties');
@@ -993,7 +994,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td class="titlefield">';
             print $langs->trans('TicketChangeType');
             print '</td><td>';
-            print $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
+            $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
             print '</td>';
             print '</tr>';
             // Group
@@ -1001,7 +1002,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
+            $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
             // Severity
@@ -1009,7 +1010,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeSeverity');
             print '</td><td>';
-            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
+            $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
             print '</td>';
             print '</tr>';
         } else {

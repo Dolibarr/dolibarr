@@ -111,7 +111,7 @@ function project_prepare_head($object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
 		$h++;
 	}
@@ -1072,7 +1072,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 					if ($projectstatic->title)
 					{
 						print ' - ';
-						print $projectstatic->title;
+						print '<span class="secondary">'.$projectstatic->title.'</span>';
 					}
 					/*
                     $colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
@@ -1451,7 +1451,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					if ($projectstatic->title)
 					{
 						print ' - ';
-						print $projectstatic->title;
+						print '<span class="secondary">'.$projectstatic->title.'</span>';
 					}
 
                     /*$colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
@@ -1645,7 +1645,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						$cssweekend = 'weekend';
 					}
 
-					$tableCell = '<td align="center" class="hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
 					$placeholder = '';
 					if ($alreadyspent)
 					{
@@ -2071,22 +2071,26 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         else {
             if ($task->hasDelay()) $out .= img_warning($langs->trans("Late")).' ';
 
-            $out .= !empty($diff) ? $diff.' ' : '';
+			$url = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$task->id;
 
+            $out .= !empty($diff) ? $diff.' ' : '';
+			$out .= '<a href="'.$url.'" >';
             $out .= '<b title="'.$langs->trans('TimeSpent').'" >';
             if ($task->duration_effective) $out .= convertSecondToTime($task->duration_effective, $timespentoutputformat);
             else $out .= '--:--';
             $out .= '</b>';
+			$out .= '</a>';
 
             $out .= '/';
 
+			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';
             if ($task->planned_workload) $out .= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
             else $out .= '--:--';
+			$out .= '</a>';
         }
         $out .= '    </span>';
     }
-
 
 
     $out .= '</span>';
@@ -2095,7 +2099,9 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if ($diffval >= 0) {
     	// good
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
-    	$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+    	if (!empty($task->progress)) {
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+		}
     	$out .= '        </div>';
     }
     else

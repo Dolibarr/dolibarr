@@ -139,8 +139,14 @@ if (empty($reshook))
 	        {
 	            $cursorfacid = substr($key, 7);
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
-	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
-	            if (!empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
+	            if (!empty($amounts[$cursorfacid])) {
+	            	$atleastonepaymentnotnull++;
+	            	if (is_numeric($amounts[$cursorfacid])) {
+	            		$totalpayment = $totalpayment + $amounts[$cursorfacid];
+	            	} else {
+	            		setEventMessages($langs->transnoentities("InputValueIsNotAnNumber", GETPOST($key)), null, 'warnings');
+	            	}
+	            }
 	            $result = $tmpinvoice->fetch($cursorfacid);
 	            if ($result <= 0) dol_print_error($db);
 	            $amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
@@ -457,7 +463,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add_paiement">';
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
@@ -881,7 +887,7 @@ if (empty($action) || $action == 'list')
 
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="list">';
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

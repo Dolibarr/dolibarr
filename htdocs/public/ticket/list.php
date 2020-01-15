@@ -658,7 +658,7 @@ if ($action == "view_ticketlist")
                 print '</form>';
 
                 print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="'.dol_buildpath('/public/ticket/view.php', 1).'" style="display:none;">';
-                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="token" value="'.newToken().'">';
                 print '<input type="hidden" name="action" value="view_ticket">';
                 print '<input type="hidden" name="btn_view_ticket_list" value="1">';
                 print '<input type="hidden" name="track_id" value="">';
@@ -683,7 +683,7 @@ if ($action == "view_ticketlist")
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="view_ticketlist">';
     //print '<input type="hidden" name="search_fk_status" value="non_closed">';
 

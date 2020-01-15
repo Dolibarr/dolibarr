@@ -1729,11 +1729,11 @@ class SupplierProposal extends CommonObject
         if ($resql)
         {
             $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
-            $trigger_name='SUPPLIER_PROPOSAL_CLOSE_REFUSED';
+            $triggerName = 'SUPPLIER_PROPOSAL_CLOSE_REFUSED';
 
             if ($status == 2)
             {
-                $trigger_name='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
+                $triggerName='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
                 $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
 
                 if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
@@ -1743,7 +1743,7 @@ class SupplierProposal extends CommonObject
             }
             if ($status == 4)
             {
-                $trigger_name='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
+                $triggerName='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
             }
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1760,7 +1760,7 @@ class SupplierProposal extends CommonObject
             }
 
             // Call trigger
-            $result=$this->call_trigger($trigger_name, $user);
+            $result=$this->call_trigger($triggerName, $user);
             if ($result < 0) { $error++; }
             // End call triggers
 

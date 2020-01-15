@@ -180,7 +180,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
     /***************************************************************************************
      *
-     * Migration des donnees
+     * Migration of data
      *
      ***************************************************************************************/
     $db->begin();
@@ -552,6 +552,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
     }
 
     print '</table>';
+
+
+    $sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+    $db->query($sql, 1);
+
 
     // We always commit.
     // Process is designed so we can run it several times whatever is situation.
@@ -4474,7 +4479,10 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/core/modules/facture/pdf_crabe.modules.php',
         '/core/modules/facture/pdf_oursin.modules.php',
 
-        '/compta/facture/class/api_invoice.class.php',
+    	'/api/class/api_generic.class.php',
+    	'/categories/class/api_category.class.php',
+    	'/categories/class/api_deprecated_category.class.php',
+    	'/compta/facture/class/api_invoice.class.php',
         '/commande/class/api_commande.class.php',
         '/user/class/api_user.class.php',
         '/product/class/api_product.class.php',

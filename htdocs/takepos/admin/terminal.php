@@ -123,9 +123,10 @@ print '<br>';
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 : $terminal).'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -236,6 +237,7 @@ if (!empty($conf->stock->enabled))
 }
 
 print '</table>';
+print '</div>';
 
 if ($atleastonefound == 0 && !empty($conf->banque->enabled))
 {

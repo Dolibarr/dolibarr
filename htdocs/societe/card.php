@@ -862,7 +862,7 @@ if (empty($reshook))
     $object->fetch($socid);
 
     // Actions to send emails
-    $trigger_name = 'COMPANY_SENTBYMAIL';
+    $triggersendname = 'COMPANY_SENTBYMAIL';
     $paramname = 'socid';
     $mode = 'emailfromthirdparty';
     $trackid = 'thi'.$object->id;
@@ -1163,7 +1163,7 @@ else
 
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
         print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1803,7 +1803,7 @@ else
 
             print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formsoc">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -2424,7 +2424,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editRE')
 			        {
@@ -2442,7 +2442,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editIRPF') {
 			            print '<td class="left">';
@@ -2463,7 +2463,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editRE') {
 			            print '<td class="left">';
@@ -2484,7 +2484,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editIRPF') {
 			            print '<td class="left">';

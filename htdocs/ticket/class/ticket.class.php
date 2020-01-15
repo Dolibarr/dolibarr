@@ -1368,6 +1368,8 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
+        $error = 0;
+
         if ($this->statut != self::STATUS_CANCELED) { // no closed
             $this->db->begin();
 
@@ -1420,6 +1422,7 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
+        $error = 0;
         $this->db->begin();
 
         $this->oldcopy = dol_clone($this);

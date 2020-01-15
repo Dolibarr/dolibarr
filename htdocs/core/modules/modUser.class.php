@@ -69,7 +69,7 @@ class modUser extends DolibarrModules
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->langfiles = array("main","users","companies","members",'salaries');
+		$this->langfiles = array("main","users","companies","members","salaries","hrm");
 		$this->always_enabled = true;	// Can't be disabled
 
 		// Constants
@@ -225,7 +225,7 @@ class modUser extends DolibarrModules
 		    'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",
 		    'u.office_phone'=>'Phone','u.user_mobile'=>"Mobile",'u.office_fax'=>'Fax',
 		    'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature',
-		    'u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
+		    'u.fk_user'=>'HierarchicalResponsible','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
 		    'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey',
 		    'u.birth'=>'BirthdayDate',
 		    'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",
@@ -281,7 +281,7 @@ class modUser extends DolibarrModules
 			'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",
 		    'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",
 		    'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature',
-		    'u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
+		    'u.fk_user'=>'HierarchicalResponsible','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
 			'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey',
 		    'u.birth'=>'BirthdayDate',
 		    'u.datec'=>"DateCreation",

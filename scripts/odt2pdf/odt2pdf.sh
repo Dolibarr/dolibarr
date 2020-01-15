@@ -2,10 +2,12 @@
 # @copyright  GPL License 2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
 # @copyright  GPL License 2013 - Florian HEnry - florian.henry@open-concept.pro
 # @copyright  GPL License 2017 - Laurent Destailleur - eldy@users.sourceforge.net
+# @copyright  GPL License 2019 - Camille Lafitte - cam.lafit@azerttyu.net 
 #
-# Convert an ODT into a PDF using "jodconverter" or "pyodconverter" or "unoconv" tool.
+# Convert an ODT into a PDF using "native" or "jodconverter" or "pyodconverter" or "unoconv" tool.
 # Dolibarr variable MAIN_ODT_AS_PDF must be defined 
-#  to value "unoconv" to call unoconv CLI tool after ODT generation.
+#  to value "native" to call soffice native exporter feature  
+#  or value "unoconv" to call unoconv CLI tool after ODT generation.
 #  or value "pyodconverter" to call DocumentConverter.py after ODT generation.
 #  or value "jodconverter" to call jodconverter wrapper after ODT generation
 #  or value "/pathto/jodconverter-cli-file.jar" to call jodconverter java tool without wrapper after ODT generation.
@@ -14,7 +16,7 @@
 
 if [ "x$1" == "x" ] 
 then
-	echo "Usage:   odt2pdf.sh fullfilename [unoconv|jodconverter|pyodconverter|pathtojodconverterjar]"
+	echo "Usage:   odt2pdf.sh fullfilename [native|unoconv|jodconverter|pyodconverter|pathtojodconverterjar]"
 	echo "Example: odt2pdf.sh myfile unoconv"
 	echo "Example: odt2pdf.sh myfile ~/jodconverter/jodconverter-cli-2.2.2.jar"
 	exit
@@ -33,6 +35,12 @@ home_java="/tmp"
 # Main program
 if [ -f "$1.odt" ]
 then
+
+  if [ "x$2" == "xnative" ]
+  then
+      $soffice --headless -env:UserInstallation=file:///$home_java/ --convert-to  pdf:writer_pdf_Export --outdir $(dirname $1) "$1.odt"
+      exit 0
+  fi
 
   if [ "x$2" == "xunoconv" ]
   then
