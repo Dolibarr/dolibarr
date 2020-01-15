@@ -1127,7 +1127,20 @@ class DolGraph
 		$this->stringtoshow .= '</script>'."\n";
 	}
 
-
+	/**
+	 * Output HTML string to total value
+	 *
+	 * @return	string							HTML string to total value
+	 */
+    public function total()
+	{
+		$value = 0;
+		foreach($this->data as $valarray)	// Loop on each x
+			{
+			$value += $valarray[1];
+		}
+		return $value;
+	}
 
 	/**
 	 * Output HTML string to show graph
