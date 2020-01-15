@@ -780,6 +780,23 @@ if (empty($reshook))
 				}
 			}
 
+			// If some payments were already done, we change the amount to pay using same prorate
+			if (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
+					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
+					foreach($amount_ht as $vatrate => $val) {
+						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
+						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
+						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ht[$line->tva_tx] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_tva[$line->tva_tx] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ttc[$line->tva_tx] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
+					}
+				}
+			}
+			//var_dump($amount_ht);var_dump($amount_tva);var_dump($amount_ttc);exit;
+
 			// Insert one discount by VAT rate category
 			$discount = new DiscountAbsolute($db);
 			if ($object->type == Facture::TYPE_CREDIT_NOTE)
@@ -1520,7 +1537,7 @@ if (empty($reshook))
 										if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 
 										// View third's localtaxes for NOW and do not use value from origin.
-										// TODO Is this really what we want ? Yes if source if template invoice but what if proposal or order ?
+										// TODO Is this really what we want ? Yes if source is template invoice but what if proposal or order ?
 										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
@@ -5014,7 +5031,9 @@ elseif ($id > 0 || !empty($ref))
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a>';
 				}
 				// For credit note
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate && $object->getSommePaiement() == 0) {
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
+					&& (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For deposit invoice

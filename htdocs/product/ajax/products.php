@@ -18,8 +18,8 @@
  */
 
 /**
- * \file htdocs/product/ajax/products.php
- * \brief File to return Ajax response on product list request
+ * \file 	htdocs/product/ajax/products.php
+ * \brief 	File to return Ajax response on product list request.
  */
 
 if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
@@ -59,6 +59,7 @@ dol_syslog(join(',', $_GET));
 
 if (!empty($action) && $action == 'fetch' && !empty($id))
 {
+	// When action='fetch', id must be the product id.
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 	$outjson = array();

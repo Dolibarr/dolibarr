@@ -1260,12 +1260,14 @@ class pdf_einstein extends ModelePDFCommandes
 		{
 			if ($this->emetteur->logo)
 			{
+				$logodir = $conf->mycompany->dir_output;
+				if (! empty($conf->mycompany->multidir_output[$object->entity])) $logodir = $conf->mycompany->multidir_output[$object->entity];
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
-					$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/thumbs/'.$this->emetteur->logo_small;
+					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				}
 				else {
-					$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/'.$this->emetteur->logo;
+					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
 				{

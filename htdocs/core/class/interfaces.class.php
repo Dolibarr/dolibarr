@@ -109,8 +109,10 @@ class Interfaces
             $handle = opendir($newdir);
             if (is_resource($handle))
             {
+            	$fullpathfiles = array();
                 while (($file = readdir($handle)) !== false)
                 {
+                	$reg=array();
                     if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i', $file, $reg))
                     {
                         $part1 = $reg[1];
@@ -274,6 +276,7 @@ class Interfaces
             {
                 while (($file = readdir($handle)) !== false)
                 {
+                	$reg = array();
                     if (is_readable($newdir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/', $file, $reg))
                     {
                         if (preg_match('/\.back$/', $file)) continue;
