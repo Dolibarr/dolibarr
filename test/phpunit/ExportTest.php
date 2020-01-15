@@ -246,7 +246,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 		$expectedresult=1;
         $this->assertEquals($expectedresult, $result);
 
-        $model='excel';
+        $model='excel2007new';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
