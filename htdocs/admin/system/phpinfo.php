@@ -80,7 +80,7 @@ print '<tr><td width="220">'.$langs->trans("Version").'</td><td>';
 
 $arrayphpminversionerror = array(5,5,0);
 $arrayphpminversionwarning = array(5,5,0);
-if (versioncompare(versionphparray(), , $arrayphpminversionerror) < 0)
+if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
 {
     print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 }
