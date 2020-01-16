@@ -1783,6 +1783,91 @@ class ActionComm extends CommonObject
                 return -1;
             }
 
+			if($conf->global->AGENDA_SHOW_HOLIDAYS)
+            {
+                $langs->load("holidays");
+                $title = $langs->trans("Holidays");
+
+                $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.email, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
+                $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+                $sql.= " WHERE u.rowid = x.fk_user";
+                $sql.= " AND u.statut = '1'";                           // Show only active users  (0 = inactive user, 1 = active user)
+                $sql.= " AND (x.statut = '2' OR x.statut = '3')";       // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+
+                $resql=$this->db->query($sql);
+                if ($resql)
+                {
+                    $num = $this->db->num_rows($resql);
+                    $i   = 0;
+            
+                    while ($i < $num)
+                    {
+                        $obj   = $this->db->fetch_object($resql);
+                        $event = array();
+
+                        if($obj->halfday == -1)
+                        {
+                            $event['fulldayevent'] = false;
+
+                            $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
+                            $timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
+                        }
+                        elseif($obj->halfday == 1)
+                        {
+                            $event['fulldayevent'] = false;
+
+                            $timestampStart = dol_stringtotime($obj->date_start." 12:00:00", 0);
+                            $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
+                        }
+                        else
+                        {
+                            $event['fulldayevent'] = true;
+
+                            $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
+                            $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
+                        }
+
+                        if(!empty($conf->global->AGENDA_EXPORT_FIX_TZ))
+                        {
+                            $timestampStart =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                            $timestampEnd   =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                        }
+
+                        $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+                        $urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;
+                        $url               = $urlwithroot.'/holiday/card.php?id='.$obj->rowid;
+
+                        $event['uid']          = 'dolibarrholiday-'.$this->db->database_name.'-'.$obj->rowid."@".$_SERVER["SERVER_NAME"];
+                        $event['author']       = dolGetFirstLastname($obj->firstname, $obj->lastname);
+                        $event['type']         = 'event';
+                        $event['category']     = "Holiday";
+                        $event['transparency'] = 'OPAQUE';
+                        $event['email']        = $obj->email;
+                        $event['created']      = $timestampStart;
+                        $event['modified']     = $timestampStart;
+                        $event['startdate']    = $timestampStart;
+                        $event['enddate']      = $timestampEnd;
+                        $event['duration']     = $timestampEnd - $timestampStart;
+                        $event['url']          = $url;
+
+                        if($obj->status == 2)
+                        {
+                            // 2 = leave wait for approval
+                            $event['summary'] = $title." - ".$obj->lastname." (wait for approval)";
+                        }
+                        else
+                        {
+                            // 3 = leave approved
+                            $event['summary'] = $title." - ".$obj->lastname;
+                        }
+
+                        $eventarray[] = $event;
+
+                        $i++;
+                    }
+                }
+            }
+
             $langs->load("agenda");
 
             // Define title and desc
