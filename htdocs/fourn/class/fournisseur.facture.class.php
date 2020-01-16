@@ -1639,7 +1639,7 @@ class FactureFournisseur extends CommonInvoice
 	        			$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 	        			if ($result > 0)
 	        			{
-	        				$pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
+	        				if (empty($pu)) $pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
 	        				$ref_supplier = $prod->ref_supplier; // Ref supplier price set by get_buyprice
 	        				// is remise percent not keyed but present for the product we add it
 	        				if ($remise_percent == 0 && $prod->remise_percent != 0)
@@ -1691,6 +1691,7 @@ class FactureFournisseur extends CommonInvoice
 	        $localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 	        // Clean vat code
+	        $reg = array();
 	        $vat_src_code = '';
 	        if (preg_match('/\((.*)\)/', $txtva, $reg))
 	        {
@@ -2247,9 +2248,10 @@ class FactureFournisseur extends CommonInvoice
      *	@param		string	$moretitle					Add more text to title tooltip
      *  @param	    int   	$notooltip					1=Disable tooltip
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param		int		$addlinktonotes				Add link to show notes
      * 	@return		string								String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
     {
         global $langs, $conf;
 
@@ -2316,6 +2318,22 @@ class FactureFournisseur extends CommonInvoice
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
         if ($withpicto != 2) $result.= ($max?dol_trunc($ref, $max):$ref);
         $result .= $linkend;
+
+        if ($addlinktonotes)
+        {
+        	$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+        	if ($txttoshow)
+        	{
+        		$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+        		$result .= ' <span class="note inline-block">';
+        		$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+        		$result .= img_picto('', 'note');
+        		$result .= '</a>';
+        		//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+        		//$result.='</a>';
+        		$result .= '</span>';
+        	}
+        }
 
         return $result;
     }

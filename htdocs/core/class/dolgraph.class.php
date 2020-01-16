@@ -898,87 +898,90 @@ class DolGraph
 			return;
 		}
 
-		$legends=array();
-		$nblot=count($this->data[0])-1;    // -1 to remove legend
+		$legends = array();
+		$nblot = 0;
+		if (is_array($this->data) && is_array($this->data[0])) {
+			$nblot = count($this->data[0]) - 1; // -1 to remove legend
+		}
 		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
-		$firstlot=0;
+		$firstlot = 0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
-		$i=$firstlot;
-		$serie=array();
+		$i = $firstlot;
+		$serie = array();
 		while ($i < $nblot)	// Loop on each serie
 		{
-			$values=array();	// Array with horizontal y values (specific values of a serie) for each abscisse x
-			$serie[$i]="var d".$i." = [];\n";
+			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x
+			$serie[$i] = "var d".$i." = [];\n";
 
 			// Fill array $values
-			$x=0;
-			foreach($this->data as $valarray)	// Loop on each x
+			$x = 0;
+			foreach ($this->data as $valarray)	// Loop on each x
 			{
 				$legends[$x] = $valarray[0];
-				$values[$x]  = (is_numeric($valarray[$i+1]) ? $valarray[$i+1] : null);
+				$values[$x]  = (is_numeric($valarray[$i + 1]) ? $valarray[$i + 1] : null);
 				$x++;
 			}
 
 			// TODO Avoid push by adding generated long array...
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
 			{
-				foreach($values as $x => $y) {
-					if (isset($y)) $serie[$i].='d'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
+				foreach ($values as $x => $y) {
+					if (isset($y)) $serie[$i] .= 'd'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
 				}
 			}
 			else
 			{
-				foreach($values as $x => $y) {
-					if (isset($y)) $serie[$i].='d'.$i.'.push(['.$x.', '.$y.']);'."\n";
+				foreach ($values as $x => $y) {
+					if (isset($y)) $serie[$i] .= 'd'.$i.'.push(['.$x.', '.$y.']);'."\n";
 				}
 			}
 
 			unset($values);
 			$i++;
 		}
-		$tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-','.'))));
+		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
 
-		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
-		if (! empty($this->title)) $this->stringtoshow.='<div class="center dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
-		if (! empty($this->shownographyet))
+		$this->stringtoshow = '<!-- Build using '.$this->_library.' -->'."\n";
+		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle'.(empty($this->cssprefix) ? '' : ' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		if (!empty($this->shownographyet))
 		{
-		    $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
-		    $this->stringtoshow.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+		    $this->stringtoshow .= '<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
+		    $this->stringtoshow .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
 		    return;
 		}
-		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).' center"></div>'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"></div>'."\n";
 
-		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
-		$this->stringtoshow.='$(function () {'."\n";
-		$i=$firstlot;
+		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
+		$this->stringtoshow .= '$(function () {'."\n";
+		$i = $firstlot;
 		if ($nblot < 0)
 		{
-			$this->stringtoshow.='<!-- No series of data -->';
+			$this->stringtoshow .= '<!-- No series of data -->';
 		}
 		else
 		{
 			while ($i < $nblot)
 			{
-				$this->stringtoshow.=$serie[$i];
+				$this->stringtoshow .= $serie[$i];
 				$i++;
 			}
 		}
-		$this->stringtoshow.="\n";
+		$this->stringtoshow .= "\n";
 
 		// Special case for Graph of type 'pie'
 		if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
 		{
-			$datacolor=array();
-			foreach($this->datacolor as $val) $datacolor[]="#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);
+			$datacolor = array();
+			foreach ($this->datacolor as $val) $datacolor[] = "#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);
 
-			$urltemp='';	// TODO Add support for url link into labels
-			$showlegend=$this->showlegend;
-			$showpointvalue=$this->showpointvalue;
-			$showpercent=$this->showpercent;
+			$urltemp = ''; // TODO Add support for url link into labels
+			$showlegend = $this->showlegend;
+			$showpointvalue = $this->showpointvalue;
+			$showpercent = $this->showpercent;
 
-			$this->stringtoshow.= '
+			$this->stringtoshow .= '
 			function plotWithOptions_'.$tag.'() {
 			$.plot($("#placeholder_'.$tag.'"), d0,
 			{
@@ -1124,7 +1127,20 @@ class DolGraph
 		$this->stringtoshow .= '</script>'."\n";
 	}
 
-
+	/**
+	 * Output HTML string to total value
+	 *
+	 * @return	string							HTML string to total value
+	 */
+    public function total()
+	{
+		$value = 0;
+		foreach($this->data as $valarray)	// Loop on each x
+			{
+			$value += $valarray[1];
+		}
+		return $value;
+	}
 
 	/**
 	 * Output HTML string to show graph

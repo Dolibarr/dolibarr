@@ -127,7 +127,7 @@ if (!function_exists("imagecreate"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
-	// $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
@@ -140,7 +140,7 @@ if (!function_exists("curl_init"))
 {
     $langs->load("errors");
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
-    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+    // $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
@@ -163,7 +163,7 @@ if (!function_exists("utf8_encode"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
-	// $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
@@ -178,7 +178,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	{
 	    $langs->load("errors");
 	    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
-	    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	    // $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	}
 	else
 	{
@@ -186,6 +186,16 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	}
 }
 
+if (!class_exists('ZipArchive'))
+{
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+}
+else
+{
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "ZIP")."<br>\n";
+}
 
 // Check memory
 $memrequiredorig = '64M';

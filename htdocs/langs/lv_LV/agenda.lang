@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=BOM nav apstiprināts
 BOM_CLOSEInDolibarr=BOM ir atspējots
 BOM_REOPENInDolibarr=BOM tiek atvērts no jauna
 BOM_DELETEInDolibarr=BOM ir izdzēsts
-MO_VALIDATEInDolibarr=MO apstiprināta
-MO_PRODUCEDInDolibarr=MO ražots
-MO_DELETEInDolibarr=MO ir izdzēsts
+MRP_MO_VALIDATEInDolibarr=MO apstiprināta
+MRP_MO_PRODUCEDInDolibarr=MO ražots
+MRP_MO_DELETEInDolibarr=MO ir izdzēsts
 ##### End agenda events #####
 AgendaModelModule=Dokumentu veidnes notikumam
 DateActionStart=Sākuma datums

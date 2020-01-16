@@ -1772,7 +1772,7 @@ else
 			{
 				print '<tr><td>'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
-				print $form->showCategories($object->id, 'user', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
 			}
 
@@ -2581,7 +2581,7 @@ else
 			if ($conf->accounting->enabled)
 			{
 				print "<tr>";
-				print '<td>'.$langs->trans("AccountancyCode").'</td>';
+				print '<td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
 				if ($caneditfield)
 				{
@@ -2633,7 +2633,7 @@ else
 				{
 					print $form->multiselectarray('usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				} else {
-					print $form->showCategories($object->id, 'user', 1);
+					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				}
 				print "</td></tr>";
 			}
@@ -2647,7 +2647,7 @@ else
 			// Company / Contact
 			if (!empty($conf->societe->enabled))
 			{
-				print '<tr><td width="25%">'.$langs->trans("LinkToCompanyContact").'</td>';
+				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
 				if ($object->socid > 0)
 				{
@@ -2674,7 +2674,7 @@ else
 			if (!empty($conf->adherent->enabled))
 			{
 				$langs->load("members");
-				print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
 				if ($object->fk_member)
 				{

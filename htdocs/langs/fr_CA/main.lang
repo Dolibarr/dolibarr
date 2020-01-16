@@ -143,3 +143,4 @@ SearchIntoCustomerShipments=Envois clients
 SearchIntoExpenseReports=Note de frais
 AssignedTo=Affecté à
 ToProcess=Procéder
+ContactDefault_order_supplier=Supplier Order

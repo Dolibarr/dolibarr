@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Banco | Dinheiro - Financeiro
+MenuBankCash=Banco | Contas - Financeiro
 BankAccounts=Contas bancárias
 BankAccountsAndGateways=Contas Bancárias | Entradas
 ShowAccount=Mostrar conta

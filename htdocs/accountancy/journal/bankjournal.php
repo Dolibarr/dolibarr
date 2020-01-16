@@ -1155,9 +1155,9 @@ if (empty($action) || $action == 'view') {
 					}
 					else print $accounttoshow;
 					print "</td>";
+
 					// Subledger account
 					print "<td>";
-
 					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various')))	// Type of payment with subledger
 					{
 						$accounttoshowsubledger = length_accounta($k);
@@ -1171,7 +1171,12 @@ if (empty($action) || $action == 'view') {
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (! empty($tabcompany[$key]['code_compta']))
 								{
-									print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									if (in_array($tabtype[$key], array('payment_various'))) {
+										// For such case, if subledger is not defined, we won't use subledger accounts.
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+									} else {
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									}
 								}
 								else
 								{

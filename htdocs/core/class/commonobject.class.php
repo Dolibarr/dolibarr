@@ -3522,6 +3522,7 @@ abstract class CommonObject
 		if ($elementTable == 'user') $fieldstatus = "statut";
 		if ($elementTable == 'expensereport') $fieldstatus = "fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus = "status";
+		if (is_array($this->fields) && array_key_exists('status', $this->fields)) $fieldstatus = 'status';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql .= " SET ".$fieldstatus." = ".$status;
@@ -3572,7 +3573,7 @@ abstract class CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::setStatus ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -5562,16 +5563,17 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   		$val	       Array of properties for field to show
+	 * @param  array   		$val	       Array of properties for field to show (used only if ->fields not defined)
 	 * @param  string  		$key           Key of attribute
 	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  int			$nonewbutton   Force to not show the new button on field that are links to object
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0)
+	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
 		global $conf, $langs, $form;
 
@@ -5581,7 +5583,9 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$val = $this->fields[$key];
+		if (! empty($this->fields)) {
+			$val = $this->fields[$key];
+		}
 
 		$out = '';
         $type = '';
@@ -6124,7 +6128,7 @@ abstract class CommonObject
 
 			if (!empty($param_list_array[2]))		// If we set to add a create button
 			{
-				if (!GETPOSTISSET('backtopage') && empty($val['disabled']))	// To avoid to open several infinitely the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
+				if (!GETPOSTISSET('backtopage') && empty($val['disabled']) && empty($nonewbutton))	// To avoid to open several times the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
 				{
 		   			list($class, $classfile) = explode(':', $param_list[0]);
 		   			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
@@ -7383,7 +7387,7 @@ abstract class CommonObject
 	 * @param   stdClass    $obj    Contain data of object from database
      * @return void
 	 */
-	protected function setVarsFromFetchObj(&$obj)
+	public function setVarsFromFetchObj(&$obj)
 	{
 		foreach ($this->fields as $field => $info)
 		{
@@ -7494,7 +7498,7 @@ abstract class CommonObject
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
-		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref,we sanitize data
+		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
 		$values = array();
@@ -7729,6 +7733,7 @@ abstract class CommonObject
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) $fieldvalues['date_modification'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
+		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
 		$values = array();

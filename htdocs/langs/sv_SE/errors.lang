@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Search criteria too small.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Ett lösenord har ställts för den här medlemmen. Men inget användarkonto skapades. Så det här lösenordet är lagrat men kan inte användas för att logga in till Dolibarr. Den kan användas av en extern modul / gränssnitt men om du inte behöver definiera någon inloggning eller ett lösenord för en medlem kan du inaktivera alternativet "Hantera en inloggning för varje medlem" från inställningen av medlemsmodulen. Om du behöver hantera en inloggning men inte behöver något lösenord, kan du hålla fältet tomt för att undvika denna varning. Obs! Email kan också användas som inloggning om medlemmen är länkad till en användare.

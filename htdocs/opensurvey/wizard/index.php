@@ -2,6 +2,7 @@
 /* Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014	Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,7 @@ llxHeader('', $langs->trans("Survey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 print load_fiche_titre($langs->trans("CreatePoll"));
 
 print '<form name="formulaire" action="create_survey.php" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<div class="center">';
 print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>';
 print '<div class="corps">';

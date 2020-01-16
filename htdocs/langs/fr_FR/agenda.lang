@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=Nomenclature (BOM) dévalidée
 BOM_CLOSEInDolibarr=Nomenclature (BOM) désactivée
 BOM_REOPENInDolibarr=Nomenclature (BOM) ré-ouverte
 BOM_DELETEInDolibarr=Nomenclature (BOM) supprimée
-MO_VALIDATEInDolibarr=OF validé
-MO_PRODUCEDInDolibarr=OF réalisé
-MO_DELETEInDolibarr=OF supprimé
+MRP_MO_VALIDATEInDolibarr=OF validé
+MRP_MO_PRODUCEDInDolibarr=OF réalisé
+MRP_MO_DELETEInDolibarr=OF supprimé
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début

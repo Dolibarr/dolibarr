@@ -57,6 +57,7 @@ NatureOfThirdParty=Naturaleza del tercero
 NatureOfContact=Naturaleza del contacto
 Address=Dirección
 State=Provincia
+StateCode=Código de estado/provincia
 StateShort=Estado
 Region=Región
 Region-State=Región - Estado

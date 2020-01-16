@@ -62,6 +62,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
@@ -117,8 +118,6 @@ $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->enti
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters = array();
@@ -137,6 +136,10 @@ if (empty($reshook))
     		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     	}
     }
+    if ($cancel && !empty($backtopageforcancel)) {
+    	$backtopage = $backtopageforcancel;
+    }
+
     $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
     // Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -204,7 +207,8 @@ if ($action == 'create')
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
 	dol_fiche_head(array(), '');
 
@@ -306,8 +310,9 @@ if (($id || $ref) && $action == 'edit')
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
 	dol_fiche_head();
 
@@ -517,7 +522,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if (!empty($object->lines))
     		{
     			$i = 0;
-    			foreach($object->lines as $line) {
+    			foreach ($object->lines as $line) {
     				if ($line->role == 'toconsume') {
     					if ($i) print ', ';
     					$tmpproduct = new Product($db);
@@ -536,7 +541,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if (!empty($object->lines))
     		{
     			$i = 0;
-    			foreach($object->lines as $line) {
+    			foreach ($object->lines as $line) {
     				if ($line->role == 'toproduce') {
     					if ($i) print ', ';
     					$tmpproduct = new Product($db);
@@ -597,13 +602,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
 	    		if ($permissiontoadd)
 	    		{
-	    		    if (is_array($object->lines) && count($object->lines) > 0)
+	    			if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 	    		    {
 	    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
 	    		    }
 	    		    else
 	    		    {
-	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    		    	$langs->load("errors");
+	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    		    }
 	    		}
     		}
@@ -617,7 +623,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		// Cancel
     		if ($permissiontoadd)
     		{
-    			if ($object->status == $object::STATUS_VALIDATED)
+    			if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS)
     			{
     				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
     			}

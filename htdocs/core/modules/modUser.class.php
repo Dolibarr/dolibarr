@@ -233,7 +233,7 @@ class modUser extends DolibarrModules
 			'u.fk_socpeople'=>"IdContact",'u.fk_soc'=>"IdCompany",'u.fk_member'=>"MemberId"
 		);
 		$this->export_TypeFields_array[$r]=array(
-			'u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.employee'=>'Boolean','u.job'=>'Text',
+			'u.rowid'=>'Numeric', 'u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.employee'=>'Boolean','u.job'=>'Text',
 		    'u.accountancy_code'=>'Text',
 		    'u.address'=>"Text",'u.zip'=>"Text",'u.town'=>"Text",
 		    'u.office_phone'=>'Text','u.user_mobile'=>'Text','u.office_fax'=>'Text',
