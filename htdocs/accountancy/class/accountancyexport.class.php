@@ -704,9 +704,9 @@ class AccountancyExport
 		print $end_line;
 
 		foreach ($objectLines as $line) {
-			$date_creation = dol_print_date($line->date_creation, '%d%m%Y');
-			$date_doc = dol_print_date($line->doc_date, '%d%m%Y');
-			$date_valid = dol_print_date($line->date_validated, '%d%m%Y');
+			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+			$date_doc = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_valid = dol_print_date($line->date_validated, '%Y%m%d');
 
 			// FEC:JournalCode
 			print $line->code_journal.$separator;

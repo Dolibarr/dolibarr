@@ -28,14 +28,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("loan","compta","banks","bills"));
+$langs->loadLangs(array("loan", "compta", "banks", "bills"));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'loan', '', '', '');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -124,14 +124,14 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 else
 {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
-	
+
 	$resql = $db->query($sql);
 	if (!$resql)
 	{
 		dol_print_error($db);
 		exit;
 	}
-	
+
 	$num = $db->num_rows($resql);
 }
 
@@ -144,18 +144,18 @@ if ($resql)
 {
 	$i = 0;
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref) $param.="&search_ref=".urlencode($search_ref);
-	if ($search_label) $param.="&search_label=".urlencode($search_label);
-	if ($search_amount) $param.="&search_amount=".urlencode($search_amount);
-	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($search_ref) $param .= "&search_ref=".urlencode($search_ref);
+	if ($search_label) $param .= "&search_label=".urlencode($search_label);
+	if ($search_amount) $param .= "&search_amount=".urlencode($search_amount);
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->loan->write)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
 	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -185,10 +185,10 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="right liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
-	print '</tr>';
 
 	// Fields title label
 	// --------------------------------------------------------------------
@@ -199,7 +199,9 @@ if ($resql)
 	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre('');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print "</tr>\n";
+
 	print "</tr>\n";
 
 	// Loop on record
@@ -210,7 +212,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		if (empty($obj)) break; // Should not happen
-		
+
 		$loan_static->id = $obj->rowid;
 		$loan_static->ref = $obj->rowid;
 		$loan_static->label = $obj->label;
@@ -252,12 +254,12 @@ if ($resql)
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	print '</table>'."\n";
 	print '</div>'."\n";
-	
+
 	print '</form>'."\n";
-	
+
 	$db->free($resql);
 }
 else

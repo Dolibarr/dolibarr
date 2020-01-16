@@ -59,7 +59,13 @@ elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCate
 elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
 elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
 elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
-else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
+elseif ($type == Categorie::TYPE_ACTIONCOMM) {
+    $title = $langs->trans("ActionCommCategoriesArea");
+    $typetext = 'actioncomm';
+} else {
+    $title = $langs->trans("CategoriesArea");
+    $typetext = 'unknown';
+}
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');

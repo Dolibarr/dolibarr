@@ -1,5 +1,6 @@
--- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+-- ============================================================================
+-- Copyright (C) 2016       Charlie Benke       <charlie@patas-monkey.com>
+-- Copyright (C) 2016-2019  Frédéric France     <frederic.france@netlogic.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- Table to link actioncomm tag/categories with actioncomms
+-- ===========================================================================
 
-
-ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, entity, title);
+CREATE TABLE llx_categorie_actioncomm
+(
+  fk_categorie integer NOT NULL,
+  fk_actioncomm integer NOT NULL,
+  import_key varchar(14)
+) ENGINE=innodb;
