@@ -173,11 +173,11 @@ print '<tr><td>Zip support</td><td>';
 
 if (!class_exists('ZipArchive'))
 {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportZip");
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "Zip");
 }
 else
 {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportZip");
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "Zip");
 }
 
 print '</td></tr>';
