@@ -764,7 +764,7 @@ if($conf->global->AGENDA_SHOW_HOLIDAYS)
     $sql.= " WHERE u.rowid = x.fk_user";
     $sql.= " AND u.statut = '1'";                           // Show only active users  (0 = inactive user, 1 = active user)
     $sql.= " AND (x.statut = '2' OR x.statut = '3')";       // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
-    
+
     if($action == 'show_day')
     {
         // Request only leaves for the current selected day
@@ -810,7 +810,7 @@ if($conf->global->AGENDA_SHOW_HOLIDAYS)
             }
             elseif($obj->status == 2)
             {
-                // Show TO-DO symbol for leave with state "leave wait for approval" 
+                // Show TO-DO symbol for leave with state "leave wait for approval"
                 $event->percentage = 0;
             }
 
@@ -1843,7 +1843,7 @@ function sort_events_by_date($a, $b)
     {
         return 1;
     }
-	
+
     // datep => Event start time
     // datef => Event end time
 
