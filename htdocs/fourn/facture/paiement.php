@@ -973,7 +973,7 @@ if (empty($action) || $action == 'list')
         {
             $objp = $db->fetch_object($resql);
 
-            print '<tr class="oddeven'.(($invoice->id == $objp->fk_facture) ? ' highlight' : '').'">';
+            print '<tr class="oddeven">';
 
             // Ref payment
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
