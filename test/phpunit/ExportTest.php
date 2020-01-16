@@ -235,6 +235,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $model='csv';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($expectedresult, $result,'Error in CSV export');
@@ -242,6 +243,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $model='tsv';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error in TSV export');
@@ -249,6 +251,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $model='excel2007new';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error in Excel2007new export');
