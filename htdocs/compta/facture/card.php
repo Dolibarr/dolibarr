@@ -103,7 +103,9 @@ $extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	if ($action != 'add') {
+		$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	}
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -133,6 +135,7 @@ $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
+
 
 /*
  * Actions
@@ -941,11 +944,13 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+				$action = 'create';
 			}
 
 			if (!($_POST['fac_replacement'] > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
+				$action = 'create';
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
@@ -992,6 +997,7 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), null, 'errors');
+				$action = 'create';
 			}
 
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -999,6 +1005,7 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+				$action = 'create';
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
@@ -1181,6 +1188,7 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+				$action = 'create';
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
@@ -1223,6 +1231,7 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+				$action = 'create';
 			}
 
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -1230,6 +1239,7 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+				$action = 'create';
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
@@ -1642,6 +1652,7 @@ if (empty($reshook))
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation"));
                 setEventMessages($mesg, null, 'errors');
+                $action = 'create';
 			}
 
 			if (!$error) {
@@ -2123,7 +2134,7 @@ if (empty($reshook))
 		if (!GETPOST('qty')) $special_code = 3;
 
 		$line = new FactureLigne($db);
-		$line->fetch(GETPOST('lineid'));
+		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0)
@@ -2283,17 +2294,17 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'updatealllines' && $usercancreate && $_POST['all_percent'] == $langs->trans('Modifier'))
+	elseif ($action == 'updatealllines' && $usercancreate && $_POST['all_percent'] == $langs->trans('Modifier'))	// Update all lines of situation invoice
 	{
 		if (!$object->fetch($id) > 0) dol_print_error($db);
-		if (!is_null(GETPOST('all_progress')) && GETPOST('all_progress') != "")
+		if (GETPOST('all_progress') != "")
 		{
             $all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line)
 			{
 				$percent = $line->get_prev_progress($object->id);
 				if (floatval($all_progress) < floatval($percent)) {
-                    $mesg = $langs->trans("Line").' '.$i.' '.$line->ref.' : '.$langs->trans("CantBeLessThanMinPercent");
+                    $mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
                     setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else
@@ -2303,7 +2314,7 @@ if (empty($reshook))
 	}
 
 	elseif ($action == 'updateline' && $usercancreate && $_POST['cancel'] == $langs->trans('Cancel')) {
-		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
 		exit();
 	}
 
@@ -2939,7 +2950,7 @@ if ($action == 'create')
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
-				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
+				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
 				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">'.$langs->trans('Value').':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit', 'int').'"/>';
@@ -2992,14 +3003,16 @@ if ($action == 'create')
 				exit();
 			}
 			$options = "";
-			foreach ($facids as $facparam)
-			{
-				$options .= '<option value="'.$facparam ['id'].'"';
-				if ($facparam ['id'] == $_POST['fac_replacement'])
-					$options .= ' selected';
-				$options .= '>'.$facparam ['ref'];
-				$options .= ' ('.$facturestatic->LibStatut(0, $facparam ['status']).')';
-				$options .= '</option>';
+			if (is_array($facids)) {
+				foreach ($facids as $facparam)
+				{
+					$options .= '<option value="'.$facparam ['id'].'"';
+					if ($facparam ['id'] == $_POST['fac_replacement'])
+						$options .= ' selected';
+					$options .= '>'.$facparam ['ref'];
+					$options .= ' ('.$facturestatic->LibStatut(0, $facparam ['status']).')';
+					$options .= '</option>';
+				}
 			}
 
 			print '<!-- replacement line -->';
@@ -4240,7 +4253,7 @@ elseif ($id > 0 || !empty($ref))
         }
         else
         {
-            print $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
+            $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
             if (!$displayWarranty) {
                 print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
             }
@@ -4557,7 +4570,7 @@ elseif ($id > 0 || !empty($ref))
 	print '</tr>';
 
 	// Payments already done (from payment on this invoice)
-	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
+	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
 	$sql .= ' c.code as payment_code, c.libelle as payment_label,';
 	$sql .= ' pf.amount,';
 	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
@@ -4583,7 +4596,7 @@ elseif ($id > 0 || !empty($ref))
 				$paymentstatic->id = $objp->rowid;
 				$paymentstatic->datepaye = $db->jdate($objp->dp);
 				$paymentstatic->ref = $objp->ref;
-				$paymentstatic->num_paiement = $objp->num_paiement;
+				$paymentstatic->num_payment = $objp->num_payment;
 				$paymentstatic->payment_code = $objp->payment_code;
 
 				print '<tr class="oddeven"><td>';
@@ -4591,7 +4604,7 @@ elseif ($id > 0 || !empty($ref))
 				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour').'</td>';
 				$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
-				print '<td>'.$label.' '.$objp->num_paiement.'</td>';
+				print '<td>'.$label.' '.$objp->num_payment.'</td>';
 				if (!empty($conf->banque->enabled))
 				{
 					$bankaccountstatic->id = $objp->baid;
@@ -5082,21 +5095,6 @@ elseif ($id > 0 || !empty($ref))
 				}
 			}
 
-			// Clone
-			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate)
-			{
-				print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
-			}
-
-			// Clone as predefined / Create template
-			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $usercancreate)
-			{
-				if (!$objectidnext && count($object->lines) > 0)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
-				}
-			}
-
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $usercancreate)
 			{
@@ -5121,6 +5119,21 @@ elseif ($id > 0 || !empty($ref))
 			    } else {
 			        print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateCreditNote").'</span>';
 			    }
+			}
+
+			// Clone
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate)
+			{
+				print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
+			}
+
+			// Clone as predefined / Create template
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $usercancreate)
+			{
+				if (!$objectidnext && count($object->lines) > 0)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+				}
 			}
 
 			// Remove situation from cycle

@@ -637,7 +637,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
 					print '<td class="nowraponall">';
                     print $invoice->getNomUrl(1, '');
@@ -715,7 +715,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Price
-                    print '<td class="right" '.(($invoice->id == $facid) ? ' style="font-weight: bold" ' : '').'>'.price($sign * $objp->total_ttc).'</td>';
+                    print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
 
                     // Received or paid back
                     print '<td class="right">'.price($sign * $paiement);

@@ -1766,6 +1766,7 @@ GoOntoUserCardToAddMore=Go to the tab "Notifications" of a user to add or remove
 GoOntoContactCardToAddMore=Go to the tab "Notifications" of a third party to add or remove notifications for contacts/addresses
 Threshold=Threshold
 BackupDumpWizard=Wizard to build the backup file
+BackupZipWizard=Wizard to archive the documents
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is a manual process only a privileged user may perform.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
