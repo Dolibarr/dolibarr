@@ -123,3 +123,5 @@ ALTER TABLE llx_accounting_account ADD COLUMN labelshort varchar(255) DEFAULT NU
 
 ALTER TABLE llx_subscription ADD COLUMN fk_user_creat   integer DEFAULT NULL;
 ALTER TABLE llx_subscription ADD COLUMN fk_user_valid   integer DEFAULT NULL;
+
+UPDATE llx_c_forme_juridique set libelle = 'SRL - Société à responsabilité limitée' WHERE code = '201';
