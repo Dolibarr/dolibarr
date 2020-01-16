@@ -2542,6 +2542,11 @@ if ($action == 'create' && $usercancreate)
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
+				// Reopen a closed order
+				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
+				}
+
 				// Send
 				if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 					if ($usercansend) {
@@ -2617,11 +2622,6 @@ if ($action == 'create' && $usercancreate)
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Shipment"))).'">'.$langs->trans('CreateShipment').'</a>';
 						}
 					}
-				}
-
-				// Reopen a closed order
-				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
 				// Set to shipped
