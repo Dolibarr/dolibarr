@@ -436,14 +436,14 @@ class WebsitePage extends CommonObject
 		$object = new self($this->db);
 
 		// Clean parameters
-		if (empty($newref) && ! empty($newtitle)) {
-			$newref=strtolower(dol_sanitizeFileName(preg_replace('/\s+/', '-', $newtitle), '-', 1));
+		if (empty($newref) && !empty($newtitle)) {
+			$newref = strtolower(dol_sanitizeFileName(preg_replace('/\s+/', '-', $newtitle), '-', 1));
 		}
 
 		// Check parameters
 		if (empty($newref)) {
 			$langs->load("errors");
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE"));
 			return -1;
 		}
 

@@ -4515,7 +4515,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 /**
  *	Function that return a number with universal decimal format (decimal separator is '.') from an amount typed by a user.
- *	Function to use on each input amount before any numeric test or database insert
+ *	Function to use on each input amount before any numeric test or database insert. A better name for this function
+ *  should be text2num().
  *
  *	@param	float	$amount			Amount to convert/clean
  *	@param	string	$rounding		''=No rounding
@@ -6039,7 +6040,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : '');
+			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = $outputlangs->transnoentities("AvailabilityType".$object->availability_code)!=('AvailabilityType'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityType".$object->availability_code):$outputlangs->convToOutputCharset(isset($object->availability)?$object->availability:'');
 
 			$birthday = dol_print_date($object->birth, 'day');
 

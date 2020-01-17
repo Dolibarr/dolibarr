@@ -135,7 +135,13 @@ else
 			echo $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
-			echo $text.' '.dol_htmlentitiesbr($line->description);
+			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
+				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);
+				echo $text.' '.dol_htmlentitiesbr($newdesc);
+			}
+			else {
+				echo $text.' '.dol_htmlentitiesbr($line->description);
+			}
 		}
 	}
 
