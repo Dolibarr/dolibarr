@@ -3008,7 +3008,6 @@ class Form
 	 *  @param	    int		$productid       	Id of product
 	 *  @param      string	$htmlname        	Name of HTML field
 	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
-     * 
 	 *  @return	    string
 	 */
     public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
@@ -5911,6 +5910,7 @@ class Form
 		//var_dump($objecttmp->filter);
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
+		if ($prefixforautocompletemode == 'product') $prefixforautocompletemode='produit';
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);

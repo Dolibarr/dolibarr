@@ -509,7 +509,7 @@ if ($id > 0 || !empty($ref))
 			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
@@ -550,7 +550,7 @@ if ($id > 0 || !empty($ref))
 			print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Progress declared
 			print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';

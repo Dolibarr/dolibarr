@@ -576,14 +576,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
             print nl2br($projectstatic->description);
             print '</td></tr>';
 
-            // Bill time
-            if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-            {
-	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	            print yn($projectstatic->usage_bill_time);
-	            print '</td></tr>';
-            }
-
             // Categories
             if ($conf->categorie->enabled) {
                 print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';

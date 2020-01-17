@@ -2082,9 +2082,10 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
+ * @param	string	$rootdirinzip	Add a root dir level in zip file
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '')
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '')
 {
 	$foundhandler=0;
 
@@ -2145,7 +2146,8 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					{
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
-						$relativePath = substr($filePath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+
 						if (empty($excludefiles) || ! preg_match($excludefiles, $filePath))
 						{
 							// Add current file to archive
