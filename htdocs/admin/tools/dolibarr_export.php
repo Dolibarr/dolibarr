@@ -413,11 +413,6 @@ print '<br>';
 // Define compressions array
 $compression=array();
 if (in_array($type, array('mysql', 'mysqli'))) {
-	$compression['none'] = array(
-		'function' => '',
-		'id' => 'radio_compression_none',
-		'label' => $langs->trans("None")
-	);
 	$compression['gz'] = array(
 		'function' => 'gzopen',
 		'id' => 'radio_compression_gzip',
@@ -434,13 +429,18 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		'id' => 'radio_compression_bzip',
 		'label' => $langs->trans("Bzip2")
 	);
+    $compression['none'] = array(
+    	'function' => '',
+    	'id' => 'radio_compression_none',
+    	'label' => $langs->trans("None")
+    );
 }
 else
 {
 	$compression['none'] = array(
 		'function' => '',
 		'id' => 'radio_compression_none',
-		'label' => $langs->trans("Default")
+		'label' => $langs->trans("None")
 	);
 	$compression['gz'] = array(
 		'function' => 'gzopen',
@@ -455,11 +455,14 @@ print "\n";
 
 print $langs->trans("Compression").': &nbsp; ';
 
+$i = 0;
 foreach($compression as $key => $val)
 {
 	if (! $val['function'] || function_exists($val['function'])) {
 		// Enabled export format
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked>';
+		$checked = '';
+		if ($key == 'gz') $checked = ' checked';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
 	else
@@ -467,9 +470,10 @@ foreach($compression as $key => $val)
 		// Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-		print ' ('.$langs->trans("NotAvailable").')';
+		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
 	}
 	print ' &nbsp; &nbsp; ';
+	$i++;
 }
 
 print '</div>';
@@ -542,6 +546,7 @@ print "<!-- Dump of a server -->\n";
 print '<form method="post" action="export_files.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
+print '<input type="hidden" name="page_y" value="" />';
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';
 
@@ -561,28 +566,33 @@ print '<br>';
 
 
 // Show compression choices
+// Example: With gz choice, you can compress in 5mn, a file of 2GB directory (after compression) with 10 Mb memory.
 print '<div class="formelementrow">';
 print "\n";
 
 print $langs->trans("Compression").': &nbsp; ';
 $filecompression = $compression;
-array_shift($filecompression);
+unset($filecompression['none']);
 $filecompression['zip']= array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));
 
+$i = 0;
 foreach($filecompression as $key => $val)
 {
     if (! $val['function'] || function_exists($val['function']))	// Enabled export format
     {
-        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked>';
+    	$checked = '';
+    	if ($key == 'gz') $checked = ' checked';
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
     }
     else	// Disabled export format
     {
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-        print ' ('.$langs->trans("NotAvailable").')';
+        print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
     }
     print ' &nbsp; &nbsp; ';
+    $i++;
 }
 
 print '</div>';
@@ -600,7 +610,7 @@ print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px;
 print '<div class="ficheaddleft">';
 
 $filearray=dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC), 1);
-$result=$formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
+$result=$formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("ArchiveFiles"));
 print '<br>';
 
 print '</div>';
