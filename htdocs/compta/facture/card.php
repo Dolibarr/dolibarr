@@ -3968,7 +3968,7 @@ elseif ($id > 0 || !empty($ref))
 		if ($result > 0) {
 			print '. <span class="opacitymediumbycolor">'.$langs->trans(
 				"GeneratedFromTemplate",
-				'<a href="'.DOL_MAIN_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$tmptemplate->id.'">'.$tmptemplate->ref.'</a>'
+				'<a href="'.DOL_MAIN_URL_ROOT.'/compta/facture/card-rec.php?facid='.$tmptemplate->id.'">'.$tmptemplate->ref.'</a>'
 			).'</span>';
 		}
 	}
