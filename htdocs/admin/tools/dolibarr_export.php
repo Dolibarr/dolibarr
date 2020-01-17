@@ -560,7 +560,7 @@ print load_fiche_titre($title?$title:$langs->trans("BackupZipWizard"));
 print '<label for="zipfilename_template">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix='documents';
 $ext='zip';
-$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
 print '<input type="text" name="zipfilename_template" style="width: 90%" id="zipfilename_template" value="'.$file.'" /> <br>';
 print '<br>';
 

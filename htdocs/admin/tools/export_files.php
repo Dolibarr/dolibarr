@@ -33,10 +33,11 @@ $langs->load("admin");
 $action=GETPOST('action', 'alpha');
 $what=GETPOST('what', 'alpha');
 $export_type=GETPOST('export_type', 'alpha');
-$file=GETPOST('zipfilename_template', 'alpha');
+$file=trim(GETPOST('zipfilename_template', 'alpha'));
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);
+$file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
@@ -112,6 +113,7 @@ $utils = new Utils($db);
 
 if ($compression == 'zip')
 {
+	$file .= '.zip';
     $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.log|\/temp\/|documents\/admin\/documents\/)/');
     if ($ret < 0)
     {
@@ -131,7 +133,6 @@ elseif (in_array($compression, array('gz', 'bz')))
 
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out';	// File used with popen method
 
-	$file = substr($file, 0, strrpos($file, '.'));
     $file .= '.tar';
     // We also exclude '/temp/' dir and 'documents/admin/documents'
     $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude='documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
