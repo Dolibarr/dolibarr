@@ -192,13 +192,15 @@ class StockMovements extends DolibarrApi
             if ($field == 'movementcode') $movementcode = $value;
             if ($field == 'movementlabel') $movementlabel = $value;
             if ($field == 'price') $price = $value;
+            if ($field == 'dlc') $dlc = $value;
+            if ($field == 'dluo') $dluo = $value;
         }
 
         // Type increase or decrease
         if ($qty >= 0) $type = 3;
         else $type = 2;
 
-        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', '', '', $lot) <= 0) {
+        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $dlc, $dluo, $lot) <= 0) {
             throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->error);
         }
 
