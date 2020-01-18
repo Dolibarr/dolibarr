@@ -217,12 +217,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
-	$search_date_start='';
-	$search_date_end='';
-	$search_dateend_start='';
-	$search_dateend_end='';
-	$search_datedelivery_start='';
-	$search_datedelivery_end='';
+	$search_date_start = '';
+	$search_date_end = '';
+	$search_dateend_start = '';
+	$search_dateend_end = '';
+	$search_datedelivery_start = '';
+	$search_datedelivery_end = '';
 	$search_availability = '';
 	$viewstatut = '';
 	$object_statut = '';
@@ -338,13 +338,13 @@ if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql .= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-if ($search_date_start)             $sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
-if ($search_date_end)               $sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
-if ($search_dateend_start)      	$sql .= " AND p.fin_validite >= '" . $db->idate($search_dateend_start) . "'";
-if ($search_dateend_end)            $sql .= " AND p.fin_validite <= '" . $db->idate($search_dateend_end) . "'";
-if ($search_datedelivery_start)     $sql .= " AND p.date_livraison >= '" . $db->idate($search_datedelivery_start) . "'";
-if ($search_datedelivery_end)       $sql .= " AND p.date_livraison <= '" . $db->idate($search_datedelivery_end) . "'";
-if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
+if ($search_date_start)             $sql .= " AND p.datep >= '".$db->idate($search_date_start)."'";
+if ($search_date_end)               $sql .= " AND p.datep <= '".$db->idate($search_date_end)."'";
+if ($search_dateend_start)      	$sql .= " AND p.fin_validite >= '".$db->idate($search_dateend_start)."'";
+if ($search_dateend_end)            $sql .= " AND p.fin_validite <= '".$db->idate($search_dateend_end)."'";
+if ($search_datedelivery_start)     $sql .= " AND p.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
+if ($search_datedelivery_end)       $sql .= " AND p.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
+if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_user > 0)
 {
 	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$db->escape($search_user);
@@ -599,12 +599,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -613,12 +613,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_dateend_start?$search_dateend_start:-1, 'search_dateend_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_dateend_end?$search_dateend_end:-1, 'search_dateend_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -627,12 +627,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_datedelivery_start?$search_datedelivery_start:-1, 'search_datedelivery_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_datedelivery_end?$search_datedelivery_end:-1, 'search_datedelivery_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
