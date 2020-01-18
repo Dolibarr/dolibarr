@@ -5701,14 +5701,19 @@ function dol_htmlcleanlastbr($stringtodecode)
 /**
  * Replace html_entity_decode functions to manage errors
  *
- * @param   string	$a		Operand a
- * @param   string	$b		Operand b (ENT_QUOTES=convert simple and double quotes)
- * @param   string	$c		Operand c
- * @return  string			String decoded
+ * @param   string	$a					Operand a
+ * @param   string	$b					Operand b (ENT_QUOTES=convert simple and double quotes)
+ * @param   string	$c					Operand c
+ * @param	string	$keepsomeentities	Entities but &amp;, <, >, " are not converted.
+ * @return  string						String decoded
  */
-function dol_html_entity_decode($a, $b, $c = 'UTF-8')
+function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
 {
-	return html_entity_decode($a, $b, $c);
+	$newstring = $a;
+	if ($keepsomeentities) $newstring = strtr($newstring, array('&amp;'=>'__andamp__', '&lt;'=>'__andlt__', '&gt;'=>'__andgt__', '"'=>'__dquot__'));
+	$newstring = html_entity_decode($newstring, $b, $c);
+	if ($keepsomeentities) $newstring = strtr($newstring, array('__andamp__'=>'&amp;', '__andlt__'=>'&lt;', '__andgt__'=>'&gt;', '__dquot__'=>'"'));
+	return $newstring;
 }
 
 /**
