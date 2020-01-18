@@ -234,7 +234,7 @@ if ($result)
 		// Subledger account
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, array (), 1, 1, 'maxwidth200');
+		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
 		print '</div>';
 		print '</td>';
 	}
