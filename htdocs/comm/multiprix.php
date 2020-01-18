@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/comm/multiprix.php
  *	\ingroup    societe
- *	\brief      Onglet choix du niveau de prix
+ *	\brief      Tab to set the price level of a thirdparty
  */
 
 require '../main.inc.php';
@@ -64,20 +64,11 @@ $userstatic = new User($db);
 
 if ($_socid > 0)
 {
-	// On recupere les donnees societes par l'objet
+	// We load data of thirdparty
 	$objsoc = new Societe($db);
 	$objsoc->id = $_socid;
 	$objsoc->fetch($_socid, $to);
 
-	if ($errmesg)
-	{
-		print '<div class="error">'.$errmesg.'</div><br>';
-	}
-
-
-	/*
-	 * Affichage onglets
-	 */
 
 	$head = societe_prepare_head($objsoc);
 
@@ -91,7 +82,7 @@ if ($_socid > 0)
 
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefieldcreate">';
 	print $langs->trans("PriceLevel").'</td><td>'.$objsoc->price_level."</td></tr>";

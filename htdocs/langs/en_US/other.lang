@@ -267,7 +267,7 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Title
 WEBSITE_DESCRIPTION=Description
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Keywords
 LinesToImport=Lines to import
 

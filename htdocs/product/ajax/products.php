@@ -59,8 +59,9 @@ dol_syslog(join(',', $_GET));
 
 if (!empty($action) && $action == 'fetch' && !empty($id))
 {
-	// When action='fetch', id must be the product id.
+	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$outjson = array();
 
@@ -76,6 +77,13 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		$outdiscount = 0;
 
 		$found = false;
+
+		$price_level = 1;
+		if ($socid > 0 && !empty($conf->global->PRODUIT_MULTIPRICES)) {
+			$thirdpartytemp = new Societe($db);
+			$thirdpartytemp->fetch($socid);
+			$price_level = $thirdpartytemp->price_level;
+		}
 
 		// Price by qty
 		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))) 		// If we need a particular price related to qty
@@ -100,14 +108,13 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		}
 
 		// Multiprice
-		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES))) // If we need a particular price
-		                                                                                                           // level (from 1 to 6)
+		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES))) // If we need a particular price level (from 1 to 6)
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
-			$sql .= " WHERE fk_product='".$id."'";
+			$sql .= " WHERE fk_product = '".$id."'";
 			$sql .= " AND entity IN (".getEntity('productprice').")";
-			$sql .= " AND price_level=".$price_level;
+			$sql .= " AND price_level = ".((int) $price_level);
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1";
 
@@ -160,8 +167,7 @@ else
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-	$langs->load("products");
-	$langs->load("main");
+	$langs->loadLangs(array("main", "products"));
 
 	top_httphead();
 
@@ -186,6 +192,7 @@ else
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
 	$form = new Form($db);
+
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
 		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
 	} elseif ($mode == 2) {            // mode=2: supplier

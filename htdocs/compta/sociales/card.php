@@ -604,7 +604,7 @@ if ($id > 0)
 		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
 		$sql .= " c.code as type_code,c.libelle as paiement_type,";
-		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
+		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -653,6 +653,7 @@ if ($id > 0)
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
+						$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
 						if (!empty($conf->accounting->enabled)) {
 							$bankaccountstatic->account_number = $objp->account_number;
