@@ -5910,7 +5910,7 @@ class Form
 		//var_dump($objecttmp->filter);
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
-		if ($prefixforautocompletemode == 'product') $prefixforautocompletemode='produit';
+		if ($prefixforautocompletemode == 'product') $prefixforautocompletemode = 'produit';
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
@@ -7864,7 +7864,7 @@ class Form
 	 */
     public function selectInvoice($socid = -1, $selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
 	{
-		global $user,$conf,$langs;
+		global $user, $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -7873,16 +7873,16 @@ class Form
 			$usertofilter = $user;
 		}
 
-		$out='';
+		$out = '';
 
 		$hideunselectables = false;
-		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (!empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		if (empty($projectsListId))
 		{
 			if (empty($usertofilter->rights->projet->all->lire))
 			{
-				$projectstatic=new Project($this->db);
+				$projectstatic = new Project($this->db);
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
 			}
 		}
@@ -7890,37 +7890,37 @@ class Form
 		// Search all projects
         $sql = 'SELECT f.rowid, f.ref as fref, "nolabel" as flabel, p.rowid as pid, f.ref,
             p.title, p.fk_soc, p.fk_statut, p.public,';
-		$sql.= ' s.nom as name';
-		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
-		$sql.= ' '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= " WHERE p.entity IN (".getEntity('project').")";
-		$sql.= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
+		$sql .= ' s.nom as name';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
+		$sql .= ' '.MAIN_DB_PREFIX.'facture as f';
+		$sql .= " WHERE p.entity IN (".getEntity('project').")";
+		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
-		$sql.= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";
+		$sql .= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			// Use select2 selector
-			if (! empty($conf->use_javascript_ajax))
+			if (!empty($conf->use_javascript_ajax))
 			{
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
-            	$out.=$comboenhancement;
-            	$morecss='minwidth200imp maxwidth500';
+            	$out .= $comboenhancement;
+            	$morecss = 'minwidth200imp maxwidth500';
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="valignmiddle flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'">';
+				$out .= '<select class="valignmiddle flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlname.'" name="'.$htmlname.'">';
 			}
-			if (! empty($show_empty)) {
-				$out.= '<option value="0" class="optiongrey">';
-				if (! is_numeric($show_empty)) $out.=$show_empty;
-				else $out.='&nbsp;';
-				$out.= '</option>';
+			if (!empty($show_empty)) {
+				$out .= '<option value="0" class="optiongrey">';
+				if (!is_numeric($show_empty)) $out .= $show_empty;
+				else $out .= '&nbsp;';
+				$out .= '</option>';
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -7946,57 +7946,57 @@ class Form
 
 						if ($showproject == 'all')
 						{
-							$labeltoshow.=dol_trunc($obj->ref, 18);     // Invoice ref
-							if ($obj->name) $labeltoshow.=' - '.$obj->name; // Soc name
+							$labeltoshow .= dol_trunc($obj->ref, 18); // Invoice ref
+							if ($obj->name) $labeltoshow .= ' - '.$obj->name; // Soc name
 
-							$disabled=0;
+							$disabled = 0;
 							if ($obj->fk_statut == Project::STATUS_DRAFT)
 							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Draft");
+								$disabled = 1;
+								$labeltoshow .= ' - '.$langs->trans("Draft");
 							}
 							elseif ($obj->fk_statut == Project::STATUS_CLOSED)
 							{
-								if ($discard_closed == 2) $disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Closed");
+								if ($discard_closed == 2) $disabled = 1;
+								$labeltoshow .= ' - '.$langs->trans("Closed");
 							}
-							elseif ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+								$disabled = 1;
+								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
 							}
 						}
 
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected';
+							$out .= '<option value="'.$obj->rowid.'" selected';
 							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
-							$out.= '>'.$labeltoshow.'</option>';
+							$out .= '>'.$labeltoshow.'</option>';
 						}
 						else
 						{
 							if ($hideunselectables && $disabled && ($selected != $obj->rowid))
 							{
-								$resultat='';
+								$resultat = '';
 							}
 							else
 							{
-								$resultat='<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat.=' disabled';
+								$resultat = '<option value="'.$obj->rowid.'"';
+								if ($disabled) $resultat .= ' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat.='>';
-								$resultat.=$labeltoshow;
-								$resultat.='</option>';
+								$resultat .= '>';
+								$resultat .= $labeltoshow;
+								$resultat .= '</option>';
 							}
-							$out.= $resultat;
+							$out .= $resultat;
 						}
 					}
 					$i++;
 				}
 			}
 			if (empty($option_only)) {
-				$out.= '</select>';
+				$out .= '</select>';
 			}
 
 			print $out;

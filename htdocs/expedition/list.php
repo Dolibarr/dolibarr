@@ -242,10 +242,10 @@ if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdp
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_datedelivery_start)	$sql .= " AND e.date_delivery >= '" . $db->idate($search_datedelivery_start) . "'";
-if ($search_datedelivery_end)	$sql .= " AND e.date_delivery <= '" . $db->idate($search_datedelivery_end) . "'";
-if ($search_datereceipt_start)	$sql .= " AND l.date_delivery >= '" . $db->idate($search_datereceipt_start) . "'";
-if ($search_datereceipt_end)	$sql .= " AND l.date_delivery <= '" . $db->idate($search_datereceipt_end) . "'";
+if ($search_datedelivery_start)	$sql .= " AND e.date_delivery >= '".$db->idate($search_datedelivery_start)."'";
+if ($search_datedelivery_end)	$sql .= " AND e.date_delivery <= '".$db->idate($search_datedelivery_end)."'";
+if ($search_datereceipt_start)	$sql .= " AND l.date_delivery >= '".$db->idate($search_datereceipt_start)."'";
+if ($search_datereceipt_end)	$sql .= " AND l.date_delivery <= '".$db->idate($search_datereceipt_end)."'";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 // Add where from extra fields
@@ -409,12 +409,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_delivery_start?$search_delivery_start:-1, 'search_delivery_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_delivery_start ? $search_delivery_start : -1, 'search_delivery_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_delivery_end?$search_delivery_end:-1, 'search_delivery_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_delivery_end ? $search_delivery_end : -1, 'search_delivery_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -430,12 +430,12 @@ if ($resql)
 		// Date received
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_receipt_start?$search_receipt_start:-1, 'search_receipt_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_receipt_start ? $search_receipt_start : -1, 'search_receipt_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_receipt_end?$search_receipt_end:-1, 'search_receipt_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_receipt_end ? $search_receipt_end : -1, 'search_receipt_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
