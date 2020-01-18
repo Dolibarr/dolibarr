@@ -1596,10 +1596,18 @@ class Products extends DolibarrApi
         }
 
         if ($includestockdata) {
-               $this->product->load_stock();
+        	$this->product->load_stock();
+
+        	if (is_array($this->product->stock_warehouse)) {
+        		foreach($this->product->stock_warehouse as $keytmp => $valtmp) {
+        			if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
+        				foreach($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
+        					unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
+        				}
+        			}
+        		}
+        	}
         }
-
-
 
         if ($includesubproducts) {
             $childsArbo = $this->product->getChildsArbo($id, 1);
