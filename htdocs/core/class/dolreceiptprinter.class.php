@@ -530,7 +530,7 @@ class dolReceiptPrinter extends Printer
                 $this->printer->text("Most simple example\n");
                 $this->printer->feed();
                 $this->printer->cut();
-				
+
 				// If is DummyPrintConnector send to log to debugging
 				if($this->printer->connector instanceof DummyPrintConnector)
 				{
