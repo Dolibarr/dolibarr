@@ -95,6 +95,9 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 ?>
 <link rel="stylesheet" href="css/pos.css">
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
+<?php
+if ($conf->global->TAKEPOS_COLOR_THEME == 1) print '<link rel="stylesheet" href="css/colorful.css">';
+?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">
 <?php
