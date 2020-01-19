@@ -17,6 +17,7 @@ use InvalidArgumentException;
 use Mike42\Escpos\PrintBuffers\PrintBuffer;
 use Mike42\Escpos\PrintBuffers\EscposPrintBuffer;
 use Mike42\Escpos\PrintConnectors\PrintConnector;
+use Mike42\Escpos\PrintConnectors\DummyConnector;
 use Mike42\Escpos\CapabilityProfile;
 
 /**
