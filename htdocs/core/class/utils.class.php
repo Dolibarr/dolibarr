@@ -493,7 +493,7 @@ class Utils
 		}
 
 		// Clean old files
-		if (! $errormsg && $keeplastnfiles > 0)
+		if (!$errormsg && $keeplastnfiles > 0)
 		{
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;

@@ -29,18 +29,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="date";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "date";
 if (empty($page) || $page == -1) { $page = 0; }
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
 
@@ -52,33 +52,33 @@ if ($action == 'delete')
 {
 	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha')))
 	{
-		$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
-		$ret=dol_delete_file($file, 1);
+		$file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret = dol_delete_file($file, 1);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 	else
 	{
-		$file=$conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
-		$ret=dol_delete_file($file, 1);
+		$file = $conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret = dol_delete_file($file, 1);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	$action='';
+	$action = '';
 }
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
-$label=$db::LABEL;
-$type=$db->type;
+$label = $db::LABEL;
+$type = $db->type;
 //var_dump($db);
 
-$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+$help_url = 'EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('', '', $help_url);
 
 print '<script type="text/javascript">
@@ -141,9 +141,9 @@ print '<br>';
 
 print '<div id="backupdatabaseleft" class="fichehalfleft" >';
 
-print load_fiche_titre($title?$title:$langs->trans("BackupDumpWizard"));
+print load_fiche_titre($title ? $title : $langs->trans("BackupDumpWizard"));
 
-print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').' nohover">';
+print '<table width="100%" class="'.($useinecm ? 'nobordernopadding' : 'liste').' nohover">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
@@ -186,11 +186,11 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<div class="formelementrow">'.$langs->trans("FullPathToMysqldumpCommand");
     if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
     {
-        $fullpathofmysqldump=$db->getPathOfDump();
+        $fullpathofmysqldump = $db->getPathOfDump();
     }
     else
     {
-        $fullpathofmysqldump=$conf->global->SYSTEMTOOLS_MYSQLDUMP;
+        $fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
     }
     print '<br>';
     print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'" /></div>';
@@ -203,7 +203,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
     print '</div>';
 
-    if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+    if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
         print '<div class="formelementrow">';
         print '<input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked />';
         print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
@@ -242,7 +242,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
     print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
     print '</legend>';
-    print '<input type="checkbox" name="drop"'.(((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked':'').' id="checkbox_dump_drop" />';
+    print '<input type="checkbox" name="drop"'.(((!isset($_GET["drop"]) && !isset($_POST["drop"])) || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';
@@ -293,7 +293,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
 
     print '</div>';
-    if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+    if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
         print '<div class="formelementrow">';
         print '<input type="checkbox" name="nobin_disable_fk" value="yes" id="checkbox_disable_fk" checked />';
         print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
@@ -303,7 +303,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
     print '<br>';
     print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
-    print '<input type="checkbox" name="nobin_drop"'.((! isset($_GET["nobin_drop"]) && ! isset($_POST["nobin_drop"])) || GETPOST('nobin_drop'))?' checked':''.' id="checkbox_dump_drop" />';
+    print '<input type="checkbox" name="nobin_drop"'.((!isset($_GET["nobin_drop"]) && !isset($_POST["nobin_drop"])) || GETPOST('nobin_drop')) ? ' checked' : ''.' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';
@@ -338,11 +338,11 @@ if (in_array($type, array('pgsql'))) {
 
     print '<div class="formelementrow">'.$langs->trans("FullPathToPostgreSQLdumpCommand");
     if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
-        $fullpathofpgdump=$db->getPathOfDump();
+        $fullpathofpgdump = $db->getPathOfDump();
     }
     else
     {
-        $fullpathofpgdump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+        $fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
     }
     print '<br>';
     print '<input type="text" name="postgresqldump" style="width: 80%" value="'.$fullpathofpgdump.'" /></div>';
@@ -391,27 +391,27 @@ print '<legend>'.$langs->trans("Destination").'</legend> -->';
 print '<br>';
 print '<label for="filename_template">'.$langs->trans("FileNameToGenerate").'</label>';
 print '<br>';
-$prefix='dump';
-$ext='.sql';
+$prefix = 'dump';
+$ext = '.sql';
 if (in_array($type, array('mysql', 'mysqli'))) {
-	$prefix='mysqldump';
-	$ext='sql';
+	$prefix = 'mysqldump';
+	$ext = 'sql';
 }
 //if ($label == 'PostgreSQL') {
 //	$prefix='pg_dump';
 //	$ext='dump';
 //}
 if (in_array($type, array('pgsql'))) {
-	$prefix='pg_dump';
-	$ext='sql';
+	$prefix = 'pg_dump';
+	$ext = 'sql';
 }
-$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
 print '<input type="text" name="filename_template" style="width: 90%" id="filename_template" value="'.$file.'" />';
 print '<br>';
 print '<br>';
 
 // Define compressions array
-$compression=array();
+$compression = array();
 if (in_array($type, array('mysql', 'mysqli'))) {
 	$compression['gz'] = array(
 		'function' => 'gzopen',
@@ -488,7 +488,7 @@ print '<input type="hidden" name="page_y" value="'.GETPOST('page_y', 'int').'">'
 print '<br>';
 print '<br>';
 
-if (! empty($_SESSION["commandbackuplastdone"]))
+if (!empty($_SESSION["commandbackuplastdone"]))
 {
     print '<br><b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
     print '<textarea rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuplastdone"].'</textarea><br>'."\n";
@@ -500,11 +500,11 @@ if (! empty($_SESSION["commandbackuplastdone"]))
     print '<b>'.$langs->trans("BackupResult").':</b> ';
 	print $_SESSION["commandbackupresult"];
 
-	$_SESSION["commandbackuplastdone"]='';
-	$_SESSION["commandbackuptorun"]='';
-	$_SESSION["commandbackupresult"]='';
+	$_SESSION["commandbackuplastdone"] = '';
+	$_SESSION["commandbackuptorun"] = '';
+	$_SESSION["commandbackupresult"] = '';
 }
-if (! empty($_SESSION["commandbackuptorun"]))
+if (!empty($_SESSION["commandbackuptorun"]))
 {
 	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</font><br>'."\n";
 	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
@@ -513,9 +513,9 @@ if (! empty($_SESSION["commandbackuptorun"]))
 
 	//print $paramclear;
 
-	$_SESSION["commandbackuplastdone"]='';
-	$_SESSION["commandbackuptorun"]='';
-	$_SESSION["commandbackupresult"]='';
+	$_SESSION["commandbackuplastdone"] = '';
+	$_SESSION["commandbackuptorun"] = '';
+	$_SESSION["commandbackupresult"] = '';
 }
 
 print "</div> <!-- end div center button -->\n";
@@ -529,8 +529,8 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
 print '<div class="ficheaddleft">';
 
-$filearray=dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC), 1);
-$result=$formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
+$filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
 print '<br>';
 
 print '</div>';

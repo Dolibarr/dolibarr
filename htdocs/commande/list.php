@@ -195,10 +195,10 @@ if (empty($reshook))
 		$search_total_ht = '';
 		$search_total_vat = '';
 		$search_total_ttc = '';
-		$search_dateorder_start ='';
-		$search_dateorder_end ='';
-		$search_datedelivery_start ='';
-		$search_datedelivery_end ='';
+		$search_dateorder_start = '';
+		$search_dateorder_end = '';
+		$search_datedelivery_start = '';
+		$search_datedelivery_end = '';
 		$search_project_ref = '';
 		$search_project = '';
 		$viewstatut = '';
@@ -308,10 +308,10 @@ if ($viewstatut <> '')
 	}
 }
 
-if ($search_dateorder_start)        $sql .= " AND c.date_commande >= '" . $db->idate($search_dateorder_start) . "'";
-if ($search_dateorder_end)          $sql .= " AND c.date_commande <= '" . $db->idate($search_dateorder_end) . "'";
-if ($search_datedelivery_start)		$sql .= " AND c.date_livraison >= '" . $db->idate($search_datedelivery_start) . "'";
-if ($search_datedelivery_end)		$sql .= " AND c.date_livraison <= '" . $db->idate($search_datedelivery_end) . "'";
+if ($search_dateorder_start)        $sql .= " AND c.date_commande >= '".$db->idate($search_dateorder_start)."'";
+if ($search_dateorder_end)          $sql .= " AND c.date_commande <= '".$db->idate($search_dateorder_end)."'";
+if ($search_datedelivery_start)		$sql .= " AND c.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
+if ($search_datedelivery_end)		$sql .= " AND c.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
 if ($search_town)					$sql .= natural_search('s.town', $search_town);
 if ($search_zip)					$sql .= natural_search("s.zip", $search_zip);
 if ($search_state)					$sql .= natural_search("state.nom", $search_state);
@@ -646,12 +646,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_dateorder_start?$search_dateorder_start:-1, 'search_dateorder_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_dateorder_start ? $search_dateorder_start : -1, 'search_dateorder_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_dateorder_end?$search_dateorder_end:-1, 'search_dateorder_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_dateorder_end ? $search_dateorder_end : -1, 'search_dateorder_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -659,12 +659,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_datedelivery_start?$search_datedelivery_start:-1, 'search_datedelivery_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_datedelivery_end?$search_datedelivery_end:-1, 'search_datedelivery_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -826,7 +826,7 @@ if ($resql)
 		{
 			print '<td class="nowrap">';
 
-			$generic_commande->getLinesArray();		// This set ->lines
+			$generic_commande->getLinesArray(); // This set ->lines
 
 			print $generic_commande->getNomUrl(1, ($viewstatut != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
 
