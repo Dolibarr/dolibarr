@@ -959,6 +959,7 @@ class Commande extends CommonOrder
 						if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
 						{
 							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->error;
 							dol_print_error($this->db);
 						}
 						$this->db->rollback();
@@ -1434,6 +1435,7 @@ class Commande extends CommonOrder
 				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+					$this->errors[] = $this->error;
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
@@ -3083,6 +3085,7 @@ class Commande extends CommonOrder
 				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+					$this->errors[] = $this->error;
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
