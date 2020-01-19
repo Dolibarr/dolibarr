@@ -310,7 +310,7 @@ if ($result)
 			$text=$langs->trans($val[0], isset($val[1])?$val[1]:'', isset($val[2])?$val[2]:'', isset($val[3])?$val[3]:'', isset($val[4])?$val[4]:'');
 			if (! empty($reg[2])) $text.=$reg[2];
 		}
-		print dol_string_nohtmltag($text);
+		print dol_escape_htmltag($text);
 		print '</td>';
 
 		// More informations
