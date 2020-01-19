@@ -573,11 +573,13 @@ if ($page >= $nbtotalofpages)
 if (empty($search_account)) $mode_balance_ok = false;
 // If a search is done $mode_balance_ok=false
 if (!empty($search_ref)) $mode_balance_ok = false;
-if (!empty($req_nb)) $mode_balance_ok = false;
+if (!empty($search_description)) $mode_balance_ok = false;
 if (!empty($search_type)) $mode_balance_ok = false;
-if (!empty($debit)) $mode_balance_ok = false;
-if (!empty($credit)) $mode_balance_ok = false;
-if (!empty($thirdparty)) $mode_balance_ok = false;
+if (!empty($search_debit)) $mode_balance_ok = false;
+if (!empty($search_credit)) $mode_balance_ok = false;
+if (!empty($search_thirdparty)) $mode_balance_ok = false;
+if (!empty($search_conciliated)) $mode_balance_ok = false;
+if (!empty($search_num_releve)) $mode_balance_ok = false;
 
 $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
