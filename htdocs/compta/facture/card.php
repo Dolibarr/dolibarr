@@ -3893,7 +3893,7 @@ elseif ($id > 0 || !empty($ref))
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
-	
+
 	// recalculate remaining value because amounts might have changed in hook
 	$resteapayer = price2num($object->getRemainToPay(), 'MT');
 	if ($object->paye) {
