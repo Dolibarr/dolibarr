@@ -389,6 +389,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="' . $link . '">' . $link . '</a>';
     			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
     			// Rebuild pdf
@@ -508,6 +509,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="' . $link . '">' . $link . '</a>';
 				$dateRefusEx = explode(" ", $object->date_refuse);
     			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
 
@@ -633,6 +635,7 @@ if (empty($reshook))
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="' . $link . '">' . $link . '</a>';
        			$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
        			// Rebuilt pdf
@@ -703,7 +706,8 @@ if (empty($reshook))
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
-    	$result = $object->setDeny($user, GETPOST('detail_refuse', 'alpha'));
+		$detailRefuse = GETPOST('detail_refuse', 'alpha');
+    	$result = $object->setDeny($user, $detailRefuse);
 
     	if ($result > 0)
     	{
@@ -751,7 +755,8 @@ if (empty($reshook))
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-    			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_refuse'], $link);
+				$link = '<a href="' . $link . '">' . $link . '</a>';
+    			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailRefuse, $link);
 
        			// Rebuilt pdf
     			/*
@@ -831,7 +836,8 @@ if (empty($reshook))
 
 	    	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
 	    	{
-	    		$result = $object->set_cancel($user, GETPOST('detail_cancel', 'alpha'));
+				$detailCancel = GETPOST('detail_cancel', 'alpha');
+	    		$result = $object->set_cancel($user, $detailCancel);
 
 	    		if ($result > 0)
 	    		{
@@ -879,7 +885,8 @@ if (empty($reshook))
 
 	    				// CONTENT
 	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), GETPOST('detail_cancel', 'alpha'), $link);
+						$link = '<a href="' . $link . '">' . $link . '</a>';
+	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailCancel, $link);
 
 	    				// Rebuilt pdf
 	    				/*
@@ -1104,6 +1111,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="' . $link . '">' . $link . '</a>';
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
         		// Generate pdf before attachment
@@ -1735,7 +1743,7 @@ else
 				if ($action == 'cancel')
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text", 'label'=>'<strong>'.$langs->trans("Comment").'</strong>', 'name'=>"detail_cancel", 'value'=>""));
-					$formconfirm = $form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
+					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 				}
 
 				if ($action == 'setdraft')
