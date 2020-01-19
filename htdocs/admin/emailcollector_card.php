@@ -75,7 +75,7 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
@@ -253,7 +253,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEmailCollector", $langs->transnoentitiesnoconv("EmailCollector")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -288,7 +288,7 @@ if (($id || $ref) && $action == 'edit')
 	print load_fiche_titre($langs->trans("EmailCollector"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -382,7 +382,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		                $morehtmlref.='</form>';
@@ -418,10 +418,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (function_exists('imap_open'))
 	{
 		$connectstringserver = $object->getConnectStringIMAP();
-		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $object->login, $object->password);
+		try {
+			if ($sourcedir) {
+				//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+				$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+			}
+			if ($targetdir) {
+				//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
+			}
+
+			$connection = imap_open($connectstringsource, $object->login, $object->password);
+		}
+		catch (Exception $e)
+		{
+			print $e->getMessage();
+		}
+
+		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	}
 	else
 	{
@@ -460,7 +475,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updatefiltersactions">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -509,11 +524,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         else { jQuery("#rulevalue").prop("disabled", false); }
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
-	$noparam = array();
+	/*$noparam = array();
 	foreach ($arrayoftypes as $key => $value)
 	{
 	    if ($value['noparam']) $noparam[] = $key;
-	}
+	}*/
 	print '})';
 	print '</script>'."\n";
 
@@ -580,13 +595,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
+		print '<!-- type of action: '.$ruleaction['type'].' -->';
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
 		if (in_array($ruleaction['type'], array('recordevent')))
 		{
             print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		}
+		elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
+			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
+		}
 		print '</td>';
-		print '<td>';
+		print '<td class="wordbreak">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid)
 		{
 		    print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';

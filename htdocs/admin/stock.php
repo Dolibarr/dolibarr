@@ -473,7 +473,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	// Example with a yes / no select
 	/*print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
 	} else {
@@ -486,7 +486,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	// Example with a yes / no select
     /*print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
-	print '<td align="center">';
+	print '<td class="center">';
   	if ($conf->use_javascript_ajax) {
   		print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
   	} else {
@@ -518,7 +518,7 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 	print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
 	print '<td class="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
 	print $form->selectyesno("INDEPENDANT_SUBPRODUCT_STOCK",$conf->global->INDEPENDANT_SUBPRODUCT_STOCK,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

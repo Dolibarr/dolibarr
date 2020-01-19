@@ -77,7 +77,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 // Actions to send emails
 $id=0;
 $actiontypecode='';     // Not an event for agenda
-$trigger_name='';       // Disable triggers
+$triggersendname = '';       // Disable triggers
 $paramname='id';
 $mode='emailfortest';
 $trackid=(($action == 'testhtml')?"testhtml":"test");
@@ -214,7 +214,7 @@ if ($action == 'edit')
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	dol_fiche_head($head, 'common_emailing', '', -1);

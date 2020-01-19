@@ -152,8 +152,15 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    {
 	                        $productsupplier->getMultiLangs();
 	                    }
-	                    $line->desc = $productsupplier->description;
-                        if (!empty($conf->global->MAIN_MULTILANGS))
+
+						// if we use supplier description of the products
+						if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+							$desc = $productsupplier->desc_supplier;
+						} else {
+							$desc = $productsupplier->description;
+						}
+	                    $line->desc = $desc;
+                        if (! empty($conf->global->MAIN_MULTILANGS))
                         {
                             // TODO Get desc in language of thirdparty
                         }
@@ -542,7 +549,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
-	'<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'.
+	'<input type="hidden" name="token" value="'.newToken().'">'.
 	'<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">'.
 	'<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">'.
 	'<input type="hidden" name="sortfield" value="'.$sortfield.'">'.
@@ -716,7 +723,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
 
 		// Supplier
-		print '<td class="right">'.$form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier).'</td>';
+		print '<td class="right">';
+        print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
+        print '</td>';
 
 		// Fields from hook
 		$parameters = array('objp'=>$objp);

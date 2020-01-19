@@ -132,7 +132,7 @@ if ($resql)
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -197,7 +197,7 @@ if ($resql)
     		print '</td>';
 
     		// Date
-    		print '<td align="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
+    		print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
 
     		// Bank
     		print '<td>';

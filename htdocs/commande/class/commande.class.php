@@ -959,6 +959,7 @@ class Commande extends CommonOrder
 						if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
 						{
 							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->error;
 							dol_print_error($this->db);
 						}
 						$this->db->rollback();
@@ -977,35 +978,22 @@ class Commande extends CommonOrder
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
 				if ($this->db->query($sql))
 				{
-					if ($this->id)
+					$this->ref = $initialref;
+
+					if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
 					{
-						$this->ref = $initialref;
+						$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
+					}
 
-						if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+					// Add object linked
+					if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+					{
+						foreach ($this->linked_objects as $origin => $tmp_origin_id)
 						{
-							$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
-						}
-
-						// Add object linked
-						if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
-						{
-							foreach ($this->linked_objects as $origin => $tmp_origin_id)
+							if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 							{
-								if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+								foreach ($tmp_origin_id as $origin_id)
 								{
-									foreach ($tmp_origin_id as $origin_id)
-									{
-										$ret = $this->add_object_linked($origin, $origin_id);
-										if (!$ret)
-										{
-											$this->error = $this->db->lasterror();
-											$error++;
-										}
-									}
-								}
-								else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-								{
-									$origin_id = $tmp_origin_id;
 									$ret = $this->add_object_linked($origin, $origin_id);
 									if (!$ret)
 									{
@@ -1014,44 +1002,54 @@ class Commande extends CommonOrder
 									}
 								}
 							}
+							else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+							{
+								$origin_id = $tmp_origin_id;
+								$ret = $this->add_object_linked($origin, $origin_id);
+								if (!$ret)
+								{
+									$this->error = $this->db->lasterror();
+									$error++;
+								}
+							}
 						}
+					}
 
-						if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id))   // Get contact from origin object
+					if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id))   // Get contact from origin object
+					{
+						$originforcontact = $this->origin;
+						$originidforcontact = $this->origin_id;
+						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
 						{
-							$originforcontact = $this->origin;
-							$originidforcontact = $this->origin_id;
-							if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+							require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+							$exp = new Expedition($this->db);
+							$exp->fetch($this->origin_id);
+							$exp->fetchObjectLinked();
+							if (count($exp->linkedObjectsIds['commande']) > 0)
 							{
-								require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-								$exp = new Expedition($this->db);
-								$exp->fetch($this->origin_id);
-								$exp->fetchObjectLinked();
-								if (count($exp->linkedObjectsIds['commande']) > 0)
+								foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
 								{
-									foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
-									{
-										$originforcontact = 'commande';
-										if (is_object($value)) $originidforcontact = $value->id;
-										else $originidforcontact = $value;
-										break; // We take first one
-									}
+									$originforcontact = 'commande';
+									if (is_object($value)) $originidforcontact = $value->id;
+									else $originidforcontact = $value;
+									break; // We take first one
 								}
 							}
-
-							$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-							$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-
-							$resqlcontact = $this->db->query($sqlcontact);
-							if ($resqlcontact)
-							{
-								while ($objcontact = $this->db->fetch_object($resqlcontact))
-								{
-									//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
-									$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
-								}
-							}
-							else dol_print_error($resqlcontact);
 						}
+
+						$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+						$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+
+						$resqlcontact = $this->db->query($sqlcontact);
+						if ($resqlcontact)
+						{
+							while ($objcontact = $this->db->fetch_object($resqlcontact))
+							{
+								//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
+							}
+						}
+						else dol_print_error($resqlcontact);
 					}
 
 					if (!$error)
@@ -1437,6 +1435,7 @@ class Commande extends CommonOrder
 				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+					$this->errors[] = $this->error;
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
@@ -1450,6 +1449,7 @@ class Commande extends CommonOrder
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -3085,6 +3085,7 @@ class Commande extends CommonOrder
 				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+					$this->errors[] = $this->error;
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
@@ -3561,9 +3562,10 @@ class Commande extends CommonOrder
 	 *	@param      int			$short			          ???
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip
 	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param		int			$addlinktonotes			  Add linkt to notes
 	 *	@return     string          			          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -3629,6 +3631,22 @@ class Commande extends CommonOrder
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
+
+		if ($addlinktonotes)
+		{
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow)
+			{
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+				//$result.='</a>';
+				$result .= '</span>';
+			}
+		}
 
 		return $result;
 	}

@@ -745,7 +745,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->strip
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
@@ -843,7 +843,11 @@ if (!$source)
 {
 	$found = true;
 	$tag = GETPOST("tag", 'alpha');
-	$fulltag = "TAG=".$tag;
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = "TAG=".$tag;
+	}
 
 	// Creditor
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
@@ -910,8 +914,12 @@ if ($source == 'order')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1029,9 +1037,12 @@ if ($source == 'invoice')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
-	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1202,9 +1213,12 @@ if ($source == 'contractline')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	$qty = 1;
@@ -1367,8 +1381,12 @@ if ($source == 'membersubscription')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1531,8 +1549,12 @@ if ($source == 'donation')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1819,7 +1841,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		print '<!-- Form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
 		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
 
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 		print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
 		print '<input type="hidden" name="action" value="charge">'."\n";
 		print '<input type="hidden" name="tag" value="'.$TAG.'">'."\n";

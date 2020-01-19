@@ -347,7 +347,7 @@ if ($action == 'create')
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="create_mvt" method="POST">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="confirm_create">'."\n";
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
@@ -444,7 +444,7 @@ if ($action == 'create')
 		if ($action == 'editdate') {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
 			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
@@ -468,7 +468,7 @@ if ($action == 'create')
 		if ($action == 'editjournal') {
 			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
 			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
@@ -492,7 +492,7 @@ if ($action == 'create')
 		if ($action == 'editdocref') {
 			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
 			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
@@ -588,7 +588,7 @@ if ($action == 'create')
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
 			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
 			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
 			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";

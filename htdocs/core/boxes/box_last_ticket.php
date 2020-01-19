@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        core/boxes/box_ticket_latest.php
+ *     \file        htdocs/core/boxes/box_last_ticket.php
  *     \ingroup     ticket
  *     \brief       This box shows latest created tickets
  */

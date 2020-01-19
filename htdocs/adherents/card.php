@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "members", "users", "other"));
+$langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -822,7 +822,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'MEMBER_SENTBYMAIL';
+	$triggersendname = 'MEMBER_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfrommember';
 	$trackid = 'mem'.$object->id;
@@ -931,7 +931,7 @@ else
 		}
 
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
@@ -1072,16 +1072,10 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-		//Hooks here
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-      	    print $object->showOptionals($extrafields, 'edit', $parameters);
-		}
 
 		print '<tbody>';
 		print "</table>\n";
+
 		dol_fiche_end();
 
 		print '<div class="center">';
@@ -1174,7 +1168,7 @@ else
 		}
 
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+		print '<input type="hidden" name="token" value="'.newToken().'" />';
 		print '<input type="hidden" name="action" value="update" />';
 		print '<input type="hidden" name="rowid" value="'.$id.'" />';
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
@@ -1690,7 +1684,7 @@ else
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
 				print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 				print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				print '<tr><td>';
 				print $form->select_company($object->socid, 'socid', '', 1);
@@ -1753,7 +1747,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
 			print '<td colspan="2">';
-			print $form->showCategories($object->id, 'member', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 			print '</td></tr>';
 		}
 
@@ -1769,7 +1763,7 @@ else
 
 
 		/*
-		 * Hotbar
+		 * Action bar
 		 */
 
 		print '<div class="tabsAction">';

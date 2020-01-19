@@ -150,8 +150,6 @@ class Conf
 	 */
 	public function setValues($db)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::setValues");
 
 		//Define all global constants into $this->global->key=value
@@ -311,7 +309,7 @@ class Conf
 			{
 				if (!empty($this->$module->enabled))
 				{
-					foreach ($dirs as $type => $name)
+					foreach ($dirs as $type => $name)  // $type is 'output' or 'temp'
 					{
 						$subdir = ($type == 'temp' ? '/temp' : '');
 						// For multicompany sharings
@@ -395,7 +393,7 @@ class Conf
 			// To prepare split of module vendor(fournisseur) into vendor + supplier_order + supplier_invoice + supplierproposal
 			if (!empty($this->fournisseur->enabled))  // By default, if module supplier is on, we set new properties
 			{
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
+				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
 				{
 	    			$this->supplier_order = new stdClass();
 	    			$this->supplier_order->enabled = 1;
@@ -405,7 +403,7 @@ class Conf
 	    			$this->supplier_order->dir_temp = $rootfordata."/fournisseur/commande/temp"; // For backward compatibility
 				}
 
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
+				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
 				{
 					$this->supplier_invoice = new stdClass();
 	    			$this->supplier_invoice->enabled = 1;
@@ -453,7 +451,7 @@ class Conf
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))		$this->global->SOCIETE_CODECOMPTA_ADDON = "mod_codecompta_panicum";
 
 		if (empty($this->global->CHEQUERECEIPTS_ADDON))			$this->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
-		if (empty($conf->global->TICKET_ADDON))				    $this->global->TICKET_ADDON = 'mod_ticket_simple';
+		if (empty($this->global->TICKET_ADDON))				    $this->global->TICKET_ADDON = 'mod_ticket_simple';
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED = 'standard'; // Default password generator
@@ -678,7 +676,7 @@ class Conf
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
 
 		// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
-		if (!isset($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $conf->global->MAIN_FEATURES_LEVEL >= 2) $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
+		if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $this->global->MAIN_FEATURES_LEVEL >= 2) $this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit = $this->product;

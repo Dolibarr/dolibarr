@@ -30,8 +30,8 @@ if (empty($conf) || ! is_object($conf))
 print '<tr class="oddeven'.(empty($this->tpl['strike'])?'':' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
 print '<td class="right">'.$this->tpl['qty'].'</td>';
-print '<td class="center">'.yn($this->tpl['qty_frozen']).'</td>';
-print '<td class="center">'.yn($this->tpl['disable_stock_change']).'</td>';
+print '<td class="center">'.($this->tpl['qty_frozen'] ? yn($this->tpl['qty_frozen']) : '').'</td>';
+print '<td class="center">'.($this->tpl['disable_stock_change'] ? yn($this->tpl['disable_stock_change']) : '').'</td>';
 //print '<td class="right">'.$this->tpl['efficiency'].'</td>';
 
 $selected=1;

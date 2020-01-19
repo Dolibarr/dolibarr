@@ -20,7 +20,7 @@
  * 	\defgroup   takepos     Module TakePos
  *  \brief      TakePos module descriptor.
  *
- *  \file       htdocs/takepos/core/modules/modTakePos.class.php
+ *  \file       htdocs/core/modules/modTakePos.class.php
  *  \ingroup    takepos
  *  \brief      Description and activation file for module TakePos
  */

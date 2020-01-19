@@ -11,17 +11,8 @@ YourEMail=Email a fizetés teljesítéséről
 Creditor=Hitelező
 PaymentCode=Fizetési kód
 PayBoxDoPayment=Pay with Paybox
-ToPay=Esedékes  kiegyenlítés
 YouWillBeRedirectedOnPayBox=Át lesz irányítva egy biztonságos Paybox oldalra ahol megadhatja a bak/hitelkártya információit
 Continue=Következő
-ToOfferALinkForOnlinePayment=URL %s fizetés
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői számlához
-ToOfferALinkForOnlinePaymentOnContractLine=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői tétel sorhoz
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési felhasználói csatolót ajánl egy ingyenes összeghez
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL egy %s online fizetési felhasználói csatolót ajánl egy tag feliratkozáshoz
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Hozzáadhat URL paramétereket <b>&tag=<i>érték</i></b> bármely ilyen URL (csak az ingyenes fizetéshez szükséges) a saját fizetési megjegyzés címke hozzáadásához.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Ez az oldal megerősíti, hogy a fizetési lett felvéve. Köszönöm.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

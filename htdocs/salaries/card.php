@@ -41,10 +41,16 @@ if (! empty($conf->projet->enabled))
 $langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
 if (! empty($conf->projet->enabled))	$langs->load("projects");
 
-$id=GETPOST("id", 'int');
-$action=GETPOST('action', 'aZ09');
-$cancel= GETPOST('cancel', 'aZ09');
+$id = GETPOST("id", 'int');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+$accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+
+$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+$datesp = dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
+$dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -60,6 +66,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
 
+
 /**
  * Actions
  */
@@ -74,34 +81,30 @@ if ($cancel)
 if ($action == 'classin' && $user->rights->banque->modifier)
 {
 	$object->fetch($id);
-	$object->setProject(GETPOST('projectid'));
+	$object->setProject($projectid);
 }
 
 if ($action == 'add' && empty($cancel))
 {
 	$error = 0;
 
-	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
-	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
-	$datesp = dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
-	$dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
 	if (empty($datev)) $datev = $datep;
 
 	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
-	$object->accountid = GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
-	$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user", "int") : 0;
+	$object->accountid = GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
+	$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", "int") : 0;
 	$object->datev = $datev;
 	$object->datep = $datep;
-	$object->amount = price2num(GETPOST("amount"));
-	$object->label = GETPOST("label");
+	$object->amount = price2num(GETPOST("amount", 'alpha'));
+	$object->label = GETPOST("label", 'alphanohtml');
 	$object->datesp = $datesp;
 	$object->dateep = $dateep;
-	$object->note = GETPOST("note");
+	$object->note = GETPOST("note", 'none');
 	$object->type_payment = ($type_payment > 0 ? $type_payment : 0);
-	$object->num_payment = GETPOST("num_payment");
+	$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 	$object->fk_user_author = $user->id;
-	$object->fk_project = GETPOST('fk_project', 'int');
+	$object->fk_project = $projectid;
 
 	// Set user current salary as ref salary for the payment
 	$fuser = new User($db);
@@ -146,8 +149,15 @@ if ($action == 'add' && empty($cancel))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: list.php");
-			exit;
+
+			if (GETPOST('saveandnew', 'alpha')) {
+				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
+				header("Location: card.php?action=create&fk_project=".urlencode($projectid)."&accountid=".urlencode($accountid).'&paymenttype='.urlencode(GETPOST('paymenttype', 'az09')).'&datepday='.GETPOST("datepday", 'int').'&datepmonth='.GETPOST("datepmonth", 'int').'&datepyear='.GETPOST("datepyear", 'int'));
+				exit;
+			} else {
+				header("Location: list.php");
+				exit;
+			}
 		}
 		else
 		{
@@ -251,7 +261,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'title_accountancy.png');
@@ -272,13 +282,6 @@ if ($action == 'create')
 	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
-	// Employee
-	print '<tr><td>';
-	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
-	$noactive = 0; // We keep active and unactive users
-	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
-	print '</td></tr>';
-
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
@@ -297,6 +300,13 @@ if ($action == 'create')
 	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
 	print '</td></tr>';
 
+	// Employee
+	print '<tr><td>';
+	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
+	$noactive = 0; // We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print '</td></tr>';
+
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
@@ -309,9 +319,7 @@ if ($action == 'create')
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-
+		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
 		print '</td></tr>';
 	}
 
@@ -320,14 +328,14 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($_POST["accountid"], "accountid", 0, '', 1); // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
 	print '<tr><td>';
 	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype", '', 2);
+	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '', 2);
 	print '</td></tr>';
 
 	// Number
@@ -354,8 +362,10 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp; &nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
+	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
@@ -397,7 +407,7 @@ if ($id)
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref.='</form>';

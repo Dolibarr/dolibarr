@@ -40,23 +40,23 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Get parameters
-$action=GETPOST('action', 'aZ09');
-$cancel=GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 
 // Load translation files required by the page
-$langs->loadLangs(array("holiday","mails"));
+$langs->loadLangs(array("holiday", "mails"));
 
-$now=dol_now();
+$now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
 $morefilter = 'AND employee = 1';
-if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
 $error = 0;
 
@@ -90,7 +90,7 @@ if (!empty($user->rights->holiday->delete)) $candelete = 1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete = 1;
 
 // Protection if external user
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 
@@ -872,7 +872,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='HOLIDAY_SENTBYMAIL';
+	$triggersendname = 'HOLIDAY_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
 	$trackid='leav'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -978,7 +978,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
+        print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
         if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
@@ -991,7 +991,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 			{
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 				$nb_holiday += $nb_type;
-				$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+
+				$out .= ' - ' . ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']) .': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 			}
 	        print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
@@ -1196,7 +1198,7 @@ else
                 	if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) $edit = true;
 
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">'."\n";
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
+                    print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
                 }
@@ -1278,9 +1280,17 @@ else
                     print '</td>';
                     print '</tr>';
                 }
+
                 // Nb of days
                 print '<tr>';
-                print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
+                print '<td class="nowrap">';
+                $htmlhelp = $langs->trans('NbUseDaysCPHelp');
+                $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+                $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+                if ($includesaturday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+                if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
+                print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
+                print '</td>';
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
                 print '</tr>';
 

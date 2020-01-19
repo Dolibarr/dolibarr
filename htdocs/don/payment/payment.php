@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/don/payment.php
+ *  \file       htdocs/don/payment/payment.php
  *  \ingroup    donations
  *  \brief      Page to add payment of a donation
  */
@@ -180,7 +180,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("DoPayment"));
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="rowid" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
@@ -215,7 +215,7 @@ if ($action == 'create')
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td class="tdtop" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '</table>';

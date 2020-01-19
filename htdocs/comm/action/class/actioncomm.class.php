@@ -514,9 +514,10 @@ class ActionComm extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
-            // Now insert assignedusers
+            // Now insert assigned users
 			if (!$error)
 			{
+				//dol_syslog(var_export($this->userassigned, true));
 				foreach ($this->userassigned as $key => $val)
 				{
 			        if (!is_array($val))	// For backward compatibility when val=id
@@ -524,16 +525,20 @@ class ActionComm extends CommonObject
 			        	$val = array('id'=>$val);
 			        }
 
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
+			        if ($val['id'] > 0)
+			        {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+						$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
 
-					$resql = $this->db->query($sql);
-					if (!$resql)
-					{
-						$error++;
-		           		$this->errors[] = $this->db->lasterror();
-					}
-					//var_dump($sql);exit;
+						$resql = $this->db->query($sql);
+						if (!$resql)
+						{
+							$error++;
+							dol_syslog('Error to process userassigned: '.$this->db->lasterror(), LOG_ERR);
+			           		$this->errors[] = $this->db->lasterror();
+						}
+						//var_dump($sql);exit;
+			        }
 				}
 			}
 
@@ -541,7 +546,7 @@ class ActionComm extends CommonObject
 			{
 				if (!empty($this->socpeopleassigned))
 				{
-					foreach ($this->socpeopleassigned as $id => $Tab)
+					foreach ($this->socpeopleassigned as $id => $val)
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
@@ -550,6 +555,7 @@ class ActionComm extends CommonObject
 						if (!$resql)
 						{
 							$error++;
+							dol_syslog('Error to process socpeopleassigned: '.$this->db->lasterror(), LOG_ERR);
 							$this->errors[] = $this->db->lasterror();
 						}
 					}
@@ -558,8 +564,6 @@ class ActionComm extends CommonObject
 
             if (!$error)
             {
-            	$action = 'create';
-
 	            // Actions on extra fields
             	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             	{
@@ -1112,7 +1116,7 @@ class ActionComm extends CommonObject
 
     /**
      *  Load all objects with filters.
-     *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
+     *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
      *
      *  @param		DoliDb	$db				Database handler
      *  @param		int		$socid			Filter by thirdparty
@@ -1506,6 +1510,50 @@ class ActionComm extends CommonObject
         return $result;
     }
 
+    /**
+     * Sets object to supplied categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
+     * @param  int[]|int $categories Category or categories IDs
+     * @return void
+     */
+    public function setCategories($categories)
+    {
+        // Handle single category
+        if (! is_array($categories)) {
+            $categories = array($categories);
+        }
+
+        // Get current categories
+        include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $c = new Categorie($this->db);
+        $existing = $c->containing($this->id, Categorie::TYPE_ACTIONCOMM, 'id');
+
+        // Diff
+        if (is_array($existing)) {
+            $to_del = array_diff($existing, $categories);
+            $to_add = array_diff($categories, $existing);
+        } else {
+            $to_del = array(); // Nothing to delete
+            $to_add = $categories;
+        }
+
+        // Process
+        foreach($to_del as $del) {
+            if ($c->fetch($del) > 0) {
+                $c->del_type($this, Categorie::TYPE_ACTIONCOMM);
+            }
+        }
+        foreach ($to_add as $add) {
+            if ($c->fetch($add) > 0) {
+                $c->add_type($this, Categorie::TYPE_ACTIONCOMM);
+            }
+        }
+        return;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -1721,6 +1769,13 @@ class ActionComm extends CommonObject
                     }
                     $diff++;
                 }
+
+				$parameters=array('filters' => $filters, 'eventarray' => &$eventarray);
+				$reshook=$hookmanager->executeHooks('addMoreEventsExport', $parameters);    // Note that $action and $object may have been modified by hook
+				if ($reshook > 0)
+				{
+					$eventarray = $hookmanager->resArray;
+				}
             }
             else
             {
@@ -1814,7 +1869,9 @@ class ActionComm extends CommonObject
         $this->location = 'Location';
         $this->transparency = 1; // 1 means opaque
         $this->priority = 1;
-        $this->note = 'Note';
+        $this->note = "This is a 'public' note";
+		$this->note_public = "This is a 'public' note.";
+		$this->note_private = "This is a 'private' note.";
 
         $this->userownerid = $user->id;
         $this->userassigned[$user->id] = array('id'=>$user->id, 'transparency'=> 1);

@@ -179,6 +179,8 @@ delete from llx_categorie_member where fk_categorie not in (select rowid from ll
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 6);
 
+-- Fix: delete orphelins in ecm_files
+delete from llx_ecm_files where src_object_type = 'expensereport' and src_object_id NOT IN (select rowid from llx_expensereport);
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
 delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
@@ -200,6 +202,13 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 -- Fix: delete orphelin actioncomm_resources
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
+
+-- Fix: delete orphelin links in llx_bank_url
+DELETE from llx_bank_url where type = 'payment' and url_id not in (select rowid from llx_paiement);
+DELETE from llx_bank_url where type = 'payment_supplier' and url_id not in (select rowid from llx_paiementfourn);
+DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid from llx_societe);
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
 
 -- Fix link on parent that were removed
 DROP table tmp_user;
@@ -462,12 +471,18 @@ update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product
 update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
  
- 
+
+DELETE FROM llx_mrp_production where qty = 0;
+
+
 UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
 
  
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
+UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
 
 
 -- Note to make all deposit as payed when there is already a discount generated from it.

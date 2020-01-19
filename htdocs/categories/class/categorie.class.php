@@ -54,6 +54,7 @@ class Categorie extends CommonObject
 	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
     const TYPE_WAREHOUSE = 'warehouse';
+    const TYPE_ACTIONCOMM = 'actioncomm';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -77,6 +78,7 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 		'warehouse'    => 9,
+        'actioncomm' => 10,
 	);
 
     /**
@@ -93,12 +95,13 @@ class Categorie extends CommonObject
 		7 => 'user',
 		8 => 'bank_line',
 		9 => 'warehouse',
+        10 => 'actioncomm',
 	);
 
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
-	 * @TODO Move to const array when PHP 5.6 will be our minimum target
+	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_FK = array(
 		'product'  => 'product',
@@ -111,6 +114,7 @@ class Categorie extends CommonObject
         'bank_account' => 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
+        'actioncomm' => 'actioncomm',
     );
 
     /**
@@ -129,6 +133,7 @@ class Categorie extends CommonObject
         'bank_account'=> 'account',
         'project'  => 'project',
         'warehouse'=> 'warehouse',
+        'actioncomm' => 'actioncomm',
 	);
 
     /**
@@ -147,6 +152,7 @@ class Categorie extends CommonObject
 		'bank_account'  => 'Account',
         'project'  => 'Project',
         'warehouse'=> 'Entrepot',
+        'actioncomm' => 'ActionComm',
 	);
 
     /**
@@ -164,6 +170,7 @@ class Categorie extends CommonObject
         'account'  => 'bank_account',
         'project'  => 'projet',
         'warehouse'=> 'entrepot',
+        'actioncomm' => 'actioncomm',
 	);
 
 	/**
@@ -214,6 +221,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_PROJECT
 	 * @see Categorie::TYPE_BANK_LINE
      * @see Categorie::TYPE_WAREHOUSE
+     * @see Categorie::TYPE_ACTIONCOMM
 	 */
 	public $type;
 
@@ -1146,11 +1154,13 @@ class Categorie extends CommonObject
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel.
+	 *  It is called by get_full_arbo()
 	 *  This function is a memory scan only from $this->cats and $this->motherof, no database access must be done here.
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
+	 *  @see get_full_arbo()
 	 */
     public function build_path_from_id_categ($id_categ, $protection = 1000)
     {

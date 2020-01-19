@@ -595,7 +595,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 					    $progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 					    $pdf->SetXY($this->posxprogress, $curY);
-				        $pdf->MultiCell($this->postotalht - $this->posxprogress - 1, 3, $progress, 0, 'R');
+				        $pdf->MultiCell($this->postotalht - $this->posxprogress + 1, 3, $progress, 0, 'R');
 					}
 
 					// Total HT line
@@ -1618,12 +1618,14 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			if ($this->emetteur->logo)
 			{
+				$logodir = $conf->mycompany->dir_output;
+				if (! empty($conf->mycompany->multidir_output[$object->entity])) $logodir = $conf->mycompany->multidir_output[$object->entity];
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
-					$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/thumbs/'.$this->emetteur->logo_small;
+					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				}
 				else {
-					$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/'.$this->emetteur->logo;
+					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
 				{

@@ -19,10 +19,10 @@
  */
 
 /**
- * 	\defgroup   mrp     Module Mrp
+ *  \defgroup   mrp     Module Mrp
  *  \brief      Mrp module descriptor.
  *
- *  \file       htdocs/mrp/core/modules/modMrp.class.php
+ *  \file       htdocs/core/modules/modMrp.class.php
  *  \ingroup    mrp
  *  \brief      Description and activation file for module Mrp
  */

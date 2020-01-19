@@ -461,7 +461,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_paiement">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
@@ -584,8 +584,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
-                print '<td align="center">'.$langs->trans('Date').'</td>';
-                print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
+                print '<td class="center">'.$langs->trans('Date').'</td>';
+                print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
                 if (!empty($conf->multicurrency->enabled)) {
                 	print '<td>'.$langs->trans('Currency').'</td>';
                 	print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
@@ -637,7 +637,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
 					print '<td class="nowraponall">';
                     print $invoice->getNomUrl(1, '');
@@ -645,7 +645,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print "</td>\n";
 
                     // Date
-                   	print '<td align="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
+                   	print '<td class="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
 
                     // Due date
                     if ($objp->dlr > 0)
@@ -666,7 +666,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
 
                     // Currency
-                    if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+                    if (!empty($conf->multicurrency->enabled)) print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 
 					// Multicurrency Price
 					if (!empty($conf->multicurrency->enabled))
@@ -715,7 +715,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Price
-                    print '<td class="right" '.(($invoice->id == $facid) ? ' style="font-weight: bold" ' : '').'>'.price($sign * $objp->total_ttc).'</td>';
+                    print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
 
                     // Received or paid back
                     print '<td class="right">'.price($sign * $paiement);

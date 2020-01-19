@@ -38,12 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 //show files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "categories", "companies", "bills", "trips"));
+$langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
 
 $action = GETPOST('action', 'alpha');
 $id = GETPOST('account', 'int');
@@ -202,6 +205,9 @@ $paymentvatstatic = new TVA($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
+$paymentdonationstatic=new PaymentDonation($db);
+$paymentloanstatic=new PaymentLoan($db);
+$paymentvariousstatic=new PaymentVarious($db);
 
 // Must be before button action
 $param = '';
@@ -265,7 +271,7 @@ if (empty($numref))
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder, '', $numrows, $totalnboflines, '');
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_editbankreceipt">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="account" value="'.$object->id.'">';
@@ -358,12 +364,12 @@ if (empty($numref))
 else
 {
 	/**
-	 *   Show list of bank statements
+	 *   Show list of record into a bank statement
 	 */
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
-	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), -1, 'account');
 
 
 	$mesprevnext = '';
@@ -380,7 +386,7 @@ else
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
     print '<div class="div-table-responsive">';
@@ -438,12 +444,11 @@ else
 			// Date de valeur
 			print '<td valign="center" class="center nowrap">';
 			print dol_print_date($db->jdate($objp->dv), "day").' ';
-			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a href="releve.php?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print "</td>\n";
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 
 			// Type and num
             if ($objp->fk_type == 'SOLD') {
@@ -460,7 +465,8 @@ else
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq ? $objp->num_chq : '').$link.'</td>';
 
 			// Description
-			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
+			print '<td valign="center">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) print $langs->trans($reg[1]);
@@ -512,7 +518,28 @@ else
 					print '</a>';
 					$newline = 0;
 				}
-				elseif ($links[$key]['type'] == 'banktransfert') {
+				elseif ($links[$key]['type']=='payment_donation')
+				{
+					$paymentdonationstatic->id=$links[$key]['url_id'];
+					$paymentdonationstatic->ref=$langs->trans("Payment");
+					print ' '.$paymentdonationstatic->getNomUrl(1);
+					$newline = 0;
+				}
+				elseif ($links[$key]['type']=='payment_loan')
+				{
+					$paymentloanstatic->id=$links[$key]['url_id'];
+					$paymentloanstatic->ref=$langs->trans("Payment");
+					print ' '.$paymentloanstatic->getNomUrl(1);
+					$newline = 0;
+				}
+				elseif ($links[$key]['type']=='payment_various')
+				{
+					$paymentvariousstatic->id=$links[$key]['url_id'];
+					$paymentvariousstatic->ref=$langs->trans("Payment");
+					print ' '.$paymentvariousstatic->getNomUrl(1);
+					$newline = 0;
+				}
+				elseif ($links[$key]['type']=='banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
 					if ($objp->amount > 0)
 					{

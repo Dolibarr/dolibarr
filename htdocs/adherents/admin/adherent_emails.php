@@ -151,7 +151,7 @@ dol_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
 // TODO Use global form
 //print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-//print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+//print '<input type="hidden" name="token" value="'.newToken().'">';
 //print '<input type="hidden" name="action" value="updateall">';
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';

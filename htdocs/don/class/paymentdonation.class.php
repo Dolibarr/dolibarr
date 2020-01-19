@@ -121,14 +121,14 @@ class PaymentDonation extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_donation)) 		$this->fk_donation=trim($this->fk_donation);
+		if (isset($this->fk_donation)) 		$this->fk_donation = (int) $this->fk_donation;
 		if (isset($this->amount))			$this->amount=trim($this->amount);
 		if (isset($this->fk_typepayment))   $this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))      $this->num_payment=trim($this->num_payment);
 		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat))	$this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif))	$this->fk_user_modif = (int) $this->fk_user_modif;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -275,14 +275,14 @@ class PaymentDonation extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_donation))		$this->fk_donation=trim($this->fk_donation);
+		if (isset($this->fk_donation))		$this->fk_donation = (int) $this->fk_donation;
 		if (isset($this->amount))			$this->amount=trim($this->amount);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
 		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat))	$this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif))	$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -300,13 +300,16 @@ class PaymentDonation extends CommonObject
 		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
 		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
 		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
-		$sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
 
 		if (! $error)
 		{
@@ -358,7 +361,7 @@ class PaymentDonation extends CommonObject
 	    if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_donation' AND url_id=".$this->id;
+            $sql.= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
 
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -372,7 +375,10 @@ class PaymentDonation extends CommonObject
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+			if (! $resql) {
+				$error++;
+				$this->errors[]="Error ".$this->db->lasterror();
+			}
 		}
 
 		if (! $error)
@@ -609,7 +615,7 @@ class PaymentDonation extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".(int) $id_bank." WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);

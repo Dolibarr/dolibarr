@@ -331,7 +331,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -554,7 +554,7 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->delete)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete')."</a> &nbsp;";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete')."</a> &nbsp; ";
@@ -562,7 +562,7 @@ if ($num > 0)
 		if ($user->rights->cron->execute)
 		{
 			if (!empty($obj->status)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
 				print (empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY);
 				print ($sortfield ? '&sortfield='.$sortfield : '');
 				print ($sortorder ? '&sortorder='.$sortorder : '');

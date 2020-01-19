@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/compta/bank/various_expenses/card.php
+ *  \file       htdocs/compta/bank/various_payment/card.php
  *  \ingroup    bank
  *  \brief      Page of various expenses
  */
@@ -63,6 +63,7 @@ $object = new PaymentVarious($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('variouscard','globalcard'));
+
 
 /**
  * Actions
@@ -216,6 +217,20 @@ if (empty($reshook))
 			setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 		}
 	}
+
+	if ($action == 'setsubledger_account') {
+		$result = $object->fetch($id);
+
+		$object->subledger_account = (GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "");
+
+		$res = $object->update($user);
+		if ($res > 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 
@@ -258,7 +273,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 if ($action == 'create')
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -283,7 +298,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300 maxwidth150onsmartphone" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Sens
@@ -296,7 +311,7 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100" value="'.$amount.'">';
+	print '<input name="amount" id="amount" class="minwidth100 maxwidth150onsmartphone" value="'.$amount.'">';
 	print '</td></tr>';
 
 	// Bank
@@ -321,7 +336,7 @@ if ($action == 'create')
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
-		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
     // Project
@@ -358,13 +373,13 @@ if ($action == 'create')
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
         print '<td>';
-		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
+		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
         print '</td></tr>';
 	}
 	else // For external software
 	{
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
-		print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code" value="'.$accountancy_code.'">';
+		print '<td><input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
 		print '</td></tr>';
 	}
 
@@ -379,14 +394,14 @@ if ($action == 'create')
         }
         else
         {
-            print '<input type="text" class="maxwidth200" name="subledger_account" value="'.$subledger_account.'">';
+            print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
     }
     else // For external software
     {
         print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
-        print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="subledger_account" value="'.$subledger_account.'">';
+        print '<td><input class="minwidth100 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
         print '</td></tr>';
     }
 
@@ -412,6 +427,8 @@ if ($action == 'create')
 
 if ($id)
 {
+	$alreadyaccounted = $object->getVentilExportCompta();
+
 	$head=various_payment_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
@@ -431,7 +448,7 @@ if ($id)
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref.='</form>';
@@ -456,7 +473,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -495,9 +512,9 @@ if ($id)
 
     // Subledger account
     print '<tr><td class="nowrap">';
-    print $langs->trans("SubledgerAccount");
+    print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
     print '</td><td>';
-    print $object->subledger_account;
+    print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
     print '</td></tr>';
 
 	if (!empty($conf->banque->enabled))
@@ -542,7 +559,11 @@ if ($id)
 	{
 		if (!empty($user->rights->banque->modifier))
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			if ($alreadyaccounted) {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			}
 		}
 		else
 		{

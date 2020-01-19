@@ -257,7 +257,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	$sql = "SELECT fd.tva_tx AS vatrate,";
 	$sql .= " fd.product_type AS product_type,";
-	$sql .= " cc.label AS country,";
+	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
 		$sql .= " SUM(".$db->ifsql('MONTH(f.datef)='.$i, 'fd.total_ht', '0').") AS month".str_pad($i, 2, '0', STR_PAD_LEFT).",";
 	}
@@ -289,7 +289,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 			} else {
 				print '<td class="left">'.$langs->trans("Service").'</td>';
 			}
-			print '<td>'.$obj->country.'</td>';
+			// Country
+			print '<td>';
+			print $langs->trans("Country".$obj->code) != "Country".$obj->code ? $langs->trans("Country".$obj->code) : $obj->country;
+			print '</td>';
 			for ($i = 0; $i < 12; $i++) {
 				$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 				if ($j > 12) $j -= 12;
@@ -335,7 +338,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	$sql2 = "SELECT ffd.tva_tx AS vatrate,";
 	$sql2 .= " ffd.product_type AS product_type,";
-	$sql2 .= " cc.label AS country,";
+	$sql2 .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
 		$sql2 .= " SUM(".$db->ifsql('MONTH(ff.datef)='.$i, 'ffd.total_ht', '0').") AS month".str_pad($i, 2, '0', STR_PAD_LEFT).",";
 	}
@@ -368,7 +371,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 			} else {
 				print '<td class="left">'.$langs->trans("Service").'</td>';
 			}
-			print '<td>'.$obj->country.'</td>';
+			print '<td>';
+			print $langs->trans("Country".$obj->code) != "Country".$obj->code ? $langs->trans("Country".$obj->code) : $obj->country;
+			print '</td>';
 			for ($i = 0; $i < 12; $i++) {
 				$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 				if ($j > 12) $j -= 12;

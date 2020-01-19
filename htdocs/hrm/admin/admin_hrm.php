@@ -75,7 +75,7 @@ print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 $head = hrm_admin_prepare_head();
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");

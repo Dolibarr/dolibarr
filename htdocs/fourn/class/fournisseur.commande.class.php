@@ -670,10 +670,9 @@ class CommandeFournisseur extends CommonOrder
             2 => 'status3',
             3 => 'status3',
             4 => 'status3',
-            5 => 'status6',
+            5 => 'status4',
             6 => 'status5',
             7 => 'status5',
-
             9 => 'status5',
         );
 
@@ -701,11 +700,12 @@ class CommandeFournisseur extends CommonOrder
      *	@param		string	$option						On what the link points
      *  @param	    int   	$notooltip					1=Disable tooltip
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param		int		$addlinktonotes				Add link to show notes
      *	@return		string								Chain with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
 
         $result = '';
         $label = '<u>'.$langs->trans("ShowOrder").'</u>';
@@ -751,6 +751,22 @@ class CommandeFournisseur extends CommonOrder
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
+
+        if ($addlinktonotes)
+        {
+        	$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+        	if ($txttoshow)
+        	{
+        		$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+        		$result .= ' <span class="note inline-block">';
+        		$result .= '<a href="'.DOL_URL_ROOT.'/fourn/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+        		$result .= img_picto('', 'note');
+        		$result .= '</a>';
+        		//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+        		//$result.='</a>';
+        		$result .= '</span>';
+        	}
+        }
 
         return $result;
     }
@@ -2420,18 +2436,19 @@ class CommandeFournisseur extends CommonOrder
         if ($resql)
         {
             // Trigger names for each status
-            $trigger_name[0] = 'DRAFT';
-            $trigger_name[1] = 'VALIDATED';
-            $trigger_name[2] = 'APPROVED';
-            $trigger_name[3] = 'ORDERED'; // Ordered
-            $trigger_name[4] = 'RECEIVED_PARTIALLY';
-            $trigger_name[5] = 'RECEIVED_COMPLETELY';
-            $trigger_name[6] = 'CANCELED';
-            $trigger_name[7] = 'CANCELED';
-            $trigger_name[9] = 'REFUSED';
+        	$triggerName = array();
+            $triggerName[0] = 'DRAFT';
+            $triggerName[1] = 'VALIDATED';
+            $triggerName[2] = 'APPROVED';
+            $triggerName[3] = 'ORDERED'; // Ordered
+            $triggerName[4] = 'RECEIVED_PARTIALLY';
+            $triggerName[5] = 'RECEIVED_COMPLETELY';
+            $triggerName[6] = 'CANCELED';
+            $triggerName[7] = 'CANCELED';
+            $triggerName[9] = 'REFUSED';
 
             // Call trigger
-            $result = $this->call_trigger("ORDER_SUPPLIER_STATUS_".$trigger_name[$status], $user);
+            $result = $this->call_trigger("ORDER_SUPPLIER_STATUS_".$triggerName[$status], $user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
@@ -2891,9 +2908,9 @@ class CommandeFournisseur extends CommonOrder
             $resql = $db->query($sql);
             if ($resql)
             {
-                if ($db->num_rows($query))
+                if ($db->num_rows($resql))
                 {
-                    $obj = $db->fetch_object($query);
+                    $obj = $db->fetch_object($resql);
 
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
@@ -3589,7 +3606,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (!$error)
             {
                 $this->db->commit();
-                return $result;
+                return 1;
             }
             else
             {

@@ -5,7 +5,7 @@
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
@@ -862,7 +862,7 @@ if (empty($reshook))
     $object->fetch($socid);
 
     // Actions to send emails
-    $trigger_name = 'COMPANY_SENTBYMAIL';
+    $triggersendname = 'COMPANY_SENTBYMAIL';
     $paramname = 'socid';
     $mode = 'emailfromthirdparty';
     $trackid = 'thi'.$object->id;
@@ -1070,13 +1070,13 @@ else
         $linkback = "";
         print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
-        if (!empty($conf->use_javascript_ajax) && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
-        {
-            print "\n".'<script type="text/javascript">';
-            print '$(document).ready(function () {
+        if (!empty($conf->use_javascript_ajax)) {
+			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+				print "\n" . '<script type="text/javascript">';
+				print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private='.$private.';
+                        is_private=' . $private . ';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -1103,7 +1103,7 @@ else
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0') . '))
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1134,28 +1134,38 @@ else
                         	document.formsoc.submit();
                         });
                      });';
-            print '</script>'."\n";
+				print '</script>' . "\n";
 
-            print '<div id="selectthirdpartytype">';
-            print '<div class="hideonsmartphone float">';
-            print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
-            print '</div>';
-	        print '<label for="radiocompany" class="radiocompany">';
-            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private ? '' : ' checked').'>';
-	        print '&nbsp;';
-            print $langs->trans("CreateThirdPartyOnly");
-	        print '</label>';
-            print ' &nbsp; &nbsp; ';
-	        print '<label for="radioprivate" class="radioprivate">';
-            $text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private ? ' checked' : '').'>';
-	        $text .= '&nbsp;';
-	        $text .= $langs->trans("CreateThirdPartyAndContact");
-	        $htmltext = $langs->trans("ToCreateContactWithSameName");
-	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
-            print '</label>';
-            print '</div>';
-            print "<br>\n";
-        }
+				print '<div id="selectthirdpartytype">';
+				print '<div class="hideonsmartphone float">';
+				print $langs->trans("ThirdPartyType") . ': &nbsp; &nbsp; ';
+				print '</div>';
+				print '<label for="radiocompany" class="radiocompany">';
+				print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"' . ($private ? '' : ' checked') . '>';
+				print '&nbsp;';
+				print $langs->trans("CreateThirdPartyOnly");
+				print '</label>';
+				print ' &nbsp; &nbsp; ';
+				print '<label for="radioprivate" class="radioprivate">';
+				$text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"' . ($private ? ' checked' : '') . '>';
+				$text .= '&nbsp;';
+				$text .= $langs->trans("CreateThirdPartyAndContact");
+				$htmltext = $langs->trans("ToCreateContactWithSameName");
+				print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
+				print '</label>';
+				print '</div>';
+				print "<br>\n";
+			} else {
+				print '<script type="text/javascript">';
+				print '$(document).ready(function () {
+                        $("#selectcountry_id").change(function() {
+                        	document.formsoc.action.value="create";
+                        	document.formsoc.submit();
+                        });
+                     });';
+				print '</script>' . "\n";
+			}
+		}
 
         dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
@@ -1163,7 +1173,7 @@ else
 
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
         print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1220,6 +1230,8 @@ else
 	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
+	    if ($conf->browser->layout == 'phone') print '</tr><tr>';
+
         print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
         print '<table class="nobordernopadding"><tr><td>';
 		$tmpcode = $object->code_client;
@@ -1241,6 +1253,10 @@ else
             if (!empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default = 1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ?GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0));
             print '</td>';
+
+
+            if ($conf->browser->layout == 'phone') print '</tr><tr>';
+
             print '<td>';
             if (!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire))
             {
@@ -1283,7 +1299,9 @@ else
         // Zip / Town
         print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
         print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
-        print '</td><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+        print '</td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
+        print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
         print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td></tr>';
 
@@ -1313,6 +1331,7 @@ else
         // Phone / Fax
         print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
         print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
         print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
@@ -1374,7 +1393,7 @@ else
         // }
 
         // Prof ids
-        $i = 1; $j = 0;
+        $i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
         while ($i <= 6)
         {
             $idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
@@ -1382,7 +1401,7 @@ else
             {
 	            $key = 'idprof'.$i;
 
-                if (($j % 2) == 0) print '<tr>';
+                if (($j % $NBCOLS) == 0) print '<tr>';
 
                 $idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
                 print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
@@ -1401,6 +1420,7 @@ else
         print '<td>';
         print $form->selectyesno('assujtva_value', GETPOSTISSET('assujtva_value') ?GETPOST('assujtva_value', 'int') : 1, 1); // Assujeti par defaut en creation
         print '</td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td class="nowrap">'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
@@ -1462,6 +1482,7 @@ else
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td>';
+        if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td>'.$form->editfieldkey('Staff', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -1792,7 +1813,7 @@ else
 
             print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formsoc">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -2413,7 +2434,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editRE')
 			        {
@@ -2431,7 +2452,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editIRPF') {
 			            print '<td class="left">';
@@ -2452,7 +2473,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editRE') {
 			            print '<td class="left">';
@@ -2473,7 +2494,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editIRPF') {
 			            print '<td class="left">';
@@ -2550,7 +2571,7 @@ else
 			if ($object->prospect || $object->client || (!$object->fournisseur && !empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'customer', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 				print "</td></tr>";
 			}
 
@@ -2558,7 +2579,7 @@ else
 			if ($object->fournisseur) {
 				print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'supplier', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
 		}

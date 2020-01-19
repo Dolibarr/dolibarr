@@ -100,7 +100,7 @@ print $langs->trans("ApiDesc")."<br>\n";
 print "<br>\n";
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 print '<table class="noborder centpercent">';

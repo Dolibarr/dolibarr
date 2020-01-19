@@ -86,9 +86,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  * @param	WebsitePage	$objectpage			Object websitepage
  * @return	boolean							True if OK
  */
-function dolSavePageContent($filetpl, $object, $objectpage)
+function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 {
-	global $conf;
+	global $conf, $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
@@ -122,7 +122,47 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+	// Add translation reference (main language)
+	if ($object->isMultiLang()) {
+		// Add myself
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.($object->fk_default_home == $objectpage->id ? '/' : '/'.$objectpage->pageurl.'.php').'" />'."\n";
+		// Add page "translation of"
+		$translationof = $objectpage->fk_page;
+		if ($translationof) {
+			$tmppage = new WebsitePage($db);
+			$tmppage->fetch($translationof);
+			if ($tmppage->id > 0) {
+				$tmpshortlangcode = '';
+				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+				if ($tmpshortlangcode != $shortlangcode) {
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmppage->pageurl.'.php').'" />'."\n";
+				}
+			}
+		}
+		// Add "has translation pages"
+		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$objectpage->id.($translationof ? ", ".$translationof : "").")";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $db->num_rows($resql);
+			if ($num_rows > 0)
+			{
+				while ($obj = $db->fetch_object($resql))
+				{
+					$tmpshortlangcode = '';
+					if ($obj->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
+					if ($tmpshortlangcode != $shortlangcode) {
+						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : '/'.$obj->pageurl.'.php').'" />'."\n";
+					}
+				}
+			}
+		}
+		else dol_print_error($db);
+	}
+	// Add canonical reference
 	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	// Add manifest.json on homepage
+	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent .= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";

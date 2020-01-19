@@ -11,17 +11,8 @@ YourEMail=البريد الإلكتروني لتلقي تأكيد الدفع
 Creditor=دائن
 PaymentCode=رمز الدفع
 PayBoxDoPayment=Pay with Paybox
-ToPay=القيام بالدفع
 YouWillBeRedirectedOnPayBox=سيتم إعادة توجيهك على صفحة Paybox الأمنة لإدخال معلومات بطاقة الائتمان الخاصة بك
 Continue=التالي
-ToOfferALinkForOnlinePayment=عنوان URL للدفع %s
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL لتقديم واجهة مستخدم الدفع عبر الإنترنت %s لفاتورة العميل
-ToOfferALinkForOnlinePaymentOnContractLine=URL لتقديم %s واجهة مستخدم الدفع عبر الإنترنت لخط العقد
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL لتقديم واجهة مستخدم الدفع عبر الإنترنت %s مقابل مبلغ مجاني
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL لتقديم %s واجهة مستخدم الدفع عبر الإنترنت للحصول على اشتراك عضو
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=يمكنك أيضا إضافة معلمة عنوان url <b>&tag=<i>value</i></b> إلى أي من عنوان urlهذا (مطلوب فقط للدفع المجاني) لإضافة علامة تعليق الدفع الخاصة بك.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=تؤكد هذه الصفحة أنه قد تم تسجيل دفعتك. شكرا لكم.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

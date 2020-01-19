@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - vendors
-Suppliers=Vendors
-SuppliersInvoice=Vendor invoice
+Suppliers=Dobavljači
+SuppliersInvoice=Ulazni račun
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
 History=Povijest
@@ -32,8 +32,8 @@ ConfirmCancelThisOrder=Are you sure you want to cancel this order <b>%s</b>?
 AddSupplierOrder=Create Purchase Order
 AddSupplierInvoice=Create vendor invoice
 ListOfSupplierProductForSupplier=List of products and prices for vendor <b>%s</b>
-SentToSuppliers=Sent to vendors
-ListOfSupplierOrders=List of purchase orders
+SentToSuppliers=Poslanih dobavljačima
+ListOfSupplierOrders=Popis narudžbi dobavljačima
 MenuOrdersSupplierToBill=Purchase orders to invoice
 NbDaysToDelivery=Delivery delay (days)
 DescNbDaysToDelivery=The longest delivery delay of the products from this order

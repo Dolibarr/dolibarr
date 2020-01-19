@@ -71,7 +71,7 @@ if ($id)
 	dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
 	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

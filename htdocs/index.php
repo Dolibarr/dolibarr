@@ -677,7 +677,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                     $globalStatsKey = $groupElement['globalStatsKey'];
                     $groupElement['globalStats'] = array();
 
-                    if (in_array($globalStatsKey, $keys))
+                    if (is_array($keys) && in_array($globalStatsKey, $keys))
                     {
                         // get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
                         $keyIndex = array_search($globalStatsKey, $keys);
@@ -723,7 +723,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
                     $textLate = '';
                     if ($board->nbtodolate > 0) {
-                        $textLate .= ' <span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-danger">';
+                        $textLate .= ' <span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-warning">';
                         $textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
                         $textLate .= '</span>';
                     }

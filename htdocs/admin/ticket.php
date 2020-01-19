@@ -250,7 +250,7 @@ foreach ($dirmodels as $reldir) {
 
                         print '</td>'."\n";
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($conf->global->TICKET_ADDON == 'mod_'.$classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir) {
                             }
                         }
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print $form->textwithpicto('', $htmltooltip, 1, 0);
                         print '</td>';
 
@@ -291,7 +291,7 @@ print '</table><br>';
 
 if (!$conf->use_javascript_ajax) {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setvarother">';
 }
 
@@ -315,7 +315,7 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("TICKET_DISABLE_ALL_MAILS", $arrval, $conf->global->TICKET_DISABLE_ALL_MAILS);
 }
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsDisableEmailHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
@@ -330,7 +330,7 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("TICKET_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL);
 }
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsLogEnableEmailHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
@@ -348,7 +348,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	    print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
 	}
 	print '</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
@@ -365,7 +365,7 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("TICKET_LIMIT_VIEW_ASSIGNED_ONLY", $arrval, $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY);
 }
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsLimitViewAssignedOnlyHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
@@ -386,7 +386,7 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
 }
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
@@ -403,7 +403,7 @@ print load_fiche_titre($langs->trans("Notification"));
 print '<table class="noborder centpercent">';
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
 
 print '<tr class="liste_titre">';
@@ -426,29 +426,29 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("TICKET_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL);
 }
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsLogEnableEmailHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 */
 
-// @TODO Use module notification instead...
+// @todo Use module notification instead...
+
+// Email d'envoi des notifications
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TicketEmailNotificationFrom").'</td>';
+print '<td class="left">';
+print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'"></td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 // Email de réception des notifications
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
-print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM).'" size="20" ></td>';
-print '<td align="center">';
+print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM).'" size="20" ></td>';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Email d'envoi des notifications
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
-print '<td class="left">';
-print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'" size="20" ></td>';
-print '<td align="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -460,7 +460,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
@@ -472,7 +472,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
 print '</td></tr>';
 

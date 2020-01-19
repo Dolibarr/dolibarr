@@ -6,7 +6,7 @@ TMenuTools=Værktøjer
 ToolsDesc=Alle værktøjer, der ikke er inkluderet i andre menupunkter, er grupperet her. <br> Alle værktøjerne er tilgængelige via menuen til venstre.
 Birthday=Fødselsdag
 BirthdayDate=Fødselsdato
-DateToBirth=Dato for fødsel
+DateToBirth=Birth date
 BirthdayAlertOn=fødselsdag alarm aktive
 BirthdayAlertOff=fødselsdag alarm inaktive
 TransKey=Oversættelse af nøgle TransKey
@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
 Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
 Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
 Notify_CONTRACT_VALIDATE=Kontrakt bekræftet
-Notify_FICHEINTER_VALIDATE=Intervention bekræftet
+Notify_FICHINTER_VALIDATE=Intervention bekræftet
 Notify_FICHINTER_ADD_CONTACT=Tilføjet kontakt til intervention
 Notify_FICHINTER_SENTBYMAIL=Intervention sendt via post
 Notify_SHIPPING_VALIDATE=Forsendelse bekræftet
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Eksport område
