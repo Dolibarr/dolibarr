@@ -364,12 +364,12 @@ if (empty($numref))
 else
 {
 	/**
-	 *   Show list of bank statements
+	 *   Show list of record into a bank statement
 	 */
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
-	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), -1, 'account');
 
 
 	$mesprevnext = '';
@@ -444,9 +444,9 @@ else
 			// Date de valeur
 			print '<td valign="center" class="center nowrap">';
 			print dol_print_date($db->jdate($objp->dv), "day").' ';
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print "</td>\n";
 
