@@ -199,9 +199,9 @@ if ($result)
 	$i = 0;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 	if ($search_code) $param.='&search_code='.urlencode($search_code);
 	if ($search_ip)   $param.='&search_ip='.urlencode($search_ip);
 	if ($search_user) $param.='&search_user='.urlencode($search_user);
@@ -303,18 +303,19 @@ if ($result)
 		// Description
 		print '<td>';
 		$text=$langs->trans($obj->description);
+		$reg = array();
 		if (preg_match('/\((.*)\)(.*)/i', $obj->description, $reg))
 		{
 			$val=explode(',', $reg[1]);
 			$text=$langs->trans($val[0], isset($val[1])?$val[1]:'', isset($val[2])?$val[2]:'', isset($val[3])?$val[3]:'', isset($val[4])?$val[4]:'');
 			if (! empty($reg[2])) $text.=$reg[2];
 		}
-		print $text;
+		print dol_string_nohtmltag($text);
 		print '</td>';
 
 		// More informations
 		print '<td class="right">';
-		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent?$obj->user_agent:$langs->trans("Unknown"));
+		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
 		print $form->textwithpicto('', $htmltext);
 		print '</td>';
 
