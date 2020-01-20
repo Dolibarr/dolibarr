@@ -101,13 +101,7 @@ if (empty($reshook))
 	$error = 0;
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
-
-	if (empty($backtopage) || ($cancel && empty($id))) {
-		//var_dump($backurlforlist);exit;
-		if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-		else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
-	}
-
+	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id;
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -153,7 +147,7 @@ jQuery(document).ready(function() {
 
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
+if ($object->id > 0)
 {
     $res = $object->fetch_optionals();
 
@@ -260,7 +254,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	// Buttons for actions
-	if ($action != 'presend' && $action != 'editline') {
+	if ($action == 'edit') {
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+		print '<div class="center">';
+		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
+		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+		print '<br>';
+	}
+	else {
     	print '<div class="tabsAction">'."\n";
     	$parameters = array();
     	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -270,9 +279,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	{
     		if ($object->status == Inventory::STATUS_DRAFT)
     		{
+    			if ($permissiontoadd)
+    			{
+    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>'."\n";
+    			}
+    			else
+    			{
+    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Edit').'</a>'."\n";
+    			}
+    		}
+
+    		if ($object->status == Inventory::STATUS_DRAFT)
+    		{
 	        	if ($permissiontoadd)
 	    		{
-	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Validate").'</a>'."\n";
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans("Validate").'</a>'."\n";
 	    		}
 	    		else
 	    		{
@@ -280,7 +301,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    		}
     		}
 
-    		if ($object->status == Inventory::STATUS_VALIDATED)
+    		/*if ($object->status == Inventory::STATUS_VALIDATED)
     		{
 	    		if ($permissiontoadd)
 	    		{
@@ -290,14 +311,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    		{
 	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('RecordVerb').'</a>'."\n";
 	    		}
-    		}
+    		}*/
     	}
     	print '</div>'."\n";
 	}
 
 
 	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
+	//print '<div class="fichehalfleft">';
 	print '<div class="clearboth"></div>';
 
 	//print load_fiche_titre($langs->trans('Consumption'), '', '');
@@ -399,8 +420,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 	print '</div>';
 
+	//print '</div>';
 	print '</div>';
-	print '</div>';
+
+	if ($action == 'edit') {
+		print '</form>';
+	}
 }
 
 // End of page
