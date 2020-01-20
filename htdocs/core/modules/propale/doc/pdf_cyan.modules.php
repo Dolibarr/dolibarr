@@ -422,6 +422,8 @@ class pdf_cyan extends ModelePDFPropales
 				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
 				}
 
+				$tab_height = $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter;
+
 				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{
@@ -533,7 +535,6 @@ class pdf_cyan extends ModelePDFPropales
 					        $posyafter = $tab_top_newpage;
 					    }
 					}
-
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $posyafter + 6;
 				}
@@ -1481,7 +1482,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills"));
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
