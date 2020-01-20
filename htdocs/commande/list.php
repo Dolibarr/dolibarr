@@ -75,6 +75,7 @@ $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
+$search_login=GETPOST('search_login', 'alpha');
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $optioncss = GETPOST('optioncss', 'alpha');
 $billed = GETPOST('billed', 'int');
@@ -140,6 +141,7 @@ $arrayfields = array(
 	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
     'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
@@ -195,6 +197,7 @@ if (empty($reshook))
 		$search_total_ht = '';
 		$search_total_vat = '';
 		$search_total_ttc = '';
+		$search_login='';
 		$search_dateorder_start = '';
 		$search_dateorder_end = '';
 		$search_datedelivery_start = '';
@@ -246,10 +249,11 @@ if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
+$sql.= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
+$sql.= " u.login";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label']))
@@ -268,6 +272,8 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 if ($sall || $search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
 if ($search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
+
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
@@ -322,6 +328,7 @@ if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$s
 if ($search_user > 0)				$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '')			$sql .= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_ttc != '')		$sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
+if ($search_login)       $sql .= natural_search("u.login", $search_login);
 if ($search_project_ref != '')		$sql .= natural_search("p.ref", $search_project_ref);
 if ($search_project != '')			$sql .= natural_search("p.title", $search_project);
 if ($search_categ_cus > 0)			$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
@@ -417,6 +424,7 @@ if ($resql)
 	if ($search_total_ht != '') 	$param .= '&search_total_ht='.urlencode($search_total_ht);
 	if ($search_total_vat != '')  	$param .= '&search_total_vat='.urlencode($search_total_vat);
 	if ($search_total_ttc != '')  	$param .= '&search_total_ttc='.urlencode($search_total_ttc);
+	if ($search_login)  	 $param.='&search_login='.urlencode($search_login);
 	if ($search_project_ref >= 0) 	$param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_town != '')       	$param .= '&search_town='.urlencode($search_town);
 	if ($search_zip != '')        	$param .= '&search_zip='.urlencode($search_zip);
@@ -689,6 +697,13 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
 	}
+	if (! empty($arrayfields['u.login']['checked']))
+	{
+		// Author
+		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '</td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -760,6 +775,8 @@ if ($resql)
 	if (!empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'c.tva', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'], $_SERVER["PHP_SELF"], 'c.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -781,7 +798,7 @@ if ($resql)
 
 	$generic_commande = new Commande($db);
 	$generic_product = new Product($db);
-
+	$userstatic = new User($db);
 	$i = 0;
 	$totalarray = array();
 	while ($i < min($num, $limit))
@@ -1078,6 +1095,19 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
 			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+		}
+
+		$userstatic->id=$obj->fk_user_author;
+		$userstatic->login=$obj->login;
+
+		// Author
+		if (! empty($arrayfields['u.login']['checked']))
+		{
+			print '<td align="center">';
+			if ($userstatic->id) print $userstatic->getLoginUrl(1);
+			else print '&nbsp;';
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Extra fields
