@@ -4199,6 +4199,7 @@ abstract class CommonObject
 
 				$product_static->ref = $line->ref; //can change ref in hook
 				$product_static->label = $line->label; //can change label in hook
+
 				$text = $product_static->getNomUrl(1);
 
 				// Define output language and label

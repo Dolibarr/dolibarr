@@ -1381,10 +1381,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param	string		$desc            	Description de la ligne
-	 *  @param  float		$pu_ht              Prix unitaire HT
-	 *  @param  int			$qty             	Quantite
-	 *  @param  float		$txtva           	Taux tva
+	 *  @param	string		$desc            	Description of line
+	 *  @param  float		$pu_ht              Unit price net
+	 *  @param  int			$qty             	Quantity
+	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit

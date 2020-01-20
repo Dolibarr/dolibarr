@@ -4240,10 +4240,7 @@ class Product extends CommonObject
                 $label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
             }
         }
-        //if ($this->type == Product::TYPE_SERVICE)
-        //{
-            //
-        //}
+
         if (!empty($conf->accounting->enabled) && $this->status) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
@@ -4256,6 +4253,11 @@ class Product extends CommonObject
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
         }
+        if (isset($this->status) && isset($this->status_buy)) {
+        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
+        	$label.= ' '.$this->getLibStatut(5, 1);
+        }
+
         if (!empty($this->entity)) {
             $tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
             if ($this->nbphoto > 0) { $label .= '<br>'.$tmpphoto;

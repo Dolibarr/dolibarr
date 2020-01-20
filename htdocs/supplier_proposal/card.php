@@ -229,7 +229,7 @@ if (empty($reshook))
 			dol_print_error($db, $object->error);
 	}
 
-	// Create askprice
+	// Create supplier proposal
 	elseif ($action == 'add' && $user->rights->supplier_proposal->creer)
 	{
 		$object->socid = $socid;
@@ -630,7 +630,7 @@ if (empty($reshook))
 				elseif (GETPOST('idprodfournprice', 'alpha') > 0)
 				{
 					//$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
-					$qtytosearch = -1; // We force qty to -1 to be sure to find if a supplier price exist
+					$qtytosearch = -1; // We force qty to -1 to be sure to find if the supplier price that exists
 					$idprod = $productsupplier->get_buyprice(GETPOST('idprodfournprice', 'alpha'), $qtytosearch);
 					$res = $productsupplier->fetch($idprod);
 				}
@@ -660,7 +660,8 @@ if (empty($reshook))
 					$pu_ht = $productsupplier->fourn_pu;
 					if (empty($pu_ht)) $pu_ht = 0; // If pu is '' or null, we force to have a numeric value
 
-					$fournprice = 0;
+					// If GETPOST('idprodfournprice') is a numeric, we can use it. If it is empty or if it is 'idprod_123', we should use -1 (not used)
+					$fournprice = (is_numeric(GETPOST('idprodfournprice', 'alpha')) ? GETPOST('idprodfournprice', 'alpha') : -1);
 					$buyingprice = 0;
 
 					$result = $object->addline(
