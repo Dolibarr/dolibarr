@@ -306,7 +306,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 	    print $formconfirm;
 
 
-	    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php'.(!empty($socid) ? '?id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
 	    $morehtmlref = '<div class="refidno">';

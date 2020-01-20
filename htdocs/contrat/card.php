@@ -612,7 +612,7 @@ if (empty($reshook))
 					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
-				unset($_POST ['prod_entry_mode']);
+				unset($_POST['prod_entry_mode']);
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -626,8 +626,8 @@ if (empty($reshook))
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
-				unset($_POST ['np_marginRate']);
-				unset($_POST ['np_markRate']);
+				unset($_POST['np_marginRate']);
+				unset($_POST['np_markRate']);
 				unset($_POST['dp_desc']);
 				unset($_POST['idprod']);
 
@@ -1114,6 +1114,7 @@ if ($action == 'create')
 	if (GETPOST('origin') && GETPOST('originid'))
 	{
 		// Parse element/subelement (ex: project_task)
+		$regs = array();
 		$element = $subelement = GETPOST('origin');
 		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs))
 		{
@@ -1544,7 +1545,7 @@ else
 			$sql .= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
 			$sql .= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 			$sql .= " cd.fk_unit,";
-			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
+			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity, p.tosell, p.tobuy, p.tobatch";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 			$sql .= " WHERE cd.rowid = ".$object->lines[$cursorline - 1]->id;
@@ -1577,12 +1578,16 @@ else
 					// Label
 					if ($objp->fk_product > 0)
 					{
-						print '<td>';
 						$productstatic->id = $objp->fk_product;
 						$productstatic->type = $objp->ptype;
 						$productstatic->ref = $objp->pref;
 						$productstatic->entity = $objp->pentity;
 						$productstatic->label = $objp->plabel;
+						$productstatic->status = $objp->tosell;
+						$productstatic->status_buy = $objp->tobuy;
+						$productstatic->status_batch = $objp->tobatch;
+
+						print '<td>';
 						$text = $productstatic->getNomUrl(1, '', 32);
 						if ($objp->plabel)
 						{

@@ -4199,6 +4199,7 @@ abstract class CommonObject
 
 				$product_static->ref = $line->ref; //can change ref in hook
 				$product_static->label = $line->label; //can change label in hook
+
 				$text = $product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -7523,7 +7524,10 @@ abstract class CommonObject
 			}
 
 			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key] = 'null';
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
+				if (isset($this->fields[$key]['default'])) $values[$key] = $this->fields[$key]['default'];
+				else $values[$key] = 'null';
+			}
 			if (!empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key] = 'null';
 		}
 

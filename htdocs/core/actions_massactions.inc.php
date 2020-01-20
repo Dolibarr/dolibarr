@@ -352,6 +352,7 @@ if (!$error && $massaction == 'confirm_presend')
 			{
 				$langs->load("commercial");
 
+				$reg = array();
 				$fromtype = GETPOST('fromtype');
 				if ($fromtype === 'user') {
 					$from = $user->getFullName($langs).' <'.$user->email.'>';
