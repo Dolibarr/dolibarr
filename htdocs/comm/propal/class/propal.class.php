@@ -3346,7 +3346,7 @@ class Propal extends CommonObject
 	 */
     public function initAsSpecimen()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		// Load array of products prodids
 		$num_prods = 0;
@@ -3385,6 +3385,10 @@ class Propal extends CommonObject
 		$this->demand_reason_code  = 'SRC_00';
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;
@@ -3428,6 +3432,7 @@ class Propal extends CommonObject
 
 			$xnbp++;
 		}
+//		var_dump($this->lines);exit;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -3718,7 +3718,7 @@ class Commande extends CommonOrder
 	 */
 	public function initAsSpecimen()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -3752,8 +3752,13 @@ class Commande extends CommonOrder
 		$this->mode_reglement_code = 'CHQ';
 		$this->availability_code   = 'DSP';
 		$this->demand_reason_code  = 'SRC_00';
+
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;
