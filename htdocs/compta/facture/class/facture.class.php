@@ -4046,7 +4046,7 @@ class Facture extends CommonInvoice
 	 */
     public function initAsSpecimen($option = '')
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$now = dol_now();
 		$arraynow = dol_getdate($now);
@@ -4088,9 +4088,14 @@ class Facture extends CommonInvoice
 		$this->date_lim_reglement = $this->calculate_date_lim_reglement();
 		$this->mode_reglement_id   = 0; // Not forced to show payment mode CHQ + VIR
 		$this->mode_reglement_code = ''; // Not forced to show payment mode CHQ + VIR
+
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
 		$this->note = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
 

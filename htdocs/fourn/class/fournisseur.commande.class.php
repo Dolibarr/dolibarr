@@ -2691,8 +2691,13 @@ class CommandeFournisseur extends CommonOrder
         $this->date_lim_reglement = $this->date + 3600 * 24 * 30;
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_code = 'CHQ';
+
         $this->note_public = 'This is a comment (public)';
         $this->note_private = 'This is a comment (private)';
+
+        $this->multicurrency_tx = 1;
+        $this->multicurrency_code = $conf->currency;
+
         $this->statut = 0;
 
         // Lines
