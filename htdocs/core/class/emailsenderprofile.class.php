@@ -101,7 +101,7 @@ class EmailSenderProfile extends CommonObject
 		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>1, 'enabled'=>1, 'position'=>405, 'notnull'=>-1, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'default'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1),
+		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'default'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'arrayofkeyval'=>array(0=>'Disabled', 1=>'Enabled')),
 	);
 
 	/**

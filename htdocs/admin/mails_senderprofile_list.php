@@ -382,7 +382,7 @@ if ($action != 'create') {
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.GETPOST('position', 'int').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print $form->selectyesno('active', GETPOST('active', 'int'), 1);
+	print $form->selectarray('active', $object->fields['active']['arrayofkeyval'], GETPOST('active', 'int'), 0);
 	print '</td></tr>';
 	print '</table>';
 	print '<br>';
