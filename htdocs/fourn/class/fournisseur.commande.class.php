@@ -2953,7 +2953,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		$modelpath = "core/modules/supplier_order/pdf/";
+		$modelpath = "core/modules/supplier_order/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}

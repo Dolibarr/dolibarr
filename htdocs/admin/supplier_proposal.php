@@ -239,7 +239,7 @@ print '</tr>'."\n";
 clearstatcache();
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_proposal/");
+	$dir = dol_buildpath($reldir."core/modules/supplier_proposal");
 
 	if (is_dir($dir))
 	{
@@ -252,7 +252,7 @@ foreach ($dirmodels as $reldir)
 				{
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $dir.$file.'.php';
+					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file;
 
@@ -366,7 +366,8 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('', '/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/supplier_proposal".$valdir);
+    	$realpath = $reldir."core/modules/supplier_proposal".$valdir;
+    	$dir = dol_buildpath($realpath);
 
         if (is_dir($dir))
         {
@@ -440,7 +441,9 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 	                            }
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+	                            $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+	                            $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 								$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
 								$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);

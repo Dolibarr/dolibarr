@@ -77,7 +77,7 @@ class pdf_eratosthene extends ModelePDFCommandes
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'development';
+	public $version = 'dolibarr';
 
      /**
      * @var int page_largeur
@@ -116,7 +116,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
     /**
 	* Issuer
-	* @var Societe
+	* @var Societe	Object that emits
 	*/
 	public $emetteur;
 
@@ -200,7 +200,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
 		$nblines = count($object->lines);
@@ -391,7 +391,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					}
 				}
 
-				// Affiche notes
+				// Displays notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 				{
@@ -1077,7 +1077,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
-		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);
 
@@ -1360,14 +1360,14 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	void
+	 *  @return	int                         Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
 	{
 		// phpcs:enable
 		global $conf,$langs,$hookmanager;
 
-		// Translations
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1449,8 +1449,16 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date, "%d %b %Y", false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
+		if (!empty($conf->global->DOC_SHOW_CUSTOMER_CODE) && ! empty($object->thirdparty->code_client))
+		{
+			$posy+=4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+		}
+		
 		// Get contact
 		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
 		{

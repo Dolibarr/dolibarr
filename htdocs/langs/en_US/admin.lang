@@ -1713,8 +1713,9 @@ ChequeReceiptsNumberingModule=Check Receipts Numbering Module
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
 SuppliersSetup=Vendor module setup
-SuppliersCommandModel=Complete template of purchase order (logo...)
-SuppliersInvoiceModel=Complete template of vendor invoice (logo...)
+SuppliersCommandModel=Complete template of Purchase Order
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
+SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=Vendor invoices numbering models
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
 ##### GeoIPMaxmind #####

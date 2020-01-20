@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoice/pdf/pdf_canelle.modules.php
+ *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoices with the canelle model
  */

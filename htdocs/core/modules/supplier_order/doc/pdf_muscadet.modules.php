@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_order/pdf/pdf_muscadet.modules.php
+ *	\file       htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
  *	\brief      File of class to generate suppliers orders from muscadet model
  */
@@ -129,7 +129,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->db = $db;
 		$this->name = "muscadet";
-		$this->description = $langs->trans('SuppliersCommandModel');
+		$this->description = $langs->trans('SuppliersCommandModelMuscadet');
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -1302,7 +1302,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external', 'CUSTOMER');
+			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;

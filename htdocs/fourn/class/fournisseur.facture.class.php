@@ -2649,7 +2649,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		else
 		{
-            $modelpath = "core/modules/supplier_invoice/pdf/";
+            $modelpath = "core/modules/supplier_invoice/doc/";
 
             return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}

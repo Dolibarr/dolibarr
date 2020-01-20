@@ -78,7 +78,7 @@ class pdf_sponge extends ModelePDFFactures
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'development';
+	public $version = 'dolibarr';
 
      /**
      * @var int page_largeur
@@ -117,7 +117,7 @@ class pdf_sponge extends ModelePDFFactures
 
     /**
 	* Issuer
-	* @var Societe
+	* @var Societe Object that emits
 	*/
 	public $emetteur;
 
@@ -209,13 +209,15 @@ class pdf_sponge extends ModelePDFFactures
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 	    // phpcs:enable
-	    global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblines;
+	    global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
+	    dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+	    
 	    if (! is_object($outputlangs)) $outputlangs=$langs;
 	    // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 	    if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-	    // Translations
+	    // Load translation files required by the page
 	    $outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 	    $nblines = count($object->lines);
@@ -340,7 +342,7 @@ class pdf_sponge extends ModelePDFFactures
 
 	            $heightforinfotot = 50+(4*$nbpayments);	// Height reserved to output the info and total part and payment part
 	            $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)?12:22);	// Height reserved to output the footer (value include bottom margin)
+	            $heightforfooter = $this->marge_basse + (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 12 : 22);	// Height reserved to output the footer (value include bottom margin)
 
 	            if (class_exists('TCPDF'))
 	            {
@@ -944,7 +946,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 4);
 
 
-		// Loop on each deposits and credit notes included
+		// Loop on each discount available (deposits and credit notes and excess of payment included)
 		$sql = "SELECT re.rowid, re.amount_ht, re.multicurrency_amount_ht, re.amount_tva, re.multicurrency_amount_tva,  re.amount_ttc, re.multicurrency_amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source,";
 		$sql .= " f.type, f.datef";
@@ -961,9 +963,10 @@ class pdf_sponge extends ModelePDFFactures
 				$y += 3;
 				$obj = $this->db->fetch_object($resql);
 
-				if ($obj->type == 2) $text = $outputlangs->trans("CreditNote");
-				elseif ($obj->type == 3) $text = $outputlangs->trans("Deposit");
-				else $text = $outputlangs->trans("UnknownType");
+				if ($obj->type == 2) $text = $outputlangs->transnoentities("CreditNote");
+				elseif ($obj->type == 3) $text = $outputlangs->transnoentities("Deposit");
+				elseif ($obj->type == 0) $text = $outputlangs->transnoentities("ExcessReceived");
+				else $text = $outputlangs->transnoentities("UnknownType");
 
 				$invoice->fetch($obj->fk_facture_source);
 
@@ -1190,9 +1193,9 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	PDF			$pdf           Object PDF
+	 *  @param	PDF			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
@@ -1381,6 +1384,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
+		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
@@ -1648,7 +1652,7 @@ class pdf_sponge extends ModelePDFFactures
 				        // Billed - retained warranty
 				        $index++;
 				        $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("PDFEVOLToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
+				        $pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("PDFEVOLToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
 
 				        $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				        $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
@@ -1658,7 +1662,7 @@ class pdf_sponge extends ModelePDFFactures
 				        $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 				        $retainedWarrantyToPayOn = $outputlangs->transnoentities("PDFEVOLRetainedWarranty") . ' ('.$object->retained_warranty.'%)';
-				        $retainedWarrantyToPayOn.=  !empty($object->retained_warranty_date_limit)?' '.$outputlangs->transnoentities("PDFEVOLtoPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')):'';
+				        $retainedWarrantyToPayOn .= !empty($object->retained_warranty_date_limit)?' '.$outputlangs->transnoentities("PDFEVOLtoPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')):'';
 
 				        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
 				        $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -1670,11 +1674,11 @@ class pdf_sponge extends ModelePDFFactures
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		$creditnoteamount=$object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-		$depositsamount=$object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+		$creditnoteamount = $object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0); // Warning, this also include excess received
+		$depositsamount = $object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
 
 		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
-		if ($object->paye) $resteapayer=0;
+		if (!empty($object->paye)) $resteapayer = 0;
 
 		if (($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
 		{
@@ -1688,9 +1692,10 @@ class pdf_sponge extends ModelePDFFactures
 			// Credit note
 			if ($creditnoteamount)
 			{
+				$labeltouse = ($outputlangs->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangs->transnoentities("CreditNotesOrExcessReceived") : $outputlangs->transnoentities("CreditNotes");
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, 'L', 0);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
@@ -1806,7 +1811,7 @@ class pdf_sponge extends ModelePDFFactures
 	{
 		global $conf, $langs;
 
-		// Translations
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

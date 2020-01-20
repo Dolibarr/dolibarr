@@ -57,7 +57,7 @@ class pdf_cyan extends ModelePDFPropales
     public $description;
 
     /**
-     * @var int     Save the name of generated file as the main doc when generating a doc with this template
+     * @var string     Save the name of generated file as the main doc when generating a doc with this template
      */
     public $update_main_doc_field;
 
@@ -76,7 +76,7 @@ class pdf_cyan extends ModelePDFPropales
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'development';
+	public $version = 'dolibarr';
 
      /**
      * @var int page_largeur
@@ -115,7 +115,7 @@ class pdf_cyan extends ModelePDFPropales
 
     /**
 	* Issuer
-	* @var Societe
+	* @var Societe Object that emits
 	*/
 	public $emetteur;
 
@@ -199,7 +199,7 @@ class pdf_cyan extends ModelePDFPropales
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 
 		$nblines = count($object->lines);
@@ -238,7 +238,11 @@ class pdf_cyan extends ModelePDFPropales
 				{
 					if (! $arephoto)
 					{
-						$dir = $conf->product->dir_output.'/'.$midir;
+						if ($conf->product->entity != $objphoto->entity) {
+							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
+						} else {
+							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
+						}
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
 						{
@@ -413,7 +417,7 @@ class pdf_cyan extends ModelePDFPropales
 				{
 				    $tmpuser=new User($this->db);
 				    $tmpuser->fetch($object->user_author_id);
-				    $notetoshow.='Affaire suivi par '.$tmpuser->getFullName($langs);
+				    $notetoshow .= $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
 				    if ($tmpuser->email) $notetoshow.=',  Mail: '.$tmpuser->email;
 				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
 				}
@@ -1169,7 +1173,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);
 
@@ -1475,11 +1479,9 @@ class pdf_cyan extends ModelePDFPropales
 	{
 		global $conf, $langs;
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("companies");
-
+		// Load traductions files required by page
+		$outputlangs->loadLangs(array("main", "propal", "companies", "bills"));
+		
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);

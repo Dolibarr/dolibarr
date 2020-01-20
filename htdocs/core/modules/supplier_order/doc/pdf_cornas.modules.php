@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_order/pdf/pdf_cornas.modules.php
+ *	\file       htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
  *	\ingroup    fournisseur
  *	\brief      File of class to generate suppliers orders from cornas model
  */
@@ -71,7 +71,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'development';
+	public $version = 'dolibarr';
 
 	/**
      * @var int page_largeur
@@ -327,8 +327,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				        break;
 				    }
 				}
-
-
 
 				// New page
 				$pdf->AddPage();
@@ -1364,9 +1362,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 
 
-			// If BILLING contact defined on order, we use it
+			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
 			$usecontact = false;
-			$arrayidcontact = $object->getIdContact('external', 'BILLING');
+			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact = true;

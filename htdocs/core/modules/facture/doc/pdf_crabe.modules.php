@@ -117,7 +117,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 * Issuer
-	 * @var Societe object that emits
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 
