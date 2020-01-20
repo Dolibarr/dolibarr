@@ -104,7 +104,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Onglets
 		$head = account_statement_prepare_head($object, $num);
-		dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
+		dol_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
 
 
 		// Build file list
@@ -118,7 +118,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-		print load_fiche_titre($title, '', 'title_bank.png');
+		print load_fiche_titre($title, '', '');
 
 
 		print '<div class="fichecenter">';

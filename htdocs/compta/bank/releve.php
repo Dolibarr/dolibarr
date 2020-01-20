@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
@@ -369,7 +369,7 @@ else
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
-	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), -1, 'account');
+	dol_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');
 
 
 	$mesprevnext = '';
@@ -382,7 +382,7 @@ else
     $mesprevnext .= '</ul></div>';
 
     $title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-	print load_fiche_titre($title, $mesprevnext, 'title_bank.png');
+	print load_fiche_titre($title, $mesprevnext, '');
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
