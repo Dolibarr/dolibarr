@@ -242,7 +242,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
@@ -295,7 +295,112 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</div>'."\n";
 	}
 
-	include DOL_DOCUMENT_ROOT.'/product/inventory/tpl/inventory.tpl.php';
+
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="clearboth"></div>';
+
+	//print load_fiche_titre($langs->trans('Consumption'), '', '');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelines" class="noborder noshadow centpercent">';
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Warehouse").'</td>';
+	print '<td>'.$langs->trans("Product").'</td>';
+	if ($conf->productbatch->enabled) {
+		print '<td>';
+		print $langs->trans("Batch");
+		print '</td>';
+	}
+	print '<td class="right">'.$langs->trans("RecordedQty").'</td>';
+	print '<td class="right">'.$langs->trans("RealQty").'</td>';
+	print '<td>';
+	print '</td>';
+	print '</tr>';
+
+
+	$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
+	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
+	$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+	if ($object->fk_product > 0) $sql .= ' AND ps.fk_product = '.$object->fk_product;
+	if ($object->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$object->fk_warehouse;
+
+	$cacheOfProducts = array();
+	$cacheOfWarehouses = array();
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		$i = 0;
+		$totalarray = array();
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+
+			if (is_object($cacheOfWarehouses[$obj->fk_warehouse])) {
+				$warehouse_static = $cacheOfWarehouses[$obj->fk_warehouse];
+			} else {
+				$warehouse_static = new Entrepot($db);
+				$warehouse_static->fetch($obj->fk_warehouse);
+
+				$cacheOfWarehouses[$warehouse_static->id] = $warehouse_static;
+			}
+
+			if (is_object($cacheOfProducts[$obj->fk_product])) {
+				$product_static = $cacheOfProducts[$obj->fk_product];
+			} else {
+				$product_static = new Product($db);
+				$product_static->fetch($obj->fk_product);
+
+				$option = 'nobatch';
+				$option .= ',novirtual';
+				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
+
+				$cacheOfProducts[$product_static->id] = $product_static;
+			}
+
+			print '<tr class="oddeven">';
+			print '<td>';
+			print $warehouse_static->getNomUrl(1);
+			print '</td>';
+			print '<td>';
+			print $product_static->getNomUrl(1);
+			print '</td>';
+
+			if ($conf->productbatch->enabled) {
+				print '<td>';
+				print '';
+				print '</td>';
+			}
+
+			print '<td>';
+			print '';
+			print '</td>';
+			print '<td>';
+			print '';
+			print '</td>';
+			print '<td>';
+			print '';
+			print '</td>';
+
+			print '</tr>';
+
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+
+	print '</table>';
+	print '</div>';
+
+	print '</div>';
+	print '</div>';
 }
 
 // End of page
