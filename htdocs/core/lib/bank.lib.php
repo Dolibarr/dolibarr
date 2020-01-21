@@ -172,7 +172,7 @@ function account_statement_prepare_head($object, $num)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$object->id.'&num='.$num;
-	$head[$h][1] = $langs->trans("AccountStatements");
+	$head[$h][1] = $langs->trans("AccountStatement");
 	$head[$h][2] = 'statement';
 	$h++;
 

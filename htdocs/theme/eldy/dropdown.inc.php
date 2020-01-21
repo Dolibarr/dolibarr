@@ -70,7 +70,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     display: none;
 }
 
-.tmenu .open.dropdown, .login_block .open.dropdown, .tmenu .open.dropdown, .login_block .dropdown:hover{
+.tmenu .open.dropdown, .tmenu .open.dropdown {
     background: rgba(0, 0, 0, 0.1);
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu {

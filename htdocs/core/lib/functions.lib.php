@@ -3060,7 +3060,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'bookmark', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
@@ -3102,7 +3102,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
-				$morecss = 'font-status4';
+				$morecss .= ($morecss ? ' ' : '').'font-status4';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
@@ -5701,14 +5701,19 @@ function dol_htmlcleanlastbr($stringtodecode)
 /**
  * Replace html_entity_decode functions to manage errors
  *
- * @param   string	$a		Operand a
- * @param   string	$b		Operand b (ENT_QUOTES=convert simple and double quotes)
- * @param   string	$c		Operand c
- * @return  string			String decoded
+ * @param   string	$a					Operand a
+ * @param   string	$b					Operand b (ENT_QUOTES=convert simple and double quotes)
+ * @param   string	$c					Operand c
+ * @param	string	$keepsomeentities	Entities but &amp;, <, >, " are not converted.
+ * @return  string						String decoded
  */
-function dol_html_entity_decode($a, $b, $c = 'UTF-8')
+function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
 {
-	return html_entity_decode($a, $b, $c);
+	$newstring = $a;
+	if ($keepsomeentities) $newstring = strtr($newstring, array('&amp;'=>'__andamp__', '&lt;'=>'__andlt__', '&gt;'=>'__andgt__', '"'=>'__dquot__'));
+	$newstring = html_entity_decode($newstring, $b, $c);
+	if ($keepsomeentities) $newstring = strtr($newstring, array('__andamp__'=>'&amp;', '__andlt__'=>'&lt;', '__andgt__'=>'&gt;', '__dquot__'=>'"'));
+	return $newstring;
 }
 
 /**
@@ -8494,7 +8499,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function isAFileWithExecutableContent($filename)
 {
-    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
+    if (preg_match('/\.(htm|html|js|php|php\d+|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
     {
         return true;
     }

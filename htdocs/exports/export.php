@@ -377,9 +377,9 @@ if ($step == 2 && $action == 'select_model')
     $result = $objexport->fetch($exportmodelid);
     if ($result > 0)
     {
-		$fieldsarray = explode(',', $objexport->hexa);
+		$fieldsarray = preg_split("/,(?! [^(]*\))/", $objexport->hexa);
 		$i = 1;
-		foreach ($fieldsarray as $val)
+		foreach($fieldsarray as $val)
 		{
 			$array_selected[$val] = $i;
 			$i++;

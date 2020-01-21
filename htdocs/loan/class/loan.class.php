@@ -435,6 +435,7 @@ class Loan extends CommonObject
 		// Load translation files required by the page
 		$langs->loadLangs(array("customers","bills"));
 
+		unset($this->labelStatus);	// Force to reset the array of status label, because label can change depending on parameters
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
@@ -442,7 +443,7 @@ class Loan extends CommonObject
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
 			if ($status ==  0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
 			if ($status ==  0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 		}
@@ -458,23 +459,53 @@ class Loan extends CommonObject
 	/**
 	 *  Return clicable name (with eventually the picto)
 	 *
-	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param	int		$maxlen			Label max length
-	 *  @return	string					Chaine with URL
+	 *  @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param	int		$maxlen						Label max length
+     *  @param  string  $option        				On what the link point to ('nolink', ...)
+     *  @param  int     $notooltip                  1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string								Chaine with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result = '';
 
-		$tooltip = '<u>'.$langs->trans("ShowLoan").'</u>';
-		if (!empty($this->ref))
-			$tooltip .= '<br><strong>'.$langs->trans('Ref').':</strong> '.$this->ref;
-		if (!empty($this->label))
-			$tooltip .= '<br><strong>'.$langs->trans('Label').':</strong> '.$this->label;
+		$label = '<u>'.$langs->trans("ShowLoan").'</u>';
+		if (!empty($this->ref)) {
+			$label .= '<br><strong>'.$langs->trans('Ref').':</strong> '.$this->ref;
+		}
+		if (!empty($this->label)) {
+			$label .= '<br><strong>'.$langs->trans('Label').':</strong> '.$this->label;
+		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
+		$url = DOL_URL_ROOT.'/loan/card.php?id='.$this->id;
+
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
+
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		}
+		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

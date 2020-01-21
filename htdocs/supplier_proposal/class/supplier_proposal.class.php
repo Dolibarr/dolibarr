@@ -388,7 +388,7 @@ class SupplierProposal extends CommonObject
      *      @param      int			$rang               Position of line
      *      @param		int			$special_code		Special code (also used by externals modules!)
      *      @param		int			$fk_parent_line		Id of parent line
-     *      @param		int			$fk_fournprice		Id supplier price
+     *      @param		int			$fk_fournprice		Id supplier price. If 0, we will take best price. If -1 we keep it empty.
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
      *      @param		array		$array_option		extrafields array
@@ -583,15 +583,16 @@ class SupplierProposal extends CommonObject
 
             // infos marge
             if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
-                // by external module, take lowest buying price
+                // When fk_fournprice is 0, we take the lowest buying price
                 include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
                 $productFournisseur = new ProductFournisseur($this->db);
                 $productFournisseur->find_min_price_product_fournisseur($fk_product);
                 $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
             } else {
-                $this->line->fk_fournprice = $fk_fournprice;
+            	$this->line->fk_fournprice = ($fk_fournprice > 0 ? $fk_fournprice : 0);		// If fk_fournprice is -1, we will not use fk_fournprice
             }
             $this->line->pa_ht = $pa_ht;
+            //var_dump($this->line->fk_fournprice);exit;
 
             // Multicurrency
             $this->line->fk_multicurrency			= $this->fk_multicurrency;

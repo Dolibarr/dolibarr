@@ -121,7 +121,7 @@ $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql .= " AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql .= natural_search("cs.libelle", $search_label);
-if ($search_amount) $sql .= natural_search("cs.amount", price2num(trim($search_amount)), 1);
+if ($search_amount) $sql .= natural_search("cs.amount", $search_amount, 1);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND cs.paye = ".$db->escape($search_status);
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);

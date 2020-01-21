@@ -746,6 +746,9 @@ class BOM extends CommonObject
         $label = '<u>'.$langs->trans("BillOfMaterials").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (isset($this->status)) {
+        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }
 
         $url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
 

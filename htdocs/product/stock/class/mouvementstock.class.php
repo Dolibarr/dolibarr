@@ -157,6 +157,8 @@ class MouvementStock extends CommonObject
 		$result=$product->fetch($fk_product);
 		if ($result < 0)
 		{
+			$this->error = $product->error;
+			$this->errors = $product->errors;
 			dol_print_error('', "Failed to fetch product");
 			return -1;
 		}
@@ -352,7 +354,7 @@ class MouvementStock extends CommonObject
 			if(!empty($this->origin)) {			// This is set by caller for tracking reason
 				$origintype = $this->origin->element;
 				$fk_origin = $this->origin->id;
-				if($origintype == 'project') $fk_project = $fk_origin;
+				if ($origintype == 'project') $fk_project = $fk_origin;
 				else
 				{
 					$res = $this->origin->fetch($fk_origin);
@@ -398,7 +400,8 @@ class MouvementStock extends CommonObject
 			}
 			else
 			{
-				$this->errors[]=$this->db->lasterror();
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				$error = -1;
 			}
 

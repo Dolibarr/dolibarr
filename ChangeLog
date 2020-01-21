@@ -18,6 +18,7 @@ NEW: Add button "Save and Stay" in website editor of pages.
 NEW: Accountancy - Can add specific widget in this accountancy area.
 NEW: Accountancy - Add export model LDCompta V9 & higher
 NEW: Accountancy - Add permission on export, delete operations in ledger
+NEW: Can defined alternative profiles (email and signatures) for users.
 NEW: add ability to edit price without tax before adding a line of a predefined product.
 NEW: Add a tab to setup "Opening hours" of company (information only).
 NEW: Add attendee to ical export + cleanup.
