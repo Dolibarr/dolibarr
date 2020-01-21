@@ -1118,7 +1118,7 @@ if ($resql)
 		    print '</td>';
 		    if (!$i) $totalarray['nbfield']++;
 		}
-		// Surface units
+		// Volume units
 		if (!empty($arrayfields['p.volume_units']['checked'])) {
 			print '<td class="center">';
 			print measuringUnitString(0, 'volume', $product_static->volume_units);
