@@ -125,3 +125,7 @@ ALTER TABLE llx_subscription ADD COLUMN fk_user_creat   integer DEFAULT NULL;
 ALTER TABLE llx_subscription ADD COLUMN fk_user_valid   integer DEFAULT NULL;
 
 UPDATE llx_c_forme_juridique set libelle = 'SRL - Société à responsabilité limitée' WHERE code = '201';
+
+ALTER TABLE llx_c_country ADD COLUMN eec integer;
+UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI','UK');
+
