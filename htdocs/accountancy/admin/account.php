@@ -218,12 +218,21 @@ if (strlen(trim($search_account))) {
 			}
 		}
 	}
+
 	//var_dump($search_account); exit;
 	if ($search_account_tmp) {
 		if ($weremovedsomezero) {
+			$search_account_tmp_clean = $search_account_tmp;
+			$search_account_clean = $search_account;
 			$startchar = '%';
-			if (strpos('^', $search_account_tmp) === 0) $startchar = '';
-			else $sql .= " AND aa.account_number LIKE '".$startchar.$search_account_tmp."'";
+			if (strpos($search_account_tmp, '^') === 0)
+			{
+				$startchar = '';
+				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
+				$search_account_clean = preg_replace('/^\^/', '', $search_account);
+			}
+			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
+			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
 		}
 		else $sql .= natural_search("aa.account_number", $search_account_tmp);
 	}
