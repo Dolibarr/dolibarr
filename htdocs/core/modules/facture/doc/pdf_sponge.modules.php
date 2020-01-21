@@ -212,13 +212,20 @@ class pdf_sponge extends ModelePDFFactures
 	    global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
 	    dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
-	    
+
 	    if (! is_object($outputlangs)) $outputlangs=$langs;
 	    // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 	    if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 	    // Load translation files required by the page
 	    $outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+
+	    if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+	    	global $outputlangsbis;
+	    	$outputlangsbis = new Translate('', $conf);
+	    	$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+	    	$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
+	    }
 
 	    $nblines = count($object->lines);
 
@@ -1780,7 +1787,9 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			}
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
