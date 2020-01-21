@@ -142,7 +142,7 @@ if (!$rowid)
 	  }
   
     if (! empty($charge->payment_intent)) {
-    $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+    $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent, array("stripe_account" => $stripeacc));
     }
 
 		// The metadata FULLTAG is defined by the online payment page
