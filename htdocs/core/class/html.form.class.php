@@ -6235,7 +6235,7 @@ class Form
 
 				$out .= '<option value="'.$key.'"';
 				$out .= $style.$disabled;
-				if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				if (((string) $id) != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
 				if ($nohtmlescape) $out .= ' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
 				if (is_array($tmpvalue))
 				{
