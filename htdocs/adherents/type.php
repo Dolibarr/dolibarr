@@ -342,11 +342,12 @@ if ($action == 'create')
   	print '</td></tr>';
 
     // Morphy
+  	$morphys = array();
     $morphys[""] = $langs->trans("MorPhy");
     $morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy' : $object->morphy);
+	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
   	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
