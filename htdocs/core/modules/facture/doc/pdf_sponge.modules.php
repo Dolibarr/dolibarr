@@ -1231,7 +1231,12 @@ class pdf_sponge extends ModelePDFFactures
 		$useborder=0;
 		$index = 0;
 
-
+		$outputlangsbis = null;
+		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+			$outputlangsbis = new Translate('', $conf);
+			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
+		}
 
 		// overall percentage of advancement
 		$percent = 0;
@@ -1368,7 +1373,7 @@ class pdf_sponge extends ModelePDFFactures
 		    if (! empty($conf->global->MAIN_SHOW_AMOUNT_DISCOUNT)) {
 		        $pdf->SetFillColor(255, 255, 255);
 		        $pdf->SetXY($col1x, $tab2_top + $tab2_hl);
-		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount"), 0, 'L', 1);
+		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', 1);
 		        $pdf->SetXY($col2x, $tab2_top + $tab2_hl);
 		        $pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', 1);
 
@@ -1378,7 +1383,7 @@ class pdf_sponge extends ModelePDFFactures
 		    if (! empty($conf->global->MAIN_SHOW_AMOUNT_BEFORE_DISCOUNT)) {
 		        $pdf->SetFillColor(255, 255, 255);
 		        $pdf->SetXY($col1x, $tab2_top + 0);
-		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount"), 0, 'L', 1);
+		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', 1);
                 $pdf->SetXY($col2x, $tab2_top + 0);
 		        $pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
 
@@ -1389,7 +1394,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
 
 		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -1435,7 +1440,8 @@ class pdf_sponge extends ModelePDFFactures
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+							$totalvat.=' ';
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1467,7 +1473,8 @@ class pdf_sponge extends ModelePDFFactures
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code)(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+							$totalvat.=' ';
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1517,7 +1524,8 @@ class pdf_sponge extends ModelePDFFactures
 							$tvakey = str_replace('*', '', $tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).' ';
+						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code)(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
+						$totalvat.=' ';
 						$totalvat .= vatrate($tvakey, 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1548,7 +1556,8 @@ class pdf_sponge extends ModelePDFFactures
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code)(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+							$totalvat.=' ';
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1581,7 +1590,8 @@ class pdf_sponge extends ModelePDFFactures
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+							$totalvat.=' ';
 
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1598,7 +1608,7 @@ class pdf_sponge extends ModelePDFFactures
 				{
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RevenueStamp"), $useborder, 'L', 1);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RevenueStamp").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RevenueStamp", $mysoc->country_code) : ''), $useborder, 'L', 1);
 
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->revenuestamp), $useborder, 'R', 1);
@@ -1609,7 +1619,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFillColor(224, 224, 224);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalTTC") : ''), $useborder, 'L', 1);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
@@ -1692,7 +1702,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Already paid + Deposits
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Paid"), 0, 'L', 0);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Paid") : ''), 0, 'L', 0);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', 0);
 
@@ -1700,6 +1710,7 @@ class pdf_sponge extends ModelePDFFactures
 			if ($creditnoteamount)
 			{
 				$labeltouse = ($outputlangs->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangs->transnoentities("CreditNotesOrExcessReceived") : $outputlangs->transnoentities("CreditNotes");
+				$labeltouse .= (is_object($outputlangsbis) ? ' / '.($outputlangsbis->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangsbis->transnoentities("CreditNotesOrExcessReceived") : $outputlangsbis->transnoentities("CreditNotes") : '');
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, 'L', 0);
@@ -1714,7 +1725,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetFillColor(255, 255, 255);
 
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
 
@@ -1725,7 +1736,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 

@@ -1159,6 +1159,7 @@ class pdf_cyan extends ModelePDFPropales
 	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf, $mysoc;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$tab2_top = $posy;
@@ -1176,10 +1177,17 @@ class pdf_cyan extends ModelePDFPropales
 		$useborder = 0;
 		$index = 0;
 
+		$outputlangsbis = null;
+		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+			$outputlangsbis = new Translate('', $conf);
+			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
+		}
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
 
 		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
@@ -1222,7 +1230,8 @@ class pdf_cyan extends ModelePDFPropales
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+							$totalvat.=' ';
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1256,7 +1265,8 @@ class pdf_cyan extends ModelePDFPropales
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+							$totalvat.=' ';
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1282,7 +1292,8 @@ class pdf_cyan extends ModelePDFPropales
 							$tvakey = str_replace('*', '', $tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).' ';
+						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
+						$totalvat.=' ';
 						$totalvat .= vatrate($tvakey, 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1313,7 +1324,8 @@ class pdf_cyan extends ModelePDFPropales
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+							$totalvat.=' ';
 
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1346,7 +1358,8 @@ class pdf_cyan extends ModelePDFPropales
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+							$totalvat.= ' ';
 
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1363,7 +1376,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFillColor(224, 224, 224);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalTTC") : ''), $useborder, 'L', 1);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc, 0, $outputlangs), $useborder, 'R', 1);
@@ -1372,6 +1385,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		$pdf->SetTextColor(0, 0, 0);
 
+		$resteapayer = 0;
 		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
 		if (! empty($object->paye)) $resteapayer=0;
@@ -1382,7 +1396,7 @@ class pdf_cyan extends ModelePDFPropales
 			$index++;
 
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("AlreadyPaid") : ''), 0, 'L', 0);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle, 0, $outputlangs), 0, 'R', 0);
@@ -1407,7 +1421,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
