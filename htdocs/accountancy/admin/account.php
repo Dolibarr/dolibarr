@@ -220,7 +220,11 @@ if (strlen(trim($search_account))) {
 	}
 	//var_dump($search_account); exit;
 	if ($search_account_tmp) {
-		if ($weremovedsomezero) $sql .= " AND aa.account_number LIKE '%".$search_account_tmp."'";
+		if ($weremovedsomezero) {
+			$startchar = '%';
+			if (strpos('^', $search_account_tmp) === 0) $startchar = '';
+			else $sql .= " AND aa.account_number LIKE '".$startchar.$search_account_tmp."'";
+		}
 		else $sql .= natural_search("aa.account_number", $search_account_tmp);
 	}
 }
