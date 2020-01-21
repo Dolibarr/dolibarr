@@ -172,18 +172,18 @@ $arrayfields = array(
 	'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->service->enabled)), 'position'=>11),
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled)), 'position'=>12),
 	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(!empty($conf->service->enabled) && (string) $type == '1'), 'position'=>13),
-    'p.weight'=>array('label'=>$langs->trans('Weight'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled)), 'position'=>20),
-	'p.weight_units'=>array('label'=>$langs->trans('WeightUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled)), 'position'=>21),
-    'p.length'=>array('label'=>$langs->trans('Length'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE)), 'position'=>22),
-	'p.length_units'=>array('label'=>$langs->trans('LengthUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE)), 'position'=>23),
-	'p.width'=>array('label'=>$langs->trans('Width'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE)), 'position'=>24),
-	'p.width_units'=>array('label'=>$langs->trans('WidthUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE)), 'position'=>25),
-    'p.height'=>array('label'=>$langs->trans('Height'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE)), 'position'=>26),
-	'p.height_units'=>array('label'=>$langs->trans('HeightUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE)), 'position'=>27),
-    'p.surface'=>array('label'=>$langs->trans('Surface'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE)), 'position'=>28),
-	'p.surface_units'=>array('label'=>$langs->trans('SurfaceUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE)), 'position'=>29),
-    'p.volume'=>array('label'=>$langs->trans('Volume'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME)), 'position'=>30),
-	'p.volume_units'=>array('label'=>$langs->trans('VolumeUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME)), 'position'=>31),
+    'p.weight'=>array('label'=>$langs->trans('Weight'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>20),
+	'p.weight_units'=>array('label'=>$langs->trans('WeightUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>21),
+    'p.length'=>array('label'=>$langs->trans('Length'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>22),
+	'p.length_units'=>array('label'=>$langs->trans('LengthUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>23),
+	'p.width'=>array('label'=>$langs->trans('Width'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>24),
+	'p.width_units'=>array('label'=>$langs->trans('WidthUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>25),
+    'p.height'=>array('label'=>$langs->trans('Height'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>26),
+	'p.height_units'=>array('label'=>$langs->trans('HeightUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>27),
+    'p.surface'=>array('label'=>$langs->trans('Surface'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>28),
+	'p.surface_units'=>array('label'=>$langs->trans('SurfaceUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>29),
+    'p.volume'=>array('label'=>$langs->trans('Volume'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
+	'p.volume_units'=>array('label'=>$langs->trans('VolumeUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
     'cu.label'=>array('label'=>$langs->trans("DefaultUnitToShow"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
     'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>40),
 	'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>41),
@@ -1046,7 +1046,7 @@ if ($resql)
 		// Weight units
 		if (!empty($arrayfields['p.weight_units']['checked'])) {
 			print '<td class="center">';
-			print measuringUnitString(0, 'weight', $product_static->weight_units);
+			if ($product_static->weight != '') print measuringUnitString(0, 'weight', $product_static->weight_units);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1061,7 +1061,7 @@ if ($resql)
 		// Length units
 		if (!empty($arrayfields['p.length_units']['checked'])) {
 			print '<td class="center">';
-			print measuringUnitString(0, 'size', $product_static->length_units);
+			if ($product_static->length != '')	print measuringUnitString(0, 'size', $product_static->length_units);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1076,7 +1076,7 @@ if ($resql)
 		// Width units
 		if (!empty($arrayfields['p.width_units']['checked'])) {
 			print '<td class="center">';
-			print measuringUnitString(0, 'size', $product_static->width_units);
+			if ($product_static->width != '')	print measuringUnitString(0, 'size', $product_static->width_units);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1091,7 +1091,7 @@ if ($resql)
 		// Height units
 		if (!empty($arrayfields['p.height_units']['checked'])) {
 			print '<td class="center">';
-			print measuringUnitString(0, 'size', $product_static->height_units);
+			if ($product_static->height != '')	print measuringUnitString(0, 'size', $product_static->height_units);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1106,7 +1106,7 @@ if ($resql)
 		// Surface units
 		if (!empty($arrayfields['p.surface_units']['checked'])) {
 			print '<td class="center">';
-			print measuringUnitString(0, 'surface', $product_static->surface_units);
+			if ($product_static->surface != '')	print measuringUnitString(0, 'surface', $product_static->surface_units);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1121,7 +1121,7 @@ if ($resql)
 		// Volume units
 		if (!empty($arrayfields['p.volume_units']['checked'])) {
 			print '<td class="center">';
-			print measuringUnitString(0, 'volume', $product_static->volume_units);
+			if ($product_static->volume != '')	print measuringUnitString(0, 'volume', $product_static->volume_units);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
