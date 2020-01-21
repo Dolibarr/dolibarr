@@ -200,7 +200,27 @@ if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_accou
 else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
 $sql .= " WHERE asy.rowid = ".$pcgver;
 //print $sql;
-if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
+if (strlen(trim($search_account))) {
+	$lengthpaddingaccount = 0;
+	if ($conf->global->ACCOUNTING_LENGTH_GACCOUNT || $conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
+		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_GACCOUNT, $conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	}
+	$search_account_tmp = $search_account;
+	$weremovedsomezero = 0;
+	if (strlen($search_account_tmp) <= $lengthpaddingaccount) {
+		for($i = 0; $i < $lengthpaddingaccount; $i++) {
+			if (preg_match('/0$/', $search_account_tmp)) {
+				$weremovedsomezero++;
+				$search_account_tmp = preg_replace('/0$/', '', $search_account_tmp);
+			}
+		}
+	}
+	//var_dump($search_account); exit;
+	if ($search_account_tmp) {
+		if ($weremovedsomezero) $sql .= " AND aa.account_number LIKE '%".$search_account_tmp."'";
+		else $sql .= natural_search("aa.account_number", $search_account_tmp);
+	}
+}
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
 if (strlen(trim($search_accountparent)) && $search_accountparent != '-1')	$sql .= natural_search("aa.account_parent", $search_accountparent, 2);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
@@ -321,7 +341,6 @@ if ($resql)
 	if (!empty($arrayfields['aa.account_parent']['checked'])) {
 		print '<td class="liste_titre">';
 		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
-		//print '<input type="text" class="flat" size="10" name="search_accountparent" value="'.$search_accountparent.'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
