@@ -947,7 +947,8 @@ if ($id)
                         {
                             $showfield=1;
                         	$align="left";
-                            $valuetoshow=$obj->$fieldlist[$field];
+                        	$nameoffield = $fieldlist[$field];
+                        	$valuetoshow=$obj->$nameoffield;
                             if ($value == 'element')
                             {
                                 $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
