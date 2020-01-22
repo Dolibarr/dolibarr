@@ -142,7 +142,11 @@ if (!$rowid)
 	  }
   
     if (! empty($charge->payment_intent)) {
-    $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent, array("stripe_account" => $stripeacc));
+		if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+    		$charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+		} else {
+			$charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent, array("stripe_account" => $stripeacc));
+		}
     }
 
 		// The metadata FULLTAG is defined by the online payment page
