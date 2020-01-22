@@ -1393,7 +1393,11 @@ class ActionComm extends CommonObject
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		$canread = 0;
+		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) $canread = 1;	// Can read my event
+		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) $canread = 1;	// Can read my event i am assigned
+		if ($user->rights->agenda->allactions->read) $canread = 1;		// Can read all event of other
+		if (! $canread)
 		{
             $option = 'nolink';
 		}
