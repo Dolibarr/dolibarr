@@ -152,8 +152,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->option_codeproduitservice = 1; // Affiche code produit-service
 		$this->option_multilang = 1; // Dispo en plusieurs langues
 
-		$this->franchise = !$mysoc->tva_assuj;
-
         // Define column position
 		$this->posxdesc = $this->marge_gauche + 1;
 		$this->posxtva = 112;
