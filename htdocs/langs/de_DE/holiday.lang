@@ -129,3 +129,5 @@ FreeLegalTextOnHolidays=Freitext als PDF
 WatermarkOnDraftHolidayCards=Wasserzeichen auf Urlaubsantragsentwurf (leerlassen wenn keines benötigt wird)
 HolidaysToApprove=Urlaubstage zu genehmigen
 NobodyHasPermissionToValidateHolidays=Niemand hat die Erlaubnis, Feiertage zu bestätigen.
+Morning=Vormittags
+Afternoon=Nachmittags
