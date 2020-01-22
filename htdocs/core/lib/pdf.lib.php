@@ -2143,7 +2143,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec,'day','',$outputlangs);
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
 			}
 		}
 		elseif ($objecttype == 'shipping')
