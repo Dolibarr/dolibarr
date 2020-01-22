@@ -252,7 +252,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->db->escape($this->doc_type) . "'";
 		$sql .= " AND fk_doc = " . $this->fk_doc;
-		//$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 if record is for several lines
+		$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 if record is for several lines
 		$sql .= " AND numero_compte = '" . $this->db->escape($this->numero_compte) . "'";
 		$sql .= " AND label_operation = '" . $this->db->escape($this->label_operation) . "'";
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
