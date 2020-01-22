@@ -3284,6 +3284,12 @@ class Societe extends CommonObject
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
 		if (! empty($this->tva_intra)) $isacompany=1;
+		elseif (! empty($this->idprof1)) $isacompany=1;
+		elseif (! empty($this->idprof2)) $isacompany=1;
+		elseif (! empty($this->idprof3)) $isacompany=1;
+		elseif (! empty($this->idprof4)) $isacompany=1;
+		elseif (! empty($this->idprof5)) $isacompany=1;
+		elseif (! empty($this->idprof6)) $isacompany=1;
 		elseif (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
 		{
 			// TODO Add a field is_a_company into dictionary
