@@ -769,7 +769,7 @@ class Societe extends CommonObject
 						}
 					}
 
-					// Check for mandatory prof id (but only if country is other than ours)
+					// Check for mandatory prof id (but only if country is same than ours)
 					if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id)
 					{
 						$idprof_mandatory ='SOCIETE_'.$key.'_MANDATORY';
