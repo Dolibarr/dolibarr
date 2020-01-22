@@ -791,16 +791,16 @@ class ActionComm extends CommonObject
      */
     public function fetchResources()
     {
-		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
+    	$this->userassigned = array();
+    	$this->socpeopleassigned = array();
+
+    	$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
 		$sql .= ' WHERE fk_actioncomm = '.$this->id;
 		$sql .= " AND element_type IN ('user', 'socpeople')";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->userassigned = array();
-			$this->socpeopleassigned = array();
-
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) $this->userassigned[$this->userownerid] = array('id'=>$this->userownerid); // Set first so will be first into list.
 
