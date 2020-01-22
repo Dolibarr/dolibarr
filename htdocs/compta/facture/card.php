@@ -4829,6 +4829,7 @@ elseif ($id > 0 || ! empty($ref))
 
 			// For situation invoice with excess received
 			if ($object->statut > Facture::STATUS_DRAFT
+				&& $object->type == Facture::TYPE_SITUATION
 			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
 			    && $usercancreate
 			    && !$objectidnext
