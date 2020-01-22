@@ -3432,7 +3432,6 @@ class Propal extends CommonObject
 
 			$xnbp++;
 		}
-//		var_dump($this->lines);exit;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

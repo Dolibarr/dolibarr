@@ -791,16 +791,16 @@ class ActionComm extends CommonObject
      */
     public function fetchResources()
     {
-		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
+    	$this->userassigned = array();
+    	$this->socpeopleassigned = array();
+
+    	$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
 		$sql .= ' WHERE fk_actioncomm = '.$this->id;
 		$sql .= " AND element_type IN ('user', 'socpeople')";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->userassigned = array();
-			$this->socpeopleassigned = array();
-
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) $this->userassigned[$this->userownerid] = array('id'=>$this->userownerid); // Set first so will be first into list.
 
@@ -1393,7 +1393,11 @@ class ActionComm extends CommonObject
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		$canread = 0;
+		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) $canread = 1;	// Can read my event
+		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) $canread = 1;	// Can read my event i am assigned
+		if ($user->rights->agenda->allactions->read) $canread = 1;		// Can read all event of other
+		if (! $canread)
 		{
             $option = 'nolink';
 		}

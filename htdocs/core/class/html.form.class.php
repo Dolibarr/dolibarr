@@ -5169,11 +5169,11 @@ class Form
 		{
 			if ($societe_vendeuse->id == $mysoc->id)
 			{
-				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
 			}
 			else
 			{
-				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
 			}
 			return $return;
 		}
@@ -6235,7 +6235,12 @@ class Form
 
 				$out .= '<option value="'.$key.'"';
 				$out .= $style.$disabled;
-				if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				if (is_array($id)) {
+					if (in_array($key, $id) && !$disabled) $out .= ' selected'; // To preselect a value
+				} else {
+					$id = (string) $id;	// if $id = 0, then $id = '0'
+					if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				}
 				if ($nohtmlescape) $out .= ' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
 				if (is_array($tmpvalue))
 				{

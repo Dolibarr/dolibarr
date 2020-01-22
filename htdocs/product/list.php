@@ -922,7 +922,10 @@ if ($resql)
 		// Type
 		if (!empty($arrayfields['p.fk_product_type']['checked']))
 		{
-			print '<td>'.$obj->fk_product_type.'</td>';
+			print '<td>';
+			if ($obj->fk_product_type == 0) print $langs->trans("Product");
+			else print $langs->trans("Service");
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 

@@ -1568,13 +1568,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         $titletoshow = $daterange;
                         $titletoshow .= ($titletoshow ? ' ' : '').($event->label ? $event->label : $event->libelle);
 
-                        if ($event->type_code == 'ICALEVENT') print $titletoshow;
-                        else
-                        {
+                        if ($event->type_code != 'ICALEVENT') {
                         	$savlabel = $event->label ? $event->label : $event->libelle;
                         	$event->label = $titletoshow;
                         	$event->libelle = $titletoshow;
-                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
+                        	// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
+                        	$titletoshow = $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
                         	$event->label = $savlabel;
                         	$event->libelle = $savlabel;
                         }
@@ -1595,6 +1594,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                             $listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
                         }
+
+                        print $titletoshow;
                         print $listofusertoshow;
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
