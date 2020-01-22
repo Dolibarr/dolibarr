@@ -5044,11 +5044,11 @@ class Form
 		{
 			if ($societe_vendeuse->id == $mysoc->id)
 			{
-				$return.= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+				$return.= '<span class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</span>';
 			}
 			else
 			{
-				$return.= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+				$return.= '<span class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</span>';
 			}
 			return $return;
 		}

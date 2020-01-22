@@ -5932,7 +5932,8 @@ abstract class CommonObject
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam);
+
 			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 			{
             			list($class,$classfile)=explode(':', $param_list[0]);
