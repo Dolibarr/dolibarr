@@ -222,7 +222,7 @@ if (empty($reshook))
 
 			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
 				// If we set a stripe value that is different than previous one, we also set the stripe account
-				$companypaymentmode->stripe_account = $site_account;
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
 			}
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
@@ -383,7 +383,7 @@ if (empty($reshook))
 
 			if (GETPOST('stripe_card_ref', 'alpha')) {
 				// If we set a stripe value, we also set the stripe account
-				$companypaymentmode->stripe_account = $site_account;
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
 			}
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
@@ -867,7 +867,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 				}
-				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account, 'globe').'</a>';
 			}
 			print '</td><td class="right">';
 			if (empty($stripecu))
@@ -1077,7 +1077,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								{
 									$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
-								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
+								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
 							}
 							print '</td>';
 							print '<td>';
