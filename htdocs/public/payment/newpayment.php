@@ -645,7 +645,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         \Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
         try {
-            if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+        	if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id);
             } else {
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id, array("stripe_account" => $stripeacc));
