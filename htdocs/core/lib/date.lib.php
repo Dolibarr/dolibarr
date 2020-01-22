@@ -961,3 +961,67 @@ function monthArray($outputlangs, $short = 0)
 
 	return $montharray;
 }
+/**
+ *	Return array of week numbers.
+ 
+ *
+ *	@param	int 		$month			Month number
+ *  @param	int			$year			Year number
+ *	@return array						Week numbers
+ */
+
+function getWeekNumbersOfMonth($month, $year) {
+	$nb_days = cal_days_in_month(CAL_GREGORIAN,$month, $year);
+	$TWeek = array();
+	for($day = 1; $day < $nb_days; $day++) {
+		$week_number = getWeekNumber($day, $month, $year);
+		$TWeek[$week_number] = $week_number;
+	}
+	return $TWeek;
+}
+/**
+ *	Return array of first day of weeks.
+ 
+ *
+ *	@param	array 		$TWeek			array of week numbers
+ *  @param	int			$year			Year number
+ *	@return array						First day of week
+ */
+function getFirstDayOfEachWeek($TWeek, $year) {
+	$TFirstDayOfWeek = array();
+	foreach($TWeek as $weekNb) {
+		if(in_array('01',$TWeek) && in_array('52',$TWeek) && $weekNb == '01') $year++;//Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+		$TFirstDayOfWeek[$weekNb] = date('d',strtotime($year.'W'.$weekNb));
+	}
+	return $TFirstDayOfWeek;
+}
+/**
+ *	Return array of last day of weeks.
+ 
+ *
+ *	@param	array 		$TWeek			array of week numbers
+ *  @param	int			$year			Year number
+ *	@return array						Last day of week
+ */
+function getLastDayOfEachWeek($TWeek, $year) {
+	$TLastDayOfWeek = array();
+	foreach($TWeek as $weekNb) {
+		$TLastDayOfWeek[$weekNb] = date('d',strtotime($year.'W'.$weekNb.'+6 days'));
+	}
+	return $TLastDayOfWeek;
+}
+/**
+ *	Return week number.
+ 
+ *
+ *	@param	int 		$day			Day number
+ *	@param	int 		$month			Month number
+ *  @param	int			$year			Year number
+ *	@return int							Week number
+ */
+
+function getWeekNumber($day, $month, $year) {
+	$date = new DateTime($year.'-'.$month.'-'.$day);
+	$week = $date->format("W");
+	return $week;
+}
