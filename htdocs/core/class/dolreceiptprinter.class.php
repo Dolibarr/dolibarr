@@ -105,6 +105,7 @@ require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/autoload.php';
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
@@ -529,7 +530,13 @@ class dolReceiptPrinter extends Printer
                 $this->printer->text("Most simple example\n");
                 $this->printer->feed();
                 $this->printer->cut();
-                //print '<pre>'.print_r($this->connector, true).'</pre>';
+
+				// If is DummyPrintConnector send to log to debugging
+				if($this->printer->connector instanceof DummyPrintConnector)
+				{
+					$data = $this->printer->connector-> getData();
+					dol_syslog($data);
+				}
                 $this->printer->close();
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
@@ -713,9 +720,13 @@ class dolReceiptPrinter extends Printer
                         break;
                 }
             }
-            // Close and print
-            // uncomment next line to see content sent to printer
-            //print '<pre>'.print_r($this->connector, true).'</pre>';
+            // If is DummyPrintConnector send to log to debugging
+			if($this->printer->connector instanceof DummyPrintConnector)
+			{
+				$data = $this->printer->connector->getData();
+				dol_syslog($data);
+			}
+			// Close and print
             $this->printer->close();
         }
         return $error;
@@ -783,7 +794,6 @@ class dolReceiptPrinter extends Printer
             try {
                 switch ($obj['fk_type']) {
                     case 1:
-                        require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/src/DummyPrintConnector.php';
                         $this->connector = new DummyPrintConnector();
                         break;
                     case 2:
