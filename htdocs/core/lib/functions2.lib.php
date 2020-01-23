@@ -2356,16 +2356,17 @@ function price2fec($amount)
 
 	// Clean parameters
 	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
-	$amount = (is_numeric($amount)?$amount:0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 
-	// Output decimal number by default (french)
-	$nbdecimal= 2;
+	// Output decimal number by default
+	$nbdecimal = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH) ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
 
-	// Output separators by default (french)
-	$dec=','; $thousand='';
+	// Output separators by default
+	$dec = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR) ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
+	$thousand = (empty($conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR) ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
 
 	// Format number
-	$output=number_format($amount, $nbdecimal, $dec, $thousand);
+	$output = number_format($amount, $nbdecimal, $dec, $thousand);
 
 	return $output;
 }
