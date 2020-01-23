@@ -2320,9 +2320,9 @@ function getModuleDirForApiClass($module)
 /*
  * Return 2 hexa code randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int	$min	Between 0 and 255
+ * @param	int	$max	Between 0 and 255
+ * @return 	String		Color string
  */
 function random_color_part($min=0,$max=255)
 {
@@ -2332,9 +2332,9 @@ function random_color_part($min=0,$max=255)
 /*
  * Return hexadecimal color randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int	$min	Between 0 and 255
+ * @param	int	$max	Between 0 and 255
+ * @return 	String		Color string
  */
 function random_color($min=0, $max=255)
 {
@@ -2346,9 +2346,8 @@ function random_color($min=0, $max=255)
  *		Function used into accountancy FEC export
  *
  *		@param	float		$amount			Amount to format
- *		@return	string						Chain with formatted upright
- *
- *		@see	price2num()					Revert function of price2fec
+ *		@return	string					Chain with formatted upright
+ *		@see	price2num()				Format a numeric into a price for FEC files
  */
 function price2fec($amount)
 {
