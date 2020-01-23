@@ -1047,7 +1047,7 @@ if ($object->id > 0)
 		$sql .= " AND f.entity = ".$conf->entity;
 		$sql .= ' GROUP BY f.rowid, f.titre, f.amount, f.total, f.tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
-		$sql .= ' f.suspended,';
+		$sql .= ' f.suspended, f.date_when,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.date_last_gen, f.datec DESC";
 
