@@ -506,8 +506,9 @@ class SMTPs
 
 			// The error here just means the ID/password combo doesn't work.
 			// There is not a method to determine which is the problem, ID or password
-			if ( ! $_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235') )
-			$this->_setErr(130, 'Invalid Authentication Credentials.');
+			if (! $_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235') ) {
+				$this->_setErr(130, 'Invalid Authentication Credentials.');
+			}
 		}
 		else
 		{
@@ -575,8 +576,12 @@ class SMTPs
 				// From this point onward most server response codes should be 250
 				// Specify who the mail is from....
 				// This has to be the raw email address, strip the "name" off
-				$this->socket_send_str('MAIL FROM: ' . $this->getFrom('addr'), '250');
-
+			    $resultmailfrom = $this->socket_send_str('MAIL FROM: ' . $this->getFrom('addr'), '250');
+			    if (! $resultmailfrom) {
+			        fclose($this->socket);
+			        return false;
+			    }
+			    
 				// 'RCPT TO:' must be given a single address, so this has to loop
 				// through the list of addresses, regardless of TO, CC or BCC
 				// and send it out "single file"
@@ -1786,6 +1791,7 @@ class SMTPs
 				$_retVal = false;
 				break;
 			}
+            $this->log .= $server_response;
             $limit++;
 		}
 
