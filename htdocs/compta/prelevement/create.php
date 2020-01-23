@@ -307,7 +307,6 @@ if ($resql)
 	}
 	else print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	print "</table>";
-	print '</div>';
 	print "</form>";
 	print "<br>\n";
 }
