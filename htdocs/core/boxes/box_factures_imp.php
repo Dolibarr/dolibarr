@@ -111,6 +111,7 @@ class box_factures_imp extends ModeleBoxes
 			if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
 			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
 			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
+			$sql.= ", s.email";
 			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
 			$sql.= " ORDER BY datelimite ASC, f.ref ASC ";
 			$sql.= $this->db->plimit($max, 0);
