@@ -193,6 +193,7 @@ else
 }
 
 print "</div>\n";
+print '</form>';
 print '<br>';
 
 
@@ -221,6 +222,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -236,11 +242,12 @@ if ($resql)
 	if($socid) $param .= '&socid='.urlencode($socid);
     if($option) $param .= "&option=".urlencode($option);
 
-    if(! empty($page) && $num <= $nbtotalofrecords) $page = 0;
-
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="page" value="' . $page . '"/>';
+	if (! empty($limit)) {
+		print '<input type="hidden" name="limit" value="' . $limit . '"/>';
+	}
 
     print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
@@ -300,6 +307,7 @@ if ($resql)
 	}
 	else print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	print "</table>";
+	print '</div>';
 	print "</form>";
 	print "<br>\n";
 }
