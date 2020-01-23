@@ -186,11 +186,19 @@ class StockMovements extends DolibarrApi
         }
 
         // Type increase or decrease
-        if ($qty >= 0) $type = 3;
-        else $type = 2;
+        $type = 2;
+        if ($qty >= 0){
+            $type = 3;
+        }
 
-        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $dlc, $dluo, $lot) <= 0) {
-            throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->error);
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        $eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
+        $sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
+
+        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
+        	$errormessage = $this->stockmovement->error;
+        	if (empty($errormessage)) $errormessage = join(',', $this->stockmovement->errors);
+        	throw new RestException(503, 'Error when create stock movement : '.$errormessage);
         }
 
         return $this->stockmovement->id;
