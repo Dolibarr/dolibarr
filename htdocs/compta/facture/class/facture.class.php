@@ -448,10 +448,12 @@ class Facture extends CommonInvoice
 			$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
 			$substitutionarray['__INVOICE_YEAR__'] = dol_print_date($this->date, '%Y');
 			$substitutionarray['__INVOICE_NEXT_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
-			// Only for tempalte invoice
+			// Only for template invoice
 			$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = dol_print_date($originaldatewhen, 'dayhour');
 			$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = dol_print_date($nextdatewhen, 'dayhour');
 			$substitutionarray['__INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__'] = dol_print_date($previousdaynextdatewhen, 'dayhour');
+			$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $_facrec->nb_gen_done;
+			$substitutionarray['__INVOICE_COUNTER_MAX__'] = $_facrec->nb_gen_max;
 
 			//var_dump($substitutionarray);exit;
 
