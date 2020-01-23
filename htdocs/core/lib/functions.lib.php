@@ -4523,6 +4523,35 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	return $amount;
 }
 
+/**
+ *		Function to format a value into a defined format for French administration (no thousand separator & decimal separator force to ',' with two decimals)
+ *		Function used into accountancy FEC export
+ *
+ *		@param	float		$amount			Amount to format
+ *		@return	string						Chain with formatted upright
+ *
+ *		@see	price2num()					Revert function of price2fec
+ */
+function price2fec($amount)
+{
+	global $conf;
+
+	// Clean parameters
+	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
+	$amount = (is_numeric($amount)?$amount:0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+
+	// Output decimal number by default (french)
+	$nbdecimal= 2;
+
+	// Output separators by default (french)
+	$dec=','; $thousand='';
+
+	// Format number
+	$output=number_format($amount, $nbdecimal, $dec, $thousand);
+
+	return $output;
+}
+
 
 /**
  * Output a dimension with best unit
