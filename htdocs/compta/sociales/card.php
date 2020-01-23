@@ -141,7 +141,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 	if (!$dateech)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (!$dateperiod)
@@ -193,7 +193,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 
 	if (! $dateech)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'edit';
 	}
 	elseif (! $dateperiod)
@@ -522,11 +522,11 @@ if ($id > 0)
 		// Date
 		if ($action == 'edit')
 		{
-			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
+			print '<tr><td>'.$langs->trans("Date")."</td><td>";
 			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		} else {
-			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech, 'day')."</td></tr>";
+			print "<tr><td>".$langs->trans("Date")."</td><td>".dol_print_date($object->date_ech, 'day')."</td></tr>";
 		}
 
 		// Period end date
