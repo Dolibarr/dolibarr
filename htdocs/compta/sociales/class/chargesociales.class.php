@@ -499,16 +499,20 @@ class ChargeSociales extends CommonObject
         // Load translation files required by the page
         $langs->loadLangs(array("customers","bills"));
 
+        // We reinit status array to force to redefine them because label may change according to properties values.
+        $this->labelStatus = array();
+        $this->labelStatusShort = array();
+
         if (empty($this->labelStatus) || empty($this->labelStatusShort))
         {
         	global $langs;
         	//$langs->load("mymodule");
         	$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
         	$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
-        	if ($status ==  0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-        	$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Draft');
+        	if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+        	$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
         	$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
-        	if ($status ==  0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+        	if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
         }
 
         $statusType = 'status1';
