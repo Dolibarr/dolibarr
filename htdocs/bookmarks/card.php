@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,7 +54,6 @@ $object=new Bookmark($db);
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
-
 	if ($action == 'update') {
 		$invertedaction = 'edit';
 	} else {
@@ -150,14 +149,14 @@ if ($action == 'create')
 	 */
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth100" name="title" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
 	dol_set_focus('#titlebookmark');
@@ -213,7 +212,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 	if ($action == 'edit')
 	{
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/card.php?id='.$object->id.'">';
@@ -230,7 +229,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
 	if ($action == 'edit') {

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
@@ -162,8 +162,8 @@ print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_pa
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-// Note
-print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
+// Note public
+print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note_public).'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
@@ -225,7 +225,7 @@ if ($resql)
 	print '<br>';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('ExpenseReport').'</td>';
@@ -258,7 +258,7 @@ if ($resql)
 			print '<td class="right">'.price($objp->amount).'</td>';
 
 			// Remain to pay
-            print '<td class="right">'.price($remaintopay).'</td>';
+			print '<td class="right">'.price($objp->total_ttc - $objp->amount).'</td>';
 
 			// Status
 			print '<td class="center">'.$expensereport->getLibStatut(4, $objp->amount).'</td>';

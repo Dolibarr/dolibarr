@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('banks', 'categories', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'banque', '', '');
 
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -50,16 +50,16 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="dp";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "dp";
 
-$year=GETPOST("year");
-$month=GETPOST("month");
+$year = GETPOST("year");
+$month = GETPOST("month");
 
-$form=new Form($db);
+$form = new Form($db);
 $formother = new FormOther($db);
-$checkdepositstatic=new RemiseCheque($db);
-$accountstatic=new Account($db);
+$checkdepositstatic = new RemiseCheque($db);
+$accountstatic = new Account($db);
 
 
 /*
@@ -69,11 +69,11 @@ $accountstatic=new Account($db);
 // If click on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_ref='';
-    $search_amount='';
-    $search_account='';
-    $year='';
-    $month='';
+    $search_ref = '';
+    $search_amount = '';
+    $search_account = '';
+    $year = '';
+    $month = '';
 }
 
 
@@ -96,19 +96,8 @@ $sql.= " AND bc.entity = ".$conf->entity;
 if ($search_ref)			$sql.=natural_search("bc.ref", $search_ref);
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
 if ($search_amount)			$sql.=natural_search("bc.amount", price2num($search_amount));
-if ($month > 0)
-{
-    if ($year > 0 && empty($day))
-    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-    elseif ($year > 0 && ! empty($day))
-    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-    else
-    $sql.= " AND date_format(bc.date_bordereau, '%m') = '".$month."'";
-}
-elseif ($year > 0)
-{
-	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
+
 $sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -123,7 +112,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);
@@ -143,7 +132,7 @@ if ($resql)
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -152,20 +141,20 @@ if ($resql)
 
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', 0, $newcardbutton, '', $limit);
 
-	$moreforfilter='';
+	$moreforfilter = '';
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
 	print '<td class="liste_titre" align="center">';
-    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+    if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-    $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
+    $formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
     print '</td>';
     print '<td class="liste_titre">';
     $form->select_comptes($search_account, 'search_account', 0, '', 1);
@@ -201,14 +190,14 @@ if ($resql)
 
     		// Num ref cheque
     		print '<td>';
-    		$checkdepositstatic->id=$objp->rowid;
-    		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
-    		$checkdepositstatic->statut=$objp->statut;
+    		$checkdepositstatic->id = $objp->rowid;
+    		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+    		$checkdepositstatic->statut = $objp->statut;
     		print $checkdepositstatic->getNomUrl(1);
     		print '</td>';
 
     		// Date
-    		print '<td align="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';  // TODO Use date hour
+    		print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
 
     		// Bank
     		print '<td>';

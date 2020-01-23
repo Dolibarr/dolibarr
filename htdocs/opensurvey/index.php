@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,6 +33,11 @@ $langs->load("opensurvey");
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('opensurveyindex'));
+
 
 /*
  * View
@@ -48,14 +55,17 @@ if ($resql)
 }
 else dol_print_error($db, '');
 
-llxHeader();
 
-print load_fiche_titre($langs->trans("OpenSurveyArea"));
+$title = $langs->trans("OpenSurveyArea");
+llxHeader('', $title);
+
+print load_fiche_titre($title, '', 'generic');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("NbOfSurveys").'</td><td class="right"><a href="list.php">'.$nbsondages.'</a></td>';
@@ -64,9 +74,12 @@ print "</tr>";
 //print $total;
 //print '</td></tr>';
 print '</table>';
-
+print '</div>';
 
 print '</div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOpenSurvey', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

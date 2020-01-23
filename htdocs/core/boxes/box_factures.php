@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,9 +56,9 @@ class box_factures extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->facture->lire);
+	    $this->hidden = ! ($user->rights->facture->lire);
 	}
 
 	/**
@@ -69,15 +69,15 @@ class box_factures extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $facturestatic = new Facture($db);
-        $societestatic = new Societe($db);
+        $facturestatic = new Facture($this->db);
+        $societestatic = new Societe($this->db);
 
         $langs->load("bills");
 
@@ -97,30 +97,30 @@ class box_factures extends ModeleBoxes
             $sql.= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ")";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity IN (".getEntity('invoice').")";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->socid)	$sql.= " AND s.rowid = ".$user->socid;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
             else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$now=dol_now();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $datelimite = $db->jdate($objp->datelimite);
-                    $date = $db->jdate($objp->df);
-                    $datem = $db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $datelimite = $this->db->jdate($objp->datelimite);
+                    $date = $this->db->jdate($objp->df);
+                    $datem = $this->db->jdate($objp->tms);
 
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
@@ -129,7 +129,7 @@ class box_factures extends ModeleBoxes
                     $facturestatic->total_tva = $objp->total_tva;
                     $facturestatic->total_ttc = $objp->total_ttc;
                     $facturestatic->statut = $objp->fk_statut;
-                    $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
+                    $facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
 
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
@@ -156,7 +156,7 @@ class box_factures extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax200"',
                         'text' => $societestatic->getNomUrl(1, '', 40),
                         'asis' => 1,
                     );
@@ -185,12 +185,12 @@ class box_factures extends ModeleBoxes
                         'text'=>$langs->trans("NoRecordedInvoices"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

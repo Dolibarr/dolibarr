@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/loan/createschedule.php
+ *  \file       htdocs/loan/schedule.php
  *  \ingroup    loan
  *  \brief      Schedule card
  */
@@ -35,62 +35,63 @@ $object = new Loan($db);
 $object->fetch($loanid);
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","loan"));
+$langs->loadLangs(array("compta", "bills", "loan"));
 
-$title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
+$title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-$head=loan_prepare_head($object);
+$head = loan_prepare_head($object);
 dol_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
+$morehtmlref = '<div class="refidno">';
 // Ref loan
-$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
-$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
+$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
+$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 // Project
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
 	$langs->loadLangs(array("projects"));
-	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if ($user->rights->loan->write)
 	{
 		if ($action != 'classify')
-			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 		if ($action == 'classify') {
 			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-			$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			$morehtmlref.='<input type="hidden" name="action" value="classin">';
-			$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-			$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			$morehtmlref.='</form>';
+			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 		}
 	} else {
-		if (! empty($object->fk_project)) {
+		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-			$morehtmlref.=$proj->ref;
-			$morehtmlref.='</a>';
+			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+			$morehtmlref .= $proj->ref;
+			$morehtmlref .= '</a>';
 		} else {
-			$morehtmlref.='';
+			$morehtmlref .= '';
 		}
 	}
 }
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
+
+$morehtmlright = '';
+
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 if ($action == 'createecheancier') {
-
-    $i=1;
-    while($i <$object->nbterm+1){
-
-        $date =  GETPOST('hi_date'.$i, 'int');
+    $i = 1;
+    while ($i < $object->nbterm + 1) {
+        $date = GETPOST('hi_date'.$i, 'int');
         $mens = GETPOST('mens'.$i);
         $int = GETPOST('hi_interets'.$i);
         $insurance = GETPOST('hi_insurance'.$i);
@@ -101,15 +102,15 @@ if ($action == 'createecheancier') {
         $echeance->datec = dol_now();
         $echeance->tms = dol_now();
         $echeance->datep = $date;
-        $echeance->amount_capital = $mens-$int;
+        $echeance->amount_capital = $mens - $int;
         $echeance->amount_insurance = $insurance;
         $echeance->amount_interest = $int;
         $echeance->fk_typepayment = 3;
         $echeance->fk_bank = 0;
         $echeance->fk_user_creat = $user->id;
         $echeance->fk_user_modif = $user->id;
-        $result=$echeance->create($user);
-        if ($result<0) {
+        $result = $echeance->create($user);
+        if ($result < 0) {
             setEventMessages($echeance->error, $echeance->errors, 'errors');
         }
         $i++;
@@ -117,10 +118,8 @@ if ($action == 'createecheancier') {
 }
 
 if ($action == 'updateecheancier') {
-
-    $i=1;
-    while($i <$object->nbterm+1){
-
+    $i = 1;
+    while ($i < $object->nbterm + 1) {
         $mens = GETPOST('mens'.$i);
         $int = GETPOST('hi_interets'.$i);
         $id = GETPOST('hi_rowid'.$i);
@@ -129,12 +128,12 @@ if ($action == 'updateecheancier') {
         $echeance = new LoanSchedule($db);
         $echeance->fetch($id);
         $echeance->tms = dol_now();
-        $echeance->amount_capital = $mens-$int;
+        $echeance->amount_capital = $mens - $int;
         $echeance->amount_insurance = $insurance;
         $echeance->amount_interest = $int;
         $echeance->fk_user_modif = $user->id;
-        $result= $echeance->update($user, 0);
-        if ($result<0) {
+        $result = $echeance->update($user, 0);
+        if ($result < 0) {
             setEventMessages(null, $echeance->errors, 'errors');
         }
         $i++;
@@ -143,8 +142,6 @@ if ($action == 'updateecheancier') {
 
 $echeance = new LoanSchedule($db);
 $echeance->fetchAll($object->id);
-
-$var = ! $var;
 
 
 ?>
@@ -160,7 +157,7 @@ $(document).ready(function() {
 		$.ajax({
 			  dataType: 'json',
 			  url: 'calcmens.php',
-			  data: { echeance: echeance, mens: mens, capital:capital, rate:<?php echo $object->rate/100;?> , nbterm : <?php echo $object->nbterm;?>},
+			  data: { echeance: echeance, mens: mens, capital:capital, rate:<?php echo $object->rate / 100; ?> , nbterm : <?php echo $object->nbterm; ?>},
 			  success: function(data) {
 				$.each(data, function(index, element) {
 					var idcap_res='#hi_capital'+index;
@@ -182,89 +179,91 @@ $(document).ready(function() {
 <?php
 
 
-print '<form name="createecheancier" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-print '<input type="hidden" name="loanid" value="' . $loanid . '">';
-if(count($echeance->lines)>0)
+print '<form name="createecheancier" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="loanid" value="'.$loanid.'">';
+if (count($echeance->lines) > 0)
 {
 	print '<input type="hidden" name="action" value="updateecheancier">';
-}else{
+} else {
 	print '<input type="hidden" name="action" value="createecheancier">';
 }
-print '<table class="border" width="100%">';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="border centpercent">';
 print '<tr class="liste_titre">';
 $colspan = 6;
-if (count($echeance->lines)>0) $colspan++;
+if (count($echeance->lines) > 0) $colspan++;
 print '<th class="center" colspan="'.$colspan.'">';
 print $langs->trans("FinancialCommitment");
 print '</th>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<th width="5%" class="center">'.$langs->trans("Term").'</th>';
-print '<th width="5%" class="center">'.$langs->trans("Date").'</th>';
-print '<th width="15%" class="center">'.$langs->trans("Insurance");
-print '<th width="15%" class="center">'.$langs->trans("InterestAmount").'</th>';
-print '<th width="10%" class="center">'.$langs->trans("Amount").'</th>';
-print '<th width="40%" class="center">'.$langs->trans("CapitalRemain");
+print '<th class="center">'.$langs->trans("Term").'</th>';
+print '<th class="center">'.$langs->trans("Date").'</th>';
+print '<th class="center">'.$langs->trans("Insurance");
+print '<th class="center">'.$langs->trans("InterestAmount").'</th>';
+print '<th class="center">'.$langs->trans("Amount").'</th>';
+print '<th class="center">'.$langs->trans("CapitalRemain");
 print '<br>('.price($object->capital, 0, '', 1, -1, -1, $conf->currency).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';
-if (count($echeance->lines)>0) print '<th>'.$langs->trans('DoPayment').'</th>';
+if (count($echeance->lines) > 0) print '<th>'.$langs->trans('DoPayment').'</th>';
 print '</tr>'."\n";
 
-if ($object->nbterm > 0 && count($echeance->lines)==0)
+if ($object->nbterm > 0 && count($echeance->lines) == 0)
 {
-	$i=1;
+	$i = 1;
 	$capital = $object->capital;
-	$insurance = $object->insurance_amount/$object->nbterm;
+	$insurance = $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
 	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
-	while($i <$object->nbterm+1)
+	while ($i < $object->nbterm + 1)
 	{
-		$mens = price2num($echeance->calcMonthlyPayments($capital, $object->rate/100, $object->nbterm-$i+1), 'MT');
-		$int = ($capital*($object->rate/12))/100;
+		$mens = price2num($echeance->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1), 'MT');
+		$int = ($capital * ($object->rate / 12)) / 100;
 		$int = price2num($int, 'MT');
-		$insu = ($insurance+(($i == 1) ? $regulInsurance : 0));
-		$cap_rest = price2num($capital - ($mens-$int), 'MT');
+		$insu = ($insurance + (($i == 1) ? $regulInsurance : 0));
+		$cap_rest = price2num($capital - ($mens - $int), 'MT');
 		print '<tr>';
-		print '<td class="center" id="n'.$i.'">' . $i .'</td>';
-		print '<td class="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . dol_time_plus_duree($object->datestart, $i-1, 'm') . '">' . dol_print_date(dol_time_plus_duree($object->datestart, $i-1, 'm'), 'day') . '</td>';
-		print '<td class="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0), 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
-		print '<td class="center" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
+		print '<td class="center" id="n'.$i.'">'.$i.'</td>';
+		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.dol_time_plus_duree($object->datestart, $i - 1, 'm').'">'.dol_print_date(dol_time_plus_duree($object->datestart, $i - 1, 'm'), 'day').'</td>';
+		print '<td class="center" id="insurance'.$i.'">'.price($insurance + (($i == 1) ? $regulInsurance : 0), 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.($insurance + (($i == 1) ? $regulInsurance : 0)).'">';
+		print '<td class="center" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
 		print '<td class="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"></td>';
-		print '<td class="center" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital' .$i .'" id ="hi_capital' .$i .'" value="' . $cap_rest . '">';
+		print '<td class="center" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '</tr>'."\n";
 		$i++;
 		$capital = $cap_rest;
 	}
 }
-elseif(count($echeance->lines)>0)
+elseif (count($echeance->lines) > 0)
 {
-	$i=1;
+	$i = 1;
 	$capital = $object->capital;
-	$insurance = $object->insurance_amount/$object->nbterm;
+	$insurance = $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
 	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
 	$printed = false;
-	foreach ($echeance->lines as $line){
-		$mens = $line->amount_capital+$line->amount_interest;
+	foreach ($echeance->lines as $line) {
+		$mens = $line->amount_capital + $line->amount_interest;
 		$int = $line->amount_interest;
-		$insu = ($insurance+(($i == 1) ? $regulInsurance : 0));
-		$cap_rest = price2num($capital - ($mens-$int), 'MT');
+		$insu = ($insurance + (($i == 1) ? $regulInsurance : 0));
+		$cap_rest = price2num($capital - ($mens - $int), 'MT');
 
 		print '<tr>';
-		print '<td class="center" id="n'.$i.'"><input type="hidden" name="hi_rowid' .$i .'" id ="hi_rowid' .$i .'" value="' . $line->id . '">' . $i .'</td>';
-		print '<td class="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . $line->datep . '">' . dol_print_date($line->datep, 'day') . '</td>';
-		print '<td class="center" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . $insu . '">';
-		print '<td class="center" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
-		if($line->datep > dol_now() && empty($line->fk_bank)){
+		print '<td class="center" id="n'.$i.'"><input type="hidden" name="hi_rowid'.$i.'" id ="hi_rowid'.$i.'" value="'.$line->id.'">'.$i.'</td>';
+		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.$line->datep.'">'.dol_print_date($line->datep, 'day').'</td>';
+		print '<td class="center" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
+		print '<td class="center" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
+		if ($line->datep > dol_now() && empty($line->fk_bank)) {
 			print '<td class="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"></td>';
-		}else{
-			print '<td class="center">' . price($mens, 0, '', 1, -1, -1, $conf->currency) . '</td><input type="hidden" name="mens' .$i .'" id ="mens' .$i .'" value="' . $mens . '">';
+		} else {
+			print '<td class="center">'.price($mens, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="mens'.$i.'" id ="mens'.$i.'" value="'.$mens.'">';
 		}
 
-		print '<td class="center" id="capital'.$i.'">'.price($cap_rest, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_capital' .$i .'" id ="hi_capital' .$i .'" value="' . $cap_rest . '">';
+		print '<td class="center" id="capital'.$i.'">'.price($cap_rest, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '<td class="center">';
 		if (!empty($line->fk_bank)) print $langs->trans('Paid');
 		elseif (!$printed)
@@ -280,9 +279,12 @@ elseif(count($echeance->lines)>0)
 }
 
 print '</table>';
+print '</div>';
+
 print '</br>';
-print '</br>';
-if (count($echeance->lines)==0) $label = $langs->trans("Create");
+
+
+if (count($echeance->lines) == 0) $label = $langs->trans("Create");
 else $label = $langs->trans("Save");
 print '<div class="center"><input class="button" type="submit" value="'.$label.'"></div>';
 print '</form>';

@@ -114,6 +114,7 @@ InformationToHelpDiagnose=این اطلاعات برای اهداف تحلیل �
 MoreInformation=اطلاعات بیشتر
 TechnicalInformation=اطلاعات فنی
 TechnicalID=شناسۀ فنی
+LineID=Line ID
 NotePublic=یادداشت (عمومی)
 NotePrivate=یادداشت (خصوصی)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr طوری تنظیم شده است که دقت واحد مبالغ با <b>%s</b> عدد اعشاری باشد.
@@ -169,6 +170,8 @@ ToValidate=برای تائیداعتبار
 NotValidated=تائیداعتبار نشده
 Save=ذخیره
 SaveAs=ذخیره به‌عنوان
+SaveAndStay=Save and stay
+SaveAndNew=Save and new
 TestConnection=آزمایش اتصال
 ToClone=نسخه‌برداری
 ConfirmClone=تاریخی که برای نسخه‌برداری مد نظر دارید:
@@ -182,6 +185,7 @@ Hide=پنهان‌کردن
 ShowCardHere=نمایش کارت
 Search=جستجو
 SearchOf=جستجو
+SearchMenuShortCut=Ctrl + shift + f
 Valid=معتبر
 Approve=تجویز
 Disapprove=عدم تجویز
@@ -412,6 +416,7 @@ DefaultTaxRate=نرخ‌مالیات پیش‌فرض
 Average=میانگین
 Sum=مجموع
 Delta=دلتا
+StatusToPay=قابل پرداخت
 RemainToPay=در انتظار پرداخت
 Module=واحد/برنامه
 Modules=واحد/برنامه
@@ -474,7 +479,9 @@ Categories=کلیدواژه‌ها/دسته‌بندی‌ها
 Category=کلیدواژه/دسته‌بندی
 By=توسط
 From=از
+FromLocation=از
 to=به
+To=به
 and=و
 or=یا
 Other=دیگر
@@ -734,7 +741,7 @@ NotSupported=پشتیبانی نشده
 RequiredField=بخش الزامی
 Result=نتیجه
 ToTest=آزمایش
-ValidateBefore=قبل از استفاده از این قابلیت کارت باید اعتبارسنجی شود
+ValidateBefore=Item must be validated before using this feature
 Visibility=قابل‌نمایش
 Totalizable=مجموعی
 TotalizableDesc=این بخش در فهرست مجموعی -قابل جمع‌بندی؟- است
@@ -824,6 +831,7 @@ Mandatory=الزامی
 Hello=سلام
 GoodBye=خدانگهدار
 Sincerely=بااحترا
+ConfirmDeleteObject=Are you sure you want to delete this object?
 DeleteLine=حذف سطر
 ConfirmDeleteLine=آیا مطمئن هستید می‌خواهید این سطر را حذف کنید؟
 NoPDFAvailableForDocGenAmongChecked=برای تولید سند در خصوص ردیف بررسی شده هیچ PDFی موجود نیست
@@ -840,6 +848,7 @@ Progress=پیش‌روی
 ProgressShort=پیشرفت
 FrontOffice=بخش‌مشتریان
 BackOffice=بخش‌مدیران
+Submit=Submit
 View=نما
 Export=صادرا
 Exports=صادرات
@@ -990,3 +999,17 @@ GlobalOpenedElemView=Global view
 NoArticlesFoundForTheKeyword=No article found for the keyword '<strong>%s</strong>'
 NoArticlesFoundForTheCategory=No article found for the category
 ToAcceptRefuse=To accept | refuse
+ContactDefault_agenda=روی‌داد
+ContactDefault_commande=سفارش
+ContactDefault_contrat=قرارداد
+ContactDefault_facture=صورت‌حساب
+ContactDefault_fichinter=پادرمیانی
+ContactDefault_invoice_supplier=Supplier Invoice
+ContactDefault_order_supplier=Supplier Order
+ContactDefault_project=طرح
+ContactDefault_project_task=وظیفه
+ContactDefault_propal=پیشنهاد
+ContactDefault_supplier_proposal=Supplier Proposal
+ContactDefault_ticketsup=برگۀ پشتیبانی
+ContactAddedAutomatically=Contact added from contact thirdparty roles
+More=More

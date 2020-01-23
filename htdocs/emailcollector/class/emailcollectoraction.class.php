@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -98,7 +98,13 @@ class EmailCollectorAction extends CommonObject
     public $fk_emailcollector;
     public $type;
     public $actionparam;
+
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $tms;
     public $fk_user_creat;
     public $fk_user_modif;
@@ -226,7 +232,7 @@ class EmailCollectorAction extends CommonObject
         // Clear extrafields that are unique
         if (is_array($object->array_options) && count($object->array_options) > 0)
         {
-            $extrafields->fetch_name_optionals_label($this->element);
+            $extrafields->fetch_name_optionals_label($this->table_element);
             foreach($object->array_options as $key => $option)
             {
                 $shortkey = preg_replace('/options_/', '', $key);
@@ -408,46 +414,46 @@ class EmailCollectorAction extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        if (empty($this->labelstatus))
+        if (empty($this->labelStatus))
         {
             global $langs;
             //$langs->load("emailcollector");
-            $this->labelstatus[1] = $langs->trans('Enabled');
-            $this->labelstatus[0] = $langs->trans('Disabled');
+            $this->labelStatus[1] = $langs->trans('Enabled');
+            $this->labelStatus[0] = $langs->trans('Disabled');
         }
 
         if ($mode == 0)
         {
-            return $this->labelstatus[$status];
+            return $this->labelStatus[$status];
         }
         elseif ($mode == 1)
         {
-            return $this->labelstatus[$status];
+            return $this->labelStatus[$status];
         }
         elseif ($mode == 2)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
         }
         elseif ($mode == 3)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
         elseif ($mode == 4)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
         }
         elseif ($mode == 5)
         {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
         elseif ($mode == 6)
         {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
     }
 

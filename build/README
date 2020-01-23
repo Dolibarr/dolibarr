@@ -3,8 +3,7 @@ README (English)
 Building packages
 ##################################################
 
-All sub-directories of "build" directory contains files required to build
-automatically Dolibarr packages.
+All sub-directories of "build" directory contains files (setup or binary tools) required to build automatically Dolibarr packages.
 There are several tools:
 
 
@@ -37,7 +36,7 @@ Note: Prerequisites to build autoexe DoliWamp package:
 > perl makepack-dolibarrmodule.pl
 
 - To build developper documentation, launch the script
-> perl dolybarr-doxygen-build.pl
+> perl dolibarr-doxygen-build.pl
 
 
 Note: 

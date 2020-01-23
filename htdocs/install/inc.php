@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -253,13 +253,10 @@ foreach ($handlers as $handler)
 	if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
 }
 
-// Defini objet langs
+// Define object $langs
 $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
-
-$bc[false]=' class="bg1"';
-$bc[true]=' class="bg2"';
 
 
 /**
@@ -412,7 +409,9 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST"';
+    if ($next == 'step5') print ' autocomplete="off"';
+    print '>'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 

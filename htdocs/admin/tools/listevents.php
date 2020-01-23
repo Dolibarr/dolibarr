@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,10 +35,10 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 // Load translation files required by the page
@@ -56,11 +56,12 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="dateevent";
 if (! $sortorder) $sortorder="DESC";
 
-$search_code = GETPOST("search_code");
-$search_ip   = GETPOST("search_ip");
-$search_user = GETPOST("search_user");
-$search_desc = GETPOST("search_desc");
-$search_ua   = GETPOST("search_ua");
+$search_code = GETPOST("search_code", "alpha");
+$search_ip   = GETPOST("search_ip", "alpha");
+$search_user = GETPOST("search_user", "alpha");
+$search_desc = GETPOST("search_desc", "alpha");
+$search_ua   = GETPOST("search_ua", "none");
+$search_prefix_session = GETPOST("search_prefix_session", "none");
 
 if (GETPOST("date_startmonth") == '' || GETPOST("date_startmonth") > 0) $date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 else $date_start=-1;
@@ -91,6 +92,8 @@ $date_endday = $tmp['mday'];
 $date_endmonth = $tmp['mon'];
 $date_endyear = $tmp['year'];
 
+$arrayfields=array();
+
 
 /*
  * Actions
@@ -108,6 +111,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_user='';
     $search_desc='';
     $search_ua='';
+    $search_prefix_session='';
 }
 
 // Purge audit events
@@ -136,6 +140,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	$securityevent->type='SECURITY_EVENTS_PURGE';
 	$securityevent->dateevent=$now;
 	$securityevent->description=$text;
+
 	$result=$securityevent->create($user);
 	if ($result > 0)
 	{
@@ -163,7 +168,7 @@ $userstatic=new User($db);
 $usefilter=0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
-$sql.= " e.fk_user, e.description,";
+$sql.= " e.fk_user, e.description, e.prefix_session,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
@@ -175,6 +180,7 @@ if ($search_ip)   { $usefilter++; $sql.=natural_search("e.ip", $search_ip, 0); }
 if ($search_user) { $usefilter++; $sql.=natural_search("u.login", $search_user, 0); }
 if ($search_desc) { $usefilter++; $sql.=natural_search("e.description", $search_desc, 0); }
 if ($search_ua)   { $usefilter++; $sql.=natural_search("e.user_agent", $search_ua, 0); }
+if ($search_prefix_session)   { $usefilter++; $sql.=natural_search("e.prefix_session", $search_prefix_session, 0); }
 $sql.= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -207,6 +213,7 @@ if ($result)
 	if ($search_user) $param.='&search_user='.urlencode($search_user);
 	if ($search_desc) $param.='&search_desc='.urlencode($search_desc);
 	if ($search_ua)   $param.='&search_ua='.urlencode($search_ua);
+	if ($search_prefix_sessiona)   $param.='&search_prefix_session='.urlencode($search_prefix_session);
 	if ($date_startmonth) $param.= "&date_startmonth=".urlencode($date_startmonth);
 	if ($date_startday)   $param.= "&date_startday=".urlencode($date_startday);
 	if ($date_startyear)  $param.= "&date_startyear=".urlencode($date_startyear);
@@ -231,29 +238,43 @@ if ($result)
 	}
 
 	print '<div class="div-table-responsive">';
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 
-	// Lignes des champs de filtres
+	// Fields title search
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" width="15%">'.$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0).'</td>';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
+	print '<input class="flat maxwidth100" type="text" name="search_code" value="'.$search_code.'">';
 	print '</td>';
 
 	// IP
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_ip" value="'.$search_ip.'">';
+	print '<input class="flat maxwidth100" type="text" name="search_ip" value="'.$search_ip.'">';
 	print '</td>';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_user" value="'.$search_user.'">';
+	print '<input class="flat maxwidth100" type="text" name="search_user" value="'.$search_user.'">';
 	print '</td>';
 
 	print '<td class="liste_titre left">';
-	//print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
+	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
+
+	if (! empty($arrayfields['e.user_agent']['checked']))
+	{
+		print '<td class="liste_titre left">';
+		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.$search_ua.'">';
+		print '</td>';
+	}
+
+	if (! empty($arrayfields['e.prefix_session']['checked']))
+	{
+		print '<td class="liste_titre left">';
+		print '<input class="flat maxwidth100" type="text" name="search_prefix_session" value="'.$search_prefix_session.'">';
+		print '</td>';
+	}
 
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -264,11 +285,19 @@ if ($result)
 
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "e.dateevent", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Code", $_SERVER["PHP_SELF"], "e.type", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "e.dateevent", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Code", $_SERVER["PHP_SELF"], "e.type", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.user_agent']['checked']))
+	{
+		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
+	}
+	if (! empty($arrayfields['e.prefix_session']['checked']))
+	{
+		print_liste_field_titre("PrefixSession", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
+	}
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -313,9 +342,26 @@ if ($result)
 		print dol_escape_htmltag($text);
 		print '</td>';
 
+		if (! empty($arrayfields['e.user_agent']['checked']))
+		{
+			// User agent
+			print '<td>';
+			print $obj->user_agent;
+			print '</td>';
+		}
+
+		if (! empty($arrayfields['e.prefix_session']['checked']))
+		{
+			// User agent
+			print '<td>';
+			print $obj->prefix_session;
+			print '</td>';
+		}
+
 		// More informations
 		print '<td class="right">';
 		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
+		$htmltext.='<br><b>'.$langs->trans("PrefixSession").'</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
 		print $form->textwithpicto('', $htmltext);
 		print '</td>';
 

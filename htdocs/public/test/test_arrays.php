@@ -27,7 +27,6 @@ if (empty($usedolheader))
 	<head>
 	<meta name="robots" content="noindex,nofollow" />
 	<meta name="author" content="Dolibarr Development Team">
-	<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
 	<title>Test page</title>
 	<!-- Includes for JQuery (Ajax library) -->
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
@@ -345,7 +344,6 @@ if (! empty($usedolheader))
 {
 	llxFooter();
 } else { ?>
-
 </body>
 <?php } ?>
 

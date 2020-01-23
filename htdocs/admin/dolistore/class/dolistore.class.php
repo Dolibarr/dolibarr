@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -32,23 +32,23 @@ class Dolistore
      * beginning of pagination
      * @var int
      */
+    public $start;
 
-     public $start;
     /**
      * end of pagination
      * @var int
      */
     public $end;
 
-	public $per_page;    // pagination: display per page
-	public $categorie;   // the current categorie
-	public $search;      // the search keywords
+	public $per_page; // pagination: display per page
+	public $categorie; // the current categorie
+	public $search; // the search keywords
 
 	// setups
-	public $url;         // the url of this page
-	public $shop_url;    // the url of the shop
-	public $lang;        // the integer representing the lang in the store
-	public $debug_api;   // usefull if no dialog
+	public $url; // the url of this page
+	public $shop_url; // the url of the shop
+	public $lang; // the integer representing the lang in the store
+	public $debug_api; // usefull if no dialog
 
 
 	/**
@@ -66,8 +66,8 @@ class Dolistore
 
 		$langtmp    = explode('_', $langs->defaultlang);
 		$lang       = $langtmp[0];
-		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5);	// Into table ps_lang of Prestashop - 1
-		if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
+		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5); // Into table ps_lang of Prestashop - 1
+		if (!in_array($lang, array_keys($lang_array))) $lang = 'en';
 		$this->lang = $lang_array[$lang];
 	}
 
@@ -142,7 +142,7 @@ class Dolistore
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang;  // It seems for search, key start with
+				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
 
 				// Call
 				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
@@ -226,7 +226,6 @@ class Dolistore
 						$html   .= self::get_categories($cat->id);
 						$html   .= "</li>\n";
 			} else {
-
 			}
 		}
 
@@ -278,12 +277,12 @@ class Dolistore
 
 			// free or pay ?
 			if ($product->price > 0) {
-			    $price         = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
+			    $price = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			} else {
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
 				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
-				$download_link.= '<br><br><a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link .= '<br><br><a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			}
 
 			//checking versions

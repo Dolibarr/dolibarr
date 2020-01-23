@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,21 +24,15 @@
 /**
  * Add area with bookmarks in menu
  *
- * @param 	DoliDb  	$aDb		Database handler
- * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
-function printBookmarksList($aDb, $aLangs)
+function printBookmarksList()
 {
-	global $conf, $user;
-
-	$db = $aDb;
-	$langs = $aLangs;
+	global $conf, $user, $db, $langs;
 
 	$ret = '<div class="menu_top"></div>'."\n";
 
 	if (! empty($conf->use_javascript_ajax)) {		// Bookmark autosubmit can't work when javascript is off.
-
 		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 		if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
 
@@ -72,11 +66,11 @@ function printBookmarksList($aDb, $aLangs)
 
 		$ret.= '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
 		$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
-        $ret.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $ret.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
 		$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 	    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
-	    $ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
+	    $ret.= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
 	    $ret.= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 		// Url to go on create new bookmark page
 		if (! empty($user->rights->bookmark->creer))
@@ -84,7 +78,7 @@ function printBookmarksList($aDb, $aLangs)
 	    	//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
 		    $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
 	    	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
-	    	$ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
+	    	$ret.= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
 		}
 		// Menu with all bookmarks
 		if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
@@ -150,4 +144,136 @@ function printBookmarksList($aDb, $aLangs)
 	$ret.= '<div class="menu_end"></div>'."\n";
 
 	return $ret;
+}
+
+
+
+/**
+ * Add area with bookmarks in top menu
+ *
+ * @return	string
+ */
+function printDropdownBookmarksList()
+{
+    global $conf, $user, $db, $langs;
+
+    require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+    if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
+
+    $langs->load("bookmarks");
+
+    $url= $_SERVER["PHP_SELF"];
+
+    if (! empty($_SERVER["QUERY_STRING"]))
+    {
+        $url.=(dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'');
+    }
+    else
+    {
+        global $sortfield,$sortorder;
+        $tmpurl='';
+        // No urlencode, all param $url will be urlencoded later
+        if ($sortfield) $tmpurl.=($tmpurl?'&':'').'sortfield='.$sortfield;
+        if ($sortorder) $tmpurl.=($tmpurl?'&':'').'sortorder='.$sortorder;
+        if (is_array($_POST))
+        {
+            foreach($_POST as $key => $val)
+            {
+                if (preg_match('/^search_/', $key) && $val != '') $tmpurl.=($tmpurl?'&':'').$key.'='.$val;
+            }
+        }
+        $url.=($tmpurl?'?'.$tmpurl:'');
+    }
+
+    $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
+    $searchForm.= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="" onsubmit="return false" >';
+    $searchForm.= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
+    $searchForm.= '</form>';
+
+    // Url to list bookmark
+    $listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
+    $listbtn.= '<span class="fa fa-list"></span> '.$langs->trans('Bookmarks').'</a>';
+
+    // Url to go on create new bookmark page
+    $newbtn = '';
+    if (! empty($user->rights->bookmark->creer))
+    {
+        //$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
+        $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
+        $newbtn.= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
+        $newbtn.= img_picto('', 'bookmark').' '.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
+    }
+
+
+    $bookmarkList='<div id="dropdown-bookmarks-list" >';
+    // Menu with all bookmarks
+    if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
+    {
+        $sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
+        $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
+        $sql.= " AND entity IN (".getEntity('bookmarks').")";
+        $sql.= " ORDER BY position";
+        if ($resql = $db->query($sql) )
+        {
+            $i=0;
+            while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
+            {
+                $bookmarkList.='<a class="dropdown-item bookmark-item" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' href="'.dol_escape_htmltag($obj->url).'" >';
+                $bookmarkList.= dol_escape_htmltag($obj->title);
+                $bookmarkList.='</a>';
+                $i++;
+            }
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+    }
+    $bookmarkList.='</div>';
+
+    $html= '';
+    if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU)) {
+        $html.= '
+        <!-- search input -->
+        <div class="dropdown-header bookmark-header">
+            ' . $searchForm . '
+        </div>
+        ';
+    }
+
+    $html.= '
+        <!-- Menu Body -->
+        <div class="bookmark-body dropdown-body">
+        '.$bookmarkList.'
+        </div>
+        ';
+
+    $html.= '
+        <!-- Menu Footer-->
+        <div class="bookmark-footer">
+                '.$newbtn.$listbtn.'
+            <div style="clear:both;"></div>
+        </div>
+    ';
+
+    if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU)) {
+        $html .= '<script>
+            $( document ).on("keyup", "#top-bookmark-search-input", function () {
+
+                var filter = $(this).val(), count = 0;
+                $("#dropdown-bookmarks-list .bookmark-item").each(function () {
+
+                    if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+                        $(this).addClass("hidden-search-result");
+                    } else {
+                        $(this).removeClass("hidden-search-result");
+                        count++;
+                    }
+                });
+                $("#top-bookmark-search-filter-count").text(count);
+            });
+		    </script>';
+    }
+
+    return $html;
 }

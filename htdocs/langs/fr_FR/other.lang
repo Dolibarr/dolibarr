@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Facture fournisseur payée
 Notify_BILL_SUPPLIER_SENTBYMAIL=Envoi facture fournisseur par email
 Notify_BILL_SUPPLIER_CANCELED=Facture fournisseur annulée
 Notify_CONTRACT_VALIDATE=Validation contrat
-Notify_FICHEINTER_VALIDATE=Validation fiche d'intervention
+Notify_FICHINTER_VALIDATE=Validation fiche d'intervention
 Notify_FICHINTER_ADD_CONTACT=Contact ajouté à l'intervention
 Notify_FICHINTER_SENTBYMAIL=Envoi fiche d'intervention par email
 Notify_SHIPPING_VALIDATE=Validation expédition
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Tiers créé par le collecteur de courrier él
 ContactCreatedByEmailCollector=Contact/adresse créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 ProjectCreatedByEmailCollector=Projet créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 TicketCreatedByEmailCollector=Ticket créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
+OpeningHoursFormatDesc=Utilisez un - pour séparer les heures d'ouverture et de fermeture. <br> Utilisez un espace pour entrer différentes plages. <br> Exemple: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Espace exports

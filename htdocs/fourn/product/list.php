@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
-$langs->loadLangs(array("products","suppliers"));
+$langs->loadLangs(array("products", "suppliers"));
 
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
@@ -42,7 +42,7 @@ $type = GETPOST('type');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -50,11 +50,11 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="p.ref"; // Set here default search field
-if (! $sortorder) $sortorder="ASC";
+if (!$sortfield) $sortfield = "p.ref"; // Set here default search field
+if (!$sortorder) $sortorder = "ASC";
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
-if ($user->societe_id) $fourn_id=$user->societe_id;
+if ($user->socid) $fourn_id = $user->socid;
 
 $catid = GETPOST('catid', 'intcomma');
 
@@ -71,12 +71,12 @@ $extrafields = new ExtraFields($db);
  * Put here all code to do according to value of "action" parameter
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
-$parameters=array();
+$parameters = array();
 
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -85,17 +85,17 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
     	$sref = '';
     	$sRefSupplier = '';
     	$snom = '';
-        $search_field1='';
-        $search_field2='';
-        $search_date_creation='';
-        $search_date_update='';
-        $toselect='';
-        $search_array_options=array();
+        $search_field1 = '';
+        $search_field2 = '';
+        $search_date_creation = '';
+        $search_date_update = '';
+        $toselect = '';
+        $search_array_options = array();
     }
 }
 
@@ -107,7 +107,7 @@ $form = new Form($db);
 $productstatic = new Product($db);
 $companystatic = new Societe($db);
 
-$title=$langs->trans("ProductsAndServices");
+$title = $langs->trans("ProductsAndServices");
 
 if ($fourn_id)
 {
@@ -117,36 +117,36 @@ if ($fourn_id)
 
 
 
-$arrayofmassactions =  array(
+$arrayofmassactions = array(
 	'generate_doc'=>$langs->trans("ReGeneratePDF"),
     'builddoc'=>$langs->trans("PDFMerge"),
     'presend'=>$langs->trans("SendByMail"),
 );
-if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity,";
-$sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
-$sql.= " s.rowid as socid, s.nom as name";
+$sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
+$sql .= " s.rowid as socid, s.nom as name";
 // Add fields to SELECT from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 $sql .= $hookmanager->resPrint;
-$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
-$sql.= " WHERE p.entity IN (".getEntity('product').")";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+if ($catid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
+$sql .= " WHERE p.entity IN (".getEntity('product').")";
 if ($sRefSupplier)
 {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
 }
 if (GETPOST('type'))
 {
-	$sql .= " AND p.fk_product_type = " . GETPOST('type', 'int');
+	$sql .= " AND p.fk_product_type = ".GETPOST('type', 'int');
 }
 if ($sref)
 {
@@ -156,7 +156,7 @@ if ($snom)
 {
 	$sql .= natural_search('p.label', $snom);
 }
-if($catid)
+if ($catid)
 {
 	$sql .= " AND cp.fk_categorie = ".$catid;
 }
@@ -203,18 +203,18 @@ if ($resql)
 		exit;
 	}
 
-	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
+	if (!empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
 	else $texte = $langs->trans("List");
 
 	llxHeader("", "", $texte);
 
 
-	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	$param = "&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&amp;type=".$type : "").(empty($sRefSupplier) ? "" : "&amp;srefsupplier=".$sRefSupplier);
+	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
 
-	if (! empty($catid))
+	if (!empty($catid))
 	{
 		print "<div id='ways'>";
 		$c = new Categorie($db);
@@ -225,22 +225,22 @@ if ($resql)
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	$topicmail="Information";
-	$modelmail="product";
-	$objecttmp=new Product($db);
-	$trackid='prod'.$object->id;
+	$topicmail = "Information";
+	$modelmail = "product";
+	$objecttmp = new Product($db);
+	$trackid = 'prod'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
@@ -261,12 +261,12 @@ if ($resql)
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
     print $hookmanager->resPrint;
 	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto=$form->showFilterButtons();
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	// Line for title
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
@@ -292,10 +292,10 @@ if ($resql)
 		print '<tr class="oddeven">';
 
 		print '<td>';
-		$productstatic->id=$objp->rowid;
-		$productstatic->ref=$objp->ref;
-		$productstatic->type=$objp->fk_product_type;
-		$productstatic->entity=$objp->entity;
+		$productstatic->id = $objp->rowid;
+		$productstatic->ref = $objp->ref;
+		$productstatic->type = $objp->fk_product_type;
+		$productstatic->entity = $objp->entity;
 		print $productstatic->getNomUrl(1, 'supplier');
 		print '</td>';
 
@@ -303,8 +303,8 @@ if ($resql)
 
 		print '<td>'.$objp->label.'</td>'."\n";
 
-		$companystatic->name=$objp->name;
-		$companystatic->id=$objp->socid;
+		$companystatic->name = $objp->name;
+		$companystatic->id = $objp->socid;
 		print '<td>';
 		if ($companystatic->id > 0) print $companystatic->getNomUrl(1, 'supplier');
 		print '</td>';

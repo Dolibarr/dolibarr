@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *       \file       htdocs/core/ajax/fileupload.class.php
+ *       \file       htdocs/core/class/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
  */
 
@@ -45,6 +45,8 @@ class FileUpload
 	{
 		global $db, $conf;
 		global $object;
+		global $hookmanager;
+		$hookmanager->initHooks(array('fileupload'));
 
 		$this->fk_element=$fk_element;
 		$this->element=$element;
@@ -183,6 +185,18 @@ class FileUpload
 						)
 				)
 		);
+
+        $hookmanager->executeHooks(
+            'overrideUploadOptions',
+            array(
+                'options' => &$options,
+                'element' => $element
+            ),
+            $object,
+            $action,
+            $hookmanager
+        );
+
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
 		}

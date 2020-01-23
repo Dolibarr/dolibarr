@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'deplacement', '', '');
 
 $search_ref=GETPOST('search_ref', 'int');
@@ -120,7 +120,7 @@ if ($resql)
 
     $i = 0;
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", "&socid=$socid", '', $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "d.type", "", "&socid=$socid", '', $sortfield, $sortorder);
@@ -172,7 +172,7 @@ if ($resql)
         // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
+        print '<td class="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
         // User
         print '<td>';
         $userstatic->id = $obj->fk_user;

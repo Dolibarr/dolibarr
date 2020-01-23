@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -107,7 +107,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 * 	Return amount of payments already done
+	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
+	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Amount of payment already done, <0 if KO
@@ -154,7 +155,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
 	        // TODO
-	       return 0;
+	        return 0;
 	    }
 
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -219,9 +220,9 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Renvoie tableau des ids de facture avoir issus de la facture
+	 *	Returns array of credit note ids from the invoice
 	 *
-	 *	@return		array		Tableau d'id de factures avoirs
+	 *	@return		array		Array of credit note ids
 	 */
 	public function getListIdAvoirFromInvoice()
 	{
@@ -251,10 +252,10 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Renvoie l'id de la facture qui la remplace
+	 *	Returns the id of the invoice that replaces it
 	 *
-	 *	@param		string	$option		filtre sur statut ('', 'validated', ...)
-	 *	@return		int					<0 si KO, 0 si aucune facture ne remplace, id facture sinon
+	 *	@param		string	$option		status filter ('', 'validated', ...)
+	 *	@return		int					<0 si KO, 0 if no invoice replaces it, id of invoice otherwise
 	 */
 	public function getIdReplacingInvoice($option = '')
 	{
@@ -264,10 +265,10 @@ abstract class CommonInvoice extends CommonObject
 		$sql.= ' AND type < 2';
 		if ($option == 'validated') $sql.= ' AND fk_statut = 1';
 		// PROTECTION BAD DATA
-		// Au cas ou base corrompue et qu'il y a une facture de remplacement validee
-		// et une autre non, on donne priorite a la validee.
-		// Ne devrait pas arriver (sauf si acces concurrentiel et que 2 personnes
-		// ont cree en meme temps une facture de remplacement pour la meme facture)
+		// In case the database is corrupted and there is a valid replectement invoice
+		// and another no, priority is given to the valid one.
+		// Should not happen (unless concurrent access and 2 people have created a
+		// replacement invoice for the same invoice at the same time)
 		$sql.= ' ORDER BY fk_statut DESC';
 
 		$resql=$this->db->query($sql);
@@ -276,12 +277,12 @@ abstract class CommonInvoice extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
-				// Si il y en a
+				// If there is any
 				return $obj->rowid;
 			}
 			else
 			{
-				// Si aucune facture ne remplace
+				// If no invoice replaces it
 				return 0;
 			}
 		}
@@ -337,6 +338,51 @@ abstract class CommonInvoice extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			//look for credit notes and discounts and deposits
+			$sql = '';
+			if ($this->element == 'facture' || $this->element == 'invoice')
+			{
+				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
+				$sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
+			}
+			elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+			{
+				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
+				$sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$this->id;
+				$sql.= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)';	// Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
+			}
+
+			if ($sql) {
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$num = $this->db->num_rows($resql);
+					$i=0;
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+						if ($multicurrency) {
+							$retarray[]=array('amount'=>$obj->multicurrency_amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
+						}
+						else {
+							$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
+						}
+						$i++;
+					}
+				}
+				else
+				{
+					$this->error = $this->db->lasterror();
+					dol_print_error($this->db);
+					return array();
+				}
+				$this->db->free($resql);
+			}
+
 			return $retarray;
 		}
 		else
@@ -496,27 +542,27 @@ abstract class CommonInvoice extends CommonObject
 		$prefix='Short';
 		if (! $paye){
 		    if ($status == 0) {
-		        $labelstatut = $langs->trans('BillStatusDraft');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusDraft');
+		        $labelStatus = $langs->trans('BillStatusDraft');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusDraft');
 		    }
 		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
-		        $labelstatut = $langs->trans('BillStatusClosedUnpaid');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
+		        $labelStatus = $langs->trans('BillStatusClosedUnpaid');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 		        $statusType='status5';
 		    }
 		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
-		        $labelstatut = $langs->trans('BillStatusClosedPaidPartially');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType='status9';
 		    }
 		    elseif ($alreadypaid <= 0) {
-		        $labelstatut = $langs->trans('BillStatusNotPaid');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
+		        $labelStatus = $langs->trans('BillStatusNotPaid');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType='status1';
 		    }
 		    else {
-		        $labelstatut = $langs->trans('BillStatusStarted');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusStarted');
+		        $labelStatus = $langs->trans('BillStatusStarted');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusStarted');
 		        $statusType='status3';
 		    }
 		}
@@ -525,27 +571,26 @@ abstract class CommonInvoice extends CommonObject
 		    $statusType='status6';
 
 		    if ($type == self::TYPE_CREDIT_NOTE){
-		        $labelstatut = $langs->trans('BillStatusPaidBackOrConverted');       // credit note
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
+		        $labelStatus = $langs->trans('BillStatusPaidBackOrConverted');       // credit note
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
 		    }
 		    elseif ($type == self::TYPE_DEPOSIT){
-		        $labelstatut = $langs->trans('BillStatusConverted');             // deposit invoice
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusConverted');             // deposit invoice
+		        $labelStatus = $langs->trans('BillStatusConverted');             // deposit invoice
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusConverted');             // deposit invoice
 		    }
 		    else{
-		        $labelstatut = $langs->trans('BillStatusPaid');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaid');
+		        $labelStatus = $langs->trans('BillStatusPaid');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaid');
 		    }
 		}
 
-
-		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi une date limite de reglement de facture en fonction des
-	 *	conditions de reglements de la facture et date de facturation.
+	 *  Returns an invoice payment deadline based on the invoice settlement
+	 *  conditions and billing date.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
 	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
@@ -589,14 +634,14 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Definition de la date limite */
 
-		// 0 : ajout du nombre de jours
+		// 0 : adding the number of days
 		if ($cdr_type == 0)
 		{
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
 		}
-		// 1 : application de la regle "fin de mois"
+		// 1 : application of the "end of the month" rule
 		elseif ($cdr_type == 1)
 		{
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
@@ -612,13 +657,13 @@ abstract class CommonInvoice extends CommonObject
 			{
 				$mois += 1;
 			}
-			// On se deplace au debut du mois suivant, et on retire un jour
+			// We move at the beginning of the next month, and we take a day off
 			$datelim=dol_mktime(12, 0, 0, $mois, 1, $annee);
 			$datelim -= (3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
 		}
-		// 2 : application de la règle, le N du mois courant ou suivant
+		// 2 : application of the rule, the N of the current or next month
 		elseif ($cdr_type == 2 && !empty($cdr_decalage))
 		{
 		    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -733,7 +778,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $total_ttc;
 
 	/**
-	 * Liste d'options cumulables:
+	 * List of cumulative options:
 	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
 	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
 	 * @var int

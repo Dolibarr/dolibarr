@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 $sapi_type = php_sapi_name();
@@ -149,9 +149,9 @@ foreach ($langstrings_3d AS $filename => $file)
 		$keys = array_keys($langstrings_full, $value);
 		if (count($keys)>1)
 		{
-				foreach ($keys AS $key) {
-					$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
-				}
+			foreach ($keys AS $key) {
+				$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
+			}
 		}
 	}
 }

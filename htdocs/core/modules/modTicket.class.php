@@ -12,13 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module descriptor for ticket system
  */
 
 /**
  *     \defgroup    ticket    Module Ticket
+ *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -80,8 +81,6 @@ class modTicket extends DolibarrModules
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory
             'triggers' => 1,
-            // Set this to 1 if module has its own models directory
-            'models' => 1,
         );
 
         // Data directories to create when module is enabled.

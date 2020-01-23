@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,7 +93,7 @@ class modSupplierProposal extends DolibarrModules
 
 		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposal";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposals";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -215,8 +215,8 @@ class modSupplierProposal extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposal/template_supplier_proposal.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_proposal';
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposals/template_supplier_proposal.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_proposals';
 		$dest=$dirodt.'/template_supplier_proposal.odt';
 
 		if (file_exists($src) && ! file_exists($dest))

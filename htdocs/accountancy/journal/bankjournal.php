@@ -8,8 +8,8 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018		Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT . '/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
@@ -80,7 +80,7 @@ $now = dol_now();
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id > 0 && empty($id_journal))
+if ($user->socid > 0 && empty($id_journal))
 	accessforbidden();
 
 
@@ -167,7 +167,6 @@ $journal_label = $accountingjournalstatic->label;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-
 	$num = $db->num_rows($result);
 	//print $sql;
 
@@ -268,10 +267,8 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
-
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
-
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various')))
 				{
 					// So we excluded 'company' and 'user' here. We want only payment lines
@@ -326,11 +323,11 @@ if ($result) {
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
 						if ($reg[1] == 'socialcontribution')
 							$reg[1] = 'SocialContribution';
-						$chargestatic->lib = $langs->trans($reg[1]);
+						$chargestatic->label = $langs->trans($reg[1]);
 					} else {
-						$chargestatic->lib = $links[$key]['label'];
+						$chargestatic->label = $links[$key]['label'];
 					}
-					$chargestatic->ref = $chargestatic->lib;
+					$chargestatic->ref = $chargestatic->label;
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 
@@ -535,7 +532,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 
 					// No subledger_account value for the bank line but add a specific label_operation
 					$bookkeeping->subledger_account = '';
@@ -598,7 +595,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 
 						if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
 							$bookkeeping->subledger_account = $k;							// For payment, the subledger account is stored as $key of $tabtp
@@ -734,7 +731,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->label_compte = '';
 						$bookkeeping->label_operation = $reflabel;
 						$bookkeeping->entity = $conf->entity;
@@ -1001,7 +998,7 @@ if (empty($action) || $action == 'view') {
 
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 	    || ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
-	   print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+	    print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
 	    if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
@@ -1158,9 +1155,9 @@ if (empty($action) || $action == 'view') {
 					}
 					else print $accounttoshow;
 					print "</td>";
+
 					// Subledger account
 					print "<td>";
-
 					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various')))	// Type of payment with subledger
 					{
 						$accounttoshowsubledger = length_accounta($k);
@@ -1174,7 +1171,12 @@ if (empty($action) || $action == 'view') {
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (! empty($tabcompany[$key]['code_compta']))
 								{
-									print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									if (in_array($tabtype[$key], array('payment_various'))) {
+										// For such case, if subledger is not defined, we won't use subledger accounts.
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+									} else {
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									}
 								}
 								else
 								{

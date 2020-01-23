@@ -15,11 +15,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file    htdocs/compat/paiement/class/cpaiement.class.php
+ * \file    htdocs/compta/paiement/class/cpaiement.class.php
  * \ingroup facture
  * \brief   This file is to manage CRUD function of type of payments
  */
@@ -34,14 +34,21 @@ class Cpaiement
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cpaiement';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_paiement';
 
 	public $code;
+
+	/**
+	 * @deprecated
+	 * @see $label
+	 */
 	public $libelle;
+	public $label;
+
 	public $type;
 	public $active;
 	public $accountancy_code;
@@ -80,6 +87,9 @@ class Cpaiement
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
 		}
+		if (isset($this->label)) {
+			$this->label = trim($this->label);
+		}
 		if (isset($this->type)) {
 			 $this->type = trim($this->type);
 		}
@@ -100,7 +110,6 @@ class Cpaiement
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-
 		$sql.= 'entity,';
 		$sql.= 'code,';
 		$sql.= 'libelle,';
@@ -108,10 +117,7 @@ class Cpaiement
 		$sql.= 'active,';
 		$sql.= 'accountancy_code,';
 		$sql.= 'module';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(! isset($this->entity)?getEntity('c_paiement'):$this->entity).',';
 		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
@@ -119,8 +125,6 @@ class Cpaiement
 		$sql .= ' '.(! isset($this->active)?'NULL':$this->active).',';
 		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'").',';
 		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -173,7 +177,7 @@ class Cpaiement
 		$sql = 'SELECT';
 		$sql .= ' t.id,';
 		$sql .= " t.code,";
-		$sql .= " t.libelle,";
+		$sql .= " t.libelle as label,";
 		$sql .= " t.type,";
 		$sql .= " t.active,";
 		$sql .= " t.accountancy_code,";
@@ -195,7 +199,8 @@ class Cpaiement
 				$this->id = $obj->id;
 
 				$this->code = $obj->code;
-				$this->libelle = $obj->libelle;
+				$this->libelle = $obj->label;
+				$this->label = $obj->label;
 				$this->type = $obj->type;
 				$this->active = $obj->active;
 				$this->accountancy_code = $obj->accountancy_code;
@@ -237,6 +242,9 @@ class Cpaiement
 		}
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
+		}
+		if (isset($this->label)) {
+			$this->label = trim($this->label);
 		}
 		if (isset($this->type)) {
 			 $this->type = trim($this->type);
@@ -361,6 +369,7 @@ class Cpaiement
 
 		$this->code = '';
 		$this->libelle = '';
+		$this->label = '';
 		$this->type = '';
 		$this->active = '';
 		$this->accountancy_code = '';

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,6 +64,8 @@ if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.fo
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	// test for travis
+	if (!empty($argv[1]) && $argv[1] == "set") $action = "set";
 }
 
 dolibarr_install_syslog("- step2: entering step2.php page");
@@ -311,7 +313,7 @@ if ($action == "set")
                 {
                     $buf = fgets($fp, 4096);
 
-                    // Cas special de lignes autorisees pour certaines versions uniquement
+                    // Special case of lines allowed for some version only
                     if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg))
                     {
                         $versioncommande=explode('.', $reg[1]);
@@ -631,6 +633,25 @@ if (!$ok && isset($argv[1])) $ret=1;
 dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step2: end");
+
+
+$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno" value="checked" checked="true"> ';
+$out .= $langs->trans("MakeAnonymousPing");
+
+$out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
+$out .= '<script type="text/javascript">';
+$out .= 'jQuery(document).ready(function(){';
+$out .= '  document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=0; path=/"'."\n";
+$out .= '  jQuery("#dolibarrpingno").click(function() {';
+$out .= '    if (! $(this).is(\':checked\')) {';
+$out .= '      console.log("We uncheck anonymous ping");';
+$out .= '      document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=1; path=/"'."\n";
+$out .= '    }';
+$out .= '  });';
+$out .= '});';
+$out .= '</script>';
+
+print $out;
 
 pFooter($ok?0:1, $setuplang);
 

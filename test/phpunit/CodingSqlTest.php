@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -181,6 +181,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 $result=strpos($filecontent, 'NUMERIC(');
                 print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
+
+                $result=strpos($filecontent, 'NUMERIC(');
+                print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
+                $this->assertTrue($result===false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
 
                 $result=strpos($filecontent, 'integer(');
                 print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";

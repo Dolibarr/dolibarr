@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -120,7 +120,12 @@ class AccountingAccount extends CommonObject
      */
     public $label;
 
-    /**
+	/**
+	 * @var string Label short of account
+	 */
+	public $labelshort;
+
+	/**
      * @var int ID
      */
     public $fk_user_author;
@@ -162,7 +167,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
 			$sql .= ", ca.label as category_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
@@ -196,6 +201,7 @@ class AccountingAccount extends CommonObject
 					$this->account_number = $obj->account_number;
 					$this->account_parent = $obj->account_parent;
 					$this->label = $obj->label;
+					$this->labelshort = $obj->labelshort;
 					$this->account_category = $obj->fk_accounting_category;
 					$this->account_category_label = $obj->category_label;
 					$this->fk_user_author = $obj->fk_user_author;
@@ -239,6 +245,8 @@ class AccountingAccount extends CommonObject
 			$this->account_number = trim($this->account_number);
 		if (isset($this->label))
 			$this->label = trim($this->label);
+		if (isset($this->labelshort))
+			$this->labelshort = trim($this->labelshort);
 
 		if (empty($this->pcg_type) || $this->pcg_type == '-1')
 		{
@@ -261,6 +269,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", account_number";
 		$sql .= ", account_parent";
 		$sql .= ", label";
+		$sql .= ", labelshort";
 		$sql .= ", fk_accounting_category";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
@@ -273,6 +282,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
 		$sql .= ", " . (empty($this->account_parent) ? 0 : (int) $this->account_parent);
 		$sql .= ", " . (empty($this->label) ? "''" : "'" . $this->db->escape($this->label) . "'");
+		$sql .= ", " . (empty($this->labelshort) ? "''" : "'" . $this->db->escape($this->labelshort) . "'");
 		$sql .= ", " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (int) $this->active;
@@ -344,6 +354,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
 		$sql .= " , account_parent = " . (int) $this->account_parent;
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "''");
+		$sql .= " , labelshort = " . ($this->labelshort ? "'" . $this->db->escape($this->labelshort) . "'" : "''");
 		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = " . (int) $this->active;
@@ -407,7 +418,6 @@ class AccountingAccount extends CommonObject
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
-
 			$this->db->begin();
 
 			// if (! $error) {
@@ -462,10 +472,11 @@ class AccountingAccount extends CommonObject
 	 * @param	string  $moretitle					Add more text to title tooltip
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int     $withcompletelabel		    0=Short label (field short label), 1=Complete label (field label)
 	 * @return  string	String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
-    {
+    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0)
+	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
@@ -483,11 +494,18 @@ class AccountingAccount extends CommonObject
 		$picto = 'billr';
 		$label='';
 
+		if (empty($this->labelshort) || $withcompletelabel == 1)
+		{
+			$labeltoshow = $this->label;
+		} else {
+			$labeltoshow = $this->labelshort;
+		}
+
 		$label = '<u>' . $langs->trans("ShowAccountingAccount") . '</u>';
 		if (! empty($this->account_number))
 			$label .= '<br><b>'.$langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
-		if (! empty($this->label))
-			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+		if (! empty($labeltoshow))
+			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $labeltoshow;
 		if ($moretitle) $label.=' - '.$moretitle;
 
 		$linkclose='';
@@ -514,7 +532,7 @@ class AccountingAccount extends CommonObject
 		}
 
 		$label_link = length_accountg($this->account_number);
-		if ($withlabel) $label_link .= ' - ' . $this->label;
+		if ($withlabel) $label_link .= ' - ' . $labeltoshow;
 
 		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
@@ -639,11 +657,11 @@ class AccountingAccount extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param  int     $statut     Id statut
+	 *  @param  int     $status     Id status
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -651,34 +669,33 @@ class AccountingAccount extends CommonObject
 
 		if ($mode == 0)
 		{
-			$prefix='';
-			if ($statut == 1) return $langs->trans('Enabled');
-			elseif ($statut == 0) return $langs->trans('Disabled');
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 1)
 		{
-			if ($statut == 1) return $langs->trans('Enabled');
-			elseif ($statut == 0) return $langs->trans('Disabled');
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 }

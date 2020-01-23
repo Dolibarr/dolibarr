@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,36 +68,31 @@ if (empty($reshook))
 {
 	$demoprofiles=array(
 		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
+		'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
 		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
 		'url'=>$url
 		),
-		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-		'disablemodules'=>'adherent,don,externalsite,ficheinter,ftp,incoterm,mailmanspip,prelevement,product,productbatch,stock',
-		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
-		'url'=>$url
+		array('default'=>'0', 'key'=>'profmanufacture','label'=>'DemoCompanyManufacturing',
+			'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-manufacturing.jpg',
+			'url'=>$url
 		),
 		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
+		'disablemodules'=>'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
 		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
 		'url'=>$url
 		),
-		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
-		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
-		'url'=>$url
-		),
 		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
 		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
 		'url'=>$url
 		),
 	    // All demo profile
 	    array('default'=>'0', 'key'=>'profdemoall','label'=>'ChooseYourDemoProfilMore',
-		'disablemodules'=>'adherent,don,externalsite,mailmanspip,takepos',
+		'disablemodules'=>'adherent,cashdesk,don,externalsite,mailmanspip',
 	    //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
 	    )
@@ -112,7 +107,7 @@ if (empty($reshook))
 									'mailmanspip','notification','oauth','syslog','user','webservices','workflow',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('debugbar','emailcollector','ftp','hrm','modulebuilder','webservicesclient','websites',
+	$alwayshiddenuncheckedmodules=array('dav','debugbar','emailcollector','ftp','hrm','modulebuilder','printing','webservicesclient',
 	                                // Extended modules
 	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
@@ -328,7 +323,7 @@ foreach ($demoprofiles as $profilearray)
 		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" id="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
         print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+        print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
         print '<input type="hidden" name="username" value="demo">'."\n";
         print '<input type="hidden" name="dol_hide_topmenu" value="'.$conf->dol_hide_topmenu.'">'."\n";
         print '<input type="hidden" name="dol_hide_leftmenu" value="'.$conf->dol_hide_leftmenu.'">'."\n";

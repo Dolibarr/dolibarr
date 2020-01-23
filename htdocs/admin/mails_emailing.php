@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +77,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 // Actions to send emails
 $id=0;
 $actiontypecode='';     // Not an event for agenda
-$trigger_name='';       // Disable triggers
+$triggersendname = '';       // Disable triggers
 $paramname='id';
 $mode='emailfortest';
 $trackid=(($action == 'testhtml')?"testhtml":"test");
@@ -93,6 +93,8 @@ if ($action == 'presend' && GETPOST('trackid') == 'testhtml')   $action='testhtm
 /*
  * View
  */
+
+$form = new Form($db);
 
 $linuxlike=1;
 if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
@@ -123,8 +125,6 @@ $listofmethods['swiftmailer']='Swift Mailer socket library';
 
 if ($action == 'edit')
 {
-	$form=new Form($db);
-
 	if ($conf->use_javascript_ajax)
 	{
 		print "\n".'<script type="text/javascript" language="javascript">';
@@ -214,18 +214,18 @@ if ($action == 'edit')
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	dol_fiche_head($head, 'common_emailing', '', -1);
 
-	print $langs->trans("EMailsDesc")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
 
 
 	clearstatcache();
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Method
@@ -316,7 +316,6 @@ if ($action == 'edit')
 	// ID
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer'))))
 	{
-
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID_EMAILING)?$conf->global->MAIN_MAIL_SMTPS_ID_EMAILING:'');
 		print '<tr class="drag drop oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
@@ -399,7 +398,7 @@ else
     print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
     print "<br>\n";
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Method

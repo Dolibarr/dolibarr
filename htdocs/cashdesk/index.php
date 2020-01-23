@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -90,7 +90,7 @@ else
 <?php if ($err) print dol_escape_htmltag($err)."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Identification"); ?></legend>
 <form id="frmLogin" method="POST" action="index_verif.php">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+	<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 
 <table>
 
@@ -134,7 +134,7 @@ print '<td>';
 $disabled=0;
 $langs->load("companies");
 if (! empty($conf->global->CASHDESK_ID_THIRDPARTY)) $disabled=1; // If a particular third party is defined, we disable choice
-print $form->select_company(GETPOST('socid', 'int')?GETPOST('socid', 'int'):$conf->global->CASHDESK_ID_THIRDPARTY, 'socid', '(s.client IN (1,3) AND s.status = 1)', !$disabled, $disabled, 1);
+print $form->select_company(GETPOST('socid', 'int')?GETPOST('socid', 'int'):$conf->global->CASHDESK_ID_THIRDPARTY, 'socid', '(s.client IN (1,3) AND s.status = 1)', !$disabled, $disabled, 0, array(), 0, 'maxwidth300');
 //print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 print '</td>';
 print "</tr>\n";
