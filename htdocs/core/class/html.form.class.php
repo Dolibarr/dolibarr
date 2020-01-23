@@ -2364,6 +2364,7 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
+
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
@@ -2514,7 +2515,7 @@ class Form
 			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
-			dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
+			dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level.'', LOG_DEBUG);
 			$result2 = $this->db->query($sql);
 			if ($result2)
 			{
@@ -2642,7 +2643,7 @@ class Form
     			    $langs->load("stocks");
 
     			    $tmpproduct = new Product($this->db);
-    			    $tmpproduct->fetch($objp->rowid);
+    			    $tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1);	// Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
     			    $tmpproduct->load_virtual_stock();
     			    $virtualstock = $tmpproduct->stock_theorique;
 
