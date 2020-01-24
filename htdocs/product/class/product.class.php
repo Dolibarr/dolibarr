@@ -318,6 +318,9 @@ class Product extends CommonObject
     public $stats_contrat = array();
     public $stats_facture = array();
     public $stats_commande_fournisseur = array();
+    public $stats_reception = array();
+    public $stats_mrptoconsume = array();
+    public $stats_mrptoproduce = array();
 
     public $multilangs = array();
 
@@ -2808,6 +2811,93 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
+     *  Charge tableau des stats commande client pour le produit/service
+     *
+     * @param  int    $socid           Id societe pour filtrer sur une societe
+     * @param  string $filtrestatut    Id statut pour filtrer sur un statut
+     * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+     * @return integer                 Array of stats in $this->stats_commande (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
+     */
+    public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
+    {
+    	// phpcs:enable
+    	global $conf, $user;
+
+    	$sql = "SELECT COUNT(DISTINCT m.fk_soc) as nb_customers, COUNT(DISTINCT m.rowid) as nb,";
+    	$sql .= " COUNT(mp.rowid) as nb_rows, SUM(mp.qty) as qty, role";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_production as mp";
+    	$sql .= ", ".MAIN_DB_PREFIX."mrp_mo as m";
+    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = m.fk_soc";
+    	if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
+    		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    	}
+    	$sql .= " WHERE m.rowid = mp.fk_mo";
+    	$sql .= " AND m.entity IN (".getEntity('mrp').")";
+    	$sql .= " AND mp.fk_product = ".$this->id;
+    	if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
+    		$sql .= " AND m.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+    	}
+    	if ($socid > 0) {
+    		$sql .= " AND m.fk_soc = ".$socid;
+    	}
+    	if ($filtrestatut <> '') {
+    		$sql .= " AND m.status in (".$filtrestatut.")";
+    	}
+		$sql .= " GROUP BY role";
+
+		$this->stats_mrptoconsume['customers'] = 0;
+		$this->stats_mrptoconsume['nb'] = 0;
+		$this->stats_mrptoconsume['rows'] = 0;
+		$this->stats_mrptoconsume['qty'] = 0;
+		$this->stats_mrptoproduce['customers'] = 0;
+		$this->stats_mrptoproduce['nb'] = 0;
+		$this->stats_mrptoproduce['rows'] = 0;
+		$this->stats_mrptoproduce['qty'] = 0;
+
+		$result = $this->db->query($sql);
+    	if ($result) {
+    		while ($obj = $this->db->fetch_object($result)) {
+	    		if ($obj->role == 'toconsume') {
+		    		$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
+		    		$this->stats_mrptoconsume['nb'] += $obj->nb;
+		    		$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
+		    		$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
+	    		}
+	    		if ($obj->role == 'consumed') {
+	    			//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
+	    			//$this->stats_mrptoconsume['nb'] += $obj->nb;
+	    			//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
+	    			$this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
+	    		}
+	    		if ($obj->role == 'toproduce') {
+	    			$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
+	    			$this->stats_mrptoproduce['nb'] += $obj->nb;
+	    			$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
+	    			$this->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+	    		}
+	    		if ($obj->role == 'produced') {
+	    			//$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
+	    			//$this->stats_mrptoproduce['nb'] += $obj->nb;
+	    			//$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
+	    			$this->stats_mrptoproduce['qty'] -= ($obj->qty ? $obj->qty : 0);
+	    		}
+    		}
+
+    		// Clean data
+    		if ($this->stats_mrptoconsume['qty'] < 0) $this->stats_mrptoconsume['qty'] = 0;
+    		if ($this->stats_mrptoproduce['qty'] < 0) $this->stats_mrptoproduce['qty'] = 0;
+
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error = $this->db->error();
+    		return -1;
+    	}
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *  Charge tableau des stats contrat pour le produit/service
      *
      * @param  int $socid Id societe
@@ -4717,8 +4807,9 @@ class Product extends CommonObject
 		}
 		if (!empty($conf->mrp->enabled))
 		{
-			// TODO
-			$stock_inproduction = 0;
+			$result = $this->load_stats_inproduction(0, '1,2', 1);
+			if ($result < 0) dol_print_error($this->db, $this->error);
+			$stock_inproduction = $this->stats_mrptoproduce['qty'] - $this->stats_mrptoconsume['qty'];
 		}
 
 		$this->stock_theorique = $this->stock_reel + $stock_inproduction;

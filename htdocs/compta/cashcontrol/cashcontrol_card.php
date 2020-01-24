@@ -544,14 +544,16 @@ if (empty($action) || $action == "view")
 		print $object->posmodule;
 		print "</td></tr>";
 
-		print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
+		print '<tr><td valign="middle">'.$langs->trans("Terminal").'</td><td>';
 		print $object->posnumber;
 		print "</td></tr>";
 
 		print '<tr><td class="nowrap">';
 		print $langs->trans("Period");
 		print '</td><td>';
-		print $object->year_close."-".$object->month_close."-".$object->day_close;
+		print $object->year_close;
+		print ($object->month_close ? "-" : "").$object->month_close;
+		print ($object->day_close ? "-" : "").$object->day_close;
 		print '</td></tr>';
 
 		print '</table>';
@@ -570,7 +572,6 @@ if (empty($action) || $action == "view")
 	    print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
 	    print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
 	    print "</td></tr>";
-
 	    foreach ($arrayofpaymentmode as $key => $val)
 	    {
 	        print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';

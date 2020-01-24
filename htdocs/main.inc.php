@@ -1224,7 +1224,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Favicon
-		$favicon = DOL_URL_ROOT.'/theme/common/dolibarr_logo_256x256.png';
+		$favicon = DOL_URL_ROOT.'/theme/dolibarr_logo_256x256.png';
 		if (!empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (!empty($conf->global->MAIN_FAVICON_URL)) $favicon = $conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n"; // Not required into an Android webview
