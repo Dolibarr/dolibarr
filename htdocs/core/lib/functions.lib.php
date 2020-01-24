@@ -4605,7 +4605,6 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 	return $amount;
 }
 
-
 /**
  * Output a dimension with best unit
  *
