@@ -2637,8 +2637,6 @@ div.popuptab {
 }
 
 a.tabTitle {
-/*    background: #657090;
-    color: white;*/
     color:rgba(0,0,0,.5);
     margin-<?php print $right; ?>: 10px;
     text-shadow:1px 1px 1px #ffffff;
@@ -2648,6 +2646,9 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
+}
+.imgTabTitle {
+	max-height: 14px;
 }
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {

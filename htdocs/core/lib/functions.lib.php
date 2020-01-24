@@ -1140,7 +1140,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	{
 		$limittitle = 30;
 		$out .= '<a class="tabTitle">';
-		if ($picto) $out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath).' ';
+		if ($picto) $out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
 		$out .= '<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out .= '</a>';
 	}

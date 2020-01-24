@@ -2462,6 +2462,9 @@ a.tabTitle {
     text-decoration: none;
     white-space: nowrap;
 }
+.imgTabTitle {
+	max-height: 14px;
+}
 
 a.tabunactive {
     color: rgb(<?php print $colortextlink; ?>) !important;
