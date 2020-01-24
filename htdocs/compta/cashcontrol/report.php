@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
+$langs->load("bills");
+
 $id = GETPOST('id', 'int');
 
 $_GET['optioncss']="print";
@@ -50,7 +52,8 @@ $arrayfields=array(
     'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
     'b.num_chq'=>array('label'=>$langs->trans("Number"), 'checked'=>1),
     'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1),
-    'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
+    'cp.code'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
+	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
 );
 
@@ -128,7 +131,6 @@ if ($resql)
 
 	$invoicetmp = new Facture($db);
 
-
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("InitialBankBalance").' - '.$langs->trans("Cash")." : ".price($cashcontrol->opening);
 	print "</h2></div>";
@@ -136,13 +138,16 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste">'."\n";
 
+    $param = '';
+
 	// Fields title
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, 'class="left"', $sortfield, $sortorder);
-	print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '"', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], 'cp.code', '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
 	$posconciliatecol = 0;
@@ -151,7 +156,9 @@ if ($resql)
 	$sign = 1;
 	$cash=$bank=$cheque=$other=0;
 
-    $totalarray=array();
+    $totalarray = array();
+    $cachebankaccount = array();
+    $amountpertype = array();
     while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
@@ -168,7 +175,9 @@ if ($resql)
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
-		/*if ($first == "yes")
+        $invoicetmp->fetch($objp->facid);
+
+        /*if ($first == "yes")
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
@@ -181,11 +190,9 @@ if ($resql)
 
 		// Ref
         print '<td class="nowrap left">';
-        $invoicetmp->fetch($objp->facid);
         print $invoicetmp->getNomUrl(1);
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-
 
         // Date ope
     	print '<td class="nowrap left">';
@@ -197,26 +204,38 @@ if ($resql)
         print '<td class="nowrap right">';
 		print $bankaccount->getNomUrl(1);
 		if ($cashcontrol->posmodule=="takepos"){
-			if ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber}==$bankaccount->id) $cash+=$objp->amount;
-			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$cashcontrol->posnumber}==$bankaccount->id) $bank+=$objp->amount;
-			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$cashcontrol->posnumber}==$bankaccount->id) $cheque+=$objp->amount;
-			else $other+=$objp->amount;
+			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber;
 		}
 		else{
-			if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
-			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
-			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
-			else $other+=$objp->amount;
+			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH';
+		}
+		if ($objp->code == 'CHQ') {
+			$cheque += $objp->amount;
+		} elseif ($objp->code == 'CB') {
+			$bank += $objp->amount;
+		} else {
+			if ($conf->global->$var1 == $bankaccount->id) $cash += $objp->amount;
+			//elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
+			//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
+			else $other += $objp->amount;
 		}
 		print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 
-    	// Debit
+        // Type
+        print '<td class="right">';
+       	print $objp->code;
+       	if (empty($amountpertype[$objp->code])) $amountpertype[$objp->code] = 0;
+        print "</td>\n";
+        if (! $i) $totalarray['nbfield']++;
+
+        // Debit
     	print '<td class="right">';
     	if ($objp->amount < 0)
     	{
     	    print price($objp->amount * -1);
     	    $totalarray['val']['totaldebfield'] += $objp->amount;
+    	    $amountpertype[$objp->code] += $objp->amount;
     	}
     	print "</td>\n";
     	if (! $i) $totalarray['nbfield']++;
@@ -228,6 +247,7 @@ if ($resql)
     	{
 			print price($objp->amount);
     	    $totalarray['val']['totalcredfield'] += $objp->amount;
+    	    $amountpertype[$objp->code] -= $objp->amount;
     	}
     	print "</td>\n";
     	if (! $i) $totalarray['nbfield']++;
@@ -243,22 +263,31 @@ if ($resql)
 
 	print "</table>";
 
+	//$cash = $amountpertype['LIQ'] + $cashcontrol->opening;
 	$cash = $cash + $cashcontrol->opening;
+
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("Cash").": ".price($cash);
-	if ($cash != $object->cash) {
+	if ($cash != $cashcontrol->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
 	}
 	print "<br><br>";
-	print '<br>';
+
+	//print '<br>';
 	print $langs->trans("PaymentTypeCHQ").": ".price($cheque);
-	if ($cash != $object->cheque) {
+	if ($cheque != $cashcontrol->cheque) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cheque).'</span>';
 	}
 	print "<br><br>";
-	print '<br>';
+
+	//print '<br>';
 	print $langs->trans("PaymentTypeCB").": ".price($bank);
+	if ($bank != $cashcontrol->card) {
+		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->card).'</span>';
+	}
 	print "<br><br>";
+
+	// print '<br>';
 	if ($other) {
 		print '<br>'.$langs->trans("Other").": ".price($other)."<br><br>";
 	}
