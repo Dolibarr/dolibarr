@@ -2541,3 +2541,32 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
     $notetoshow=preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
     return $notetoshow;
 }
+
+/**
+ *		Function to format a value into a defined format for French administration (no thousand separator & decimal separator force to ',' with two decimals)
+ *		Function used into accountancy FEC export
+ *
+ *		@param	float		$amount			Amount to format
+ *		@return	string					Chain with formatted upright
+ *		@see	price2num()				Format a numeric into a price for FEC files
+ */
+function price2fec($amount)
+{
+	global $conf;
+
+	// Clean parameters
+	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
+	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+
+	// Output decimal number by default
+	$nbdecimal = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH) ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
+
+	// Output separators by default
+	$dec = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR) ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
+	$thousand = (empty($conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR) ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
+
+	// Format number
+	$output = number_format($amount, $nbdecimal, $dec, $thousand);
+
+	return $output;
+}

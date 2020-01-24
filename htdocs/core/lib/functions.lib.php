@@ -4520,7 +4520,6 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 	return $amount;
 }
 
-
 /**
  * Output a dimension with best unit
  *
@@ -5756,9 +5755,9 @@ function dol_textishtml($msg, $option = 0)
 		elseif (preg_match('/<body/i', $msg))			return true;
 		elseif (preg_match('/<(b|em|i|u)>/i', $msg))		return true;
 		elseif (preg_match('/<br\/>/i', $msg))	  return true;
-		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) 	  return true;
-		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i', $msg)) return true;
-		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i', $msg)) return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table|s)>/i', $msg)) 	  return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table|s)\s+[^<>\/]*>/i', $msg)) return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table|s)\s+[^<>\/]*\/>/i', $msg)) return true;
 		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) return true;	// must accept <img src="http://example.com/aaa.png" />
 		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i', $msg)) return true;	// must accept <a href="http://example.com/aaa.png" />
 		elseif (preg_match('/<h[0-9]>/i', $msg))			return true;

@@ -177,6 +177,8 @@ delete from llx_categorie_member where fk_categorie not in (select rowid from ll
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 6);
 
+-- Fix: delete orphelins in ecm_files
+delete from llx_ecm_files where src_object_type = 'expensereport' and src_object_id NOT IN (select rowid from llx_expensereport);
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
 delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');

@@ -819,9 +819,9 @@ class Product extends CommonObject
         $this->height = price2num($this->height);
         $this->height_units = trim($this->height_units);
         // set unit not defined
-        if ($this->length_units) { $this->width_units = $this->length_units;    // Not used yet
+        if (is_numeric($this->length_units)) { $this->width_units = $this->length_units;    // Not used yet
         }
-        if ($this->length_units) { $this->height_units = $this->length_units;    // Not used yet
+        if (is_numeric($this->length_units)) { $this->height_units = $this->length_units;    // Not used yet
         }
         // Automated compute surface and volume if not filled
         if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {

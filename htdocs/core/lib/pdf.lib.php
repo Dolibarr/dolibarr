@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2132,6 +2133,17 @@ function pdf_getLinkedObjects($object, $outputlangs)
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
+			}
+		}
+		else if ($objecttype == 'fichinter')
+		{
+			$outputlangs->load('interventions');
+			foreach($objects as $elementobject)
+			{
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
 			}
 		}
 		elseif ($objecttype == 'shipping')
