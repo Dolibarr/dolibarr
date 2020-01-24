@@ -544,7 +544,7 @@ if (empty($action) || $action == "view")
 		print $object->posmodule;
 		print "</td></tr>";
 
-		print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
+		print '<tr><td valign="middle">'.$langs->trans("Terminal").'</td><td>';
 		print $object->posnumber;
 		print "</td></tr>";
 
