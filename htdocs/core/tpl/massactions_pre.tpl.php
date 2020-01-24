@@ -170,7 +170,7 @@ if ($massaction == 'presend')
 $parameters['toselect']=$toselect;
 $parameters['uploaddir']=$uploaddir;
 
-$reshook=$hookmanager->executeHooks('doPreMassActions',$parameters, $object, $action);
+$reshook=$hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
 if ($reshook < 0) {
     setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } else {
