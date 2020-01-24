@@ -33,11 +33,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
 $id = GETPOST('id', 'int');
 
 $_GET['optioncss']="print";
-include_once 'class/cashcontrol.class.php';
 $cashcontrol= new CashControl($db);
 $cashcontrol->fetch($id);
 
@@ -243,12 +243,25 @@ if ($resql)
 
 	print "</table>";
 
-	$cash=$cash+$cashcontrol->opening;
+	$cash = $cash + $cashcontrol->opening;
 	print "<div style='text-align: right'><h2>";
-	print $langs->trans("Cash").": ".price($cash)."<br><br>";
-	print $langs->trans("PaymentTypeCB").": ".price($bank)."<br><br>";
-	print $langs->trans("PaymentTypeCHQ").": ".price($cheque)."<br><br>";
-	if ($other) print $langs->trans("Other").": ".price($other)."<br><br>";
+	print $langs->trans("Cash").": ".price($cash);
+	if ($cash != $object->cash) {
+		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
+	}
+	print "<br><br>";
+	print '<br>';
+	print $langs->trans("PaymentTypeCHQ").": ".price($cheque);
+	if ($cash != $object->cheque) {
+		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cheque).'</span>';
+	}
+	print "<br><br>";
+	print '<br>';
+	print $langs->trans("PaymentTypeCB").": ".price($bank);
+	print "<br><br>";
+	if ($other) {
+		print '<br>'.$langs->trans("Other").": ".price($other)."<br><br>";
+	}
 	print "</h2></div>";
 
 	//save totals to DB
