@@ -62,6 +62,9 @@ if (!empty($_POST['startdatemonth']))
 if (!empty($_POST['enddatemonth']))
   $enddate = dol_mktime(23, 59, 59, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Societe($db);
+$hookmanager->initHooks(array('margincustomerlist'));
 
 /*
  * View
@@ -255,8 +258,11 @@ if ($result)
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice = 'CostPrice';
 
+	$moreforfilter = '';
+
 	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if (!empty($client)) {
@@ -359,7 +365,8 @@ if ($result)
 		print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
-    print "</table>";
+	print "</table>";
+	print '</div>';
 }
 else
 {
