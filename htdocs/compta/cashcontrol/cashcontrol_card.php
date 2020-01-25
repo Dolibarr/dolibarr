@@ -56,7 +56,7 @@ if (!$sortfield) $sortfield = 'rowid';
 if (!$sortorder) $sortorder = 'ASC';
 
 // Security check
-if (!$user->rights->cashdesk->use && !$user->rights->takepos->use)
+if (!$user->rights->cashdesk->run && !$user->rights->takepos->run)
 {
 	accessforbidden();
 }
@@ -82,8 +82,8 @@ $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
  * Actions
  */
 
-$permissiontoadd = ($user->rights->cashdesk->use || $user->rights->takepos->use);
-$permissiontodelete = ($user->rights->cashdesk->use || $user->rights->takepos->use) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = ($user->rights->cashdesk->run || $user->rights->takepos->run);
+$permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
