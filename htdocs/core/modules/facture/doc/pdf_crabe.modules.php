@@ -1037,13 +1037,13 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($posxval, $posy);
 				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
-				
+
 				// Show online payment link
 				$useonlinepayment = ((! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) && !empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT));
 				if ($object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD' && $object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
-					
+
 					$langs->loadLangs(array('payment', 'paybox'));
 					$servicename=$langs->transnoentities('Online');
 					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
@@ -1051,7 +1051,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					$pdf->writeHTMLCell(80, 10, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
 				}
-				
+
 
 				$posy = $pdf->GetY() + 2;
 			}
