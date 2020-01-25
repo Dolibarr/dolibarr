@@ -3105,6 +3105,7 @@ class Facture extends CommonInvoice
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new FactureLigne($this->db);
 			$line->fetch($rowid);
+			$line->fetch_optionals();
 
 			if (!empty($line->fk_product))
 			{
@@ -3173,7 +3174,10 @@ class Facture extends CommonInvoice
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
 			if (is_array($array_options) && count($array_options) > 0) {
-				$this->line->array_options = $array_options;
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach($array_options as $key => $value) {
+					$this->line->array_options[$key] = $array_options[$key];
+				}
 			}
 
 			$result = $this->line->update($user, $notrigger);
