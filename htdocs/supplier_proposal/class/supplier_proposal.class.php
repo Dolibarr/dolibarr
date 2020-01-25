@@ -391,7 +391,7 @@ class SupplierProposal extends CommonObject
      *      @param		int			$fk_fournprice		Id supplier price. If 0, we will take best price. If -1 we keep it empty.
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
-     *      @param		array		$array_option		extrafields array
+     *      @param		array		$array_options		extrafields array
      * 		@param		string		$ref_supplier			Supplier price reference
      * 		@param		int			$fk_unit			Id of the unit to use.
      * 		@param		string		$origin				'order', 'supplier_proposal', ...
@@ -403,7 +403,7 @@ class SupplierProposal extends CommonObject
      *
      *    	@see       	add_product()
      */
-    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_option = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0, $date_start = 0, $date_end = 0)
+    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_options = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0, $date_start = 0, $date_end = 0)
     {
         global $mysoc, $conf, $langs;
 
@@ -664,13 +664,13 @@ class SupplierProposal extends CommonObject
      *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
-     *  @param		array		$array_option		extrafields array
+     *  @param		array		$array_options		extrafields array
      * 	@param		string		$ref_supplier			Supplier price reference
      *	@param		int			$fk_unit			Id of the unit to use.
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
      *  @return     int     		        		0 if OK, <0 if KO
      */
-    public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_option = 0, $ref_supplier = '', $fk_unit = '', $pu_ht_devise = 0)
+    public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_options = 0, $ref_supplier = '', $fk_unit = '', $pu_ht_devise = 0)
     {
         global $conf, $user, $langs, $mysoc;
 
@@ -720,13 +720,17 @@ class SupplierProposal extends CommonObject
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
 
-            // Update line
-            $this->line = new SupplierProposalLine($this->db);
+            //Fetch current line from the database and then clone the object and set it in $oldline property
+            $line = new SupplierProposalLine($this->db);
+            $line->fetch($rowid);
+            $line->fetch_optionals();
 
             // Stock previous line records
-            $staticline = new SupplierProposalLine($this->db);
-            $staticline->fetch($rowid);
-            $this->line->oldline = $staticline;
+            $staticline = clone $line;
+
+            $line->oldline = $staticline;
+            $this->line = $line;
+            $this->line->context = $this->context;
 
             // Reorder if fk_parent_line change
             if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -773,8 +777,11 @@ class SupplierProposal extends CommonObject
             }
             $this->line->pa_ht = $pa_ht;
 
-            if (is_array($array_option) && count($array_option) > 0) {
-                $this->line->array_options = $array_option;
+            if (is_array($array_options) && count($array_options)>0) {
+            	// We replace values in this->line->array_options only for entries defined into $array_options
+            	foreach($array_options as $key => $value) {
+            		$this->line->array_options[$key] = $array_options[$key];
+            	}
             }
 
             // Multicurrency

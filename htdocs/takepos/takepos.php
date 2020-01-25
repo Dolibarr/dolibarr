@@ -78,6 +78,9 @@ if ($invoice->socid > 0) $soc->fetch($invoice->socid);
 else $soc->fetch($conf->global->$constforcompanyid);
 */
 
+// Security check
+$result = restrictedArea($user, 'takepos', 0, '');
+
 
 /*
  * View

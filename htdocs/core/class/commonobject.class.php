@@ -5187,7 +5187,6 @@ abstract class CommonObject
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 
-
 			   	if ($attributeRequired)
 			   	{
 			   		$mandatorypb = false;
@@ -5217,7 +5216,6 @@ abstract class CommonObject
 						$new_array_options[$key] = null;
 					}
 				}
-
 
 			   	switch ($attributeType)
 			   	{
