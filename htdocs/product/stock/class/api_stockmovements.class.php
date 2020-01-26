@@ -164,7 +164,7 @@ class StockMovements extends DolibarrApi
      *
      * @param int $product_id Id product id {@min 1} {@from body} {@required true}
      * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
-     * @param float $qty Qty to add (Use negative value for a stock decrease) {@min 0} {@message qty must be higher than 0} {@from body} {@required true}
+     * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
      * @param string $lot Lot {@from body}
      * @param string $movementcode Movement code {@example INV123} {@from body}
      * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
