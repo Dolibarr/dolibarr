@@ -76,6 +76,9 @@ if (!empty($_POST['startdatemonth']))
 if (!empty($_POST['enddatemonth']))
   $enddate = dol_mktime(23, 59, 59, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Product($db);
+$hookmanager->initHooks(array('marginproductlist'));
 
 /*
  * View
