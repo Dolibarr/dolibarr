@@ -138,7 +138,7 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
         else echo $line->description;?>
         </td>
         <td class="right"><?php echo $line->qty;?></td>
-        <td class="right"><?php echo price(price2num($line->total_ttc/$line->qty, 'MT'), 1);?></td>
+        <td class="right"><?php echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);?></td>
         <td class="right"><?php echo price($line->total_ttc, 1);?></td>
     </tr>
         <?php
