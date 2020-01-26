@@ -63,7 +63,7 @@ $object = new BonPrelevement($db, "");
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-$hookmanager->initHooks(array('directdebitprevcard', 'globalcard'));
+$hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 /*
  * Actions
@@ -362,10 +362,19 @@ if ($id > 0 || $ref)
 
 		$urladd = "&amp;id=".$id;
 
-		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+		print '<form method="get" action="' . $_SERVER ['PHP_SELF'] . '" name="search_form">' . "\n";
+		print '<input type="hidden" name="id" value="' . $id . '"/>';
+		print '<input type="hidden" name="socid" value="' . $socid . '"/>';
+		if (! empty($page)) {
+			print '<input type="hidden" name="page" value="' . $page . '"/>';
+		}
+		if (! empty($limit)) {
+			print '<input type="hidden" name="limit" value="' . $limit . '"/>';
+		}
+		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder liste" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
@@ -375,7 +384,7 @@ if ($id > 0 || $ref)
 
 		$total = 0;
 
-		while ($i < min($num, $conf->liste_limit))
+		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($result);
 
@@ -433,6 +442,7 @@ if ($id > 0 || $ref)
 
 		print "</table>";
 		print '</div>';
+		print '</form>';
 
 		$db->free($result);
 	}
