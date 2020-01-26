@@ -24,7 +24,7 @@ MessageOK=Message on the return page for a validated payment
 MessageKO=Message on the return page for a canceled payment
 ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
 DeleteAlsoContentRecursively=Check to delete all content recursively
-
+PoweredBy=Powered by
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date
 NextYearOfInvoice=Following year of invoice date

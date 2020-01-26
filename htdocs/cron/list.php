@@ -425,6 +425,7 @@ if ($num > 0)
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
+		$object->lastresult = $obj->lastresult;
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
@@ -541,7 +542,7 @@ if ($num > 0)
 
 		// Status
 		print '<td class="center">';
-		print $object->getLibStatut(3);
+		print $object->getLibStatut(5);
 		print '</td>';
 
 		print '<td class="nowraponall right">';

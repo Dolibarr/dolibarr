@@ -155,23 +155,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Si ajout champ produit libre
-	if (GETPOST('mode') == 'libre')
-	{
-		$date_start_sl = '';
-		$date_end_sl = '';
-		if (GETPOST('date_start_slmonth') && GETPOST('date_start_slday') && GETPOST('date_start_slyear'))
-		{
-			$date_start_sl = dol_mktime(GETPOST('date_start_slhour'), GETPOST('date_start_slmin'), 0, GETPOST('date_start_slmonth'), GETPOST('date_start_slday'), GETPOST('date_start_slyear'));
-		}
-		if (GETPOST('date_end_slmonth') && GETPOST('date_end_slday') && GETPOST('date_end_slyear'))
-		{
-			$date_end_sl = dol_mktime(GETPOST('date_end_slhour'), GETPOST('date_end_slmin'), 0, GETPOST('date_end_slmonth'), GETPOST('date_end_slday'), GETPOST('date_end_slyear'));
-		}
-	}
-
 	// Param dates
-	$date_contrat = '';
 	$date_start_update = '';
 	$date_end_update = '';
 	$date_start_real_update = '';
@@ -665,11 +649,12 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$objectline = new ContratLigne($db);
-			if ($objectline->fetch(GETPOST('elrowid')) < 0)
+			if ($objectline->fetch(GETPOST('elrowid', 'int')) < 0)
 			{
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 				$error++;
 			}
+			$objectline->fetch_optionals();
 		}
 
 		$db->begin();
@@ -693,6 +678,7 @@ if (empty($reshook))
 			$txtva = $vat_rate;
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -735,7 +721,13 @@ if (empty($reshook))
 			// Extrafields
 			$extralabelsline = $extrafields->fetch_name_optionals_label($objectline->table_element);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
-			$objectline->array_options = $array_options;
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach($array_options as $key => $value) {
+					$objectline->array_options[$key] = $array_options[$key];
+				}
+			}
 
 			// TODO verifier price_min si fk_product et multiprix
 

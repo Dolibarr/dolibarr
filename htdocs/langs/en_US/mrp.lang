@@ -64,3 +64,5 @@ ConfirmProductionDesc=By clicking on '%s', you will validate the consumption and
 ProductionForRef=Production of %s
 AutoCloseMO=Close automatically the Manufacturing Order if quantities to consume and to produce are reached
 NoStockChangeOnServices=No stock change on services
+ProductQtyToConsumeByMO=Product quantity still to consume by open MO
+ProductQtyToProduceByMO=Product quentity still to produce by open MO

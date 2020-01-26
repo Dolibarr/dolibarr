@@ -199,10 +199,10 @@ class modTakePos extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 50151;
-		$this->rights[$r][1] = 'Use point of sale';
+		$this->rights[$r][1] = 'Use Point Of Sale';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'use';
+		$this->rights[$r][4] = 'run';
 
 
 		// Main menu entries
@@ -221,7 +221,7 @@ class modTakePos extends DolibarrModules
 								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->takepos->enabled',	// Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->takepos->run',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
 								'target'=>'takepos',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 

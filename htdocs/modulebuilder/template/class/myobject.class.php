@@ -48,7 +48,7 @@ class MyObject extends CommonObject
 	public $ismultientitymanaged = 0;
 
 	/**
-	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
 
