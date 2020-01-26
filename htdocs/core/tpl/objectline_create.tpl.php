@@ -670,46 +670,47 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 			var i = 0;
 			$(data).each(function() {
-			if (this.id != 'pmpprice' && this.id != 'costprice')
-			{
-			i++;
-			this.price = parseFloat(this.price); // to fix when this.price >0
-			// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
-			//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
-			if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
-			}
-			if (this.id == 'pmpprice')
-			{
-			// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
-			//console.log("id="+this.id+"-price="+this.price);
-			if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
-			{
-			if (this.price > 0) {
-			defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
-			//console.log("pmppricevalue="+pmppricevalue);
-			}
-			}
-			}
-			if (this.id == 'costprice')
-			{
-			// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
-			//console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
-			if ('costprice' == defaultbuyprice)
-			{
-			if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
-			else if (pmppricevalue > 0) { defaultkey = pmppriceid; defaultprice = pmppricevalue; }
-			}
-			}
-			options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
-																								  });
-																								  options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
+				/* Warning: Lines must be processed in order: best supplier price, then pmpprice line then costprice */
+				if (this.id != 'pmpprice' && this.id != 'costprice')
+				{
+					i++;
+					this.price = parseFloat(this.price); // to fix when this.price >0
+					// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
+					//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
+					if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
+				}
+				if (this.id == 'pmpprice')
+				{
+					// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
+					console.log("id="+this.id+"-price="+this.price);
+					if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
+					{
+						if (this.price > 0) {
+							defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
+							//console.log("pmppricevalue="+pmppricevalue);
+						}
+					}
+				}
+				if (this.id == 'costprice')
+				{
+					// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
+					console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
+					if ('costprice' == defaultbuyprice)
+					{
+						if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
+						else if (pmppricevalue > 0) { defaultkey = 'pmpprice'; defaultprice = pmppricevalue; }
+					}
+				}
+				options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
+			});
+			options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
 
 			console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
 
 			$("#fournprice_predef").html(options).show();
 			if (defaultkey != '')
 			{
-			$("#fournprice_predef").val(defaultkey);
+				$("#fournprice_predef").val(defaultkey);
 			}
 
 			/* At loading, no product are yet selected, so we hide field of buying_price */
