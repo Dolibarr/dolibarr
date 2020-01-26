@@ -203,7 +203,7 @@ class Contrat extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+	    'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed')),
 		'mise_en_service' =>array('type'=>'datetime', 'label'=>'Mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'fin_validite' =>array('type'=>'datetime', 'label'=>'Fin validite', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'date_cloture' =>array('type'=>'datetime', 'label'=>'Date cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>65),

@@ -8021,4 +8021,23 @@ class Form
 			return -1;
 		}
 	}
+
+	/**
+	 * Output the component to make advanced search criteries
+	 *
+	 * @param	array		$arrayofcriterias			Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
+	 * @param	array		$search_component_params	Array of selected search criterias
+	 * @return	string									HTML component for advanced search
+	 */
+	public function searchComponent($arrayofcriterias, $search_component_params)
+	{
+		$ret = '';
+
+
+
+
+
+
+		return $ret;
+	}
 }
