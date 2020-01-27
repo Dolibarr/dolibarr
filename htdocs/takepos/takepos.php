@@ -649,7 +649,7 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 
 <?php
 if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
-?>
+	?>
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
