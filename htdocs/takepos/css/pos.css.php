@@ -66,11 +66,11 @@ html,body {
 }
 
 .bodytakepos {
-    background-color: #EEE;	
+    background-color: #EEE;
 }
 
 .center {
-	text-align: center;	
+	text-align: center;
 }
 
 button.calcbutton.poscolorblue {
@@ -154,7 +154,7 @@ button.actionbutton {
 }
 
 .takepospay {
-	font-size: 1.5em;	
+	font-size: 1.5em;
 }
 
 .fa.fa-trash:before {
@@ -210,7 +210,7 @@ div.description{
 	opacity:1; /* transparency */
 	/*filter:alpha(opacity=80); IE transparency */
 	text-align:center;
-	
+
 	padding-top: 30px;
     background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
 }
@@ -239,9 +239,9 @@ table.postablelines tr td {
 
 div.paymentbordline
 {
-	width:50%; 
-	background-color:#888; 
-	border-radius: 8px; 
+	width:50%;
+	background-color:#888;
+	border-radius: 8px;
 	margin-bottom: 4px;
 }
 
@@ -415,7 +415,6 @@ div.description_content {
 .topnav a{
 	float: left;
 	color: #f2f2f2;
-	text-align: center;
 	padding: 6px 16px;
 	text-decoration: none;
 	font-size: 17px;
@@ -436,6 +435,7 @@ div.description_content {
 	float: left;
 	border-bottom: none !important;
 	margin-top: 4px;
+	margin-left: 6px;
 }
 
 @media screen and (min-width: 892px) {
@@ -510,7 +510,7 @@ div.description_content {
 	div.wrapper2 {
 		width: 25%;
 	}
-	
+
 	div.div1 {
 		padding-bottom: 0;
 		margin-bottom: 10px;
@@ -518,25 +518,25 @@ div.description_content {
 	div.div1, div.div2, div.div3 {
 		width: 100%;
 	}
-	
+
 	div.row1 {
 		height: unset;
 	}
-	
+
 	div.div2 {
 		min-height: unset;
 	}
-	
+
 	div.div3 {
 		height: unset;
 	}
-	
+
 	button.calcbutton, button.calcbutton2 {
 	    min-height: 30px;
 	}
-	
+
 	.takepospay {
-		font-size: 1.2em;	
+		font-size: 1.2em;
 	}
-	
+
 }
