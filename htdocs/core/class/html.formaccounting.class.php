@@ -309,7 +309,7 @@ class FormAccounting extends Form
     			return -1;
     		}
 
-    		$selected = 0;
+    		$selected = $selectid;	// selectid can be -1, 0, 123
     		while ($obj = $this->db->fetch_object($resql))
     		{
 				if (empty($obj->labelshort))

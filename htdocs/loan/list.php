@@ -184,7 +184,6 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="right liste_titre">';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
@@ -216,6 +215,7 @@ if ($resql)
 		$loan_static->id = $obj->rowid;
 		$loan_static->ref = $obj->rowid;
 		$loan_static->label = $obj->label;
+		$loan_static->paid = $obj->paid;
 
 		print '<tr class="oddeven">';
 
@@ -234,7 +234,9 @@ if ($resql)
 		// Date end
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
-		print '<td class="right nowrap">'.$loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed).'</a></td>';
+		print '<td class="right nowrap">';
+		print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed);
+		print '</td>';
 
 		print '<td></td>';
 

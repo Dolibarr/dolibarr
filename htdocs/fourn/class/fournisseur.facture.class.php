@@ -1913,11 +1913,15 @@ class FactureFournisseur extends CommonInvoice
             $product_type = $type;
         }
 
+	    //Fetch current line from the database and then clone the object and set it in $oldline property
 	    $line = new SupplierInvoiceLine($this->db);
+	    $line->fetch($id);
+	    $line->fetch_optionals();
 
-	    if ($line->fetch($id) < 1) {
-		    return -1;
-	    }
+	    $staticline = clone $line;
+
+	    $line->oldline = $staticline;
+	    $line->context = $this->context;
 
 	    $line->description = $desc;
 	    $line->subprice = $pu_ht;
@@ -1945,9 +1949,15 @@ class FactureFournisseur extends CommonInvoice
 	    $line->product_type = $product_type;
 	    $line->info_bits = $info_bits;
 	    $line->fk_unit = $fk_unit;
-	    $line->array_options = $array_options;
 
-		// Multicurrency
+	    if (is_array($array_options) && count($array_options) > 0) {
+	    	// We replace values in this->line->array_options only for entries defined into $array_options
+	    	foreach($array_options as $key => $value) {
+	    		$this->line->array_options[$key] = $array_options[$key];
+	    	}
+	    }
+
+	    // Multicurrency
 		$line->multicurrency_subprice = $pu_ht_devise;
 		$line->multicurrency_total_ht = $multicurrency_total_ht;
         $line->multicurrency_total_tva 	= $multicurrency_total_tva;
@@ -2437,10 +2447,14 @@ class FactureFournisseur extends CommonInvoice
         $this->date_lim_reglement = $this->date + 3600 * 24 * 30;
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_code = 'CHQ';
+
         $this->note_public = 'This is a comment (public)';
         $this->note_private = 'This is a comment (private)';
 
-		if (empty($option) || $option != 'nolines')
+        $this->multicurrency_tx = 1;
+        $this->multicurrency_code = $conf->currency;
+
+        if (empty($option) || $option != 'nolines')
 		{
 	        // Lines
 	        $nbp = 5;
@@ -2649,7 +2663,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		else
 		{
-            $modelpath = "core/modules/supplier_invoice/pdf/";
+            $modelpath = "core/modules/supplier_invoice/doc/";
 
             return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}

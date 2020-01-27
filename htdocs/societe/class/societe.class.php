@@ -920,7 +920,7 @@ class Societe extends CommonObject
 					}
 				}
 
-				// Check for unicity
+				// Check for unicity on profid
 				if (!$error && $vallabel && $this->id_prof_verifiable($i))
 				{
 					if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))

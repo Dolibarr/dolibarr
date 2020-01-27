@@ -115,6 +115,7 @@ $boxstatFromHook = '';
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
+// Load global statistics of objects
 if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
     $object = new stdClass();
@@ -201,7 +202,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                'contacts',
 	                'members',
 	                'products',
-	                 'services',
+	                'services',
 	                'proposals',
 	                'orders',
 	                'invoices',
@@ -212,7 +213,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                'askprice',
 	                'projects',
 	                'expensereports',
-                    'holiday',
+                    'holidays',
 					'donations'
 	    );
 	    // Dashboard Icon lines
@@ -348,9 +349,8 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 
 
 
-/*
- * Dolibarr Working Board with weather
- */
+// Dolibarr Working Board with weather
+
 if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
@@ -701,6 +701,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 $openedDashBoard .= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
+                // Show the span for the total of record
                 if (!empty($groupElement['globalStats'])) {
                     $globalStatInTopOpenedDashBoard[] = $globalStatsKey;
                     $openedDashBoard .= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";

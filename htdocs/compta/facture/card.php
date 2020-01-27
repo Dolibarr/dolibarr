@@ -137,6 +137,7 @@ $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 
+
 /*
  * Actions
  */
@@ -288,6 +289,39 @@ if (empty($reshook))
 			if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ttc < 0) {
 				setEventMessages($langs->trans("ErrorInvoiceOfThisTypeMustBePositive"), null, 'errors');
 				$action = '';
+			}
+
+			// Also negative lines should not be allowed on 'non Credit notes' invoices. A test is done when adding or updating lines but we must
+			// do it again in validation to avoid cases where invoice is created from another object that allow negative lines.
+			// Note that we can accept the negative line if sum with other lines with same vat is positivie: Because all the lines will be merged together
+			// when converted into 'available credit' and we will get a positive available credit line.
+			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
+			$array_of_pu_ht_per_vat_rate = array();
+			$array_of_pu_ht_devise_per_vat_rate = array();
+			foreach($object->lines as $line) {
+				if (empty($array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
+				if (empty($array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
+				$array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->subprice;
+				$array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_subprice;
+			}
+			//var_dump($array_of_pu_ht_per_vat_rate);exit;
+			foreach($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
+			{
+				$pu_ht = $array_of_pu_ht_per_vat_rate[$vatrate];
+				$pu_ht_devise = $array_of_pu_ht_devise_per_vat_rate[$vatrate];
+
+				if (($pu_ht < 0 || $pu_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
+				{
+					$langs->load("errors");
+					if ($object->type == $object::TYPE_DEPOSIT) {
+						// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
+						setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+					} else {
+						setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+					}
+					$error++;
+					$action = '';
+				}
 			}
 		}
 	}
@@ -1822,7 +1856,12 @@ if (empty($reshook))
 			if ($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 			{
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+				if ($object->type == $object::TYPE_DEPOSIT) {
+					// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
+					setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+				}
 				$error++;
 			}
 			else
@@ -2203,7 +2242,12 @@ if (empty($reshook))
 			if ($pu_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 			{
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+				if ($object->type == $object::TYPE_DEPOSIT) {
+					// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
+					setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+				}
 				$error++;
 			}
 			else
@@ -5106,6 +5150,7 @@ elseif ($id > 0 || !empty($ref))
 
 			// For situation invoice with excess received
 			if ($object->statut > Facture::STATUS_DRAFT
+				&& $object->type == Facture::TYPE_SITUATION
 			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
 			    && $usercancreate
 			    && !$objectidnext

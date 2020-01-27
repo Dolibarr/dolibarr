@@ -65,7 +65,7 @@ if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-	print '<link rel="stylesheet" href="css/pos.css">
+	print '<link rel="stylesheet" href="css/pos.css.php">
 	<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
 }

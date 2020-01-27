@@ -508,7 +508,7 @@ class SMTPs
                     // The error here just means the ID/password combo doesn't work.
                     $_retVal = $this->socket_send_str(base64_encode("\0" . $this->_smtpsID . "\0" . $this->_smtpsPW), '235');
                     break;
-                case 'LOGIN':
+                case 'LOGIN':	// most common case
                 default:
                     $this->socket_send_str('AUTH LOGIN', '334');
                     // User name will not return any error, server will take anything we give it.
@@ -588,7 +588,11 @@ class SMTPs
                 // From this point onward most server response codes should be 250
                 // Specify who the mail is from....
                 // This has to be the raw email address, strip the "name" off
-                $this->socket_send_str('MAIL FROM: ' . $this->getFrom('addr'), '250');
+                $resultmailfrom = $this->socket_send_str('MAIL FROM: ' . $this->getFrom('addr'), '250');
+			    if (! $resultmailfrom) {
+			        fclose($this->socket);
+			        return false;
+			    }
 
                 // 'RCPT TO:' must be given a single address, so this has to loop
                 // through the list of addresses, regardless of TO, CC or BCC
@@ -1792,6 +1796,7 @@ class SMTPs
                 $_retVal = false;
                 break;
             }
+			$this->log .= $server_response;
             $limit++;
         }
 

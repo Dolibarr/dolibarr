@@ -42,6 +42,10 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $error='';
 
+	public $atleastonediscount = 0;
+	public $atleastoneratenotnull = 0;
+
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules

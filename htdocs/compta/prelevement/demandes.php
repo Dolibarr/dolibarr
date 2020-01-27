@@ -43,6 +43,9 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjec
 $backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
+$search_facture = GETPOST('search_facture', 'alpha');
+$search_societe = trim(GETPOST('search_societe', 'alpha'));
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -56,6 +59,26 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.ref";
 
 $massactionbutton = '';
+
+$hookmanager->initHooks(array('withdrawalstodolist'));
+
+
+/*
+ * Actions
+ */
+
+$parameters = array('socid' => $socid, 'limit' => $limit, 'page' => $page, 'offset' => $offset);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+{
+	$search_facture = '';
+	$search_societe = '';
+	$search_array_options = array();
+}
+
 
 
 /*
@@ -98,10 +121,8 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 	$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 $sql.= " AND pfd.fk_facture = f.rowid";
-if (dol_strlen(trim(GETPOST('search_societe', 'alpha'))))
-{
-	$sql.= natural_search("s.nom", 'search_societe');
-}
+if ($search_facture) $sql.= natural_search("f.ref", $search_facture);
+if ($search_societe) $sql.= natural_search("s.nom", $search_societe);
 $sql.=$db->order($sortfield, $sortorder);
 
 
@@ -140,9 +161,7 @@ else
 
 $newcardbutton = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/index.php">'.$langs->trans("Back").'</a>';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -152,6 +171,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
 print '<table class="liste centpercent">';
 
@@ -164,13 +184,13 @@ print_liste_field_titre('');
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture', 'alpha')).'"></td>';
-print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe', 'alpha')).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag($search_facture).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag($search_societe).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre" class="middle">';
-$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+print '<td class="liste_titre maxwidthsearch">';
+$searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
 print '</tr>';

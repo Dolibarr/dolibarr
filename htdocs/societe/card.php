@@ -965,6 +965,7 @@ else
         if (!empty($conf->fournisseur->enabled) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) { $object->fournisseur = 1; }
 
         $object->name = GETPOST('name', 'alpha');
+        $object->name_alias	= GETPOST('name_alias', 'alpha');
         $object->firstname = GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');

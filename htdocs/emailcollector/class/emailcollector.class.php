@@ -1243,34 +1243,34 @@ class EmailCollector extends CommonObject
 
                     $objectid = 0;
                     $objectemail = null;
-                    if ($reg[0] == 'inv')
+                    if ($reg[1] == 'inv')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Facture($this->db);
                     }
-                    if ($reg[0] == 'proj')
+                    if ($reg[1] == 'proj')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Project($this->db);
                     }
-                    if ($reg[0] == 'con')
+                    if ($reg[1] == 'con')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Contact($this->db);
                     }
-                    if ($reg[0] == 'thi')
+                    if ($reg[1] == 'thi')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Societe($this->db);
                     }
-                    if ($reg[0] == 'use')
+                    if ($reg[1] == 'use')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new User($this->db);
                     }
-                    if ($reg[0] == 'tic')
+                    if ($reg[1] == 'tic')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Ticket($this->db);
                     }
 

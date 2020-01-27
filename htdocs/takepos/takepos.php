@@ -54,8 +54,8 @@ $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptpri
 
 $categorie = new Categorie($db);
 
-$maxcategbydefaultforthisdevice = 16;
-$maxproductbydefaultforthisdevice = 32;
+$maxcategbydefaultforthisdevice = 12;
+$maxproductbydefaultforthisdevice = 24;
 if ($conf->browser->layout == 'phone')
 {
     $maxcategbydefaultforthisdevice = 8;
@@ -78,6 +78,9 @@ if ($invoice->socid > 0) $soc->fetch($invoice->socid);
 else $soc->fetch($conf->global->$constforcompanyid);
 */
 
+// Security check
+$result = restrictedArea($user, 'takepos', 0, '');
+
 
 /*
  * View
@@ -93,7 +96,7 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 <?php
 if ($conf->global->TAKEPOS_COLOR_THEME == 1) print '<link rel="stylesheet" href="css/colorful.css">';
@@ -622,6 +625,10 @@ function DirectPayment(){
 	});
 }
 
+function FullScreen() {
+	document.documentElement.requestFullscreen();
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -642,7 +649,35 @@ $( document ).ready(function() {
 if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 ?>
 <div class="container">
-	<div class="row1">
+
+<?php
+if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	?>
+	<div class="header">
+		<div class="topnav">
+			<div class="topnav-left">
+			<a onclick="TerminalsDialog();">
+			<?php echo $langs->trans("Terminal")." ";
+			if ($_SESSION["takeposterminal"] == "") echo "1"; else echo $_SESSION["takeposterminal"];
+			echo " - ".dol_print_date(dol_now(), "dayhour");
+			?>
+			</a>
+			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
+			</div>
+			<div class="topnav-right">
+				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search");?>" autofocus>
+				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>';"><span class="fas fa-sign-out-alt"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>/user/logout.php';"><span class="fas fa-user"></span></a>
+				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+			</div>
+		</div>
+	</div>
+	<?php
+}
+?>
+
+	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead';?>">
 
 		<div id="poslines" class="div1">
 		</div>
@@ -710,7 +745,9 @@ else
     $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
-$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+}
 $menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
@@ -764,7 +801,10 @@ if (!empty($reshook)) {
 if ($r % 3 == 2) $menus[$r++]=array('title'=>'', 'style'=>'visibility: hidden;');
 
 $menus[$r++]=array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
-$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+
+if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+}
 
 ?>
 		<!-- Show buttons -->
@@ -783,16 +823,18 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 
-        print '<!-- Show the search input text -->'."\n";
-        print '<div class="margintoponly">';
-		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
-		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
-		print '</div>';
+		if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+			print '<!-- Show the search input text -->'."\n";
+			print '<div class="margintoponly">';
+			print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+			print '</div>';
+		}
         ?>
 		</div>
 	</div>
 
-	<div class="row2">
+	<div class="row2<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead';?>">
 
 		<!--  Show categories -->
 		<div class="div4">

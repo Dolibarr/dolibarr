@@ -1287,12 +1287,12 @@ class Cronjob extends CommonObject
 	/**
 	 *  Return label of status of user (active, inactive)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
-	    return $this->LibStatut($this->status, $mode, $this->processing);
+	    return $this->LibStatut($this->status, $mode, $this->processing, $this->lastresult);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1300,13 +1300,17 @@ class Cronjob extends CommonObject
 	 *  Renvoi le libelle d'un statut donne
 	 *
 	 *  @param	int		$status        	Id statut
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@param	int		$processing		0=Not running, 1=Running
+	 *  @param	int		$lastresult		Value of last result (0=no error, error otherwise)
 	 *  @return string 			       	Label of status
 	 */
-    public function LibStatut($status, $mode = 0, $processing = 0)
+    public function LibStatut($status, $mode = 0, $processing = 0, $lastresult = 0)
 	{
 		// phpcs:enable
+		$this->labelStatus = array();		// Force reset o array because label depends on other fields
+		$this->labelStatusShort = array();
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
@@ -1314,6 +1318,7 @@ class Cronjob extends CommonObject
 
 			$moretext = '';
 			if ($processing) $moretext = ' ('.$langs->trans("Running").')';
+			elseif ($lastresult) $moretext .= ' ('.$langs->trans("Error").')';
 
 			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Draft').$moretext;
 			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled').$moretext;
@@ -1324,6 +1329,7 @@ class Cronjob extends CommonObject
 		$statusType = 'status4';
 		if ($status == 1 && $processing) $statusType = 'status1';
 		if ($status == 0) $statusType = 'status5';
+		if ($this->lastresult) $statusType = 'status8';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }

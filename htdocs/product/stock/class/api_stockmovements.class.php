@@ -164,7 +164,7 @@ class StockMovements extends DolibarrApi
      *
      * @param int $product_id Id product id {@min 1} {@from body} {@required true}
      * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
-     * @param float $qty Qty to add (Use negative value for a stock decrease) {@min 0} {@message qty must be higher than 0} {@from body} {@required true}
+     * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
      * @param string $lot Lot {@from body}
      * @param string $movementcode Movement code {@example INV123} {@from body}
      * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
@@ -186,11 +186,19 @@ class StockMovements extends DolibarrApi
         }
 
         // Type increase or decrease
-        if ($qty >= 0) $type = 3;
-        else $type = 2;
+        $type = 2;
+        if ($qty >= 0){
+            $type = 3;
+        }
 
-        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $dlc, $dluo, $lot) <= 0) {
-            throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->error);
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        $eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
+        $sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
+
+        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
+        	$errormessage = $this->stockmovement->error;
+        	if (empty($errormessage)) $errormessage = join(',', $this->stockmovement->errors);
+        	throw new RestException(503, 'Error when create stock movement : '.$errormessage);
         }
 
         return $this->stockmovement->id;

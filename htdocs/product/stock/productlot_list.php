@@ -214,6 +214,8 @@ $sql.= " t.import_key,";
 $sql.= " p.fk_product_type as product_type,";
 $sql.= " p.ref as product_ref,";
 $sql.= " p.label as product_label,";
+$sql.= " p.tosell,";
+$sql.= " p.tobuy,";
 $sql.= " p.tobatch";
 // Add fields for extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -300,7 +302,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'products', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'barcode', 0, '', '', $limit);
 
 	$topicmail = "Information";
 	$modelmail = "productlot";
@@ -418,6 +420,7 @@ if ($resql)
 		if ($obj)
 		{
 			$productlot->id = $obj->rowid;
+			$productlot->status = $obj->tosell;
 			$productlot->batch = $obj->batch;
 
 			// You can use here results
@@ -438,7 +441,10 @@ if ($resql)
 				$productstatic->type = $obj->product_type;
 				$productstatic->ref = $obj->product_ref;
 				$productstatic->label = $obj->product_label;
+				$productstatic->status = $obj->tosell;
+				$productstatic->status_buy = $obj->tobuy;
 				$productstatic->status_batch = $obj->tobatch;
+
 				print '<td>'.$productstatic->getNomUrl(1).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}

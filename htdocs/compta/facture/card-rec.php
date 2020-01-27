@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products'));
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products', 'banks'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -1030,6 +1030,8 @@ if ($action == 'create')
 		// Only on template invoices
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')';
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour').')';
+		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $langs->trans("Count");
+		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $langs->trans("MaxPeriodNumber");
 
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach ($substitutionarray as $key => $val)
@@ -1446,8 +1448,6 @@ else
 		print '</tr>';
 
 		// Bank Account
-		$langs->load('banks');
-
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
@@ -1468,8 +1468,6 @@ else
 		print '</tr>';
 
         // Model pdf
-        $langs->load('banks');
-
         print '<tr><td class="nowrap">';
         print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
         print $langs->trans('Model');

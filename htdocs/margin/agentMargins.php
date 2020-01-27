@@ -74,6 +74,9 @@ if ($user->rights->margins->read->all) {
 }
 $result = restrictedArea($user, 'margins');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new User($db);
+$hookmanager->initHooks(array('marginagentlist'));
 
 /*
  * Actions
@@ -205,8 +208,11 @@ if ($result)
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice = 'CostPrice';
 
+	$moreforfilter = '';
+
 	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($agentid > 0)
@@ -299,7 +305,8 @@ if ($result)
             print "</tr>\n";
         }
     }
-    print "</table>";
+	print "</table>";
+	print '</div>';
 }
 else
 {

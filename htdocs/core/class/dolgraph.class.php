@@ -1145,8 +1145,8 @@ class DolGraph
 	/**
 	 * Output HTML string to show graph
 	 *
-	 * @param	int			$shownographyet 	Show graph to say there is not enough data
-	 * @return	string							HTML string to show graph
+	 * @param	int|string		$shownographyet    Show graph to say there is not enough data or the message in $shownographyet if it is a string.
+	 * @return	string							   HTML string to show graph
 	 */
     public function show($shownographyet = 0)
 	{
@@ -1155,7 +1155,13 @@ class DolGraph
 		if ($shownographyet)
 		{
 			$s = '<div class="nographyet" style="width:'.(preg_match('/%/', $this->width) ? $this->width : $this->width.'px').'; height:'.(preg_match('/%/', $this->height) ? $this->height : $this->height.'px').';"></div>';
-			$s .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+			$s .= '<div class="nographyettext">';
+			if (is_numeric($shownographyet)) {
+                $s .= $langs->trans("NotEnoughDataYet");
+			} else {
+			    $s .= $shownographyet;
+			}
+			$s .= '</div>';
 			return $s;
 		}
 

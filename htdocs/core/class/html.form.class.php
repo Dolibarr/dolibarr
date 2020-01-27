@@ -690,18 +690,19 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 *  @param	string	$selected       	Id or Code or Label of preselected country
-	 *  @param  string	$htmlname       	Name of html select object
-	 *  @param  string	$htmloption     	More html options on select object
-	 *  @param	integer	$maxlength			Max length for labels (0=no limit)
-	 *  @param	string	$morecss			More css class
-	 *  @param	string	$usecodeaskey		''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 *  @param	int		$showempty			Show empty choice
-	 *  @param	int		$disablefavorites	1=Disable favorites,
-	 *  @param	int		$addspecialentries	1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 *  @return string           			HTML string with select
+	 *  @param	string	$selected       		Id or Code or Label of preselected country
+	 *  @param  string	$htmlname       		Name of html select object
+	 *  @param  string	$htmloption     		More html options on select object
+	 *  @param	integer	$maxlength				Max length for labels (0=no limit)
+	 *  @param	string	$morecss				More css class
+	 *  @param	string	$usecodeaskey			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int		$showempty				Show empty choice
+	 *  @param	int		$disablefavorites		1=Disable favorites,
+	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @return string           				HTML string with select
 	 */
-    public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0)
+    public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array())
 	{
         // phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -733,6 +734,7 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
+
 					$countryArray[$i]['rowid'] = $obj->rowid;
 					$countryArray[$i]['code_iso'] = $obj->code_iso;
 					$countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
@@ -765,6 +767,7 @@ class Form
 				{
 					//if (empty($showempty) && empty($row['rowid'])) continue;
 					if (empty($row['rowid'])) continue;
+					if (is_array($exclude_country_code) && count($exclude_country_code) && in_array($row['code_iso'], $exclude_country_code)) continue;	// exclude some countries
 
 					if (empty($disablefavorites) && $row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
@@ -2361,6 +2364,7 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
+
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
@@ -2511,7 +2515,7 @@ class Form
 			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
-			dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
+			dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level.'', LOG_DEBUG);
 			$result2 = $this->db->query($sql);
 			if ($result2)
 			{
@@ -2639,7 +2643,7 @@ class Form
     			    $langs->load("stocks");
 
     			    $tmpproduct = new Product($this->db);
-    			    $tmpproduct->fetch($objp->rowid);
+    			    $tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1);	// Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
     			    $tmpproduct->load_virtual_stock();
     			    $virtualstock = $tmpproduct->stock_theorique;
 
@@ -5169,11 +5173,11 @@ class Form
 		{
 			if ($societe_vendeuse->id == $mysoc->id)
 			{
-				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
 			}
 			else
 			{
-				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
 			}
 			return $return;
 		}
@@ -6235,7 +6239,12 @@ class Form
 
 				$out .= '<option value="'.$key.'"';
 				$out .= $style.$disabled;
-				if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				if (is_array($id)) {
+					if (in_array($key, $id) && !$disabled) $out .= ' selected'; // To preselect a value
+				} else {
+					$id = (string) $id;	// if $id = 0, then $id = '0'
+					if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				}
 				if ($nohtmlescape) $out .= ' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
 				if (is_array($tmpvalue))
 				{
@@ -8011,5 +8020,24 @@ class Form
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Output the component to make advanced search criteries
+	 *
+	 * @param	array		$arrayofcriterias			Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
+	 * @param	array		$search_component_params	Array of selected search criterias
+	 * @return	string									HTML component for advanced search
+	 */
+	public function searchComponent($arrayofcriterias, $search_component_params)
+	{
+		$ret = '';
+
+
+
+
+
+
+		return $ret;
 	}
 }

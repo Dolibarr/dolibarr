@@ -4199,6 +4199,7 @@ abstract class CommonObject
 
 				$product_static->ref = $line->ref; //can change ref in hook
 				$product_static->label = $line->label; //can change label in hook
+
 				$text = $product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -5186,7 +5187,6 @@ abstract class CommonObject
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 
-
 			   	if ($attributeRequired)
 			   	{
 			   		$mandatorypb = false;
@@ -5216,7 +5216,6 @@ abstract class CommonObject
 						$new_array_options[$key] = null;
 					}
 				}
-
 
 			   	switch ($attributeType)
 			   	{
@@ -6124,7 +6123,7 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
 
-			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, empty($val['disabled']) ? 0 : 1);
+			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 			if (!empty($param_list_array[2]))		// If we set to add a create button
 			{
@@ -6612,7 +6611,7 @@ abstract class CommonObject
 				if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
 				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
-				$enabled = 1;
+				//$enabled = 1;
 
 				$visibility = 1;
 				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
@@ -7523,7 +7522,10 @@ abstract class CommonObject
 			}
 
 			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key] = 'null';
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
+				if (isset($this->fields[$key]['default'])) $values[$key] = $this->fields[$key]['default'];
+				else $values[$key] = 'null';
+			}
 			if (!empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key] = 'null';
 		}
 

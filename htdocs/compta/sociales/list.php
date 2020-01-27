@@ -121,7 +121,7 @@ $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql .= " AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql .= natural_search("cs.libelle", $search_label);
-if ($search_amount) $sql .= natural_search("cs.amount", price2num(trim($search_amount)), 1);
+if ($search_amount) $sql .= natural_search("cs.amount", $search_amount, 1);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND cs.paye = ".$db->escape($search_status);
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
@@ -217,7 +217,9 @@ if ($resql)
 		print '<td class="liste_titre" align="left">';
 	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
 	    print '</td>';
-		// Period end date
+	    // Date
+	    print '<td class="liste_titre">&nbsp;</td>';
+	    // Period end date
 		print '<td class="liste_titre center">';
 		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
@@ -227,7 +229,6 @@ if ($resql)
 		print '<td class="liste_titre right">';
 		print '<input class="flat maxwidth75" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 		print '</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
 		// Status
 		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
@@ -244,9 +245,9 @@ if ($resql)
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "id", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, 'class="left"', $sortfield, $sortorder);
 		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "periode", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-		print_liste_field_titre("DateDue", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cs.paye", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print "</tr>\n";
@@ -276,6 +277,10 @@ if ($resql)
 			print "<td>".$obj->type_label."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 
+			// Date
+			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+			if (!$i) $totalarray['nbfield']++;
+
 			// Date end period
 			print '<td class="center">';
 			if ($obj->periode)
@@ -294,10 +299,6 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			$totalarray['val']['totalttcfield'] += $obj->amount;
-
-			// Due date
-			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
-			if (!$i) $totalarray['nbfield']++;
 
 			print '<td class="nowrap right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
 			if (!$i) $totalarray['nbfield']++;

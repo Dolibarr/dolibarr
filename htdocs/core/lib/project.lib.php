@@ -935,7 +935,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			// Warning
 			print '<td class="right">';
 			/*if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
-			else if ($disabledtask)
+			elseif ($disabledtask)
 			{
 				$titleassigntask = $langs->trans("AssignTaskToMe");
 				if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');

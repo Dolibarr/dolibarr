@@ -155,8 +155,6 @@ class pdf_standard extends ModeleExpenseReport
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
-		$this->franchise = !$mysoc->tva_assuj;
-
 		// Get source company
 		$this->emetteur=$mysoc;
 
