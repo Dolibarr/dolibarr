@@ -569,30 +569,38 @@ if (empty($reshook))
 			$db->begin();
 
             if (empty($newcu)) {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
             } else {
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
-                $sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
-                $sql .= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
+                $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
             }
 
 			$resql = $db->query($sql);
-			$num = $db->num_rows($resql);
-			if (empty($num) && !empty($newcu))
-			{
-				$societeaccount = new SocieteAccount($db);
-				$societeaccount->fk_soc = $object->id;
-				$societeaccount->login = '';
-				$societeaccount->pass_encoding = '';
-				$societeaccount->site = 'stripe';
-				$societeaccount->status = $servicestatus;
-				$societeaccount->key_account = $newcu;
-				$result = $societeaccount->create($user);
-				if ($result < 0)
+			$num = $db->num_rows($resql);		// Note: $num is always 0 on an update and delete, it is defined for select only.
+			if (!empty($newcu)) {
+				if (empty($num))
 				{
-					$error++;
+					$societeaccount = new SocieteAccount($db);
+					$societeaccount->fk_soc = $object->id;
+					$societeaccount->login = '';
+					$societeaccount->pass_encoding = '';
+					$societeaccount->site = 'stripe';
+					$societeaccount->status = $servicestatus;
+					$societeaccount->key_account = $newcu;
+					$societeaccount->site_account = $site_account;
+					$result = $societeaccount->create($user);
+					if ($result < 0)
+					{
+						$error++;
+					}
+				} else {
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
+					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$site_account."'";
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$resql = $db->query($sql);
 				}
 			}
+			//var_dump($sql);	var_dump($newcu);		var_dump($num); exit;
 
 			if (!$error)
 			{
@@ -615,6 +623,8 @@ if (empty($reshook))
 
             if (empty($newsup)) {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+                // TODO Add site and site_account on oauth_token table
+                //$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
             } else {
                 try {
                     $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
@@ -622,6 +632,8 @@ if (empty($reshook))
                     $tokenstring['type'] = $stripesup->type;
                     $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
                     $sql .= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+                    $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                    // TODO Add site and site_account on oauth_token table
                     $sql .= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
                 } catch (Exception $e) {
 					$error++;
@@ -639,6 +651,7 @@ if (empty($reshook))
                     $tokenstring['type'] = $stripesup->type;
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
                     $sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+                    // TODO Add site and site_account on oauth_token table
                 } catch (Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
