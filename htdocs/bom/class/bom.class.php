@@ -47,7 +47,7 @@ class BOM extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
-	 * @var int  Does bom support extrafields ? 0=No, 1=Yes
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
 

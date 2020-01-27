@@ -100,7 +100,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 .side-nav-vert .user-menu .dropdown-menu > .user-header {
-    min-height: 175px;
+    min-height: 100px;
     padding: 10px;
     text-align: center;
     white-space: normal;
