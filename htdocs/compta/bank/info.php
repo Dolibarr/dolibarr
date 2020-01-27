@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,14 +21,13 @@
  *     \brief      Onglet info d'une ecriture bancaire
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'companies'));
 
 $id = GETPOST("rowid");
 
@@ -46,7 +45,7 @@ $object->info($id);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$id;
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Card");
 $h++;
 
@@ -72,5 +71,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

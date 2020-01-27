@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.cl
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$langs->load("products");
-$langs->load("accountancy"); //"Back" translation is on this file
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
 
 $id = GETPOST('id', 'int');
 $eid = GETPOST('eid', 'int');
@@ -41,7 +41,7 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
-$result=restrictedArea($user,'produit|service&fournisseur',$id,'product&product','','','rowid');
+$result=restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
 
 //Initialize objects
 $product = new Product($db);
@@ -55,7 +55,7 @@ if (empty($eid)) //This also disables fetch when eid == 0
 {
 	$eid = 0;
 }
-else if ($action != 'delete')
+elseif ($action != 'delete')
 {
 	$price_expression->fetch($eid);
 }
@@ -94,7 +94,7 @@ if ($action == 'add')
 				}
 			}
 		}
-		else if ($result < 0)
+		elseif ($result < 0)
 		{
 			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
@@ -134,7 +134,7 @@ if ($action == 'update')
 				}
 			}
 		}
-		else if ($result < 0)
+		elseif ($result < 0)
 		{
 			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
@@ -166,18 +166,18 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("CardProduct".$product->type));
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
 //Form/Table
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Price expression selector
 print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';
@@ -204,9 +204,9 @@ foreach ($price_globals->listGlobalVariables() as $entry) {
 }
 
 //Price expression editor
-print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
+print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"), $help_text, 1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,ROWS_4,'90%');
+$doleditor=new DolEditor('expression', isset($price_expression->expression)?$price_expression->expression:'', '', 300, '', '', false, false, false, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';
@@ -219,7 +219,7 @@ print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {
-	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused">'.$langs->trans('Delete').'</span></div>'."\n";
+	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 }
 else
 {
@@ -244,5 +244,6 @@ print '<script type="text/javascript">
 	}
 </script>';
 
+// End of page
 llxFooter();
 $db->close();

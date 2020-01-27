@@ -15,11 +15,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file    htdocs/compat/paiement/class/cpaiement.class.php
+ * \file    htdocs/compta/paiement/class/cpaiement.class.php
  * \ingroup facture
  * \brief   This file is to manage CRUD function of type of payments
  */
@@ -34,24 +34,25 @@ class Cpaiement
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cpaiement';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_paiement';
 
+	public $code;
 
 	/**
+	 * @deprecated
+	 * @see $label
 	 */
-
-	public $code;
 	public $libelle;
+	public $label;
+
 	public $type;
 	public $active;
 	public $accountancy_code;
 	public $module;
-
-	/**
-	 */
 
 
 	/**
@@ -86,6 +87,9 @@ class Cpaiement
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
 		}
+		if (isset($this->label)) {
+			$this->label = trim($this->label);
+		}
 		if (isset($this->type)) {
 			 $this->type = trim($this->type);
 		}
@@ -106,27 +110,21 @@ class Cpaiement
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-
-		$sql.= 'id,';
+		$sql.= 'entity,';
 		$sql.= 'code,';
 		$sql.= 'libelle,';
 		$sql.= 'type,';
 		$sql.= 'active,';
 		$sql.= 'accountancy_code,';
 		$sql.= 'module';
-
-
 		$sql .= ') VALUES (';
-
-		$sql .= ' '.(! isset($this->id)?'NULL':$this->id).',';
+		$sql .= ' '.(! isset($this->entity)?getEntity('c_paiement'):$this->entity).',';
 		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(! isset($this->type)?'NULL':$this->type).',';
 		$sql .= ' '.(! isset($this->active)?'NULL':$this->active).',';
 		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'").',';
 		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -141,15 +139,15 @@ class Cpaiement
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
+			//if (!$notrigger) {
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			}
+			//  // Call triggers
+			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  if ($result < 0) $error++;
+			//  // End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -179,14 +177,15 @@ class Cpaiement
 		$sql = 'SELECT';
 		$sql .= ' t.id,';
 		$sql .= " t.code,";
-		$sql .= " t.libelle,";
+		$sql .= " t.libelle as label,";
 		$sql .= " t.type,";
 		$sql .= " t.active,";
 		$sql .= " t.accountancy_code,";
 		$sql .= " t.module";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.code = ' . '\'' . $ref . '\'';
+			$sql .= ' WHERE t.entity IN ('.getEntity('c_paiement').')';
+			$sql .= ' AND t.code = ' . '\'' . $ref . '\'';
 		} else {
 			$sql .= ' WHERE t.id = ' . $id;
 		}
@@ -200,13 +199,12 @@ class Cpaiement
 				$this->id = $obj->id;
 
 				$this->code = $obj->code;
-				$this->libelle = $obj->libelle;
+				$this->libelle = $obj->label;
+				$this->label = $obj->label;
 				$this->type = $obj->type;
 				$this->active = $obj->active;
 				$this->accountancy_code = $obj->accountancy_code;
 				$this->module = $obj->module;
-
-
 			}
 			$this->db->free($resql);
 
@@ -244,6 +242,9 @@ class Cpaiement
 		}
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
+		}
+		if (isset($this->label)) {
+			$this->label = trim($this->label);
 		}
 		if (isset($this->type)) {
 			 $this->type = trim($this->type);
@@ -283,15 +284,15 @@ class Cpaiement
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
-		}
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
 
 		// Commit or rollback
 		if ($error) {
@@ -321,17 +322,15 @@ class Cpaiement
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			}
-		}
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -370,12 +369,10 @@ class Cpaiement
 
 		$this->code = '';
 		$this->libelle = '';
+		$this->label = '';
 		$this->type = '';
 		$this->active = '';
 		$this->accountancy_code = '';
 		$this->module = '';
-
-
 	}
-
 }

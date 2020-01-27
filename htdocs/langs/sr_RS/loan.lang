@@ -10,6 +10,7 @@ LoanCapital=Kapital
 Insurance=Osiguranje
 Interest=Kamata
 Nbterms=Broj uslova
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Potvrdi brisanje ovog kredita
 LoanDeleted=Kredit uspešno obrisan
 ConfirmPayLoan=Potvrdi klasiranje ovog kredita kao isplaćen
 LoanPaid=Kredit isplaćen
-# Calc
-LoanCalc=Kreditni kalkulator
-PurchaseFinanceInfo=Informacije o kupovini i finansiranju
-SalePriceOfAsset=Prodajna cena proizvoda
-PercentageDown=Smanjenje u procentima
-LengthOfMortgage=Duration of loan
-AnnualInterestRate=Godišnja kamatna rata
-ExplainCalculations=Objasni kalkulacije
-ShowMeCalculationsAndAmortization=Prikaži kalkulacije i amortizaciju
-MortgagePaymentInformation=Informacije isplate kredita
-DownPayment=Ulog
-DownPaymentDesc=<b>Ulog</b> = Cena nekretnine pomnožena sa procentima smanjenja i podeljena sa 100 (za 5% ulog postaje 5/100 ili 0.05)
-InterestRateDesc=<b>Kamatna stopa</b> = Godišnja kamata podeljena sa 100
-MonthlyFactorDesc=<b>Mesečni faktor</b> = rezultat sledeće formule
-MonthlyInterestRateDesc=<b>Mesečna kamatna stopa</b> = Godišnja kamatna stopa podeljena sa 12 (za 12 meseci u godini)
-MonthTermDesc=<b>Mesčno trajanje</b> kredita u mesecima = Broj godina trajanja kredita puta 12
-MonthlyPaymentDesc=Mesečna isplata je sračunata koristeći sledeću formulu
-AmortizationPaymentDesc=<a href="#amortization">Amortizacija</a> izražava koliko od Vaše mesečne isplate ide na kamatu a koliko na glavnicu kredita.
-AmountFinanced=Finansirani iznos
-AmortizationMonthlyPaymentOverYears=Amortizacija za Mesečnu Isplatu: <b>%s</b> kroz %s godina
-Totalsforyear=Ukupno za godinu
-MonthlyPayment=Mesečna isplata
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s odlazi na KAMATU
-GoToPrincipal=%s odlazi na GLAVNICU
-YouWillSpend=You will spend %s in year %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Kamata
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Konfiguracija modula Krediti
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

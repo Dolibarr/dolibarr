@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015	Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2017	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,12 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("companies");
-$langs->load("contact");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'companies', 'contact'));
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Contact($db);
@@ -51,25 +51,27 @@ if (! empty($canvas))
 }
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) {
-    $page = 0;
-}
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
+if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 if ($id > 0) $object->fetch($id);
 
-$upload_dir = $conf->societe->dir_output.'/contact/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart='contact';
 
 
@@ -87,7 +89,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $helpurl);
 
@@ -99,8 +101,8 @@ if ($object->id)
     dol_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
-    // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -126,7 +128,7 @@ if ($object->id)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border tableforfield centpercent">';
 
     // Company
     /*
@@ -154,7 +156,7 @@ if ($object->id)
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print '</table>';
 
     print '</div>';

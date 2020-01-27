@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,17 +33,21 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class box_comptes extends ModeleBoxes
 {
-	var $boxcode="currentaccounts";
-	var $boximg="object_bill";
-	var $boxlabel="BoxCurrentAccounts";
-	var $depends = array("banque");     // Box active if module banque active
+    public $boxcode="currentaccounts";
+    public $boximg="object_bill";
+    public $boxlabel="BoxCurrentAccounts";
+    public $depends = array("banque");     // Box active if module banque active
 
-	var $db;
-	var $param;
-	var $enabled = 1;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -52,15 +56,15 @@ class box_comptes extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
-	function __construct($db,$param='')
+	public function __construct($db, $param = '')
 	{
 		global $conf, $user;
 
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('banque', $listofmodulesforexternal) && ! empty($user->socid)) $this->enabled=0;	// disabled for external users
 
 		$this->hidden = ! ($user->rights->banque->lire);
 	}
@@ -71,9 +75,9 @@ class box_comptes extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
@@ -93,19 +97,19 @@ class box_comptes extends ModeleBoxes
 			$sql.= " AND clos = 0";
 			//$sql.= " AND courant = 1";
 			$sql.= " ORDER BY label";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
             dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 $solde_total = array();
 
-                $account_static = new Account($db);
+                $account_static = new Account($this->db);
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
+                    $objp = $this->db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
 					$account_static->ref = $objp->ref;
@@ -130,7 +134,7 @@ class box_comptes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
                     );
 
@@ -141,50 +145,47 @@ class box_comptes extends ModeleBoxes
                 foreach ($solde_total as $key=>$solde) {
                     $this->info_box_contents[$line][] = array(
                         'tr' => 'class="liste_total"',
-                        'td' => 'align="left" class="liste_total"',
+                        'td' => 'class="liste_total left"',
                         'text' => $langs->trans('Total').' '.$key,
                     );
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="liste_total"',
+                        'td' => 'class="liste_total right"',
                         'text' => '&nbsp;'
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="liste_total"',
+                        'td' => 'class="liste_total right nowraponall"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $line++;
                 }
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
 	}
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    /**
+     *  Method to show box
+     *
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  int     $nooutput   No print, only return string
+     *  @return string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
-
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }
-

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
 TasksOnOpenedProject=Tâches sur projets ouverts
 NewTimeSpent=Nouveau consommé
-ListShippingAssociatedProject=Liste des expéditions associées au projet
 TimeAlreadyRecorded=Temps consommé déjà enregistré pour cette tâche/jour et utilisateur %s

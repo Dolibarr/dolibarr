@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+-- Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Change are done into list pages to use the new code to manage
 -- selection by users of fields. Once all changes are done with new
@@ -33,7 +33,7 @@ create table llx_c_field_list
   align			varchar(6)		DEFAULT 'left',				-- align (left,center,right)
   sort			tinyint 		DEFAULT 1  	NOT NULL,		-- add sort field
   search		tinyint 		DEFAULT 0  	NOT NULL,		-- add search field
+  visible		tinyint			DEFAULT 1	NOT NULL,		-- visibility of field. 0=Never visible, 1=Visible on list and forms, 2=Visible on list only
   enabled       varchar(255)	DEFAULT 1,					-- Condition to show or hide
   rang      	integer 		DEFAULT 0
-  
 )ENGINE=innodb;

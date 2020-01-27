@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * Id of the line
 	 * @var int
 	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 
@@ -53,11 +53,11 @@ abstract class CommonObjectLine extends CommonObject
     /**
      *	Returns the translation key from units dictionary.
      *  A langs->trans() must be called on result to get translated value.
-     *  
+     *
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
-	public function getLabelOfUnit($type='long')
+	public function getLabelOfUnit($type = 'long')
 	{
 		global $langs;
 
@@ -94,4 +94,3 @@ abstract class CommonObjectLine extends CommonObject
 
 	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }
-

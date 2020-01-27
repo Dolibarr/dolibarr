@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ class modCommande extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -51,15 +51,14 @@ class modCommande extends DolibarrModules
 		$this->numero = 25;
 
 		$this->family = "crm";
-		$this->module_position = 30;
+		$this->module_position = '23';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des commandes clients";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='order';
 
 		// Data directories to create when module is enabled
@@ -72,7 +71,7 @@ class modCommande extends DolibarrModules
 		$this->depends = array("modSociete");
 		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();
-		$this->langfiles = array('orders', 'bills', 'companies','products', 'deliveries');
+		$this->langfiles = array('orders', 'bills', 'companies','products', 'deliveries', 'sendings');
 
 		// Constants
 		$this->const = array();
@@ -104,7 +103,7 @@ class modCommande extends DolibarrModules
 		$this->const[$r][2] = "__(Draft)__";
 		$this->const[$r][3] = 'Watermark to show on draft orders';
 		$this->const[$r][4] = 0;*/
-		
+
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),
@@ -177,12 +176,12 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -191,10 +190,50 @@ class modCommande extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='CustomersOrdersAndOrdersLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("commande","commande","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','d.nom'=>'State','co.label'=>'Country','co.code'=>"CountryCode",'s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_client'=>"RefCustomer",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_commande'=>"OrderDate",'c.amount_ht'=>"Amount",'c.remise_percent'=>"GlobalDiscount",'c.total_ht'=>"TotalHT",'c.total_ttc'=>"TotalTTC",'c.facture'=>"Billed",'c.fk_statut'=>'Status','c.note_public'=>"Note",'c.date_livraison'=>'DeliveryDate','c.fk_user_author'=>'CreatedById','uc.login'=>'CreatedByLogin','c.fk_user_valid'=>'ValidatedById','uv.login'=>'ValidatedByLogin','pj.ref'=>'ProjectRef','cd.rowid'=>'LineId','cd.label'=>"Label",'cd.description'=>"LineDescription",'cd.product_type'=>'TypeOfLineServiceOrProduct','cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
-		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text');
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','pj.ref'=>'Text','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text');
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company','co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.siret'=>'company','c.rowid'=>"order",'c.ref'=>"order",'c.ref_client'=>"order",'c.fk_soc'=>"order",'c.date_creation'=>"order",'c.date_commande'=>"order",'c.amount_ht'=>"order",'c.remise_percent'=>"order",'c.total_ht'=>"order",'c.total_ttc'=>"order",'c.facture'=>"order",'c.fk_statut'=>"order",'c.note'=>"order",'c.date_livraison'=>"order",'pj.ref'=>'project','cd.rowid'=>'order_line','cd.label'=>"order_line",'cd.description'=>"order_line",'cd.product_type'=>'order_line','cd.tva_tx'=>"order_line",'cd.qty'=>"order_line",'cd.total_ht'=>"order_line",'cd.total_tva'=>"order_line",'cd.total_ttc'=>"order_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product');
+		$this->export_fields_array[$r]=array(
+			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','d.nom'=>'State','co.label'=>'Country',
+			'co.code'=>"CountryCode",'s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','c.rowid'=>"Id",
+			'c.ref'=>"Ref",'c.ref_client'=>"RefCustomer",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_commande'=>"OrderDate",
+			'c.date_livraison'=>"DateDeliveryPlanned",'c.amount_ht'=>"Amount",'c.remise_percent'=>"GlobalDiscount",'c.total_ht'=>"TotalHT",
+			'c.total_ttc'=>"TotalTTC",'c.facture'=>"Billed",'c.fk_statut'=>'Status','c.note_public'=>"Note",'c.date_livraison'=>'DeliveryDate',
+			'c.fk_user_author'=>'CreatedById','uc.login'=>'CreatedByLogin','c.fk_user_valid'=>'ValidatedById','uv.login'=>'ValidatedByLogin',
+			'pj.ref'=>'ProjectRef','cd.rowid'=>'LineId','cd.label'=>"Label",'cd.description'=>"LineDescription",'cd.product_type'=>'TypeOfLineServiceOrProduct',
+			'cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",
+			'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel'
+		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+		    $this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
+		    $this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
+		    $this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+		    $this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+		    $this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+		//$this->export_TypeFields_array[$r]=array(
+		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
+		//	'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",
+		//	'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
+		//	'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','cd.description'=>"Text",
+		//	'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",
+		//	'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text'
+		//);
+		$this->export_TypeFields_array[$r]=array(
+			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text',
+			's.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",
+			'c.date_commande'=>"Date",'c.date_livraison'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
+			'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','pj.ref'=>'Text',
+			'cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",
+			'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref::product','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
+		);
+		$this->export_entities_array[$r]=array(
+			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company',
+			'co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.siret'=>'company','c.rowid'=>"order",
+			'c.ref'=>"order",'c.ref_client'=>"order",'c.fk_soc'=>"order",'c.date_creation'=>"order",'c.date_commande'=>"order",'c.amount_ht'=>"order",
+			'c.remise_percent'=>"order",'c.total_ht'=>"order",'c.total_ttc'=>"order",'c.facture'=>"order",'c.fk_statut'=>"order",'c.note'=>"order",
+			'c.date_livraison'=>"order",'pj.ref'=>'project','cd.rowid'=>'order_line','cd.label'=>"order_line",'cd.description'=>"order_line",
+			'cd.product_type'=>'order_line','cd.tva_tx'=>"order_line",'cd.qty'=>"order_line",'cd.total_ht'=>"order_line",'cd.total_tva'=>"order_line",
+			'cd.total_ttc'=>"order_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product'
+		);
 		$this->export_dependencies_array[$r]=array('order_line'=>'cd.rowid','product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		$keyforselect='commande'; $keyforelement='order'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -230,7 +269,7 @@ class modCommande extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf,$langs;
 
@@ -246,11 +285,11 @@ class modCommande extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
@@ -260,6 +299,6 @@ class modCommande extends DolibarrModules
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order',".$conf->entity.")"
 		);
 
-		 return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

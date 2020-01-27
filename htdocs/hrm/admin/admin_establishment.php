@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,12 +20,12 @@
  * \ingroup HRM
  * \brief 	HRM Establishment module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
-$langs->load("admin");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'hrm'));
 
 if (! $user->admin)
 	accessforbidden();
@@ -54,14 +54,14 @@ $sortfield     = GETPOST("sortfield");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="e.rowid";
 
-if ($page == -1) {
+if (empty($page) || $page == -1) {
 	$page = 0 ;
 }
 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);
@@ -69,7 +69,7 @@ $establishmenttmp=new Establishment($db);
 dol_htmloutput_mesg($mesg);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
@@ -78,8 +78,8 @@ dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
-$sql.= " WHERE e.entity = ".$conf->entity;
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= " WHERE e.entity IN (".getEntity('establishment').')';
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
@@ -89,22 +89,20 @@ if ($result)
 	$i = 0;
 
 	// Load attribute_label
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Address",$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Zipcode",$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
-
-	$var=true;
 
 	if ($num > 0)
     {
 	    $establishmentstatic=new Establishment($db);
 
-		while ($i < min($num,$limit))
+		while ($i < min($num, $limit))
 		{
             $obj = $db->fetch_object($result);
 
@@ -115,18 +113,17 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
-            print '<td align="left">'.$obj->address.'</td>';
-			print '<td align="left">'.$obj->zip.'</td>';
-			print '<td align="left">'.$obj->town.'</td>';
+            print '<td class="left">'.$obj->address.'</td>';
+			print '<td class="left">'.$obj->zip.'</td>';
+			print '<td class="left">'.$obj->town.'</td>';
 
-            print '<td align="right">';
+            print '<td class="right">';
 			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
             print "</tr>\n";
 
             $i++;
         }
-
     }
     else
     {
@@ -147,5 +144,6 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

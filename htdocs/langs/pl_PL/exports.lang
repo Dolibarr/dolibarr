@@ -120,7 +120,7 @@ SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for 
 UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
 NoUpdateAttempt=No update attempt was performed, only insert
 ImportDataset_user_1=Użytkownicy (pracownicy lub nie) i ustawienia
-ComputedField=Computed field
+ComputedField=Obliczone pole
 ## filters
 SelectFilterFields=Jeśli chcesz filtrować po jakiś wartościach, po po prostu podaj wartości tutaj.
 FilteredFields=Filtrowane pola

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,20 +13,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$value = GETPOST('value','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$value = GETPOST('value', 'alpha');
 
-$action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel','alpha');
-$backtopage=GETPOST('backtopage','alpha');
+$action=GETPOST('action', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
+$backtopage=GETPOST('backtopage', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -58,19 +59,18 @@ if ($cancel)
 if ($action == 'add')
 {
 	if (empty($ref) || empty($value)) {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
-
 		$objectval->fk_product_attribute = $object->id;
 		$objectval->ref = $ref;
 		$objectval->value = $value;
 
-		if ($objectval->create() > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+		if ($objectval->create($user) > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 			exit();
 		} else {
-			setEventMessage($langs->trans('ErrorCreatingProductAttributeValue'), 'errors');
+			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
 		}
 	}
 }
@@ -112,12 +112,12 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-print_fiche_titre($langs->trans('NewProductAttributeValue'));
+print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
 dol_fiche_head();
 
@@ -144,5 +144,6 @@ print '</div>';
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -26,7 +26,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -40,8 +40,9 @@ if (empty($conf) || ! is_object($conf))
 $parameters = array();
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label'])) {
-	print $object->showOptionals($extrafields, 'edit');
+if (empty($reshook)) {
+	$params = isset($tpl_context) ? array('tpl_context' => $tpl_context) : array(); // BUG #11554 : Add tpl_context in params
+	print $object->showOptionals($extrafields, 'edit', $params); // BUG #11554 : Add context in params
 }
 
 ?>

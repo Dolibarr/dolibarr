@@ -1,8 +1,8 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -29,8 +29,9 @@ create table llx_don
   fk_statut       smallint NOT NULL DEFAULT 0,  -- Status of donation promise or validate
   datedon         datetime,                     -- Date of the donation/promise
   amount          double(24,8) DEFAULT 0,
-  fk_payment      integer,
+  fk_payment      integer,						-- Id of payment mode
   paid            smallint default 0 NOT NULL,
+  fk_soc      	  integer NULL, 
   firstname       varchar(50),
   lastname        varchar(50),
   societe         varchar(50),
@@ -38,7 +39,7 @@ create table llx_don
   zip             varchar(30),
   town            varchar(50),
   country         varchar(50),					-- Deprecated - Replace with fk_country
-  fk_country	  integer        NOT NULL,
+  fk_country      integer NOT NULL,
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),
@@ -46,6 +47,7 @@ create table llx_don
   fk_projet       integer NULL,                 -- Donation is given for a project ?
   datec           datetime,                     -- Create date
   fk_user_author  integer NOT NULL,
+  fk_user_modif   integer,
   date_valid      datetime,						-- date de validation
   fk_user_valid   integer NULL,
   note_private    text,

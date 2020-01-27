@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;
 
@@ -55,7 +55,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
-	 * @see product_label
+	 * @see $product_label
 	 */
 	public $libelle;
 
@@ -73,16 +73,16 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Quantity
-	 * @var int
+	 * @var float
 	 */
 	public $qty;
 
 	/**
 	 * Unit price
 	 * @deprecated
-	 * @see subprice
+	 * @see $subprice
 	 */
-	var $price;
+    public $price;
 
 	/**
 	 * Unit price before taxes
@@ -144,6 +144,4 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
-
 }
-

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,18 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'banks', 'bills'));
 
-$id=GETPOST("id",'int');
-$action=GETPOST("action","alpha");
-$refund=GETPOST("refund","int");
+$id=GETPOST("id", 'int');
+$action=GETPOST("action", "alpha");
+$refund=GETPOST("refund", "int");
 if (empty($refund)) $refund=0;
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
+$socid = GETPOST('socid', 'int');
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Tva($db);
@@ -55,16 +55,24 @@ $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 {
-	header("Location: reglement.php");
+	header("Location: list.php");
 	exit;
+}
+
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+	$object->fetch($id);
+	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
 }
 
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
+    $object->datev=dol_mktime(12, 0, 0, GETPOST('datevmonth', 'int'), GETPOST('datevday', 'int'), GETPOST('datevyear', 'int'));
     $result=$object->update($user);
-    if ($result < 0) dol_print_error($db,$object->error);
+    if ($result < 0) dol_print_error($db, $object->error);
 
     $action='';
 }
@@ -73,8 +81,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error=0;
 
-	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+	$datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+    $datep=dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
 
     $object->accountid=GETPOST("accountid");
     $object->type_payment=GETPOST("type_payment");
@@ -82,13 +90,13 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $object->datev=$datev;
     $object->datep=$datep;
 
-	$amount = price2num(GETPOST("amount"));
+	$amount = price2num(GETPOST("amount", 'alpha'));
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
     $object->amount= $amount;
-	$object->label=GETPOST("label");
-	$object->note=GETPOST("note");
+	$object->label=GETPOST("label", 'alpha');
+	$object->note=GETPOST("note", 'none');
 
 	if (empty($object->datev))
 	{
@@ -119,7 +127,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: reglement.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -154,7 +162,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
 			}
 			else
@@ -172,7 +180,8 @@ if ($action == 'delete')
 	}
 	else
 	{
-        setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
+		$mesg='Error try do delete a line linked to a conciliated bank transaction';
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -180,11 +189,13 @@ if ($action == 'delete')
 /*
  *	View
  */
-$title=$langs->trans("VAT") . " - " . $langs->trans("Card");
-$help_url='';
-llxHeader("",$title,$helpurl);
 
 $form = new Form($db);
+
+$title=$langs->trans("VAT") . " - " . $langs->trans("Card");
+$help_url='';
+llxHeader("", $title, $helpurl);
+
 
 if ($id)
 {
@@ -218,7 +229,7 @@ if ($action == 'create')
 	}
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<div id="selectmethod">';
@@ -241,15 +252,15 @@ if ($action == 'create')
 
     dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add',1,1);
+    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add',1,1);
+    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
+    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
 	// Label
@@ -258,15 +269,15 @@ if ($action == 'create')
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label",'',2):$label).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label", '', 2):$label).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
-        $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+        $form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 1);  // Affiche liste des comptes courant
         print '</td></tr>';
     }
 
@@ -283,7 +294,7 @@ if ($action == 'create')
 
     // Other attributes
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
     print '</table>';
@@ -304,30 +315,36 @@ if ($id)
 {
 	$head=vat_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+	$morehtmlref='<div class="refidno">';
+	// Label of social contribution
+	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	// Project
+	$morehtmlref.='</div>';
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
-	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	//print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td>';
-	print dol_print_date($object->datep,'day');
+	print '<td class="titlefield">'.$langs->trans("DatePayment").'</td><td>';
+	print dol_print_date($object->datep, 'day');
 	print '</td></tr>';
 
-
 	print '<tr><td>';
-	print $form->editfieldkey("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	print '</td><td>';
-	print $form->editfieldval("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
@@ -343,7 +360,7 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
-			print $bankline->getNomUrl(1,0,'showall');
+			print $bankline->getNomUrl(1, 0, 'showall');
 			print '</td>';
 			print '</tr>';
 		}
@@ -351,7 +368,7 @@ if ($id)
 
 	// Other attributes
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -368,16 +385,16 @@ if ($id)
 	{
 		if (! empty($user->rights->tax->charges->supprimer))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 	print "</div>";
 }

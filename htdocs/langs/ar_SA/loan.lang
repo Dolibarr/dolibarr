@@ -10,6 +10,7 @@ LoanCapital=عاصمة
 Insurance=تأمين
 Interest=اهتمام
 Nbterms=عدد من المصطلحات
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=تأكيد حذف هذا القرض
 LoanDeleted=بنجاح قرض محذوفة
 ConfirmPayLoan=تأكيد صنف دفع هذا القرض
 LoanPaid=القرض المدفوع
-# Calc
-LoanCalc=بنك القروض حاسبة
-PurchaseFinanceInfo=شراء وتمويل معلومات
-SalePriceOfAsset=بيع سعر الأصول
-PercentageDown=نسبة داون
-LengthOfMortgage=Duration of loan
-AnnualInterestRate=معدل الفائدة السنوي
-ExplainCalculations=شرح الحسابات
-ShowMeCalculationsAndAmortization=تدلني على الحسابات والإطفاء
-MortgagePaymentInformation=معلومات الرهن العقاري الدفع
-DownPayment=الدفعة الأولى
-DownPaymentDesc=<b>الدفعة</b> الأولى = سعر المنزل مضروبا في نسبة مقسمة بنسبة 100٪ (5٪ يصبح أسفل 5/100 أو 0.05)
-InterestRateDesc=<b>سعر</b> الفائدة = نسبة الفائدة السنوية مقسومة على 100
-MonthlyFactorDesc=<b>عامل الشهري</b> = ونتيجة الصيغة التالية
-MonthlyInterestRateDesc=<b>معدل الفائدة الشهرية</b> = معدل الفائدة السنوي مقسوما على 12 (لمدة 12 شهرا في السنة)
-MonthTermDesc=<b>على</b> المدى <b>شهر</b> القرض في أشهر = لعدد من السنوات كنت قد اتخذت القرض بها لمرة 12
-MonthlyPaymentDesc=وبرزت دفع أفضل نتيجة من استخدام الصيغة التالية
-AmortizationPaymentDesc=<a href="#amortization">والإطفاء</a> ينهار مقدار الدفع الشهري يذهب نحو مصلحة البنك، وكم يذهب إلى سداد أصل القرض الخاص بك.
-AmountFinanced=مبلغ التمويل
-AmortizationMonthlyPaymentOverYears=الإطفاء للدفع <b>الشهري:٪ الصورة</b> أكثر من٪ الصورة سنوات
-Totalsforyear=مجاميع العام
-MonthlyPayment=الدفع الشهري
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=٪ S سوف تذهب نحو الفائدة
-GoToPrincipal=٪ S سوف تذهب نحو PRINCIPAL
-YouWillSpend=You will spend %s in year %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=اهتمام
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=التكوين للقرض وحدة
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

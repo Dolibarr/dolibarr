@@ -28,10 +28,10 @@ UseDiscountAsService=Jako usługa
 UseDiscountOnTotal=Na podsumy
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowana jako produktu, usługi lub tylko na sumy częściowej obliczania marży.
 MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
-MargeType1=Marża na najlepszej cenie dostawcy
+MargeType1=Margin on Best vendor price
 MargeType2=Marża na średniej cenie ważonej
 MargeType3=Marża na cenie fabrycznej
-MarginTypeDesc=* Marża na najlepszej cenie zakupu = Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu<br>* Marża na średnio ważonej cenie (WAP) = Cena sprzedaży - Średnio ważona cena (WAP) lub najlepsza cena dostawcy jeżeli WAP nie jest zdefiniowana<br>* Marża na cenie fabrycznej = Cena sprzedaży -  Cena fabryczna zdefiniowana na karcie produktu lub WAP jeżeli cena fabryczna nie jest zdefiniowana, lub najlepsza cena dostawcy jeżeli WAP nie jest jeszcze zdefiniowana
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Cena fabryczna
 UnitCharges=Koszty jednostkowe
 Charges=Opłaty
@@ -41,4 +41,4 @@ rateMustBeNumeric=Stawka musi być wartością liczbową
 markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
 ShowMarginInfos=Pokaż informacje o marżę
 CheckMargins=Szczegóły marż
-MarginPerSaleRepresentativeWarning=Raport marży na użytkownika wykorzystuje powiązanie między kontrahentami a przedstawicielami handlowymi w celu obliczenia marży każdego przedstawiciela handlowego. Ze względu na to, że niektórzy kontrahenci mogą nie posiadać przedstawiciela handlowego, a niektórzy mogą być powiązani z kilkoma, niektóre kwoty mogą nie zostać uwzględnione w tym raporcie (jeśli nie ma przedstawiciela sprzedaży), a niektóre mogą pojawić się w różnych wierszach (dla każdego przedstawiciela sprzedaży).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

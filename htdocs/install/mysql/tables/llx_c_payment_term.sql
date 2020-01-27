@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
 -- Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2017		Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2017		Regis Houssin			<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,13 +14,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 create table llx_c_payment_term
 (
-  rowid				integer,
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer	DEFAULT 1 NOT NULL,	-- multi company id
   code				varchar(16),
   sortorder			smallint,

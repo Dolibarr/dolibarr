@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,25 +36,30 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModelePDFSupplierProposal extends CommonDocGenerator
 {
-	var $error='';
-
-
 	/**
-	 *  Return list of active generation modules
-	 *
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='supplier_proposal';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -66,14 +71,17 @@ abstract class ModelePDFSupplierProposal extends CommonDocGenerator
  */
 abstract class ModeleNumRefSupplierProposal
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * Return if a module can be used or not
 	 *
 	 * @return	boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -83,7 +91,7 @@ abstract class ModeleNumRefSupplierProposal
 	 *
 	 * 	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("supplier_proposal");
@@ -91,11 +99,11 @@ abstract class ModeleNumRefSupplierProposal
 	}
 
 	/**
-	 * 	Renvoi un exemple de numerotation
+	 * 	Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("supplier_proposal");
@@ -103,12 +111,12 @@ abstract class ModeleNumRefSupplierProposal
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Checks if the numbers already in force in the data base do not
+	 *  cause conflicts that would prevent this numbering from working.
 	 *
-	 *  @return     boolean     false si conflit, true si ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -120,7 +128,7 @@ abstract class ModeleNumRefSupplierProposal
 	 *	@param		Propal		$propal		Object commercial proposal
 	 *	@return     string      Valeur
 	 */
-	function getNextValue($objsoc,$propal)
+	public function getNextValue($objsoc, $propal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -131,7 +139,7 @@ abstract class ModeleNumRefSupplierProposal
 	 *
 	 *  @return     string      Valeur
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

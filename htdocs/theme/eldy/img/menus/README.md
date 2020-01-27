@@ -2,8 +2,8 @@
 Tutorial to create a new image for menu:
 
 1) First find an image.
-2) With Gimp, open image and check there is a alpha channel. If not add one.
-3) Convert image into back and white (Menu Image - Mode - Grey levels).
+2) With Gimp, open image and check there is a alpha channel. If not add one (Menu Color - Convert to alpha).
+3) Convert image into black and white (Menu Image - Mode - Grey levels).
 4) Use the degrade tool with option (Menu Tools - Paint - Degrade - CTRL+L):
 * Mode: Erase color (you can also try "Clear only") 
 * Opacity: 50 +/-

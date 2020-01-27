@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,25 +33,32 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class mailing_fraise extends MailingTargets
 {
-    var $name='FundationMembers';                    // Identifiant du module mailing
+    public $name='FundationMembers';                    // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    var $desc='Foundation members with emails';
+    public $desc='Foundation members with emails';
     // Set to 1 if selector is available for admin users only
-    var $require_admin=0;
+    public $require_admin=0;
 
-    var $require_module=array('adherent');
-    var $picto='user';
+    public $require_module=array('adherent');
 
-    var $db;
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto='user';
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     /**
      *    Constructor
      *
      *  @param        DoliDB        $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 
 
@@ -62,7 +70,7 @@ class mailing_fraise extends MailingTargets
      *
      *    @return        string[]        Array with SQL requests
      */
-    function getSqlArrayForStats()
+    public function getSqlArrayForStats()
     {
         global $langs;
 
@@ -86,7 +94,7 @@ class mailing_fraise extends MailingTargets
      *  @param    string    $sql        Requete sql de comptage
      *    @return        int            Nb of recipients
      */
-    function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql = '')
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -103,12 +111,12 @@ class mailing_fraise extends MailingTargets
      *
      *   @return     string      Retourne zone select
      */
-    function formFilter()
+    public function formFilter()
     {
         global $conf, $langs;
-        $langs->load("members");
-		$langs->load("categories");
-		$langs->load("companies");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("members","companies","categories"));
 
         $form=new Form($this->db);
 
@@ -125,9 +133,9 @@ class mailing_fraise extends MailingTargets
         $s.='</select> ';
         $s.=$langs->trans("Type").': ';
         $s.='<select name="filter_type" class="flat">';
-        $sql = "SELECT rowid, libelle, statut";
+        $sql = "SELECT rowid, libelle as label, statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('member_type').")";
         $sql.= " ORDER BY rowid";
         $resql = $this->db->query($sql);
         if ($resql)
@@ -142,7 +150,7 @@ class mailing_fraise extends MailingTargets
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle,38,'middle');
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
                 $s.='</option>';
                 $i++;
             }
@@ -181,7 +189,7 @@ class mailing_fraise extends MailingTargets
         	{
         		$obj = $this->db->fetch_object($resql);
 
-        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
         		$s.='</option>';
         		$i++;
         	}
@@ -196,9 +204,9 @@ class mailing_fraise extends MailingTargets
 
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
-        $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
         $s.=' &nbsp; ';
-        $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
 
         return $s;
     }
@@ -210,35 +218,32 @@ class mailing_fraise extends MailingTargets
      *  @param    int        $id        ID
      *  @return     string      Url lien
      */
-    function url($id)
+    public function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('',"user").'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('', "user").'</a>';
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Ajoute destinataires dans table des cibles
      *
      *  @param    int        $mailing_id        Id of emailing
-     *  @param  array    $filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    public function add_to_target($mailing_id)
     {
-	    // Deprecation warning
-	    if ($filtersarray) {
-		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
-	    }
-
+        // phpcs:enable
     	global $langs,$_POST;
-		$langs->load("members");
-        $langs->load("companies");
+
+    	// Load translation files required by the page
+        $langs->loadLangs(array("members","companies"));
 
         $cibles = array();
         $now=dol_now();
 
-        $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'],$_POST['subscriptionaftermin'],$_POST['subscriptionaftersec'],$_POST['subscriptionaftermonth'],$_POST['subscriptionafterday'],$_POST['subscriptionafteryear']);
-        $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'],$_POST['subscriptionbeforemin'],$_POST['subscriptionbeforesec'],$_POST['subscriptionbeforemonth'],$_POST['subscriptionbeforeday'],$_POST['subscriptionbeforeyear']);
+        $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'], $_POST['subscriptionaftermin'], $_POST['subscriptionaftersec'], $_POST['subscriptionaftermonth'], $_POST['subscriptionafterday'], $_POST['subscriptionafteryear']);
+        $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'], $_POST['subscriptionbeforemin'], $_POST['subscriptionbeforesec'], $_POST['subscriptionbeforemonth'], $_POST['subscriptionbeforeday'], $_POST['subscriptionbeforeyear']);
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
@@ -254,9 +259,11 @@ class mailing_fraise extends MailingTargets
         $sql.= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''";     // Note that null != '' is false
         $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
         // Filter on status
-        if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND a.datefin >= '".$this->db->idate($now)."'";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '-1') {
+            $sql.= " AND a.statut=-1";
+        }
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
         if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql.= " AND a.statut=0";
         // Filter on date
         if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
@@ -265,8 +272,8 @@ class mailing_fraise extends MailingTargets
         // Filter on type
         if ($_POST['filter_type']) $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
         // Filter on category
-		if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
-		$sql.= " ORDER BY a.email";
+        if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
+        $sql.= " ORDER BY a.email";
         //print $sql;
 
         // Add targets into table
@@ -294,7 +301,7 @@ class mailing_fraise extends MailingTargets
                                 'other' =>
                                 ($langs->transnoentities("Login").'='.$obj->login).';'.
                                 ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')).';'.
-                                ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
+                                ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
                                 ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
@@ -314,7 +321,6 @@ class mailing_fraise extends MailingTargets
             return -1;
         }
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
-
 }

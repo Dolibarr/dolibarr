@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,12 +27,15 @@
 $supportedoauth2array=array(
     'OAUTH_GOOGLE_NAME'=>'google',
 );
-
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-    $supportedoauth2array['OAUTH_GITHUB_NAME']='github';
+	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME']='stripetest';
+	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME']='stripelive';
 }
 $supportedoauth2array['OAUTH_GITHUB_NAME']='github';
+
+
+
 // API access parameters OAUTH
 $list = array (
     array(
@@ -217,7 +220,17 @@ $list = array (
         'OAUTH_STRAVA_ID',
         'OAUTH_STRAVA_SECRET',
     ),
-    array(
+	array(
+		'OAUTH_STRIPE_TEST_NAME',
+		'OAUTH_STRIPE_TEST_ID',
+		'STRIPE_TEST_SECRET_KEY',
+	),
+	array(
+		'OAUTH_STRIPE_LIVE_NAME',
+		'OAUTH_STRIPE_LIVE_ID',
+		'STRIPE_LIVE_SECRET_KEY',
+	),
+	array(
         'OAUTH_TUMBLR_NAME',
         'OAUTH_TUMBLR_ID',
         'OAUTH_TUMBLR_SECRET',
@@ -258,7 +271,7 @@ $list = array (
  */
 function oauthadmin_prepare_head()
 {
-    global $langs, $conf, $user;
+    global $langs, $conf;
     $h = 0;
     $head = array();
 
@@ -266,12 +279,12 @@ function oauthadmin_prepare_head()
     $head[$h][1] = $langs->trans("OAuthServices");
     $head[$h][2] = 'services';
     $h++;
-    
+
     $head[$h][0] = dol_buildpath('/admin/oauthlogintokens.php', 1);
     $head[$h][1] = $langs->trans("TokenManager");
     $head[$h][2] = 'tokengeneration';
     $h++;
-    
+
     complete_head_from_modules($conf, $langs, null, $head, $h, 'oauthadmin');
 
     complete_head_from_modules($conf, $langs, null, $head, $h, 'oauthadmin', 'remove');

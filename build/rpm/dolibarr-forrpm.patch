@@ -15,21 +15,7 @@ diff -up htdocs/filefunc.inc.php.patch htdocs/filefunc.inc.php
 diff -up htdocs/install/inc.php.patch htdocs/install/inc.php
 --- htdocs/install/inc.php.patch	2011-09-03 02:33:26.450952000 +0200
 +++ htdocs/install/inc.php	2011-09-03 02:33:36.286952001 +0200
-@@ -71,8 +71,8 @@
- $conffile = "../conf/conf.php";
- $conffiletoshow = "htdocs/conf/conf.php";
- // For debian/redhat like systems
--//$conffile = "/etc/dolibarr/conf.php";
--//$conffiletoshow = "/etc/dolibarr/conf.php";
-+$conffile = "/etc/dolibarr/conf.php";
-+$conffiletoshow = "/etc/dolibarr/conf.php";
- 
- 
- // Load conf file if it is already defined
-diff -up htdocs/support/inc.php.patch htdocs/support/inc.php
---- htdocs/support/inc.php.patch	2011-09-03 02:34:39.606952000 +0200
-+++ htdocs/support/inc.php	2011-09-03 02:33:59.814952000 +0200
-@@ -69,8 +69,8 @@
+@@ -74,8 +74,8 @@
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems

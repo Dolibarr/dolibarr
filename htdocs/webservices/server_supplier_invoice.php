@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,13 +20,12 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 
@@ -39,7 +38,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -49,7 +48,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrSupplierInvoice',$ns);
+$server->configureWSDL('WebServicesDolibarrSupplierInvoice', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -224,7 +223,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
+function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -236,7 +235,7 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -251,7 +250,7 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->fournisseur->facture->lire)
 		{
 			$invoice=new FactureFournisseur($db);
-			$result=$invoice->fetch($id,$ref,$ref_ext);
+			$result=$invoice->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
 				$linesresp=array();
@@ -275,32 +274,32 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
 			    $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'invoice'=>array(
-				    	'id' => $invoice->id,
-			   			'ref' => $invoice->ref,
-                        'ref_supplier'=>$invoice->ref_supplier,
-			            'ref_ext' => $invoice->ref_ext,
-			            'fk_user_author' => $invoice->fk_user_author,
-			            'fk_user_valid' => $invoice->fk_user_valid,
-                        'fk_thirdparty' => $invoice->fk_soc,
-                        'type'=>$invoice->type,
-                        'status'=>$invoice->statut,
-                        'total_net'=>$invoice->total_ht,
-                        'total_vat'=>$invoice->total_tva,
-                        'total'=>$invoice->total_ttc,
-                        'date_creation'=>dol_print_date($invoice->datec,'dayhourrfc'),
-                        'date_modification'=>dol_print_date($invoice->tms,'dayhourrfc'),
-                        'date_invoice'=>dol_print_date($invoice->date,'dayhourrfc'),
-                        'date_term'=>dol_print_date($invoice->date_echeance,'dayhourrfc'),
-                        'label'=>$invoice->libelle,
-                        'paid'=>$invoice->paye,
-                        'note_private'=>$invoice->note_private,
-                        'note_public'=>$invoice->note_public,
-                        'close_code'=>$invoice->close_code,
-                        'close_note'=>$invoice->close_note,
+				    'id' => $invoice->id,
+		   			'ref' => $invoice->ref,
+                    'ref_supplier'=>$invoice->ref_supplier,
+		            'ref_ext' => $invoice->ref_ext,
+		            'fk_user_author' => $invoice->fk_user_author,
+		            'fk_user_valid' => $invoice->fk_user_valid,
+                    'fk_thirdparty' => $invoice->fk_soc,
+                    'type'=>$invoice->type,
+                    'status'=>$invoice->statut,
+                    'total_net'=>$invoice->total_ht,
+                    'total_vat'=>$invoice->total_tva,
+                    'total'=>$invoice->total_ttc,
+                    'date_creation'=>dol_print_date($invoice->datec, 'dayhourrfc'),
+                    'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
+                    'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
+                    'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
+                    'label'=>$invoice->label,
+                    'paid'=>$invoice->paid,
+                    'note_private'=>$invoice->note_private,
+                    'note_public'=>$invoice->note_public,
+                    'close_code'=>$invoice->close_code,
+                    'close_note'=>$invoice->close_note,
 
-                        'lines' => $linesresp
-//					        'lines' => array('0'=>array('id'=>222,'type'=>1),
-//				        				 '1'=>array('id'=>333,'type'=>1))
+                    'lines' => $linesresp,
+                    // 'lines' => array('0'=>array('id'=>222,'type'=>1),
+                    // '1'=>array('id'=>333,'type'=>1)),
 
 			    ));
 			}
@@ -334,7 +333,7 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
  * @return	array							Array result
  *
  */
-function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
+function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -346,7 +345,7 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 	if (! $error && empty($idthirdparty))
 	{
@@ -419,12 +418,12 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 				    'total_net'=>$invoice->total_ht,
 					'total_vat'=>$invoice->total_tva,
 					'total'=>$invoice->total_ttc,
-                    'date_creation'=>dol_print_date($invoice->datec,'dayhourrfc'),
-                    'date_modification'=>dol_print_date($invoice->tms,'dayhourrfc'),
-                    'date_invoice'=>dol_print_date($invoice->date,'dayhourrfc'),
-                    'date_term'=>dol_print_date($invoice->date_echeance,'dayhourrfc'),
-                    'label'=>$invoice->libelle,
-                    'paid'=>$invoice->paye,
+                    'date_creation'=>dol_print_date($invoice->datec, 'dayhourrfc'),
+                    'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
+                    'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
+                    'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
+                    'label'=>$invoice->label,
+                    'paid'=>$invoice->paid,
                     'note_private'=>$invoice->note_private,
                     'note_public'=>$invoice->note_public,
                     'close_code'=>$invoice->close_code,

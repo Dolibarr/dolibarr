@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,9 +24,10 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 
+// Load translation files required by the page
 $langs->load("exports");
 
-if (! $user->societe_id == 0)
+if (! $user->socid == 0)
   accessforbidden();
 
 $import=new Import($db);
@@ -39,32 +40,33 @@ $import->load_arrays($user);
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+llxHeader('', $langs->trans("ImportArea"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 print load_fiche_titre($langs->trans("ImportArea"));
 
 print $langs->trans("FormatedImportDesc1").'<br>';
-print $langs->trans("FormatedImportDesc2").'<br>';
+//print $langs->trans("FormatedImportDesc2").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichehalfleft">';
+//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List of import set
-print '<table class="noborder" width="100%">';
+/*
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ImportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
-$val=true;
+
 if (count($import->array_import_code))
 {
 	foreach ($import->array_import_code as $key => $value)
 	{
-		$val=!$val;
-		print '<tr '.$bc[$val].'><td>';
+		print '<tr class="oddeven"><td>';
 		print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
 		print $import->array_import_module[$key]->getName();
 		print '</td><td>';
@@ -83,34 +85,36 @@ else
 	print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
 }
 print '</table>';
+print '</div>';
 print '<br>';
+*/
 
 print '<div class="center">';
 if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'</a>';
+    print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
 	//}
 	//else
 	//{
-	//	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+	//	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
 	//}
 }
 print '</div>';
 print '<br>';
 
 
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available import format
-$var=true;
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
-print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
@@ -119,22 +123,21 @@ $liste=$model->liste_modeles($db);
 
 foreach($liste as $key)
 {
-	
 	print '<tr class="oddeven">';
-	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
+	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
-	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
+	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
 }
 
 print '</table>';
+print '</div>';
 
 
-print '</div></div></div>';
+//print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

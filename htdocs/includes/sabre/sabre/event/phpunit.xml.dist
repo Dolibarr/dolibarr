@@ -1,0 +1,18 @@
+<phpunit
+  colors="true"
+  bootstrap="vendor/autoload.php"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  strict="true"
+  >
+  <testsuite name="sabre-event">
+    <directory>tests/</directory>
+  </testsuite>
+
+  <filter>
+    <whitelist addUncoveredFilesFromWhitelist="true">
+        <directory suffix=".php">./lib/</directory>
+   </whitelist>
+  </filter>
+</phpunit>

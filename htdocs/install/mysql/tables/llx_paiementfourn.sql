@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -28,6 +28,7 @@ create table llx_paiementfourn
   amount				double(24,8) DEFAULT 0,    -- montant
   multicurrency_amount	double(24,8) DEFAULT 0,    -- multicurrency amount
   fk_user_author		integer,           -- auteur
+  fk_user_modif 		integer,
   fk_paiement			integer NOT NULL,  -- moyen de paiement
   num_paiement			varchar(50),       -- numero de paiement (cheque)
   note					text,

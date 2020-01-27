@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,21 +38,20 @@ class modBookmark extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 330;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des Bookmarks";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
 		$this->picto='bookmark';
 
 		// Data directories to create when module is enabled
@@ -94,14 +93,13 @@ class modBookmark extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 333; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
 	}
 }

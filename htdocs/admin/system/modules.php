@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,9 +25,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -39,9 +38,9 @@ if (! $user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("AvailableModules"),'','title_setup');
+print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
-print $langs->trans("ToActivateModule").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span><br>';
 print "<br>\n";
 
 $modules = array();
@@ -79,17 +78,17 @@ foreach($modulesdir as $dir)
 						{
 							try {
 	    						$objMod = new $modName($db);
-						
+
 			    				$modules[$objMod->numero]=$objMod;
 			    				$modules_names[$objMod->numero]=$objMod->name;
 	    						$modules_files[$objMod->numero]=$file;
 	    						$modules_fullpath[$file]=$dir.$file;
 	    						$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
-							} 
+							}
 							catch(Exception $e)
 							{
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
-							}	
+							}
 						}
 						else
 						{
@@ -104,11 +103,11 @@ foreach($modulesdir as $dir)
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';
-print '<td align="center">'.$langs->trans("IdModule").'</td>';
+print '<td class="center">'.$langs->trans("IdModule").'</td>';
 print '<td>'.$langs->trans("IdPermissions").'</td>';
 print '</tr>';
 $var=false;
@@ -123,19 +122,19 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="14px"',1);
-       	else print img_object($alt,$picto[$numero],'width="14px"');
+       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+       	else print img_object($alt, $picto[$numero], 'width="14px"');
     }
     else
     {
-      	print img_object($alt,$picto[$numero],'width="14px"');
+      	print img_object($alt, $picto[$numero], 'width="14px"');
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
 	// Version
 	print '<td>'.$modules[$numero]->getVersion().'</td>';
 	// Id
-	print '<td align="center">'.$numero.'</td>';
+	print '<td class="center">'.$numero.'</td>';
 	// Permissions
 	if ($modules[$numero]->rights)
 	{
@@ -159,5 +158,6 @@ foreach($rights_ids as $right_id)
 	$old = $right_id;
 }
 
+// End of page
 llxFooter();
 $db->close();

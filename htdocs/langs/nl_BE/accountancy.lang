@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+Accountancy=Boekhouding
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom scheidingsteken voor exporteren naar bestand
 ACCOUNTING_EXPORT_DATE=Datum formaat voor exporteren naar bestand
 ACCOUNTING_EXPORT_PIECE=Exporteren van het aantal stukken
@@ -17,9 +18,6 @@ AccountAccountingShort=Rekening
 AccountAccountingSuggest=Voorgesteld boekhoudkundige rekening
 CreateMvts=Nieuwe transactie maken
 UpdateMvts=Wijzigen van een transactie
-WriteBookKeeping=Wegschrijven van transacties naar grootboek.
-Bookkeeping=Grootboek
-CAHTF=Totaal leveranciersaankoop voor BTW
 Processing=Verwerken
 EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn
@@ -29,6 +27,4 @@ TotalVente=Totaal omzet voor belastingen
 AccountingJournalType2=Verkoop
 AccountingJournalType3=Inkoop
 Modelcsv=Model van een export
-OptionsDeactivatedForThisExportModel=Voor dit export model zijn de opties gedeactiveerd.
 Selectmodelcsv=Selecteer een model van export
-Modelcsv_CEGID=Exporteer naar CEGID Expert Comptabilité

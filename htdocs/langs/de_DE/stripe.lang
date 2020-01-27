@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Strip Moduleeinstellungen
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeSetup=Karten Moduleeinstellungen
+StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Zahlen mit Kreditkarte oder Stripe
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:
 PaymentForm=Zahlungsformular
@@ -9,32 +9,62 @@ ThisScreenAllowsYouToPay=Über dieses Fenster können Sie Online-Zahlungen an %s
 ThisIsInformationOnPayment=Informationen zu der vorzunehmenden Zahlung
 ToComplete=Vervollständigen
 YourEMail=E-Mail-Adresse für die Zahlungsbestätigung
-STRIPE_PAYONLINE_SENDEMAIL=Status-E-Mail nach einer Zahlung (erfolgreich oder nicht)
+STRIPE_PAYONLINE_SENDEMAIL=E-Mail-Benachrichtigung nach einem Zahlungsversuch (erfolgreich oder fehlgeschlagen)
 Creditor=Zahlungsempfänger
 PaymentCode=Zahlungscode
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Zahlen mit Stripe
 YouWillBeRedirectedOnStripe=Zur Eingabe Ihrer Kreditkartendaten werden Sie auf die sichere Bezahlseite von Stripe weitergeleitet.
 Continue=Nächster
 ToOfferALinkForOnlinePayment=URL für %s Zahlung
-ToOfferALinkForOnlinePaymentOnOrder=URL um Ihren Kunden eine %s Online-Bezahlseite für Bestellungen anzubieten
-ToOfferALinkForOnlinePaymentOnInvoice=URL um Ihren Kunden eine %s Online-Bezahlseite für Rechnungen anzubieten
-ToOfferALinkForOnlinePaymentOnContractLine=URL um Ihren Kunden eine %s Online-Bezahlseite für Vertragspositionen anzubieten
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Bezahlseite für frei wählbare Beträge anzubieten
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Mitgliedern eine %s Online-Bezahlseite für Mitgliedsbeiträge
-YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Richten Sie Stripe mit der URL <b>%s</b> ein, um nach Freigabe durch Stripe eine Zahlung anzulegen.
-YourPaymentHasBeenRecorded=Hiermit Bestätigen wir, dass die Zahlung ausgeführt wurde. Vielen Dank.
-YourPaymentHasNotBeenRecorded=Die Zahlung wurde nicht gespeichert und der Vorgang storniert. Vielen Dank.
 AccountParameter=Konto Parameter
 UsageParameter=Einsatzparameter
-InformationToFindParameters=Hilfe für das Finden der %s Kontoinformationen
+InformationToFindParameters=Hilfe beim Auffinden Ihrer %s Kontoinformationen
 STRIPE_CGI_URL_V2=URL für das Stripe CGI Zahlungsmodul
-VendorName=Name des Anbieters
+VendorName=Name des Lieferanten
 CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
 NewStripePaymentReceived=Neue Stripezahlung erhalten
 NewStripePaymentFailed=Neue Stripezahlung versucht, aber fehlgeschlagen
 STRIPE_TEST_SECRET_KEY=Geheimer Testschlüssel
 STRIPE_TEST_PUBLISHABLE_KEY=Öffentlicher Testschlüssel
+STRIPE_TEST_WEBHOOK_KEY=Webhook Testschlüssel
 STRIPE_LIVE_SECRET_KEY=Geheimer Produktivschlüssel
 STRIPE_LIVE_PUBLISHABLE_KEY=Öffentlicher Produktivschlüssel
+STRIPE_LIVE_WEBHOOK_KEY=Webhook Produktivschlüssel
+ONLINE_PAYMENT_WAREHOUSE=Lager verwenden um den Bestand bei Onlinezahlungen vermindern<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
 StripeLiveEnabled=Stripe live aktiviert (Nicht im Test/Sandbox Modus)
+StripeImportPayment=Kartenzahlungen importieren
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+StripeGateways=Kartengateways
+OAUTH_STRIPE_TEST_ID=Karten Connect Client ID (ca_...)
+OAUTH_STRIPE_LIVE_ID=Karten Connect Client ID (ca_...)
+BankAccountForBankTransfer=Bankkonto für Auszahlungen
+StripeAccount=Kartenkonto
+StripeChargeList=Liste der Kartengebühren
+StripeTransactionList=Liste der Kartentransaktionen
+StripeCustomerId=Kundennummer Karte
+StripePaymentModes=Kartenzahlungsarten
+LocalID=Lokale ID
+StripeID=Karte ID
+NameOnCard=Name auf Karte
+CardNumber=Kartennummer
+ExpiryDate=Ablaufdatum
+CVN=CVN
+DeleteACard=Karte löschen
+ConfirmDeleteCard=Wollen Sie diese Debit- oder Kreditkarte wirklich löschen?
+CreateCustomerOnStripe=Kunde mit Karte erstellen
+CreateCardOnStripe=Karte auf Stripe erstellen
+ShowInStripe=In Karte anzeigen
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

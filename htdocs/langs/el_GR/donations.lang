@@ -31,3 +31,4 @@ DONATION_ART200=Δείτε το άρθρο 200 από το CGI αν ανησυχ
 DONATION_ART238=Δείτε το άρθρο 238 από το CGI αν ανησυχείτε
 DONATION_ART885=Δείτε το άρθρο 885 από το CGI αν ανησυχείτε
 DonationPayment=Πληρωμή Δωρεάς
+DonationValidated=Donation %s validated

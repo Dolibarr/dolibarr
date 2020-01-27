@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,27 +38,26 @@ class modExport extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 240;
 
 		$this->family = "technic";
-		$this->module_position = 72;
+		$this->module_position = '72';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Outils d'exports de donnees Dolibarr (via un assistant)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'technic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/export/temp");
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array("export.php");
 
 		// Dependencies
 		$this->depends = array();
@@ -95,6 +94,5 @@ class modExport extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
 	}
 }

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,20 +24,18 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *	Class of a generic business object
+ *  Class of a generic business object
  */
 
 class GenericObject extends CommonObject
 {
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-	    $this->db=$db;
-	}
-
+    /**
+     * Constructor
+     *
+     * @param       DoliDB      $db     Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 }
-

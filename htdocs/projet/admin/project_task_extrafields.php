@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,8 +30,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("project");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('project', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -62,10 +62,10 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Project");
 
-llxHeader("",$langs->trans("ProjectsSetup"));
+llxHeader("", $langs->trans("ProjectsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("ProjectsSetup"), $linkback, 'title_setup');
 
 $head = project_admin_prepare_head();
 
@@ -112,6 +112,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

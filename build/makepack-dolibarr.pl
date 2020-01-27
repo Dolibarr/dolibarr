@@ -19,10 +19,10 @@ use Term::ANSIColor;
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
 $PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="ldestailleur\@vmprod.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
+$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
 
 
-#@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
+#@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
 "SF"=>"git ssh rsync",
@@ -36,8 +36,8 @@ $PUBLISHBETARC="ldestailleur\@vmprod.dolibarr.org:/home/dolibarr/dolibarr.org/ht
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
-"APS"=>"zip",
+"DEB"=>"dpkg dpatch",
+"FLATPACK"=>"flatpack",
 "EXEDOLIWAMP"=>"ISCC.exe",
 "SNAPSHOT"=>"tar"
 );
@@ -129,7 +129,7 @@ $BUILDROOT="$TEMP/buildroot";
 $result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION','([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+	if ( $_ =~ /define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
 }
 close IN;
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
@@ -142,7 +142,6 @@ $FILENAMETGZ         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEXZ          = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEDEB         = "see later";
-$FILENAMEAPS         = "$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP = "DoliWamp-$MAJOR.$MINOR.$BUILD";
 # For RPM
 $ARCH='noarch';
@@ -358,17 +357,16 @@ if ($nboftargetok) {
 		}
 		else
 		{
-			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with command:'\n";
+			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
 		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
 		{
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
 		}
 		else			# For a maintenance release
 		{
-			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			
+			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\'| sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
 		}
 		print "\n";
 		if (! $ret)
@@ -383,12 +381,25 @@ if ($nboftargetok) {
 			}
 		}
 	}
-		
+
 	# Build xml check file
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
-	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
+		print "Go to directory $SOURCE\n";
+		$olddir=getcwd();
+		chdir("$SOURCE");
+		
+		$ret=`git ls-files . --exclude-standard --others`;
+		if ($ret)
+		{
+				print "Some files exists in source directory and are not indexed neither excluded in .gitignore.\n";
+				print $ret;
+				print "Canceled.\n";
+				exit;
+		}
+		
+	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
 	  	print $ret."\n";
 	  	# Copy to final dir
@@ -450,15 +461,18 @@ if ($nboftargetok) {
 		print "Clean $BUILDROOT\n";
 		$ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/.editorconfig`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.tx`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/phpstan.neon`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
 		
 		$ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
@@ -466,10 +480,12 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.deb`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.dsc`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.tar.gz`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.tar.xz`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.deb`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.rpm`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar.gz`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar.xz`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tgz`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.xz`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip`;
@@ -521,12 +537,21 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot12.png`;
 
 		# Security to avoid to package data files 
+        print "Remove documents dir\n";
 		$ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/document`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
+        
+        print "Remove subdir of custom dir\n";
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs but not files
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs, even symbolic links, but not files
 
 		# Removed known external modules to avoid any error when packaging from env where external modules are tested 
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/abricot*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/allscreens*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ancotec*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/cabinetmed*`;
@@ -541,12 +566,14 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ndf*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nltechno*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nomenclature*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/of/`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/oscim*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/workstation*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
@@ -558,7 +585,7 @@ if ($nboftargetok) {
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/adapters`;		# Keep this removal in case we embed libraries
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`;		# Keep this removal in case we embed libraries
-        #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;					# _source must be kept into tarball for official debian, not for the rest
    	    
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
@@ -577,6 +604,8 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Examples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/unitTests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/license.md`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/tests`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/tests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/LICENSE`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-*`;
@@ -590,13 +619,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
-        
-        
-        print "Remove subdir of custom dir\n";
-   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs but not files
-   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs, even symbolic links, but not files
 	}
 
 	# Build package for each target
@@ -690,7 +712,7 @@ if ($nboftargetok) {
 			print "Go to directory $BUILDROOT\n";
 			$olddir=getcwd();
 			chdir("$BUILDROOT");
-			$cmd= "xz -9 -r $BUILDROOT/$FILENAMEAPS.xz \*";
+			$cmd= "xz -9 -r $BUILDROOT/$FILENAMEXZ.xz \*";
 			print $cmd."\n";
 			$ret= `$cmd`;
 			chdir("$olddir");
@@ -767,8 +789,8 @@ if ($nboftargetok) {
 			$cmd="cp -pr '$BUILDROOT/$PROJECT' '$BUILDROOT/$FILENAMETGZ2'";
 			$ret=`$cmd`;
 
-			# Removed files we don't need
-			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
+			# Removed files we don't need (already removed before)
+			#$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
 
 			print "Set permissions on files/dir\n";
 			$ret=`chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
@@ -849,6 +871,8 @@ if ($nboftargetok) {
 			unlink("$NEWDESTI/${FILENAMEDEB}.changes");
 			print "Remove target ${FILENAMEDEB}.debian.tar.gz...\n";
 			unlink("$NEWDESTI/${FILENAMEDEB}.debian.tar.gz");
+			print "Remove target ${FILENAMEDEB}.debian.tar.xz...\n";
+			unlink("$NEWDESTI/${FILENAMEDEB}.debian.tar.xz");
 			print "Remove target ${FILENAMEDEBNATIVE}.orig.tar.gz...\n";
 			unlink("$NEWDESTI/${FILENAMEDEBNATIVE}.orig.tar.gz");
 
@@ -915,8 +939,8 @@ if ($nboftargetok) {
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mike42/escpos-php/LICENSE.md`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mobiledetect/mobiledetectlib/LICENSE.txt`;
 			
-			# Removed files we don't need
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
+			# Removed files we don't need (already removed)
+			#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
 			
 			# Rename upstream changelog to match debian rules
 			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
@@ -978,13 +1002,13 @@ if ($nboftargetok) {
 			$ret=`chmod 755 $BUILDROOT/$PROJECT.tmp/debian/rules`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_myobject.class.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_mymodule.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
-			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/myobject.php`;
+			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
@@ -1024,97 +1048,11 @@ if ($nboftargetok) {
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
-			$ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
+			$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.changes "$NEWDESTI/"`;
 			next;
 		}
 		
-		if ($target eq 'APS') 
-		{
-			$NEWDESTI=$DESTI;
-			if ($NEWDESTI =~ /stable/)
-			{
-				mkdir($DESTI.'/package_aps');
-				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
-			} 
-			
-			$newbuild = $BUILD;
-			$newbuild =~ s/(dev|alpha)/0/gi;                # dev
-			$newbuild =~ s/beta/1/gi;                       # beta
-			$newbuild =~ s/rc./2/gi;                        # rc
-			if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-			# now newbuild is 0-0 or 0-3 for example
-			$REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
-			if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
-			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
-			
-			print "Remove target $FILENAMEAPS.zip...\n";
-			unlink "$NEWDESTI/$FILENAMEAPS.zip";
-
-			#rmdir "$BUILDROOT/$PROJECT.tmp";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
-			print "Create directory $BUILDROOT/$PROJECT.tmp\n";
-			$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp"`;
-			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
-			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
-			$ret=`$cmd`;
-
-			print "Remove other files\n";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/doap`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/exe`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/live`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/patch`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/rpm`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
-
-            $APSVERSION="1.2";
-            print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
-            open (SPECFROM,"<$BUILDROOT/$PROJECT/build/aps/APP-META-$APSVERSION.xml") || die "Error";
-            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml") || die "Error";
-            while (<SPECFROM>) {
-                $newbuild = $BUILD;
-                $newbuild =~ s/(dev|alpha)/0/gi;                # dev
-                $newbuild =~ s/beta/1/gi;                       # beta
-                $newbuild =~ s/rc./2/gi;                        # rc
-                if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-                # now newbuild is 0-0 or 0-3 for example
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
-                $_ =~ s/__RELEASE__/$RPMSUBVERSION/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure.php\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure.php\"";
-            $ret=`$cmd`;
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/doc/images\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/images\"";
-            $ret=`$cmd`;
- 
-            print "Remove other files\n";
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc`;
-            
-            print "Build APP-LIST.xml files\n";
-            
-            print "Compress $BUILDROOT/$PROJECT.tmp/$PROJECT into $FILENAMEAPS.zip...\n";
- 
-            print "Go to directory $BUILDROOT/$PROJECT.tmp\/$PROJECT\n";
-            $olddir=getcwd();
-            chdir("$BUILDROOT\/$PROJECT.tmp\/$PROJECT");
-            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip \*";
-            print $cmd."\n";
-            $ret= `$cmd`;
-            chdir("$olddir");
-                        
-    		# Move to final dir
-            print "Move $BUILDROOT/$FILENAMEAPS.zip to $NEWDESTI/$FILENAMEAPS.zip\n";
-            $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$NEWDESTI/$FILENAMEAPS.zip"`;
-            next;
-    	}
-
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
@@ -1136,7 +1074,7 @@ if ($nboftargetok) {
     		$ret=`cat "$SOURCE/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
 
     		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"\n";
-    		$cmd= "ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+    		$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			print "$cmd\n";
 			$ret= `$cmd`;
 			#print "$ret\n";
@@ -1168,7 +1106,7 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'none',					# none means it won't be published on SF
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'none',		# none means it won't be published on SF
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
@@ -1181,8 +1119,7 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'package_debian-ubuntu',
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'package_debian-ubuntu',
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',

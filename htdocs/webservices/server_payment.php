@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -27,7 +27,7 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';                // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
@@ -46,7 +46,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
        $langs->load("admin");
        dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-       print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+       print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
        print $langs->trans("ToActivateModule");
        exit;
 }
@@ -56,7 +56,7 @@ $server                              = new nusoap_server();
 $server->soap_defencoding            = 'UTF-8';
 $server->decode_utf8                 = false;
 $ns                                  = 'http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrPayment',$ns);
+$server->configureWSDL('WebServicesDolibarrPayment', $ns);
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -151,41 +151,41 @@ function createPayment($authentication, $payment)
     // Init and check authentication
     $objectresp = array();
     $errorcode  = '';
-       $errorlabel = '';
+    $errorlabel = '';
     $error      = 0;
-    $fuser      = check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser      = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
     // Check parameters
     if (empty($payment['amount']) && empty($payment['thirdparty_id'])) {
-       $error++;
-               $errorcode  ='KO';
-               $errorlabel ="You must specify the amount and the third party's ID.";
+        $error++;
+        $errorcode  ='KO';
+        $errorlabel ="You must specify the amount and the third party's ID.";
     }
 
     if (! $error)
     {
-               $soc = new Societe($db);
+        $soc = new Societe($db);
         $res = $soc->fetch($payment['thirdparty_id']);
 
-               $new_payment               = new Paiement($db);
-               $new_payment->amount       = doubleval($payment['amount']);
-               $new_payment->num_paiement = $payment['num_paiement'];
-               $new_payment->bank_account = intval($payment['bank_account']);
-               $new_payment->paiementid   = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
-               $new_payment->datepaye     = $now;
-               $new_payment->author       = $payment['thirdparty_id'];
-               $new_payment->amounts      = array();
+        $new_payment               = new Paiement($db);
+        $new_payment->amount       = doubleval($payment['amount']);
+        $new_payment->num_paiement = $payment['num_paiement'];
+        $new_payment->bank_account = intval($payment['bank_account']);
+        $new_payment->paiementid   = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
+        $new_payment->datepaye     = $now;
+        $new_payment->author       = $payment['thirdparty_id'];
+        $new_payment->amounts      = array();
 
-               if(intval($payment['invoice_id']) > 0) {
-                       $new_payment->amounts[ $payment['invoice_id'] ] = $new_payment->amount;
-               }
+        if (intval($payment['invoice_id']) > 0) {
+            $new_payment->amounts[ $payment['invoice_id'] ] = $new_payment->amount;
+        }
 
         $db->begin();
-               $result = $new_payment->create($fuser, true);
+        $result = $new_payment->create($fuser, true);
 
-               if($payment['bank_account']) {
-                       $new_payment->addPaymentToBank($fuser, 'payment', $payment['int_label'], $payment['bank_account'], $payment['emitter'], $payment['bank_source']);
-               }
+        if ($payment['bank_account']) {
+            $new_payment->addPaymentToBank($fuser, 'payment', $payment['int_label'], $payment['bank_account'], $payment['emitter'], $payment['bank_source']);
+        }
 
         if ($result < 0)
         {

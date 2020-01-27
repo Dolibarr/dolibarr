@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2006-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *  \file       htdocs/core/lib/order.lib.php
- *  \brief      Ensemble de fonctions de base pour le module commande
- *  \ingroup    commande
- */
+ *  \file       htdocs/core/lib/import.lib.php
+ *  \brief      Ensemble de fonctions de base pour le module import
+ *  \ingroup    import
 
 /**
  * Function to return list of tabs for import pages
@@ -32,7 +32,7 @@
  * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
  * @return	array					Array of tabs
  */
-function import_prepare_head($param, $maxstep=0)
+function import_prepare_head($param, $maxstep = 0)
 {
 	global $langs;
 
@@ -52,4 +52,3 @@ function import_prepare_head($param, $maxstep=0)
 
 	return $head;
 }
-

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,21 +33,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("members");
-$langs->load("companies");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","other"));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'adherent',$id);
+$result=restrictedArea($user, 'adherent', $id);
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -83,16 +83,15 @@ $form = new Form($db);
 
 $title=$langs->trans("Member") . " - " . $langs->trans("Documents");
 $helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($id > 0)
 {
     $result=$membert->fetch($object->typeid);
 	if ($result > 0)
 	{
-
-		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		// Build file list
+		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -113,9 +112,9 @@ if ($id > 0)
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         // Login
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -127,24 +126,24 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
 
         // Morphy
-        print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-        /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+        print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+        /*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
         print $form->showphoto('memberphoto',$object);
         print '</td>';*/
         print '</tr>';
 
         // Company
-        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
         // Civility
         print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
         print '</tr>';
 
-    	// Nbre fichiers
+    	// Number of Attached Files
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-		//Total taille
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		//Total Size Of Attached Files
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 		print '</table>';
 
@@ -170,6 +169,6 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
 $db->close();

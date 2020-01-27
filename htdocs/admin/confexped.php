@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>ù
  * Copyright (C) 2015      Claudio Aschieri     <c.aschieri@19.coop>
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,14 +29,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 
-$langs->load("admin");
-$langs->load("sendings");
-$langs->load("deliveries");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'sendings', 'deliveries'));
 
 if (!$user->admin)
   accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 
 /*
@@ -47,7 +46,7 @@ $action=GETPOST('action','alpha');
 if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
     // This option should always be set to on when module is on.
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
 /*
 if ($action == 'activate_sending')
@@ -67,14 +66,14 @@ if ($action == 'disable_sending')
 // Delivery note
 if ($action == 'activate_delivery')
 {
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
-    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);    // We must also enable this
+    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: confexped.php");
 	exit;
 }
-else if ($action == 'disable_delivery')
+elseif ($action == 'disable_delivery')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON",$conf->entity);
+	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
     header("Location: confexped.php");
     exit;
 }
@@ -87,10 +86,10 @@ else if ($action == 'disable_delivery')
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
 $form=new Form($db);
 
-llxHeader("",$langs->trans("SendingsSetup"));
+llxHeader("", $langs->trans("SendingsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
 
@@ -98,7 +97,7 @@ dol_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'sending');
 
 // Miscellaneous parameters
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Feature").'</td>';
 print '<td width="20">&nbsp;</td>';
@@ -135,11 +134,11 @@ print '<td class="center">';
 
 if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
-	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 else
 {
-	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
 print "</td>";
@@ -148,5 +147,6 @@ print '</table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

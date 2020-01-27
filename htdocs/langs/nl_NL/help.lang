@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum en Wiki ondersteuning
 EMailSupport=E-mailondersteuning
-RemoteControlSupport=Directe online ondersteuning en ondersteuning op afstand
+RemoteControlSupport=Online realtime / externe ondersteuning
 OtherSupport=Andere ondersteuning
 ToSeeListOfAvailableRessources=Om contact op te nemen zie de beschikbare bronnen:
-HelpCenter=Ondersteuningscentrum
-DolibarrHelpCenter=Dolibarr Help- en ondersteuningscentrum
-ToGoBackToDolibarr=Klik anders <a href="%s">hier om Dolibarr te gebruiken</a>
-TypeOfSupport=Ondersteuningsbron
+HelpCenter=Helpcentrum
+DolibarrHelpCenter=Help- en ondersteuningscentrum van Dolibarr
+ToGoBackToDolibarr=Anders <a href="%s">klikt u hier om Dolibarr te blijven gebruiken</a> .
+TypeOfSupport=Soort ondersteuning
 TypeSupportCommunauty=Gemeenschap (gratis)
 TypeSupportCommercial=Commercieel (betaald)
 TypeOfHelp=Soort
@@ -15,12 +15,9 @@ NeedHelpCenter=Hulp of support nodig?
 Efficiency=Efficiëntie
 TypeHelpOnly=Alleen Hulp
 TypeHelpDev=Hulp & Ontwikkeling
-TypeHelpDevForm=Hulp, ontwikkeling en aanpassingen
-ToGetHelpGoOnSparkAngels1=Sommige bedrijven kunnen snel (soms onmiddellijke) en efficiënt online ondersteuning bieden door middel van overname van uw computer. Dergelijke ondersteuners kunnen gevonden worden op <b>%s</b> website:
-ToGetHelpGoOnSparkAngels3=U kunt ook naar de lijst gaan van alle beschikbare coaches voor Dolibarr, klik hiervoor op de knop
-ToGetHelpGoOnSparkAngels2=Soms is er geen bedrijf te vinden op het moment van uw zoekopdracht, denk er dan aan om het filter te veranderen om te zoeken naar "alle beschikbare hulp". U kunt dan meer verzoeken versturen.
-BackToHelpCenter=Klik anders hier om <a href="%s"> terug te gaan naar de hoofdpagina van het ondersteuningscentrum.</a>
-LinkToGoldMember=U kunt een van de, vooraf door Dolibarr geselecteerde, coaches voor uw taal bellen (%s) door te klikken op zijn Widget (status en de maximale prijs worden automatisch bijgewerkt):
+TypeHelpDevForm=Help + Ontwikkeling + Training
+BackToHelpCenter=<a href="%s">Ga anders terug naar de startpagina van het Helpcentrum</a> .
+LinkToGoldMember=U kunt een van de door Dolibarr geselecteerde trainers voor uw taal (%s) bellen door op hun Widget te klikken (status en maximumprijs worden automatisch bijgewerkt):
 PossibleLanguages=Ondersteunde talen
-SubscribeToFoundation=Help het Dolibarr project, wordt lid van de stichting
+SubscribeToFoundation=Help het Dolibarr-project, abonneer u op de stichting
 SeeOfficalSupport=Voor officiële Dolibarr ondersteuning in uw taal: <br><b><a href="%s" target="_blank">%s</a></b>

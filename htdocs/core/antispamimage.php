@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -21,14 +21,14 @@
  *		\brief      Return antispam image
  */
 
-define('NOLOGIN',1);
+define('NOLOGIN', 1);
 
-if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER',1);
-if (! defined('NOREQUIREDB'))     define('NOREQUIREDB',1);
-if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
+if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER', 1);
+if (! defined('NOREQUIREDB'))     define('NOREQUIREDB', 1);
+if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 
 require_once '../main.inc.php';
 
@@ -51,18 +51,17 @@ for($i = 0; $i < $length; $i++)
 $sessionkey='dol_antispam_value';
 $_SESSION[$sessionkey]=$string;
 
-$img = imagecreate(80,32);
+$img = imagecreate(80, 32);
 if (empty($img))
 {
-    dol_print_error('',"Problem with GD creation");
+    dol_print_error('', "Problem with GD creation");
     exit;
 }
 
 // Define mime type
-top_httphead('image/png');
+top_httphead('image/png', 1);
 
 $background_color = imagecolorallocate($img, 250, 250, 250);
 $ecriture_color = imagecolorallocate($img, 0, 0, 0);
 imagestring($img, 4, 24, 8, $string, $ecriture_color);
 imagepng($img);
-

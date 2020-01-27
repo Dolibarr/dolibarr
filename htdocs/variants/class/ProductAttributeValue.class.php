@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -52,13 +52,18 @@ class ProductAttributeValue
 	 */
 	public $value;
 
-	public function __construct(DoliDB $db)
-	{
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
+    {
 		global $conf;
 
 		$this->db = $db;
 		$this->entity = $conf->entity;
-	}
+    }
 
 	/**
 	 * Gets a product attribute value
@@ -80,12 +85,12 @@ class ProductAttributeValue
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->fk_product_attribute = $result->fk_product_attribute;
-		$this->ref = $result->ref;
-		$this->value = $result->value;
+		$this->id = $obj->rowid;
+		$this->fk_product_attribute = $obj->fk_product_attribute;
+		$this->ref = $obj->ref;
+		$this->value = $obj->value;
 
 		return 1;
 	}
@@ -124,7 +129,6 @@ class ProductAttributeValue
 		$query = $this->db->query($sql);
 
 		while ($result = $this->db->fetch_object($query)) {
-
 			$tmp = new ProductAttributeValue($this->db);
 			$tmp->fk_product_attribute = $result->fk_product_attribute;
 			$tmp->id = $result->rowid;
@@ -140,15 +144,16 @@ class ProductAttributeValue
 	/**
 	 * Creates a value for a product attribute
 	 *
-	 * @return int <0 KO >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO >0 OK
 	 */
-	public function create()
+	public function create(User $user)
 	{
 		if (!$this->fk_product_attribute) {
 			return -1;
 		}
 
-		//Ref must be uppercase
+		// Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, entity)

@@ -6,16 +6,16 @@ Permission23102 = Erstelle/ändere geplanten Job
 Permission23103 = Lösche geplanten Job
 Permission23104 = Führe geplanten Job aus
 # Admin
-CronSetup= Jobverwaltungs-Konfiguration
+CronSetup=Jobverwaltungs-Konfiguration
 URLToLaunchCronJobs=URL zum Prüfen und Starten von speziellen Jobs
 OrToLaunchASpecificJob=Oder zum Prüfen und Starten von speziellen Jobs
 KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
-FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+FileToLaunchCronJobs=Befehlszeile zum Überprüfen und Starten von qualifizierten Cron-Jobs
 CronExplainHowToRunUnix=In Unix-Umgebung sollten Sie die folgenden crontab-Eintrag verwenden, um die Befehlszeile alle 5 Minuten ausführen
-CronExplainHowToRunWin=In Microsoft(tm) Windows Umgebungen kannst Du die Aufgabenplanung benutzen um die Kommandozeile jede 5 Minuten aufzurufen
+CronExplainHowToRunWin=In Microsoft™ Windows Umgebungen kannst Du die Aufgabenplanung benutzen, um die Kommandozeile alle 5 Minuten aufzurufen.
 CronMethodDoesNotExists=Klasse %s enthält keine Methode %s
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+CronJobDefDesc=Cron-Jobprofile sind in der Moduldeskriptordatei definiert. Wenn das Modul aktiviert ist, sind diese geladen und verfügbar, so dass Sie die Jobs über das Menü admin tools %s verwalten können.
+CronJobProfiles=Liste vordefinierter Cron-Jobprofile
 # Menu
 EnabledAndDisabled=Aktiviert und Deaktiviert
 # Page list
@@ -43,7 +43,7 @@ CronNoJobs=Keine Jobs eingetragen
 CronPriority=Rang
 CronLabel=Bezeichnung
 CronNbRun=Anzahl Starts
-CronMaxRun=max. Anzahl Starts
+CronMaxRun=Maximum number of launches
 CronEach=Jede
 JobFinished=Job gestartet und beendet
 #Page card
@@ -55,28 +55,30 @@ CronSaveSucess=Erfolgreich gespeichert
 CronNote=Kommentar
 CronFieldMandatory=Feld %s ist zwingend nötig
 CronErrEndDateStartDt=Enddatum kann nicht vor dem Startdatum liegen
-StatusAtInstall=Status at module installation
+StatusAtInstall=Status bei der Modulinstallation
 CronStatusActiveBtn=Aktivieren
 CronStatusInactiveBtn=Deaktivieren
 CronTaskInactive=Dieser Job ist deaktiviert
 CronId=ID
 CronClassFile=Dateiname mit Klasse
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Die auszuführende System-Kommandozeile
 CronCreateJob=Erstelle neuen cronjob
 CronFrom=Von
 # Info
 # Common
 CronType=Job Typ
-CronType_method=Call method of a PHP Class
+CronType_method=Aufruf-Methode einer PHP-Klasse
 CronType_command=Shell-Befehl
-CronCannotLoadClass=Kann Klasse %s oder Object %s nicht laden
-UseMenuModuleToolsToAddCronJobs=Gehen Sie in Menü "Start - Module Hilfsprogramme - Geplante Aufträge" um geplante Aufträge zu sehen/bearbeiten.
+CronCannotLoadClass=Die Klassendatei %s kann nicht geladen werden (um die Klasse %s zu verwenden)
+CronCannotLoadObject=Die Klassendatei %s wurde geladen, aber das Objekt %s wurde nicht gefunden
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Aufgabe deaktiviert
 MakeLocalDatabaseDumpShort=lokales Datenbankbackup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, nb of backup files to keep
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Bitte beachten: Aus Leistungsgründen können Ihre Jobs um bis zu %s Stunden verzögert werden, unabhängig vom nächsten Ausführungstermin.
+DATAPOLICYJob=Data cleaner and anonymizer

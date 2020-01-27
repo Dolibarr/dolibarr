@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -10,8 +10,8 @@
 */
 
 /**
- *	\file       advtargetingemaling/modules/mailings/advthirdparties.modules.php
- *	\ingroup    advtargetingemaling
+ *	\file       htdocs/core/modules/mailings/advthirdparties.modules.php
+ *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
  */
 
@@ -25,14 +25,22 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
-	var $name='ThirdPartyAdvancedTargeting';
+    public $name='ThirdPartyAdvancedTargeting';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc="Third parties";
-	var $require_admin=0;
+    public $desc="Third parties";
+    public $require_admin=0;
 
-	var $require_module=array("none");	// This module should not be displayed as Selector in mailling
-	var $picto='company';
-	var $db;
+    public $require_module=array("none");	// This module should not be displayed as Selector in mailling
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto='company';
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
@@ -40,14 +48,13 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db=$db;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
@@ -57,11 +64,12 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$contactid 		Array of contact id to add
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-	function add_to_target_spec($mailing_id,$socid,$type_of_target, $contactid)
+	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::add_to_target socid=".var_export($socid,true).' contactid='.var_export($contactid,true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
 
 		$cibles = array();
 
@@ -72,7 +80,7 @@ class mailing_advthirdparties extends MailingTargets
 				$sql= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql.= " WHERE s.entity IN (".getEntity('societe').")";
-				$sql.= " AND s.rowid IN (".implode(',',$socid).")";
+				$sql.= " AND s.rowid IN (".implode(',', $socid).")";
 				$sql.= " ORDER BY email";
 
     			// Stock recipients emails into targets table
@@ -82,9 +90,8 @@ class mailing_advthirdparties extends MailingTargets
     				$num = $this->db->num_rows($result);
     				$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
+    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found", LOG_DEBUG);
 
-    				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
@@ -97,10 +104,10 @@ class mailing_advthirdparties extends MailingTargets
     								'name' => $obj->name,
     								'firstname' => $obj->firstname,
     								'other' => '',
-    								'source_url' => $this->url($obj->id,'thirdparty'),
+    								'source_url' => $this->url($obj->id, 'thirdparty'),
     								'source_id' => $obj->id,
     								'source_type' => 'thirdparty'
-    						);
+    							);
     						}
     					}
 
@@ -122,12 +129,12 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$sql= "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql.= " WHERE socp.entity IN (".getEntity('societe').")";
+				$sql.= " WHERE socp.entity IN (".getEntity('socpeople').")";
 				if (count($contactid)>0) {
-					$sql.= " AND socp.rowid IN (".implode(',',$contactid).")";
+					$sql.= " AND socp.rowid IN (".implode(',', $contactid).")";
 				}
 				if (count($socid)>0) {
-					$sql.= " AND socp.fk_soc IN (".implode(',',$socid).")";
+					$sql.= " AND socp.fk_soc IN (".implode(',', $socid).")";
 				}
 				$sql.= " ORDER BY email";
 
@@ -138,9 +145,8 @@ class mailing_advthirdparties extends MailingTargets
     				$num = $this->db->num_rows($result);
     				$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found");
 
-    				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
@@ -153,7 +159,7 @@ class mailing_advthirdparties extends MailingTargets
     								'lastname' => $obj->lastname,
     								'firstname' => $obj->firstname,
     								'other' => '',
-    								'source_url' => $this->url($obj->id,'contact'),
+    								'source_url' => $this->url($obj->id, 'contact'),
     								'source_id' => $obj->id,
     								'source_type' => 'contact'
     							);
@@ -173,8 +179,9 @@ class mailing_advthirdparties extends MailingTargets
 		}
 
 
-		dol_syslog(get_class($this)."::add_to_target mailing cibles=".var_export($cibles,true), LOG_DEBUG);
-		return parent::add_to_target($mailing_id, $cibles);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 
 
@@ -186,7 +193,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+	public function getSqlArrayForStats()
 	{
 		// CHANGE THIS: Optionnal
 
@@ -204,7 +211,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  @param	string	$sql 		Not use here
 	 *	@return	    int			          Nb of recipients
 	 */
-	function getNbOfRecipients($sql='')
+	public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
@@ -224,7 +231,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *  @return     string      A html select zone
 	 */
-	function formFilter()
+	public function formFilter()
 	{
 		global $conf, $langs;
 
@@ -260,7 +267,7 @@ class mailing_advthirdparties extends MailingTargets
 				$type='';
 				if ($obj->type == 1) $type=$langs->trans("Supplier");
 				if ($obj->type == 2) $type=$langs->trans("Customer");
-				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
 				if ($type) $s.=' ('.$type.')';
 				$s.='</option>';
 				$i++;
@@ -273,7 +280,6 @@ class mailing_advthirdparties extends MailingTargets
 
 		$s.='</select>';
 		return $s;
-
 	}
 
 
@@ -284,17 +290,16 @@ class mailing_advthirdparties extends MailingTargets
 	 *  @param	string		$type	type
 	 *  @return string      	Url link
 	 */
-	function url($id,$type)
+	public function url($id, $type)
 	{
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0);
+			return $companystatic->getNomUrl(0, '', 0, 1);
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0);
+			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
 	}
-
 }

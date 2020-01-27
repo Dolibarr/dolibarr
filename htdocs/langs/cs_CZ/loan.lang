@@ -10,6 +10,7 @@ LoanCapital=Kapitál
 Insurance=Pojištění
 Interest=Zájem
 Nbterms=Počet termínů
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Potvrdit smazání tohoto úvěru
 LoanDeleted=Úvěr úspěšně smazán
 ConfirmPayLoan=Potvrďte klasifikaci zaplatit tento úvěr
 LoanPaid=Placený úvěr
-# Calc
-LoanCalc=Kalkulátor bankovního úvěru
-PurchaseFinanceInfo=Platební & finanční informace
-SalePriceOfAsset=Prodejní cena aktiv
-PercentageDown=Procento dlů
-LengthOfMortgage=Duration of loan
-AnnualInterestRate=Roční úroková sazba
-ExplainCalculations=Vysvětlení výpočtů
-ShowMeCalculationsAndAmortization=Ukažte mi výpočty a amortizaci
-MortgagePaymentInformation=Informace o platbě hypotéky
-DownPayment=Záloha
-DownPaymentDesc=<b>Záloha</b> = základní vynásobená procentem dolů dělená 100 (pro dolů 5% se stává 5/100 nebo 0,05)
-InterestRateDesc=<b>Úroková sazba</b> = roční úroková procena děleno 100,
-MonthlyFactorDesc=<b>Měsíční faktor</b> = výsledkem následujícího vzorce
-MonthlyInterestRateDesc=<b>Měsíční úroková sazba</b> = roční úroková sazba děleno 12 (za 12 měsíců v roce)
-MonthTermDesc=<b>Měsíc Termín</b> úvěru v měsících = počet let, na které jste vzali úvěr  - pozor na časy 12
-MonthlyPaymentDesc=Měsíční platba se počítá podle následujícího vzorce
-AmortizationPaymentDesc=<a href="#amortization">amortizace</a>se mění, jak moc vaše měsíční splátka jde vstříc zájmu banky, a kolik jde do splácení jistiny vašeho úvěru.
-AmountFinanced=Financovaná částka
-AmortizationMonthlyPaymentOverYears=Odpisy měsíční splátky: <b>%s</b> přes %s let
-Totalsforyear=Součty pro rok
-MonthlyPayment=Měsíční platby
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s půjde na ZÁJEM
-GoToPrincipal=%s půjde na HLAVNÍCH
-YouWillSpend=You will spend %s in year %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=vytvoření úvěru
+FinancialCommitment=Financial commitment
+InterestAmount=Zájem
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Konfigurace modulu úvěru
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

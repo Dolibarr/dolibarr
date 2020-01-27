@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Risorse
+MenuResourceIndex=risorse
 MenuResourceAdd=Nuova risorsa
 DeleteResource=Elimina risorsa
-ConfirmDeleteResourceElement=Conferma l'eliminazione della risorsa da questo elemento
-NoResourceInDatabase=Nessuna risorsa nel database
+ConfirmDeleteResourceElement=Conferma elimina la risorsa per questo elemento
+NoResourceInDatabase=Nessuna risorsa nel database.
 NoResourceLinked=Nessuna risorsa collegata
-
+ActionsOnResource=Eventi su questa risorsa
 ResourcePageIndex=Elenco delle risorse
 ResourceSingular=Risorsa
-ResourceCard=Scheda risorsa
+ResourceCard=Carta delle risorse
 AddResource=Crea una risorsa
 ResourceFormLabel_ref=Nome della risorsa
 ResourceType=Tipo di risorsa
 ResourceFormLabel_description=Descrizione della risorsa
 
-ResourcesLinkedToElement=Risorse collegate all'elemento
+ResourcesLinkedToElement=Risorse legate all&#39;elemento
 
 ShowResource=Mostra risorsa
 
-ResourceElementPage=Risorse dell'elemento
+ResourceElementPage=Risorse dell&#39;elemento
 ResourceCreatedWithSuccess=Risorsa creata con successo
-RessourceLineSuccessfullyDeleted=Riga di risorsa eliminata correttamente
-RessourceLineSuccessfullyUpdated=Riga di risorsa aggiornata correttamente
+RessourceLineSuccessfullyDeleted=Riga di risorse eliminata correttamente
+RessourceLineSuccessfullyUpdated=Riga delle risorse aggiornata correttamente
 ResourceLinkedWithSuccess=Risorsa collegata con successo
 
-ConfirmDeleteResource=Conferma l'eliminazione di questa risorsa
-RessourceSuccessfullyDeleted=Risorsa eliminata con successo
+ConfirmDeleteResource=Conferma per eliminare questa risorsa
+RessourceSuccessfullyDeleted=Risorsa eliminata correttamente
 DictionaryResourceType=Tipo di risorse
 
 SelectResource=Seleziona risorsa
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Risorse
+IdResource=Risorsa ID
+AssetNumber=Numero di serie
+ResourceTypeCode=Codice del tipo di risorsa
+ImportDataset_resource_1=risorse
+
+ErrorResourcesAlreadyInUse=Alcune risorse sono in uso
+ErrorResourceUseInEvent=%s utilizzato nell'evento %s

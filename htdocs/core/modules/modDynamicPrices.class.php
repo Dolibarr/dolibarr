@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,21 +36,20 @@ class modDynamicPrices extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         $this->numero = 2200;
 
         $this->family = "products";
+        $this->module_position = '85';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable the usage of math expressions for prices";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 0;
         // Name of image file used for this module.
         $this->picto='technic';
 
@@ -84,6 +83,5 @@ class modDynamicPrices extends DolibarrModules
         $this->rights = array();
         $this->rights_class = 'dynamicprices';
         $r=0;
-
     }
 }

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,10 +29,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/payment/modules_payment.php';
  */
 class mod_payment_cicada extends ModeleNumRefPayments
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PAY';
-	var $error='';
-	var $nom='Cicada';
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='PAY';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Cicada';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Cicada';
 
 
     /**
@@ -40,31 +60,31 @@ class mod_payment_cicada extends ModeleNumRefPayments
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
 
 
 	/**
-	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
 	 *
-	 *  @return     boolean     false si conflit, true si ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -80,9 +100,9 @@ class mod_payment_cicada extends ModeleNumRefPayments
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $payyymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $payyymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($payyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$payyymm))
+		if ($payyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -99,7 +119,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc,$object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $db,$conf;
 
@@ -125,26 +145,27 @@ class mod_payment_cicada extends ModeleNumRefPayments
 
 		//$date=time();
 		$date=$object->datepaye;
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s",$max+1);
+    	else $num = sprintf("%04s", $max+1);
 
 		dol_syslog(__METHOD__." return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
+	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
-	function payment_get_num($objsoc,$objforref)
+	public function payment_get_num($objsoc, $objforref)
 	{
-		return $this->getNextValue($objsoc,$objforref);
+        // phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
 	}
-
 }

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2017      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -63,9 +63,8 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled)
 	$warehouseLink = $warehouse->getNomUrl(1);
 }
 
-
-$langs->load("cashdesk");
-$langs->load("main");
+// Load translation files required by the page
+$langs->loadLangs(array("main","cashdesk"));
 
 print "\n".'<!-- menu.tpl.php -->'."\n";
 print '<div class="menu_bloc">';
@@ -75,11 +74,11 @@ print '<li class="menu_choix1"><a href="affIndex.php?menutpl=facturation&id=NOUV
 // Open new tab on backoffice (this is not a disconnect from POS)
 print '<li class="menu_choix2"><a href=".." target="backoffice"><span class="hideonsmartphone">'.$langs->trans("BackOffice").'</span></a></li>';
 // Disconnect
-print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['firstname'].' '.$_SESSION['lastname'];
-print ' <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a><br>';
+print '<li class="menu_choix0"><div class="cashdeskloginuser marginbottomonly valignmiddle"><div class="inline-block valignmiddle">'.$langs->trans("User").': '.$_SESSION['firstname'].' '.$_SESSION['lastname'].'</div>';
+print '<div class="inline-block valignmiddle"> <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a></div></div>';
 print '<form id="frmThirdparty" class="formulaire1 inline-block" method="post" action="facturation_verif.php?action=change_thirdparty">';
 print $langs->trans("CashDeskThirdParty").': ';
-print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', 's.client IN (1,3)', '', 0, 0, null, 0, 'valignmiddle inline-block');
+print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', '(s.client IN (1,3) AND s.status = 1)', '', 0, 0, null, 0, 'valignmiddle inline-block');
 print '<input class="button bouton_change_thirdparty inline-block valignmiddle" type="submit" id="bouton_change_thirdparty" value="'.$langs->trans("Modify").'">';
 //print $companyLink;
 print '<br>';

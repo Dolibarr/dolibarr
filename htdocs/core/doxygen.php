@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -27,10 +27,10 @@
  *      <br>
  *      Dolibarr official web site: <a href="https://www.dolibarr.org">www.dolibarr.org</a><br>
  *      <br>
- *      Dolibarr french portal: <a href="http://www.dolibarr.fr">www.dolibarr.fr</a><br>
- *      Dolibarr spanish portal: <a href="http://www.dolibarr.es">www.dolibarr.es</a><br>
- *      Dolibarr italian portal: <a href="http://www.dolibarr.it">www.dolibarr.it</a><br>
- *      Dolibarr greek portal: <a href="http://www.dolibarr.gr">www.dolibarr.gr</a><br>
- *      Dolibarr german portal: <a href="http://www.dolibarr.de">www.dolibarr.de</a><br>
+ *      Dolibarr french portal: <a href="https://www.dolibarr.fr">www.dolibarr.fr</a><br>
+ *      Dolibarr spanish portal: <a href="https://www.dolibarr.es">www.dolibarr.es</a><br>
+ *      Dolibarr italian portal: <a href="https://www.dolibarr.it">www.dolibarr.it</a><br>
+ *      Dolibarr greek portal: <a href="https://www.dolibarr.gr">www.dolibarr.gr</a><br>
+ *      Dolibarr german portal: <a href="https://www.dolibarr.de">www.dolibarr.de</a><br>
  *      <br>
  */

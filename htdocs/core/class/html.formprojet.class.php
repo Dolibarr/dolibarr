@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
+ * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,8 +29,15 @@
  */
 class FormProjets
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -37,22 +45,22 @@ class FormProjets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output a combo list with projects qualified for a third party / user
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id project preselected
+	 *	@param  string	$selected   	Id project preselected ('' or id of project)
 	 *	@param  string	$htmlname   	Name of HTML field
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
 	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *  @param	int		$disabled		Disabled
 	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
@@ -63,8 +71,9 @@ class FormProjets
 	 *	@param  int     $htmlid         Html id to use instead of htmlname
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='', $htmlid='')
-	{
+    public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '')
+    {
+        // phpcs:enable
 		global $langs,$conf,$form;
 
 		$out='';
@@ -81,23 +90,23 @@ class FormProjets
 				$selected_input_value=$project->ref;
 			}
 			$urloption='socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
-			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
-//				'update' => array(
-//					'projectid' => 'id'
-//				)
-			));
+            $out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
+                //  'update' => array(
+                //      'projectid' => 'id'
+                //  )
+            ));
 
-			$out.='<input type="text" class="minwidth200'.($morecss?' '.$morecss:'').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+            $out.='<input type="text" class="minwidth200'.($morecss?' '.$morecss:'').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
-			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid);
+			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, abs($discard_closed), $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss);
 		}
-		if ($discard_closed)
+		if ($discard_closed > 0)
 		{
 			if (class_exists('Form'))
 			{
-				if (empty($form)) $form=new Form($this->db);
+				if (! is_object($form)) $form=new Form($this->db);
 				$out.=$form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			}
 		}
@@ -110,6 +119,7 @@ class FormProjets
 		else return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns an array with projects qualified for a third party
 	 *
@@ -130,8 +140,9 @@ class FormProjets
 	 * @param  string  $morecss            More CSS
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='', $morecss='maxwidth500')
-	{
+    public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500')
+    {
+        // phpcs:enable
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -139,7 +150,7 @@ class FormProjets
 		if (empty($htmlid)) $htmlid = $htmlname;
 
 		$out='';
-        $outarray=array();
+		$outarray=array();
 
 		$hideunselectables = false;
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
@@ -148,7 +159,7 @@ class FormProjets
 		if (empty($user->rights->projet->all->lire))
 		{
 			$projectstatic=new Project($this->db);
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		}
 
 		// Search all projects
@@ -160,7 +171,7 @@ class FormProjets
 		if ($socid > 0)
 		{
 		    if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
-		    else if ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
+		    elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 		    {
 		        $sql.= " AND (p.fk_soc IN (".$socid.", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") OR p.fk_soc IS NULL)";
 		    }
@@ -177,7 +188,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	           	$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
-            	$morecss='minwidth100 maxwidth500';
+            	$morecss.=' minwidth100';
 			}
 
 			if (empty($option_only)) {
@@ -206,7 +217,7 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow=dol_trunc($obj->ref,18);
+						$labeltoshow=dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						$labeltoshow.=', '.dol_trunc($obj->title, $maxlength);
@@ -222,12 +233,12 @@ class FormProjets
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Draft");
 						}
-						else if ($obj->fk_statut == 2)
+						elseif ($obj->fk_statut == 2)
 						{
-							if ($discard_close == 2) $disabled=1;
+							if ($discard_closed == 2) $disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Closed");
 						}
-						else if ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						elseif ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 						{
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
@@ -292,11 +303,11 @@ class FormProjets
 	}
 
 	/**
-	 *	Output a combo list with projects qualified for a third party
+	 *  Output a combo list with tasks qualified for a third party
 	 *
-	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id task preselected
-	 *	@param  string	$htmlname   	Name of HTML select
+	 *  @param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *  @param  int		$selected   	Id task preselected
+	 *  @param  string	$htmlname   	Name of HTML select
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
@@ -304,35 +315,45 @@ class FormProjets
      *  @param	int		$forcefocus		Force focus on field (works with javascript only)
      *  @param	int		$disabled		Disabled
 	 *  @param	string	$morecss        More css added to the select component
+	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
+	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
+	 *  @param	User	$usertofilter	User object to use for filtering
 	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500')
+    public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
 	{
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		if (is_null($usertofilter))
+		{
+			$usertofilter = $user;
+		}
 
 		$out='';
 
 		$hideunselectables = false;
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
-		$projectsListId = false;
-		if (empty($user->rights->projet->all->lire))
+		if (empty($projectsListId))
 		{
-			$projectstatic=new Project($this->db);
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+			if (empty($usertofilter->rights->projet->all->lire))
+			{
+				$projectstatic=new Project($this->db);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
+			}
 		}
 
 		// Search all projects
-		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
 		$sql.= ' s.nom as name';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
-		$sql.= ', '.MAIN_DB_PREFIX.'projet_task as t';
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
+		$sql.= ' '.MAIN_DB_PREFIX.'projet_task as t';
+		$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		$sql.= " AND t.fk_projet = p.rowid";
-		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql.= " ORDER BY p.ref, t.ref ASC";
@@ -346,7 +367,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
             	$out.=$comboenhancement;
-            	$morecss='minwidth200 maxwidth500';
+            	$morecss='minwidth200imp maxwidth500';
 			}
 
 			if (empty($option_only)) {
@@ -366,43 +387,50 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire))
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire))
 					{
 						// Do nothing
 					}
 					else
 					{
-						if ($discard_closed == 1 && $obj->fk_statut == 2)
+						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED)
 						{
 							$i++;
 							continue;
 						}
 
-						$labeltoshow=dol_trunc($obj->ref,18);     // Project ref
-						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+						$labeltoshow = '';
 
-						if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
+						if ($showproject == 'all')
+						{
+							$labeltoshow.=dol_trunc($obj->ref, 18);     // Project ref
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$labeltoshow.=' '.dol_trunc($obj->title, $maxlength);
 
-						$disabled=0;
-						if ($obj->fk_statut == 0)
-						{
-							$disabled=1;
-							$labeltoshow.=' - '.$langs->trans("Draft");
+							if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
+
+							$disabled=0;
+							if ($obj->fk_statut == Project::STATUS_DRAFT)
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Draft");
+							}
+							elseif ($obj->fk_statut == Project::STATUS_CLOSED)
+							{
+								if ($discard_closed == 2) $disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Closed");
+							}
+							elseif ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+							}
+							$labeltoshow.=' - ';
 						}
-						else if ($obj->fk_statut == 2)
-						{
-							if ($discard_closed == 2) $disabled=1;
-							$labeltoshow.=' - '.$langs->trans("Closed");
-						}
-						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-						{
-							$disabled=1;
-							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-						}
+
 						// Label for task
-						$labeltoshow.=' - '.$obj->tref.' '.dol_trunc($obj->tlabel,$maxlength);
+						$labeltoshow.=$obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
 
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
@@ -449,6 +477,7 @@ class FormProjets
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
@@ -456,19 +485,21 @@ class FormProjets
 	 *    @param	string		$socid				If of thirdparty to use as filter or 'id1,id2,...'
 	 *    @param	string		$morecss			More CSS
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
+	 *    @param	string		$projectkey			Equivalent key  to fk_projet for actual table_element
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2)
+	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet")
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','payment_salary','payment_various','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
-		$projectkey="fk_projet";
+
 		//print $table_element;
 		switch ($table_element)
 		{
@@ -476,7 +507,7 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.label as ref";
 				break;
 			case "facture":
-				$sql = "SELECT t.rowid, t.facnumber as ref";
+				$sql = "SELECT t.rowid, t.ref as ref";
 				break;
 			case "facture_fourn":
 				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
@@ -507,6 +538,9 @@ class FormProjets
 			case 'stock_mouvement':
 				$sql = 'SELECT t.rowid, t.label as ref';
 				$projectkey='fk_origin';
+				break;
+			case "payment_salary":
+				$sql = "SELECT t.rowid, t.num_payment as ref";	// TODO In a future fill and use real ref field
 				break;
 			case "payment_various":
 				$sql = "SELECT t.rowid, t.num_payment as ref";
@@ -584,7 +618,7 @@ class FormProjets
 	 *    @param   string      $morecss            Add more css
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname, $preselected='-1', $showempty=1, $useshortlabel=0, $showallnone=0, $showpercent=0, $morecss='')
+	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '')
 	{
 		global $conf, $langs;
 
@@ -601,10 +635,16 @@ class FormProjets
 			if ($num > 0)
 			{
 				$sellist = '<select class="flat oppstatus'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-				if ($showempty) $sellist.= '<option value="-1">&nbsp;</option>';    // Without &nbsp, strange move of screen when switching value
-				if ($showallnone) $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>--'.$langs->trans("OnlyOpportunitiesShort").'--</option>';
-				if ($showallnone) $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>--'.$langs->trans("OpenedOpportunitiesShort").'--</option>';
-				if ($showallnone) $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>--'.$langs->trans("NotAnOpportunityShort").'--</option>';
+				if ($showempty) {
+                    // Without &nbsp, strange move of screen when switching value
+                    $sellist.= '<option value="-1">&nbsp;</option>';
+                }
+				if ($showallnone) {
+                    $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>-- '.$langs->trans("OnlyOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>-- '.$langs->trans("OpenedOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="notopenedopp"'.($preselected == 'notopenedopp'?' selected="selected"':'').'>-- '.$langs->trans("NotOpenedOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>-- '.$langs->trans("NotAnOpportunityShort").' --</option>';
+                }
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -614,7 +654,7 @@ class FormProjets
 					$sellist .= '>';
 					if ($useshortlabel)
 					{
-						$finallabel = ($langs->transnoentitiesnoconv("OppStatusShort".$obj->code) != "OppStatusShort".$obj->code ? $langs->transnoentitiesnoconv("OppStatusShort".$obj->code) : $obj->label);
+						$finallabel = ($langs->transnoentitiesnoconv("OppStatus".$obj->code) != "OppStatus".$obj->code ? $langs->transnoentitiesnoconv("OppStatus".$obj->code) : $obj->label);
 					}
 					else
 					{
@@ -645,5 +685,4 @@ class FormProjets
 			return -1;
 		}
 	}
-
 }

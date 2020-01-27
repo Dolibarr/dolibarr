@@ -1,0 +1,26 @@
+language: php
+php:
+  - 5.5
+  - 5.6
+  - 7
+  - hhvm
+
+matrix:
+  allow_failures:
+    - php: hhvm
+
+env:
+  matrix:
+    - LOWEST_DEPS=""
+    - LOWEST_DEPS="--prefer-lowest"
+
+before_script:
+  - composer update --prefer-source $LOWEST_DEPS
+
+script:
+  - ./bin/phpunit
+  - ./bin/sabre-cs-fixer fix . --dry-run --diff
+
+sudo: false
+
+cache: vendor

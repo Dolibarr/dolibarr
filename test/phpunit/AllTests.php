@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -75,7 +75,7 @@ class AllTests
     public static function suite()
     {
 
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
+        $suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';
         //$suite->addTestSuite('CoreTest');
@@ -87,6 +87,8 @@ class AllTests
         $suite->addTestSuite('DateLibTest');
         require_once dirname(__FILE__).'/UtilsTest.php';
         $suite->addTestSuite('UtilsTest');
+        require_once dirname(__FILE__).'/LesscTest.php';
+        $suite->addTestSuite('LesscTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
         //$suite->addTestSuite('DateLibTzFranceTest');
         require_once dirname(__FILE__).'/MarginsLibTest.php';
@@ -136,6 +138,8 @@ class AllTests
         require_once dirname(__FILE__).'/CommonObjectTest.php';
         $suite->addTestSuite('CommonObjectTest');
 
+        require_once dirname(__FILE__).'/ActionCommTest.php';
+        $suite->addTestSuite('ActionCommTest');
         require_once dirname(__FILE__).'/SocieteTest.php';
         $suite->addTestSuite('SocieteTest');
         require_once dirname(__FILE__).'/ContactTest.php';
@@ -151,11 +155,16 @@ class AllTests
         require_once dirname(__FILE__).'/DiscountTest.php';
         $suite->addTestSuite('DiscountTest');
 
+        require_once dirname(__FILE__).'/BOMTest.php';
+        $suite->addTestSuite('BOMTest');
+
         require_once dirname(__FILE__).'/ContratTest.php';
         $suite->addTestSuite('ContratTest');
 
         require_once dirname(__FILE__).'/FichinterTest.php';
         $suite->addTestSuite('FichinterTest');
+        require_once dirname(__FILE__).'/TicketTest.php';
+        $suite->addTestSuite('TicketTest');
 
         require_once dirname(__FILE__).'/PropalTest.php';
         $suite->addTestSuite('PropalTest');
@@ -191,6 +200,8 @@ class AllTests
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/ExpenseReportTest.php';
         $suite->addTestSuite('ExpenseReportTest');
+        require_once dirname(__FILE__).'/LoanTest.php';
+        $suite->addTestSuite('LoanTest');
 
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
@@ -199,6 +210,9 @@ class AllTests
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
+
+        require_once dirname(__FILE__).'/AccountingAccountTest.php';
+        $suite->addTestSuite('AccountingAccountTest');
 
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');
@@ -230,6 +244,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/FormAdminTest.php';
         $suite->addTestSuite('FormAdminTest');
+        require_once dirname(__FILE__).'/FormTest.php';
+        $suite->addTestSuite('FormTest');
 
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
@@ -240,7 +256,9 @@ class AllTests
         $suite->addTestSuite('FormAdminTest');
 
 
+        require_once dirname(__FILE__).'/PaypalTest.php';
+        $suite->addTestSuite('PaypalTest');
+
         return $suite;
     }
 }
-

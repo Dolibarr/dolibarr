@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -80,11 +80,13 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
+// $requestedpermissionsarray contains list of scopes.
+// Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 /** @var $apiService Service */
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
-// alos note that a refresh token is sent only after a prompt
+// also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
 
 $apiService->setApprouvalPrompt('force');
@@ -109,10 +111,10 @@ if ($action == 'delete')
 
 if (! empty($_GET['code']))     // We are coming from oauth provider page
 {
-	dol_syslog("We are coming fr mthe oauth provider page");
+	dol_syslog("We are coming from the oauth provider page");
 	//llxHeader('',$langs->trans("OAuthSetup"));
 
-    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
     //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
     //dol_fiche_head();
@@ -147,7 +149,7 @@ else // If entry on page with no parameter, we arrive here
     // Creation of record with state in this tables depend on the Provider used (see its constructor).
     if (GETPOST('state'))
     {
-        $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+    	$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
     }
     else
     {
@@ -167,4 +169,3 @@ else // If entry on page with no parameter, we arrive here
 // No view at all, just actions
 
 $db->close();
-

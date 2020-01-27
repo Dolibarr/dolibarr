@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -39,21 +39,20 @@ class modDocumentGeneration extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 1520;
 
 		$this->family = "technic";
-		$this->module_position = 80;
+		$this->module_position = '78';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Direct mail document generation";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='email';
 
 		// Data directories to create when module is enabled
@@ -97,15 +96,15 @@ class modDocumentGeneration extends DolibarrModules
 
 
 	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
+     *  @param      string  $options    Options when enabling module ('', 'noboxes')
+     *  @return     int                 1 if OK, 0 if KO
+     */
+    public function init($options = '')
+    {
 		global $conf;
 
 		// Permissions
@@ -113,6 +112,6 @@ class modDocumentGeneration extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

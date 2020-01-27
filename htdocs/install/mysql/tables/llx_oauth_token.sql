@@ -12,13 +12,15 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 
 CREATE TABLE llx_oauth_token (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     service varchar(36),
-    token text,
+    token text,						-- token in serialize() format, of an object StdOAuth2Token of library phpoauth2
+    tokenstring text,				-- token in json format '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
+    fk_soc integer,
     fk_user integer,
     fk_adherent integer,
     entity integer DEFAULT 1

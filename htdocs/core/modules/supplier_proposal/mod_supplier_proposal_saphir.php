@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -33,9 +33,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_proposal/modules_supplie
  */
 class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -43,32 +62,32 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstsupplier_proposal" value="SUPPLIER_PROPOSAL_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -79,17 +98,17 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -106,7 +125,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$supplier_proposal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $db,$conf;
 
@@ -123,9 +142,8 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		$date=$supplier_proposal->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'supplier_proposal','ref','',$customercode,$date);
+		$numFinal=get_next_value($db, $mask, 'supplier_proposal', 'ref', '', $customercode, $date);
 
 		return  $numFinal;
 	}
-
 }

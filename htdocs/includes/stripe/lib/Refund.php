@@ -8,72 +8,54 @@ namespace Stripe;
  * @property string $id
  * @property string $object
  * @property int $amount
- * @property mixed $balance_transaction
+ * @property string $balance_transaction
  * @property string $charge
  * @property int $created
  * @property string $currency
- * @property mixed $metadata
- * @property mixed $reason
- * @property mixed $receipt_number
+ * @property string $description
+ * @property string $failure_balance_transaction
+ * @property string $failure_reason
+ * @property StripeObject $metadata
+ * @property string $reason
+ * @property string $receipt_number
+ * @property string $source_transfer_reversal
  * @property string $status
+ * @property string $transfer_reversal
  *
  * @package Stripe
  */
 class Refund extends ApiResource
 {
 
-    /**
-     * @param string $id The ID of the refund to retrieve.
-     * @param array|string|null $options
-     *
-     * @return Refund
-     */
-    public static function retrieve($id, $options = null)
-    {
-        return self::_retrieve($id, $options);
-    }
+    const OBJECT_NAME = "refund";
+
+    use ApiOperations\All;
+    use ApiOperations\Create;
+    use ApiOperations\Retrieve;
+    use ApiOperations\Update;
 
     /**
-     * @param string $id The ID of the refund to update.
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return Refund The updated refund.
+     * Possible string representations of the failure reason.
+     * @link https://stripe.com/docs/api/refunds/object#refund_object-failure_reason
      */
-    public static function update($id, $params = null, $options = null)
-    {
-        return self::_update($id, $params, $options);
-    }
+    const FAILURE_REASON                     = 'expired_or_canceled_card';
+    const FAILURE_REASON_LOST_OR_STOLEN_CARD = 'lost_or_stolen_card';
+    const FAILURE_REASON_UNKNOWN             = 'unknown';
 
     /**
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return Collection of Refunds
+     * Possible string representations of the refund reason.
+     * @link https://stripe.com/docs/api/refunds/object#refund_object-reason
      */
-    public static function all($params = null, $options = null)
-    {
-        return self::_all($params, $options);
-    }
+    const REASON_DUPLICATE             = 'duplicate';
+    const REASON_FRAUDULENT            = 'fraudulent';
+    const REASON_REQUESTED_BY_CUSTOMER = 'requested_by_customer';
 
     /**
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return Refund The created refund.
+     * Possible string representations of the refund status.
+     * @link https://stripe.com/docs/api/refunds/object#refund_object-status
      */
-    public static function create($params = null, $options = null)
-    {
-        return self::_create($params, $options);
-    }
-
-    /**
-     * @param array|string|null $opts
-     *
-     * @return Refund The saved refund.
-     */
-    public function save($opts = null)
-    {
-        return $this->_save($opts);
-    }
+    const STATUS_CANCELED  = 'canceled';
+    const STATUS_FAILED    = 'failed';
+    const STATUS_PENDING   = 'pending';
+    const STATUS_SUCCEEDED = 'succeeded';
 }

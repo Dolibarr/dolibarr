@@ -5,14 +5,14 @@
 // Begin       : 2013-09-25
 // Last Update : 2013-09-25
 // Author      : Paul Nicholls - https://github.com/pauln
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 //
 // Based on    : tcpdf_parser.php
 // Version     : 1.0.003
 // Begin       : 2011-05-23
 // Last Update : 2013-03-17
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
 // Copyright (C) 2011-2013 Nicola Asuni - Tecnick.com LTD
 //
@@ -484,7 +484,7 @@ class tcpdi_parser {
 			$v = $sarr[$key];
 			if (($key == '/Type') AND ($v[0] == PDF_TYPE_TOKEN AND ($v[1] == 'XRef'))) {
 				$valid_crs = true;
-			} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
+			} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
 				// first object number in the subsection
 				$index_first = intval($v[1][0][1]);
 				// number of entries in the subsection

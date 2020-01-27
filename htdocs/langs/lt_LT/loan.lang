@@ -10,6 +10,7 @@ LoanCapital=Kapitalas
 Insurance=Draudimas
 Interest=Palūkanos
 Nbterms=Sąlygos numeris
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Patvirtinti šios paskolos panaikinimą
 LoanDeleted=Skola sėkmingai panaikinta 
 ConfirmPayLoan=Patvirtinti paskolos priskyrimą prie apmokėtų
 LoanPaid=Paskola grąžinta
-# Calc
-LoanCalc=Banko paskolų skaičiuoklė
-PurchaseFinanceInfo=Pirkimo ir finansavimo informacija
-SalePriceOfAsset=Turto pardavimo kaina
-PercentageDown=Procentų sumažėjimas
-LengthOfMortgage=Duration of loan
-AnnualInterestRate=Metinė palūkanų norma
-ExplainCalculations=Paaiškinti skaičiavimus
-ShowMeCalculationsAndAmortization=Parodyti skaičiavimus ir amortizaciją
-MortgagePaymentInformation=Įkeisto turto apmokėjimo informacija
-DownPayment=Pradinis mokėjimas
-DownPaymentDesc=<b>Pradinė įmoka</b> = Būsto kaina x procentų sumažėjimo / 100 ( 5% sumažėjimui yra 5/100 or 0.05)
-InterestRateDesc=<b>Palūkanų rodiklis</b> = Metinė palūkanų norma % / 100
-MonthlyFactorDesc=<b>Mėnesio faktorius</b> = Sekančios formulės rezultatas
-MonthlyInterestRateDesc=<b>Mėnesio palūkanų norma</b> = Metinė palūkanų norma / 12
-MonthTermDesc=<b>Mėnesių skaičius</b> = Paskolos metų skaičius x 12
-MonthlyPaymentDesc=Mėnesinė įmoka nustatoma pagal sekančią formulę
-AmortizationPaymentDesc=<a href="#amortizacija">amortizacija</a> parodo kokia mėnesinės įmokos dalis skiriama banko plaūkanoms ir kokia dalis - paskolos dengimui.
-AmountFinanced=Finansuota suma
-AmortizationMonthlyPaymentOverYears=Mėnesinės įmokos amortizacija: <b>%s</b> per %s metų
-Totalsforyear=Iš viso per metus
-MonthlyPayment=Mėnesinė įmoka
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s skiriama PALŪKANOMS
-GoToPrincipal=%s skiriama PASKOLOS GRĄŽINIMUI
-YouWillSpend=You will spend %s in year %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Palūkanos
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Paskolos modulio konfigūracija
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

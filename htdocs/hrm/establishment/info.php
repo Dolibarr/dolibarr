@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015      Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015      Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,18 +20,18 @@
  *  \brief      	Page to show info of an establishment
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
-$langs->load("admin");
-$langs->load("hrm");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
 if (! $user->admin) accessforbidden();
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 
 // View
 llxHeader();
@@ -53,5 +53,6 @@ if ($id)
     print '</div>';
 }
 
+// End of page
 llxFooter();
 $db->close();

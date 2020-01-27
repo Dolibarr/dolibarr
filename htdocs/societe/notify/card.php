@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,24 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("companies");
-$langs->load("mails");
-$langs->load("admin");
-$langs->load("other");
+$langs->loadLangs(array("companies", "mails", "admin", "other"));
 
-$socid = GETPOST("socid",'int');
-$action = GETPOST('action','aZ09');
-$contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
-$actionid=GETPOST('actionid');
+$socid     = GETPOST("socid", 'int');
+$action    = GETPOST('action', 'aZ09');
+$contactid = GETPOST('contactid');    // May be an int or 'thirdparty'
+$actionid  = GETPOST('actionid');
+$optioncss = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe','','');
+if ($user->socid) $socid=$user->socid;
+$result = restrictedArea($user, 'societe', '', '');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield=GETPOST("sortfield",'alpha');
-$sortorder=GETPOST("sortorder",'alpha');
-$page=GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield=GETPOST("sortfield", 'alpha');
+$sortorder=GETPOST("sortorder", 'alpha');
+$page=GETPOST("page", 'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="n.daten";
 if (empty($page) || $page == -1) { $page = 0; }
@@ -69,7 +67,7 @@ $hookmanager->initHooks(array('thirdpartynotification','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -81,12 +79,12 @@ if (empty($reshook))
     {
         if (empty($contactid))
         {
-    	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), null, 'errors');
+    	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
             $error++;
         }
         if ($actionid <= 0)
         {
-    	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), null, 'errors');
+    	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
             $error++;
         }
 
@@ -143,9 +141,9 @@ $object = new Societe($db);
 $result=$object->fetch($socid);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 
 if ($result > 0)
@@ -158,7 +156,7 @@ if ($result > 0)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -221,10 +219,10 @@ if ($result > 0)
 
 
     // Add notification form
-    print load_fiche_titre($langs->trans("AddNewNotification"),'','');
+    print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     $param="&socid=".$socid;
@@ -232,9 +230,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '"width="45%"', $sortfield, $sortorder);
+    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
     print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -261,9 +259,9 @@ if ($result > 0)
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
-        print $form->selectarray("typeid",$type);
+        print $form->selectarray("typeid", $type);
         print '</td>';
-        print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+        print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';
     }
     else
@@ -302,15 +300,15 @@ if ($result > 0)
     }
 
     // List of active notifications
-    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
 
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
-    print_liste_field_titre('','','');
+    print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '"width="45%"', $sortfield, $sortorder);
+    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
+    print_liste_field_titre('', '', '');
     print '</tr>';
 
 	$langs->load("errors");
@@ -339,7 +337,7 @@ if ($result > 0)
                 else
                 {
                     $langs->load("errors");
-                    print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$obj->email);
+                    print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
                 }
             }
             print '</td>';
@@ -351,7 +349,7 @@ if ($result > 0)
             if ($obj->type == 'email') print $langs->trans("Email");
             if ($obj->type == 'sms') print $langs->trans("SMS");
             print '</td>';
-            print '<td align="right"><a href="card.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+            print '<td class="right"><a href="card.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
             print '</tr>';
             $i++;
         }
@@ -397,7 +395,7 @@ if ($result > 0)
 		print '<td>';
 		print $langs->trans("Email");
 		print '</td>';
-		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
+		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
     }*/
 
@@ -432,6 +430,11 @@ if ($result > 0)
     {
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
+        if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        {
+        	$page = 0;
+        	$offset = 0;
+        }
     }
 
     $sql.= $db->plimit($limit+1, $offset);
@@ -452,7 +455,7 @@ if ($result > 0)
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -465,11 +468,11 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '', $sortfield, $sortorder);
     //print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
-    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, '', $sortfield, $sortorder, 'right ');
     print '</tr>';
 
     if ($num > 0)
@@ -514,7 +517,7 @@ if ($result > 0)
             }
            	print '</td>';*/
             // print
-            print'<td align="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
+            print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
             print '</tr>';
             $i++;
         }
@@ -525,9 +528,8 @@ if ($result > 0)
 
     print '</form>';
 }
-else dol_print_error('','RecordNotFound');
+else dol_print_error('', 'RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();

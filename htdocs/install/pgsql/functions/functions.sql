@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -24,10 +24,10 @@ CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITHOUT TIME ZONE) RETURNS B
 
 CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITH TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
 
-DROP FUNCTION date_format(timestamp without time zone,text);
+DROP FUNCTION IF EXISTS date_format(timestamp without time zone,text);
 CREATE OR REPLACE FUNCTION date_format(timestamp without time zone, text) RETURNS text AS $$ DECLARE i int := 1; temp text := ''; c text; n text; res text; BEGIN WHILE i <= pg_catalog.length($2) LOOP c := SUBSTRING ($2 FROM i FOR 1); IF c = '%' AND i != pg_catalog.length($2) THEN n := SUBSTRING ($2 FROM (i + 1) FOR 1); SELECT INTO res CASE WHEN n = 'a' THEN pg_catalog.to_char($1, 'Dy') WHEN n = 'b' THEN pg_catalog.to_char($1, 'Mon') WHEN n = 'c' THEN pg_catalog.to_char($1, 'FMMM') WHEN n = 'D' THEN pg_catalog.to_char($1, 'FMDDth') WHEN n = 'd' THEN pg_catalog.to_char($1, 'DD') WHEN n = 'e' THEN pg_catalog.to_char($1, 'FMDD') WHEN n = 'f' THEN pg_catalog.to_char($1, 'US') WHEN n = 'H' THEN pg_catalog.to_char($1, 'HH24') WHEN n = 'h' THEN pg_catalog.to_char($1, 'HH12') WHEN n = 'I' THEN pg_catalog.to_char($1, 'HH12') WHEN n = 'i' THEN pg_catalog.to_char($1, 'MI') WHEN n = 'j' THEN pg_catalog.to_char($1, 'DDD') WHEN n = 'k' THEN pg_catalog.to_char($1, 'FMHH24') WHEN n = 'l' THEN pg_catalog.to_char($1, 'FMHH12') WHEN n = 'M' THEN pg_catalog.to_char($1, 'FMMonth') WHEN n = 'm' THEN pg_catalog.to_char($1, 'MM') WHEN n = 'p' THEN pg_catalog.to_char($1, 'AM') WHEN n = 'r' THEN pg_catalog.to_char($1, 'HH12:MI:SS AM') WHEN n = 'S' THEN pg_catalog.to_char($1, 'SS') WHEN n = 's' THEN pg_catalog.to_char($1, 'SS') WHEN n = 'T' THEN pg_catalog.to_char($1, 'HH24:MI:SS') WHEN n = 'U' THEN pg_catalog.to_char($1, '?') WHEN n = 'u' THEN pg_catalog.to_char($1, '?') WHEN n = 'V' THEN pg_catalog.to_char($1, '?') WHEN n = 'v' THEN pg_catalog.to_char($1, '?') WHEN n = 'W' THEN pg_catalog.to_char($1, 'FMDay') WHEN n = 'w' THEN EXTRACT(DOW FROM $1)::text WHEN n = 'X' THEN pg_catalog.to_char($1, '?') WHEN n = 'x' THEN pg_catalog.to_char($1, '?') WHEN n = 'Y' THEN pg_catalog.to_char($1, 'YYYY') WHEN n = 'y' THEN pg_catalog.to_char($1, 'YY') WHEN n = '%' THEN pg_catalog.to_char($1, '%') ELSE NULL END; temp := temp operator(pg_catalog.||) res; i := i + 2; ELSE temp = temp operator(pg_catalog.||) c; i := i + 1; END IF; END LOOP; RETURN temp; END $$ IMMUTABLE STRICT LANGUAGE plpgsql;
 
-DROP FUNCTION date_format(timestamp with time zone,text);
+DROP FUNCTION IF EXISTS date_format(timestamp with time zone,text);
 CREATE OR REPLACE FUNCTION date_format(timestamp with time zone, text) RETURNS text AS $$ DECLARE i int := 1; temp text := ''; c text; n text; res text; BEGIN WHILE i <= pg_catalog.length($2) LOOP c := SUBSTRING ($2 FROM i FOR 1); IF c = '%' AND i != pg_catalog.length($2) THEN n := SUBSTRING ($2 FROM (i + 1) FOR 1); SELECT INTO res CASE WHEN n = 'a' THEN pg_catalog.to_char($1, 'Dy') WHEN n = 'b' THEN pg_catalog.to_char($1, 'Mon') WHEN n = 'c' THEN pg_catalog.to_char($1, 'FMMM') WHEN n = 'D' THEN pg_catalog.to_char($1, 'FMDDth') WHEN n = 'd' THEN pg_catalog.to_char($1, 'DD') WHEN n = 'e' THEN pg_catalog.to_char($1, 'FMDD') WHEN n = 'f' THEN pg_catalog.to_char($1, 'US') WHEN n = 'H' THEN pg_catalog.to_char($1, 'HH24') WHEN n = 'h' THEN pg_catalog.to_char($1, 'HH12') WHEN n = 'I' THEN pg_catalog.to_char($1, 'HH12') WHEN n = 'i' THEN pg_catalog.to_char($1, 'MI') WHEN n = 'j' THEN pg_catalog.to_char($1, 'DDD') WHEN n = 'k' THEN pg_catalog.to_char($1, 'FMHH24') WHEN n = 'l' THEN pg_catalog.to_char($1, 'FMHH12') WHEN n = 'M' THEN pg_catalog.to_char($1, 'FMMonth') WHEN n = 'm' THEN pg_catalog.to_char($1, 'MM') WHEN n = 'p' THEN pg_catalog.to_char($1, 'AM') WHEN n = 'r' THEN pg_catalog.to_char($1, 'HH12:MI:SS AM') WHEN n = 'S' THEN pg_catalog.to_char($1, 'SS') WHEN n = 's' THEN pg_catalog.to_char($1, 'SS') WHEN n = 'T' THEN pg_catalog.to_char($1, 'HH24:MI:SS') WHEN n = 'U' THEN pg_catalog.to_char($1, '?') WHEN n = 'u' THEN pg_catalog.to_char($1, '?') WHEN n = 'V' THEN pg_catalog.to_char($1, '?') WHEN n = 'v' THEN pg_catalog.to_char($1, '?') WHEN n = 'W' THEN pg_catalog.to_char($1, 'FMDay') WHEN n = 'w' THEN EXTRACT(DOW FROM $1)::text WHEN n = 'X' THEN pg_catalog.to_char($1, '?') WHEN n = 'x' THEN pg_catalog.to_char($1, '?') WHEN n = 'Y' THEN pg_catalog.to_char($1, 'YYYY') WHEN n = 'y' THEN pg_catalog.to_char($1, 'YY') WHEN n = '%' THEN pg_catalog.to_char($1, '%') ELSE NULL END; temp := temp operator(pg_catalog.||) res; i := i + 2; ELSE temp = temp operator(pg_catalog.||) c; i := i + 1; END IF; END LOOP; RETURN temp; END $$ IMMUTABLE STRICT LANGUAGE plpgsql;
 
 
@@ -69,6 +69,12 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent_type_extraf
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bank FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bank_account FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bank_account_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_blockedlog FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_blockedlog_authority FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bom_bom FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bom_bom_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bom_bomline FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bom_bomline_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bordereau_cheque FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_boxes_def FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_c_email_templates FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -96,7 +102,11 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_deplacement FOR EACH
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_don FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_don_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_element_resources FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_emailcollector_emailcollector FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_emailcollector_emailcollectoraction FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_emailcollector_emailcollectorfilter FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_entrepot FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_entrepot_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_events FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_expedition FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_expensereport FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -114,6 +124,8 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_fichinterdet_extrafi
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_livraison FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_loan FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_localtax FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mailing FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mailing_cibles FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_menu FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_notify FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_notify_def FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

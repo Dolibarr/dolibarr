@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,12 +22,7 @@
  */
 
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-$res=@include("../main.inc.php");				// For root directory
-if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
@@ -35,20 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("main");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
-$id						= GETPOST('id','int');
-$action					= GETPOST('action','alpha');
-$cancel					= GETPOST('cancel','alpha');
-$ref					= GETPOST('ref','alpha');
+$id						= GETPOST('id', 'int');
+$action					= GETPOST('action', 'alpha');
+$cancel					= GETPOST('cancel', 'alpha');
+$ref					= GETPOST('ref', 'alpha');
 $description			= GETPOST('description');
 $confirm				= GETPOST('confirm');
-$fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
+$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -57,7 +49,7 @@ if ($user->socid > 0)
 	accessforbidden();
 }
 
-if( ! $user->rights->resource->read)
+if (!$user->rights->resource->read)
 {
 	accessforbidden();
 }
@@ -67,24 +59,24 @@ $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 
-/*******************************************************************
- * ACTIONS
- ********************************************************************/
+/*
+ * Actions
+ */
 
-$hookmanager->initHooks(array('resource', 'resource_card','globalcard'));
-$parameters=array('resource_id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
+$parameters = array('resource_id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
 	if ($cancel)
 	{
-		if (! empty($backtopage))
+		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
 			exit;
@@ -94,18 +86,18 @@ if (empty($reshook))
 			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
 			exit;
 		}
-		$action='';
+		$action = '';
 	}
 
 	if ($action == 'add' && $user->rights->resource->write)
 	{
-		if (! $cancel)
+		if (!$cancel)
 		{
-			$error='';
+			$error = '';
 
 			if (empty($ref))
 			{
-				setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 				$action = 'create';
 			}
 			else
@@ -116,10 +108,10 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
-				$result=$object->create($user);
+				$result = $object->create($user);
 				if ($result > 0)
 				{
 					// Creation OK
@@ -142,9 +134,9 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && ! $cancel && $user->rights->resource->write)
+	if ($action == 'update' && !$cancel && $user->rights->resource->write)
 	{
-		$error=0;
+		$error = 0;
 
 		if (empty($ref))
 		{
@@ -152,10 +144,10 @@ if (empty($reshook))
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$res = $object->fetch($id);
-			if ( $res > 0 )
+			if ($res > 0)
 			{
 				$object->ref          			= $ref;
 				$object->description  			= $description;
@@ -163,12 +155,12 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) {
-					$error ++;
+					$error++;
 				}
 
-				$result=$object->update($user);
+				$result = $object->update($user);
 				if ($result > 0)
 				{
 					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -179,7 +171,6 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-
 			}
 			else
 			{
@@ -190,14 +181,14 @@ if (empty($reshook))
 
 		if ($error)
 		{
-			$action='edit';
+			$action = 'edit';
 		}
 	}
 
 	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes')
 	{
 		$res = $object->fetch($id);
-		if($res > 0)
+		if ($res > 0)
 		{
 			$result = $object->delete($id);
 
@@ -220,22 +211,21 @@ if (empty($reshook))
 }
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * View
+ */
+
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
-llxHeader('',$title,'');
+llxHeader('', $title, '');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ($action == 'create' || $object->fetch($id) > 0)
+if ($action == 'create' || $object->fetch($id, $ref) > 0)
 {
 	if ($action == 'create')
 	{
-		print load_fiche_titre($title,'','title_generic');
+		print load_fiche_titre($title, '', 'generic');
 		dol_fiche_head('');
 	}
 	else
@@ -246,25 +236,24 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 	if ($action == 'create' || $action == 'edit')
 	{
-		if ( ! $user->rights->resource->write )
-			accessforbidden('',0);
+		if (!$user->rights->resource->write) accessforbidden('', 0, 1);
 
 		// Create/Edit object
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="'.($action == "create"?"add":"update").'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="'.($action == "create" ? "add" : "update").'">';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
+		$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
 		print '</td></tr>';
 
 		// Description
@@ -277,17 +266,17 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id,'country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+		print $form->select_country($object->country_id, 'country_id');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters=array('objectsrc' => $objectsrc);
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$parameters = array('objectsrc' => $objectsrc);
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
-			print $object->showOptionals($extrafields,'edit');
+			print $object->showOptionals($extrafields, 'edit');
 		}
 
 		print '</table>';
@@ -295,9 +284,9 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		dol_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="' . $langs->trans($action == "create"?"Create":"Modify") . '">';
+		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '</div>';
 
@@ -310,18 +299,18 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
-	        $formconfirm = $form->formconfirm("card.php?&id=".$object->id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
+	        $formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
 	    }
 
 	    // Print form confirm
 	    print $formconfirm;
 
 
-	    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
-	    $morehtmlref='<div class="refidno">';
-	    $morehtmlref.='</div>';
+	    $morehtmlref = '<div class="refidno">';
+	    $morehtmlref .= '</div>';
 
 
 	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -333,11 +322,11 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		/*---------------------------------------
 		 * View object
 		 */
-		print '<table width="100%" class="border">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Resource type
 		print '<tr>';
-		print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
+		print '<td class="titlefield">'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
 		print $object->type_label;
 		print '</td>';
@@ -345,13 +334,13 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 		// Description
 		print '<tr>';
-		print '<td>' . $langs->trans("ResourceFormLabel_description") . '</td>';
+		print '<td>'.$langs->trans("ResourceFormLabel_description").'</td>';
 		print '<td>';
 		print $object->description;
 		print '</td>';
 
 		// Other attributes
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</tr>';
 
@@ -359,7 +348,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		print '<tr>';
 		print '<td>'.$langs->trans("CountryOrigin").'</td>';
 		print '<td>';
-		print getCountry($object->country_id,0,$db);
+		print getCountry($object->country_id, 0, $db);
 		print '</td>';
 		print '</tr>';
 
@@ -382,10 +371,10 @@ if ($action == 'create' || $object->fetch($id) > 0)
 	// modified by hook
 	if (empty($reshook))
 	{
-		if ($action != "create" && $action != "edit" )
+		if ($action != "create" && $action != "edit")
 		{
 			// Edit resource
-			if($user->rights->resource->write)
+			if ($user->rights->resource->write)
 			{
 				print '<div class="inline-block divButAction">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
@@ -395,7 +384,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		if ($action != "delete" && $action != "create" && $action != "edit")
 		{
 		    // Delete resource
-		    if($user->rights->resource->delete)
+		    if ($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';
 		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
@@ -408,8 +397,6 @@ if ($action == 'create' || $object->fetch($id) > 0)
 else {
 	dol_print_error();
 }
-
-
 
 // End of page
 llxFooter();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /** \defgroup   printing     Module printing
@@ -40,22 +40,20 @@ class modPrinting extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function  __construct($db)
+    public function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 64000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
-        $this->family = "technic";
-        $this->module_position = 520;
+        $this->family = "interface";
+        $this->module_position = '52';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
-		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable Direct Printing System.";
         $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 1;
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -68,9 +66,11 @@ class modPrinting extends DolibarrModules
         $this->config_page_url = array("printing.php@printing");
 
         // Dependencies
-        $this->depends = array();
-        $this->requiredby = array();
-        $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,7,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("printing");
@@ -111,13 +111,11 @@ class modPrinting extends DolibarrModules
                                 'url'=>'/printing/index.php?mainmenu=home&leftmenu=admintools',
                                 'langs'=>'printing',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                                 'position'=>300,
-                                'enabled'=>'$conf->printing->enabled && preg_match(\'/^admintools/\', $leftmenu)',
+                                'enabled'=>'$conf->printing->enabled && preg_match(\'/^(admintools|all)/\', $leftmenu)',
                                 'perms'=>'$user->rights->printing->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
                                 'target'=>'',
                                 'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
         $r++;
-
-
     }
 }

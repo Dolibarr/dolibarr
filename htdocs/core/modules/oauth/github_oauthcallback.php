@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\GitHub;
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -109,10 +109,10 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming fr mthe oauth provider page");
+	dol_syslog("We are coming from the oauth provider page");
     //llxHeader('',$langs->trans("OAuthSetup"));
 
-    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
     //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
     //dol_fiche_head();
@@ -125,14 +125,14 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
         //var_dump($_GET['code']);
         //var_dump($state);
         //var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
-    	
+
         //$token = $apiService->requestAccessToken($_GET['code'], $state);
         $token = $apiService->requestAccessToken($_GET['code']);
         // Github is a service that does not need state to be stored.
         // Into constructor of GitHub, the call
         // parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
         // has not the ending parameter to true like the Google class constructor.
-		
+
         setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
 
         $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
@@ -172,4 +172,3 @@ else // If entry on page with no parameter, we arrive here
 // No view at all, just actions
 
 $db->close();
-

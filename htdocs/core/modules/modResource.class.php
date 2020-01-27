@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module to manage resources into Dolibarr ERP/CRM
  */
@@ -55,7 +55,7 @@ class modResource extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
-		$this->module_position = 20;
+		$this->module_position = '16';
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -69,9 +69,6 @@ class modResource extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		// Where to store the module in setup page
-		// (0=common,1=interface,2=others,3=very specific)
-		$this->special = 2;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue'
@@ -82,26 +79,7 @@ class modResource extends DolibarrModules
 		// for default path (eg: /resource/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /resource/core/modules/barcode)
 		// for specific css file (eg: /resource/css/resource.css.php)
-		$this->module_parts = array(
-			// Set this to 1 if module has its own trigger directory
-			//'triggers' => 1,
-			// Set this to 1 if module has its own login method directory
-			//'login' => 0,
-			// Set this to 1 if module has its own substitution function file
-			//'substitutions' => 0,
-			// Set this to 1 if module has its own menus handler directory
-			//'menus' => 0,
-			// Set this to 1 if module has its own barcode directory
-			//'barcode' => 0,
-			// Set this to 1 if module has its own models directory
-			//'models' => 0,
-			// Set this to relative path of css if module has its own css file
-			//'css' => '/resource/css/resource.css.php',
-			// Set here all hooks context managed by module
-			// 'hooks' => array('actioncard','actioncommdao','resource_card','element_resource')
-			// Set here all workflow context managed by module
-			//'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
-		);
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/resource/temp");
@@ -117,7 +95,7 @@ class modResource extends DolibarrModules
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
-		$this->phpmin = array(5, 3);
+		$this->phpmin = array(5, 4);
 
 		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
@@ -231,7 +209,7 @@ class modResource extends DolibarrModules
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
+			'perms'=> '$user->rights->resource->write',
 			'target'=> '',
 			'user'=> 0
 		);
@@ -287,7 +265,7 @@ class modResource extends DolibarrModules
 		$this->import_tables_array[$r]=array('r'=>MAIN_DB_PREFIX.'resource','extra'=>MAIN_DB_PREFIX.'resource_extrafields');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('r.ref'=>"ResourceFormLabel_ref*",'r.fk_code_type_resource'=>'ResourceTypeCode','r.description'=>'ResourceFormLabel_description','r.note_private'=>"NotePrivate",'r.note_public'=>"NotePublic",'r.asset_number'=>'AssetNumber','r.datec'=>'DateCreation');
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity = ".$conf->entity;
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -307,7 +285,6 @@ class modResource extends DolibarrModules
 		$this->import_regex_array[$r]=array('s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
 		$this->import_examplevalues_array[$r]=array('r.ref'=>"REF1",'r.fk_code_type_resource'=>"Code from dictionary resource type",'r.datec'=>"2017-01-01 or 2017-01-01 12:30:00");
 		$this->import_updatekeys_array[$r]=array('r.rf'=>'ResourceFormLabel_ref');
-
 	}
 
 	/**
@@ -336,7 +313,7 @@ class modResource extends DolibarrModules
 	 *
 	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-	private function loadTables()
+	protected function loadTables()
 	{
 		return $this->_load_tables('/resource/sql/');
 	}

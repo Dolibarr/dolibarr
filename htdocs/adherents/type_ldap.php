@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,29 +29,28 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("members");
-$langs->load("admin");
-$langs->load("ldap");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "members", "ldap"));
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'adherent',$id,'adherent_type');
+$result = restrictedArea($user, 'adherent', $id, 'adherent_type');
 
 $object = new AdherentType($db);
 $object->fetch($id);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membertypeldapcard','globalcard'));
+$hookmanager->initHooks(array('membertypeldapcard', 'globalcard'));
 
 /*
  * Actions
  */
 
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -63,11 +62,11 @@ if (empty($reshook))
 
 		if ($result > 0)
 		{
-			$object->listMembersForMemberType();
+			$object->listMembersForMemberType('', 1);
 
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
-			$olddn = $dn;    // We can say that old dn = dn as we force synchro
+			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
 			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
@@ -100,7 +99,7 @@ dol_banner_tab($object, 'rowid', $linkback);
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPMemberTypeDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_TYPE_DN."</td></tr>\n";
@@ -122,7 +121,7 @@ print '</div>';
 dol_fiche_end();
 
 /*
- * Barre d'actions
+ * Action bar
  */
 
 print '<div class="tabsAction">';
@@ -138,7 +137,7 @@ if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) print "<br>\n";
 
 
 
-// Affichage attributs LDAP
+// Display LDAP attributes
 print load_fiche_titre($langs->trans("LDAPInformationsForThisMemberType"));
 
 print '<table width="100%" class="noborder">';
@@ -148,33 +147,34 @@ print '<td>'.$langs->trans("LDAPAttributes").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-// Lecture LDAP
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
+// LDAP reading
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
 if ($result > 0)
 {
-    $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info,1);
-    $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records = $ldap->getAttribute($dn,$search);
+    $info = $object->_load_ldap_info();
+    $dn = $object->_load_ldap_dn($info, 1);
+    $search = "(".$object->_load_ldap_dn($info, 2).")";
+
+    $records = $ldap->getAttribute($dn, $search);
 
     //print_r($records);
 
-    // Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    // Show tree
+    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
     {
-        if (! is_array($records))
+        if (!is_array($records))
         {
-            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+            print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
         }
         else
         {
-            $result=show_ldap_content($records,0,$records['count'],true);
+            $result = show_ldap_content($records, 0, $records['count'], true);
         }
     }
     else
     {
-        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+        print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
     }
 
     $ldap->unbind();
@@ -187,5 +187,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

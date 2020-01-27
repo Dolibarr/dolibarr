@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 /**
  * API class for accounts
  *
+ * @property DoliDB db
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
@@ -43,7 +44,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db;
         $this->db = $db;
@@ -61,11 +62,11 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         $list = array();
 
-        if(! DolibarrApiAccess::$user->rights->banque->lire) {
+        if (! DolibarrApiAccess::$user->rights->banque->lire) {
             throw new RestException(401);
         }
 
@@ -121,7 +122,7 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function get($id)
+    public function get($id)
     {
         if (! DolibarrApiAccess::$user->rights->banque->lire) {
             throw new RestException(401);
@@ -142,7 +143,7 @@ class BankAccounts extends DolibarrApi
      * @param array $request_data    Request data
      * @return int ID of account
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -167,13 +168,149 @@ class BankAccounts extends DolibarrApi
     }
 
     /**
+     * Create an internal wire transfer between two bank accounts
+     *
+     * @param int     $bankaccount_from_id  BankAccount ID to use as the source of the internal wire transfer		{@from body}{@required true}
+     * @param int     $bankaccount_to_id    BankAccount ID to use as the destination of the internal wire transfer  {@from body}{@required true}
+     * @param string  $date					Date of the internal wire transfer (UNIX timestamp)						{@from body}{@required true}{@type timestamp}
+     * @param string  $description			Description of the internal wire transfer								{@from body}{@required true}
+     * @param float	  $amount				Amount to transfer from the source to the destination BankAccount		{@from body}{@required true}
+     * @param float	  $amount_to			Amount to transfer to the destination BankAccount (only when accounts does not share the same currency)		{@from body}{@required false}
+     *
+     * @url POST    /transfer
+     *
+     * @return array
+     *
+     * @status 201
+     *
+     * @throws 401 Unauthorized: User does not have permission to configure bank accounts
+	 * @throws 404 Not Found: Either the source or the destination bankaccount for the provided id does not exist
+     * @throws 422 Unprocessable Entity: Refer to detailed exception message for the cause
+	 * @throws 500 Internal Server Error: Error(s) returned by the RDBMS
+     */
+    public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
+    {
+        if (! DolibarrApiAccess::$user->rights->banque->configurer) {
+            throw new RestException(401);
+        }
+
+        if ($bankaccount_from_id === $bankaccount_to_id) {
+            throw new RestException(422, 'bankaccount_from_id and bankaccount_to_id must be different !');
+        }
+
+        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+        $accountfrom = new Account($this->db);
+        $resultAccountFrom = $accountfrom->fetch($bankaccount_from_id);
+
+        if ($resultAccountFrom === 0) {
+            throw new RestException(404, 'The BankAccount for bankaccount_from_id provided does not exist.');
+        }
+
+        $accountto = new Account($this->db);
+        $resultAccountTo = $accountto->fetch($bankaccount_to_id);
+
+        if ($resultAccountTo === 0) {
+            throw new RestException(404, 'The BankAccount for bankaccount_to_id provided does not exist.');
+        }
+
+        if ($accountto->currency_code == $accountfrom->currency_code)
+        {
+            $amount_to = $amount;
+        }
+        else
+        {
+            if (!$amount_to || empty($amount_to))
+            {
+                throw new RestException(422, 'You must provide amount_to value since bankaccount_from and bankaccount_to does not share the same currency.');
+            }
+        }
+
+        $this->db->begin();
+
+        $error = 0;
+        $bank_line_id_from = 0;
+        $bank_line_id_to = 0;
+        $result = 0;
+        $user = DolibarrApiAccess::$user;
+
+        // By default, electronic transfert from bank to bank
+        $typefrom='PRE';
+        $typeto='VIR';
+
+        if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
+        {
+            // This is transfer of change
+            $typefrom='LIQ';
+            $typeto='LIQ';
+        }
+
+        /**
+         * Creating bank line records
+         */
+
+        if (!$error) {
+            $bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1*price2num($amount), '', '', $user);
+        }
+        if (!($bank_line_id_from > 0)) {
+            $error++;
+        }
+
+        if (!$error) {
+            $bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user);
+        }
+        if (!($bank_line_id_to > 0)) {
+            $error++;
+        }
+
+        /**
+         * Creating links between bank line record and its source
+         */
+
+        $url = DOL_URL_ROOT.'/compta/bank/line.php?rowid=';
+        $label = '(banktransfert)';
+        $type = 'banktransfert';
+
+        if (!$error) {
+            $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, $url, $label, $type);
+        }
+        if (!($result > 0)) {
+            $error++;
+        }
+
+        if (!$error) {
+            $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, $url, $label, $type);
+        }
+        if (!($result > 0)) {
+            $error++;
+        }
+
+        if (!$error)
+        {
+            $this->db->commit();
+
+            return array(
+                'success' => array(
+                    'code' => 201,
+                    'message' => 'Internal wire transfer created successfully.'
+                )
+            );
+        }
+        else
+        {
+            $this->db->rollback();
+            throw new RestException(500, $accountfrom->error.' '.$accountto->error);
+        }
+    }
+
+    /**
      * Update account
      *
      * @param int    $id              ID of account
      * @param array  $request_data    data
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -196,7 +333,7 @@ class BankAccounts extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $account->error);
+            throw new RestException(500, $account->error);
         }
     }
 
@@ -206,7 +343,7 @@ class BankAccounts extends DolibarrApi
      * @param int    $id    ID of account
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -237,7 +374,7 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $account = array();
         foreach (BankAccounts::$FIELDS as $field) {
@@ -248,14 +385,16 @@ class BankAccounts extends DolibarrApi
         return $account;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param object    $object    Object to clean
      * @return array Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
@@ -273,7 +412,7 @@ class BankAccounts extends DolibarrApi
      *
      * @url GET {id}/lines
      */
-    function getLines($id)
+    public function getLines($id)
     {
         $list = array();
 
@@ -325,7 +464,7 @@ class BankAccounts extends DolibarrApi
      *
      * @url POST {id}/lines
      */
-    function addLine($id, $date, $type, $label, $amount, $category=0, $cheque_number='', $cheque_writer='', $cheque_bank='')
+    public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '')
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
@@ -337,8 +476,16 @@ class BankAccounts extends DolibarrApi
             throw new RestException(404, 'account not found');
         }
 
-        $result = $account->addline($date, $type, $label, $amount, $cheque_number, $category,
-                                    DolibarrApiAccess::$user, $cheque_writer, $cheque_bank);
+        $result = $account->addline(
+            $date,
+            $type,
+            $label,
+            $amount,
+            $cheque_number,
+            $category,
+            DolibarrApiAccess::$user,
+            $cheque_writer, $cheque_bank
+        );
         if ($result < 0) {
             throw new RestException(503, 'Error when adding line to account: ' . $account->error);
         }
@@ -358,7 +505,7 @@ class BankAccounts extends DolibarrApi
      *
      * @url POST {id}/lines/{line_id}/links
      */
-    function addLink($id, $line_id, $url_id, $url, $label, $type)
+    public function addLink($id, $line_id, $url_id, $url, $label, $type)
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);

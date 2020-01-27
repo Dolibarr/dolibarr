@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *  \brief      This file is an CRUD class file (Create/Read/Update/Delete)
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 
@@ -31,18 +31,25 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Propalmergepdfproduct extends CommonObject
 {
-	var $element='propal_merge_pdf_product';			//!< Id that identify managed objects
-	var $table_element='propal_merge_pdf_product';		//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='propal_merge_pdf_product';
 
-	var $fk_product;
-	var $file_name;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $datec='';
-	var $tms='';
-	var $lang;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='propal_merge_pdf_product';
 
-	var $lines=array();
+	public $fk_product;
+	public $file_name;
+	public $fk_user_author;
+	public $fk_user_mod;
+	public $datec='';
+	public $tms='';
+	public $lang;
+
+	public $lines=array();
 
 
 
@@ -52,10 +59,9 @@ class Propalmergepdfproduct extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -66,7 +72,7 @@ class Propalmergepdfproduct extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -161,7 +167,7 @@ class Propalmergepdfproduct extends CommonObject
      *  @param	int		$id    Id object
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
     	global $langs,$conf;
 
@@ -201,8 +207,6 @@ class Propalmergepdfproduct extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->import_key = $obj->import_key;
-
-
             }
             $this->db->free($resql);
 
@@ -216,6 +220,7 @@ class Propalmergepdfproduct extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Load object in memory from the database
      *
@@ -223,8 +228,9 @@ class Propalmergepdfproduct extends CommonObject
      *  @param	string	$lang  			Lang string code
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_by_product($product_id, $lang='')
+    public function fetch_by_product($product_id, $lang = '')
     {
+        // phpcs:enable
     	global $langs,$conf;
 
     	$sql = "SELECT";
@@ -253,7 +259,6 @@ class Propalmergepdfproduct extends CommonObject
     		if ($this->db->num_rows($resql))
     		{
     			while($obj = $this->db->fetch_object($resql)) {
-
     				$line = new PropalmergepdfproductLine();
 
 	    			$line->id    = $obj->rowid;
@@ -275,11 +280,7 @@ class Propalmergepdfproduct extends CommonObject
 	    			}else {
 	    				$this->lines[$obj->file_name]=$line;
 	    			}
-
-
     			}
-
-
     		}
     		$this->db->free($resql);
 
@@ -301,7 +302,7 @@ class Propalmergepdfproduct extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    public function update($user = 0, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -312,9 +313,6 @@ class Propalmergepdfproduct extends CommonObject
 		if (isset($this->file_name)) $this->file_name=trim($this->file_name);
 		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
 		if (isset($this->lang)) $this->lang=trim($this->lang);
-
-
-
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -338,10 +336,10 @@ class Propalmergepdfproduct extends CommonObject
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
 
@@ -351,8 +349,8 @@ class Propalmergepdfproduct extends CommonObject
 	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
-	    	}
-		}
+	    //	}
+		//}
 
         // Commit or rollback
 		if ($error)
@@ -380,7 +378,7 @@ class Propalmergepdfproduct extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -431,6 +429,7 @@ class Propalmergepdfproduct extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
@@ -440,17 +439,18 @@ class Propalmergepdfproduct extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete_by_product($user, $product_id, $lang_id='',  $notrigger=0)
+	public function delete_by_product($user, $product_id, $lang_id = '', $notrigger = 0)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -460,8 +460,8 @@ class Propalmergepdfproduct extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		if (! $error)
 		{
@@ -495,23 +495,25 @@ class Propalmergepdfproduct extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete_by_file($user)
+	public function delete_by_file($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -521,8 +523,8 @@ class Propalmergepdfproduct extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		if (! $error)
 		{
@@ -557,13 +559,12 @@ class Propalmergepdfproduct extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		User making the clone
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new Propalmergepdfproduct($this->db);
@@ -579,20 +580,22 @@ class Propalmergepdfproduct extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+			$this->errors=array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
 		if (! $error)
 		{
-
-
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -614,7 +617,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *	@return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -625,10 +628,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->datec='';
 		$this->tms='';
 		$this->import_key='';
-
-
 	}
-
 }
 
 /**
@@ -636,18 +636,38 @@ class Propalmergepdfproduct extends CommonObject
  */
 class PropalmergepdfproductLine
 {
-	var $id;
+    /**
+     * @var int ID
+     */
+    public $id;
 
-	var $fk_product;
-	var $file_name;
-	var $lang;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $datec='';
-	var $tms='';
-	var $import_key;
+    /**
+     * @var int ID
+     */
+    public $fk_product;
 
-	function __construct() {
-		return 1;
-	}
+	public $file_name;
+	public $lang;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_mod;
+
+	public $datec='';
+	public $tms='';
+	public $import_key;
+
+    /**
+     *  Constructor
+     */
+    public function __construct()
+    {
+        return 1;
+    }
 }

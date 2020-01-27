@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,19 +40,18 @@ class modDon extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 700;
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des dons";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
 		$this->picto='bill';
@@ -141,7 +140,6 @@ class modDon extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
 	}
 
 
@@ -153,7 +151,7 @@ class modDon extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf;
 
@@ -162,6 +160,6 @@ class modDon extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','donation',".$conf->entity.")",
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

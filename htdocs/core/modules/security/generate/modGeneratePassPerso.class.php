@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
- * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,7 +24,7 @@
  *      \brief      File to manage no password generation.
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpassword.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
 
 
 /**
@@ -33,26 +33,34 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassPerso extends ModeleGenPassword
 {
-	var $id;
-	var $length;
-	var $length2; // didn't overright display
-	var $NbMaj;
-	var $NbNum;
-	var $NbSpe;
-	var $NbRepeat;
-	var $WithoutAmbi;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $db;
-	var $conf;
-	var $lang;
-	var $user;
+	public $length;
+	public $length2; // didn't overright display
+	public $NbMaj;
+	public $NbNum;
+	public $NbSpe;
+	public $NbRepeat;
+	public $WithoutAmbi;
 
-	var $Maj;
-	var $Min;
-	var $Nb;
-	var $Spe;
-	var $Ambi;
-	var $All;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $conf;
+	public $lang;
+	public $user;
+
+	public $Maj;
+	public $Min;
+	public $Nb;
+	public $Spe;
+	public $Ambi;
+	public $All;
 
 	/**
 	 *	Constructor
@@ -62,28 +70,28 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *	@param		Translate	$langs		Handler de langue
 	 *	@param		User		$user		Handler du user connecte
 	 */
-	function __construct($db, $conf, $langs, $user)
+	public function __construct($db, $conf, $langs, $user)
 	{
 		$this->id = "Perso";
 		$this->length = $langs->trans("SetupPerso");
 
-		$this->db=$db;
-		$this->conf=$conf;
-		$this->langs=$langs;
-		$this->user=$user;
+		$this->db = $db;
+		$this->conf = $conf;
+		$this->langs = $langs;
+		$this->user = $user;
 
-		if(empty($conf->global->USER_PASSWORD_PATTERN)){
+		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
 			// default value (8carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
-			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1','chaine',0,'',$conf->entity);
+			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1', 'chaine', 0, '', $conf->entity);
 		}
 
 		$this->Maj = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		$this->Min = strtolower($this->Maj);
 		$this->Nb = "0123456789";
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
-		$this->Ambi = array("1","I","l","|","O","0");
+		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
-		$tabConf = explode(";",$conf->global->USER_PASSWORD_PATTERN);
+		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 		$this->length2 = $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];
@@ -93,19 +101,18 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		if ($this->WithoutAmbi)
 		{
-			$this->Maj = str_replace($this->Ambi,"",$this->Maj);
-			$this->Min = str_replace($this->Ambi,"",$this->Min);
-			$this->Nb  = str_replace($this->Ambi,"",$this->Nb);
-			$this->Spe = str_replace($this->Ambi,"",$this->Spe);
+			$this->Maj = str_replace($this->Ambi, "", $this->Maj);
+			$this->Min = str_replace($this->Ambi, "", $this->Min);
+			$this->Nb  = str_replace($this->Ambi, "", $this->Nb);
+			$this->Spe = str_replace($this->Ambi, "", $this->Spe);
 		}
 
-		$pattern = $this->Min . (! empty($this->NbMaj)?$this->Maj:'') . (! empty($this->NbNum)?$this->Nb:'') . (! empty($this->NbSpe)?$this->Spe:'');
+		$pattern = $this->Min.(!empty($this->NbMaj) ? $this->Maj : '').(!empty($this->NbNum) ? $this->Nb : '').(!empty($this->NbSpe) ? $this->Spe : '');
 		$this->All = str_shuffle($pattern);
 
 		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
-
 	}
 
 	/**
@@ -113,7 +120,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *
 	 *      @return     string      Description of text
 	 */
-	function getDescription()
+	public function getDescription()
 	{
 		global $langs;
 		return $langs->trans("PasswordGenerationPerso");
@@ -124,39 +131,42 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *
 	 *      @return     string      Example of password
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->getNewGeneratedPassword();
 	}
 
 	/**
-	 * 		Build new password
+	 *  Build new password
 	 *
-	 *      @return     string      Return a new generated password
+	 *  @return     string      Return a new generated password
 	 */
-	function getNewGeneratedPassword()
+	public function getNewGeneratedPassword()
 	{
 		$pass = "";
-		for($i=0; $i<$this->NbMaj; $i++){ // Y
-			$pass .= $this->Maj[mt_rand(0,strlen($this->Maj) - 1)];
+		for ($i = 0; $i < $this->NbMaj; $i++) {
+            // Y
+			$pass .= $this->Maj[mt_rand(0, strlen($this->Maj) - 1)];
 		}
 
-		for($i=0; $i<$this->NbNum; $i++){ // X
-			$pass .= $this->Nb[mt_rand(0,strlen($this->Nb) - 1)];
+		for ($i = 0; $i < $this->NbNum; $i++) {
+            // X
+			$pass .= $this->Nb[mt_rand(0, strlen($this->Nb) - 1)];
 		}
 
-		for($i=0; $i<$this->NbSpe; $i++){ // @
-			$pass .= $this->Spe[mt_rand(0,strlen($this->Spe) - 1)];
+		for ($i = 0; $i < $this->NbSpe; $i++) {
+            // @
+			$pass .= $this->Spe[mt_rand(0, strlen($this->Spe) - 1)];
 		}
 
-		for($i=strlen($pass);$i<$this->length2; $i++){ // y
-			$pass .= $this->All[mt_rand(0,strlen($this->All) -1)];
+		for ($i = strlen($pass); $i < $this->length2; $i++) {
+            // y
+			$pass .= $this->All[mt_rand(0, strlen($this->All) - 1)];
 		}
 
 		$pass = str_shuffle($pass);
 
-		if ($this->validatePassword($pass))
-		{
+		if ($this->validatePassword($pass)) {
 			return $pass;
 		}
 
@@ -164,60 +174,66 @@ class modGeneratePassPerso extends ModeleGenPassword
 	}
 
 	/**
-	 * 		Validate a password
+	 *  Validate a password
 	 *
-	 *		@param		string	$password	Password to check
-	 *      @return     int					0 if KO, >0 if OK
+	 *  @param      string  $password   Password to check
+	 *  @return     bool                false if KO, true if OK
 	 */
-	function validatePassword($password)
+	public function validatePassword($password)
 	{
 		$password_a = str_split($password);
 		$maj = str_split($this->Maj);
 		$num = str_split($this->Nb);
 		$spe = str_split($this->Spe);
 
-		if(count(array_intersect($password_a, $maj)) < $this->NbMaj){
-			return 0;
+		if (count(array_intersect($password_a, $maj)) < $this->NbMaj) {
+			return false;
 		}
 
-		if(count(array_intersect($password_a, $num)) < $this->NbNum){
-			return 0;
+		if (count(array_intersect($password_a, $num)) < $this->NbNum) {
+			return false;
 		}
 
-		if(count(array_intersect($password_a, $spe)) < $this->NbSpe){
-			return 0;
+		if (count(array_intersect($password_a, $spe)) < $this->NbSpe) {
+			return false;
 		}
 
-		if(!$this->consecutiveInterationSameCharacter($password)){
-			return 0;
+		if (!$this->consecutiveInterationSameCharacter($password)) {
+			return false;
 		}
 
-		return 1;
+		return true;
 	}
 
 	/**
-	 * 		consecutive iterations of the same character
+	 *  Check the consecutive iterations of the same character. Return false if the number doesn't match the maximum consecutive value allowed.
 	 *
-	 *		@param		string	$password	Password to check
-	 *      @return     int					0 if KO, >0 if OK
+	 *  @param		string	$password	Password to check
+	 *  @return     bool
 	 */
-	function consecutiveInterationSameCharacter($password){
+    private function consecutiveInterationSameCharacter($password)
+    {
 		$last = "";
+
+		if (empty($this->NbRepeat)) return 1;
+
 		$count = 0;
 		$char = str_split($password);
-		foreach($char as $c){
-			if($c != $last){
+
+		foreach ($char as $c) {
+			if ($c != $last) {
 				$last = $c;
 				$count = 0;
-			}else{
-				$count++;
+
+				continue;
 			}
 
-			if($count >= $this->NbRepeat) {
-				return 0;
+            $count++;
+			if ($count > $this->NbRepeat) {
+				return false;
 			}
 		}
-		return 1;
+
+		return true;
 	}
 }
-

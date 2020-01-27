@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2014	Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2014	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -31,27 +31,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleBankAccountDoc extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+     */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+        // phpcs:enable
 		global $conf;
 
-		$type='bankaccount';
-		$liste=array();
+		$type = 'bankaccount';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
-

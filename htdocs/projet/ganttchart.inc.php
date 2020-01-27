@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -109,6 +109,10 @@ if (g.getDivId() != null)
 	g.setLang('<?php print $langs->getDefaultLang(1);?>');
 
 	<?php
+
+	echo "\n";
+	echo "/* g.AddTaskItem(new JSGantt.TaskItem(task_id, 'label', 'start_date', 'end_date', 'css', 'link', milestone, 'Resources', Compl%, Group, Parent, Open, 'Dependency', 'label','note', g)); */\n";
+
 	$level=0;
 	$tnums = count($tasks);
 	$old_project_id = 0;
@@ -122,8 +126,11 @@ if (g.getDivId() != null)
 			$projecttmp=new Project($db);
 			$projecttmp->fetch($t['task_project_id']);
 			$tmpt = array(
-				'task_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
-				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_notes'=>'');
+				'task_id'=> '-'.$t['task_project_id'], 'task_alternate_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'',
+				'task_start_date'=>'', 'task_end_date'=>'',
+				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0, 'task_notes'=>'',
+				'task_planned_workload'=>0
+			);
 			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
 			$old_project_id = $t['task_project_id'];
 		}
@@ -134,6 +141,8 @@ if (g.getDivId() != null)
 			findChildGanttLine($tasks, $t["task_id"], $task_dependencies, $level+1);
 		}
 	}
+
+	echo "\n";
 	?>
 
 	g.Draw(jQuery("#tabs").width()-40);
@@ -159,8 +168,9 @@ else
  * @param 	int		$project_id				Id of project
  * @return	void
  */
-function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project_id=null)
+function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $project_id = null)
 {
+	global $langs;
     global $dateformatinput2;
 
     $start_date = $task["task_start_date"];
@@ -188,7 +198,8 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
     }
     else
     {
-    	$parent = $task["task_parent"];
+    	$parent = $task["task_parent_alternate_id"];
+    	//$parent = $task["task_parent"];
     }
     // Define percent
     $percent = $task['task_percent_complete']?$task['task_percent_complete']:0;
@@ -230,7 +241,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
 	<dt>pGroup</dt><dd>(optional) indicates whether this is a group task (parent) - Numeric; 0 = normal task, 1 = standard group task, 2 = combined group task<a href='#combinedtasks' class="footnote">*</a></dd>
 	<dt>pParent</dt><dd>(required) identifies a parent pID, this causes this task to be a child of identified task. Numeric, top level tasks should have pParent set to 0</dd>
 	<dt>pOpen</dt><dd>(required) indicates whether a standard group task is open when chart is first drawn. Value must be set for all items but is only used by standard group tasks.  Numeric, 1 = open, 0 = closed</dd>
-	<dt>pDepend</dt><dd>(optional) comma separated list of id&#39;s this task is dependent on. A line will be drawn from each listed task to this item<br>Each id can optionally be followed by a dependency type suffix. Valid values are:<blockquote>'FS' - Finish to Start (default if suffix is omitted)<br />'SF' - Start to Finish<br />'SS' - Start to Start<br />'FF' - Finish to Finish</blockquote>If present the suffix must be added directly to the id e.g. '123SS'</dd>
+	<dt>pDepend</dt><dd>(optional) comma separated list of id&#39;s this task is dependent on. A line will be drawn from each listed task to this item<br>Each id can optionally be followed by a dependency type suffix. Valid values are:<blockquote>'FS' - Finish to Start (default if suffix is omitted)<br>'SF' - Start to Finish<br>'SS' - Start to Start<br>'FF' - Finish to Finish</blockquote>If present the suffix must be added directly to the id e.g. '123SS'</dd>
 	<dt>pCaption</dt><dd>(optional) caption that will be added after task bar if CaptionType set to "Caption"</dd>
 	<dt>pNotes</dt><dd>(optional) Detailed task information that will be displayed in tool tip for this task</dd>
 	<dt>pGantt</dt><dd>(required) javascript JSGantt.GanttChart object from which to take settings.  Defaults to &quot;g&quot; for backwards compatibility</dd>
@@ -238,7 +249,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
 
     //$note="";
 
-    $s = "\n// Add taks id=".$task["task_id"]." level = ".$level."\n";
+    $s = "\n// Add task level = ".$level." id=".$task["task_id"]." parent_id=".$task["task_parent"]." aternate_id=".$task["task_alternate_id"]." parent_aternate_id=".$task["task_parent_alternate_id"]."\n";
 
     //$task["task_is_group"]=1;		// When task_is_group is 1, content will be autocalculated from sum of all low tasks
 
@@ -251,10 +262,15 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
     $dependency = '';
     //$name = str_repeat("..", $level).$name;
 
-    $s.= "g.AddTaskItem(new JSGantt.TaskItem('".$task['task_id']."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($task['note'])."', g));";
+    $taskid = $task["task_alternate_id"];
+    //$taskid = $task['task_id'];
+
+    $note = $task['note'];
+
+    $note = dol_concatdesc($note, $langs->trans("Workload").' : '.($task['task_planned_workload'] ? convertSecondToTime($task['task_planned_workload'], 'allhourmin') : ''));
+
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem('".$taskid."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($note)."', g));";
     echo $s;
-
-
 }
 
 /**
@@ -269,9 +285,6 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
 function findChildGanttLine($tarr, $parent, $task_dependencies, $level)
 {
     $n=count($tarr);
-
-    echo "\n";
-    echo "/* g.AddTaskItem(new JSGantt.TaskItem(task_id, 'label', 'start_date', 'end_date', 'css', 'link', milestone, 'Resources', Compl%, Group, Parent, 1, 'Dependency', 'label','note', g)); */\n";
 
     $old_parent_id = 0;
     for ($x=0; $x < $n; $x++)

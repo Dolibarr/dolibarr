@@ -43,12 +43,12 @@ print 'Files has been created. Check its name from your explorer'."\n";
  * @author Nicola Asuni
  * @copyright 2004-2009 Nicola Asuni - Tecnick.com S.r.l (www.tecnick.com) Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
  * @link http://tcpdf.org
- * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ * @license https://www.gnu.org/copyleft/lesser.html LGPL
  * @since 2008-09-15
  */
 
-require_once('../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php');
-require_once('../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php');
+require_once '../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php';
+require_once '../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php';
 
 // create new PDF document
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -76,7 +76,7 @@ $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
 //set auto page breaks
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+$pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
 
 //set image scale factor
 //$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);

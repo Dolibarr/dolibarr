@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Šifra za domenu
 YouMustChangePassNextLogon=Šifra za korisnika <b>%s</b> na domeni <b>%s</b> mora biti promijenjena.
 UserMustChangePassNextLogon=Korisnik mora promijeniti šifru na domeni %s
 LDAPInformationsForThisContact=Information in LDAP database for this contact
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Contact synchronized
 ForceSynchronize=Force synchronizing Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Failed to read LDAP database. Check LDAP module setup and database accessibility.
+PasswordOfUserInLDAP=Password of user in LDAP

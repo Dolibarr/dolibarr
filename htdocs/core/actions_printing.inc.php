@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -28,8 +28,7 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
-if ($action == 'print_file' and $user->rights->printing->read)
-{
+if ($action == 'print_file' && $user->rights->printing->read) {
     $langs->load("printing");
     require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';
     $objectprint = new PrintingDriver($db);
@@ -48,14 +47,24 @@ if ($action == 'print_file' and $user->rights->printing->read)
             {
                 $printerfound++;
 
-                $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
+                $subdir='';
                 $module = GETPOST('printer', 'alpha');
-                if ($module =='commande_fournisseur') {
-                    $module = 'fournisseur';
-                    $subdir = 'commande';
+                switch ($module )
+                {
+                    case 'livraison' :
+                        $subdir = 'receipt';
+                        $module = 'expedition';
+                        break;
+                    case 'expedition' :
+                        $subdir = 'sending';
+                        break;
+                    case 'commande_fournisseur' :
+                        $module = 'fournisseur';
+                        $subdir = 'commande';
+                        break;
                 }
                 try {
-                    $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
+                    $ret = $printer->printFile(GETPOST('file', 'alpha'), $module, $subdir);
                     if ($ret > 0) {
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors, 'errors');

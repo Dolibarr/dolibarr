@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -28,15 +28,17 @@ create table llx_product_fournisseur_price
   fk_product			integer,
   fk_soc				integer,
   ref_fourn				varchar(30),
+  desc_fourn            text,
   fk_availability		integer,	   
-  price					double(24,8) DEFAULT 0,
+  price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,
   remise_percent		double NOT NULL DEFAULT 0,
   remise				double NOT NULL DEFAULT 0,
-  unitprice				double(24,8) DEFAULT 0,
+  unitprice				double(24,8) DEFAULT 0,		-- unit price without tax
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
-  unitcharges			double(24,8) DEFAULT 0,		-- deprecated
   default_vat_code	    varchar(10),
+  barcode                       varchar(180) DEFAULT NULL,          -- barcode
+  fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
   tva_tx				double(6,3) NOT NULL,
   localtax1_tx		    double(6,3) DEFAULT 0,
   localtax1_type        varchar(10)  NOT NULL DEFAULT '0',
@@ -52,6 +54,6 @@ create table llx_product_fournisseur_price
   fk_multicurrency		integer,
   multicurrency_code	varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_price	double(24,8) DEFAULT NULL,
-  multicurrency_price_ttc	double(24,8) DEFAULT NULL
+  multicurrency_unitprice   double(24,8) DEFAULT NULL,		-- unit price without tax
+  multicurrency_price		double(24,8) DEFAULT NULL
 )ENGINE=innodb;

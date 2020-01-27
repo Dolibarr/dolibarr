@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -27,13 +27,13 @@
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
 // Recupere root dolibarr
 //$path=preg_replace('/generate-produit.php/i','',$_SERVER["PHP_SELF"]);
-require (__DIR__. '/../../htdocs/master.inc.php');
+require __DIR__. '/../../htdocs/master.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -49,7 +49,7 @@ include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 define(GEN_NUMBER_PRODUIT, 100000);
 
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -61,8 +61,8 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-  $num = $db->num_rows($resql); $i = 0;
-  while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
+    $num = $db->num_rows($resql); $i = 0;
+    while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
@@ -85,16 +85,14 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
     print "Product ".$s;
     $produit = new Product($db);
-    $produit->type = mt_rand(0,1);
+    $produit->type = mt_rand(0, 1);
     $produit->status = 1;
     $produit->ref = ($produit->type?'S':'P').time().$s;
     $produit->label = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
-    $produit->price = mt_rand(1,1000);
+    $produit->price = mt_rand(1, 1000);
     $produit->tva_tx = "19.6";
     $ret=$produit->create($user);
     if ($ret < 0) print "Error $ret - ".$produit->error."\n";
 	else print " OK with ref ".$produit->ref."\n";
 }
-
-

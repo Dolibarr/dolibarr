@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2011-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2011-2012 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -31,11 +31,15 @@ create table llx_extrafields
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet
+	enabled         varchar(255),
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field
-	list			integer DEFAULT 1,							-- visibility of field. 0=Never visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing
+	list			varchar(255) DEFAULT '1',					-- visibility of field. 0=Never visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing
+	printable		boolean DEFAULT FALSE,						-- is the extrafield output on documents
+    totalizable     boolean DEFAULT FALSE,                      -- is extrafield totalizable on list
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
+	help            text,                                       -- to store help tooltip
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation

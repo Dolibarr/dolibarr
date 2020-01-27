@@ -7,9 +7,9 @@ namespace Stripe;
  *
  * @property string $id
  * @property string $object
- * @property mixed $bank_account
- * @property mixed $card
- * @property mixed $client_ip
+ * @property BankAccount $bank_account
+ * @property Card $card
+ * @property string $client_ip
  * @property int $created
  * @property bool $livemode
  * @property string $type
@@ -19,25 +19,18 @@ namespace Stripe;
  */
 class Token extends ApiResource
 {
-    /**
-     * @param string $id The ID of the token to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return Token
-     */
-    public static function retrieve($id, $opts = null)
-    {
-        return self::_retrieve($id, $opts);
-    }
+
+    const OBJECT_NAME = "token";
+
+    use ApiOperations\Create;
+    use ApiOperations\Retrieve;
 
     /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Token The created token.
+     * Possible string representations of the token type.
+     * @link https://stripe.com/docs/api/tokens/object#token_object-type
      */
-    public static function create($params = null, $opts = null)
-    {
-        return self::_create($params, $opts);
-    }
+    const TYPE_ACCOUNT      = 'account';
+    const TYPE_BANK_ACCOUNT = 'bank_account';
+    const TYPE_CARD         = 'card';
+    const TYPE_PII          = 'pii';
 }

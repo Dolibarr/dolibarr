@@ -1,0 +1,78 @@
+# Copyright (C) 2018 INOVEA CONSEIl info@inovea-conseil.com - Thanks to Claudio Aschieri
+#
+# # Module label 'ModuledatapolicyName'
+Module4100Name = Data Policy
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Conformità con GDPR
+
+#
+# Page d'administration
+#
+datapolicySetup = Module Setup
+Settings_DATAPOLICY = Configurazione modulo GDPR 
+datapolicySetupPage = In accordo con <a href="http://www.privacy-regulation.eu/it/5.htm" target="_blank">l'art 5 del GDPR </a> i dati personali devono essere conservati per un periodo di tempo che .... ed eliminati se non sono più utili agli scopi per cui sono stati processati.
+NB_MONTHS = %s mesi
+ONE_YEAR = 1 anno
+NB_YEARS = %s anni
+DATAPOLICY_TIERS_CLIENT = Cliente
+DATAPOLICY_TIERS_PROSPECT = Fornitore
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Potenziale Cliente / Cliente
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nè potenziale cliente / Nè cliente
+DATAPOLICY_TIERS_FOURNISSEUR = Fornitore
+DATAPOLICY_CONTACT_CLIENT = Cliente
+DATAPOLICY_CONTACT_PROSPECT = Potenziale cliente
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potenziale Cliente / Cliente
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nè potenziale cliente / Nè cliente
+DATAPOLICY_CONTACT_FOURNISSEUR = Fornitore
+DATAPOLICY_ADHERENT = Membri
+DATAPOLICY_Tooltip_SETUP = Tipo di contatto - Indica la scelta per ogni tipologia
+DATAPOLICYMail=Configurazione Email
+DATAPOLICYSUBJECTMAIL=Subject dell'e-mail
+DATAPOLICYCONTENTMAIL=Contenuto dell'e-mail
+DATAPOLICYSUBSITUTION=Puoi utilizzare le seguenti variabili nella tua email (LINKACCEPT consente di creare un link per registrare l'accettazione della persona, LINKREFUSED consente di registrare il rifiuto della persona):
+DATAPOLICYACCEPT= Messaggio dopo il consenso
+DATAPOLICYREFUSE=Messaggio dopo il rifiuto
+SendAgreementText=Puoi inviare un'email GDPR a tutti i tuoi contatti rilevanti (che non hanno ancora ricevuto un'e-mail e per i quali non hai registrato nulla sul loro accordo GDPR). Per fare ciò, utilizzare il seguente pulsante.
+SendAgreement=Invia emails
+AllAgreementSend = Tutte le email sono state inviate
+TXTLINKDATAPOLICYACCEPT= Testo per il link "Consenso" 
+TXTLINKDATAPOLICYREFUSE= Testo per il link "Consenso negato" 
+
+#
+# Extrafield
+#
+DATAPOLICY_BLOCKCHECKBOX = GDPR : Trattamento dei dati personali
+DATAPOLICY_consentement = Consenso ottenuto al Trattamento dei dati personali
+DATAPOLICY_opposition_traitement = Consenso negato al trattamento dei dati personali
+DATAPOLICY_opposition_prospection = Consenso negato al trattamento dei dati personali a fini commerciali
+
+#
+# Popup
+#
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizza un soggetto terzo
+DATAPOLICY_POPUP_ANONYME_TEXTE = Impossibile eliminare questo contatto da Dolibarr perchè vi sono elementi collegati. In conformità con il GDPR, renderai tutti questi dati anonimi per rispettare i tuoi obblighi. Vuoi continuare?
+
+
+#
+# Bouton portabilité
+# 
+DATAPOLICY_PORTABILITE = Portabilità GDPR
+DATAPOLICY_PORTABILITE_TITLE = Esporta i dati personali
+DATAPOLICY_PORTABILITE_CONFIRMATION = Vuoi davvero esportare i dati personali di questo contatto?
+
+#
+# Note ajoutée lors d'une anonymisation
+#
+ANONYMISER_AT = Anonimizzato il %s
+
+#V2
+DATAPOLICYReturn=GDPR Validazione
+DATAPOLICY_date = Data di accordo / disaccordo GDPR
+DATAPOLICY_send = Data di invio del consenso (e-mail)
+DATAPOLICYReturn = GDPR ritorno
+DATAPOLICY_SEND = Inviare GDPR e-mail
+MailSent=L'email è stata inviata
+
+#ERROR
+ErrorSubjectIsRequired= Errore: L'oggetto della mail è obbligatorio. Inserisci l'oggetto nella configurazione del modulo.
+=A causa di un problema tecnico, non siamo stati in grado di registrare la tua scelta. Ci scusiamo per questo. Contattaci per inviarci la tua scelta.

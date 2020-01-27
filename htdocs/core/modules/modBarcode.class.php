@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,19 +39,18 @@ class modBarcode extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 55;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des codes barres";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
 		$this->picto='barcode';
 
 		// Data directories to create when module is enabled
@@ -114,7 +113,7 @@ class modBarcode extends DolibarrModules
 								'url'=>'/barcode/codeinit.php?mainmenu=home&leftmenu=admintools',
 								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>300,
-								'enabled'=>'$conf->barcode->enabled && preg_match(\'/^admintools/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'enabled'=>'$conf->barcode->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->creer_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
@@ -130,7 +129,7 @@ class modBarcode extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);

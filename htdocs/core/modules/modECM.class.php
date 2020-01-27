@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**     \defgroup   ecm		Module ecm
@@ -32,12 +32,12 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modECM extends DolibarrModules
 {
 
-   /**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
     */
-	function __construct($db)
+    public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -48,17 +48,15 @@ class modECM extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to sort modules in module setup page
 		$this->family = "ecm";
-		$this->module_position = 10;
+		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Electronic Content Management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=other)
-		$this->special = 0;
 		// Name of png file (without png) used for this module
 		$this->picto='dir';
 
@@ -131,7 +129,7 @@ class modECM extends DolibarrModules
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
-							  'position'=>100,
+							  'position'=>82,
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'enabled'=>'$conf->ecm->enabled',
 							  'target'=>'',
@@ -181,4 +179,3 @@ class modECM extends DolibarrModules
 		$r++;
 	}
 }
-

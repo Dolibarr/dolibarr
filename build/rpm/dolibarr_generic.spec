@@ -46,7 +46,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, php-adodb, php-nusoap, dejavu-sans-fonts
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-adodb, php-nusoap, dejavu-sans-fonts, php-mbstring, php-xml
 Requires: mysql-server, mysql
 BuildRequires: desktop-file-utils
 %else
@@ -54,7 +54,7 @@ BuildRequires: desktop-file-utils
 Group: Applications/Productivity
 Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ldap, php-imap, php-mysqli, php-openssl, fonts-ttf-dejavu 
 Requires: mysql, mysql-client 
-%else
+%else%_datadir/dolibarr/htdocs/datapolicy
 %if 0%{?suse_version}
 # Voir http://en.opensuse.org/openSUSE:Packaging_Conventions_RPM_Macros
 Group: Productivity/Office/Management
@@ -63,9 +63,9 @@ Requires: mysql-community-server, mysql-community-server-client
 BuildRequires: update-desktop-files fdupes
 %else
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap 
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mbstring, php-xml
 Requires: mysql-server, mysql 
-Requires: php-mysql >= 4.1.0 
+Requires: php-mysqli >= 4.1.0 
 %endif
 %endif
 %endif
@@ -124,7 +124,7 @@ cui hai bisogno ed essere facile da usare.
 
 %if 0%{?sles_version}
 %{__rm} -rf $RPM_BUILD_ROOT
-%{__mkdir} $RPM_BUILD_ROOT
+%{__mkdir} $RPM_BUILD_ROOT%_datadir/dolibarr/htdocs/datapolicy
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %else
@@ -240,10 +240,12 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/adherents
 %_datadir/dolibarr/htdocs/admin
 %_datadir/dolibarr/htdocs/api
+%_datadir/dolibarr/htdocs/asset
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
+%_datadir/dolibarr/htdocs/bom
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab
@@ -256,8 +258,12 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/custom
+%_datadir/dolibarr/htdocs/datapolicy
+%_datadir/dolibarr/htdocs/dav
+%_datadir/dolibarr/htdocs/debugbar
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
+%_datadir/dolibarr/htdocs/emailcollector
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
@@ -276,6 +282,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
 %_datadir/dolibarr/htdocs/modulebuilder
+%_datadir/dolibarr/htdocs/mrp
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
@@ -284,12 +291,15 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
+%_datadir/dolibarr/htdocs/takepos
+%_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
@@ -441,8 +451,8 @@ if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
 %else
   echo Add SE Linux permissions for dolibarr
   # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
-  semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-  semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
+  semanage fcontext -a -t httpd_sys_rw_content_t "/etc/dolibarr(/.*)?"
+  semanage fcontext -a -t httpd_sys_rw_content_t "/var/lib/dolibarr(/.*)?"
   restorecon -R -v /etc/dolibarr
   restorecon -R -v /var/lib/dolibarr
 %endif

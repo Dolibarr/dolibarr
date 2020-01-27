@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * 	\defgroup   mymodule     Module MyModule
- *  \brief      Example of a module descriptor.
- *				Such a file must be copied into htdocs/mymodule/core/modules directory.
- *  \file       htdocs/mymodule/core/modules/modMyModule.class.php
- *  \ingroup    mymodule
+ * 	\defgroup   incoterm     Module MyModule
+ *
+ *  \file       htdocs/core/modules/modIncoterm.class.php
+ *  \ingroup    incoterm
  *  \brief      Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
@@ -38,8 +37,8 @@ class modIncoterm extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
-	{
+    public function __construct($db)
+    {
         global $langs,$conf;
 
         $this->db = $db;
@@ -52,13 +51,11 @@ class modIncoterm extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		$this->family = "srm";
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Incoterm management";
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 0;
 		$this->picto='generic';
 
 		$this->module_parts = array();
@@ -67,9 +64,11 @@ class modIncoterm extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("incoterm");
 

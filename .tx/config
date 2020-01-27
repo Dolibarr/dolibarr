@@ -20,6 +20,12 @@ source_file = htdocs/langs/en_US/agenda.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.assets]
+file_filter = htdocs/langs/<lang>/assets.lang
+source_file = htdocs/langs/en_US/assets.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.banks]
 file_filter = htdocs/langs/<lang>/banks.lang
 source_file = htdocs/langs/en_US/banks.lang
@@ -29,6 +35,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.bills]
 file_filter = htdocs/langs/<lang>/bills.lang
 source_file = htdocs/langs/en_US/bills.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.blockedlog]
+file_filter = htdocs/langs/<lang>/blockedlog.lang
+source_file = htdocs/langs/en_US/blockedlog.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -152,12 +164,6 @@ source_file = htdocs/langs/en_US/hrm.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.incoterm]
-file_filter = htdocs/langs/<lang>/incoterm.lang
-source_file = htdocs/langs/en_US/incoterm.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
 [dolibarr.install]
 file_filter = htdocs/langs/<lang>/install.lang
 source_file = htdocs/langs/en_US/install.lang
@@ -227,6 +233,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.modulebuilder]
 file_filter = htdocs/langs/<lang>/modulebuilder.lang
 source_file = htdocs/langs/en_US/modulebuilder.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.mrp]
+file_filter = htdocs/langs/<lang>/mrp.lang
+source_file = htdocs/langs/en_US/mrp.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -308,6 +320,12 @@ source_file = htdocs/langs/en_US/receiptprinter.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.receptions]
+file_filter = htdocs/langs/<lang>/receptions.lang
+source_file = htdocs/langs/en_US/receptions.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.resource]
 file_filter = htdocs/langs/<lang>/resource.lang
 source_file = htdocs/langs/en_US/resource.lang
@@ -356,6 +374,12 @@ source_file = htdocs/langs/en_US/supplier_proposal.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.ticket]
+file_filter = htdocs/langs/<lang>/ticket.lang
+source_file = htdocs/langs/en_US/ticket.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.trips]
 file_filter = htdocs/langs/<lang>/trips.lang
 source_file = htdocs/langs/en_US/trips.lang
@@ -385,3 +409,10 @@ file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
+
+[dolibarr.zapier]
+file_filter = htdocs/langs/<lang>/zapier.lang
+source_file = htdocs/langs/en_US/zapier.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+

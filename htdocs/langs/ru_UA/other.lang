@@ -2,7 +2,6 @@
 DateToBirth=Дата до рождения
 BirthdayAlertOn=День рождения оповещения активных
 BirthdayAlertOff=День рождения оповещения неактивные
-Notify_FICHINTER_VALIDATE=Вмешательство проверку
 Notify_BILL_PAYED=Клиенту счет-фактура оплачен
 Notify_MEMBER_VALIDATE=Член проверку
 Notify_MEMBER_SUBSCRIPTION=Член подписался

@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+
+#
+# Copyright (c) 2009-2010 Evert Pot
+# All rights reserved.
+# http://www.rooftopsolutions.nl/
+#
+# This utility is distributed along with SabreDAV
+# license: http://sabre.io/license/ Modified BSD License
+
+import os
+from optparse import OptionParser
+import time
+
+def getfreespace(path):
+    stat = os.statvfs(path)
+    return stat.f_frsize * stat.f_bavail
+
+def getbytesleft(path,threshold):
+    return getfreespace(path)-threshold
+
+def run(cacheDir, threshold, sleep=5, simulate=False, min_erase = 0):
+
+    bytes = getbytesleft(cacheDir,threshold)
+    if (bytes>0):
+        print "Bytes to go before we hit threshold:", bytes
+    else:
+        print "Threshold exceeded with:", -bytes, "bytes"
+        dir = os.listdir(cacheDir)
+        dir2 = []
+        for file in dir:
+            path = cacheDir + '/' + file
+            dir2.append({
+                "path" : path,
+                "atime": os.stat(path).st_atime,
+                "size" : os.stat(path).st_size
+            })
+
+        dir2.sort(lambda x,y: int(x["atime"]-y["atime"]))
+
+        filesunlinked = 0
+        gainedspace = 0
+
+        # Left is the amount of bytes that need to be freed up
+        # The default is the 'min_erase setting'
+        left = min_erase
+
+        # If the min_erase setting is lower than the amount of bytes over
+        # the threshold, we use that number instead.
+        if left < -bytes :
+            left = -bytes
+
+        print "Need to delete at least:", left;
+
+        for file in dir2:
+
+            # Only deleting files if we're not simulating
+            if not simulate: os.unlink(file["path"])
+            left = int(left - file["size"])
+            gainedspace = gainedspace + file["size"]
+            filesunlinked = filesunlinked + 1
+
+            if(left<0):
+                break
+
+        print "%d files deleted (%d bytes)" % (filesunlinked, gainedspace)
+
+
+    time.sleep(sleep)
+
+
+
+def main():
+    parser = OptionParser(
+        version="naturalselection v0.3",
+        description="Cache directory manager. Deletes cache entries based on accesstime and free space thresholds.\n" +
+            "This utility is distributed alongside SabreDAV.",
+        usage="usage: %prog [options] cacheDirectory",
+    )
+    parser.add_option(
+        '-s',
+        dest="simulate",
+        action="store_true",
+        help="Don't actually make changes, but just simulate the behaviour",
+    )
+    parser.add_option(
+        '-r','--runs',
+        help="How many times to check before exiting. -1 is infinite, which is the default",
+        type="int",
+        dest="runs",
+        default=-1
+    )
+    parser.add_option(
+        '-n','--interval',
+        help="Sleep time in seconds (default = 5)",
+        type="int",
+        dest="sleep",
+        default=5
+    )
+    parser.add_option(
+        '-l','--threshold',
+        help="Threshold in bytes (default = 10737418240, which is 10GB)",
+        type="int",
+        dest="threshold",
+        default=10737418240
+    )
+    parser.add_option(
+        '-m', '--min-erase',
+        help="Minimum number of bytes to erase when the threshold is reached. " +
+            "Setting this option higher will reduce the number of times the cache directory will need to be scanned. " +
+            "(the default is 1073741824, which is 1GB.)",
+        type="int",
+        dest="min_erase",
+        default=1073741824
+    )
+
+    options,args = parser.parse_args()
+    if len(args)<1:
+        parser.error("This utility requires at least 1 argument")
+    cacheDir = args[0]
+
+    print "Natural Selection"
+    print "Cache directory:", cacheDir
+    free = getfreespace(cacheDir);
+    print "Current free disk space:", free
+
+    runs = options.runs;
+    while runs!=0 :
+        run(
+            cacheDir,
+            sleep=options.sleep,
+            simulate=options.simulate,
+            threshold=options.threshold,
+            min_erase=options.min_erase
+        )
+        if runs>0:
+            runs = runs - 1
+
+if __name__ == '__main__' :
+    main()

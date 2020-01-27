@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ class modDeplacement extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -45,16 +45,15 @@ class modDeplacement extends DolibarrModules
 		$this->numero = 75 ;
 
 		$this->family = "hr";
-		$this->module_position = 41;
+		$this->module_position = '41';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des notes de frais et deplacements";		// Si traduction Module75Desc non trouvee
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'dolibarr_deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = "trip";
 
 		// Data directories to create when module is enabled
@@ -108,12 +107,12 @@ class modDeplacement extends DolibarrModules
 		$this->rights[5][3] = 0;
 		$this->rights[5][4] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		$r=0;
 
@@ -134,13 +133,13 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('deplacement').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR d.fk_soc IS NULL)';
-		
+
 		if (! empty($user))   // Not defined during migration process
 		{
     		$childids = $user->getAllChildIds();
     		$childids[]=$user->id;
-    		
-    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+
+    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $this->export_sql_end[$r] .=' AND d.fk_user IN ('.join(',', $childids).')';
 		}
 	}
 
@@ -153,13 +152,13 @@ class modDeplacement extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

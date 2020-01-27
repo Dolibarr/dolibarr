@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,8 +29,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
  */
 class ExpenseReportRule extends CoreObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expenserule';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expensereport_rules';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_expense_rule';
 
 	/**
@@ -132,12 +143,12 @@ class ExpenseReportRule extends CoreObject
 	/**
 	 * Return all rules or filtered by something
 	 *
-	 * @param int	$fk_c_type_fees	type of expense
-	 * @param date	$date			date of expense
-	 * @param type	$fk_user		user of expense
-	 * @return array \ExpenseReportRule
+	 * @param int	     $fk_c_type_fees	type of expense
+	 * @param integer	 $date			    date of expense
+	 * @param int        $fk_user		    user of expense
+	 * @return array                        Array with ExpenseReportRule
 	 */
-	public static function getAllRule($fk_c_type_fees='', $date='', $fk_user='')
+	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{
 		global $db;
 

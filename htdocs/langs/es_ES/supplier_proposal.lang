@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Aceptado
 SupplierProposalStatusNotSignedShort=Rechazado
 CopyAskFrom=Crear presupuesto por copia de uno existente
 CreateEmptyAsk=Crear un presupuesto en blanco
-CloneAsk=Clonar presupuesto
 ConfirmCloneAsk=¿Está seguro de querer clonar el presupuesto <b>%s</b>?
 ConfirmReOpenAsk=¿Está seguro de querer reabrir el presupuesto <b>%s</b>?
 SendAskByMail=Envío presupuesto por e-mail

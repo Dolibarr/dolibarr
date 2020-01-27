@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,11 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-$langs->load("bills");
-$langs->load("suppliers");
-$langs->load("companies");
+$langs->loadLangs(array("bills", "suppliers", "companies"));
 
-$id			= GETPOST('id','int');
+$id			= GETPOST('id', 'int');
 
 $object = new PaiementFourn($db);
 $object->fetch($id);
@@ -57,6 +55,6 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
+// End of page
 llxFooter();
-
 $db->close();

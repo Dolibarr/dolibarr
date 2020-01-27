@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,19 +36,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("other");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'commercial', 'other', 'bills'));
 
 $id = GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
-if ($user->societe_id > 0)
+$socid = GETPOST('socid', 'int');
+if ($user->socid) $socid=$user->socid;
+if ($user->socid > 0)
 {
 	unset($_GET["action"]);
 	$action='';
@@ -64,9 +62,9 @@ if ($id > 0)
 }
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -91,7 +89,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
-llxHeader('',$langs->trans("Agenda"),$help_url);
+llxHeader('', $langs->trans("Agenda"), $help_url);
 
 
 if ($object->id > 0)
@@ -100,11 +98,11 @@ if ($object->id > 0)
 	$result2=$object->fetch_thirdparty();
 	$result3=$object->fetch_contact();
 	$result4=$object->fetch_userassigned();
-	$result5=$object->fetch_optionals($id,$extralabels);
+	$result5=$object->fetch_optionals();
 
 	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
 	{
-		dol_print_error($db,$object->error);
+		dol_print_error($db, $object->error);
 		exit;
 	}
 
@@ -123,19 +121,19 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
-	$linkback = img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
+	$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 	$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Link to other agenda views
 	$out='';
-	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
-	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
-	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
-	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
-	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
+	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
+	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
+	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
+	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+	$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
+	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
 	$linkback.=$out;
 
@@ -161,14 +159,14 @@ if ($object->id > 0)
 	}
 	$morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'id', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
 
 	// Affichage fiche action en mode visu
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Type
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -181,16 +179,16 @@ if ($object->id > 0)
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-	if (! $object->fulldayevent) print dol_print_date($object->datep,'dayhour');
-	else print dol_print_date($object->datep,'day');
+	if (! $object->fulldayevent) print dol_print_date($object->datep, 'dayhour');
+	else print dol_print_date($object->datep, 'day');
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 	print '</td>';
 	print '</tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-	if (! $object->fulldayevent) print dol_print_date($object->datef,'dayhour');
-	else print dol_print_date($object->datef,'day');
+	if (! $object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
+	else print dol_print_date($object->datef, 'day');
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 	print '</td></tr>';
 
@@ -239,10 +237,10 @@ if ($object->id > 0)
 
 	print '</table>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -270,7 +268,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

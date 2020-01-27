@@ -5,64 +5,76 @@ namespace Stripe;
 /**
  * Class Subscription
  *
+ * @property string $id
+ * @property string $object
+ * @property float $application_fee_percent
+ * @property string $billing
+ * @property int $billing_cycle_anchor
+ * @property mixed $billing_thresholds
+ * @property bool $cancel_at_period_end
+ * @property int $canceled_at
+ * @property string $collection_method
+ * @property int $created
+ * @property int $current_period_end
+ * @property int $current_period_start
+ * @property string $customer
+ * @property int $days_until_due
+ * @property string $default_payment_method
+ * @property string $default_source
+ * @property array $default_tax_rates
+ * @property Discount $discount
+ * @property int $ended_at
+ * @property Collection $items
+ * @property string $latest_invoice
+ * @property boolean $livemode
+ * @property StripeObject $metadata
+ * @property Plan $plan
+ * @property int $quantity
+ * @property SubscriptionSchedule $schedule
+ * @property int $start
+ * @property int $start_date
+ * @property string $status
+ * @property float $tax_percent
+ * @property int $trial_end
+ * @property int $trial_start
+ *
  * @package Stripe
  */
 class Subscription extends ApiResource
 {
+
+    const OBJECT_NAME = "subscription";
+
+    use ApiOperations\All;
+    use ApiOperations\Create;
+    use ApiOperations\Delete {
+        delete as protected _delete;
+    }
+    use ApiOperations\Retrieve;
+    use ApiOperations\Update;
+
     /**
      * These constants are possible representations of the status field.
      *
      * @link https://stripe.com/docs/api#subscription_object-status
      */
-    const STATUS_ACTIVE = 'active';
-    const STATUS_CANCELED = 'canceled';
-    const STATUS_PAST_DUE = 'past_due';
-    const STATUS_TRIALING = 'trialing';
-    const STATUS_UNPAID = 'unpaid';
+    const STATUS_ACTIVE             = 'active';
+    const STATUS_CANCELED           = 'canceled';
+    const STATUS_PAST_DUE           = 'past_due';
+    const STATUS_TRIALING           = 'trialing';
+    const STATUS_UNPAID             = 'unpaid';
+    const STATUS_INCOMPLETE         = 'incomplete';
+    const STATUS_INCOMPLETE_EXPIRED = 'incomplete_expired';
 
-    /**
-     * @param string $id The ID of the subscription to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return Subscription
-     */
-    public static function retrieve($id, $opts = null)
+    public static function getSavedNestedResources()
     {
-        return self::_retrieve($id, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Collection of Subscriptions
-     */
-    public static function all($params = null, $opts = null)
-    {
-        return self::_all($params, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Subscription The created subscription.
-     */
-    public static function create($params = null, $opts = null)
-    {
-        return self::_create($params, $opts);
-    }
-
-    /**
-     * @param string $id The ID of the subscription to retrieve.
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return Subscription The updated subscription.
-     */
-    public static function update($id, $params = null, $options = null)
-    {
-        return self::_update($id, $params, $options);
+        static $savedNestedResources = null;
+        if ($savedNestedResources === null) {
+            $savedNestedResources = new Util\Set([
+                'source',
+            ]);
+        }
+        return $savedNestedResources;
     }
 
     /**
@@ -76,22 +88,12 @@ class Subscription extends ApiResource
     }
 
     /**
-     * @param array|string|null $opts
-     *
-     * @return Subscription The saved subscription.
-     */
-    public function save($opts = null)
-    {
-        return $this->_save($opts);
-    }
-
-    /**
      * @return Subscription The updated subscription.
      */
     public function deleteDiscount()
     {
         $url = $this->instanceUrl() . '/discount';
         list($response, $opts) = $this->_request('delete', $url);
-        $this->refreshFrom(array('discount' => null), $opts, true);
+        $this->refreshFrom(['discount' => null], $opts, true);
     }
 }

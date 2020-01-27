@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,12 +31,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("companies");
-$langs->load("projects");
+$langs->loadLangs(array("companies", "projects"));
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
+$socid = GETPOST('socid', 'int');
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -48,7 +47,7 @@ $hookmanager->initHooks(array('projectthirdparty'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -73,8 +72,8 @@ if ($socid)
 	$result = $object->fetch($socid);
 
 	$title=$langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	llxHeader('',$title);
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	llxHeader('', $title);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
@@ -83,12 +82,12 @@ if ($socid)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -120,25 +119,7 @@ if ($socid)
 	dol_fiche_end();
 
 
-    /*
-     * Barre d'action
-     */
-
-    /*print '<div class="tabsAction">';
-
-    if (! empty($conf->projet->enabled))
-    {
-    	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{*/
-        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    /*	}
-    	else
-    	{
-        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
-    	}
-    }
-
-    print '</div>'; */
+   	$addbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'"><span class="text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
     print '<br>';
 
@@ -147,7 +128,6 @@ if ($socid)
 	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

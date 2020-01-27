@@ -1,7 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
 -- Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -47,24 +47,25 @@ create table llx_facturedet
   total_localtax1				double(24,8) DEFAULT 0,				-- Total LocalTax1 for total quantity of line
   total_localtax2				double(24,8) DEFAULT 0,				-- Total LocalTax2 for total quantity of line
   total_ttc						double(24,8),						-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type					integer    DEFAULT 0,
+  product_type					integer    DEFAULT 0,				-- 0 or 1. Value 9 may be used by some modules (amount of line may not be included into generated discount if value is 9).
   date_start					datetime   DEFAULT NULL,			-- date start if service
   date_end						datetime   DEFAULT NULL,			-- date end if service
   info_bits						integer    DEFAULT 0,				-- VAT NPR or not (for france only)
 
-  buy_price_ht					double(24,8) DEFAULT 0,				-- buying price
+  buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
+
+  special_code					integer    DEFAULT 0,				-- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
+  rang							integer    DEFAULT 0,				-- position of line
+  fk_contract_line  			integer NULL,						-- id of contract line when invoice comes from contract lines
+  fk_unit                       integer DEFAULT NULL, 				-- id of the unit code
+  import_key					varchar(14),
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
   
-  special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
-  rang							integer    DEFAULT 0,				-- position of line
-  fk_contract_line  			integer NULL,						-- id of contract line when invoice comes from contract lines
-  import_key					varchar(14),
+  situation_percent real DEFAULT 100, 								-- % progression of lines invoicing
+  fk_prev_id        integer, 										-- id of the line in the previous situation
 
-  situation_percent real,   										-- % progression of lines invoicing
-  fk_prev_id        integer, 										-- id of the line in the previous situation,
-  fk_unit           integer DEFAULT NULL, 							-- id of the unit code¡
   fk_user_author	integer,                						-- user making creation
   fk_user_modif     integer,                						-- user making last change
 

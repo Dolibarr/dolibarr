@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 	Jeremie Ollivier 	<jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 	Laurent Destailleur <eldy@uers.sourceforge.net>
- * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,16 +24,12 @@
  */
 
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 require '../main.inc.php';
@@ -80,7 +76,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			$ret=array(); $i=0;
 			while ( $tab = $db->fetch_array($result) )
 			{
-				foreach ( $tab as $cle => $valeur )
+				foreach ($tab as $cle => $valeur)
 				{
 					$ret[$i][$cle] = $valeur;
 				}
@@ -112,5 +108,4 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			print '</ul>';
 		}
 	}
-
 }

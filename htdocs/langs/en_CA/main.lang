@@ -26,3 +26,4 @@ TotalVAT=Total GST
 TotalLT1=Total PST
 VAT=GST
 VATRate=GST rate
+ContactDefault_order_supplier=Supplier Order

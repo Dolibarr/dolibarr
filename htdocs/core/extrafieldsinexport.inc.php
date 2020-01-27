@@ -8,7 +8,7 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 }
 
 // Add extra fields
-$sql="SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.')';
+$sql="SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.') ORDER BY pos ASC';
 //print $sql;
 $resql=$this->db->query($sql);
 if ($resql)    // This can fail when class is used on old database (during migration for example)
@@ -34,6 +34,15 @@ if ($resql)    // This can fail when class is used on old database (during migra
 			case 'boolean':
 				$typeFilter="Boolean";
 				break;
+			case 'select':
+			    if (! empty($conf->global->EXPORT_LABEL_FOR_SELECT))
+			    {
+    			    $tmpparam=unserialize($obj->param);	// $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
+    			    if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+    			        $typeFilter="Select:".$obj->param;
+    			    }
+			    }
+			    break;
 			case 'sellist':
 				$tmp='';
 				$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null

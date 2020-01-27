@@ -31,3 +31,4 @@ DONATION_ART200=Eğer ilgileniyorsanız CGI den 200 öğe göster
 DONATION_ART238=Eğer ilgileniyorsanız CGI den 238 öğe göster
 DONATION_ART885=Show article 885 from CGI if you are concerned
 DonationPayment=Bağış ödemesi
+DonationValidated=Donation %s validated

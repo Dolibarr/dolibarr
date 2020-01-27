@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,11 +31,11 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other"));
 
 $error=0;
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $syslogModules = array();
 $activeModules = array();
@@ -50,8 +50,6 @@ foreach ($dirsyslogs as $reldir) {
 		$handle = opendir($newdir);
 
 		if (is_resource($handle)) {
-			$var = true;
-
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
@@ -103,7 +101,7 @@ if ($action == 'set')
 				{
 					$_POST[$option['constant']] = trim($_POST[$option['constant']]);
 					dolibarr_del_const($db, $option['constant'], -1);
-					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
+					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine', 0, '', 0);
 				}
 			}
 		}
@@ -112,7 +110,7 @@ if ($action == 'set')
 	$activeModules = $newActiveModules;
 
     dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1);  // To be sure ther is not a setup into another entity
-    dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
+    dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
@@ -133,19 +131,27 @@ if ($action == 'set')
 	{
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
-
 	}
-
 }
 
 // Set level
 if ($action == 'setlevel')
 {
 	$level = GETPOST("level");
-	$res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
+	$res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
 	dol_syslog("admin/syslog: level ".$level);
 
 	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		$file_saves = GETPOST("file_saves");
+		$res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
+		dol_syslog("admin/syslog: file saves  ".$file_saves);
+
+		if (! $res > 0) $error++;
+	}
+
 	if (! $error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -164,14 +170,14 @@ llxHeader();
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SyslogSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SyslogSetup"), $linkback, 'title_setup');
 print '<br>';
 
 $def = array();
 
-$syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db,"SYSLOG_FACILITY",0);
-$syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE",0);
+$syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db, "SYSLOG_FACILITY", 0);
+$syslogfile=$defaultsyslogfile=dolibarr_get_const($db, "SYSLOG_FILE", 0);
 
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
 if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
@@ -190,12 +196,12 @@ print load_fiche_titre($langs->trans("SyslogOutput"));
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td align="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 foreach ($syslogModules as $moduleName)
@@ -223,14 +229,14 @@ foreach ($syslogModules as $moduleName)
 		    if (! empty($tmpoption))
 		    {
     			if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
-    			else if (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+    			elseif (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
 		    }
 			else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
 
-			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/',$value))
+			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value))
 			{
     			$filelogparam =' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
     			$filelogparam.=$langs->trans('Download');
@@ -241,7 +247,7 @@ foreach ($syslogModules as $moduleName)
 	}
 	print '</td>';
 
-	print '<td align="left">';
+	print '<td class="left">';
 	if ($module->getInfo())
 	{
 		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
@@ -262,15 +268,14 @@ print '<br>'."\n\n";
 print load_fiche_titre($langs->trans("SyslogLevel"));
 
 // Level
-print '<form action="syslog.php" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setlevel">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-$var=true;
 
 print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat" name="level" '.$option.'>';
@@ -284,9 +289,16 @@ print '<option value="'.LOG_INFO.'" '.($conf->global->SYSLOG_LEVEL==LOG_INFO?'SE
 print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL>=LOG_DEBUG?'SELECTED':'').'>LOG_DEBUG ('.LOG_DEBUG.')</option>';
 print '</select>';
 print '</td></tr>';
+
+if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enabled)) {
+	print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
+	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.$conf->global->SYSLOG_FILE_SAVES.'" />';
+	print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
+}
+
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
-
 $db->close();

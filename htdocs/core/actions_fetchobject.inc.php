@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,15 +32,21 @@ if (($id > 0 || (! empty($ref) && ! in_array($action, array('create', 'createtas
 {
 	if (($id > 0 && is_numeric($id)) || ! empty($ref))	// To discard case when id is list of ids like '1,2,3...'
 	{
-	    $ret = $object->fetch($id, $ref);
-	    if ($ret > 0)
+		$ret = $object->fetch($id, $ref);
+		if ($ret > 0)
 	    {
 	        $object->fetch_thirdparty();
 	        $id = $object->id;
 	    }
 	    else
 	    {
-	    	if (empty($object->error) && ! count($object->errors)) setEventMessages('Fetch on object return an error without filling $object->error nor $object->errors', null, 'errors');
+	    	if (empty($object->error) && ! count($object->errors))
+	    	{
+	    		if ($ret < 0)	// if $ret == 0, it means not found.
+	    		{
+	    			setEventMessages('Fetch on object (type '.get_class($object).') return an error without filling $object->error nor $object->errors', null, 'errors');
+	    		}
+	    	}
 	        else setEventMessages($object->error, $object->errors, 'errors');
 	        $action='';
 	    }

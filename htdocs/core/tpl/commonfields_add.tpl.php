@@ -12,17 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
  * $langs
+ * $form
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -32,12 +33,14 @@ if (empty($conf) || ! is_object($conf))
 <!-- BEGIN PHP TEMPLATE commonfields_add.tpl.php -->
 <?php
 
+$object->fields = dol_sort_array($object->fields, 'position');
+
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
-	if (abs($val['visible']) != 1) continue;
+	if (abs($val['visible']) != 1 && abs($val['visible']) != 3) continue;
 
-	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
 
 	print '<tr id="field_'.$key.'">';
 	print '<td';
@@ -46,7 +49,8 @@ foreach($object->fields as $key => $val)
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>';
-	print $langs->trans($val['label']);
+	if (!empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');

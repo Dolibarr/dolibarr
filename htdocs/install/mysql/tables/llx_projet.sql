@@ -1,6 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -41,7 +41,11 @@ create table llx_projet
   note_public      text,
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
-  budget_amount    double(24,8),				
+  budget_amount    double(24,8),
+  usage_opportunity    integer DEFAULT 0,			-- Set to 1 if project is used to follow an opportunity
+  usage_task           integer DEFAULT 1,			-- Set to 1 if project is used to manage tasks and/or record timesheet
+  usage_bill_time      integer DEFAULT 0,			-- Set to 1 if time spent must be converted into invoices
+  usage_organize_event integer DEFAULT 0,			-- Set to 1 if you want to use project to organize an event, receive attendees subscription				
   model_pdf        varchar(255),
   import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

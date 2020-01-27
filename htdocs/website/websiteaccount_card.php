@@ -12,88 +12,65 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *   	\file       htdocs/Website/websiteaccount_card.php
+ *   	\file       htdocs/website/websiteaccount_card.php
  *		\ingroup    website
- *		\brief      Page to create/edit/view websiteaccount
+ *		\brief      Page to create/edit/view thirdparty website account
  */
 
-//if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))            define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
-//if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
-//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
-//if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))          define('NOREQUIREAJAX','1');         // Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
-
 // Load Dolibarr environment
-$res=0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
-$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
-// Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
-if (! $res) die("Include of main fails");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/website/class/websiteaccount.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php');
-
-// Load traductions files requiredby by page
-$langs->loadLangs(array("website","other"));
+// Load translation files required by the page
+$langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object=new WebsiteAccount($db);
+$object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('websiteaccountcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
-$search=array();
-foreach($object->fields as $key => $val)
+$search_all = trim(GETPOST("search_all", 'alpha'));
+$search = array();
+foreach ($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action='view';
+if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
 
-// fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$permissionnote = $user->rights->websiteaccount->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->websiteaccount->write; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
 
@@ -101,17 +78,17 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-	$error=0;
+	$error = 0;
 
 	$permissiontoadd = $user->rights->website->write;
 	$permissiontodelete = $user->rights->website->delete;
-	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php',1);
+	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php', 1);
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -120,9 +97,9 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='MYOBJECT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='websiteaccount'.$object->id;
+	$triggersendname = 'WEBSITEACCOUNT_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_WEBSITEACCOUNT_TO';
+	$trackid = 'websiteaccount'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
@@ -131,10 +108,10 @@ if (empty($reshook))
  * View
  */
 
-$form=new Form($db);
-$formfile=new FormFile($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
-llxHeader('','WebsiteAccount','');
+llxHeader('', 'WebsiteAccount', '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -158,7 +135,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("WebsiteAccount")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -167,10 +144,10 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	print '</table>'."\n";
 
@@ -179,7 +156,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -200,10 +177,10 @@ if (($id || $ref) && $action == 'edit')
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	print '</table>';
 
@@ -219,9 +196,9 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	if ($object->fk_soc >0 && empty($socid)) $socid = $object->fk_soc;
+	if ($object->fk_soc > 0 && empty($socid)) $socid = $object->fk_soc;
 
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals();
 
 	$head = websiteaccountPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, 'websiteaccount@website');
@@ -230,29 +207,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
-	{
-	    $formquestion=array();
-	    /*
-	        $formquestion = array(
-	            // 'text' => $langs->trans("ConfirmClone"),
-	            // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-	            // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-	            // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
-	    }*/
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
-	if (! $formconfirm) {
-	    $parameters = array('lineid' => $lineid);
-	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	}
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -260,11 +222,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback='';
-	if ($socid) $linkback = '<a href="' .DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToListOfThirdParty") . '</a>';
-	if ($fk_website) $linkback = '<a href="' .DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '';
+	if ($socid) $linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListOfThirdParty").'</a>';
+	if ($fk_website) $linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	/*
 	// Ref bis
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', 0, 1);
@@ -280,12 +242,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    {
 	        if ($action != 'classify')
 	        {
-	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                $morehtmlref.='</form>';
@@ -306,7 +268,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    }
 	}
 	*/
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
 	if ($socid > 0) $object->next_prev_filter = 'te.fk_soc = '.$socid;
 
@@ -319,10 +281,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 	print '</div>';
@@ -337,14 +299,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    	$parameters = array();
+    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))
     	{
     	    // Send
-            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>'."\n";
+            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 
     		if ($user->rights->website->write)
     		{
@@ -414,14 +376,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail='websiteaccount';
-	$defaulttopic='Information';
+	$modelmail = 'websiteaccount';
+	$defaulttopic = 'Information';
 	$diroutput = $conf->website->dir_output;
 	$trackid = 'websiteaccount'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
-
 
 // End of page
 llxFooter();

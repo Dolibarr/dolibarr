@@ -13,11 +13,11 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
-ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_date_creation (date_creation);

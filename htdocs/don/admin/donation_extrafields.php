@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,22 +13,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/don/admin/donation_extrafields.php
- *		\ingroup    donations
- *		\brief      Page to setup extra fields of donations
+ *  \file       htdocs/don/admin/donation_extrafields.php
+ *  \ingroup    donations
+ *  \brief      Page to setup extra fields of donations
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load('donations');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'donations'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -59,15 +58,15 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Donations");
 
-llxHeader('',$langs->trans("DonationsSetup"));
+llxHeader('', $langs->trans("DonationsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Donations"), 0, 'payment');
+dol_fiche_head($head, 'attributes', $langs->trans("Donations"), -1, 'payment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

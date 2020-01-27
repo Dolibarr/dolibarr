@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,45 +36,42 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("holidays");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'holiday', 'companies'));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
 
-$langs->load("holiday");
-
 // Get parameters
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "position_name";
 
 
 $object = new Holiday($db);
 $object->fetch($id, $ref);
 
 $upload_dir = $conf->holiday->dir_output.'/'.get_exdir($object->id, 0, 0, 0, $object, 'holiday').dol_sanitizeFileName($object->ref);
-$modulepart='holiday';
+$modulepart = 'holiday';
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -82,9 +80,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader("","",$langs->trans("InterventionCard"));
+llxHeader("", "", $langs->trans("InterventionCard"));
 
 
 if ($object->id)
@@ -95,30 +93,30 @@ if ($object->id)
 	$userRequest = new User($db);
 	$userRequest->fetch($object->fk_user);
 
-	$head=holiday_prepare_head($object);
+	$head = holiday_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1,'holiday');
+	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
+	// Build file list
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
 	{
-		$totalsize+=$file['size'];
+		$totalsize += $file['size'];
 	}
 
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 
 	print '<div class="fichecenter">';
 	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -130,21 +128,21 @@ if ($object->id)
     print '<tr>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    $typeleaves=$object->getTypes(1,-1);
-    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $typeleaves[$object->fk_type]['label'];
+    $typeleaves = $object->getTypes(1, -1);
+    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $typeleaves[$object->fk_type]['label'];
     print '</td>';
     print '</tr>';
 
-    $starthalfday=($object->halfday == -1 || $object->halfday == 2)?'afternoon':'morning';
-    $endhalfday=($object->halfday == 1 || $object->halfday == 2)?'morning':'afternoon';
+    $starthalfday = ($object->halfday == -1 || $object->halfday == 2) ? 'afternoon' : 'morning';
+    $endhalfday = ($object->halfday == 1 || $object->halfday == 2) ? 'morning' : 'afternoon';
 
-    if(!$edit)
+    if (!$edit)
     {
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-        print '<td>'.dol_print_date($object->date_debut,'day');
+        print '<td>'.dol_print_date($object->date_debut, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$starthalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -153,9 +151,9 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
-        $form->select_date($object->date_debut,'date_debut_');
+        print $form->selectDate($object->date_debut, 'date_debut_');
         print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
         print '</td>';
         print '</tr>';
     }
@@ -164,9 +162,9 @@ if ($object->id)
     {
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-        print '<td>'.dol_print_date($object->date_fin,'day');
+        print '<td>'.dol_print_date($object->date_fin, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$endhalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -175,9 +173,9 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
-        $form->select_date($object->date_fin,'date_fin_');
+        print $form->selectDate($object->date_fin, 'date_fin_');
         print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
         print '</td>';
         print '</tr>';
     }
@@ -211,11 +209,11 @@ if ($object->id)
     }
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
     print '</tbody>';
     print '</table>'."\n";
-/*
+    /*
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
@@ -223,7 +221,7 @@ if ($object->id)
     print '<div class="underbanner clearboth"></div>';
 
 	// Info workflow
-    print '<table class="border centpercent">'."\n";
+    print '<table class="border tableforfield centpercent">'."\n";
     print '<tbody>';
 
     if (! empty($object->fk_user_create))
@@ -251,7 +249,7 @@ if ($object->id)
     }
 
     print '<tr>';
-    print '<td>'.$langs->trans('DateCreateCP').'</td>';
+    print '<td>'.$langs->trans('DateCreation').'</td>';
     print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
     print '</tr>';
     if ($object->statut == 3) {
@@ -288,15 +286,14 @@ if ($object->id)
     $modulepart = 'holiday';
     $permission = $user->rights->holiday->write;
     $permtoedit = $user->rights->holiday->write;
-    $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $param = '&id='.$object->id;
+    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

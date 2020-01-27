@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017   Laurent Destailleur  <eldy@users.sourcefore.net>
+ * Copyright (C) 2018   Nicolas ZABOURI   <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +35,7 @@ class modModuleBuilder extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -45,14 +46,12 @@ class modModuleBuilder extends DolibarrModules
 		// It is used to group modules in module setup page
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "A tool to help developers to build their own module.";
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 1;
         // Name of image file used for this module.
         $this->picto='technic';
 
@@ -61,9 +60,9 @@ class modModuleBuilder extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array();
+        $this->config_page_url = array('setup.php@modulebuilder');
 
-        // Dependancies
+        // Dependencies
         //-------------
 	    $this->hidden = false;	// A condition to disable module
 	    $this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -96,9 +95,8 @@ class modModuleBuilder extends DolibarrModules
             'langs'=>'modulebuilder',
             'position'=>100,
             'perms'=>'1',
-            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^admintools/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
-
     }
 }

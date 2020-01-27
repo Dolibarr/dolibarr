@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -46,7 +46,7 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BankAccountTest extends PHPUnit_Framework_TestCase
+class BankAccountTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -59,9 +59,11 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
      *
      * @return BankAccountTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -106,6 +108,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
+
     /**
      * End phpunit tests
      *
@@ -166,7 +169,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testBankAccountOther
      *
      * @param   Object  $localobject    Object contract
@@ -220,5 +223,4 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

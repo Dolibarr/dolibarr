@@ -2,7 +2,7 @@
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
--- Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -45,12 +45,21 @@ create table llx_facturedet_rec
   total_localtax1	double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
   total_localtax2	double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
   total_ttc			double(24,8),					-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
+  date_start_fill	integer DEFAULT 0,				-- 1=autofill the date_start of invoice with __INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__
+  date_end_fill		integer DEFAULT 0,				-- 1=autofill the date_start of invoice with __INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__
   info_bits			integer DEFAULT 0,				-- TVA NPR ou non
-  special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
+
+  buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
+  fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
+  
+  special_code		integer UNSIGNED DEFAULT 0,		-- code for special lines
   rang				integer DEFAULT 0,				-- ordre d'affichage
   fk_contract_line  integer NULL,					-- id of contract line when template invoice comes from contract lines
   fk_unit           integer    DEFAULT NULL,
   import_key		varchar(14),
+ 
+  fk_user_author	integer,                						-- user making creation
+  fk_user_modif     integer,                						-- user making last change
     
   fk_multicurrency          integer,
   multicurrency_code        varchar(255),

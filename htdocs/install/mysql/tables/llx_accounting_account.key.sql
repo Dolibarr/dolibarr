@@ -13,12 +13,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
 
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_fk_pcg_version (fk_pcg_version);
+ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
 
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 

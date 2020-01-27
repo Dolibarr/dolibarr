@@ -2,31 +2,45 @@
 EventReports=Gebeurtenisrapporten
 ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
-AgendaAutoActionDesc=Stel hier de gebeurtenissen in waarvoor u wilt dat Dolibarr automatische een afspraak in de agenda creëert. Als er niets is aangevinkt (standaard), zullen alleen handmatige acties worden opgenomen in de agenda. Automatische tracking van acties zullen niet bewaard worden.
-EventRemindersByEmailNotEnabled=Herinneringen via email voor gebeurtenissen is niet ingeschakeld in de module setup van de Agenda
+AgendaAutoActionDesc=Hier kunt u gebeurtenissen definiëren die u Dolibarr automatisch in Agenda wilt laten maken. Als er niets wordt gecontroleerd, worden alleen handmatige acties opgenomen in logboeken en weergegeven in Agenda. Automatisch bijhouden van zakelijke acties die worden uitgevoerd op objecten (validatie, statuswijziging), wordt niet opgeslagen.
+AgendaSetupOtherDesc=Deze pagina biedt opties voor het exporteren van uw Dolibarr-evenementen naar een externe agenda (Thunderbird, Google Agenda, enz.)
+EventRemindersByEmailNotEnabled=Herinneringen via email was niet ingeschakeld in %s van module setup.
 NewCompanyToDolibarr=Derde %s aangemaakt
+COMPANY_DELETEInDolibarr=Derden (externen) %s verwijderd
 ContractValidatedInDolibarr=Contract %s goedgekeurd
+CONTRACT_DELETEInDolibarr=Contract %s geannuleerd
 MemberModifiedInDolibarr=Lid %s werd aangepast
 MemberResiliatedInDolibarr=Lid %s verwijderd
+MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
+ShipmentBackToDraftInDolibarr=Verzending %s zet om naar conceptstatus
 ShipmentDeletedInDolibarr=Shipment %s gewist
-ContractSentByEMail=Contract %s verstuurd via Email
+ProposalSentByEMail=Commercieel voorstel %s verzonden per e-mail
+InvoiceSentByEMail=Klantfactuur %s per e-mail verzonden
+SupplierOrderSentByEMail=Bestelling %s per e-mail verzonden
+ORDER_SUPPLIER_DELETEInDolibarr=Aankooporder %s verwijderd
+ShippingSentByEMail=Verzending %s verzonden per e-mail
 ProposalDeleted=Offerte verwijderd
-PRODUCT_CREATEInDolibarr=Product %s aangemaakt
-PRODUCT_MODIFYInDolibarr=Product %s aangepast
-PRODUCT_DELETEInDolibarr=Product %s verwijderd
+HOLIDAY_CREATEInDolibarr=Verzoek om verlof %s gemaakt
+HOLIDAY_MODIFYInDolibarr=Verzoek om verlof %s gewijzigd
+HOLIDAY_APPROVEInDolibarr=Verzoek om verlof %s goedgekeurd
+HOLIDAY_VALIDATEDInDolibarr=Verzoek om verlof %s gevalideerd
+HOLIDAY_DELETEInDolibarr=Verzoek om verlof %s verwijderd
 EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd
 EXPENSE_REPORT_APPROVEInDolibarr=Onkostenrapport %s goedgekeurd
 EXPENSE_REPORT_DELETEInDolibarr=Onkostenrapport %s verwijderd
 EXPENSE_REPORT_REFUSEDInDolibarr=Onkostenrapport %s geweigerd
 PROJECT_MODIFYInDolibarr=Project %s gewijzigd
-PROJECT_DELETEInDolibarr=Project %s verwijderd
+TICKET_CREATEInDolibarr=Ticket %s aangemaakt
+TICKET_MODIFYInDolibarr=Ticket %s aangepast
 AgendaModelModule=Document sjablonen voor een gebeurtenis
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> om de uitvoer van acties te beperken die niet werden toegewezen aan de gebruiker <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken tot acties die zijn gekoppeld aan project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

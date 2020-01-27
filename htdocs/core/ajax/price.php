@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,18 +20,16 @@
  *       \brief      File to get ht and ttc
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 
-$output		= GETPOST('output','alpha');
-$amount		= price2num(GETPOST('amount','alpha'));
-$tva_tx		= str_replace('*','',GETPOST('tva_tx','alpha'));
+$output		= GETPOST('output', 'alpha');
+$amount		= price2num(GETPOST('amount', 'alpha'));
+$tva_tx		= str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 
 /*
  * View
@@ -50,14 +48,11 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 	if (is_numeric($amount) && $amount != '')
 	{
 		if ($output == 'price_ttc') {
-
 			$price = price2num($amount * (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = $amount;
 			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
-
 		}
-		else if ($output == 'price_ht') {
-
+		elseif ($output == 'price_ht') {
 			$price = price2num($amount / (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
 			$return['price_ttc'] = ($tva_tx == 0 ? $price : $amount);
@@ -66,4 +61,3 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 
 	echo json_encode($return);
 }
-

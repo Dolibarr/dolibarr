@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Alexis Algoud		<alexis@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,21 +16,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/adherents/admin/adherent_extrafields.php
- *		\ingroup    member
- *		\brief      Page to setup extra fields of members
+ *  \file       htdocs/user/admin/group_extrafields.php
+ *  \ingroup    user
+ *  \brief      Page to setup extra fields of users
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -62,11 +62,11 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 $textobject=$langs->transnoentitiesnoconv("Groups");
 
 $help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
-llxHeader('',$langs->trans("UsersSetup"),$help_url);
+llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 
 $head = user_admin_prepare_head();
@@ -82,7 +82,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
 	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
 	print "</div>";
 }
 
@@ -95,7 +95,7 @@ if ($action != 'create' && $action != 'edit')
 
 if ($action == 'create')
 {
-	print "<br>";
+	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
@@ -114,6 +114,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

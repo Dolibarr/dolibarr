@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,14 +26,15 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
-$action=GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
@@ -58,10 +59,8 @@ if ($categid) {
 	$bankcateg = new BankCateg($db);
 
 	if ($bankcateg->fetch($categid) > 0) {
-
 		//Update category
 		if (GETPOST('update') && $label) {
-
 			$bankcateg->label = $label;
 			$bankcateg->update($user);
 		}
@@ -80,20 +79,39 @@ if ($categid) {
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("RubriquesTransactions"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("RubriquesTransactions"));
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+/*print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+*/
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
 
+// Line to add category
+if ($action != 'edit')
+{
+	print '<tr class="oddeven">';
+	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
+	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+}
+
+
 $sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql.= " WHERE entity = ".$conf->entity;
-$sql.= " ORDER BY label";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql .= " WHERE entity = ".$conf->entity;
+$sql .= " ORDER BY label";
 
 $result = $db->query($sql);
 if ($result)
@@ -101,14 +119,13 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0; $total = 0;
 
-	$var=True;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		
+
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST('action','aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
+		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid") == $objp->rowid)
 		{
 			print "<td colspan=2>";
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
@@ -122,7 +139,8 @@ if ($result)
 			print "<td >".$objp->label."</td>";
 			print '<td style="text-align: center;">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a>';
+			print '</td>';
 		}
 		print "</tr>";
 		$i++;
@@ -130,19 +148,11 @@ if ($result)
 	$db->free($result);
 }
 
+print '</table>';
+print '</div>';
 
-/*
- * Line to add category
- */
-if ($action != 'edit')
-{
-	
-	print '<tr class="oddeven">';
-	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
-	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
-	print '</tr>';
-}
+print '</form>';
 
-print '</table></form>';
-
+// End of page
 llxFooter();
+$db->close();

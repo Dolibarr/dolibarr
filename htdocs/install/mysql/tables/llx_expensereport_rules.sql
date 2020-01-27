@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -29,6 +29,6 @@ CREATE TABLE llx_expensereport_rules (
   fk_usergroup				integer DEFAULT NULL,
   fk_c_type_fees			integer NOT NULL,
   code_expense_rules_type	varchar(50) NOT NULL,
-  is_for_all				tinyint DEFAULT '0',
+  is_for_all				tinyint DEFAULT 0,
   entity					integer DEFAULT 1
-) ENGINE=InnoDB
+) ENGINE=InnoDB;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010     Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010     Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-204 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,12 +22,12 @@
  *       \brief     File to return Ajax response on zipcode or town request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -47,7 +47,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog("GET is ".join(',',$_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
+dol_syslog("GET is ".join(',', $_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
 //var_dump($_GET);
 
 // Generation of list of zip-town
@@ -120,9 +120,10 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			$row_array['selectcountry_id'] = $row['fk_country'];
 			$row_array['state_id'] = $row['fk_county'];
 
-			$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
+			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
+			$row_array['states'] = $formcompany->select_state('', $row['fk_country'], '');
 
-			array_push($return_arr,$row_array);
+			array_push($return_arr, $row_array);
 		}
 	}
 
@@ -130,8 +131,6 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 }
 else
 {
-
 }
 
 $db->close();
-

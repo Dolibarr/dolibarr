@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ class modWebsite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -46,16 +46,14 @@ class modWebsite extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "portal";
-        $this->module_position = 50;
+        $this->module_position = '50';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable to build and serve public web sites with CMS features";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 0;
         // Name of image file used for this module.
         $this->picto='globe';
 
@@ -63,27 +61,23 @@ class modWebsite extends DolibarrModules
 		$this->dirs = array("/website/temp");
 
         // Config pages
-        //-------------
         $this->config_page_url = array('website.php');
 
-        // Dependancies
-        //-------------
+        // Dependencies
 		$this->hidden = ! empty($conf->global->MODULE_WEBSITE_DISABLED);	// A condition to disable module
 		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("website");
 
         // Constants
-        //-----------
        	$this->const = array();
 
         // New pages on tabs
-        // -----------------
-       	//$this->tabs[] = array('data'=>'thirdparty:+website:WebSites:website:($conf->societe->enabled && $user->rights->societe->lire):/societe/website.php?mainmenu=home&id=__ID__');  					// To add a new tab identified by code tabname1
+       	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
-        //------
         $this->boxes = array();
 
 		// Permissions
@@ -98,12 +92,18 @@ class modWebsite extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 10002;
-		$this->rights[$r][1] = 'Create/modify website content';
+		$this->rights[$r][1] = 'Create/modify website content (html and javascript content)';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$r++;
 
 		$this->rights[$r][0] = 10003;
+		$this->rights[$r][1] = 'Create/modify website content (dynamic php code). Dangerous, must be reserved to restricted developers.';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'writephp';
+		$r++;
+
+		$this->rights[$r][0] = 10005;
 		$this->rights[$r][1] = 'Delete website content';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
@@ -113,7 +113,7 @@ class modWebsite extends DolibarrModules
         $r=0;
         $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'top',			                // This is a Left menu entry
-						        'titre'=>'Websites',
+						        'titre'=>'WebSites',
                                 'mainmenu'=>'website',
 						        'url'=>'/website/index.php',
 						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -134,11 +134,70 @@ class modWebsite extends DolibarrModules
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         //$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'website_page as t, '.MAIN_DB_PREFIX.'website as p';
         $this->export_sql_end[$r] .=' WHERE t.fk_website = p.rowid';
         $this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('website').')';
         $r++;
+    }
+
+
+    /**
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
+     *
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int                 1 if OK, 0 if KO
+     */
+    public function init($options = '')
+    {
+    	global $conf,$langs;
+
+    	// Remove permissions and default values
+    	$this->remove($options);
+
+    	// Copy flags and octicons directory
+    	$dirarray=array('common/flags', 'common/octicons');
+    	foreach($dirarray as $dir)
+    	{
+	    	$src=DOL_DOCUMENT_ROOT.'/theme/'.$dir;
+	    	$dest=DOL_DATA_ROOT.'/medias/image/'.$dir;
+
+	    	if (is_dir($src))
+	    	{
+	    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    		dol_mkdir($dest);
+	    		$result=dolCopyDir($src, $dest, 0, 0);
+	    		if ($result < 0)
+	    		{
+	    			$langs->load("errors");
+	    			$this->error=$langs->trans('ErrorFailToCopyDir', $src, $dest);
+	    			return 0;
+	    		}
+	    	}
+    	}
+
+    	// Website templates
+    	$srcroot=DOL_DOCUMENT_ROOT.'/install/doctemplates/websites';
+    	$destroot=DOL_DATA_ROOT.'/doctemplates/websites';
+
+    	dol_mkdir($destroot);
+
+    	$docs=dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
+    	foreach($docs as $cursorfile) {
+	    	$src=$srcroot.'/'.$cursorfile['name'];
+	    	$dest=$destroot.'/'.$cursorfile['name'];
+
+	    	$result=dol_copy($src, $dest, 0, 1);	// For full zip templates, we overwrite old existing files
+	    	if ($result < 0) {
+	    		$langs->load("errors");
+	    		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+	    	}
+    	}
+
+    	$sql = array();
+
+    	return $this->_init($sql, $options);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2017      Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,18 +32,16 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("companies");
-$langs->load('stocks');
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-$id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
+$id = GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int');
 $ref = GETPOST('ref');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
+if ($user->socid) $socid=$user->socid;
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
@@ -62,7 +60,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$langs->trans("Order"),$help_url);
+llxHeader('', $langs->trans("Order"), $help_url);
 
 $form = new Form($db);
 
@@ -72,9 +70,9 @@ $form = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-$now=dol_now();
+$now = dol_now();
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     if ($result >= 0)
     {
@@ -105,20 +103,21 @@ if ($id > 0 || ! empty($ref))
 		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		    if ($user->rights->fournisseur->commande->creer)
 		    {
-		        if ($action != 'classify')
-		            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-		            $morehtmlref.=' : ';
-		        	if ($action == 'classify') {
-		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-		                $morehtmlref.='</form>';
-		            } else {
-		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-		            }
+		        if ($action != 'classify') {
+		        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.=' : ';
+                }
+	            if ($action == 'classify') {
+	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
+	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='</form>';
+	            } else {
+	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	            }
 		    } else {
 		        if (! empty($object->fk_project)) {
 		            $proj = new Project($db);
@@ -140,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="underbanner clearboth"></div>';
 
 
-		$cssclass="titlefield";
+		$cssclass = "titlefield";
         include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         print '</div>';
@@ -155,7 +154,6 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

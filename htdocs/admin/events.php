@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,16 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 
 $securityevent=new Events($db);
 $eventstolog=$securityevent->eventstolog;
-
 
 
 /*
@@ -56,8 +54,8 @@ if ($action == "save")
 	{
 		$param='MAIN_LOGEVENTS_'.$arr['id'];
 		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
-		else dolibarr_del_const($db,$param,$conf->entity);
+		if (! empty($_POST[$param])) dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
+		else dolibarr_del_const($db, $param, $conf->entity);
 	}
 
 	$db->commit();
@@ -71,25 +69,23 @@ if ($action == "save")
  */
 
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('',$langs->trans("Audit"),$wikihelp);
+llxHeader('', $langs->trans("Audit"), $wikihelp);
 
-//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("LogEventDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("LogEventDesc", $langs->transnoentitiesnoconv("AdminTools"), $langs->transnoentitiesnoconv("Audit"))."</span><br>\n";
 print "<br>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'audit', $langs->trans("Security"), -1);
 
-
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
@@ -99,7 +95,6 @@ foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
 	{
-		
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
@@ -119,6 +114,6 @@ print "</div>";
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
 $db->close();

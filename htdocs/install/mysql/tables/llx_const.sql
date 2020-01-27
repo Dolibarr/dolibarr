@@ -2,7 +2,7 @@
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -28,8 +28,8 @@ create table llx_const
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(180) NOT NULL,
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
-  value       text NOT NULL, -- max 65535 caracteres
-  type        varchar(6),
+  value       text NOT NULL, 				-- max 65535 caracteres
+  type        varchar(64) DEFAULT 'string',
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp

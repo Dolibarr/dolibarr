@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,25 +32,32 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_contacts1 extends MailingTargets
 {
-	var $name='ContactCompanies';                     // Identifiant du module mailing
+	public $name='ContactCompanies';                     // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
-	var $require_module=array("societe");               // Module mailing actif si modules require_module actifs
-	var $require_admin=0;                               // Module mailing actif pour user admin ou non
-	var $picto='contact';
-
-	var $db;
-
+	public $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
+	public $require_module=array("societe");               // Module mailing actif si modules require_module actifs
+	public $require_admin=0;                               // Module mailing actif pour user admin ou non
 
 	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
+	public $picto='contact';
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 
 
     /**
@@ -61,8 +68,8 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
-	{
+    public function getSqlArrayForStats()
+    {
 		global $conf, $langs;
 
 		$langs->load("commercial");
@@ -71,13 +78,13 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label,";
 		$statssql[0].= " count(distinct(c.email)) as nb";
 		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$statssql[0].= " WHERE c.entity IN (".getEntity('societe').")";
+		$statssql[0].= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$statssql[0].= " AND c.email != ''";      // Note that null != '' is false
 		$statssql[0].= " AND c.no_email = 0";
 		$statssql[0].= " AND c.statut = 1";
 
 		return $statssql;
-	}
+    }
 
 
 	/**
@@ -88,21 +95,23 @@ class mailing_contacts1 extends MailingTargets
 	 *  @param		string	$sql		Requete sql de comptage
 	 *	@return		int
 	 */
-	function getNbOfRecipients($sql='')
-	{
+    public function getNbOfRecipients($sql = '')
+    {
 		global $conf;
 
 		$sql  = "SELECT count(distinct(c.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
-		$sql.= " WHERE c.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND c.email != ''"; // Note that null != '' is false
 		$sql.= " AND c.no_email = 0";
+		$sql .= " AND (SELECT count(*) FROM ". MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = c.email) = 0";
+		// exclude unsubscribed users
 		$sql.= " AND c.statut = 1";
 
 		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
-	}
+    }
 
 
 	/**
@@ -110,20 +119,19 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
-	function formFilter()
-	{
+    public function formFilter()
+    {
 		global $langs;
-		$langs->load("companies");
-		$langs->load("commercial");
-		$langs->load("suppliers");
-		$langs->load("categories");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","companies","suppliers","categories"));
 
 		$s='';
 
 		// Add filter on job position
 		$sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		/*$sql.= " AND sp.email != ''";    // Note that null != '' is false
 		 $sql.= " AND sp.no_email = 0";
 		 $sql.= " AND sp.statut = 1";*/
@@ -161,7 +169,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
 		//$sql.= " AND sp.no_email = 0";
 		//$sql.= " AND sp.email != ''";
-		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		//$sql.= " AND sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND cs.fk_categorie = c.rowid";
 		$sql.= " AND cs.fk_socpeople = sp.rowid";
 		$sql.= " GROUP BY c.label";
@@ -236,7 +244,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
 		//$sql.= " AND sp.no_email = 0";
 		//$sql.= " AND sp.email != ''";
-		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		//$sql.= " AND sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND cs.fk_categorie = c.rowid";
 		$sql.= " AND cs.fk_soc = sp.fk_soc";
 		$sql.= " GROUP BY c.label";
@@ -278,7 +286,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
 		//$sql.= " AND sp.no_email = 0";
 		//$sql.= " AND sp.email != ''";
-		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		//$sql.= " AND sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND cs.fk_categorie = c.rowid";
 		$sql.= " AND cs.fk_soc = sp.fk_soc";
 		$sql.= " GROUP BY c.label";
@@ -309,7 +317,7 @@ class mailing_contacts1 extends MailingTargets
 		$s.='</select>';
 
 		return $s;
-	}
+    }
 
 
 	/**
@@ -318,28 +326,29 @@ class mailing_contacts1 extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
-	function url($id)
-	{
-		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
-	}
+    public function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('', "contact").'</a>';
+    }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
-	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @param  array	$filtersarray   Optional filter data (deprecated)
+	 *  @param  int		$mailing_id    	Id of emailing
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id,$filtersarray=array())
-	{
+    public function add_to_target($mailing_id)
+    {
+        // phpcs:enable
 		global $conf, $langs;
 
-		$filter = GETPOST('filter','alpha');
-		$filter_jobposition = GETPOST('filter_jobposition','alpha');
-		$filter_category = GETPOST('filter_category','alpha');
-		$filter_category_customer = GETPOST('filter_category_customer','alpha');
-		$filter_category_supplier = GETPOST('filter_category_supplier','alpha');
+		$filter = GETPOST('filter', 'alpha');
+		$filter_jobposition = GETPOST('filter_jobposition', 'alpha');
+		$filter_category = GETPOST('filter_category', 'alpha');
+		$filter_category_customer = GETPOST('filter_category_customer', 'alpha');
+		$filter_category_supplier = GETPOST('filter_category_supplier', 'alpha');
 
 		$cibles = array();
 
@@ -374,9 +383,11 @@ class mailing_contacts1 extends MailingTargets
     	if ($filter_category_customer <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as c2s";
     	if ($filter_category_supplier <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c3";
     	if ($filter_category_supplier <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
-    	$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+    	$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND sp.email <> ''";
 		$sql.= " AND sp.no_email = 0";
+		$sql .= " AND (SELECT count(*) FROM ". MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = sp.email) = 0";
+		// Exclude unsubscribed email adresses
 		$sql.= " AND sp.statut = 1";
 		$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		// Filter on category
@@ -444,8 +455,6 @@ class mailing_contacts1 extends MailingTargets
 			return -1;
 		}
 
-		return parent::add_to_target($mailing_id, $cibles);
-	}
-
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
+    }
 }
-

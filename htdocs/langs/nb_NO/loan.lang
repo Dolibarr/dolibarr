@@ -10,6 +10,7 @@ LoanCapital=Kapital
 Insurance=Forsikring
 Interest=Rente
 Nbterms=Antall terminer
+Term=Term
 LoanAccountancyCapitalCode=Regnskapskonto kapital
 LoanAccountancyInsuranceCode=Regnskapskonto forsikring
 LoanAccountancyInterestCode=Regnskapskonto rente
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Bekreft sletting av dette lånet
 LoanDeleted=Lånet ble slettet
 ConfirmPayLoan=Bekreft at dette lånet er klassifisert som betalt
 LoanPaid=Lån nedbetalt
-# Calc
-LoanCalc=Lånekalkulator
-PurchaseFinanceInfo=Kjøps- og finansieringsinformasjon
-SalePriceOfAsset=Aktiva salgspris
-PercentageDown=Prosentvis ned
-LengthOfMortgage=Lånevarighet
-AnnualInterestRate=Årlig rente
-ExplainCalculations=Forklar utregninger
-ShowMeCalculationsAndAmortization=Vis utregninger og amortisering
-MortgagePaymentInformation=Nedbetalingsinformasjon
-DownPayment=Avdrag
-DownPaymentDesc= <b>Nedbetaling</b> = Lånebeløp * prosent ned / 100 (For 5% ned får man 5/100 eller 0.05)
-InterestRateDesc=<b>Rentefot</b> = Årsrente/100
-MonthlyFactorDesc=<b>Månedsfaktor</b> = Resultatet av følgende formel:
-MonthlyInterestRateDesc=<b>Månedlig rentefot</b> = Årlig rentefot / 12 (mnd)
-MonthTermDesc=<b>Månedsterminer</b> = Låneperiode i år * 12
-MonthlyPaymentDesc=Månedlige nedbetalinger er regnet ut med følgende formel:
-AmortizationPaymentDesc=<a href="#amortization">amortisering</a> bryter ned hvor mye av den månedlige betalingen går til rentebetaling, og hvor mye som går til nedbetaling på lånet ditt.
-AmountFinanced=Finansieringsbeløp
-AmortizationMonthlyPaymentOverYears=Amortisering for månedlige avdrag: <b>%s</b> over %s år
-Totalsforyear=Totalt for året
-MonthlyPayment=Månedlig avdrag
-LoanCalcDesc=Denne <b>boliglånskalkulatoren</b> kan brukes til å finne ut månedlige betalinger av et lån, basert på lånebeløp, antall terminer og rente. <br> Denne kalkulatoren inneholder også PMI (Private Mortgage Insurance) for lån hvor mindre enn 20% er satt som nedbetaling . Også tatt i betraktning er eiendomsskatt, og dens effekt på den totale månedlige boliglåns-betalingen. <br>
-GoToInterest=%s vil gå mot INTEREST
-GoToPrincipal=%s vil gå mot PRINCIPAL
-YouWillSpend=Du kommer til å bruke %s i år %s
 ListLoanAssociatedProject=Liste over lån tilknyttet prosjektet
 AddLoan=Opprett lån
+FinancialCommitment=Finansiell forpliktelse
+InterestAmount=Rente
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Oppset av lån-modulen
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskonto kapital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard regnskapskonto  rente
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard regnskapskonto forsikring
-CreateCalcSchedule=Opprett/endre låneplan
+CreateCalcSchedule=Rediger økonomisk forpliktelse

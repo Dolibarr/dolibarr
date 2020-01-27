@@ -12,14 +12,14 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 CREATE TABLE llx_holiday 
 (
 rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-ref			   varchar(30) NULL,       -- number
+ref			   varchar(30) NOT NULL,
 ref_ext		   varchar(255),
 entity         integer DEFAULT 1 NOT NULL,		-- Multi company id
 fk_user        integer NOT NULL,
@@ -32,9 +32,9 @@ date_debut     DATE NOT NULL,
 date_fin       DATE NOT NULL,
 halfday        integer DEFAULT 0,				-- 0=start morning and end afternoon, -1=start afternoon end afternoon, 1=start morning and end morning, 2=start afternoon and end morning
 statut         integer NOT NULL DEFAULT '1',
-fk_validator   integer NOT NULL,
-date_valid     DATETIME DEFAULT NULL,
-fk_user_valid  integer DEFAULT NULL,
+fk_validator   integer NOT NULL,				-- who should approve
+date_valid     DATETIME DEFAULT NULL,			-- date approval
+fk_user_valid  integer DEFAULT NULL,			-- user approval
 date_refuse    DATETIME DEFAULT NULL,
 fk_user_refuse integer DEFAULT NULL,
 date_cancel    DATETIME DEFAULT NULL,
