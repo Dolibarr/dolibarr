@@ -93,6 +93,9 @@ if ($resql) {
 }
 ?>
 <link rel="stylesheet" href="css/pos.css.php">
+<?php
+if ($conf->global->TAKEPOS_COLOR_THEME == 1) print '<link rel="stylesheet" href="css/colorful.css">';
+?>
 </head>
 <body>
 
