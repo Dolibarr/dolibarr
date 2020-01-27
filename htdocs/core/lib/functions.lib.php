@@ -7421,7 +7421,7 @@ function printCommonFooter($zone = 'private')
 				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-				$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+				//$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
 				if (!empty($user->default_values[$relativepathstring]['focus']))
 				{
 					foreach ($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
@@ -7433,7 +7433,9 @@ function printCommonFooter($zone = 'private')
 							$foundintru = 0;
 							foreach ($tmpqueryarraytohave as $tmpquerytohave)
 							{
-								if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru = 1;
+								$tmpquerytohaveparam = explode('=', $tmpquerytohave);
+								//print "console.log('".$tmpquerytohaveparam[0]." ".$tmpquerytohaveparam[1]." ".GETPOST($tmpquerytohaveparam[0])."');";
+								if (!GETPOSTISSET($tmpquerytohaveparam[0]) || ($tmpquerytohaveparam[1] != GETPOST($tmpquerytohaveparam[0]))) $foundintru = 1;
 							}
 							if (!$foundintru) $qualified = 1;
 							//var_dump($defkey.'-'.$qualified);
@@ -7463,7 +7465,9 @@ function printCommonFooter($zone = 'private')
 							$foundintru = 0;
 							foreach ($tmpqueryarraytohave as $tmpquerytohave)
 							{
-								if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru = 1;
+								$tmpquerytohaveparam = explode('=', $tmpquerytohave);
+								//print "console.log('".$tmpquerytohaveparam[0]." ".$tmpquerytohaveparam[1]." ".GETPOST($tmpquerytohaveparam[0])."');";
+								if (!GETPOSTISSET($tmpquerytohaveparam[0]) || ($tmpquerytohaveparam[1] != GETPOST($tmpquerytohaveparam[0]))) $foundintru = 1;
 							}
 							if (!$foundintru) $qualified = 1;
 							//var_dump($defkey.'-'.$qualified);
