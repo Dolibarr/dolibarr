@@ -96,7 +96,7 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">

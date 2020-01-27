@@ -67,7 +67,7 @@ else
     }
 }
 
-$arrayofcss = array('/takepos/css/pos.css');
+$arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs=array();
 
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
@@ -92,7 +92,7 @@ if ($resql) {
 	}
 }
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 </head>
 <body>
 
