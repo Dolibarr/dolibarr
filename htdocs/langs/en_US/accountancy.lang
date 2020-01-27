@@ -270,6 +270,7 @@ ChangeBinding=Change the binding
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
 ShowTutorial=Show Tutorial
+NotLettering= Not lettering
 
 ## Admin
 ApplyMassCategories=Apply mass categories
