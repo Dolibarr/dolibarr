@@ -48,11 +48,11 @@ $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['ent
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -96,27 +96,45 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
     global $user, $conf, $langs, $mysoc;
 
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-    print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
-    // Print logo
+    print '<body id="mainbody" class="publicnewmemberform">';
+
+    // Define urllogo
+    $width = 0;
     $urllogo = DOL_URL_ROOT.'/theme/login_logo.png';
 
     if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+        $width = 150;
     }
     elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-        $width = 128;
+        $width = 150;
     }
     elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
     {
         $urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+        $width = 150;
     }
-    print '<div class="center">';
-    print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
-    print '</div><br>';
+
+	print '<div class="center">';
+    // Output html code for logo
+    if ($urllogo)
+    {
+    	print '<div class="backgreypublicpayment">';
+    	print '<div class="logopublicpayment">';
+    	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+    	if ($width) print ' width="'.$width.'"';
+    	print '>';
+    	print '</div>';
+    	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+    		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+    	}
+    	print '</div>';
+    }
+    print '</div>';
 
     print '<div class="divmainbodylarge">';
 }

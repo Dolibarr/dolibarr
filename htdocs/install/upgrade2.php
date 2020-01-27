@@ -489,6 +489,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+			'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
 			'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
 			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
@@ -4746,8 +4747,19 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->init($reloadmode);
 			}
 		}
+		elseif ($moduletoreload == 'MAIN_MODULE_TAKEPOS')    // Permission has changed into 10.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Takepos module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modTakePos.class.php';
+			if ($res) {
+				$mod = new modTakePos($db);
+				$mod->remove('noboxes'); // We need to remove because menu entries has changed
+				$mod->init($reloadmode);
+			}
+		}
 		else
 		{
+			$reg = array();
 			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
 			if (!empty($reg[1]))
 			{
