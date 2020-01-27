@@ -1875,7 +1875,6 @@ class User extends CommonObject
 
 			// Crypt password
 			$password_crypted = dol_hash($password);
-
 		} else {
 			$password_crypted = $password_indatabase_crypted;
 		}
