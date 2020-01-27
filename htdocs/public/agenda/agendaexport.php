@@ -157,10 +157,12 @@ $agenda=new ActionComm($db);
 $cachedelay=0;
 if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) $cachedelay=$conf->global->MAIN_AGENDA_EXPORT_CACHE;
 
+$exportholidays = empty($conf->global->AGENDA_SHOW_HOLIDAYS) ? 0 : 1;
+
 // Build file
 if ($format == 'ical' || $format == 'vcal')
 {
-	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0)
 	{
 		$attachment = true;
@@ -195,7 +197,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 if ($format == 'rss')
 {
-	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0)
 	{
 		$attachment = false;
