@@ -1040,7 +1040,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Show online payment link
 				$useonlinepayment = ((! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) && !empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT));
-				if ($object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD' && $object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
+				if (($object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') && $object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
