@@ -5501,11 +5501,12 @@ div.tabsElem a.tab {
 	width: 70%;
 }
 .publicnewticketform {
-	margin-top: 25px !important;
+	/* margin-top: 25px !important; */
 }
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
+	padding-top: 10px;
 }
 @media only screen and (max-width: 767px)
 {
@@ -5513,7 +5514,7 @@ div.tabsElem a.tab {
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100%;
+		width: 100% !important;
 	}
 }
 
