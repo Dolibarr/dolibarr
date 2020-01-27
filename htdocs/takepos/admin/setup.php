@@ -130,7 +130,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -301,7 +301,7 @@ print '</div>';
 if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	print '<br>';
 
-	print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';

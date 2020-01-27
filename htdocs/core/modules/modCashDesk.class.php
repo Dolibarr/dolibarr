@@ -85,10 +85,10 @@ class modCashDesk extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 50101;
-		$this->rights[$r][1] = 'Use point of sale';
+		$this->rights[$r][1] = 'Use Point of sale';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'use';
+		$this->rights[$r][4] = 'run';
 
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
@@ -103,7 +103,7 @@ class modCashDesk extends DolibarrModules
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>900,
                                     'enabled'=>'$conf->cashdesk->enabled',
-		                            'perms'=>'$user->rights->cashdesk->use',		// Use 'perms'=>'1' if you want your menu with no permission rules
+		                            'perms'=>'$user->rights->cashdesk->run',		// Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'pointofsale',
 									'user'=>0);				// 0=Menu for internal users, 1=external users, 2=both
 

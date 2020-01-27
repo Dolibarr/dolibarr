@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
@@ -155,23 +155,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Si ajout champ produit libre
-	if (GETPOST('mode') == 'libre')
-	{
-		$date_start_sl = '';
-		$date_end_sl = '';
-		if (GETPOST('date_start_slmonth') && GETPOST('date_start_slday') && GETPOST('date_start_slyear'))
-		{
-			$date_start_sl = dol_mktime(GETPOST('date_start_slhour'), GETPOST('date_start_slmin'), 0, GETPOST('date_start_slmonth'), GETPOST('date_start_slday'), GETPOST('date_start_slyear'));
-		}
-		if (GETPOST('date_end_slmonth') && GETPOST('date_end_slday') && GETPOST('date_end_slyear'))
-		{
-			$date_end_sl = dol_mktime(GETPOST('date_end_slhour'), GETPOST('date_end_slmin'), 0, GETPOST('date_end_slmonth'), GETPOST('date_end_slday'), GETPOST('date_end_slyear'));
-		}
-	}
-
 	// Param dates
-	$date_contrat = '';
 	$date_start_update = '';
 	$date_end_update = '';
 	$date_start_real_update = '';
@@ -417,12 +401,12 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$price_ht = price2num(GETPOST('price_ht'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
 		else
 		{
@@ -430,7 +414,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = GETPOST('qty'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef));
 		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
@@ -438,7 +422,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc))
+		if (GETPOST('prod_entry_mode', 'alpha') == 'free' && empty($idprod) && empty($product_desc))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
@@ -612,7 +596,7 @@ if (empty($reshook))
 					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
-				unset($_POST ['prod_entry_mode']);
+				unset($_POST['prod_entry_mode']);
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -626,8 +610,8 @@ if (empty($reshook))
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
-				unset($_POST ['np_marginRate']);
-				unset($_POST ['np_markRate']);
+				unset($_POST['np_marginRate']);
+				unset($_POST['np_markRate']);
 				unset($_POST['dp_desc']);
 				unset($_POST['idprod']);
 
@@ -665,11 +649,12 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$objectline = new ContratLigne($db);
-			if ($objectline->fetch(GETPOST('elrowid')) < 0)
+			if ($objectline->fetch(GETPOST('elrowid', 'int')) < 0)
 			{
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 				$error++;
 			}
+			$objectline->fetch_optionals();
 		}
 
 		$db->begin();
@@ -693,6 +678,7 @@ if (empty($reshook))
 			$txtva = $vat_rate;
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -735,7 +721,13 @@ if (empty($reshook))
 			// Extrafields
 			$extralabelsline = $extrafields->fetch_name_optionals_label($objectline->table_element);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
-			$objectline->array_options = $array_options;
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach($array_options as $key => $value) {
+					$objectline->array_options[$key] = $array_options[$key];
+				}
+			}
 
 			// TODO verifier price_min si fk_product et multiprix
 
@@ -1114,6 +1106,7 @@ if ($action == 'create')
 	if (GETPOST('origin') && GETPOST('originid'))
 	{
 		// Parse element/subelement (ex: project_task)
+		$regs = array();
 		$element = $subelement = GETPOST('origin');
 		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs))
 		{
@@ -1544,7 +1537,7 @@ else
 			$sql .= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
 			$sql .= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 			$sql .= " cd.fk_unit,";
-			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
+			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity, p.tosell, p.tobuy, p.tobatch";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 			$sql .= " WHERE cd.rowid = ".$object->lines[$cursorline - 1]->id;
@@ -1577,12 +1570,16 @@ else
 					// Label
 					if ($objp->fk_product > 0)
 					{
-						print '<td>';
 						$productstatic->id = $objp->fk_product;
 						$productstatic->type = $objp->ptype;
 						$productstatic->ref = $objp->pref;
 						$productstatic->entity = $objp->pentity;
 						$productstatic->label = $objp->plabel;
+						$productstatic->status = $objp->tosell;
+						$productstatic->status_buy = $objp->tobuy;
+						$productstatic->status_batch = $objp->tobatch;
+
+						print '<td>';
 						$text = $productstatic->getNomUrl(1, '', 32);
 						if ($objp->plabel)
 						{

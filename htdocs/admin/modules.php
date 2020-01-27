@@ -180,11 +180,11 @@ if ($action == 'install')
                 $modulename = preg_replace('/module_/', '', $original_file);
                 $modulename = preg_replace('/\-([0-9][0-9\.]*)\.zip$/i', '', $modulename);
                 // Search dir $modulename
-                $modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename; // Example .../mymodule
-                //var_dump($modulenamedir);
+                $modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename; // Example ./mymodule
+
                 if (!dol_is_dir($modulenamedir))
                 {
-                	$modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename; // Example .../htdocs/mymodule
+                	$modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename; // Example ./htdocs/mymodule
                     //var_dump($modulenamedir);
                     if (!dol_is_dir($modulenamedir))
                     {
@@ -207,6 +207,7 @@ if ($action == 'install')
                 	$modulenamearrays = explode("\n", $metafile);
                 }
                 $modulenamearrays[$modulename] = $modulename;
+                //var_dump($modulenamearrays);exit;
 
                 foreach ($modulenamearrays as $modulenameval) {
                 	if (strpos($modulenameval, '#') === 0) continue; // Discard comments
@@ -216,15 +217,14 @@ if ($action == 'install')
 	                // Now we install the module
 	                if (!$error)
 	                {
-	                    //var_dump($dirins);
 	                    @dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the zip file
 	                    dol_syslog("We copy now directory ".$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval." into target dir ".$dirins.'/'.$modulenameval);
-	                    $result = dolCopyDir($conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval, $dirins.'/'.$modulenameval, '0444', 1);
+	                    $result = dolCopyDir($modulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
 	                    if ($result <= 0)
 	                    {
 	                        dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$modulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
 	                        $langs->load("errors");
-	                        setEventMessages($langs->trans("ErrorFailToCopyDir", $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval, $dirins.'/'.$modulenameval), null, 'errors');
+	                        setEventMessages($langs->trans("ErrorFailToCopyDir", $modulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
 	                        $error++;
 	                    }
 	                }

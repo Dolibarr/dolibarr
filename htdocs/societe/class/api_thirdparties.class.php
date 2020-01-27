@@ -1685,6 +1685,8 @@ class Thirdparties extends DolibarrApi
 		unset($object->particulier);
 		unset($object->prefix_comm);
 
+		unset($object->commercial_id);	// This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
+
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);

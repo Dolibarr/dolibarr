@@ -2147,23 +2147,27 @@ class ExtraFields
 
 				if (in_array($key_type, array('date', 'datetime')))
 				{
+					if (! GETPOSTISSET($keysuffix."options_".$key.$keyprefix)."year") continue;	// Value was not provided, we should not set it.
 					// Clean parameters
-					$value_key = dol_mktime($_POST[$keysuffix."options_".$key.$keyprefix."hour"], $_POST[$keysuffix."options_".$key.$keyprefix."min"], 0, $_POST[$keysuffix."options_".$key.$keyprefix."month"], $_POST[$keysuffix."options_".$key.$keyprefix."day"], $_POST[$keysuffix."options_".$key.$keyprefix."year"]);
+					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
 				}
 				elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
+					if (! GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue;	// Value was not provided, we should not set it.
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				}
-				elseif (in_array($key_type, array('price', 'double')))
+				elseif (in_array($key_type, array('price', 'double', 'int')))
 				{
+					if (! GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue;	// Value was not provided, we should not set it.
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key = price2num($value_arr);
 				}
 				else
 				{
+					if (! GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue;	// Value was not provided, we should not set it.
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 				}
 

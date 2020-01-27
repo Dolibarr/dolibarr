@@ -1712,8 +1712,8 @@ class FormFile
 		if (count($filearray) == 0)
 		{
 			print '<tr class="oddeven"><td colspan="5">';
-			if (empty($textifempty)) print $langs->trans("NoFileFound");
-			else print $textifempty;
+			if (empty($textifempty)) print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
+			else print '<span class="opacitymedium">'.$textifempty.'</span>';
 			print '</td></tr>';
 		}
 		print "</table>";

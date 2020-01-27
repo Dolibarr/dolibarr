@@ -1224,7 +1224,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Favicon
-		$favicon = DOL_URL_ROOT.'/theme/common/dolibarr_logo_256x256.png';
+		$favicon = DOL_URL_ROOT.'/theme/dolibarr_logo_256x256.png';
 		if (!empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (!empty($conf->global->MAIN_FAVICON_URL)) $favicon = $conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n"; // Not required into an Android webview
@@ -2571,6 +2571,10 @@ if (!function_exists("llxFooter"))
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
+					// Try to guess the distrib used
+					$distrib = 'standard';
+					if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') $distrib = 'doliwamp';
+					if (! empty($dolibarr_distrib)) $distrib = $dolibarr_distrib;
 					?>
 		    			<script>
 		    			jQuery(document).ready(function (tmp) {
@@ -2588,7 +2592,8 @@ if (!function_exists("llxFooter"))
 			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
 			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
 			    					  php_version: "<?php echo phpversion(); ?>",
-			    					  os_version: "<?php echo version_os('smr'); ?>"
+			    					  os_version: "<?php echo version_os('smr'); ?>",
+			    					  distrib: "<?php echo $distrib ? $distrib : 'unknown'; ?>"
 			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");

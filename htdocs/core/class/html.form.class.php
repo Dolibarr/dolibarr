@@ -213,7 +213,7 @@ class Form
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
 				}
-				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))
+				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))	// if wysiwyg is enabled $typeofdata = 'ckeditor'
 				{
 					$tmp = explode(':', $typeofdata);
 					$cols = $tmp[2];
@@ -225,8 +225,10 @@ class Form
 					}
 
 					$valuetoshow = ($editvalue ? $editvalue : $value);
-
 					$ret .= '<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1] ? $tmp[1] : '20').'"'.($cols ? ' cols="'.$cols.'"' : 'class="quatrevingtpercent"').$morealt.'">';
+					// textarea convert automatically entities chars into simple chars.
+					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwig is off.
+					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
 					$ret .= dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
 					$ret .= '</textarea>';
 				}
@@ -2359,6 +2361,7 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
+
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
@@ -2509,7 +2512,7 @@ class Form
 			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
-			dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
+			dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level.'', LOG_DEBUG);
 			$result2 = $this->db->query($sql);
 			if ($result2)
 			{
@@ -2637,7 +2640,7 @@ class Form
     			    $langs->load("stocks");
 
     			    $tmpproduct = new Product($this->db);
-    			    $tmpproduct->fetch($objp->rowid);
+    			    $tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1);	// Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
     			    $tmpproduct->load_virtual_stock();
     			    $virtualstock = $tmpproduct->stock_theorique;
 
@@ -3008,7 +3011,6 @@ class Form
 	 *  @param	    int		$productid       	Id of product
 	 *  @param      string	$htmlname        	Name of HTML field
 	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
-     * 
 	 *  @return	    string
 	 */
     public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
@@ -5168,11 +5170,11 @@ class Form
 		{
 			if ($societe_vendeuse->id == $mysoc->id)
 			{
-				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
 			}
 			else
 			{
-				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
 			}
 			return $return;
 		}
@@ -5911,6 +5913,7 @@ class Form
 		//var_dump($objecttmp->filter);
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
+		if ($prefixforautocompletemode == 'product') $prefixforautocompletemode='produit';
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
@@ -6233,7 +6236,12 @@ class Form
 
 				$out .= '<option value="'.$key.'"';
 				$out .= $style.$disabled;
-				if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				if (is_array($id)) {
+					if (in_array($key, $id) && !$disabled) $out .= ' selected'; // To preselect a value
+				} else {
+					$id = (string) $id;	// if $id = 0, then $id = '0'
+					if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
+				}
 				if ($nohtmlescape) $out .= ' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
 				if (is_array($tmpvalue))
 				{

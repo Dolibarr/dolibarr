@@ -2462,6 +2462,9 @@ a.tabTitle {
     text-decoration: none;
     white-space: nowrap;
 }
+.imgTabTitle {
+	max-height: 14px;
+}
 
 a.tabunactive {
     color: rgb(<?php print $colortextlink; ?>) !important;
@@ -3496,7 +3499,7 @@ img.boxhandle, img.boxclose {
 
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
-.error   { color: #550000 !important; font-weight: bold; }
+.error   { color: #660000 !important; font-weight: bold; }
 .green   { color: #118822; }
 
 div.ok {
@@ -3512,6 +3515,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
+    color: #666;
 }
 
 /* Warning message */
@@ -3662,6 +3666,18 @@ table.table-fiche-title {
 	margin-bottom: 5px;
 }
 
+
+div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; }
+.backgreypublicpayment a { color: #222 !important; }
+.poweredbypublicpayment {
+	float: right;
+	top: 8px;
+    right: 8px;
+    position: absolute;
+    font-size: 0.8em;
+    color: #222;
+    opacity: 0.3;
+}
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }

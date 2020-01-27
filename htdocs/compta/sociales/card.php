@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2020 Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@open-dsi.fr>
@@ -141,7 +141,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 	if (!$dateech)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (!$dateperiod)
@@ -193,7 +193,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 
 	if (! $dateech)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'edit';
 	}
 	elseif (! $dateperiod)
@@ -337,25 +337,25 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
 
-	// Date end period
+	// Date
 	print '<tr>';
 	print '<td class="fieldrequired">';
-	print $form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"));
-	print '</td>';
-   	print '<td>';
-	print $form->selectDate(!empty($dateperiod) ? $dateperiod : '-1', 'period', 0, 0, 0, 'charge', 1);
-	print '</td>';
-	print '</tr>';
-
-	// Date due
-	print '<tr>';
-	print '<td class="fieldrequired">';
-	print $langs->trans("DateDue");
+	print $langs->trans("Date");
 	print '</td>';
 	print '<td>';
 	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print "</tr>\n";
+
+	// Date end period
+	print '<tr>';
+	print '<td class="fieldrequired">';
+	print $form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"));
+	print '</td>';
+	print '<td>';
+	print $form->selectDate(!empty($dateperiod) ? $dateperiod : '-1', 'period', 0, 0, 0, 'charge', 1);
+	print '</td>';
+	print '</tr>';
 
 	// Amount
 	print '<tr>';
@@ -434,11 +434,11 @@ if ($id > 0)
 			}
 			else
 			{
+				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
-				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("DateDue"), 'value' => -1);
 			}
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
 		}
 
 
@@ -515,8 +515,19 @@ if ($id > 0)
 		print '<table class="border centpercent">';
 
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_label."</td>";
+		print '<tr><td class="titlefield">';
+		print $langs->trans("Type")."</td><td>".$object->type_label."</td>";
 		print "</tr>";
+
+		// Date
+		if ($action == 'edit')
+		{
+			print '<tr><td>'.$langs->trans("Date")."</td><td>";
+			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print "</td></tr>";
+		} else {
+			print "<tr><td>".$langs->trans("Date")."</td><td>".dol_print_date($object->date_ech, 'day')."</td></tr>";
+		}
 
 		// Period end date
 		print "<tr><td>".$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"))."</td>";
@@ -530,16 +541,6 @@ if ($id > 0)
 			print dol_print_date($object->periode, "day");
 		}
 		print "</td></tr>";
-
-		// Due date
-		if ($action == 'edit')
-		{
-			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
-			print "</td></tr>";
-		} else {
-			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech, 'day')."</td></tr>";
-		}
 
 		// Amount
 		if ($action == 'edit')
@@ -604,7 +605,7 @@ if ($id > 0)
 		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
 		$sql .= " c.code as type_code,c.libelle as paiement_type,";
-		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
+		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -653,6 +654,7 @@ if ($id > 0)
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
+						$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
 						if (!empty($conf->accounting->enabled)) {
 							$bankaccountstatic->account_number = $objp->account_number;

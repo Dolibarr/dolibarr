@@ -124,14 +124,14 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 else
 {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
-	
+
 	$resql = $db->query($sql);
 	if (!$resql)
 	{
 		dol_print_error($db);
 		exit;
 	}
-	
+
 	$num = $db->num_rows($resql);
 }
 
@@ -184,11 +184,10 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="right liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
-	print '</tr>';
 
 	// Fields title label
 	// --------------------------------------------------------------------
@@ -199,7 +198,9 @@ if ($resql)
 	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre('');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print "</tr>\n";
+
 	print "</tr>\n";
 
 	// Loop on record
@@ -210,10 +211,11 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		if (empty($obj)) break; // Should not happen
-		
+
 		$loan_static->id = $obj->rowid;
 		$loan_static->ref = $obj->rowid;
 		$loan_static->label = $obj->label;
+		$loan_static->paid = $obj->paid;
 
 		print '<tr class="oddeven">';
 
@@ -232,7 +234,9 @@ if ($resql)
 		// Date end
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
-		print '<td class="right nowrap">'.$loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed).'</a></td>';
+		print '<td class="right nowrap">';
+		print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed);
+		print '</td>';
 
 		print '<td></td>';
 
@@ -252,12 +256,12 @@ if ($resql)
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	print '</table>'."\n";
 	print '</div>'."\n";
-	
+
 	print '</form>'."\n";
-	
+
 	$db->free($resql);
 }
 else

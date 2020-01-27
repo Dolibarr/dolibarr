@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
@@ -364,12 +364,12 @@ if (empty($numref))
 else
 {
 	/**
-	 *   Show list of bank statements
+	 *   Show list of record into a bank statement
 	 */
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
-	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+	dol_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');
 
 
 	$mesprevnext = '';
@@ -382,7 +382,7 @@ else
     $mesprevnext .= '</ul></div>';
 
     $title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-	print load_fiche_titre($title, $mesprevnext, 'title_bank.png');
+	print load_fiche_titre($title, $mesprevnext, '');
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
@@ -444,12 +444,11 @@ else
 			// Date de valeur
 			print '<td valign="center" class="center nowrap">';
 			print dol_print_date($db->jdate($objp->dv), "day").' ';
-			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a href="releve.php?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print "</td>\n";
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 
 			// Type and num
             if ($objp->fk_type == 'SOLD') {
@@ -466,7 +465,8 @@ else
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq ? $objp->num_chq : '').$link.'</td>';
 
 			// Description
-			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
+			print '<td valign="center">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) print $langs->trans($reg[1]);

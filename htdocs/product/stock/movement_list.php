@@ -195,12 +195,12 @@ if ($action == "correct_stock")
 
         if ($product->hasbatch())
         {
-        	$batch = GETPOST('batch_number');
+        	$batch = GETPOST('batch_number', 'alphanohtml');
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+        	$sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 
 			$result = $product->correct_stock_batch(
 	            $user,
@@ -210,7 +210,7 @@ if ($action == "correct_stock")
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice'),
 	        	$eatby, $sellby, $batch,
-	        	GETPOST('inventorycode'),
+				GETPOST('inventorycode', 'alphanohtml'),
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
@@ -224,7 +224,7 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement"),
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode'),
+				GETPOST('inventorycode', 'alphanohtml'),
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
@@ -329,7 +329,7 @@ if ($action == "transfert_stock" && !$cancel)
                 else
                 {
                     $srcwarehouseid = $id;
-                    $batch = GETPOST('batch_number');
+                    $batch = GETPOST('batch_number', 'alphanohtml');
                     $eatby = $d_eatby;
                     $sellby = $d_sellby;
                 }
@@ -356,7 +356,7 @@ if ($action == "transfert_stock" && !$cancel)
                         GETPOST("label", 'san_alpha'),
                         $pricedest,
                         $eatby, $sellby, $batch,
-                        GETPOST('inventorycode')
+                    	GETPOST('inventorycode', 'alphanohtml')
                         );
                 }
             }
@@ -368,9 +368,9 @@ if ($action == "transfert_stock" && !$cancel)
                     $id,
                     GETPOST("nbpiece"),
                     1,
-                    GETPOST("label"),
+                	GETPOST("label", 'san_alpha'),
                     $pricesrc,
-                    GETPOST('inventorycode')
+                	GETPOST('inventorycode', 'alphanohtml')
                     );
 
                 // Add stock
@@ -379,9 +379,9 @@ if ($action == "transfert_stock" && !$cancel)
                     GETPOST("id_entrepot_destination"),
                     GETPOST("nbpiece"),
                     0,
-                    GETPOST("label"),
+                    GETPOST("label", 'san_alpha'),
                     $pricedest,
-                    GETPOST('inventorycode')
+                	GETPOST('inventorycode', 'alphanohtml')
                     );
             }
             if (!$error && $result1 >= 0 && $result2 >= 0)
@@ -424,7 +424,7 @@ $formother = new FormOther($db);
 $formproduct = new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
+$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tosell, p.tobuy, p.tobatch, p.fk_product_type as type, p.entity,";
 $sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql .= " m.batch, m.price,";
@@ -976,6 +976,8 @@ if ($resql)
         $productstatic->label = $objp->produit;
         $productstatic->type = $objp->type;
         $productstatic->entity = $objp->entity;
+        $productstatic->status = $objp->tosell;
+        $productstatic->status_buy = $objp->tobuy;
         $productstatic->status_batch = $objp->tobatch;
 
         $productlot->id = $objp->lotid;
