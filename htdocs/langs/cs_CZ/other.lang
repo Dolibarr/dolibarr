@@ -24,7 +24,7 @@ MessageOK=Zpráva na vrácené stránce o ověřené platbě
 MessageKO=Návratová stránka se zprávou o zrušení platby
 ContentOfDirectoryIsNotEmpty=Obsah tohoto adresáře není prázdný.
 DeleteAlsoContentRecursively=Zkontrolujte, zda chcete celý obsah odstranit rekurzivně
-
+PoweredBy=Powered by
 YearOfInvoice=Rok fakturace
 PreviousYearOfInvoice=Předchozí rok data fakturace
 NextYearOfInvoice=Následující rok fakturace
@@ -104,7 +104,8 @@ DemoFundation=Spravovat nadaci, nebo neziskovou organizaci a její členy
 DemoFundation2=Správa členů a bankovních účtů nadace nebo neziskové organizace
 DemoCompanyServiceOnly=Správa pouze prodejní činnosti malé firmy nebo nadace
 DemoCompanyShopWithCashDesk=Správa obchodu s pokladnou, e-shopu nebo obchodní činnost
-DemoCompanyProductAndStocks=Správa malého nebo středního podniku, který prodává své výrobky
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Správa malé nebo střední firmy s více činnostmi (všechny hlavní moduly)
 CreatedBy=Vytvořil %s
 ModifiedBy=Změnil %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL stránky
 WEBSITE_TITLE=Titul
 WEBSITE_DESCRIPTION=Popis
 WEBSITE_IMAGE=obraz
-WEBSITE_IMAGEDesc=Relativní cesta obrazového média. Můžete si to nechat prázdné, protože se jen zřídka používá (může být použito dynamickým obsahem pro zobrazení náhledu seznamu blogů).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Klíčová slova
 LinesToImport=Řádky, které chcete importovat
 

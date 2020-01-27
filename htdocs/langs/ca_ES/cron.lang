@@ -76,8 +76,9 @@ CronType_method=Mètode per cridar una classe PHP
 CronType_command=Comando Shell
 CronCannotLoadClass=Impossible carregar el fitxer de la classe %s (per utilitzar la classe %s)
 CronCannotLoadObject=El "class file" %s s'ha carregat, però l'objecte %s no s'ha trobat dins d'ell
-UseMenuModuleToolsToAddCronJobs=Ves a menú "Inici - Utilitats de sistema - Tasques programades" per veure i editar les tasques programades.
+UseMenuModuleToolsToAddCronJobs=Vés al menú "<a href="%s">Inici - Eines d'administració: treballs programats</a>" per veure i editar les tasques programades.
 JobDisabled=Tasca desactivada
 MakeLocalDatabaseDumpShort=Còpia de seguretat de la base de dades local
 MakeLocalDatabaseDump=Crear un bolcat de la base de dades local. Els paràmetres són: compressió ('gz' o 'bz' o 'none'), tipus de còpia de seguretat ('mysql' o 'pgsql'), 1, 'auto' o nom de fitxer per a compilar, nombre de fitxers de còpia de seguretat per conservar
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
+DATAPOLICYJob=Netejador de dades i anonimitzador

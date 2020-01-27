@@ -110,3 +110,6 @@ UserLogged=Utente connesso
 DateEmployment=Employment Start Date
 DateEmploymentEnd=Employment End Date
 CantDisableYourself=You can't disable your own user record
+ForceUserExpenseValidator=Forza validatore rapporto spese
+ForceUserHolidayValidator=Convalida richiesta di congedo forzato
+ValidatorIsSupervisorByDefault=Per impostazione predefinita, il validatore è il supervisore dell'utente. Mantieni vuoto per mantenere questo comportamento.

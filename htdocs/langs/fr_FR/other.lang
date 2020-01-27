@@ -24,7 +24,7 @@ MessageOK=Message sur la page de retour d'un paiement validé
 MessageKO=Message sur la page de retour d'un paiement annulé
 ContentOfDirectoryIsNotEmpty=Le contenu de ce répertoire n'est pas vide.
 DeleteAlsoContentRecursively=Cocher pour supprimer tout le contenu de manière récursive
-
+PoweredBy=Powered by
 YearOfInvoice=Année de la date de facturation
 PreviousYearOfInvoice=Année précédente de la date de facturation
 NextYearOfInvoice=Année suivante de la date de facturation
@@ -104,7 +104,8 @@ DemoFundation=Gestion des adhérents d'une association
 DemoFundation2=Gestion des adhérents et trésorerie d'une association
 DemoCompanyServiceOnly=Société ou indépendant faisant du service uniquement
 DemoCompanyShopWithCashDesk=Gestion d'un magasin avec caisse
-DemoCompanyProductAndStocks=Société vendant des produits avec magasin
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Société avec de multiples activités (tous les modules principaux)
 CreatedBy=Créé par %s
 ModifiedBy=Modifié par %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL de la page
 WEBSITE_TITLE=Titre
 WEBSITE_DESCRIPTION=Description
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Chemin relatif du média image. Vous pouvez garder ce champ vide car il est rarement utilisé (cela peut être utilisé par du contenu dynamique pour afficher un aperçu de page de type "blog_post").
+WEBSITE_IMAGEDesc=Chemin relatif du média image. Vous pouvez garder ce champ vide car il est rarement utilisé (cela peut être utilisé par du contenu dynamique pour afficher un aperçu de page de type "blog_post"). Utilisez la chaine __WEBSITEKEY__ dans le chemin si le chemin dépend du nom du site web.
 WEBSITE_KEYWORDS=Mots clés
 LinesToImport=Lignes à importer
 

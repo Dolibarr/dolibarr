@@ -1013,3 +1013,6 @@ ContactDefault_supplier_proposal=Proposition commerciale fournisseur
 ContactDefault_ticketsup=Ticket
 ContactAddedAutomatically=Contact ajouté à partir des rôles du contact du tiers
 More=Plus
+ShowDetails=Afficher les détails
+CustomReports=Custom reports
+SelectYourGraphOptionsFirst=Select your graph options to build a graph

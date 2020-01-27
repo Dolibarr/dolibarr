@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 dagar
 PaymentCondition14D=14 dagar
 PaymentConditionShort14DENDMONTH=14 dagar i månadsskiftet
 PaymentCondition14DENDMONTH=Inom 14 dagar efter slutet av månaden
-FixAmount=Bestämd mängd
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variabelt belopp (%% summa)
 VarAmountOneLine=Variabel mängd (%% tot.) - 1 rad med etikett '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Intäkt stämpel
 YouMustCreateInvoiceFromThird=Det här alternativet är endast tillgängligt när du skapar en faktura från fliken "Kund" från tredje part
 YouMustCreateInvoiceFromSupplierThird=Det här alternativet är endast tillgängligt när du skapar en faktura från fliken "Leverantör" till tredje part
 YouMustCreateStandardInvoiceFirstDesc=Du måste först skapa en standardfaktura och konvertera den till "mall" för att skapa en ny mallfaktura
-PDFCrabeDescription=Faktura modell Crabe. En fullständig faktura modell (Stöd moms alternativet, rabatter, betalningar villkor, logotyp, etc. ..)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Faktura PDF mall Svamp. En komplett fakturamall
 PDFCrevetteDescription=Faktura PDF-mall Crevette. En komplett faktura mall för lägesfakturor
 TerreNumRefModelDesc1=Återger nummer med formatet %syymm-nnnn för standardfakturor och %syymm-NNNN för kreditnotor där yy är året, mm månaden och nnnn är en sekvens med ingen paus och ingen återgång till 0

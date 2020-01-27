@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 dage
 PaymentCondition14D=14 dage
 PaymentConditionShort14DENDMONTH=14 dage i slutningen af ​​måneden
 PaymentCondition14DENDMONTH=Inden for 14 dage efter slutningen af ​​måneden
-FixAmount=Fixed amount
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variabel mængde (%% tot.)
 VarAmountOneLine=Variabel mængde (%% tot.) - 1 linje med etiket '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Indtægtsstempel
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=Du skal først oprette en standardfaktura og konvertere den til "skabelon" for at oprette en ny skabelonfaktura
-PDFCrabeDescription=Faktura model Crabe. En fuldstændig faktura model (Support moms option, rabatter, betalinger betingelser, logo, etc. ..)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Faktura PDF skabelon opsætning. En komplet faktura skabelon
 PDFCrevetteDescription=Faktura PDF skabelon Crevette. En komplet faktura skabelon for kontoudtog
 TerreNumRefModelDesc1=Retur nummer med format %syymm-nnnn for standard faktura og %syymm-nnnn for kreditnoter hvor du er år, mm er måned og nnnn er en sekvens uden pause og ingen tilbagevenden til 0

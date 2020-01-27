@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=Το BOM δεν έχει εγκριθεί
 BOM_CLOSEInDolibarr=Το BOM είναι απενεργοποιημένο
 BOM_REOPENInDolibarr=Ανοίξτε ξανά το BOM
 BOM_DELETEInDolibarr=Το BOM διαγράφηκε
-MRP_MO_VALIDATEInDolibarr=MO validated
-MRP_MO_PRODUCEDInDolibarr=MO produced
-MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_VALIDATEInDolibarr=Το ΜΟ επικυρώθηκε
+MRP_MO_PRODUCEDInDolibarr=Το ΜΟ παράχθηκε
+MRP_MO_DELETEInDolibarr=Το MO διαγράφηκε
 ##### End agenda events #####
 AgendaModelModule=Πρότυπα εγγράφων για συμβάν
 DateActionStart=Ημερομηνία έναρξης

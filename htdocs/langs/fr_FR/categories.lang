@@ -90,4 +90,5 @@ ShowCategory=Afficher tag/catégorie
 ByDefaultInList=Par défaut dans la liste
 ChooseCategory=Choisissez une catégorie
 StocksCategoriesArea=Espace Catégories d'entrepôts
+ActionCommCategoriesArea=Espace catégories d'événements
 UseOrOperatorForCategories=Utiliser l'opérateur 'ou' pour les catégories

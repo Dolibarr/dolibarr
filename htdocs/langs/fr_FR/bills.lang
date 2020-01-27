@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 jours
 PaymentCondition14D=14 jours
 PaymentConditionShort14DENDMONTH=14 jours fin de mois
 PaymentCondition14DENDMONTH=Sous 14 jours suivant la fin du mois
-FixAmount=Montant Fixe
+FixAmount=Montant Fixe - 1 ligne avec le libellé '%s'
 VarAmount=Montant variable (%% tot.)
 VarAmountOneLine=Montant variable (%% tot.) - 1 ligne avec le libellé '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Timbre fiscal
 YouMustCreateInvoiceFromThird=Cette option est disponible uniquement lors de la création de factures depuis l'onglet "client" du tiers
 YouMustCreateInvoiceFromSupplierThird=Cette option est disponible uniquement lors de la création d'une facture depuis l'onglet "fournisseur" d'un tiers
 YouMustCreateStandardInvoiceFirstDesc=Pour créer une facture modèle, vous devez d'abord créer une facture standard brouillon et la convertir en modèle.
-PDFCrabeDescription=Modèle de facture PDF complet (modèle recommandé par défaut)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Modèle de facture PDF Sponge. Un modèle de facture complet
 PDFCrevetteDescription=Modèle de facture PDF Crevette (modèle complet pour les factures de situation)
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et factures de remplacement, %syymm-nnnn pour les avoirs et %syymm-nnnn pour les acomptes où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0

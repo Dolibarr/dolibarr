@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 zile
 PaymentCondition14D=14 zile
 PaymentConditionShort14DENDMONTH=14 zile de la sfârșitul lunii
 PaymentCondition14DENDMONTH=În termen de 14 zile de la sfârșitul lunii
-FixAmount=Valoare fixă
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Valoare variabilă (%% tot.)
 VarAmountOneLine=Cantitate variabilă (%% tot.) - 1 rând cu eticheta "%s"
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Timbru fiscal
 YouMustCreateInvoiceFromThird=Această opțiune este disponibilă numai când creați o factură din fila "Client" al unui terț
 YouMustCreateInvoiceFromSupplierThird=Această opțiune este disponibilă numai când creați o factură din fila "Furnizor" al unui terț
 YouMustCreateStandardInvoiceFirstDesc=Intai se poate crea o factură standard si se transforma in model pentru a avea un nou model de factura.
-PDFCrabeDescription=Şablon PDF Factura Crabe . Un șablon factură complet (format recomandat)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Factura PDF șablon Burete. Un șablon complet de factură
 PDFCrevetteDescription=Model factură PDF Crevette. Un model complet pentru factura de situaţie
 TerreNumRefModelDesc1=Returnează numărul sub forma %syymm-nnnn pentru facturile standard și %syymm-nnnn pentru notele de credit unde yy este anul, mm este luna și nnnn este o secvenţă fără nici o pauză și fără revenire la 0

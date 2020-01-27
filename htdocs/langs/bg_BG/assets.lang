@@ -45,7 +45,7 @@ AssetsSetupPage = Страница за настройка на активите
 ExtraFieldsAssetsType = Допълнителни атрибути (вид актив)
 AssetsType=Вид актив
 AssetsTypeId=Идентификатор на вида актива
-AssetsTypeLabel=Етикет на вида актив
+AssetsTypeLabel=Име на вид актив
 AssetsTypes=Видове активи
 
 #

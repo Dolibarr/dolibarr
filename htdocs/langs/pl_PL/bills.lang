@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 dni
 PaymentCondition14D=14 dni
 PaymentConditionShort14DENDMONTH=14 days of month-end
 PaymentCondition14DENDMONTH=Within 14 days following the end of the month
-FixAmount=Fixed amount
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Zmienna ilość (%% tot.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Znaczek skarbowy
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
-PDFCrabeDescription=Faktura Crabe modelu. Pełna faktura modelu (VAT Wsparcie opcji, rabaty, warunki płatności, logo, itp. ..)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=Zwróć numer w formacie %srrmm-nnnn dla standardowych faktur i %srrmm-nnnn dla not kredytowych, gdzie rr oznacza rok, mm to miesiąc, a nnnn to kolejny niepowtarzalny numer rozpoczynający się od 0
