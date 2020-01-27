@@ -1557,18 +1557,19 @@ class ActionComm extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *		Export events from database into a cal file.
+     * Export events from database into a cal file.
      *
-     *		@param	string		$format			'vcal', 'ical/ics', 'rss'
-     *		@param	string		$type			'event' or 'journal'
-     *		@param	int			$cachedelay		Do not rebuild file if date older than cachedelay seconds
-     *		@param	string		$filename		Force filename
-     *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
-     *		@return int     					<0 if error, nb of events in new file if ok
+     * @param string    $format         The format of the export 'vcal', 'ical/ics' or 'rss'
+     * @param string    $type           The type of the export 'event' or 'journal'
+     * @param integer   $cachedelay     Do not rebuild file if date older than cachedelay seconds
+     * @param string    $filename       The name for the exported file.
+     * @param array     $filters        Array of filters. Example array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
+     * @param integer   $exportholiday  0 = don't integrate holidays into the export, 1 = integrate holidays into the export
+     * @return integer                  -1 = error on build export file, 0 = export okay
      */
-    public function build_exportfile($format, $type, $cachedelay, $filename, $filters)
+    public function build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholiday = 0)
     {
-    	global $hookmanager;
+        global $hookmanager;
 
         // phpcs:enable
         global $conf, $langs, $dolibarr_main_url_root, $mysoc;
@@ -1783,7 +1784,7 @@ class ActionComm extends CommonObject
                 return -1;
             }
 
-			if($conf->global->AGENDA_SHOW_HOLIDAYS)
+			if($exportholiday == 1)
             {
                 $langs->load("holidays");
                 $title = $langs->trans("Holidays");
