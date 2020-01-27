@@ -1,6 +1,6 @@
 html,body {
     box-sizing: border-box;
-	padding:3px;
+	padding:0px;
     margin:0;
     height:100%;
 	width:100%;
@@ -35,7 +35,7 @@ button.calcbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
-	height: 24%;
+	height: calc(25% - 2px);
 	font-weight: bold;
     background-color: #8c907e;
     color: #fff;
@@ -57,7 +57,7 @@ button.calcbutton2 {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
-	height: 24%;
+	height: calc(25% - 2px);
 	font-weight: bold;
 }
 
@@ -72,7 +72,7 @@ button.calcbutton3 {
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
-	height: 24%;
+	height: calc(25% - 2px);
 }
 
 button.actionbutton {
@@ -91,7 +91,7 @@ button.actionbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
-	height:24%;
+	height: calc(25% - 2px);
 }
 
 .takepospay {
@@ -107,7 +107,7 @@ div.wrapper{
 	float:left; /* important */
 	position:relative; /* important(so we can absolutely position the description div */
 	width:25%;
-	height:25%;
+	height:33%;
 	margin:0;
 	padding:1px;
 	border: 2px solid #EEE;
@@ -121,7 +121,7 @@ div.wrapper2{
 	float:left; /* important */
 	position:relative; /* important(so we can absolutely position the description div */
 	width:12.5%;
-	height:25%;
+	height:33%;
 	margin:0;
 	/* padding:1px; */
 	border: 2px solid #EEE;
@@ -206,10 +206,23 @@ div.paymentbordline
 	height: 34%;
 }
 
+.row1withhead{
+	margin: 0 auto;
+	width: 100%;
+	height: calc(50% - 35px);
+	padding-top: 5px;
+}
+
 .row2{
 	margin: 0 auto;
 	width: 100%;
 	height: 66%;
+}
+
+.row2withhead{
+	margin: 0 auto;
+	width: 100%;
+	height: 50%;
 }
 
 .div1{
@@ -221,9 +234,10 @@ div.paymentbordline
 	overflow: auto;
 	/* background-color:white; */
 	padding-top: 0;
-	padding-bottom: 10px;
+	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
+	min-height: 180px;
 }
 
 .div2{
@@ -233,7 +247,7 @@ div.paymentbordline
 	float: left;
 	box-sizing: border-box;
 	padding-top: 0;
-	padding-bottom: 10px;
+	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
 	min-height: 180px;
@@ -325,6 +339,45 @@ div.description_content {
     padding-right: 2px;
 }
 
+.header{
+	margin: 0 auto;
+	width: 100%;
+	height: 35px;
+	background: rgb(60,70,100);
+}
+
+.topnav{
+	background-color: rgb(60,70,100);
+	overflow: hidden;
+	height: 100%;
+}
+
+.topnav a{
+	float: left;
+	color: #f2f2f2;
+	text-align: center;
+	padding: 6px 16px;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.topnav a:hover{
+	background-color: #ddd;
+	color: black;
+}
+
+.topnav-right{
+	float: right;
+}
+
+.topnav input[type="text"] {
+	background-color: #fff;
+	color: #000;
+	float: left;
+	border-bottom: none !important;
+	margin-top: 4px;
+}
+
 @media screen and (min-width: 892px) {
 	.calcbutton{
 		font-size: 18px;
@@ -382,6 +435,12 @@ div.description_content {
 /* For small screens */
 
 @media screen and (max-width: 767px) {
+	.topnav-right {
+		float: unset;
+	}
+	.header {
+		height: unset;
+	}
 	div.container {
 		overflow-x: scroll;
 	}
@@ -392,6 +451,10 @@ div.description_content {
 		width: 25%;
 	}
 	
+	div.div1 {
+		padding-bottom: 0;
+		margin-bottom: 10px;
+	}
 	div.div1, div.div2, div.div3 {
 		width: 100%;
 	}
@@ -402,6 +465,10 @@ div.description_content {
 	
 	div.div2 {
 		min-height: unset;
+	}
+	
+	div.div3 {
+		height: unset;
 	}
 	
 	button.calcbutton, button.calcbutton2 {
