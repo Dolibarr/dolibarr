@@ -2377,9 +2377,14 @@ div.tabs {
 div.tabsElem {
 	margin-top: 1px;
 }	/* To avoid overlap of tabs when not browser */
-div.tabsElem a {
-    /* font-weight: normal !important; */
+/*
+div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
+    content: "\f0da";
+    font-family: "Font Awesome 5 Free";
+    padding-right: 2px;
+    font-weight: 900;
 }
+*/
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
