@@ -2048,10 +2048,11 @@ class EmailCollector extends CommonObject
 
 	/**
 	 * Converts a string from one encoding to another.
-	 * @param string $string
-	 * @param string $fromEncoding
-	 * @param string $toEncoding
-	 * @return string Converted string if conversion was successful, or the original string if not
+	 *
+	 * @param string $string		String to convert
+	 * @param string $fromEncoding	String encoding
+	 * @param string $toEncoding	String return encoding
+	 * @return string 				Converted string if conversion was successful, or the original string if not
 	 * @throws Exception
 	 */
 	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')
