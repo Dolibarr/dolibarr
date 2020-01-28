@@ -1636,67 +1636,70 @@ elseif ($id || $ref)
 
 		$formconfirm = '';
 
-		// Confirm deleteion
-		if ($action == 'delete')
-		{
-		    $formquestion = array();
-		    if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-		        $formquestion = array(
-                        array(
-                            'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
-                            'name' => 'alsoUpdateStock',
-                            'type' => 'checkbox',
-                            'value' => 0
-                        ),
-                    );
-            }
-		    $formconfirm = $form->formconfirm(
-			    $_SERVER['PHP_SELF'].'?id='.$object->id,
-                $langs->trans('DeleteSending'),
-                $langs->trans("ConfirmDeleteSending", $object->ref),
-                'confirm_delete',
-                $formquestion,
-                0,
-                1
-            );
-		}
-
-		// Confirmation validation
-		if ($action == 'valid')
-		{
-			$objectref = substr($object->ref, 1, 4);
-			if ($objectref == 'PROV')
-			{
-				$numref = $object->getNextNumRef($soc);
-			}
-			else
-			{
-				$numref = $object->ref;
-			}
-
-			$text = $langs->trans("ConfirmValidateSending", $numref);
-
-			if (!empty($conf->notification->enabled))
-			{
-				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-				$notify = new Notify($db);
-				$text .= '<br>';
-				$text .= $notify->confirmMessage('SHIPPING_VALIDATE', $object->socid, $object);
-			}
-
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
-		}
-		// Confirm cancelation
-		if ($action == 'annuler')
-		{
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
-		}
-
 		// Call Hook formConfirm
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+		
+		if (empty($formconfirm) ) {
+			// Confirm deleteion
+			if ($action == 'delete')
+			{
+				$formquestion = array();
+				if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+					$formquestion = array(
+							array(
+								'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
+								'name' => 'alsoUpdateStock',
+								'type' => 'checkbox',
+								'value' => 0
+							),
+						);
+				}
+				$formconfirm = $form->formconfirm(
+					$_SERVER['PHP_SELF'].'?id='.$object->id,
+					$langs->trans('DeleteSending'),
+					$langs->trans("ConfirmDeleteSending", $object->ref),
+					'confirm_delete',
+					$formquestion,
+					0,
+					1
+				);
+			}
+
+			// Confirmation validation
+			if ($action == 'valid')
+			{
+				$objectref = substr($object->ref, 1, 4);
+				if ($objectref == 'PROV')
+				{
+					$numref = $object->getNextNumRef($soc);
+				}
+				else
+				{
+					$numref = $object->ref;
+				}
+
+				$text = $langs->trans("ConfirmValidateSending", $numref);
+
+				if (!empty($conf->notification->enabled))
+				{
+					require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+					$notify = new Notify($db);
+					$text .= '<br>';
+					$text .= $notify->confirmMessage('SHIPPING_VALIDATE', $object->socid, $object);
+				}
+
+				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
+			}
+			// Confirm cancelation
+			if ($action == 'annuler')
+			{
+				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
+			}
+		}
+		
 
 		// Print form confirm
 		print $formconfirm;
