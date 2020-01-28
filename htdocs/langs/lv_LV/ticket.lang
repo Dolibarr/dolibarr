@@ -241,7 +241,7 @@ NoLogForThisTicket=Vēl nav piereģistrējies par šo biļeti
 TicketLogAssignedTo=Pieteikums %s piešķirts %s
 TicketLogPropertyChanged=Pieteikums %s labots: klasifikācija no %s līdz %s
 TicketLogClosedBy=Pieteikumu %s slēdza %s
-TicketLogReopen=Pieteikumi %s atkal atvērti
+TicketLogReopen=Pieteikums %s atvērts atkārtoti
 
 #
 # Public pages

@@ -17,6 +17,7 @@ DonationStatusPromiseNotValidatedShort=Entwurf
 DonationStatusPromiseValidatedShort=Freigegeben
 DonationStatusPaidShort=Bezahlt
 DonationTitle=Spendenbescheinigung
+DonationDate=Spendedatum
 DonationDatePayment=Zahlungsdatum
 ValidPromess=Zusage freigeben
 DonationReceipt=Spendenbescheinigung

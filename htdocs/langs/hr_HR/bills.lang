@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 days
 PaymentCondition14D=14 days
 PaymentConditionShort14DENDMONTH=14 days of month-end
 PaymentCondition14DENDMONTH=Within 14 days following the end of the month
-FixAmount=Određeni iznos
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Iznos u postotku (%% od ukupno)
 VarAmountOneLine=Iznos u postotku (%% ukupno) - jedan redak s oznakom '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Prihodovna markica
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=Kako biste izradili novi predložak računa morate prvo izraditi običan račun i onda ga promijeniti u "predložak"
-PDFCrabeDescription="Crabe" predložak PDF računa. Potpuni predložak računa (preporučeni)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=PDF račun prema Crevette predlošku. Kompletan predložak računa za etape
 TerreNumRefModelDesc1=Vraća broj u formatu %syymm-nnnn za standardne račune i %syymm-nnnn za odobrenja gdje je yy godina, mm je mjesec i nnnn je sljedni broj bez prekida i bez mogučnosti povratka na 0

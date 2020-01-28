@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 days
 PaymentCondition14D=14 days
 PaymentConditionShort14DENDMONTH=14 days of month-end
 PaymentCondition14DENDMONTH=Within 14 days following the end of the month
-FixAmount=Fixed amount
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Változó összeg (%% össz.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Illetékbélyeg
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
-PDFCrabeDescription=Számla PDF sablon Crabe. A teljes számla sablon (Sablon ajánlott)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
