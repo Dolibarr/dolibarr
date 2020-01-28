@@ -826,6 +826,14 @@ foreach ($listofreferent as $key => $value)
 		elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'payment_salary'))) print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
+                // Duration of intervention
+                if($tablename == 'fichinter')
+                {
+                    print '<td>';
+                    print $langs->trans("TotalDuration");
+                    $total_duration = 0;
+                    print '</td>';
+                }
 		// Amount HT
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
 		//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("Amount").'</td>';
@@ -1024,6 +1032,15 @@ foreach ($listofreferent as $key => $value)
                 }
 				print '</td>';
 
+               // Add duration and store it in counter for fichinter
+               if($tablename == 'fichinter')
+               {
+                   print '<td>';
+                   print convertSecondToTime($element->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+                   $total_duration += $element->duration;
+                   print '</td>';
+               }
+
                 // Amount without tax
 				$warning = '';
 				if (empty($value['disableamount']))
@@ -1201,6 +1218,8 @@ foreach ($listofreferent as $key => $value)
 			}
 			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
 			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
+                        // If fichinter add the total_duration
+                        if($tablename == 'fichinter') print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 			print '<td class="right">';
 			if (empty($value['disableamount']))
 			{
