@@ -110,6 +110,6 @@ UserLogged=Usuari connectat
 DateEmployment=Data d'inici de l'ocupació
 DateEmploymentEnd=Data de finalització de l'ocupació
 CantDisableYourself=No podeu desactivar el vostre propi registre d'usuari
-ForceUserExpenseValidator=Validador de l&#39;informe de despeses obligatori
+ForceUserExpenseValidator=Validador de l'informe de despeses obligatori
 ForceUserHolidayValidator=Forçar validador de sol·licitud d'abandonament
 ValidatorIsSupervisorByDefault=Per defecte, el validador és el supervisor de l’usuari. Deixar buit per mantenir aquest comportament.

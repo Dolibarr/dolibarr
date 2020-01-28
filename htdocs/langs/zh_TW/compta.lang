@@ -254,3 +254,4 @@ ByVatRate=依營業稅率
 TurnoverbyVatrate=依營業稅率開票的營業額
 TurnoverCollectedbyVatrate=依營業稅率收取的營業額
 PurchasebyVatrate=依銷售購買稅率
+LabelToShow=短標籤

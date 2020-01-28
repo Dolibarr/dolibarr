@@ -255,14 +255,14 @@ CivilityMLE=Nti
 CivilityMTRE=Mestari
 CivilityDR=Tohtori
 ##### Currencies #####
-Currencyeuros=Euroa
+Currencyeuros=EUR
 CurrencyAUD=Australian dollaria
 CurrencySingAUD=Australian dollari
 CurrencyCAD=Kanadan dollaria
 CurrencySingCAD=Kanadan dollari
 CurrencyCHF=Sveitsin frangia
 CurrencySingCHF=Sveitsin frangi
-CurrencyEUR=Euroa
+CurrencyEUR=EUR
 CurrencySingEUR=Euro
 CurrencyFRF=Ranskan frangia
 CurrencySingFRF=Ranskan frangi

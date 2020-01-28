@@ -83,7 +83,7 @@ ListOfDictionariesEntries=List of dictionaries entries
 ListOfPermissionsDefined=Lista de permissões definidas
 SeeExamples=Veja exemplos aqui
 EnabledDesc=Condição para ter este campo ativo (Exemplos: 1 ou $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
 IsAMeasureDesc=O valor do campo pode ser acumulado para obter um total na lista? (Exemplos: 1 ou 0)
 SearchAllDesc=O campo é usado para fazer uma pesquisa a partir da ferramenta de pesquisa rápida? (Exemplos: 1 ou 0)
 SpecDefDesc=Digite aqui toda a documentação que você deseja fornecer com seu módulo que ainda não está definido por outras guias. Você pode usar .md ou melhor, a rica sintaxe .asciidoc.
@@ -135,3 +135,5 @@ CSSClass=CSS Class
 NotEditable=Not editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
+AsciiToHtmlConverter=Ascii to HTML converter
+AsciiToPdfConverter=Ascii to PDF converter

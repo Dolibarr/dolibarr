@@ -13,7 +13,7 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "da fatturare" le propost
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è impostata su pagamento (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica "da spedire" l'ordine cliente collegato quando una spedizione viene convalidata (e se la quantità spedita da tutte le spedizioni è la stessa dell'ordine da aggiornare)
-# Autoclassify supplier order
+# Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
 AutomaticCreation=Creazione automatica

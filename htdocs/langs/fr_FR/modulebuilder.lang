@@ -83,7 +83,7 @@ ListOfDictionariesEntries=Liste des entrées de dictionnaires
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification). Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage). Il peut s'agir d'une expression, par exemple :  <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification). Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage). Il peut s'agir d'une expression, par exemple :  <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> ($user->rights->holiday->define_holiday ? 1 : 0)
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
@@ -135,3 +135,5 @@ CSSClass=Classe CSS
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
 TypeOfFieldsHelp=Type de champs: <br> varchar (99), double (24,8), réel, texte, html, datetime, timestamp, integer, integer:NomClasse:cheminrelatif/vers/classfile.class.php [:1[:filtre]] ('1' signifie nous ajoutons un bouton + après le combo pour créer l'enregistrement, 'filter' peut être 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' par exemple)
+AsciiToHtmlConverter=Convertisseur Ascii en HTML
+AsciiToPdfConverter=Convertisseur Ascii en PDF

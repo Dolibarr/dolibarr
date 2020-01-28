@@ -90,4 +90,5 @@ ShowCategory=Toon label/categorie
 ByDefaultInList=Standaard in de lijst
 ChooseCategory=Kies categorie
 StocksCategoriesArea=Magazijnen Categorieën
+ActionCommCategoriesArea=Gebeurtenissen categorieën omgeving
 UseOrOperatorForCategories=Gebruik of operator voor categorieën
