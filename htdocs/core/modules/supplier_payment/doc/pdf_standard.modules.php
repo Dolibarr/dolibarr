@@ -371,7 +371,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
-
 						}
 					}
 					else	// No pagebreak

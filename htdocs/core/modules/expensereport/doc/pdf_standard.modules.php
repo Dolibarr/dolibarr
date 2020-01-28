@@ -391,7 +391,6 @@ class pdf_standard extends ModeleExpenseReport
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
-
 						}
 					}
 					else	// No pagebreak
