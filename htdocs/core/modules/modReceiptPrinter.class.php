@@ -138,8 +138,8 @@ class modReceiptPrinter extends DolibarrModules
         $sql = array(
             "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
             "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
-        	"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$langs->trans('Default')."';",
-			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$langs->trans('Default')."', '<dol_align_center>\r\n<dol_print_text><dol_value_mysoc_name>\r\n<dol_print_text><dol_value_mysoc_address>\r\n<dol_print_text><dol_value_mysoc_zip><dol_value_mysoc_town>\r\n<dol_line_feed>\r\n<dol_print_text>Facture <dol_value_object_ref>\r\n<dol_line_feed>\r\n<dol_align_left>\r\n<dol_print_object_lines>\r\n<dol_line_feed>\r\n<dol_print_object_tax>\r\n<dol_line_feed>\r\n<dol_print_object_total>\r\n<dol_line_feed>\r\n<dol_cut_paper_full>', 1);",
+        	"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$langs->trans('Example')."';",
+			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$langs->trans('Example')."', '<dol_align_center>\r\n<dol_print_text><dol_value_mysoc_name>\r\n<dol_print_text><dol_value_mysoc_address>\r\n<dol_print_text><dol_value_mysoc_zip><dol_value_mysoc_town>\r\n<dol_line_feed>\r\n<dol_print_text>Facture <dol_value_object_ref>\r\n<dol_line_feed>\r\n<dol_align_left>\r\n<dol_print_object_lines>\r\n<dol_line_feed>\r\n<dol_print_object_tax>\r\n<dol_line_feed>\r\n<dol_print_object_total>\r\n<dol_line_feed>\r\n<dol_cut_paper_full>', 1);",
 		);
         return $this->_init($sql, $options);
     }
