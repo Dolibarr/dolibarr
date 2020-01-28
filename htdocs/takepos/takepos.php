@@ -440,7 +440,7 @@ function New() {
 
 function Search2() {
 	console.log("Search2 Call ajax search to replace products");
-	if(window.event.keyCode == 13) ClickProduct(0);
+	if(window.event.keyCode == 13) var key=13;
 	pageproducts=0;
 	jQuery(".wrapper2 .catwatermark").hide();
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
@@ -459,7 +459,9 @@ function Search2() {
 			$("#prodiv"+i).data("rowid", data[i]['rowid']);
 			$("#prodiv"+i).data("iscat", 0);
 		}
-	});
+	}).always(function() {
+		if(key==13) ClickProduct(0);
+  });
 }
 
 function Edit(number) {
