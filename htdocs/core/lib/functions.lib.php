@@ -5946,7 +5946,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
-			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
+        	'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
+        	'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
 
