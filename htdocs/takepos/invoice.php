@@ -417,11 +417,25 @@ if ($action == "updatereduction")
 {
     foreach ($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
-        }
+		if ($line->id == $idline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			$customer = new Societe($db);
+			$customer->fetch($invoice->socid);
+			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
+			$price_min = $datapriceofproduct['price_min'];
+			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$pu_ht = price2num($line->multicurrency_subprice / (1 + ($line->tva_tx / 100)), 'MU');
+			//Check min price
+			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->multicurrency_subprice) * (1 - price2num($number) / 100) < price2num($price_min))))
+			{
+				echo $langs->trans("CantBeLessThanMinPrice");
+			}
+			else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+		}
     }
-
-    $invoice->fetch($placeid);
+	$invoice->fetch($placeid);
 }
 
 if ($action == "order" and $placeid != 0)
