@@ -1641,7 +1641,7 @@ elseif ($id || $ref)
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
-		
+
 		if (empty($formconfirm) ) {
 			// Confirm deleteion
 			if ($action == 'delete')
@@ -1699,7 +1699,7 @@ elseif ($id || $ref)
 				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 			}
 		}
-		
+
 
 		// Print form confirm
 		print $formconfirm;
