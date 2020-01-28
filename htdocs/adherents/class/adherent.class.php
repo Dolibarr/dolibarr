@@ -2264,9 +2264,10 @@ class Adherent extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param	User	$user   		Objet user
+	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
 	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
-	public function load_board($user)
+	public function load_board($user, $mode)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -2279,20 +2280,41 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE a.fk_adherent_type = t.rowid";
+    if ($mode == 'expired')
+		{
 		$sql.= " AND a.statut = 1";
 		$sql.= " AND a.entity IN (".getEntity('adherent').")";
 		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
+		}
+		elseif ($mode == 'shift')
+		{
+		$sql.= " AND a.statut = -1";
+		$sql.= " AND a.entity IN (".getEntity('adherent').")";
+		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$langs->load("members");
+      
+			if ($mode == 'expired') {
+				$warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
+				$label = $langs->trans("MembersWithSubscriptionToReceive");
+				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
+				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
+			}
+			elseif ($mode == 'shift') {
+			    $warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
+			    $url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=-1&amp;filter=outofdate';
+			    $label = $langs->trans("MembersListToValid");
+			    $labelShort = $langs->trans("MemberStatusDraft");
+			}
 
 			$response = new WorkboardResponse();
-			$response->warning_delay=$conf->adherent->subscription->warning_delay/60/60/24;
-			$response->label=$langs->trans("MembersWithSubscriptionToReceive");
-			$response->labelShort=$langs->trans("MembersWithSubscriptionToReceiveShort");
-			$response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
+			$response->warning_delay=$warning_delay;
+			$response->label=$label;
+			$response->labelShort=$labelShort;
+			$response->url=$url;
 			$response->img=img_object('', "user");
 
 			$adherentstatic = new Adherent($this->db);
