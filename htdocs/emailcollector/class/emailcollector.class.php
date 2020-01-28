@@ -2045,8 +2045,9 @@ class EmailCollector extends CommonObject
             }
         }
     }
-	
-	protected function convertStringEncoding($string, $fromEncoding, $toEncoding='UTF-8') {
+
+	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')
+	{
   		if(!$string || $fromEncoding == $toEncoding) {
   			return $string;
   		}
