@@ -1919,7 +1919,6 @@ class User extends CommonObject
 
 						if ($result >= 0)
 						{
-
 							if ($alreadyencrypted != 1) $result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
 							else $result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1, 0, 1); // Dont encrypt the password cause is already encrypted
 
