@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -86,7 +86,7 @@ $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
-$search_not_lettering = GETPOST('search_lettering_option', 'alpha');
+$search_not_reconciled = GETPOST('search_reconciled_option', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -203,7 +203,7 @@ if (empty($reshook))
         $search_debit = '';
         $search_credit = '';
         $search_lettering_code = '';
-		$search_not_lettering='';
+		$search_not_reconciled='';
     }
 
     // Must be after the remove filter action, before the export.
@@ -314,9 +314,9 @@ if (empty($reshook))
         $filter['t.lettering_code'] = $search_lettering_code;
         $param .= '&search_lettering_code='.urlencode($search_lettering_code);
     }
-	if (! empty($search_not_lettering)) {
-		$filter['t.lettering_option'] = $search_not_lettering;
-		$param .= '&search_not_lettering=' . urlencode($search_not_lettering);
+	if (! empty($search_not_reconciled)) {
+		$filter['t.reconciled_option'] = $search_not_reconciled;
+		$param .= '&search_not_reconciled=' . urlencode($search_not_reconciled);
 	}
 }
 
@@ -450,7 +450,7 @@ if (count($filter) > 0) {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
-		} elseif ($key == 't.lettering_option') {
+		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
@@ -766,7 +766,7 @@ if (!empty($arrayfields['t.lettering_code']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
-	print '<br><span class="nowrap"><input type="checkbox" name="search_lettering_option" value="notlettering"'.($search_not_lettering == 'notlettering'?' checked':'').'>'.$langs->trans("NotLettering").'</span>';
+	print '<br><span class="nowrap"><input type="checkbox" name="search_reconciled_option" value="notreconciled"'.($search_not_reconciled == 'notreconciled'?' checked':'').'>'.$langs->trans("NotReconciled").'</span>';
 	print '</td>';
 }
 // Code journal
