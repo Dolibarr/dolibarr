@@ -2064,7 +2064,7 @@ if ($action == 'create' && $usercancreate)
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('lineid' => $lineid);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		// Note that $action and $object may be modified by hook
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
 		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
