@@ -49,7 +49,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'vat', 'charges');
+$result = restrictedArea($user, 'tax', '', 'vat', 'charges');
 
 
 // Get parameters
