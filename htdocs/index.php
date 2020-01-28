@@ -268,6 +268,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
     	    DOL_URL_ROOT.'/contact/list.php?mainmenu=companies',
     	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
+    	    DOL_URL_ROOT.'/adherents/list.php?statut=-1&mainmenu=members',   
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
     	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
@@ -457,7 +458,8 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
         $board = new Adherent($db);
-        $dashboardlines['Adherent'] = $board->load_board($user);
+        $dashboardlines[$board->element . '_expired'] = $board->load_board($user, 'expired');
+        $dashboardlines[$board->element . '_shift'] = $board->load_board($user, 'shift');
     }
 
     // Number of expense reports to approve
@@ -563,7 +565,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'groupName' => 'Members',
                 'globalStatsKey' => 'members',
                 'stats' =>
-                    array('Adherent'),
+                    array('member_expired', 'member_shift'),
             ),
         'ExpenseReport' =>
             array(
