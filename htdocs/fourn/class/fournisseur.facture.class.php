@@ -2231,6 +2231,7 @@ class FactureFournisseur extends CommonInvoice
 
                 if ($facturestatic->hasDelay()) {
 	                $response->nbtodolate++;
+					$response->url_late=DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
                 }
             }
             $this->db->free($resql);
