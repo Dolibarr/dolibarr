@@ -215,7 +215,7 @@ if (!$rowid)
 		print "</td>\n";
 		// Origine
 		print "<td>";
-		if ($charge->metadata->dol_type=="order") {
+		if ($charge->metadata->dol_type=="order" || $charge->metadata->dol_type=="commande") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -223,7 +223,7 @@ if (!$rowid)
             } else {
                 print $FULLTAG;
             }
-		} elseif ($charge->metadata->dol_type=="invoice") {
+		} elseif ($charge->metadata->dol_type=="invoice" || $charge->metadata->dol_type=="facture") {
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
