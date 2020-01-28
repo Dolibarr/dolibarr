@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,11 @@ class Contrat extends CommonObject
      * @var int
      */
     public $ismultientitymanaged = 1;
+
+    /**
+     * @var int  Does object support extrafields ? 0=No, 1=Yes
+     */
+    public $isextrafieldmanaged = 1;
 
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -188,6 +193,36 @@ class Contrat extends CommonObject
 	 */
 	protected $lines_id_index_mapper = array();
 
+
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>15),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>20),
+		'ref_supplier' =>array('type'=>'varchar(50)', 'label'=>'Ref supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+	    'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed')),
+		'mise_en_service' =>array('type'=>'datetime', 'label'=>'Mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'fin_validite' =>array('type'=>'datetime', 'label'=>'Fin validite', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'date_cloture' =>array('type'=>'datetime', 'label'=>'Date cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial suivi', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		'fk_user_mise_en_service' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'ref_customer' =>array('type'=>'varchar(50)', 'label'=>'Ref customer', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+	);
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -675,18 +710,18 @@ class Contrat extends CommonObject
 				{
 					$this->id = $obj->rowid;
 					$this->ref = (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
-					$this->ref_customer				= $obj->ref_customer;
-					$this->ref_supplier				= $obj->ref_supplier;
+					$this->ref_customer = $obj->ref_customer;
+					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 	                $this->entity = $obj->entity;
 					$this->statut = $obj->statut;
 					$this->mise_en_service = $this->db->jdate($obj->datemise);
 
-					$this->date_contrat				= $this->db->jdate($obj->datecontrat);
-					$this->date_creation			= $this->db->jdate($obj->datecontrat);
+					$this->date_contrat = $this->db->jdate($obj->datecontrat);
+					$this->date_creation = $this->db->jdate($obj->datecontrat);
 
-					$this->fin_validite				= $this->db->jdate($obj->fin_validite);
-					$this->date_cloture				= $this->db->jdate($obj->date_cloture);
+					$this->fin_validite = $this->db->jdate($obj->fin_validite);
+					$this->date_cloture = $this->db->jdate($obj->date_cloture);
 
 
 					$this->user_author_id = $obj->fk_user_author;
@@ -696,9 +731,9 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
-					$this->modelpdf					= $obj->model_pdf;
+					$this->modelpdf = $obj->model_pdf;
 
-					$this->fk_projet				= $obj->fk_project; // deprecated
+					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
 
 					$this->socid = $obj->fk_soc;
@@ -708,7 +743,7 @@ class Contrat extends CommonObject
 
 					$this->db->free($resql);
 
-					// Retreive all extrafields
+					// Retrieve all extrafields
 					// fetch optionals attributes and labels
 					$this->fetch_optionals();
 
@@ -1381,10 +1416,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param	string		$desc            	Description de la ligne
-	 *  @param  float		$pu_ht              Prix unitaire HT
-	 *  @param  int			$qty             	Quantite
-	 *  @param  float		$txtva           	Taux tva
+	 *  @param	string		$desc            	Description of line
+	 *  @param  float		$pu_ht              Unit price net
+	 *  @param  int			$qty             	Quantity
+	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit
@@ -1739,8 +1774,14 @@ class Contrat extends CommonObject
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
-					$contractline->array_options = $array_options;
-					$contractline->id = $rowid;
+					$contractline->fetch($rowid);
+					$contractline->fetch_optionals();
+
+					// We replace values in $contractline->array_options only for entries defined into $array_options
+					foreach($array_options as $key => $value) {
+						$contractline->array_options[$key] = $array_options[$key];
+					}
+
 					$result = $contractline->insertExtraFields();
 					if ($result < 0)
 					{
@@ -3004,6 +3045,7 @@ class ContratLigne extends CommonObjectLine
 
 		$this->oldcopy = new ContratLigne($this->db);
 		$this->oldcopy->fetch($this->id);
+        $this->oldcopy->fetch_optionals();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

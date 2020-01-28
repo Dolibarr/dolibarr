@@ -150,8 +150,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-		$this->franchise=!$mysoc->tva_assuj;
-
 		// Get source company
 		$this->emetteur=$mysoc;
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined

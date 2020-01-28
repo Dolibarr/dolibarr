@@ -722,6 +722,7 @@ class Propal extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -757,7 +758,7 @@ class Propal extends CommonObject
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
 			$line->fetch($rowid);
-			$line->fetch_optionals(); // Fetch extrafields for oldcopy
+			$line->fetch_optionals();
 
 			$staticline = clone $line;
 
@@ -808,7 +809,10 @@ class Propal extends CommonObject
 			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
-				$this->line->array_options = $array_options;
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach($array_options as $key => $value) {
+					$this->line->array_options[$key] = $array_options[$key];
+				}
 			}
 
 			// Multicurrency
@@ -3346,7 +3350,7 @@ class Propal extends CommonObject
 	 */
     public function initAsSpecimen()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		// Load array of products prodids
 		$num_prods = 0;
@@ -3385,6 +3389,10 @@ class Propal extends CommonObject
 		$this->demand_reason_code  = 'SRC_00';
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;

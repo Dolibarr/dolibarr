@@ -34,8 +34,10 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't ne
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (! defined('NOLOGIN'))        define("NOLOGIN", 1);		// This means this output page does not require to be logged.
 if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		 define('NOIPCHECK', '1');  // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
-// C'est un wrapper, donc header vierge
+
+// It's a wrapper, so empty header
 
 /**
  * Header function
@@ -72,7 +74,7 @@ if (GETPOST("format", 'alpha')) $format=GETPOST("format", 'apha');
 if (GETPOST("type", 'apha'))   $type=GETPOST("type", 'alpha');
 
 $filters=array();
-if (GETPOST("year", 'int')) 	         $filters['year']=GETPOST("year", 'int');
+if (GETPOST("year", 'int')) 	      $filters['year']=GETPOST("year", 'int');
 if (GETPOST("id", 'int'))             $filters['id']=GETPOST("id", 'int');
 if (GETPOST("idfrom", 'int'))         $filters['idfrom']=GETPOST("idfrom", 'int');
 if (GETPOST("idto", 'int'))           $filters['idto']=GETPOST("idto", 'int');
@@ -157,10 +159,12 @@ $agenda=new ActionComm($db);
 $cachedelay=0;
 if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) $cachedelay=$conf->global->MAIN_AGENDA_EXPORT_CACHE;
 
+$exportholidays = GETPOST('includeholidays', 'int');
+
 // Build file
 if ($format == 'ical' || $format == 'vcal')
 {
-	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0)
 	{
 		$attachment = true;
@@ -195,7 +199,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 if ($format == 'rss')
 {
-	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0)
 	{
 		$attachment = false;

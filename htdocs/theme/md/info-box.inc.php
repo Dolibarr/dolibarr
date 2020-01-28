@@ -98,7 +98,7 @@ a.info-box-text{ text-decoration: none;}
 
 
 
-/* ICONS */
+/* ICONS INFO BOX */
 .info-box-icon {
 	color: #000 !important;
 }

@@ -692,7 +692,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
 		 'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
 		 'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
-		 'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
+		 'fk_soc' 		 =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
 		 'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		 'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		 'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
@@ -716,6 +716,12 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			// type
 			$type = $obj->Type;
 			if ($type == 'int(11)') $type='integer';
+			if ($obj->Field == 'fk_soc') $type = 'integer:Societe:societe/class/societe.class.php';
+			if (preg_match('/^fk_proj/', $obj->Field)) $type = 'integer:Project:projet/class/project.class.php:1:fk_statut=1';
+			if (preg_match('/^fk_prod/', $obj->Field)) $type = 'integer:Product:product/class/product.class.php:1';
+			if ($obj->Field == 'fk_warehouse') $type = 'integer:Entrepot:product/stock/class/entrepot.class.php';
+			if (preg_match('/^(fk_user|fk_commercial)/', $obj->Field)) $type = 'integer:User:user/class/user.class.php';
+
 			// notnull
 			$notnull = ($obj->Null == 'YES'?0:1);
 			if ($fieldname == 'fk_user_modif') $notnull = -1;

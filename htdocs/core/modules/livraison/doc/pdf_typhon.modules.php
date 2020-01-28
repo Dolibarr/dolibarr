@@ -142,8 +142,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Display product-service code
 
-		$this->franchise=!$mysoc->tva_assuj;
-
 		// Get source company
 		$this->emetteur=$mysoc;
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined

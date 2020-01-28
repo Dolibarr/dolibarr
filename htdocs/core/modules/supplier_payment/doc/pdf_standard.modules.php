@@ -142,8 +142,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
-		$this->franchise=!$mysoc->tva_assuj;
-
         // Define column position
 		$this->posxdate=$this->marge_gauche+1;
 		$this->posxreffacturefourn=30;

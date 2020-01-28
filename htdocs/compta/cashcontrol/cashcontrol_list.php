@@ -168,8 +168,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass = 'CashControl';
 	$objectlabel = 'CashControl';
-	$permissiontoread = ($user->rights->cashdesk->use || $user->rights->takepos->use);
-	$permissiontodelete = ($user->rights->cashdesk->use || $user->rights->takepos->use);
+	$permissiontoread = ($user->rights->cashdesk->run || $user->rights->takepos->run);
+	$permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run);
 
 	//$uploaddir = '';
 	//include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';

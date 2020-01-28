@@ -248,9 +248,17 @@ if ($search_contract) $sql.= " AND c.ref LIKE '%".$db->escape($search_contract).
 if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $filter_dateouvertureprevue=dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
+if ($filter_dateouvertureprevue != '' && $filter_opouvertureprevue == -1) $filter_opouvertureprevue = '=';
+
 $filter_date1=dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
+if ($filter_date1 != '' && $filter_op1 == -1) $filter_op1 = '=';
+
 $filter_date2=dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
+if ($filter_date2 != '' && $filter_op2 == -1) $filter_op2 = '=';
+
 $filter_datecloture=dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
+if ($filter_datecloture != '' && $filter_opcloture == -1) $filter_opcloture = '=';
+
 if (! empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $filter_dateouvertureprevue != '') $sql.= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue)."'";
 if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1)."'";
 if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2)."'";
@@ -258,6 +266,8 @@ if (! empty($filter_opcloture) && $filter_opcloture != -1 && $filter_datecloture
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $sql .= $db->order($sortfield, $sortorder);
+
+//print $sql;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))

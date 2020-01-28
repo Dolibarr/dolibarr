@@ -959,6 +959,7 @@ class Commande extends CommonOrder
 						if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
 						{
 							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->error;
 							dol_print_error($this->db);
 						}
 						$this->db->rollback();
@@ -1434,6 +1435,7 @@ class Commande extends CommonOrder
 				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+					$this->errors[] = $this->error;
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
@@ -3072,6 +3074,7 @@ class Commande extends CommonOrder
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
 			$line->fetch($rowid);
+			$line->fetch_optionals();
 
 			if (!empty($line->fk_product))
 			{
@@ -3083,6 +3086,7 @@ class Commande extends CommonOrder
 				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+					$this->errors[] = $this->error;
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
@@ -3143,7 +3147,10 @@ class Commande extends CommonOrder
 			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
-				$this->line->array_options = $array_options;
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach($array_options as $key => $value) {
+					$this->line->array_options[$key] = $array_options[$key];
+				}
 			}
 
 			$result = $this->line->update($user, $notrigger);
@@ -3715,7 +3722,7 @@ class Commande extends CommonOrder
 	 */
 	public function initAsSpecimen()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -3749,8 +3756,13 @@ class Commande extends CommonOrder
 		$this->mode_reglement_code = 'CHQ';
 		$this->availability_code   = 'DSP';
 		$this->demand_reason_code  = 'SRC_00';
+
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;

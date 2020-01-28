@@ -705,7 +705,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
 
         $result = '';
         $label = '<u>'.$langs->trans("ShowOrder").'</u>';
@@ -2572,6 +2572,8 @@ class CommandeFournisseur extends CommonOrder
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $this->line = new CommandeFournisseurLigne($this->db);
             $this->line->fetch($rowid);
+            $this->line->fetch_optionals();
+
             $oldline = clone $this->line;
             $this->line->oldline = $oldline;
 
@@ -2620,7 +2622,10 @@ class CommandeFournisseur extends CommonOrder
             $this->line->remise_percent = $remise_percent;
 
             if (is_array($array_options) && count($array_options) > 0) {
-                $this->line->array_options = $array_options;
+            	// We replace values in this->line->array_options only for entries defined into $array_options
+            	foreach($array_options as $key => $value) {
+            		$this->line->array_options[$key] = $array_options[$key];
+            	}
             }
 
             $result = $this->line->update($notrigger);
@@ -2691,8 +2696,13 @@ class CommandeFournisseur extends CommonOrder
         $this->date_lim_reglement = $this->date + 3600 * 24 * 30;
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_code = 'CHQ';
+
         $this->note_public = 'This is a comment (public)';
         $this->note_private = 'This is a comment (private)';
+
+        $this->multicurrency_tx = 1;
+        $this->multicurrency_code = $conf->currency;
+
         $this->statut = 0;
 
         // Lines
@@ -2953,7 +2963,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		$modelpath = "core/modules/supplier_order/pdf/";
+		$modelpath = "core/modules/supplier_order/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}

@@ -48,7 +48,7 @@ class MyObject extends CommonObject
 	public $ismultientitymanaged = 0;
 
 	/**
-	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
 
@@ -732,6 +732,9 @@ class MyObject extends CommonObject
         $label = '<u>'.$langs->trans("MyObject").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (isset($this->status)) {
+        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }
 
         $url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 

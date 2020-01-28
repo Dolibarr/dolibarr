@@ -45,7 +45,7 @@ class modMrp extends DolibarrModules
 
         // Id for module (must be unique).
         // Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-        $this->numero = 660; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+        $this->numero = 660;
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'mrp';
         // Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
@@ -240,17 +240,17 @@ class modMrp extends DolibarrModules
         // Add here entries to declare new permissions
         /* BEGIN MODULEBUILDER PERMISSIONS */
         $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Read objects of Mrp';	// Permission label
+        $this->rights[$r][1] = 'Read Manufacturing Order';	// Permission label
         $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update objects of Mrp';	// Permission label
+        $this->rights[$r][1] = 'Create/Update Manufacturing Order';	// Permission label
         $this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Delete objects of Mrp';	// Permission label
+        $this->rights[$r][1] = 'Delete Manufacturing Order';	// Permission label
         $this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $r++;

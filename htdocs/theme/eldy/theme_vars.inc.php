@@ -53,7 +53,7 @@ $theme_bgcolor = array(hexdec('F4'), hexdec('F4'), hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 
 // Colors
-$colorbackhmenu1 = '60,70,100'; // topmenu
+$colorbackhmenu1 = '68,68,90'; // topmenu
 $colorbackvmenu1 = '250,250,250'; // vmenu
 $colortopbordertitle1 = '200,200,200'; // top border of title
 $colorbacktitle1 = '233,234,237'; // title of tables,list
@@ -112,7 +112,7 @@ $badgeStatus4 = '#55a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
 $badgeStatus7 = '#baa32b';
-$badgeStatus8 = '#be3013';
+$badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 
 // status color ajustement for color blind

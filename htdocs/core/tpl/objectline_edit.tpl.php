@@ -105,7 +105,7 @@ $coldisplay++;
 	// Do not allow editing during a situation cycle
 	if ($line->fk_prev_id == null)
 	{
-		// editeur wysiwyg
+		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
 		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;

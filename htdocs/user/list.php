@@ -519,7 +519,7 @@ while ($i < min($num, $limit))
 	print "<tr>";
 	if (! empty($arrayfields['u.login']['checked']))
 	{
-		print '<td>';
+		print '<td class="nowraponall">';
 		print $li;
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{

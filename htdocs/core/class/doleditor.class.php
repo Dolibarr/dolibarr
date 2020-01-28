@@ -225,7 +225,8 @@ class DolEditor
                                                             breakAfterClose : true
                                                         });
                                                 }
-                                            }';
+                                            },
+											disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER)?'true':'false');
 
             	if ($this->uselocalbrowser)
             	{

@@ -554,7 +554,10 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note = dol_htmlentitiesbr($obj->note);			// deprecated
+		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+
+		$actionstatic->fetchResources();
 
 		print '<tr class="oddeven">';
 
@@ -656,7 +659,6 @@ if ($resql)
 		if (!empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
 
-            $actionstatic->fetchResources();
             if (!empty($actionstatic->socpeopleassigned))
             {
                 $contactList = array();

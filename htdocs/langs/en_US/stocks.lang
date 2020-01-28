@@ -193,6 +193,7 @@ TheoricalQty=Theorique qty
 TheoricalValue=Theorique qty
 LastPA=Last BP
 CurrentPA=Curent BP
+RecordedQty=Recorded Qty
 RealQty=Real Qty
 RealValue=Real Value
 RegulatedQty=Regulated Qty

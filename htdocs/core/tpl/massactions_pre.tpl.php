@@ -166,3 +166,15 @@ if ($massaction == 'presend')
 
 	dol_fiche_end();
 }
+// Allow Pre-Mass-Action hook (eg for confirmation dialog)
+$parameters = array(
+	'toselect' => $toselect,
+	'uploaddir' => $uploaddir
+);
+
+$reshook=$hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} else {
+    print $hookmanager->resPrint;
+}

@@ -791,16 +791,16 @@ class ActionComm extends CommonObject
      */
     public function fetchResources()
     {
-		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
+    	$this->userassigned = array();
+    	$this->socpeopleassigned = array();
+
+    	$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
 		$sql .= ' WHERE fk_actioncomm = '.$this->id;
 		$sql .= " AND element_type IN ('user', 'socpeople')";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->userassigned = array();
-			$this->socpeopleassigned = array();
-
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) $this->userassigned[$this->userownerid] = array('id'=>$this->userownerid); // Set first so will be first into list.
 
@@ -1378,13 +1378,13 @@ class ActionComm extends CommonObject
      *  Return URL of event
      *  Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     *  @param	int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param	int		$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
      *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
      *  @param	string	$classname				Force style class on a link
-     *  @param	string	$option					''=Link to action, 'birthday'=Link to contact
-     *  @param	int		$overwritepicto			1=Overwrite picto
-     *  @param	int   	$notooltip		    	1=Disable tooltip
-     *  @param  int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
+     *  @param	int		$overwritepicto			1 = Overwrite picto
+     *  @param	int   	$notooltip		    	1 = Disable tooltip
+     *  @param  int     $save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
      *  @return	string							Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
@@ -1393,7 +1393,11 @@ class ActionComm extends CommonObject
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		$canread = 0;
+		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) $canread = 1;	// Can read my event
+		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) $canread = 1;	// Can read my event i am assigned
+		if ($user->rights->agenda->allactions->read) $canread = 1;		// Can read all event of other
+		if (! $canread)
 		{
             $option = 'nolink';
 		}
@@ -1451,6 +1455,8 @@ class ActionComm extends CommonObject
 		$url = '';
 		if ($option == 'birthday')
 			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
+		elseif ($option == 'holiday')
+            $url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 		else
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
 		if ($option !== 'nolink')
@@ -1557,18 +1563,19 @@ class ActionComm extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *		Export events from database into a cal file.
+     * Export events from database into a cal file.
      *
-     *		@param	string		$format			'vcal', 'ical/ics', 'rss'
-     *		@param	string		$type			'event' or 'journal'
-     *		@param	int			$cachedelay		Do not rebuild file if date older than cachedelay seconds
-     *		@param	string		$filename		Force filename
-     *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
-     *		@return int     					<0 if error, nb of events in new file if ok
+     * @param string    $format         The format of the export 'vcal', 'ical/ics' or 'rss'
+     * @param string    $type           The type of the export 'event' or 'journal'
+     * @param integer   $cachedelay     Do not rebuild file if date older than cachedelay seconds
+     * @param string    $filename       The name for the exported file.
+     * @param array     $filters        Array of filters. Example array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
+     * @param integer   $exportholiday  0 = don't integrate holidays into the export, 1 = integrate holidays into the export
+     * @return integer                  -1 = error on build export file, 0 = export okay
      */
-    public function build_exportfile($format, $type, $cachedelay, $filename, $filters)
+    public function build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholiday = 0)
     {
-    	global $hookmanager;
+        global $hookmanager;
 
         // phpcs:enable
         global $conf, $langs, $dolibarr_main_url_root, $mysoc;
@@ -1781,6 +1788,91 @@ class ActionComm extends CommonObject
             {
                 $this->error=$this->db->lasterror();
                 return -1;
+            }
+
+			if($exportholiday == 1)
+            {
+                $langs->load("holidays");
+                $title = $langs->trans("Holidays");
+
+                $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.email, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
+                $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+                $sql.= " WHERE u.rowid = x.fk_user";
+                $sql.= " AND u.statut = '1'";                           // Show only active users  (0 = inactive user, 1 = active user)
+                $sql.= " AND (x.statut = '2' OR x.statut = '3')";       // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+
+                $resql=$this->db->query($sql);
+                if ($resql)
+                {
+                    $num = $this->db->num_rows($resql);
+                    $i   = 0;
+
+                    while ($i < $num)
+                    {
+                        $obj   = $this->db->fetch_object($resql);
+                        $event = array();
+
+                        if($obj->halfday == -1)
+                        {
+                            $event['fulldayevent'] = false;
+
+                            $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
+                            $timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
+                        }
+                        elseif($obj->halfday == 1)
+                        {
+                            $event['fulldayevent'] = false;
+
+                            $timestampStart = dol_stringtotime($obj->date_start." 12:00:00", 0);
+                            $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
+                        }
+                        else
+                        {
+                            $event['fulldayevent'] = true;
+
+                            $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
+                            $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
+                        }
+
+                        if(!empty($conf->global->AGENDA_EXPORT_FIX_TZ))
+                        {
+                            $timestampStart =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                            $timestampEnd   =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                        }
+
+                        $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+                        $urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;
+                        $url               = $urlwithroot.'/holiday/card.php?id='.$obj->rowid;
+
+                        $event['uid']          = 'dolibarrholiday-'.$this->db->database_name.'-'.$obj->rowid."@".$_SERVER["SERVER_NAME"];
+                        $event['author']       = dolGetFirstLastname($obj->firstname, $obj->lastname);
+                        $event['type']         = 'event';
+                        $event['category']     = "Holiday";
+                        $event['transparency'] = 'OPAQUE';
+                        $event['email']        = $obj->email;
+                        $event['created']      = $timestampStart;
+                        $event['modified']     = $timestampStart;
+                        $event['startdate']    = $timestampStart;
+                        $event['enddate']      = $timestampEnd;
+                        $event['duration']     = $timestampEnd - $timestampStart;
+                        $event['url']          = $url;
+
+                        if($obj->status == 2)
+                        {
+                            // 2 = leave wait for approval
+                            $event['summary'] = $title." - ".$obj->lastname." (wait for approval)";
+                        }
+                        else
+                        {
+                            // 3 = leave approved
+                            $event['summary'] = $title." - ".$obj->lastname;
+                        }
+
+                        $eventarray[] = $event;
+
+                        $i++;
+                    }
+                }
             }
 
             $langs->load("agenda");

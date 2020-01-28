@@ -40,23 +40,23 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Get parameters
-$action=GETPOST('action', 'aZ09');
-$cancel=GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 
 // Load translation files required by the page
-$langs->loadLangs(array("holiday","mails"));
+$langs->loadLangs(array("holiday", "mails"));
 
-$now=dol_now();
+$now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
 $morefilter = 'AND employee = 1';
-if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
 $error = 0;
 
@@ -90,7 +90,7 @@ if (!empty($user->rights->holiday->delete)) $candelete = 1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete = 1;
 
 // Protection if external user
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 
@@ -991,7 +991,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 			{
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 				$nb_holiday += $nb_type;
-				$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+
+				$out .= ' - ' . ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']) .': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 			}
 	        print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
@@ -1285,8 +1287,8 @@ else
                 $htmlhelp = $langs->trans('NbUseDaysCPHelp');
                 $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
                 $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
-                if ($includesaturday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
-                if ($includesunday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
+                if ($includesaturday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+                if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
                 print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
                 print '</td>';
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';

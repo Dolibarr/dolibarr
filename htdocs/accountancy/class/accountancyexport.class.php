@@ -32,6 +32,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 
 /**
  * Manage the different format accountancy export
@@ -742,10 +744,10 @@ class AccountancyExport
 			print $line->label_operation.$separator;
 
 			// FEC:Debit
-			print price2num($line->debit).$separator;
+			print price2fec($line->debit).$separator;
 
 			// FEC:Credit
-			print price2num($line->credit).$separator;
+			print price2fec($line->credit).$separator;
 
 			// FEC:EcritureLet
 			print $line->lettering_code.$separator;
