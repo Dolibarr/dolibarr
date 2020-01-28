@@ -380,7 +380,6 @@ class pdf_squille extends ModelePdfReception
 							$showpricebeforepagebreak = 1;
 						else
 							$showpricebeforepagebreak = 0;
-
 					}
 
 					if (isset($imglinesize['width']) && isset($imglinesize['height']))
@@ -429,7 +428,6 @@ class pdf_squille extends ModelePdfReception
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
-
 						}
 					}
 					else	// No pagebreak

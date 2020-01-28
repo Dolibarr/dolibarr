@@ -439,7 +439,6 @@ class pdf_espadon extends ModelePdfExpedition
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
-
 					    }
 
 
@@ -487,7 +486,6 @@ class pdf_espadon extends ModelePdfExpedition
 									$showpricebeforepagebreak = 1;
 								else
 									$showpricebeforepagebreak = 0;
-
 					        }
 					    }
 					    else	// No pagebreak

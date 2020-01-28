@@ -397,7 +397,6 @@ class pdf_strato extends ModelePDFContract
 									$showpricebeforepagebreak = 1;
 								else
 									$showpricebeforepagebreak = 0;
-
 							}
 						}
 						else	// No pagebreak

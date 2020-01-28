@@ -436,7 +436,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 							$showpricebeforepagebreak = 1;
 						else
 							$showpricebeforepagebreak = 0;
-
 					}
 
 					if (!empty($imglinesize['width']) && !empty($imglinesize['height']))
@@ -492,7 +491,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
-
 						}
 					}
 					else	// No pagebreak

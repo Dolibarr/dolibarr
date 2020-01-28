@@ -606,7 +606,6 @@ class pdf_sponge extends ModelePDFFactures
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
-
     	                }
 
     	                if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
@@ -651,7 +650,6 @@ class pdf_sponge extends ModelePDFFactures
 									$showpricebeforepagebreak = 1;
 								else
 									$showpricebeforepagebreak = 0;
-
     	                    }
     	                }
     	                else	// No pagebreak
