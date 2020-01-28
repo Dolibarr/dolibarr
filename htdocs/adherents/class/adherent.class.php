@@ -641,7 +641,7 @@ class Adherent extends CommonObject
 					$isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1;
 
 					// If password to set differs from the one found into database
-					$result=$this->setPassword($user, $this->pass, $this->pass_indatabase_crypted, $isencrypted, $notrigger, $nosyncuserpass);
+					$result=$this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
 					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}
@@ -964,9 +964,10 @@ class Adherent extends CommonObject
 	 *    @param    int		$isencrypted    0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
 	 *	  @param	int		$notrigger		1=Ne declenche pas les triggers
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
+	 * 	  @param  	int		$alreadyencrypted    	1 = password is already encrypted (0 by default)
 	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	public function setPassword($user, $password = '', $password_indatabase_crypted = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
+	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0, $alreadyencrypted = 0)
 	{
 		global $conf, $langs;
 
@@ -974,23 +975,22 @@ class Adherent extends CommonObject
 
 		dol_syslog(get_class($this)."::setPassword user=".$user->id." password=".preg_replace('/./i', '*', $password)." isencrypted=".$isencrypted);
 
-		// If password_crypted not provided, try crypt password provided
-		if(!$password_indatabase_crypted)
+		// If new password not provided, we generate one
+		if (! $password)
 		{
-			// If new password not provided, we generate one
-			if (!$password)
-			{
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-				$password=getRandomPassword(false);
-			}
-
-			// Crypt password
-			$password_crypted = dol_hash($password);
-
-		} else {
-			$password_crypted = $password_indatabase_crypted;
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$password=getRandomPassword(false);
 		}
 
+		// Crypt password
+		if ($alreadyencrypted != 1) $password_crypted = dol_hash($password);
+		else $password_crypted = $password;
+
+		$password_indatabase = '';
+		if (! $isencrypted)
+		{
+			$password_indatabase = $password;
+		}
 
 		$this->db->begin();
 
@@ -1032,7 +1032,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0)
 					{
-						$result=$luser->setPassword($user, $this->pass, $this->pass_indatabase_crypted, 0, 0, 1);
+						$result=$luser->setPassword($user, $this->pass, 0, 0, 1, 1);
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
