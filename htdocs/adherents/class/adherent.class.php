@@ -2280,23 +2280,23 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE a.fk_adherent_type = t.rowid";
-    if ($mode == 'expired')
+		if ($mode == 'expired')
 		{
-		$sql.= " AND a.statut = 1";
-		$sql.= " AND a.entity IN (".getEntity('adherent').")";
-		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
+			$sql.= " AND a.statut = 1";
+			$sql.= " AND a.entity IN (".getEntity('adherent').")";
+			$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
 		}
 		elseif ($mode == 'shift')
 		{
-		$sql.= " AND a.statut = -1";
-		$sql.= " AND a.entity IN (".getEntity('adherent').")";
+			$sql.= " AND a.statut = -1";
+			$sql.= " AND a.entity IN (".getEntity('adherent').")";
 		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$langs->load("members");
-      
+
 			if ($mode == 'expired') {
 				$warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");

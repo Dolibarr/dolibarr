@@ -268,7 +268,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
     	    DOL_URL_ROOT.'/contact/list.php?mainmenu=companies',
     	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
-    	    DOL_URL_ROOT.'/adherents/list.php?statut=-1&mainmenu=members',   
+    	    DOL_URL_ROOT.'/adherents/list.php?statut=-1&mainmenu=members',
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
     	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
