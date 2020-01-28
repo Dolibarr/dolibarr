@@ -2305,9 +2305,9 @@ class Adherent extends CommonObject
 			}
 			elseif ($mode == 'shift') {
 			    $warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
-			    $url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=-1&amp;filter=outofdate';
+			    $url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=-1';
 			    $label = $langs->trans("MembersListToValid");
-			    $labelShort = $langs->trans("MemberStatusDraft");
+			    $labelShort = $langs->trans("ToValidate");
 			}
 
 			$response = new WorkboardResponse();

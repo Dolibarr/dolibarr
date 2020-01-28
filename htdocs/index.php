@@ -458,8 +458,8 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
         $board = new Adherent($db);
-        $dashboardlines[$board->element . '_expired'] = $board->load_board($user, 'expired');
         $dashboardlines[$board->element . '_shift'] = $board->load_board($user, 'shift');
+        $dashboardlines[$board->element . '_expired'] = $board->load_board($user, 'expired');
     }
 
     // Number of expense reports to approve
@@ -565,7 +565,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'groupName' => 'Members',
                 'globalStatsKey' => 'members',
                 'stats' =>
-                    array('member_expired', 'member_shift'),
+            	array('member_shift', 'member_expired'),
             ),
         'ExpenseReport' =>
             array(
