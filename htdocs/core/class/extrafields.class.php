@@ -1466,7 +1466,7 @@ class ExtraFields
                         }
 
                         // We have to join on extrafield table
-                        if (strpos($InfoFieldList[4], 'extra') !== false) {
+                        if (strpos($InfoFieldList[4], 'extra.') !== false) {
                             $sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
                             $sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
                         } else {
