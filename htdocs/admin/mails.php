@@ -858,6 +858,13 @@ else
 		print $formmail->get_form('addfile', 'removefile');
 
 		dol_fiche_end();
+
+		// References
+		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
+		print '</span>';
+
+
 	}
 }
 

@@ -1971,3 +1971,4 @@ NotAPublicIp=Not a public IP
 MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server (done 1 time only after installation) to allow the foundation to count the number of Dolibarr installation.
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
+EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
