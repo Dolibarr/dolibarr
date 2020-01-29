@@ -553,7 +553,11 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->montant, $outputlangs, $currency));
+		if (! empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
+			$translateinletter = strtoupper($outputlangs->getLabelFromNumber($object->montant, 1));
+		}else{
+			$translateinletter = strtoupper(dol_convertToWord($object->montant, $outputlangs, $currency));
+		}
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$posy += 8;
