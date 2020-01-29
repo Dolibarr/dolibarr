@@ -505,7 +505,7 @@ elseif ($modecompta=="BOOKKEEPING")
 						$resultNP = $totPerAccount[$cpt['account_number']]['NP'];
 						$resultN = $totPerAccount[$cpt['account_number']]['N'];
 
-						if ($showaccountdetail == 'all' || $resultN > 0) {
+						if ($showaccountdetail == 'all' || $resultN != 0) {
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200">';
