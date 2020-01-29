@@ -303,9 +303,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
-				// Fetch thirdparty to be sure thirdparty is accessible through an API call when we use ODT template
-				$object->fetch_thirdparty();
-
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
