@@ -758,13 +758,31 @@ else
 		$text = '';
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= $langs->trans("WarningPHPMail");
+			$text .= $langs->trans("WarningPHPMail");	// To encourage to use SMTPS
 		}
-		//$conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS='1.2.3.4';
-		if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= ($text ? '<br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			// MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is list of IPs where email is sent from. Example: '1.2.3.4, [aaaa:bbbb:cccc:dddd]'.
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+			{
+				// List of IP show as record to add in SPF if we use the mail method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			}
+		} else {
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+			{
+				// List of IP show as record to add as allowed IP if we use the smtp method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			}
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD))
+			{
+				// List of string to add in SPF if we use the smtp method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD);
+			}
 		}
+
+
 		if ($text) print info_admin($text);
 	}
 
@@ -840,6 +858,13 @@ else
 		print $formmail->get_form('addfile', 'removefile');
 
 		dol_fiche_end();
+
+		// References
+		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
+		print '</span>';
+
+
 	}
 }
 
