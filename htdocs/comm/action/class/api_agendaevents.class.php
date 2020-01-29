@@ -229,7 +229,6 @@ class AgendaEvents extends DolibarrApi
      *
      * @return int
      */
-    /*
     public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
@@ -257,12 +256,11 @@ class AgendaEvents extends DolibarrApi
             $this->actioncomm->$field = $value;
         }
 
-        if ($this->actioncomm->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0)
             return $this->get($id);
 
         return false;
     }
-    */
 
     /**
      * Delete Agenda Event

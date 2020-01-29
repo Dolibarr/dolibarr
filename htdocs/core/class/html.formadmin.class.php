@@ -96,12 +96,9 @@ class FormAdmin
 			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
 			if ($showcode == 2) $valuetoshow=$value.' ('.$key.')';
 
-			if ($filter && is_array($filter))
+			if ($filter && is_array($filter) && array_key_exists($key, $filter))
 			{
-				if ( ! array_key_exists($key, $filter))
-				{
-					$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
-				}
+				continue;
 			}
 			elseif ($selected == $key)
 			{

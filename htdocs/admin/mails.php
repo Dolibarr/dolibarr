@@ -863,8 +863,6 @@ else
 		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
 		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
 		print '</span>';
-
-
 	}
 }
 
