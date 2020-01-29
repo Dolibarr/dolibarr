@@ -8,6 +8,7 @@
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2020       Zouhair Mouhsine        <zouhair.mouhsine@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +170,8 @@ class DoliDBPgsql extends DoliDB
 			// Replace group_concat(x) or group_concat(x SEPARATOR ',') with string_agg(x, ',')
 		    $line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
-			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
+			$line = preg_replace('/STRING_AGG\(([^,\)]+)/i', 'STRING_AGG(CAST(\1 AS VARCHAR(8000))', $line);
+			$line = preg_replace('/"@"/', '\'@\'', $line);
 			//print $line."\n";
 
 		    if ($type == 'auto')
