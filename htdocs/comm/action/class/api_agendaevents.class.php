@@ -244,11 +244,11 @@ class AgendaEvents extends DolibarrApi
             $this->actioncomm->fetch_userassigned();
             $this->actioncomm->oldcopy = clone $this->actioncomm;
         }
-        if ( ! $result ) {
+        if (! $result ) {
             throw new RestException(404, 'actioncomm not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('actioncomm',$this->actioncomm->id)) {
+        if (! DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         foreach($request_data as $field => $value) {
