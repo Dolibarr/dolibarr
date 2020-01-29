@@ -7297,14 +7297,23 @@ class Form
 		{
 			$ret .= '';
 		}
-		elseif ($fieldref != 'none') $ret .= dol_htmlentities($object->$fieldref);
-
+		elseif ($fieldref != 'none')
+		{
+			$ret.=dol_htmlentities($object->$fieldref);
+		}
 
 		if ($morehtmlref)
 		{
-			$ret .= ' '.$morehtmlref;
+			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
+			if(substr($morehtmlref, 0, 4) != '<div')
+			{
+				$ret.=' ';
+			}
+
+			$ret.=$morehtmlref;
 		}
-		$ret .= '</div>';
+
+		$ret.='</div>';
 
 		$ret .= '</div><!-- End banner content -->';
 

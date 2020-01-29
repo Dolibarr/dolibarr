@@ -24,7 +24,7 @@ MessageOK=Mesaj pe pagina de returnare pentru o plată validată
 MessageKO=Mesaj de pe pagina de returnare pentru o plată anulată
 ContentOfDirectoryIsNotEmpty=Conținutul acestui director nu este gol.
 DeleteAlsoContentRecursively=Verificați pentru a șterge tot conținutul recursiv
-
+PoweredBy=Powered by
 YearOfInvoice=Anul datei facturii
 PreviousYearOfInvoice=Anul anterior datei facturii
 NextYearOfInvoice=Anul următor datei facturii
@@ -104,7 +104,8 @@ DemoFundation=Gestionare membrii unui Fundaţia
 DemoFundation2=Gestionaţi membri şi un cont bancar de Fundaţia
 DemoCompanyServiceOnly=Companie sau independent cu vânzare de servicii
 DemoCompanyShopWithCashDesk=Gestionaţi-un magazin cu o casă de marcat
-DemoCompanyProductAndStocks=Companie care vinde produse cu un magazin
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Companie cu activități multiple (toate modulele principale)
 CreatedBy=Creat de %s
 ModifiedBy=Modificat de %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL pagina
 WEBSITE_TITLE=Titlu
 WEBSITE_DESCRIPTION=Descriere
 WEBSITE_IMAGE=Imagine
-WEBSITE_IMAGEDesc=Calea relativă a imaginii media. Puteți păstra acest lucru gol, deoarece acesta este rar folosit (acesta poate fi utilizat de conținut dinamic pentru a afișa o previzualizare a unei liste de postări pe blog).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Cuvânt cheie
 LinesToImport=Linii de import
 

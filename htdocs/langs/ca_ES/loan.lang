@@ -22,7 +22,7 @@ ListLoanAssociatedProject=Llistat de prèstecs associats al projecte
 AddLoan=Crea un préstec
 FinancialCommitment=Compromís financer
 InterestAmount=Interessos
-CapitalRemain=Capital remain
+CapitalRemain=Capital restant
 # Admin
 ConfigLoan=Configuració del mòdul de préstecs
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable del capital per defecte

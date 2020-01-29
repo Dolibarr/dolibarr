@@ -141,10 +141,10 @@ OrderByEMail=Correu electrònic
 OrderByWWW=En línia
 OrderByPhone=Telèfon
 # Documents models
-PDFEinsteinDescription=Model de comanda complet (logo...)
-PDFEratostheneDescription=Model de comanda complet (logo...)
+PDFEinsteinDescription=A complete order model 
+PDFEratostheneDescription=A complete order model
 PDFEdisonDescription=Model de comanda simple
-PDFProformaDescription=Una factura proforma completa (logo...)
+PDFProformaDescription=A complete Proforma invoice template
 CreateInvoiceForThisCustomer=Facturar comandes
 NoOrdersToInvoice=Sense comandes facturables
 CloseProcessedOrdersAutomatically=Classificar automàticament com "Processades" les comandes seleccionades.

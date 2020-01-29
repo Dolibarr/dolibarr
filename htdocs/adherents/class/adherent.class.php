@@ -2264,9 +2264,10 @@ class Adherent extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param	User	$user   		Objet user
+	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
 	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
-	public function load_board($user)
+	public function load_board($user, $mode)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -2279,20 +2280,41 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE a.fk_adherent_type = t.rowid";
-		$sql.= " AND a.statut = 1";
-		$sql.= " AND a.entity IN (".getEntity('adherent').")";
-		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
+		if ($mode == 'expired')
+		{
+			$sql.= " AND a.statut = 1";
+			$sql.= " AND a.entity IN (".getEntity('adherent').")";
+			$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
+		}
+		elseif ($mode == 'shift')
+		{
+			$sql.= " AND a.statut = -1";
+			$sql.= " AND a.entity IN (".getEntity('adherent').")";
+		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$langs->load("members");
 
+			if ($mode == 'expired') {
+				$warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
+				$label = $langs->trans("MembersWithSubscriptionToReceive");
+				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
+				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
+			}
+			elseif ($mode == 'shift') {
+			    $warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
+			    $url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=-1';
+			    $label = $langs->trans("MembersListToValid");
+			    $labelShort = $langs->trans("ToValidate");
+			}
+
 			$response = new WorkboardResponse();
-			$response->warning_delay=$conf->adherent->subscription->warning_delay/60/60/24;
-			$response->label=$langs->trans("MembersWithSubscriptionToReceive");
-			$response->labelShort=$langs->trans("MembersWithSubscriptionToReceiveShort");
-			$response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
+			$response->warning_delay=$warning_delay;
+			$response->label=$label;
+			$response->labelShort=$labelShort;
+			$response->url=$url;
 			$response->img=img_object('', "user");
 
 			$adherentstatic = new Adherent($this->db);
@@ -2750,6 +2772,9 @@ class Adherent extends CommonObject
 		$nbok = 0;
 		$nbko = 0;
 
+		$listofmembersok = array();
+		$listofmembersko = array();
+
 		$arraydaysbeforeend=explode(';', $daysbeforeendlist);
 		foreach($arraydaysbeforeend as $daysbeforeend)			// Loop on each delay
 		{
@@ -2766,7 +2791,8 @@ class Adherent extends CommonObject
 			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
-			$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
+			$sql.= " WHERE entity = ".$conf->entity; // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
+			$sql.= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -2787,6 +2813,7 @@ class Adherent extends CommonObject
 					if (empty($adherent->email))
 					{
 						$nbko++;
+						$listofmembersko[$adherent->id]=$adherent->id;
 					}
 					else
 					{
@@ -2828,12 +2855,16 @@ class Adherent extends CommonObject
 							{
 								$error++;
 								$this->error = $cmail->error;
-								$this->errors += $cmail->errors;
+								if (! is_null($cmail->errors)) {
+									$this->errors += $cmail->errors;
+								}
 								$nbko++;
+								$listofmembersko[$adherent->id]=$adherent->id;
 							}
 							else
 							{
 								$nbok++;
+								$listofmembersok[$adherent->id]=$adherent->id;
 
 								$message = $msg;
 								$sendto = $to;
@@ -2892,7 +2923,10 @@ class Adherent extends CommonObject
 						else
 						{
 							$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
+
 							$nbko++;
+							$listofmembersko[$adherent->id]=$adherent->id;
+
 							break;
 						}
 					}
@@ -2916,7 +2950,39 @@ class Adherent extends CommonObject
 		{
 			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
 			$this->output.= ' Send email successfuly to '.$nbok.' members';
-			if ($nbko) $this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
+			if (is_array($listofmembersok)) {
+				$listofids = ''; $i = 0;
+				foreach($listofmembersok as $idmember) {
+					if ($i > 100) {
+						$listofids .= ', ...';
+						break;
+					}
+					if (empty($listofids)) $listofids .= ' [';
+					else $listofids .= ', ';
+					$listofids .= $idmember;
+					$i++;
+				}
+				if ($listofids) $listofids .= ']';
+				$this->output .= $listofids;
+			}
+			if ($nbko) {
+				$this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
+				if (is_array($listofmembersko)) {
+					$listofids = ''; $i = 0;
+					foreach($listofmembersko as $idmember) {
+						if ($i > 100) {
+							$listofids .= ', ...';
+							break;
+						}
+						if (empty($listofids)) $listofids .= ' [';
+						else $listofids .= ', ';
+						$listofids .= $idmember;
+						$i++;
+					}
+					if ($listofids) $listofids .= ']';
+					$this->output .= $listofids;
+				}
+			}
 		}
 
 		return 0;

@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 dienas
 PaymentCondition14D=14 dienas
 PaymentConditionShort14DENDMONTH=Mēneša 14 dienas
 PaymentCondition14DENDMONTH=14 dienu laikā pēc mēneša beigām
-FixAmount=Fiksētā summa
+FixAmount=Fiksēta summa - 1 rinda ar etiķeti '%s'
 VarAmount=Mainīgais apjoms (%% kop.)
 VarAmountOneLine=Mainīgā summa (%% kopā) - 1 rinda ar etiķeti '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Ieņēmumu zīmogs
 YouMustCreateInvoiceFromThird=Šī opcija ir pieejama tikai tad, ja izveidojat rēķinu no trešās personas cilnes "Klients"
 YouMustCreateInvoiceFromSupplierThird=Šī opcija ir pieejama tikai tad, ja izveidojat rēķinu no trešās puses cilnes „Pārdevējs”
 YouMustCreateStandardInvoiceFirstDesc=Vispirms vispirms jāizveido standarta rēķins un jāpārveido tas par "veidni", lai izveidotu jaunu veidnes rēķinu
-PDFCrabeDescription=Rēķina PDF  paraugs. Pilnākais rēķina paraugs (vēlamais paraugs)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Rēķina PDF veidne Sponge. Pilnīga rēķina veidne
 PDFCrevetteDescription=Rēķina PDF veidne Crevette. Pabeigta rēķina veidne situāciju rēķiniem
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

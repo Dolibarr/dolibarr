@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - donations
 Donation=Дарение
 Donations=Дарения
-DonationRef=Реф. дарение
+DonationRef=Дарение №
 Donor=Дарител
 AddDonation=Създаване на дарение
 NewDonation=Ново дарение

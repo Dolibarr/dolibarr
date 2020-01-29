@@ -83,7 +83,7 @@ ListOfDictionariesEntries=Liste over ordbokinnføringer
 ListOfPermissionsDefined=Liste over definerte tillatelser
 SeeExamples=Se eksempler her
 EnabledDesc=Betingelse for å ha dette feltet aktivt (Eksempler: 1 eller $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=Er feltet synlig? (Eksempler: 0=Aldri synlig, 1=Synlig på liste og opprett/oppdater/vis skjemaer, 2=Synlig bare på liste, 3=Synlig bare på opprett/oppdater/vis skjema (ikke liste), 4=Synlig bare på liste og oppdaterings-/visningsskjema  (ikke opprett), 5=Synlig på listens sluttformular (ikke opprett, ikke oppdatering). Bruk av negativ verdi betyr at feltet ikke vises som standard på listen, men kan velges for visning). Det kan være et uttrykk, for eksempel: <br> preg_match ('public/',$_SERVER['PHP_SELF'])?0:1<br>($ user->rights->holiday>define_holiday ? 1: 0)
 IsAMeasureDesc=Kan verdien av feltet bli kumulert for å få en total i listen? (Eksempler: 1 eller 0)
 SearchAllDesc=Er feltet brukt til å søke fra hurtigsøkingsverktøyet? (Eksempler: 1 eller 0)
 SpecDefDesc=Skriv inn all dokumentasjon du vil gi med modulen din, som ikke allerede er definert av andre faner. Du kan bruke .md eller bedre,  .asciidoc-syntaksen.
@@ -135,3 +135,5 @@ CSSClass=CSS klasse
 NotEditable=Ikke redigerbar
 ForeignKey=Fremmed nøkkel
 TypeOfFieldsHelp=Type felt: <br> varchar (99), dobbel (24,8), ekte, tekst, html, datetime, tidstempel, heltall, heltall:ClassName:relativepath/to/classfile.class.php [:1[:filter]] ('1' betyr at vi legger til en + -knapp etter kombinasjonsboksen for å opprette posten, 'filter' kan være 'status=1 OG fk_user=__USER_ID OG enhet IN (__SHARED_ENTITIES__)' for eksempel)
+AsciiToHtmlConverter=Ascii til HTML konverter
+AsciiToPdfConverter=Ascii til PDF konverter

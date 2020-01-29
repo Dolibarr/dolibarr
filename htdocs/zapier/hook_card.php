@@ -247,7 +247,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
