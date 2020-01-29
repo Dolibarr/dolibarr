@@ -171,6 +171,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " a.rowid = " . (int) $rowid;
 			} elseif ($account_number) {
 				$sql .= " a.account_number = '" . $this->db->escape($account_number) . "'";
+				$sql .= " AND a.entity = ".$conf->entity;
 			}
 			if (! empty($limittocurrentchart)) {
 				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';
@@ -178,7 +179,6 @@ class AccountingAccount extends CommonObject
 			if (! empty($limittoachartaccount)) {
 			    $sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
-			$sql.= " AND a.entity = ".$conf->entity;
 
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
