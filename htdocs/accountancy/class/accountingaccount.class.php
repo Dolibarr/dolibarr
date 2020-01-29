@@ -178,6 +178,7 @@ class AccountingAccount extends CommonObject
 			if (! empty($limittoachartaccount)) {
 			    $sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
+			$sql.= " AND a.entity = ".$conf->entity;
 
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
