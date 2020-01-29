@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       resource/index.php
+ *      \file       resource/list.php
  *      \ingroup    resource
  *      \brief      Page to manage resource objects
  */
@@ -52,20 +52,19 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 if (! is_array($search_array_options)) $search_array_options = array();
-$search_ref=GETPOST("search_ref");
-$search_type=GETPOST("search_type");
+$search_ref = GETPOST("search_ref", 'alpha');
+$search_type = GETPOST("search_type", 'alpha');
 
 $filter=array();
 
 if ($search_ref != ''){
-	$param.='&search_ref='.$search_ref;
+	$param.='&search_ref='.urlencode($search_ref);
 	$filter['t.ref']=$search_ref;
 }
 if ($search_type != ''){
-	$param.='&search_type='.$search_type;
+	$param.='&search_type='.urlencode($search_type);
 	$filter['ty.label']=$search_type;
 }
-if ($search_label != '') 		$param.='&search_label='.$search_label;
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -83,7 +82,7 @@ foreach ($search_array_options as $key => $val)
 		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 
 
 $hookmanager->initHooks(array('resourcelist'));
@@ -133,7 +132,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
-	$search_label="";
 	$search_type="";
 	$search_array_options=array();
 	$filter=array();
