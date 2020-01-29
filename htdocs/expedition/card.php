@@ -1623,6 +1623,7 @@ elseif ($id || $ref)
 
 	if ($object->id > 0)
 	{
+		print '<input type="hidden" name="id" value="'.$object->id.'"/>';
 		if (!empty($object->origin) && $object->origin_id > 0)
 		{
 			$typeobject = $object->origin;
@@ -2034,7 +2035,7 @@ elseif ($id || $ref)
 			print '<td width="5" class="center">&nbsp;</td>';
 		}
 		// Product/Service
-		print '<td>'.$langs->trans("Products").'</td>';
+		print '<td class="linecoldescription">'.$langs->trans("Products").'</td>';
 		// Qty
 		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
@@ -2162,7 +2163,7 @@ elseif ($id || $ref)
 			if(empty($reshook))
 			{
 			    print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
-				print '<tr class="oddeven">';
+				print '<tr id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-fk_product="'.$lines[$i]->fk_product.'" class="oddeven">';
 
 				// #
 				if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -2183,7 +2184,7 @@ elseif ($id || $ref)
 					else
 						$label = (! empty($lines[$i]->label)?$lines[$i]->label:$lines[$i]->product_label);
 
-					print '<td>';
+					print '<td class="linecoldescription">';
 
 					// Show product and description
 					$product_static->type=$lines[$i]->fk_product_type;
@@ -2204,7 +2205,7 @@ elseif ($id || $ref)
 				}
 				else
 				{
-					print "<td>";
+					print "<td class='linecoldescription'>";
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'), 'service');
 					else $text = img_object($langs->trans('Product'), 'product');
 
