@@ -298,14 +298,14 @@ if (empty($reshook))
 			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
 			$array_of_pu_ht_per_vat_rate = array();
 			$array_of_pu_ht_devise_per_vat_rate = array();
-			foreach($object->lines as $line) {
+			foreach ($object->lines as $line) {
 				if (empty($array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				if (empty($array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				$array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->subprice;
 				$array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_subprice;
 			}
 			//var_dump($array_of_pu_ht_per_vat_rate);exit;
-			foreach($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
+			foreach ($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
 			{
 				$pu_ht = $array_of_pu_ht_per_vat_rate[$vatrate];
 				$pu_ht_devise = $array_of_pu_ht_devise_per_vat_rate[$vatrate];
@@ -818,11 +818,11 @@ if (empty($reshook))
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
-				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+			if (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
-					foreach($amount_ht as $vatrate => $val) {
+					foreach ($amount_ht as $vatrate => $val) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
@@ -3903,7 +3903,7 @@ elseif ($id > 0 || !empty($ref))
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref invoice
-	if ($object->status == $object::STATUS_DRAFT && ! $mysoc->isInEEC() && ! empty($conf->global->INVOICE_ALLOW_FREE_REF)) {
+	if ($object->status == $object::STATUS_DRAFT && !$mysoc->isInEEC() && !empty($conf->global->INVOICE_ALLOW_FREE_REF)) {
 		$morehtmlref .= $form->editfieldkey("Ref", 'ref', $object->ref, $object, $usercancreate, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("Ref", 'ref', $object->ref, $object, $usercancreate, 'string', '', null, null, '', 1);
 		$morehtmlref .= '<br>';
@@ -5095,7 +5095,7 @@ elseif ($id > 0 || !empty($ref))
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
-					&& (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}

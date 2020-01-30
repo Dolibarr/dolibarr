@@ -589,7 +589,7 @@ class SupplierProposal extends CommonObject
                 $productFournisseur->find_min_price_product_fournisseur($fk_product);
                 $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
             } else {
-            	$this->line->fk_fournprice = ($fk_fournprice > 0 ? $fk_fournprice : 0);		// If fk_fournprice is -1, we will not use fk_fournprice
+            	$this->line->fk_fournprice = ($fk_fournprice > 0 ? $fk_fournprice : 0); // If fk_fournprice is -1, we will not use fk_fournprice
             }
             $this->line->pa_ht = $pa_ht;
             //var_dump($this->line->fk_fournprice);exit;
@@ -777,9 +777,9 @@ class SupplierProposal extends CommonObject
             }
             $this->line->pa_ht = $pa_ht;
 
-            if (is_array($array_options) && count($array_options)>0) {
+            if (is_array($array_options) && count($array_options) > 0) {
             	// We replace values in this->line->array_options only for entries defined into $array_options
-            	foreach($array_options as $key => $value) {
+            	foreach ($array_options as $key => $value) {
             		$this->line->array_options[$key] = $array_options[$key];
             	}
             }

@@ -2627,7 +2627,7 @@ function price2fec($amount)
 	global $conf;
 
 	// Clean parameters
-	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
+	if (empty($amount)) $amount = 0; // To have a numeric value if amount not defined or = ''
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 
 	// Output decimal number by default
