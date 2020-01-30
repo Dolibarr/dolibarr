@@ -2,7 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
-# We use dist: trusty to have php 5.4+ available
+# We use dist: xenial to have php 5.6+ available
 dist: xenial
 sudo: required
 
