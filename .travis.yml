@@ -15,7 +15,7 @@ services:
 - postgresql
 
 addons:
-  postgresql
+  postgresql: '9.3'
   apt:
     sources:
     # To use the last version of pgloader, we add repo of postgresql with a name available in http://apt.postgresql.org/pub/repos/apt/
