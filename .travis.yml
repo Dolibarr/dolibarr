@@ -59,13 +59,13 @@ matrix:
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
   - php: '7.0'
-    env: DB=mariadb
+    env: DB=mysql
   - php: '7.1'
-    env: DB=mariadb
+    env: DB=mysql
   - php: '7.2'
-    env: DB=mariadb
+    env: DB=mysql
   - php: '7.3'
-    env: DB=mariadb
+    env: DB=mysql
   - php: '7.0'
     env: DB=postgresql
   - php: '7.1'
@@ -451,7 +451,7 @@ after_failure:
     # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"
     tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
-    # MariaDB log file
+    # Database log file
     echo "Debugging informations for file mysql error.log"
     sudo tail -n 50 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
