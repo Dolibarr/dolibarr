@@ -186,7 +186,7 @@ before_script:
     echo "Database version"
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
-	psql --version
+    psql --version
     echo
 
   - |
