@@ -6552,7 +6552,7 @@ class Form
 							 	templateResult: formatResult,		/* For 4.0 */
 								// Specify format function for selected item
 								formatSelection: formatSelection,
-							 	templateResult: formatSelection		/* For 4.0 */
+							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
 			}
