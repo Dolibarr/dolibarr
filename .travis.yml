@@ -15,6 +15,8 @@ services:
 - postgresql
 
 addons:
+  # Force postgresql to 9.4 (the oldest availablable on xenial)
+  postgresql: '9.4'
   apt:
     sources:
     # To use the last version of pgloader, we add repo of postgresql with a name available in http://apt.postgresql.org/pub/repos/apt/
@@ -251,7 +253,7 @@ before_script:
     fi
   - sudo a2enmod rewrite actions fastcgi alias
   - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - echo "extension = libzip.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  #- echo "extension = libzip.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
   - sudo chown -R travis:travis /var/lib/apache2/fastcgi
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
