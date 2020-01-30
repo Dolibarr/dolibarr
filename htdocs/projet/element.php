@@ -817,7 +817,19 @@ foreach ($listofreferent as $key => $value)
 		// Date
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
 		if (in_array($tablename, array('projet_task'))) print $langs->trans("TimeSpent");
-		if (!in_array($tablename, array('projet_task'))) print $langs->trans("Date");
+		if (! in_array($tablename, array('projet_task')))
+                {
+                    // Add dateeo section for fichinter
+                    if($tablename == 'fichinter')
+                    {
+                        print (($langs->trans("InterDateO") != 'InterDateO') ? $langs->trans("InterDateO") : $langs->trans("DateO")).'</td><td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' class="center">';
+                        print (($langs->trans("InterDateV") != 'InterDateV') ? $langs->trans("InterDateV") : $langs->trans("Date"));
+                    }
+                    else
+                    {
+                        print $langs->trans("Date");
+                    }
+                }
 		print '</td>';
 		// Thirdparty or user
 		print '<td>';
@@ -976,7 +988,11 @@ foreach ($listofreferent as $key => $value)
     				    $date = ($element->date_commande ? $element->date_commande : $element->date_valid);
     				}
     				elseif ($tablename == 'supplier_proposal') $date = $element->date_validation; // There is no other date for this
-    				elseif ($tablename == 'fichinter') $date = $element->datev; // There is no other date for this
+    				elseif ($tablename == 'fichinter')
+                                {
+                                    $dateo=$element->dateo;
+                                    $date=$element->datev; // There is no other date for this
+                                }
     				elseif ($tablename == 'projet_task') $date = ''; // We show no date. Showing date of beginning of task make user think it is date of time consumed
 					else
     				{
@@ -999,7 +1015,12 @@ foreach ($listofreferent as $key => $value)
                 	print '</a>';
 				    $total_time_by_line = $tmpprojtime['nbseconds'];
 				}
-				else print dol_print_date($date, 'day');
+				else
+                                {
+                                    // For fichinter display dateo too
+                                    if($tablename == 'fichinter') print dol_print_date($dateo, 'day').'</td><td class="center">';
+                                    print dol_print_date($date, 'day');
+                                }
 				print '</td>';
 
 				// Third party or user
@@ -1207,6 +1228,8 @@ foreach ($listofreferent as $key => $value)
 			// Total
 			$colspan = 4;
 			if (in_array($tablename, array('projet_task'))) $colspan = 2;
+                        // Change colspan for fichinter because we added dateo
+                        if ($tablename == 'fichinter') $colspan=5;
 			print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 			if (in_array($tablename, array('projet_task')))
 			{
