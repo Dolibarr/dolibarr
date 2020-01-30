@@ -911,7 +911,7 @@ class Setup extends DolibarrApi
      * @throws 400 RestException
      * @throws 200 OK
      */
-    public function getPaymentTerms($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
