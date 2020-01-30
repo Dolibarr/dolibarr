@@ -141,11 +141,13 @@ if ($action == 'validatehistory') {
 	} else {
 		$num_lines = $db->num_rows($result);
 
-		$isSellerInEEC = isInEEC($mysoc);
+		$isBuyerInEEC = isInEEC($mysoc);
 
 		$i = 0;
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
+
+			$isSellerInEEC = isInEEC($objp);
 
 			// Search suggested account for product/service
 			$suggestedaccountingaccountfor = '';

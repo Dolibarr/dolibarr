@@ -139,6 +139,10 @@ if (!$rowid)
 			$type = $langs->trans("card");
 	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
+	    } elseif ($charge->payment_method_details->type=='sepa_debit'){
+			$type = $langs->trans("sepadebit");
+	    } elseif ($charge->payment_method_details->type=='ideal'){
+			$type = $langs->trans("iDEAL");
 	    }
 
         if (! empty($charge->payment_intent)) {

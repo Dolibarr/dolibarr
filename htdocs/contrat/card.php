@@ -1356,6 +1356,7 @@ else
 
         // Call Hook formConfirm
         $parameters = array(
+        	'formConfirm' => $formconfirm,
             'id' => $id,
             //'lineid' => $lineid,
         );
