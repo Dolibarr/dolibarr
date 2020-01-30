@@ -1637,7 +1637,7 @@ elseif ($id || $ref)
 		$formconfirm = '';
 
 		// Call Hook formConfirm
-		$parameters = array();
+		$parameters = array('formConfirm' => $formconfirm);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;

@@ -83,7 +83,7 @@ ListOfDictionariesEntries=Vārdnīcu ierakstu saraksts
 ListOfPermissionsDefined=Noteikto atļauju saraksts
 SeeExamples=Skatiet piemērus šeit
 EnabledDesc=Nosacījums, lai šis lauks būtu aktīvs (piemēri: 1 vai $ conf-> globāla-> MYMODULE_MYOPTION)
-VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (nevis izveidot). Negatīvas vērtības līdzekļu lauka izmantošana pēc noklusējuma netiek parādīta, bet to var atlasīt apskatei). Tas var būt izteiciens, piemēram: <br> preg_match (&#39;/ public /&#39;, $ _SERVER [&#39;PHP_SELF&#39;])? 0: 1 <br> ($ lietotājs-&gt; tiesības-&gt; brīvdiena-&gt; noteikt_svētku laiku? 1: 0)
+VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (neveidot), 5 = redzama tikai saraksta beigu skata formā (neveidot, ne atjaunināt.) Negatīvas vērtības līdzekļu lauka izmantošana pēc noklusējuma netiek parādīta sarakstā, bet to var atlasīt apskatei. Tas var būt izteiciens, piemēram: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> holiday-> define_holiday? 1: 0)
 IsAMeasureDesc=Vai lauka vērtību var uzkrāties, lai kopsumma tiktu iekļauta sarakstā? (Piemēri: 1 vai 0)
 SearchAllDesc=Vai laukums tiek izmantots, lai veiktu meklēšanu no ātrās meklēšanas rīka? (Piemēri: 1 vai 0)
 SpecDefDesc=Ievadiet šeit visu dokumentāciju, ko vēlaties iesniegt ar savu moduli, kuru vēl nav definējušas citas cilnes. Jūs varat izmantot .md vai labāku, bagātīgo .asciidoc sintaksi.
@@ -134,4 +134,6 @@ KeyForTooltip=Rīka padoma atslēga
 CSSClass=CSS klase
 NotEditable=Nav rediģējams
 ForeignKey=Sveša atslēga
-TypeOfFieldsHelp=Lauku tips: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName: reliapath / to / classfile.class.php [: 1 [: filter]] (&#39;1&#39; nozīmē mēs pievienojam pogu + pēc kombināta, lai izveidotu ierakstu; “filtrs” var būt “status = 1 UN fk_user = __USER_ID UN entītija (piemēram, __SHARED_ENTITIES__)”.
+TypeOfFieldsHelp=Lauku tips: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName: reliapath / to / classfile.class.php [: 1 [: filter]] ('1' nozīmē mēs pievienojam pogu + pēc kombināta, lai izveidotu ierakstu; “filtrs” var būt “status = 1 UN fk_user = __USER_ID UN entītija (piemēram, __SHARED_ENTITIES__)”.
+AsciiToHtmlConverter=Ascii uz HTML pārveidotāju
+AsciiToPdfConverter=Ascii uz PDF pārveidotāju

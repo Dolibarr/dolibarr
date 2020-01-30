@@ -2377,9 +2377,14 @@ div.tabs {
 div.tabsElem {
 	margin-top: 1px;
 }	/* To avoid overlap of tabs when not browser */
-div.tabsElem a {
-    /* font-weight: normal !important; */
+/*
+div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
+    content: "\f0da";
+    font-family: "Font Awesome 5 Free";
+    padding-right: 2px;
+    font-weight: 900;
 }
+*/
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
@@ -5513,11 +5518,12 @@ div.tabsElem a.tab {
 	width: 70%;
 }
 .publicnewticketform {
-	margin-top: 25px !important;
+	/* margin-top: 25px !important; */
 }
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
+	padding-top: 10px;
 }
 @media only screen and (max-width: 767px)
 {
@@ -5525,7 +5531,7 @@ div.tabsElem a.tab {
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100%;
+		width: 100% !important;
 	}
 }
 

@@ -83,7 +83,7 @@ ListOfDictionariesEntries=Lijst met woordenboekingangen
 ListOfPermissionsDefined=Lijst met gedefinieerde machtigingen
 SeeExamples=Zie hier voorbeelden
 EnabledDesc=Voorwaarde om dit veld actief te hebben (voorbeelden: 1 of $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
-VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = Nooit zichtbaar, 1 = Zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = Alleen zichtbaar op lijst, 3 = Zichtbaar op alleen formulier maken / bijwerken / bekijken (niet lijst), 4 = Zichtbaar op lijst en update / weergave alleen formulier (niet aanmaken). Het gebruik van een negatieve waarde betekent dat het veld niet standaard in de lijst wordt weergegeven, maar kan worden geselecteerd om te bekijken). Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> holiday->  define_holiday? 1: 0)
+VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = Nooit zichtbaar, 1 = Zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = Alleen zichtbaar op lijst, 3 = Zichtbaar op alleen formulier maken / bijwerken / bekijken (niet lijst), 4 = Zichtbaar op lijst en update / weergave alleen formulier (niet aanmaken), 5 = Alleen zichtbaar op lijst eindweergave formulier (niet maken, niet bijwerken) Het gebruik van een negatief waarde betekent dat veld niet standaard wordt weergegeven in de lijst, maar kan worden geselecteerd voor weergave). Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> holiday-> define_holiday? 1: 0)
 IsAMeasureDesc=Kan de waarde van het veld worden gecumuleerd om een totaal in de lijst te krijgen? (Voorbeelden: 1 of 0)
 SearchAllDesc=Wordt het veld gebruikt om een zoekopdracht uit het snelzoekprogramma te doen? (Voorbeelden: 1 of 0)
 SpecDefDesc=Voer hier alle documentatie in die u met uw module wilt verstrekken die nog niet door andere tabbladen is gedefinieerd. U kunt .md of beter gebruiken, de rijke .asciidoc-syntaxis.
@@ -135,3 +135,5 @@ CSSClass=CSS-klasse
 NotEditable=Niet bewerkbaar
 ForeignKey=Vreemde sleutel
 TypeOfFieldsHelp=Type velden: <br> varchar (99), dubbel (24,8), real, tekst, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betekent we voegen een + -knop toe na de combo om het record te maken, 'filter' kan 'status = 1 EN fk_user = __USER_ID EN entiteit IN (bijvoorbeeld __SHARED_ENTITIES__)' zijn)
+AsciiToHtmlConverter=Ascii naar HTML converter
+AsciiToPdfConverter=Ascii naar PDF converter

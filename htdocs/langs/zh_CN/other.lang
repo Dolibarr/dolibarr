@@ -24,7 +24,7 @@ MessageOK=Message on the return page for a validated payment
 MessageKO=Message on the return page for a canceled payment
 ContentOfDirectoryIsNotEmpty=该目录的内容不为空。
 DeleteAlsoContentRecursively=Check to delete all content recursively
-
+PoweredBy=Powered by
 YearOfInvoice=发票日期年份
 PreviousYearOfInvoice=上一年的发票日期
 NextYearOfInvoice=发票日期后一年
@@ -104,7 +104,8 @@ DemoFundation=基础会员管理
 DemoFundation2=资金密集型企业
 DemoCompanyServiceOnly=外贸公司
 DemoCompanyShopWithCashDesk=管理与现金办公桌店
-DemoCompanyProductAndStocks=销售门店
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=公司有多项活动（所有主要模块）
 CreatedBy=创建者 %s
 ModifiedBy=修改者 %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=页面URL地址
 WEBSITE_TITLE=标题
 WEBSITE_DESCRIPTION=描述
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=关键字
 LinesToImport=要导入的行
 

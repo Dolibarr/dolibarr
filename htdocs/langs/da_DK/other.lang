@@ -24,7 +24,7 @@ MessageOK=Message on the return page for a validated payment
 MessageKO=Message on the return page for a canceled payment
 ContentOfDirectoryIsNotEmpty=Indholdet af denne mappe er ikke tomt.
 DeleteAlsoContentRecursively=Check for at slette alt indhold rekursivt
-
+PoweredBy=Powered by
 YearOfInvoice=År for faktura dato
 PreviousYearOfInvoice=Tidligere års faktura dato
 NextYearOfInvoice=Følgende års faktura dato
@@ -104,7 +104,8 @@ DemoFundation=Administrer medlemmer af en fond
 DemoFundation2=Administrer medlemmer og bankkonto i en fond
 DemoCompanyServiceOnly=Kun firma eller freelance-salgstjeneste
 DemoCompanyShopWithCashDesk=Administrer en butik med et kontant desk
-DemoCompanyProductAndStocks=Firma, der sælger varer med en butik
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Virksomhed med flere aktiviteter (alle hovedmoduler)
 CreatedBy=Oprettet af %s
 ModifiedBy=Modificeret af %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL til side
 WEBSITE_TITLE=Titel
 WEBSITE_DESCRIPTION=Beskrivelse
 WEBSITE_IMAGE=Billede
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=nøgleord
 LinesToImport=Linjer at importere
 

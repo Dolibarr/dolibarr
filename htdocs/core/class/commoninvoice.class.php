@@ -103,7 +103,12 @@ abstract class CommonInvoice extends CommonObject
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
 	    $alreadypaid+=$this->getSumDepositsUsed($multicurrency);
 	    $alreadypaid+=$this->getSumCreditNotesUsed($multicurrency);
-    	return $this->total_ttc - $alreadypaid;
+
+	    $remaintopay = ($this->total_ttc - $alreadypaid);
+	    if ($this->statut == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+	    	$remaintopay = 0;
+	    }
+	    return $remaintopay;
 	}
 
 	/**

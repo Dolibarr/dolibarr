@@ -16,13 +16,13 @@ StripeDoPayment=Πληρώστε με λωρίδα
 YouWillBeRedirectedOnStripe=Θα μεταφερθείτε στη σελίδα Ασφαλής σελίδα Stripe για να εισαγάγετε τις πληροφορίες της πιστωτικής σας κάρτας
 Continue=Επόμενη
 ToOfferALinkForOnlinePayment=URL για %s πληρωμής
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
-ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+ToOfferALinkForOnlinePaymentOnOrder=URL για την προσφορά %sμιας online πληρωμής σελίδας, για μια παραγγελία πώλησης
+ToOfferALinkForOnlinePaymentOnInvoice=URL για την προσφορά  %s μιας online πληρωμής, για ένα τιμολόγιο πελάτη
+ToOfferALinkForOnlinePaymentOnContractLine=URL για την προσφορά %s μιας online πληρωμής, για μια γραμμή συμβολαίου
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL για την προσφορά%s μας online πληρωμής οποιουδήποτε ποσού χωρίς υπάρχον αντικείμενο
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL για την προσφορά %s μιας απευθείας ηλεκτρονικής πληρωμής, για μια συνδρομή μέλους
+ToOfferALinkForOnlinePaymentOnDonation=URL για την προσφορά%s μιας online πληρωμής, για την πληρωμή μιας δωρεάς
+YouCanAddTagOnUrl=Μπορείτε επίσης να προσθέσετε την παράμετρο url <b>&tag=<i>value</i></b> σε ένα από αυτά τα URL (απαιτείται μόνο για την ελεύθερη πληρωμής) για να προσθέσετε το δικό σας σχόλιο ετικέτα πληρωμής. .<br>Για το URL πληρωμών χωρίς να υπάρχει αντικείμενο, μπορείτε να προσθέσετε την παράμετρο <strong>&noidempotency=1</strong> όπως το ίδιο σύνδεσμο με το ίδιο tag μπορεί να χρησιμοποιηθεί πολλές φορές (μερικές πληρωμές μπορούν να οριοθετούνται με όριο πληρωμης το 1 για κάθε διαφορετικό σύνδεσμο χωρίς παραμέτρους)
 SetupStripeToHavePaymentCreatedAutomatically=Ρυθμίστε το Stripe με url <b>%s</b> για να δημιουργηθεί αυτόματα πληρωμή όταν επικυρωθεί από το Stripe.
 AccountParameter=Παράμετροι λογαριασμού
 UsageParameter=Παράμετροι χρήσης

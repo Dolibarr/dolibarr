@@ -24,7 +24,7 @@ MessageOK=Meddelande på retursidan för en bekräftat betalning
 MessageKO=Meddelande på retursidan för en avbokad betalning
 ContentOfDirectoryIsNotEmpty=Innehållet i den här katalogen är inte tomt.
 DeleteAlsoContentRecursively=Kontrollera att allt innehåll rekursivt raderas
-
+PoweredBy=Powered by
 YearOfInvoice=År för fakturadatum
 PreviousYearOfInvoice=Föregående år av fakturadatum
 NextYearOfInvoice=Följande år med fakturadatum
@@ -104,7 +104,8 @@ DemoFundation=Hantera medlemmar av en stiftelse
 DemoFundation2=Hantera medlemmar och bankkonto i en stiftelse
 DemoCompanyServiceOnly=Endast företag eller frilansförsäljning
 DemoCompanyShopWithCashDesk=Hantera en butik med en kassa
-DemoCompanyProductAndStocks=Företag som säljer produkter med en butik
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Företag med flera aktiviteter (alla huvudmoduler)
 CreatedBy=Skapad av %s
 ModifiedBy=Uppdaterad av %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=Webbadressen
 WEBSITE_TITLE=Titel
 WEBSITE_DESCRIPTION=Beskrivning
 WEBSITE_IMAGE=Bild
-WEBSITE_IMAGEDesc=Relativ sökväg i bildmediet. Du kan hålla det tomt eftersom det här sällan används (det kan användas av dynamiskt innehåll för att visa en förhandsgranskning av en lista med blogginlägg).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Nyckelord
 LinesToImport=Rader att importera
 

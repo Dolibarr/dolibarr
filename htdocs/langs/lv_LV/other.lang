@@ -24,7 +24,7 @@ MessageOK=Ziņojums apstiprinātā maksājuma lapā
 MessageKO=Ziņojums par atcelto maksājumu atgriešanas lapā
 ContentOfDirectoryIsNotEmpty=Šīs direktorijas saturs nav tukšs.
 DeleteAlsoContentRecursively=Pārbaudiet, lai rekursīvi izdzēstu visu saturu
-
+PoweredBy=Powered by
 YearOfInvoice=Rēķina datums
 PreviousYearOfInvoice=Iepriekšējā rēķina datuma gads
 NextYearOfInvoice=Pēc gada rēķina datuma
@@ -104,7 +104,8 @@ DemoFundation=Pārvaldīt nodibinājuma dalībniekus
 DemoFundation2=Pārvaldīt dalībniekus un bankas kontu nodibinājumam
 DemoCompanyServiceOnly=Tikai uzņēmuma vai ārštata pārdošanas pakalpojums
 DemoCompanyShopWithCashDesk=Pārvaldīt veikals ar kasē
-DemoCompanyProductAndStocks=Uzņēmums, kas pārdod produktus veikalā
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Uzņēmums ar vairākām darbībām (visi galvenie moduļi)
 CreatedBy=Izveidoja %s
 ModifiedBy=Laboja %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=Lapas URL
 WEBSITE_TITLE=Virsraksts
 WEBSITE_DESCRIPTION=Apraksts
 WEBSITE_IMAGE=Attēls
-WEBSITE_IMAGEDesc=Attēlu nesēja relatīvais ceļš. Jūs varat to paturēt tukša, jo to reti izmanto (to var izmantot dinamiskais saturs, lai parādītu emuāra ziņu saraksta priekšskatījumu).
+WEBSITE_IMAGEDesc=Attēlu nesēja relatīvais ceļš. Varat to atstāt tukšu, jo tas tiek reti izmantots (dinamiskais saturs to var izmantot, lai parādītu sīktēlu emuāru ziņu sarakstā). Ceļā izmantojiet __WEBSITEKEY__, ja ceļš ir atkarīgs no vietnes nosaukuma.
 WEBSITE_KEYWORDS=Atslēgas vārdi
 LinesToImport=Importējamās līnijas
 

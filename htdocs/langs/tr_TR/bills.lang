@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 gün
 PaymentCondition14D=14 gün
 PaymentConditionShort14DENDMONTH=14 days of month-end
 PaymentCondition14DENDMONTH=Within 14 days following the end of the month
-FixAmount=Sabit tutar
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Değişken tutar (%% top.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Bandrol
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=Yeni bir fatura şablonu oluşturmak için önce bir standart fatura oluşturmalı ve onu "şablona" dönüştürmelisiniz
-PDFCrabeDescription=Fatura PDF şablonu Crabe. Tam fatura şablonu  (Önerilen şablon)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=Fatura PDF şablonu Crevette. Durum faturaları için eksiksiz bir fatura şablonu
 TerreNumRefModelDesc1=Standart faturalar için numarayı  %syymm-nnnn biçiminde ve iade faturaları için %syymm-nnnn biçiminde göster, yy yıl, mm ay ve nnnn boşluksuz ve 0 olmayan bir dizidir.

@@ -1124,7 +1124,7 @@ class Categorie extends CommonObject
         // Include or exclude leaf including $markafterid from tree
         if (count($markafterid) > 0)
         {
-            $keyfiltercatid = implode('|', $markafterid);
+            $keyfiltercatid = '(' . implode('|', $markafterid) . ')';
 
             //print "Look to discard category ".$markafterid."\n";
             $keyfilter1 = '^'.$keyfiltercatid.'$';

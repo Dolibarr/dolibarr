@@ -1324,6 +1324,7 @@ class ExtraFields
                         print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
                     }
                 } else {
+					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
                     $data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
                     $out .= '<option value="0">&nbsp;</option>';
                     foreach ($data as $data_key => $data_value) {
@@ -1465,7 +1466,7 @@ class ExtraFields
                         }
 
                         // We have to join on extrafield table
-                        if (strpos($InfoFieldList[4], 'extra') !== false) {
+                        if (strpos($InfoFieldList[4], 'extra.') !== false) {
                             $sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
                             $sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
                         } else {
@@ -1550,6 +1551,7 @@ class ExtraFields
                         print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
                     }
                 } else {
+					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
                     $data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
                     $out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
                 }

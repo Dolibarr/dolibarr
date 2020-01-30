@@ -229,8 +229,8 @@ TicketConfirmChangeStatus=Confirmar el canvi d'estatus : %s ?
 TicketLogStatusChanged=Estatus canviat : %s a %s
 TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
 Unread=No llegit
-TicketNotCreatedFromPublicInterface=No disponible El tiquet no s&#39;ha creat des de la interfície pública.
-PublicInterfaceNotEnabled=La interfície pública no s&#39;ha activat
+TicketNotCreatedFromPublicInterface=No disponible El tiquet no s'ha creat des de la interfície pública.
+PublicInterfaceNotEnabled=La interfície pública no s'ha activat
 ErrorTicketRefRequired=El nom de referència del tiquet és obligatori
 
 #
@@ -241,7 +241,7 @@ NoLogForThisTicket=Encara no hi ha 'log' per aquest tiquet
 TicketLogAssignedTo=Tiquet %s assignat a %s
 TicketLogPropertyChanged=Tiquet %s modificat: classificació de %s a %s
 TicketLogClosedBy=Tiquet %s tancat per %s
-TicketLogReopen=S'ha obert el tiquet %s
+TicketLogReopen=El tiquet %s s'ha re-obert
 
 #
 # Public pages

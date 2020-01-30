@@ -660,6 +660,7 @@ class Export
 								    }
 								    $tmpobjforcomputecall->id = $obj->f_rowid;
 								    $tmpobjforcomputecall->total_ttc = $obj->f_total_ttc;
+								    $tmpobjforcomputecall->close_code = $obj->f_close_code;
 								    $remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;

@@ -24,7 +24,7 @@ MessageOK=Message on the return page for a validated payment
 MessageKO=Message on the return page for a canceled payment
 ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
 DeleteAlsoContentRecursively=Check to delete all content recursively
-
+PoweredBy=Powered by
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date
 NextYearOfInvoice=Following year of invoice date
@@ -104,7 +104,8 @@ DemoFundation=Zarządzanie członkami fundacji
 DemoFundation2=Zarządzanie członkami i kontami bankowymi fundacji
 DemoCompanyServiceOnly=Firma lub freelancer sprzedający tylko swoje usługi
 DemoCompanyShopWithCashDesk=Zarządzanie sklepem z kasy
-DemoCompanyProductAndStocks=Firma sprzedająca produkty w sklepie
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Firma z kilkoma aktywnościami (wszystkie główne moduły)
 CreatedBy=Utworzone przez %s
 ModifiedBy=Zmodyfikowane przez %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=Link strony
 WEBSITE_TITLE=Tytuł
 WEBSITE_DESCRIPTION=Opis
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Słowa kluczowe
 LinesToImport=Lines to import
 

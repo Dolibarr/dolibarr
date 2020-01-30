@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 ngày
 PaymentCondition14D=14 ngày
 PaymentConditionShort14DENDMONTH=14 ngày cuối tháng
 PaymentCondition14DENDMONTH=Trong vòng 14 ngày sau khi kết thúc tháng
-FixAmount=Số tiền cố định
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Số tiền thay đổi (%% tot.)
 VarAmountOneLine=Số tiền thay đổi (%% tot.) - 1 dòng có nhãn '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Doanh thu đóng dấu
 YouMustCreateInvoiceFromThird=Tùy chọn này chỉ khả dụng khi tạo hóa đơn từ tab "Khách hàng" của bên thứ ba
 YouMustCreateInvoiceFromSupplierThird=Tùy chọn này chỉ khả dụng khi tạo hóa đơn từ tab "Nhà cung cấp" của bên thứ ba
 YouMustCreateStandardInvoiceFirstDesc=Trước tiên, bạn phải tạo hóa đơn chuẩn và chuyển đổi thành "mẫu" để tạo hóa đơn mẫu mới
-PDFCrabeDescription=Hóa đơn mẫu PDF Crabe. Một mẫu hóa đơn đầy đủ (mẫu đề nghị)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Hóa đơn PDF mẫu Sponge. Một mẫu hóa đơn hoàn chỉnh
 PDFCrevetteDescription=Hóa đơn PDF mẫu Crevette. Mẫu hóa đơn hoàn chỉnh cho hóa đơn tình huống
 TerreNumRefModelDesc1=Quay về số với định dạng %ssyymm-nnnn cho hóa đơn chuẩn và %syymm-nnnn cho các giấy báo có nơi mà yy là năm, mm là tháng và nnnn là một chuỗi ngắt và không trở về 0

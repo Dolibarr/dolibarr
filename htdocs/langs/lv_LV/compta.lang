@@ -254,3 +254,4 @@ ByVatRate=Ar pārdošanas nodokļa likmi
 TurnoverbyVatrate=Apgrozījums, par kuru tiek aprēķināta pārdošanas nodokļa likme
 TurnoverCollectedbyVatrate=Apgrozījums, kas iegūts, pārdodot nodokli
 PurchasebyVatrate=Iegāde pēc pārdošanas nodokļa likmes
+LabelToShow=Īsais nosaukums

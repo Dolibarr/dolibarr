@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
-DeliveryRef=Реф. доставка
+DeliveryRef=Доставка №
 DeliveryCard=Карта на разписка
 DeliveryOrder=Разписка за доставка
 DeliveryDate=Дата на доставка

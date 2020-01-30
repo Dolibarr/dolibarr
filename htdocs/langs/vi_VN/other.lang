@@ -24,7 +24,7 @@ MessageOK=Thông điệp trên trang trả về cho một khoản thanh toán đ
 MessageKO=Thông điệp trên trang trả về cho một khoản thanh toán bị hủy
 ContentOfDirectoryIsNotEmpty=Nội dung của thư mục này không rỗng.
 DeleteAlsoContentRecursively=Kiểm tra để xóa tất cả nội dung lặp lại
-
+PoweredBy=Powered by
 YearOfInvoice=Năm hóa đơn
 PreviousYearOfInvoice=Năm trước của ngày hóa đơn
 NextYearOfInvoice=Năm sau của ngày hóa đơn
@@ -104,7 +104,8 @@ DemoFundation=Quản lý thành viên của một nền tảng
 DemoFundation2=Quản lý thành viên và tài khoản ngân hàng của một nền tảng
 DemoCompanyServiceOnly=Chỉ công ty hoặc dịch vụ bán hàng tự do
 DemoCompanyShopWithCashDesk=Quản lý một cửa hàng với một bàn bằng tiền mặt
-DemoCompanyProductAndStocks=Công ty bán sản phẩm có một cửa hàng
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Công ty có nhiều hoạt động (tất cả các mô-đun chính)
 CreatedBy=Được tạo ra bởi %s
 ModifiedBy=Được thay đổi bởi %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL của trang
 WEBSITE_TITLE=Tiêu đề
 WEBSITE_DESCRIPTION=Mô tả
 WEBSITE_IMAGE=Hình ảnh
-WEBSITE_IMAGEDesc=Đường dẫn tương đối của phương tiện hình ảnh. Bạn có thể giữ trống vì điều này hiếm khi được sử dụng (nội dung động có thể được sử dụng để hiển thị bản xem trước của danh sách các bài đăng trên blog).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Từ khóa
 LinesToImport=Dòng để nhập
 

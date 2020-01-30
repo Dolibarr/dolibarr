@@ -24,7 +24,7 @@ MessageOK=Μήνυμα στη σελίδα επιστροφής για επικ�
 MessageKO=Μήνυμα στη σελίδα επιστροφής για μια ακυρωμένη πληρωμή
 ContentOfDirectoryIsNotEmpty=Το περιεχόμενο αυτού του καταλόγου δεν είναι άδειο.
 DeleteAlsoContentRecursively=Επιλέξτε για να διαγράψετε όλο το περιεχόμενο αναδρομικά
-
+PoweredBy=Powered by
 YearOfInvoice=Έτος της ημερομηνίας του τιμολογίου
 PreviousYearOfInvoice=Προηγούμενο έτος της ημερομηνίας του τιμολογίου
 NextYearOfInvoice=Μετά το έτος της ημερομηνίας του τιμολογίου
@@ -104,7 +104,8 @@ DemoFundation=Διαχειριστείτε τα μέλη του ιδρύματο
 DemoFundation2=Διαχειριστείτε τα μέλη και τον τραπεζικό λογαριασμό του ιδρύματος
 DemoCompanyServiceOnly=Εταιρική ή ανεξάρτητη υπηρεσία πώλησης
 DemoCompanyShopWithCashDesk=Διαχειριστείτε το κατάστημα με ένα ταμείο
-DemoCompanyProductAndStocks=Εταιρεία που πωλεί προϊόντα με κατάστημα
+DemoCompanyProductAndStocks=Κατάστημα πώλησης προϊόντων με σημείο πώλησης
+DemoCompanyManufacturing=Εταιρεία κατασκευής προϊόντων
 DemoCompanyAll=Εταιρεία με πολλαπλές δραστηριότητες (όλες τις κύριες ενότητες)
 CreatedBy=Δημιουργήθηκε από %s
 ModifiedBy=Τροποποίηθηκε από %s
@@ -252,7 +253,7 @@ ThirdPartyCreatedByEmailCollector=Το τρίτο μέρος δημιουργή�
 ContactCreatedByEmailCollector=Επαφή / διεύθυνση που δημιουργήθηκε από τον συλλέκτη ηλεκτρονικού ταχυδρομείου από το ηλεκτρονικό ταχυδρομείο MSGID %s
 ProjectCreatedByEmailCollector=Έργο που δημιουργήθηκε από τον συλλέκτη ηλεκτρονικού ταχυδρομείου από το ηλεκτρονικό ταχυδρομείο MSGID %s
 TicketCreatedByEmailCollector=Εισιτήριο που δημιουργήθηκε από τον συλλέκτη ηλεκτρονικού ταχυδρομείου από το ηλεκτρονικό ταχυδρομείο MSGID %s
-OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
+OpeningHoursFormatDesc=Χρησιμοποιήστε το "-" για να διαχωρίσετε τις ώρες ανοίγματος και κλεισίματος. <br> Χρησιμοποιήστε "κενό" για να εισάγετε διαφορετικές περιοχές. <br> Παράδειγμα: 8-12 14-18
 
 ##### Export #####
 ExportsArea=Exports area
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=Σύνδεσμος URL της σελίδας
 WEBSITE_TITLE=Τίτλος
 WEBSITE_DESCRIPTION=Περιγραφή
 WEBSITE_IMAGE=Εικόνα
-WEBSITE_IMAGEDesc=Σχετική διαδρομή των μέσων εικόνας. Μπορείτε να το κρατήσετε κενό, καθώς σπάνια χρησιμοποιείται (μπορεί να χρησιμοποιηθεί από το δυναμικό περιεχόμενο για να εμφανιστεί μια προεπισκόπηση μιας λίστας αναρτήσεων ιστολογίου).
+WEBSITE_IMAGEDesc=Σχετική διαδρομή των μέσων εικόνας. Μπορείτε να το κρατήσετε κενό, καθώς σπάνια χρησιμοποιείται (μπορεί να χρησιμοποιηθεί από το δυναμικό περιεχόμενο για να εμφανιστεί μια μικρογραφία σε μια λίστα με αναρτήσεις ιστολογίου). Χρησιμοποιήστε το __WEBSITEKEY__ στη διαδρομή εάν η διαδρομή εξαρτάται από το όνομα του ιστότοπου.
 WEBSITE_KEYWORDS=Λέξεις κλειδιά
 LinesToImport=Γραμμές για εισαγωγή
 
