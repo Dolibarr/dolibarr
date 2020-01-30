@@ -201,9 +201,9 @@ before_script:
       mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
+      #psql -c 'create database travis;' -U postgres
       #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
-      psql -c 'create database travis;' -U postgres
       echo pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
       pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
