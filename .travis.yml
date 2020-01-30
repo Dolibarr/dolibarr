@@ -3,7 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: trusty to have php 5.4+ available
-dist: trusty
+dist: xenial
 sudo: required
 
 language: php
