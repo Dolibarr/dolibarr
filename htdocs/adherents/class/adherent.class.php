@@ -2297,6 +2297,11 @@ class Adherent extends CommonObject
 		{
 			$langs->load("members");
 
+			$warning_delay = 0;
+			$url = '';
+			$label = '';
+			$labelShort = '';
+
 			if ($mode == 'expired') {
 				$warning_delay = $conf->adherent->subscription->warning_delay/60/60/24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");
