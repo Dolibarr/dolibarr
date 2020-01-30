@@ -194,11 +194,11 @@ before_script:
     echo "Setting up database"
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
       echo "MySQL"
-      mysql -u root -S -e 'DROP DATABASE IF EXISTS travis;'
+      mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
       mysql -u root -e 'CREATE DATABASE IF NOT EXISTS travis;'
-      mysql -u travis -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
-      mysql -e 'FLUSH PRIVILEGES;'
-      mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+      mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+      mysql -u root -e 'FLUSH PRIVILEGES;'
+      mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
       #pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
