@@ -44,11 +44,9 @@ env:
   - DEBUG=false
   matrix:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
-  #- DB=mysql
-  - DB=mariadb
+  #- DB=mariadb
+  - DB=mysql
   - DB=postgresql
-  # TODO
-  #- DB=sqlite
   # See https://docs.travis-ci.com/user/languages/php/#Apache-%2B-PHP
   #- WS=apache
   # See https://github.com/DracoBlue/travis-ci-nginx-php-fpm-test
