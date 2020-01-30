@@ -451,10 +451,10 @@ if ($mode == 'feature')
     }
     require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
     $interfaces = new Interfaces($db);
-    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$objMod->code:'').'/core/triggers'));
+    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$objMod->name:'').'/core/triggers'));
 	foreach($triggers as $triggercursor)
 	{
-		if ($triggercursor['module'] == $objMod->code)
+		if ($triggercursor['module'] == $objMod->name)
 		{
 			$yesno='Yes';
 			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
