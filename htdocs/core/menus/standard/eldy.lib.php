@@ -225,25 +225,35 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Commercial
 	$tmpentry = array(
-	    'enabled'=>(!empty($conf->propal->enabled) ||
-	        !empty($conf->commande->enabled) ||
-	        !empty($conf->supplier_order->enabled) ||
-	        !empty($conf->supplier_proposal->enabled) ||
-	        !empty($conf->contrat->enabled) ||
-	        !empty($conf->ficheinter->enabled)
-	        ) ? 1 : 0,
-		'perms'=>(!empty($user->rights->propal->lire) ||
-				  !empty($user->rights->commande->lire) ||
-				  !empty($user->rights->supplier_order->lire) ||
-				  !empty($user->rights->supplier_proposal->lire) ||
-				  !empty($user->rights->contrat->lire) ||
-				  !empty($user->rights->ficheinter->lire)
-			),
-	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
+		'enabled'=>(	! empty($conf->propal->enabled) ||
+						! empty($conf->commande->enabled) ||
+						! empty($conf->supplier_order->enabled) ||
+						! empty($conf->supplier_proposal->enabled) ||
+						! empty($conf->contrat->enabled) ||
+						! empty($conf->ficheinter->enabled)
+			)?1:0,
+			'perms'=>(	! empty($user->rights->propal->lire) ||
+						! empty($user->rights->commande->lire) ||
+						! empty($user->rights->supplier_order->lire) ||
+						! empty($user->rights->supplier_proposal->lire) ||
+						! empty($user->rights->contrat->lire) ||
+						! empty($user->rights->ficheinter->lire) ||
+						! empty($user->rights->fournisseur->commande->lire)
+		),
+		'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
 	);
+
+	$onlyorder = ! empty($user->rights->fournisseur->commande->lire) &&
+				empty($user->rights->propal->lire) &&
+				empty($user->rights->commande->lire) &&
+				empty($user->rights->supplier_order->lire) &&
+				empty($user->rights->supplier_proposal->lire) &&
+				empty($user->rights->contrat->lire) &&
+				empty($user->rights->ficheinter->lire);
+
 	$menu_arr[] = array(
 		'name' => 'Commercial',
-		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
+		'link' => $onlyorder ? '/fourn/commande/index.php?mainmenu=commercial&amp;leftmenu=' : '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
 		'title' => "Commercial",
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
