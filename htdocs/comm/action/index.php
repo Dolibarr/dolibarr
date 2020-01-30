@@ -757,29 +757,29 @@ if ($showbirthday)
     }
 }
 
-if($conf->global->AGENDA_SHOW_HOLIDAYS)
+if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 {
     $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
-    $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE u.rowid = x.fk_user";
-    $sql.= " AND u.statut = '1'";                           // Show only active users  (0 = inactive user, 1 = active user)
-    $sql.= " AND (x.statut = '2' OR x.statut = '3')";       // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+    $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+    $sql .= " WHERE u.rowid = x.fk_user";
+    $sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+    $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 
-    if($action == 'show_day')
+    if ($action == 'show_day')
     {
         // Request only leaves for the current selected day
-        $sql.= " AND '".$year."-".$month."-".$day."' BETWEEN x.date_debut AND x.date_fin";
+        $sql .= " AND '".$year."-".$month."-".$day."' BETWEEN x.date_debut AND x.date_fin";
     }
-    elseif($action == 'show_week')
+    elseif ($action == 'show_week')
     {
         // TODO: Add filter to reduce database request
     }
-    elseif($action == 'show_month')
+    elseif ($action == 'show_month')
     {
         // TODO: Add filter to reduce database request
     }
 
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
@@ -803,22 +803,22 @@ if($conf->global->AGENDA_SHOW_HOLIDAYS)
             $event->date_start_in_calendar  = $event->datep;
             $event->date_end_in_calendar    = $event->datef;
 
-            if($obj->status == 3)
+            if ($obj->status == 3)
             {
                 // Show no symbol for leave with state "leave approved"
                 $event->percentage = -1;
             }
-            elseif($obj->status == 2)
+            elseif ($obj->status == 2)
             {
                 // Show TO-DO symbol for leave with state "leave wait for approval"
                 $event->percentage = 0;
             }
 
-            if($obj->halfday == 1)
+            if ($obj->halfday == 1)
             {
                 $event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
             }
-            elseif($obj->halfday == -1)
+            elseif ($obj->halfday == -1)
             {
                 $event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
             }
@@ -836,7 +836,7 @@ if($conf->global->AGENDA_SHOW_HOLIDAYS)
             {
                 $eventarray[$daykey][] = $event;
 
-                $daykey += 60*60*24;
+                $daykey += 60 * 60 * 24;
             }
 
             while ($daykey <= $event->date_end_in_calendar);
@@ -1835,12 +1835,12 @@ function dol_color_minus($color, $minus, $minusunit = 16)
 function sort_events_by_date($a, $b)
 {
 	// Sort holidays at first
-    if($a->type_code === 'HOLIDAY')
+    if ($a->type_code === 'HOLIDAY')
     {
         return -1;
     }
 
-    if($b->type_code === 'HOLIDAY')
+    if ($b->type_code === 'HOLIDAY')
     {
         return 1;
     }

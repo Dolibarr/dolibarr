@@ -409,7 +409,7 @@ foreach ($dirmodels as $reldir)
 
 	                            // Info
 		    					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
 			                    {
 			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;

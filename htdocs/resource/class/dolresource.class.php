@@ -615,7 +615,7 @@ class Dolresource extends CommonObject
    					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
-   					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
    		}
@@ -697,7 +697,7 @@ class Dolresource extends CommonObject
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
-    				$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -958,7 +958,7 @@ class Dolresource extends CommonObject
         	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
         }*/
         if (isset($this->type_label)) {
-        	$label.= '<br><b>' . $langs->trans("ResourceType").":</b> ".$this->type_label;
+        	$label .= '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
         }
 
         $url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;

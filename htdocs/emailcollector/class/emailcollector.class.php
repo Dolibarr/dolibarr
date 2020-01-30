@@ -2013,6 +2013,9 @@ class EmailCollector extends CommonObject
 
         // TEXT
         if ($p->type == 0 && $data) {
+			if(!empty($params['charset'])) {
+                $data = $this->convertStringEncoding($data, $params['charset']);
+            }
             // Messages may be split in different parts because of inline attachments,
             // so append parts together with blank row.
             if (strtolower($p->subtype) == 'plain')
@@ -2028,6 +2031,9 @@ class EmailCollector extends CommonObject
         // There are no PHP functions to parse embedded messages,
         // so this just appends the raw source to the main message.
         elseif ($p->type == 2 && $data) {
+			if(!empty($params['charset'])) {
+                $data = $this->convertStringEncoding($data, $params['charset']);
+            }
             $plainmsg .= $data."\n\n";
         }
 
@@ -2039,4 +2045,28 @@ class EmailCollector extends CommonObject
             }
         }
     }
+
+	/**
+	 * Converts a string from one encoding to another.
+	 *
+	 * @param string $string		String to convert
+	 * @param string $fromEncoding	String encoding
+	 * @param string $toEncoding	String return encoding
+	 * @return string 				Converted string if conversion was successful, or the original string if not
+	 * @throws Exception
+	 */
+	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')
+	{
+  		if(!$string || $fromEncoding == $toEncoding) {
+  			return $string;
+  		}
+  		$convertedString = function_exists('iconv') ? @iconv($fromEncoding, $toEncoding . '//IGNORE', $string) : null;
+  		if(!$convertedString && extension_loaded('mbstring')) {
+  			$convertedString = @mb_convert_encoding($string, $toEncoding, $fromEncoding);
+  		}
+  		if(!$convertedString) {
+  			throw new Exception('Mime string encoding conversion failed');
+  		}
+  		return $convertedString;
+  	}
 }

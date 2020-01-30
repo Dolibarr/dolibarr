@@ -810,7 +810,7 @@ class Propal extends CommonObject
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
-				foreach($array_options as $key => $value) {
+				foreach ($array_options as $key => $value) {
 					$this->line->array_options[$key] = $array_options[$key];
 				}
 			}

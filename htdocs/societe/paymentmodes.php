@@ -584,7 +584,7 @@ if (empty($reshook))
             }
 
 			$resql = $db->query($sql);
-			$num = $db->num_rows($resql);		// Note: $num is always 0 on an update and delete, it is defined for select only.
+			$num = $db->num_rows($resql); // Note: $num is always 0 on an update and delete, it is defined for select only.
 			if (!empty($newcu)) {
 				if (empty($num))
 				{
@@ -1009,17 +1009,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					}
 				}
 			}
-			catch(Exception $e)
+			catch (Exception $e)
 			{
 				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
 			}
 		}
 
 		print '<!-- List of stripe payments -->'."\n";
-		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
-		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
 			print '<td>'.$langs->trans('LocalID').'</td>';
 		}
@@ -1346,7 +1346,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->available as $cpt)
 			{
-		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        $arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		        if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
     					$currencybalance[$cpt->currency]['available'] = $cpt->amount / 100;
 				} else {
@@ -1360,11 +1360,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->pending as $cpt)
 			{
-				$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
-					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available']+$cpt->amount / 100;
+					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available'] + $cpt->amount / 100;
 				} else {
-					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available']+$cpt->amount;
+					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available'] + $cpt->amount;
 				}
 			}
         }
@@ -1373,7 +1373,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($currencybalance as $cpt)
 			{
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available']+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + $cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
@@ -1383,14 +1383,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	// List of bank accounts
 
-    $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
+    $morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 
 	$rib_list = $object->get_all_rib();
 	if (is_array($rib_list))
 	{
-		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">';
 
 		print '<tr class="liste_titre">';

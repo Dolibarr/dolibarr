@@ -16,6 +16,9 @@
  */
 
 
+.opacitymedium {
+	opacity: 0.5;
+}
 
 body {
 	font-size:14px;

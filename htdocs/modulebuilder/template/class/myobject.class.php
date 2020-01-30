@@ -237,13 +237,13 @@ class MyObject extends CommonObject
 		// Translate some data of arrayofkeyval
 		if (is_object($langs))
 		{
-			foreach($this->fields as $key => $val)
+			foreach ($this->fields as $key => $val)
 			{
 				if (is_array($val['arrayofkeyval']))
 				{
-					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					foreach ($val['arrayofkeyval'] as $key2 => $val2)
 					{
-						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
 			}
@@ -733,7 +733,7 @@ class MyObject extends CommonObject
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {
-        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
         }
 
         $url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;

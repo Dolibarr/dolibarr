@@ -767,7 +767,7 @@ class Form
 				{
 					//if (empty($showempty) && empty($row['rowid'])) continue;
 					if (empty($row['rowid'])) continue;
-					if (is_array($exclude_country_code) && count($exclude_country_code) && in_array($row['code_iso'], $exclude_country_code)) continue;	// exclude some countries
+					if (is_array($exclude_country_code) && count($exclude_country_code) && in_array($row['code_iso'], $exclude_country_code)) continue; // exclude some countries
 
 					if (empty($disablefavorites) && $row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
@@ -2643,7 +2643,7 @@ class Form
     			    $langs->load("stocks");
 
     			    $tmpproduct = new Product($this->db);
-    			    $tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1);	// Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
+    			    $tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1); // Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
     			    $tmpproduct->load_virtual_stock();
     			    $virtualstock = $tmpproduct->stock_theorique;
 
@@ -6242,7 +6242,7 @@ class Form
 				if (is_array($id)) {
 					if (in_array($key, $id) && !$disabled) $out .= ' selected'; // To preselect a value
 				} else {
-					$id = (string) $id;	// if $id = 0, then $id = '0'
+					$id = (string) $id; // if $id = 0, then $id = '0'
 					if ($id != '' && $id == $key && !$disabled) $out .= ' selected'; // To preselect a value
 				}
 				if ($nohtmlescape) $out .= ' data-html="'.dol_escape_htmltag($selectOptionValue).'"';

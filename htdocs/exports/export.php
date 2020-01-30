@@ -379,7 +379,7 @@ if ($step == 2 && $action == 'select_model')
     {
 		$fieldsarray = preg_split("/,(?! [^(]*\))/", $objexport->hexa);
 		$i = 1;
-		foreach($fieldsarray as $val)
+		foreach ($fieldsarray as $val)
 		{
 			$array_selected[$val] = $i;
 			$i++;
@@ -1186,7 +1186,7 @@ if ($step == 5 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donnees a exporter
+    // Dataset to export
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
 	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
