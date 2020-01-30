@@ -200,52 +200,52 @@ jQuery(document).ready(function() {
 
 
 $sql = "SELECT";
-$sql.= " t.rowid,";
-$sql.= " t.entity,";
-$sql.= " t.fk_product,";
-$sql.= " t.batch,";
-$sql.= " t.sellby,";
-$sql.= " t.eatby,";
-$sql.= " t.datec as date_creation,";
-$sql.= " t.tms as date_update,";
-$sql.= " t.fk_user_creat,";
-$sql.= " t.fk_user_modif,";
-$sql.= " t.import_key,";
-$sql.= " p.fk_product_type as product_type,";
-$sql.= " p.ref as product_ref,";
-$sql.= " p.label as product_label,";
-$sql.= " p.tosell,";
-$sql.= " p.tobuy,";
-$sql.= " p.tobatch";
+$sql .= " t.rowid,";
+$sql .= " t.entity,";
+$sql .= " t.fk_product,";
+$sql .= " t.batch,";
+$sql .= " t.sellby,";
+$sql .= " t.eatby,";
+$sql .= " t.datec as date_creation,";
+$sql .= " t.tms as date_update,";
+$sql .= " t.fk_user_creat,";
+$sql .= " t.fk_user_modif,";
+$sql .= " t.import_key,";
+$sql .= " p.fk_product_type as product_type,";
+$sql .= " p.ref as product_ref,";
+$sql .= " p.label as product_label,";
+$sql .= " p.tosell,";
+$sql .= " p.tobuy,";
+$sql .= " p.tobatch";
 // Add fields for extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.= " FROM ".MAIN_DB_PREFIX."product_lot as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
-$sql.= ", ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.rowid = t.fk_product";
-$sql.= " AND p.entity IN (".getEntity('product').")";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " FROM ".MAIN_DB_PREFIX."product_lot as t";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+$sql .= ", ".MAIN_DB_PREFIX."product as p";
+$sql .= " WHERE p.rowid = t.fk_product";
+$sql .= " AND p.entity IN (".getEntity('product').")";
 
-if ($search_entity) $sql.= natural_search("entity", $search_entity);
-if ($search_product) $sql.= natural_search("p.ref", $search_product);
-if ($search_batch) $sql.= natural_search("batch", $search_batch);
-if ($search_fk_user_creat) $sql.= natural_search("fk_user_creat", $search_fk_user_creat);
-if ($search_fk_user_modif) $sql.= natural_search("fk_user_modif", $search_fk_user_modif);
-if ($search_import_key) $sql.= natural_search("import_key", $search_import_key);
+if ($search_entity) $sql .= natural_search("entity", $search_entity);
+if ($search_product) $sql .= natural_search("p.ref", $search_product);
+if ($search_batch) $sql .= natural_search("batch", $search_batch);
+if ($search_fk_user_creat) $sql .= natural_search("fk_user_creat", $search_fk_user_creat);
+if ($search_fk_user_modif) $sql .= natural_search("fk_user_modif", $search_fk_user_modif);
+if ($search_import_key) $sql .= natural_search("import_key", $search_import_key);
 
-if ($sall) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.=$db->order($sortfield, $sortorder);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= $db->order($sortfield, $sortorder);
 //$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 // Count total nb of records

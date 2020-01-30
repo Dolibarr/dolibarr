@@ -1272,7 +1272,7 @@ class Facture extends CommonInvoice
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->date_livraison       = $object->date_livraison;
-		$this->fk_delivery_address  = $object->fk_delivery_address;		// deprecated
+		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
 
@@ -1688,7 +1688,7 @@ class Facture extends CommonInvoice
 				$line->special_code = $objp->special_code;
 				$line->fk_parent_line = $objp->fk_parent_line;
 				$line->situation_percent = $objp->situation_percent;
-				$line->fk_prev_id       = $objp->fk_prev_id;
+				$line->fk_prev_id = $objp->fk_prev_id;
 				$line->fk_unit = $objp->fk_unit;
 
 				// Accountancy
@@ -3231,7 +3231,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->id					= $rowid;
+			$this->line->id = $rowid;
 			$this->line->rowid				= $rowid;
 			$this->line->label				= $label;
 			$this->line->desc = $desc;
@@ -3272,7 +3272,7 @@ class Facture extends CommonInvoice
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
-				foreach($array_options as $key => $value) {
+				foreach ($array_options as $key => $value) {
 					$this->line->array_options[$key] = $array_options[$key];
 				}
 			}

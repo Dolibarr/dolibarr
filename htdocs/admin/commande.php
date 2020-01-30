@@ -472,11 +472,11 @@ foreach ($dirmodels as $reldir)
 	                            print '</td>';
 
 	                            // Info
-		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+		    					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
 			                    {
-			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
 			                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
 
