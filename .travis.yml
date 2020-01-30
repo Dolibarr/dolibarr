@@ -203,7 +203,7 @@ before_script:
     fi
     if [ "$DB" = 'postgresql' ]; then
       #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
-      #pgloader mysql://root:pass@127.0.0.1/dolibarr_9 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
+      #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
       echo pgloader mysql://root@127.0.0.1/travis postgresql://postgresql@/travis
       pgloader mysql://root@127.0.0.1/travis postgresql://postgresql@/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgresql travis
