@@ -554,7 +554,7 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note);			// deprecated
+		$actionstatic->note = dol_htmlentitiesbr($obj->note); // deprecated
 		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
 
 		$actionstatic->fetchResources();

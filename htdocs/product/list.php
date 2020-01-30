@@ -191,7 +191,7 @@ $arrayfields = array(
     'p.tva_tx'=>array('label'=>$langs->trans("VATRate"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>43),
     'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>44),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>50),
-	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'),'position'=>51),
+	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>51),
 	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>52),
 	'stock_virtual'=>array('label'=>$langs->trans("VirtualStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service' && $virtualdiffersfromphysical), 'position'=>53),
 	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>60),
@@ -321,7 +321,7 @@ if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
-if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units cu ON cu.rowid = p.fk_unit";
+if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -488,11 +488,11 @@ if ($resql)
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	    //'presend'=>$langs->trans("SendByMail"),
 	);
-    $rightskey='produit';
-	if ($type == Product::TYPE_SERVICE) $rightskey='service';
+    $rightskey = 'produit';
+	if ($type == Product::TYPE_SERVICE) $rightskey = 'service';
 	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
-	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
 	if ($type === "") $perm = ($user->rights->produit->creer || $user->rights->service->creer);

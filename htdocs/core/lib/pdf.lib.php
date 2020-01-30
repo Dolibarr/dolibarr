@@ -2157,7 +2157,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 		elseif ($objecttype == 'fichinter')
 		{
 			$outputlangs->load('interventions');
-			foreach($objects as $elementobject)
+			foreach ($objects as $elementobject)
 			{
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);

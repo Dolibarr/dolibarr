@@ -43,7 +43,7 @@ $action		= GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm	= GETPOST('confirm', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
-$toselect	= GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss	= GETPOST('optioncss', 'alpha');
@@ -237,8 +237,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel
 			$object->fetch($id, $ref);
 			$object->timespent_note = $_POST["timespent_note_line"];
 			$object->timespent_old_duration = $_POST["old_duration"];
-			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60;	// We store duration in seconds
-			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60;   // We store duration in seconds
+			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
 			{
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
@@ -387,18 +387,18 @@ if ($action == 'confirm_generateinvoice')
 		if ($idprod > 0)
 		{
 			$tmpproduct->fetch($idprod);
-            if ($tmpproduct->duration_unit=='i')
-                $prodDurationHours = 1./60;
-            if ($tmpproduct->duration_unit=='h')
+            if ($tmpproduct->duration_unit == 'i')
+                $prodDurationHours = 1. / 60;
+            if ($tmpproduct->duration_unit == 'h')
                 $prodDurationHours = 1.;
-            if ($tmpproduct->duration_unit=='d')
+            if ($tmpproduct->duration_unit == 'd')
                 $prodDurationHours = 24.;
-            if ($tmpproduct->duration_unit=='w')
-                $prodDurationHours = 24.*7;
-            if ($tmpproduct->duration_unit=='m')
-                $prodDurationHours = 24.*30;
-            if ($tmpproduct->duration_unit=='y')
-                $prodDurationHours = 24.*365;
+            if ($tmpproduct->duration_unit == 'w')
+                $prodDurationHours = 24. * 7;
+            if ($tmpproduct->duration_unit == 'm')
+                $prodDurationHours = 24. * 30;
+            if ($tmpproduct->duration_unit == 'y')
+                $prodDurationHours = 24. * 365;
             $prodDurationHours *= $tmpproduct->duration_value;
 
 			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -433,7 +433,7 @@ if ($action == 'confirm_generateinvoice')
 
 		if (!$error)
 		{
-			if ($generateinvoicemode=='onelineperuser') {
+			if ($generateinvoicemode == 'onelineperuser') {
 					$arrayoftasks = array();
 				foreach ($toselect as $key => $value)
 					{
@@ -460,7 +460,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour/$prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -474,7 +474,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 				}
 			}
-			elseif ($generateinvoicemode=='onelineperperiod') {
+			elseif ($generateinvoicemode == 'onelineperperiod') {
 					$arrayoftasks = array();
 				foreach ($toselect as $key => $value)
 					{
@@ -504,7 +504,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, round($qtyhour/$prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -518,7 +518,7 @@ if ($action == 'confirm_generateinvoice')
 					}
 				}
 			}
-			elseif ($generateinvoicemode=='onelinepertask') {
+			elseif ($generateinvoicemode == 'onelinepertask') {
 					$arrayoftasks = array();
 				foreach ($toselect as $key => $value)
 					{
@@ -545,7 +545,7 @@ if ($action == 'confirm_generateinvoice')
 
 					// Add lines
 					$lineName = $ftask->ref.' - '.$ftask->label;
-					$lineid = $tmpinvoice->addline($lineName, $pu_ht, round($qtyhour/$prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($lineName, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
@@ -1346,7 +1346,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
         			print '<td class="nowrap">';
 					if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
 					{
-						$formproject->selectTasks(-1, GETPOST('taskid', 'int')?GETPOST('taskid', 'int'):$task_time->fk_task, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+						$formproject->selectTasks(-1, GETPOST('taskid', 'int') ?GETPOST('taskid', 'int') : $task_time->fk_task, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
 					}
 					else
 					{
@@ -1392,11 +1392,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				}
 				else
 				{
-					$userstatic->id			= $task_time->fk_user;
+					$userstatic->id = $task_time->fk_user;
 					$userstatic->lastname = $task_time->lastname;
-					$userstatic->firstname	= $task_time->firstname;
-					$userstatic->photo		= $task_time->photo;
-					$userstatic->statut		= $task_time->user_status;
+					$userstatic->firstname = $task_time->firstname;
+					$userstatic->photo = $task_time->photo;
+					$userstatic->statut = $task_time->user_status;
 					print $userstatic->getNomUrl(-1);
 				}
 				print '</td>';
@@ -1615,11 +1615,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					}
 					else
 					{
-						$userstatic->id			= $task_time->fk_user;
+						$userstatic->id = $task_time->fk_user;
 						$userstatic->lastname = $task_time->lastname;
-						$userstatic->firstname	= $task_time->firstname;
-						$userstatic->photo		= $task_time->photo;
-						$userstatic->statut		= $task_time->user_status;
+						$userstatic->firstname = $task_time->firstname;
+						$userstatic->photo = $task_time->photo;
+						$userstatic->statut = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';
@@ -1763,11 +1763,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					}
 					else
 					{
-						$userstatic->id			= $task_time->fk_user;
+						$userstatic->id = $task_time->fk_user;
 						$userstatic->lastname = $task_time->lastname;
-						$userstatic->firstname	= $task_time->firstname;
-						$userstatic->photo		= $task_time->photo;
-						$userstatic->statut		= $task_time->user_status;
+						$userstatic->firstname = $task_time->firstname;
+						$userstatic->photo = $task_time->photo;
+						$userstatic->statut = $task_time->user_status;
 						print $userstatic->getNomUrl(-1);
 					}
 					print '</td>';

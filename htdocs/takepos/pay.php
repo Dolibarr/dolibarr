@@ -68,7 +68,7 @@ else
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');
-$arrayofjs=array();
+$arrayofjs = array();
 
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 

@@ -638,7 +638,7 @@ else
 	$liste['user'] = $langs->trans('UserEmail');
 	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
 	$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-	$sql.= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+	$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{

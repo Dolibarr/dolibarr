@@ -565,7 +565,7 @@ function OpenDrawer(){
 	console.log("OpenDrawer");
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
+		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
 		data: "opendrawer"
 	});
 }
@@ -667,10 +667,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
 			</div>
 			<div class="topnav-right">
-				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search");?>" autofocus>
+				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>';"><span class="fas fa-sign-out-alt"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT;?>/user/logout.php';"><span class="fas fa-user"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-sign-out-alt"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>/user/logout.php';"><span class="fas fa-user"></span></a>
 				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 			</div>
 		</div>
@@ -679,7 +679,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 }
 ?>
 
-	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead';?>">
+	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 
 		<div id="poslines" class="div1">
 		</div>
@@ -747,7 +747,7 @@ else
     $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
-if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
@@ -763,29 +763,29 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS)
 	{
-		$menus[$r++]=array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
+		$menus[$r++] = array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
 	}
 	//add temp ticket button
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    if ($conf->global->TAKEPOSCONNECTOR) {
-			$menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>','action'=>'TakeposPrinting(placeid);');
+			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 		} else {
-			$menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>','action'=>'Print(placeid);');
+			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
 		}
 	}
-	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1)
+	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES == 1)
 	{
-	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
+	    $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
 	if ($conf->global->TAKEPOS_SUPPLEMENTS)
 	{
-	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
+	    $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
 	}
 }
 
 if ($conf->global->TAKEPOSCONNECTOR) {
-    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
+    $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
 if ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
     $menus[$r++] = array(
@@ -795,17 +795,17 @@ if ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
-$reshook=$hookmanager->executeHooks('ActionButtons');
+$reshook = $hookmanager->executeHooks('ActionButtons');
 if (!empty($reshook)) {
-    $menus[$r++]=$reshook;
+    $menus[$r++] = $reshook;
 }
 
-if ($r % 3 == 2) $menus[$r++]=array('title'=>'', 'style'=>'visibility: hidden;');
+if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
 
-$menus[$r++]=array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
+$menus[$r++] = array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
 
-if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
-	$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 }
 
 ?>
@@ -813,7 +813,7 @@ if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div class="div3">
 		<?php
         $i = 0;
-        foreach($menus as $menu)
+        foreach ($menus as $menu)
         {
         	$i++;
         	if (count($menus) > 9 and $i == 9)
@@ -825,7 +825,7 @@ if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 
-		if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+		if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
@@ -836,7 +836,7 @@ if (! empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		</div>
 	</div>
 
-	<div class="row2<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead';?>">
+	<div class="row2<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 
 		<!--  Show categories -->
 		<div class="div4">

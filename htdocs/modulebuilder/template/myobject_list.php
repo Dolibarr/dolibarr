@@ -142,14 +142,14 @@ foreach($object->fields as $key => $val)
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
 		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
 			$arrayfields["ef.".$key] = array(
 				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1),
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
 				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
 			);
 		}
 	}
@@ -429,7 +429,7 @@ foreach ($object->fields as $key => $val)
 		elseif (strpos($val['type'], 'integer:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
 		}
-		elseif (! preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }

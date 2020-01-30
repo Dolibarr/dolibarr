@@ -901,7 +901,7 @@ class Contrat extends CommonObject
 
 				$line->fk_user_author = $objp->fk_user_author;
 				$line->fk_user_ouverture = $objp->fk_user_ouverture;
-				$line->fk_user_cloture  = $objp->fk_user_cloture;
+				$line->fk_user_cloture = $objp->fk_user_cloture;
 				$line->fk_unit = $objp->fk_unit;
 
 				$line->ref = $objp->product_ref; // deprecated
@@ -1807,7 +1807,7 @@ class Contrat extends CommonObject
 					$contractline->fetch_optionals();
 
 					// We replace values in $contractline->array_options only for entries defined into $array_options
-					foreach($array_options as $key => $value) {
+					foreach ($array_options as $key => $value) {
 						$contractline->array_options[$key] = $array_options[$key];
 					}
 
