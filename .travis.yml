@@ -11,6 +11,8 @@ language: php
 # Start on every boot
 services:
 - memcached
+- mysql
+- postgresql
 
 addons:
   mariadb: '10.0'
