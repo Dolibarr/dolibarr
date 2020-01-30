@@ -8040,11 +8040,19 @@ class Form
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params)
 	{
+	    global $conf, $langs;
+
 		$ret = '';
 
-
-
-
+		$ret .= '<div class="nowrap centpercent">';
+		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		$ret .= '<a href="ee" class="dropdown-toggle unsetcolor">';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter" title="Filter" id="idsubimgproductdistribution"></span>';
+		$ret .= $langs->trans("Filters");
+		$ret .= '</a>';
+		$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$ret .= '<input type="text" name="search_component_params" class="search_component_params centpercent">';
+        $ret .= '</div>';
 
 
 		return $ret;

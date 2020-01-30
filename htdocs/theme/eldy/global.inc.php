@@ -2573,6 +2573,15 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
+.unsetcolor {
+	color: unset !important;
+}
+.nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+.nopaddingright {
+	padding-<?php print $right; ?>: 0px;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
