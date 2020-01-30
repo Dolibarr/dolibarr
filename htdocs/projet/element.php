@@ -820,16 +820,16 @@ foreach ($listofreferent as $key => $value)
 		if (! in_array($tablename, array('projet_task')))
                 {
                     // Add dateeo section for fichinter
-                    if($tablename == 'fichinter')
+			if($tablename == 'fichinter')
                     {
-                        print (($langs->trans("InterDateO") != 'InterDateO') ? $langs->trans("InterDateO") : $langs->trans("DateO")).'</td><td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' class="center">';
-                        print (($langs->trans("InterDateV") != 'InterDateV') ? $langs->trans("InterDateV") : $langs->trans("Date"));
-                    }
-                    else
+				print (($langs->trans("InterDateO") != 'InterDateO') ? $langs->trans("InterDateO") : $langs->trans("DateO")).'</td><td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' class="center">';
+				print (($langs->trans("InterDateV") != 'InterDateV') ? $langs->trans("InterDateV") : $langs->trans("Date"));
+			}
+			else
                     {
-                        print $langs->trans("Date");
-                    }
-                }
+				print $langs->trans("Date");
+			}
+		}
 		print '</td>';
 		// Thirdparty or user
 		print '<td>';
@@ -992,7 +992,7 @@ foreach ($listofreferent as $key => $value)
                                 {
                                     $dateo=$element->dateo;
                                     $date=$element->datev; // There is no other date for this
-                                }
+					}
     				elseif ($tablename == 'projet_task') $date = ''; // We show no date. Showing date of beginning of task make user think it is date of time consumed
 					else
     				{
@@ -1020,7 +1020,7 @@ foreach ($listofreferent as $key => $value)
                                     // For fichinter display dateo too
                                     if($tablename == 'fichinter') print dol_print_date($dateo, 'day').'</td><td class="center">';
                                     print dol_print_date($date, 'day');
-                                }
+				}
 				print '</td>';
 
 				// Third party or user
