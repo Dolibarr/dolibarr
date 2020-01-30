@@ -15,7 +15,7 @@ services:
 - postgresql
 
 addons:
-  postgresql: '9.3'
+  postgresql
   apt:
     sources:
     # To use the last version of pgloader, we add repo of postgresql with a name available in http://apt.postgresql.org/pub/repos/apt/
@@ -184,10 +184,11 @@ before_script:
     # Check Apache version
     echo "Apache version"
     apache2 -v | head -
-    # Check MariaDb
-    echo "MariaDb version"
+    # Check Database
+    echo "Database version"
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
+	psql --version
     echo
 
   - |
@@ -201,15 +202,12 @@ before_script:
       mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
-      #pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+      #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_9 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
-      echo pgloader mysql://root@127.0.0.1/travis postgresql://postgresql@127.0.0.1/travis
-      pgloader mysql://root@127.0.0.1/travis postgresql://postgresql@127.0.0.1/travis
+      echo pgloader mysql://root@127.0.0.1/travis postgresql://postgresql/travis
+      pgloader mysql://root@127.0.0.1/travis postgresql://postgresql/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgresql travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgresql travis
-      #echo 'select * from INFORMATION_SCHEMA.COLUMNS where table_name = 'llx_accountingaccount' | psql -U postgresql travis
-      #echo 'select * from information_schema.table_constraints;' | psql -U postgresql travis
-      #echo 'ALTER TABLE "llx_accounting_account" DROP CONSTRAINT "idx_16390_primary"' | psql -U postgresql travis
     fi
     echo
 
