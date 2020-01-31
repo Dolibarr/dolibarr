@@ -269,13 +269,6 @@ textarea:focus, button:focus {
 input:focus, textarea:focus, button:focus, select:focus {
 	border-bottom: 1px solid #666;
 }
-input.select2-input {
-	border-bottom: none ! important;
-}
-.select2-choice {
-	border: none;
-	border-bottom: 1px solid #ccc !important;
-}
 
 textarea.cke_source:focus
 {
@@ -452,9 +445,6 @@ select.flat, form.flat select {
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
-}
-.select2-results .select2-highlighted.optionblue {
-	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
@@ -761,6 +751,10 @@ body[class*="colorblind-"] .text-success{
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
 	font-size: 1.5em; vertical-align: text-bottom;
+}
+
+.floatnone {
+	float: none !important;
 }
 
 
@@ -4919,6 +4913,17 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom: 1px solid #ccc !important;
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
+
 .blockvmenusearch .select2-container--default .select2-selection--single,
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
@@ -4980,8 +4985,16 @@ div.dataTables_length select {
 	box-shadow: none !important;
 	border-radius: 0 !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
 .select2-container--default .select2-selection--multiple {
-	border: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	border-radius: 0 !important;
 }
 .select2-search__field
