@@ -8039,7 +8039,7 @@ class Form
 	 * @param   array       $arrayofinputfieldsalreadyoutput      Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
 	 * @return	string									          HTML component for advanced search
 	 */
-	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofhiddenfieldstoadd = array())
+	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array())
 	{
 	    global $conf, $langs;
 
@@ -8057,7 +8057,7 @@ class Form
 		$ret .= '</div>';
 		foreach($arrayofcriterias as $criterias) {
 		    foreach($criterias as $criteriafamilykey => $criteriafamilyval) {
-		        if (in_array('search_'.$criteriafamilykey, $arrayofhiddenfieldstoadd)) continue;
+		    	if (in_array('search_'.$criteriafamilykey, $arrayofinputfieldsalreadyoutput)) continue;
 		        if (in_array($criteriafamilykey, array('rowid', 'ref_ext', 'entity', 'extraparams'))) continue;
 		        if (in_array($criteriafamilyval['type'], array('date', 'datetime', 'timestamp'))) {
 		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_start">';
