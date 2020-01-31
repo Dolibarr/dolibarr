@@ -969,7 +969,6 @@ function monthArray($outputlangs, $short = 0)
  *  @param	int			$year			Year number
  *	@return array						Week numbers
  */
-
 function getWeekNumbersOfMonth($month, $year)
 {
 	$nb_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);

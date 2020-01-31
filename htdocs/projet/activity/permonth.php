@@ -480,7 +480,8 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-for ($idw=0;$idw<count($TWeek);$idw++)
+$countWeek = count($TWeek);
+for ($idw=0;$idw<$countWeek;$idw++)
 {
 	print '<td class="liste_titre"></td>';
 }
