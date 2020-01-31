@@ -1806,14 +1806,14 @@ class Project extends CommonObject
 	 * @param 	int		$userid			Time spent by a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
-	public function loadTimeSpentMonth($datestart, $taskid=0, $userid=0)
+	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 	{
 		$error=0;
 
 		$this->monthWorkLoad=array();
 		$this->monthWorkLoadPerTask=array();
 
-		if (empty($datestart)) dol_print_error('','Error datestart parameter is empty');
+		if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
@@ -1837,7 +1837,7 @@ class Project extends CommonObject
 			{
 				$obj=$this->db->fetch_object($resql);
 				if(!empty($obj->task_date)) {
-					$date = explode('-',$obj->task_date);
+					$date = explode('-', $obj->task_date);
 					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
 				}
 				if (empty($weekalreadyfound[$week_number]))

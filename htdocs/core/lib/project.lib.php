@@ -1729,7 +1729,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak=0, $TWeek=array())
+function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $TWeek = array())
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1805,7 +1805,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				{
 					print '<tr class="oddeven trforbreak">'."\n";
 					print '<td colspan="'.(6+count($TWeek)).'">';
-					print $projectstatic->getNomUrl(1,'',0,'<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
+					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
 					if ($projectstatic->title)
 					{
@@ -1853,7 +1853,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Planned Workload
 				print '<td align="right" class="leftborder plannedworkload">';
-				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
 				else print '--:--';
 				print '</td>';
 
@@ -1868,7 +1868,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				if ($lines[$i]->duration)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration,'allhourmin');
+					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
 					print '</a>';
 				}
 				else print '--:--';
@@ -1877,7 +1877,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				// Time spent by user
 				print '<td align="right">';
 				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
-				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'],'allhourmin');
+				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
 				else print '--:--';
 				print "</td>\n";
 
@@ -1901,20 +1901,19 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//TODO
 				// Fields to show current time
 				$tableCell=''; $modeinput='hours';
-				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y',$firstdaytoshow));
+				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y', $firstdaytoshow));
 				$TFirstDay[reset($TWeek)] = 1;
 				foreach($TFirstDay as &$fday) {
 					$fday--;
 				}
 				foreach ($TWeek as $weekNb)
 				{
-
 					$weekWorkLoad = $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id];
 					$totalforeachweek[$weekNb]+=$weekWorkLoad;
 
 					$alreadyspent='';
-					if ($weekWorkLoad > 0) $alreadyspent=convertSecondToTime($weekWorkLoad,'allhourmin');
-					$alttitle=$langs->trans("AddHereTimeSpentForWeek",$weekNb);
+					if ($weekWorkLoad > 0) $alreadyspent=convertSecondToTime($weekWorkLoad, 'allhourmin');
+					$alttitle=$langs->trans("AddHereTimeSpentForWeek", $weekNb);
 
 
 					$tableCell ='<td align="center" class="hide">';
@@ -1936,13 +1935,13 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Warning
 				print '<td align="right">';
-				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
-				else if ($disabledtask)
+				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('', $langs->trans("UserIsNotContactOfProject"));
+				elseif ($disabledtask)
 				{
 					$titleassigntask = $langs->trans("AssignTaskToMe");
 					if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');
 
-					print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $titleassigntask));
+					print $form->textwithpicto('', $langs->trans("TaskIsNotAssignedToUser", $titleassigntask));
 				}
 				print '</td>';
 
