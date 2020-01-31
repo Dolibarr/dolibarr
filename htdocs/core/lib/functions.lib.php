@@ -1059,7 +1059,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		);
 
 		// This is when server run behind a reverse proxy
-		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].(empty($_SERVER["REMOTE_ADDR"]) ? '' : '->'.$_SERVER['REMOTE_ADDR']);
+		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].((empty($_SERVER["REMOTE_ADDR"]) || ($_SERVER['HTTP_X_FORWARDED_FOR'] == $_SERVER['REMOTE_ADDR'])) ? '' : '->'.$_SERVER['REMOTE_ADDR']);
 		// This is when server run normally on a server
 		elseif (!empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
 		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
