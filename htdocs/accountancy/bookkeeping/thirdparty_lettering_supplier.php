@@ -144,7 +144,7 @@ dol_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
-$sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
+$sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code, bk.date_validated ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 $sql .= " WHERE (bk.subledger_account =  '" . $object->code_compta_fournisseur . "' AND bk.numero_compte = '" . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . "' )";
 if (dol_strlen($search_date_start) || dol_strlen($search_date_end)) {
@@ -267,7 +267,7 @@ if ($resql) {
         $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
         print '<td class="center">' . $journaltoshow . '</td>';
 
-		if (empty($obj->lettering_code)) {
+		if (empty($obj->lettering_code)  && empty($obj->date_validated) ) {
 			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
 		    print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $obj->piece_num . '">';
 		    print img_edit();
