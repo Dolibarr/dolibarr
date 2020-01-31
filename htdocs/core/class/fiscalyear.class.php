@@ -385,9 +385,9 @@ class Fiscalyear extends CommonObject
 	{
 		global $conf;
 
-		if(empty($datestart)
+		if(empty($datestart) )
 			$datestart = $this->date_start;
-		if(empty($dateend)
+		if(empty($dateend) )
 			$dateend = $this->date_end;
 		   
 		$sql = "SELECT count(DISTINCT piece_num) as nb";
@@ -417,9 +417,9 @@ class Fiscalyear extends CommonObject
 	{
 		global $conf;
 		
-		if(empty($datestart)
+		if(empty($datestart) )
 			$datestart = $this->date_start;
-		if(empty($dateend)
+		if(empty($dateend) )
 			$dateend = $this->date_end;
 		   
 		$sql = "SELECT count(rowid) as nb";
