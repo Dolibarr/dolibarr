@@ -8070,7 +8070,7 @@ class Form
 		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_endday">';
 		        }
 		        else {
-		          $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'">';
+					$ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'">';
 		        }
 		    }
 		}
