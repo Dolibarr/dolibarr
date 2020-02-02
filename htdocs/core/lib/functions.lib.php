@@ -224,7 +224,54 @@ function dol_shutdown()
  */
 function GETPOSTISSET($paramname)
 {
-	return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+	$isset = 0;
+
+	$relativepathstring = $_SERVER["PHP_SELF"];
+	// Clean $relativepathstring
+	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
+	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+	//var_dump($relativepathstring);
+	//var_dump($user->default_values);
+
+	// Code for search criteria persistence.
+	// Retrieve values if restore_lastsearch_values
+	if (!empty($_GET['restore_lastsearch_values']))        // Use $_GET here and not GETPOST
+	{
+		if (!empty($_SESSION['lastsearch_values_'.$relativepathstring]))	// If there is saved values
+		{
+			$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+			if (is_array($tmp))
+			{
+				foreach ($tmp as $key => $val)
+				{
+					if ($key == $paramname)	// We are on the requested parameter
+					{
+						$isset = 1;
+						break;
+					}
+				}
+			}
+		}
+		// If there is saved contextpage, page or limit
+		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
+		{
+			$isset = 1;
+		}
+		elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring]))
+		{
+			$isset = 1;
+		}
+		elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
+		{
+			$isset = 1;
+		}
+	}
+	else {
+		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+	}
+
+	return $isset;
 }
 
 /**
@@ -1058,10 +1105,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'ip' => false
 		);
 
-		// This is when server run behind a reverse proxy
-		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].(empty($_SERVER["REMOTE_ADDR"]) ? '' : '->'.$_SERVER['REMOTE_ADDR']);
-		// This is when server run normally on a server
-		elseif (!empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+		$remoteip = getUserRemoteIP();	// Get ip when page run on a web server
+		if (! empty($remoteip)) {
+			$data['ip'] = $remoteip;
+			// This is when server run behind a reverse proxy
+			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != $remoteip) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].' -> '.$data['ip'];
+			elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) $data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
+		}
 		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
 		elseif (!empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
 		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
