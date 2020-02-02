@@ -675,7 +675,6 @@ foreach ($listofreferent as $key => $value)
                             }
                         }
                     }
-
                 }
 				else $total_ht_by_line = $element->total_ht;
 
