@@ -829,11 +829,13 @@ foreach ($listofreferent as $key => $value)
 		// Amount HT
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
 		//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("Amount").'</td>';
-		if (empty($value['disableamount'])) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
+        if ($key == 'loan') print '<td class="right" width="120">'.$langs->trans("LoanCapital").'</td>';
+		elseif (empty($value['disableamount'])) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
 		else print '<td width="120"></td>';
 		// Amount TTC
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
-		if (empty($value['disableamount'])) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+        if ($key == 'loan') print '<td class="right" width="120">'.$langs->trans("RemainderToPay").'</td>';
+        elseif (empty($value['disableamount'])) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
 		else print '<td width="120"></td>';
 		// Status
 		if (in_array($tablename, array('projet_task'))) print '<td class="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
@@ -928,6 +930,10 @@ foreach ($listofreferent as $key => $value)
 						print $element->getNomUrl(1, 'withproject', 'time');
 						print ' - '.dol_trunc($element->label, 48);
 					}
+					elseif ($key == 'loan'){
+                        print $element->getNomUrl(1);
+                        print ' - '.dol_trunc($element->label, 48);
+                    }
 					else print $element->getNomUrl(1);
 
 					$element_doc = $element->element;
@@ -977,6 +983,10 @@ foreach ($listofreferent as $key => $value)
     					if (empty($date)) $date = $element->datev;
     				}
 				}
+                elseif ($key == 'loan'){
+                    $date = $element->datestart;
+                }
+
 				print '<td class="center">';
 				if ($tablename == 'actioncomm')
 				{
@@ -1050,6 +1060,7 @@ foreach ($listofreferent as $key => $value)
 					        $othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
 					}
+                    elseif ($key == 'loan') $total_ht_by_line = $element->capital;
 					else
 					{
 						$total_ht_by_line = $element->total_ht;
@@ -1097,6 +1108,7 @@ foreach ($listofreferent as $key => $value)
 					        $othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
 					}
+                    elseif ($key == 'loan') $total_ttc_by_line = $element->capital - $element->getSumPayment();
 					else
 					{
 						$total_ttc_by_line = $element->total_ttc;
@@ -1204,7 +1216,8 @@ foreach ($listofreferent as $key => $value)
 			print '<td class="right">';
 			if (empty($value['disableamount']))
 			{
-			    if ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) print ''.$langs->trans("TotalHT").' : '.price($total_ht);
+                if ($key == 'loan') print $langs->trans("Total").' '.$langs->trans("LoanCapital").' : '.price($total_ttc);
+                elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) print ''.$langs->trans("TotalHT").' : '.price($total_ht);
 			}
 			print '</td>';
 			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
@@ -1212,7 +1225,8 @@ foreach ($listofreferent as $key => $value)
 			print '<td class="right">';
 			if (empty($value['disableamount']))
 			{
-			    if ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) print $langs->trans("TotalTTC").' : '.price($total_ttc);
+                if ($key == 'loan') print $langs->trans("Total").' '.$langs->trans("RemainderToPay").' : '.price($total_ttc);
+			    elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) print $langs->trans("TotalTTC").' : '.price($total_ttc);
 			}
 			print '</td>';
 			print '<td>&nbsp;</td>';
