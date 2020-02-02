@@ -5901,11 +5901,6 @@ div.tabsElem a.tab {
         border-right: none;
         border-left: none;
     }
-
-	.box-flex-container {
-	    margin: 0 0 0 -8px !important;
-	}
-
 }
 
 @media only screen and (max-width: 1024px)

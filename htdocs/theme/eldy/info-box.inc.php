@@ -299,7 +299,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 100%;
-	margin: 0 0 0 -15px;
+	margin: 0 0 0 -8px;
 	/*justify-content: space-between;*/
 }
 
@@ -309,7 +309,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	flex-basis: auto;
 
 	width: 280px;
-	margin: 5px 0px 0px 15px;
+	margin: 5px 8px 0px 8px;
 }
 .box-flex-item.filler{
 	margin: 0px 0px 0px 15px !important;
@@ -321,3 +321,10 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	overflow: visible;
 }
 */
+
+@media only screen and (max-width: 767px)
+{
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+}
