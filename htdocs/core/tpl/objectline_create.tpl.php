@@ -620,7 +620,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
-		console.log("#idprod, #idprodfournprice change triggered this.val = "+$(this).val());
+		console.log("Call method change() after change on #idprod or #idprodfournprice. this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
@@ -631,6 +631,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		{
 			?>
 			// Get the HT price for the product and display it
+			console.log("Load price without tax and set it into #price_ht");
 			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
 				{ 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> },
 				function(data) { jQuery("#price_ht").val(data.price_ht); },

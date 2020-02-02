@@ -633,7 +633,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->remove($options);
 

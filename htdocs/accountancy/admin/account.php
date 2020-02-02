@@ -27,6 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries"));
@@ -183,6 +184,7 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formaccounting = new FormAccounting($db);
 
 llxHeader('', $langs->trans("ListAccounts"));
 
@@ -201,10 +203,43 @@ if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_accou
 else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
 $sql .= " WHERE asy.rowid = ".$pcgver;
 //print $sql;
-if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
+if (strlen(trim($search_account))) {
+	$lengthpaddingaccount = 0;
+	if ($conf->global->ACCOUNTING_LENGTH_GACCOUNT || $conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
+		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_GACCOUNT, $conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	}
+	$search_account_tmp = $search_account;
+	$weremovedsomezero = 0;
+	if (strlen($search_account_tmp) <= $lengthpaddingaccount) {
+		for($i = 0; $i < $lengthpaddingaccount; $i++) {
+			if (preg_match('/0$/', $search_account_tmp)) {
+				$weremovedsomezero++;
+				$search_account_tmp = preg_replace('/0$/', '', $search_account_tmp);
+			}
+		}
+	}
+
+	//var_dump($search_account); exit;
+	if ($search_account_tmp) {
+		if ($weremovedsomezero) {
+			$search_account_tmp_clean = $search_account_tmp;
+			$search_account_clean = $search_account;
+			$startchar = '%';
+			if (strpos($search_account_tmp, '^') === 0)
+			{
+				$startchar = '';
+				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
+				$search_account_clean = preg_replace('/^\^/', '', $search_account);
+			}
+			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
+			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
+		}
+		else $sql .= natural_search("aa.account_number", $search_account_tmp);
+	}
+}
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
 if (strlen(trim($search_labelshort)))       $sql .= natural_search("aa.labelshort", $search_labelshort);
-if (strlen(trim($search_accountparent)))	$sql .= natural_search("aa.account_parent", $search_accountparent);
+if (strlen(trim($search_accountparent)) && $search_accountparent != '-1')	$sql .= natural_search("aa.account_parent", $search_accountparent, 2);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
 $sql .= $db->order($sortfield, $sortorder);
@@ -237,7 +272,7 @@ if ($resql)
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
 	if ($search_label) $param .= '&search_label='.urlencode($search_label);
 	if ($search_labelshort) $param.= '&search_labelshort='.urlencode($search_labelshort);
-	if ($search_accountparent) $param .= '&search_accountparent='.urlencode($search_accountparent);
+	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param .= '&optioncss='.$optioncss;
@@ -322,8 +357,12 @@ if ($resql)
 	if (!empty($arrayfields['aa.account_number']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="'.$search_account.'"></td>';
 	if (!empty($arrayfields['aa.label']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_labelshort" value="' . $search_labelshort . '"></td>';
-	if (!empty($arrayfields['aa.account_parent']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="'.$search_accountparent.'"></td>';
-	if (!empty($arrayfields['aa.pcg_type']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+	if (!empty($arrayfields['aa.account_parent']['checked'])) {
+		print '<td class="liste_titre">';
+		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
+		print '</td>';
+	}
+	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
 	if (!empty($arrayfields['aa.pcg_subtype']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="'.$search_pcgsubtype.'"></td>';
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
@@ -346,6 +385,7 @@ if ($resql)
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
 
+	$totalarray = array();
 	$i = 0;
 	while ($i < min($num, $limit))
 	{

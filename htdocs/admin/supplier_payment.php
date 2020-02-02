@@ -332,7 +332,8 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_payment/doc/");
+	$realpath = $reldir."core/modules/supplier_payment/doc";
+	$dir = dol_buildpath($realpath);
 
     if (is_dir($dir))
     {
@@ -356,7 +357,7 @@ foreach ($dirmodels as $reldir)
 	                print (empty($module->name) ? $name : $module->name);
 	                print "</td>\n";
                     print "<td>\n";
-                    require_once $dir.$file;
+                    require_once $dir.'/'.$file;
                     $module = new $classname($db, $specimenthirdparty);
                     if (method_exists($module, 'info')) print $module->info($langs);
 	                else print $module->description;
@@ -405,6 +406,8 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
                     $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
                     $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
                     $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                     $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
                     print '<td class="center">';

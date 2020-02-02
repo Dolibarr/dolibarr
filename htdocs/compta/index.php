@@ -397,7 +397,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowraponall">';
 				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
@@ -509,7 +509,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 				//$thirdpartystatic->code_compta = $obj->code_compta;
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td>';
+				print '<tr class="oddeven nowraponall"><td>';
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td>';

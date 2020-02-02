@@ -312,6 +312,15 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
+			$product_static->id = $objp->rowid;
+			$product_static->ref = $objp->ref;
+			$product_static->label = $objp->label;
+			$product_static->type = $objp->fk_product_type;
+			$product_static->entity = $objp->entity;
+			$product_static->status = $objp->tosell;
+			$product_static->status_buy = $objp->tobuy;
+			$product_static->status_batch = $objp->tobatch;
+
 			//Multilangs
 			if (!empty($conf->global->MAIN_MULTILANGS))
 			{
@@ -331,12 +340,6 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
-			$product_static->id = $objp->rowid;
-			$product_static->ref = $objp->ref;
-			$product_static->label = $objp->label;
-			$product_static->type = $objp->fk_product_type;
-			$product_static->entity = $objp->entity;
-			$product_static->status_batch = $objp->tobatch;
 			print $product_static->getNomUrl(1, '', 16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label, 32).'</td>';

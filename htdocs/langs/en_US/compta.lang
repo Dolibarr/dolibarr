@@ -254,3 +254,4 @@ ByVatRate=By sale tax rate
 TurnoverbyVatrate=Turnover invoiced by sale tax rate
 TurnoverCollectedbyVatrate=Turnover collected by sale tax rate
 PurchasebyVatrate=Purchase by sale tax rate
+LabelToShow=Short label
