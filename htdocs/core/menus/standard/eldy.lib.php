@@ -239,11 +239,20 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 				  !empty($user->rights->contrat->lire) ||
 				  !empty($user->rights->ficheinter->lire)
 			),
-	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
+	    'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
 	);
+
+	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
+		empty($user->rights->propal->lire) &&
+		empty($user->rights->commande->lire) &&
+		empty($user->rights->supplier_order->lire) &&
+		empty($user->rights->supplier_proposal->lire) &&
+		empty($user->rights->contrat->lire) &&
+		empty($user->rights->ficheinter->lire);
+
 	$menu_arr[] = array(
 		'name' => 'Commercial',
-		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
+		'link' => ($onlysupplierorder ? '/fourn/commande/index.php?mainmenu=commercial&amp;leftmenu=' : '/comm/index.php?mainmenu=commercial&amp;leftmenu='),
 		'title' => "Commercial",
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
