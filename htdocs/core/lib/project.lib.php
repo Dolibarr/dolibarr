@@ -1811,7 +1811,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 					if ($projectstatic->title)
 					{
 						print ' - ';
-						print $projectstatic->title;
+						print '<span class="secondary">'.$projectstatic->title.'</span>';
 					}
 					print '</td>';
 					print '</tr>';
@@ -1853,18 +1853,18 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right" class="leftborder plannedworkload">';
+				print '<td class="leftborder plannedworkload right">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
 				else print '--:--';
 				print '</td>';
 
 				// Progress declared %
-				print '<td align="right">';
+				print '<td class="right">';
 				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent by everybody
-				print '<td align="right">';
+				print '<td class="right">';
 				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
 				if ($lines[$i]->duration)
 				{
@@ -1876,7 +1876,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				print "</td>\n";
 
 				// Time spent by user
-				print '<td align="right">';
+				print '<td class="right">';
 				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
 				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
 				else print '--:--';
@@ -1935,7 +1935,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				}
 
 				// Warning
-				print '<td align="right">';
+				print '<td class="right">';
 				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('', $langs->trans("UserIsNotContactOfProject"));
 				elseif ($disabledtask)
 				{

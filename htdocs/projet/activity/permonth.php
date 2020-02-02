@@ -386,7 +386,7 @@ $head=project_timesheet_prepare_head($mode, $usertoprocess);
 dol_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'task');
 
 // Show description of content
-print '<div class="hideonsmartphone">';
+print '<div class="hideonsmartphone opacitymedium">';
 if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
@@ -502,11 +502,11 @@ print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").
  if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</td>';
 
 foreach ($TWeek as $week_number)
 {
-	print '<td width="6%" align="center" class="bold hide">'.$langs->trans("Week").'<br>'.$week_number.'<br>('.$langs->trans('From').' '.$TFirstDays[$week_number].' '.$langs->trans('to').' '.$TLastDays[$week_number].')</td>';
+	print '<td width="6%" align="center" class="bold hide">'.$langs->trans("Week").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</td>';
 }
 print '<td></td>';
 print "</tr>\n";
@@ -597,7 +597,7 @@ if (count($tasksarray) > 0)
 		print '<tr class="liste_total">
                 <td class="liste_total" colspan="'.$colspan.'">';
 		print $langs->trans("Total");
-		print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+		print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 		print '</td>';
 
 		foreach ($TWeek as $weekNb)
