@@ -49,6 +49,7 @@ if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/exp
 if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 if (! empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
@@ -650,6 +651,32 @@ foreach ($listofreferent as $key => $value)
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
 				}
+                elseif ($key == 'loan'){
+                    if((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)){
+                        // Get total loan
+                        $total_ht_by_line = -$element->capital;
+                    }
+				    else{
+                        // Get loan schedule according to date filter
+                        $total_ht_by_line = 0;
+                        $loanScheduleStatic = new LoanSchedule($element->db);
+                        $loanScheduleStatic->fetchAll($element->id);
+                        if(!empty($loanScheduleStatic->lines)){
+                            foreach($loanScheduleStatic->lines as $loanSchedule){
+                                /**
+                                 * @var $loanSchedule LoanSchedule
+                                 */
+                                if( ($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
+                                    || !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
+                                    || empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
+                                ){
+                                    $total_ht_by_line = -$loanSchedule->amount_capital;
+                                }
+                            }
+                        }
+                    }
+
+                }
 				else $total_ht_by_line = $element->total_ht;
 
 				// Define $total_ttc_by_line
@@ -661,6 +688,9 @@ foreach ($listofreferent as $key => $value)
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				}
+                elseif ($key == 'loan'){
+                        $total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
+                }
 				else $total_ttc_by_line = $element->total_ttc;
 
 				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
