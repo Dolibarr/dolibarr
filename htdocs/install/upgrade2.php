@@ -4978,16 +4978,16 @@ function migrate_users_socialnetworks()
     $db->begin();
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
-    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'user WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype !=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'user WHERE';
+    $sql .= " skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
