@@ -508,7 +508,7 @@ class CMailFile
 
 		$res = false;
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) || !empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
