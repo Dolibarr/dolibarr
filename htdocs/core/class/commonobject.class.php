@@ -2745,7 +2745,7 @@ abstract class CommonObject
 	{
         // phpcs:enable
         $positionfield = 'rang';
-		if ($this->table_element = 'bom') $positionfield = 'position';
+		if ($this->table_element == 'bom') $positionfield = 'position';
 
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
