@@ -350,7 +350,8 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('', '/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/bom".$valdir);
+    	$realpath = $reldir."core/modules/bom".$valdir;
+    	$dir = dol_buildpath($realpath);
 
         if (is_dir($dir))
         {
@@ -382,7 +383,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name) ? $name : $module->name);
 	                            print "</td><td>\n";
@@ -425,7 +425,9 @@ foreach ($dirmodels as $reldir)
 			                    {
 			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
-					    		$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+			                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+			                    $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					    		$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 					    		$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftBOMs").': '.yn($module->option_draft_watermark, 1, 1);
 

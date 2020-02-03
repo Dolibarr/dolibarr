@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=În așteptarea reconcilierii banca
 Delays_MAIN_DELAY_MEMBERS=Taxă de membru întârziată
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Cecul nu a fost creat
 Delays_MAIN_DELAY_EXPENSEREPORTS=Raportul de cheltuieli pentru aprobare
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Înainte de a începe să utilizați Dolibarr, unii parametri inițiali trebuie să fie definiți and modulele activate/configurate.
 SetupDescription2=Următoarele două secțiuni sunt obligatorii (primele două intrări din meniul de configurare)
 SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).

@@ -118,7 +118,7 @@ $title=$langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
-$sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,';
+$sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,';
 $sql.= ' ps.fk_entrepot,';
 $sql.= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql.= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
@@ -160,7 +160,7 @@ if ($search_warehouse) $sql .= natural_search("e.ref", $search_warehouse);
 if ($search_batch) $sql .= natural_search("pb.batch", $search_batch);
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql.= " p.fk_product_type, p.tms,";
-$sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,";
+$sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,";
 $sql.= " ps.fk_entrepot,";
 $sql.= " e.ref, e.lieu, e.fk_parent,";
 $sql.= " pb.batch, pb.eatby, pb.sellby,";
@@ -206,21 +206,21 @@ if ($resql)
 	$texte.=' ('.$langs->trans("StocksByLotSerial").')';
 
 	$param='';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)		$param.="&sall=".$sall;
-	if ($tosell)		$param.="&tosell=".$tosell;
-	if ($tobuy)			$param.="&tobuy=".$tobuy;
-	if ($type)			$param.="&type=".$type;
-	if ($fourn_id)		$param.="&fourn_id=".$fourn_id;
-	if ($snom)			$param.="&snom=".$snom;
-	if ($sref)			$param.="&sref=".$sref;
-	if ($search_batch)	$param.="&search_batch=".$search_batch;
-	if ($sbarcode)		$param.="&sbarcode=".$sbarcode;
-	if ($search_warehouse)	$param.="&search_warehouse=".$search_warehouse;
-	if ($catid)			$param.="&catid=".$catid;
-	if ($toolowstock)	$param.="&toolowstock=".$toolowstock;
-	if ($search_sale)	$param.="&search_sale=".$search_sale;
-	if ($search_categ)	$param.="&search_categ=".$search_categ;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($sall)		$param.="&sall=".urlencode($sall);
+	if ($tosell)		$param.="&tosell=".urlencode($tosell);
+	if ($tobuy)			$param.="&tobuy=".urlencode($tobuy);
+	if ($type)			$param.="&type=".urlencode($type);
+	if ($fourn_id)		$param.="&fourn_id=".urlencode($fourn_id);
+	if ($snom)			$param.="&snom=".urlencode($snom);
+	if ($sref)			$param.="&sref=".urlencode($sref);
+	if ($search_batch)	$param.="&search_batch=".urlencode($search_batch);
+	if ($sbarcode)		$param.="&sbarcode=".urlencode($sbarcode);
+	if ($search_warehouse)	$param.="&search_warehouse=".urlencode($search_warehouse);
+	if ($catid)			$param.="&catid=".urlencode($catid);
+	if ($toolowstock)	$param.="&toolowstock=".urlencode($toolowstock);
+	if ($search_sale)	$param.="&search_sale=".urlencode($search_sale);
+	if ($search_categ)	$param.="&search_categ=".urlencode($search_categ);
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
 
@@ -349,6 +349,8 @@ if ($resql)
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
+		$product_static->status=$objp->tosell;
+		$product_static->status_buy=$objp->tobuy;
 		$product_static->status_batch=$objp->tobatch;
 
 		$product_lot_static->batch=$objp->batch;

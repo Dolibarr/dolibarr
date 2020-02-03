@@ -119,6 +119,7 @@ if (empty($_SESSION['titre']))
 //On prépare les données pour les inserer dans la base
 
 print '<form name="formulaire" action="#bas" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 

@@ -23,7 +23,7 @@
  * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
  *
  * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new checkout API
+ * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
  * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
  * - If no option set, we use old APIS (charge)
  */
@@ -645,7 +645,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         \Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
         try {
-            if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+        	if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id);
             } else {
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id, array("stripe_account" => $stripeacc));
@@ -843,7 +843,11 @@ if (!$source)
 {
 	$found = true;
 	$tag = GETPOST("tag", 'alpha');
-	$fulltag = "TAG=".$tag;
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = "TAG=".$tag;
+	}
 
 	// Creditor
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
@@ -910,8 +914,12 @@ if ($source == 'order')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1029,9 +1037,12 @@ if ($source == 'invoice')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
-	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1202,9 +1213,12 @@ if ($source == 'contractline')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	$qty = 1;
@@ -1367,8 +1381,12 @@ if ($source == 'membersubscription')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1531,8 +1549,12 @@ if ($source == 'donation')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor

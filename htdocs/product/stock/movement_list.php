@@ -195,12 +195,12 @@ if ($action == "correct_stock")
 
         if ($product->hasbatch())
         {
-        	$batch = GETPOST('batch_number');
+        	$batch = GETPOST('batch_number', 'alphanohtml');
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+        	$sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 
 			$result = $product->correct_stock_batch(
 	            $user,
@@ -210,7 +210,7 @@ if ($action == "correct_stock")
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice'),
 	        	$eatby, $sellby, $batch,
-	        	GETPOST('inventorycode'),
+				GETPOST('inventorycode', 'alphanohtml'),
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
@@ -224,7 +224,7 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement"),
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode'),
+				GETPOST('inventorycode', 'alphanohtml'),
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
@@ -329,7 +329,7 @@ if ($action == "transfert_stock" && !$cancel)
                 else
                 {
                     $srcwarehouseid = $id;
-                    $batch = GETPOST('batch_number');
+                    $batch = GETPOST('batch_number', 'alphanohtml');
                     $eatby = $d_eatby;
                     $sellby = $d_sellby;
                 }
@@ -356,7 +356,7 @@ if ($action == "transfert_stock" && !$cancel)
                         GETPOST("label", 'san_alpha'),
                         $pricedest,
                         $eatby, $sellby, $batch,
-                        GETPOST('inventorycode')
+                    	GETPOST('inventorycode', 'alphanohtml')
                         );
                 }
             }
@@ -368,9 +368,9 @@ if ($action == "transfert_stock" && !$cancel)
                     $id,
                     GETPOST("nbpiece"),
                     1,
-                    GETPOST("label"),
+                	GETPOST("label", 'san_alpha'),
                     $pricesrc,
-                    GETPOST('inventorycode')
+                	GETPOST('inventorycode', 'alphanohtml')
                     );
 
                 // Add stock
@@ -379,9 +379,9 @@ if ($action == "transfert_stock" && !$cancel)
                     GETPOST("id_entrepot_destination"),
                     GETPOST("nbpiece"),
                     0,
-                    GETPOST("label"),
+                    GETPOST("label", 'san_alpha'),
                     $pricedest,
-                    GETPOST('inventorycode')
+                	GETPOST('inventorycode', 'alphanohtml')
                     );
             }
             if (!$error && $result1 >= 0 && $result2 >= 0)
@@ -424,7 +424,7 @@ $formother = new FormOther($db);
 $formproduct = new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
+$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tosell, p.tobuy, p.tobatch, p.fk_product_type as type, p.entity,";
 $sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql .= " m.batch, m.price,";
@@ -674,9 +674,9 @@ if ($resql)
     }
 
     $param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-    if ($id > 0)                 $param .= '&id='.$id;
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+    if ($id > 0)                 $param .= '&id='.urlencode($id);
     if ($search_movement)        $param .= '&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param .= '&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_type_mouvement)	 $param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
@@ -684,10 +684,8 @@ if ($resql)
     if ($search_product)         $param .= '&search_product='.urlencode($search_product);
     if ($search_batch)           $param .= '&search_batch='.urlencode($search_batch);
     if ($search_warehouse > 0)   $param .= '&search_warehouse='.urlencode($search_warehouse);
-    if (!empty($sref))           $param .= '&sref='.urlencode($sref); // FIXME $sref is not defined
-    if (!empty($snom))           $param .= '&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)            $param .= '&search_user='.urlencode($search_user);
-    if ($idproduct > 0)          $param .= '&idproduct='.$idproduct;
+    if ($idproduct > 0)          $param .= '&idproduct='.urlencode($idproduct);
     // Add $param from extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -752,6 +750,7 @@ if ($resql)
     }
     if (!empty($arrayfields['m.datem']['checked']))
     {
+    	// Date
     	print '<td class="liste_titre nowraponall">';
 	    print '<input class="flat" type="text" size="2" maxlength="2" placeholder="'.dol_escape_htmltag($langs->trans("Month")).'" name="month" value="'.$month.'">';
     	if (empty($conf->productbatch->enabled)) print '&nbsp;';
@@ -977,6 +976,8 @@ if ($resql)
         $productstatic->label = $objp->produit;
         $productstatic->type = $objp->type;
         $productstatic->entity = $objp->entity;
+        $productstatic->status = $objp->tosell;
+        $productstatic->status_buy = $objp->tobuy;
         $productstatic->status_batch = $objp->tobatch;
 
         $productlot->id = $objp->lotid;
@@ -1008,7 +1009,7 @@ if ($resql)
         if (!empty($arrayfields['m.datem']['checked']))
         {
 	        // Date
-	        print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+	        print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
         }
         if (!empty($arrayfields['p.ref']['checked']))
         {

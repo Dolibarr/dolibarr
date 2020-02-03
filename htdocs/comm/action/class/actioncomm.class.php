@@ -514,9 +514,10 @@ class ActionComm extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
-            // Now insert assignedusers
+            // Now insert assigned users
 			if (!$error)
 			{
+				//dol_syslog(var_export($this->userassigned, true));
 				foreach ($this->userassigned as $key => $val)
 				{
 			        if (!is_array($val))	// For backward compatibility when val=id
@@ -524,16 +525,20 @@ class ActionComm extends CommonObject
 			        	$val = array('id'=>$val);
 			        }
 
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
+			        if ($val['id'] > 0)
+			        {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+						$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
 
-					$resql = $this->db->query($sql);
-					if (!$resql)
-					{
-						$error++;
-		           		$this->errors[] = $this->db->lasterror();
-					}
-					//var_dump($sql);exit;
+						$resql = $this->db->query($sql);
+						if (!$resql)
+						{
+							$error++;
+							dol_syslog('Error to process userassigned: '.$this->db->lasterror(), LOG_ERR);
+			           		$this->errors[] = $this->db->lasterror();
+						}
+						//var_dump($sql);exit;
+			        }
 				}
 			}
 
@@ -541,7 +546,7 @@ class ActionComm extends CommonObject
 			{
 				if (!empty($this->socpeopleassigned))
 				{
-					foreach ($this->socpeopleassigned as $id => $Tab)
+					foreach ($this->socpeopleassigned as $id => $val)
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
@@ -550,6 +555,7 @@ class ActionComm extends CommonObject
 						if (!$resql)
 						{
 							$error++;
+							dol_syslog('Error to process socpeopleassigned: '.$this->db->lasterror(), LOG_ERR);
 							$this->errors[] = $this->db->lasterror();
 						}
 					}
@@ -558,8 +564,6 @@ class ActionComm extends CommonObject
 
             if (!$error)
             {
-            	$action = 'create';
-
 	            // Actions on extra fields
             	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             	{
@@ -787,16 +791,16 @@ class ActionComm extends CommonObject
      */
     public function fetchResources()
     {
-		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
+    	$this->userassigned = array();
+    	$this->socpeopleassigned = array();
+
+    	$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
 		$sql .= ' WHERE fk_actioncomm = '.$this->id;
 		$sql .= " AND element_type IN ('user', 'socpeople')";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->userassigned = array();
-			$this->socpeopleassigned = array();
-
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) $this->userassigned[$this->userownerid] = array('id'=>$this->userownerid); // Set first so will be first into list.
 
@@ -1374,13 +1378,13 @@ class ActionComm extends CommonObject
      *  Return URL of event
      *  Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     *  @param	int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param	int		$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
      *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
      *  @param	string	$classname				Force style class on a link
-     *  @param	string	$option					''=Link to action, 'birthday'=Link to contact
-     *  @param	int		$overwritepicto			1=Overwrite picto
-     *  @param	int   	$notooltip		    	1=Disable tooltip
-     *  @param  int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
+     *  @param	int		$overwritepicto			1 = Overwrite picto
+     *  @param	int   	$notooltip		    	1 = Disable tooltip
+     *  @param  int     $save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
      *  @return	string							Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
@@ -1389,7 +1393,11 @@ class ActionComm extends CommonObject
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		$canread = 0;
+		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) $canread = 1;	// Can read my event
+		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) $canread = 1;	// Can read my event i am assigned
+		if ($user->rights->agenda->allactions->read) $canread = 1;		// Can read all event of other
+		if (! $canread)
 		{
             $option = 'nolink';
 		}
@@ -1447,6 +1455,8 @@ class ActionComm extends CommonObject
 		$url = '';
 		if ($option == 'birthday')
 			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
+		elseif ($option == 'holiday')
+            $url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 		else
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
 		if ($option !== 'nolink')
@@ -1506,6 +1516,50 @@ class ActionComm extends CommonObject
         return $result;
     }
 
+    /**
+     * Sets object to supplied categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
+     * @param  int[]|int $categories Category or categories IDs
+     * @return void
+     */
+    public function setCategories($categories)
+    {
+        // Handle single category
+        if (! is_array($categories)) {
+            $categories = array($categories);
+        }
+
+        // Get current categories
+        include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $c = new Categorie($this->db);
+        $existing = $c->containing($this->id, Categorie::TYPE_ACTIONCOMM, 'id');
+
+        // Diff
+        if (is_array($existing)) {
+            $to_del = array_diff($existing, $categories);
+            $to_add = array_diff($categories, $existing);
+        } else {
+            $to_del = array(); // Nothing to delete
+            $to_add = $categories;
+        }
+
+        // Process
+        foreach($to_del as $del) {
+            if ($c->fetch($del) > 0) {
+                $c->del_type($this, Categorie::TYPE_ACTIONCOMM);
+            }
+        }
+        foreach ($to_add as $add) {
+            if ($c->fetch($add) > 0) {
+                $c->add_type($this, Categorie::TYPE_ACTIONCOMM);
+            }
+        }
+        return;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**

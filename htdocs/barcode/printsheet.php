@@ -264,7 +264,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("BarCodePrintsheet"));
 
-print load_fiche_titre($langs->trans("BarCodePrintsheet"));
+print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'barcode');
 print '<br>';
 
 print $langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';

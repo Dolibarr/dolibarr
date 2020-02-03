@@ -75,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
+$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT);
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');
@@ -127,6 +127,18 @@ if (GETPOST('target') == 'local')
 {
     if (dol_is_file($xmlfile))
     {
+    	// If file is a zip file (.../filelist-x.y.z.xml.zip), we uncompress it before
+    	if (preg_match('/\.zip$/i', $xmlfile)) {
+    		dol_mkdir($conf->admin->dir_temp);
+    		$xmlfilenew = preg_replace('/\.zip$/i', '', $xmlfile);
+    		$result = dol_uncompress($xmlfile, $conf->admin->dir_temp);
+    		if (empty($result['error'])) {
+    			$xmlfile = $conf->admin->dir_temp.'/'.basename($xmlfilenew);
+    		} else {
+    			print $langs->trans('FailedToUncompressFile').': '.$xmlfile;
+    			$error++;
+    		}
+    	}
         $xml = simplexml_load_file($xmlfile);
     }
     else

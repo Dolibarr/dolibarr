@@ -377,6 +377,7 @@ print '</table>'."\n";
 print '<br>';
 
 // Other
+print '<div class="div-table-responsive-no-min">';
 print '<table summary="edit" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LoginPage").'</td><td></td>';
 print '<td width="20">&nbsp;</td>';
@@ -427,7 +428,7 @@ print '</div>';
 print '</td></tr>';
 
 print '</table>'."\n";
-
+print '</div>';
 
 print '<br>';
 print '<div class="center">';

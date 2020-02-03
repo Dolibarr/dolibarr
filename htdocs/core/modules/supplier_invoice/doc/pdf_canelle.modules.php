@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoice/pdf/pdf_canelle.modules.php
+ *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoices with the canelle model
  */
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefo
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
@@ -150,8 +151,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->option_condreg = 1; // Affiche conditions reglement
 		$this->option_codeproduitservice = 1; // Affiche code produit-service
 		$this->option_multilang = 1; // Dispo en plusieurs langues
-
-		$this->franchise = !$mysoc->tva_assuj;
 
         // Define column position
 		$this->posxdesc = $this->marge_gauche + 1;

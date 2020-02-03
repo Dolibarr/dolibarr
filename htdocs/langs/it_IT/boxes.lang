@@ -97,6 +97,6 @@ BoxSuspenseAccount=Conta l&#39;operazione contabile con l&#39;account suspense
 BoxTitleSuspenseAccount=Numero di righe non allocate
 NumberOfLinesInSuspenseAccount=Numero di riga nell&#39;account suspense
 SuspenseAccountNotDefined=L&#39;account Suspense non è definito
-BoxLastCustomerShipments=Last customer shipments
+BoxLastCustomerShipments=Ultime spedizioni cliente
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment

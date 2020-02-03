@@ -308,7 +308,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND (a.fk_soc IS
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-if ($type) $sql .= " AND c.id = ".$type;
+if ($type) $sql .= " AND c.id = ".(int) $type;
 if ($status == '0') { $sql .= " AND a.percent = 0"; }
 if ($status == '-1') { $sql .= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql .= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
@@ -554,7 +554,10 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note = dol_htmlentitiesbr($obj->note);			// deprecated
+		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+
+		$actionstatic->fetchResources();
 
 		print '<tr class="oddeven">';
 
@@ -656,7 +659,6 @@ if ($resql)
 		if (!empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
 
-            $actionstatic->fetchResources();
             if (!empty($actionstatic->socpeopleassigned))
             {
                 $contactList = array();

@@ -1308,7 +1308,6 @@ if ($id)
             // Determines the name of the field in relation to the possible names
             // in data dictionaries
             $showfield = 1; // By defaut
-            $align = "left";
             $cssprefix = '';
             $sortable = 1;
             $valuetoshow = ucfirst($fieldlist[$field]); // By defaut
@@ -1320,23 +1319,23 @@ if ($id)
             if ($fieldlist[$field] == 'taux') {
 				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow = $langs->trans("Rate");
 				else $valuetoshow = $langs->trans("Amount");
-				$align = 'center';
+				$cssprefix = 'center ';
             }
-            if ($fieldlist[$field] == 'localtax1_type') { $valuetoshow = $langs->trans("UseLocalTax")." 2"; $align = "center"; $sortable = 0; }
-            if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("Rate")." 2"; $align = "center"; $sortable = 0; }
-            if ($fieldlist[$field] == 'localtax2_type') { $valuetoshow = $langs->trans("UseLocalTax")." 3"; $align = "center"; $sortable = 0; }
-            if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("Rate")." 3"; $align = "center"; $sortable = 0; }
+            if ($fieldlist[$field] == 'localtax1_type') { $valuetoshow = $langs->trans("UseLocalTax")." 2"; $cssprefix = "center "; $sortable = 0; }
+            if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("Rate")." 2"; $cssprefix = "center "; $sortable = 0; }
+            if ($fieldlist[$field] == 'localtax2_type') { $valuetoshow = $langs->trans("UseLocalTax")." 3"; $cssprefix = "center "; $sortable = 0; }
+            if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("Rate")." 3"; $cssprefix = "center "; $sortable = 0; }
             if ($fieldlist[$field] == 'organization') { $valuetoshow = $langs->trans("Organization"); }
             if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
             if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
             if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
-            if ($fieldlist[$field] == 'position') { $align = 'right'; }
+            if ($fieldlist[$field] == 'position') { $cssprefix = 'right '; }
             if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') { $valuetoshow = $langs->trans("Label"); }
             if ($fieldlist[$field] == 'libelle_facture') { $valuetoshow = $langs->trans("LabelOnDocuments"); }
             if ($fieldlist[$field] == 'country') { $valuetoshow = $langs->trans("Country"); }
-            if ($fieldlist[$field] == 'recuperableonly') { $valuetoshow = $langs->trans("NPR"); $align = "center"; }
+            if ($fieldlist[$field] == 'recuperableonly') { $valuetoshow = $langs->trans("NPR"); $cssprefix = "center "; }
             if ($fieldlist[$field] == 'nbjour') { $valuetoshow = $langs->trans("NbOfDays"); }
-            if ($fieldlist[$field] == 'type_cdr') { $valuetoshow = $langs->trans("AtEndOfMonth"); $align = "center"; }
+            if ($fieldlist[$field] == 'type_cdr') { $valuetoshow = $langs->trans("AtEndOfMonth"); $cssprefix = "center "; }
             if ($fieldlist[$field] == 'decalage') { $valuetoshow = $langs->trans("Offset"); }
             if ($fieldlist[$field] == 'width' || $fieldlist[$field] == 'nx') { $valuetoshow = $langs->trans("Width"); }
             if ($fieldlist[$field] == 'height' || $fieldlist[$field] == 'ny') { $valuetoshow = $langs->trans("Height"); }
@@ -1378,7 +1377,7 @@ if ($id)
             // Show field title
             if ($showfield)
             {
-                print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "align=".$align, $sortfield, $sortorder, $cssprefix);
+                print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $cssprefix);
             }
         }
 		// Favorite - Only activated on country dictionary
@@ -1434,8 +1433,8 @@ if ($id)
                         foreach ($fieldlist as $field => $value)
                         {
                         	//var_dump($fieldlist);
+                        	$class = '';
                         	$showfield = 1;
-                        	$align = "left";
                         	$valuetoshow = $obj->{$fieldlist[$field]};
 
                         	if ($fieldlist[$field] == 'entity') {
@@ -1467,13 +1466,13 @@ if ($id)
                             }
                             elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
                                 $valuetoshow = yn($valuetoshow);
-                                $align = "center";
+                                $class = "center";
                             }
                             elseif ($fieldlist[$field] == 'type_cdr') {
                 				if (empty($valuetoshow)) $valuetoshow = $langs->trans('None');
                 				elseif ($valuetoshow == 1) $valuetoshow = $langs->trans('AtEndOfMonth');
                 				elseif ($valuetoshow == 2) $valuetoshow = $langs->trans('CurrentNext');
-                                $align = "center";
+                                $class = "center";
                             } elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i', $fieldlist[$field])) {
                                 $valuetoshow = price($valuetoshow);
                             }
@@ -1587,20 +1586,20 @@ if ($id)
 							        $valuetoshow = $localtax_typeList[$valuetoshow];
 							    else
 							        $valuetoshow = '';
-							    $align = "center";
+							    $class = "center";
 							}
 							elseif ($fieldlist[$field] == 'localtax2_type') {
 							    if ($obj->localtax2 != 0)
 							        $valuetoshow = $localtax_typeList[$valuetoshow];
 							    else
 							        $valuetoshow = '';
-							    $align = "center";
+							    $class = "center";
 							}
 							elseif ($fieldlist[$field] == 'taux') {
                                 $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
-							    $align = "center";
+							    $class = "center";
 							} elseif (in_array($fieldlist[$field], array('recuperableonly'))) {
-								$align = "center";
+								$class = "center";
 							}
 							elseif ($fieldlist[$field] == 'accountancy_code' || $fieldlist[$field] == 'accountancy_code_sell' || $fieldlist[$field] == 'accountancy_code_buy') {
                                 $valuetoshow = length_accountg($valuetoshow);
@@ -1632,14 +1631,14 @@ if ($id)
 								$valuetoshow = ($obj->label && $key != strtoupper($obj->label) ? $key : $obj->{$fieldlist[$field]});
 							}
 
-                            $class = 'tddict';
+                            $class .= ($class ? ' ' : '').'tddict';
                             if ($fieldlist[$field] == 'note' && $id == 10) $class .= ' tdoverflowmax200';
                             if ($fieldlist[$field] == 'tracking') $class .= ' tdoverflowauto';
                             if ($fieldlist[$field] == 'position') $class .= ' right';
                             if ($fieldlist[$field] == 'localtax1_type') $class .= ' nowrap';
                             if ($fieldlist[$field] == 'localtax2_type') $class .= ' nowrap';
                             // Show value for field
-							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
                         }
                     }
 
@@ -1918,9 +1917,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		}
 		elseif (in_array($fieldlist[$field], array('nbjour', 'decalage', 'taux', 'localtax1', 'localtax2'))) {
-			$align = "left";
-			if (in_array($fieldlist[$field], array('taux', 'localtax1', 'localtax2'))) $align = "center"; // Fields aligned on right
-			print '<td class="'.$align.'">';
+			$class = "left";
+			if (in_array($fieldlist[$field], array('taux', 'localtax1', 'localtax2'))) $class = "center"; // Fields aligned on right
+			print '<td class="'.$class.'">';
 			print '<input type="text" class="flat" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="3" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}

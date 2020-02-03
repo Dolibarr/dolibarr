@@ -573,7 +573,7 @@ function isValidVATID($company)
         elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers
         else $vatprefix = preg_quote($vatprefix, '/');*/
         $vatprefix = '[a-zA-Z][a-zA-Z]';
-        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra)))
+        if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra)))
         {
             return 0;
         }
@@ -732,17 +732,17 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  */
 function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
 {
-    global $conf,$user;
+    global $conf, $user;
 
-    if (! is_object($objsoc)) $valueforccc=$objsoc;
-    elseif ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=dol_string_unaccent($objsoc->code_fournisseur);
-    else $valueforccc=dol_string_unaccent($objsoc->code_client);
+    if (!is_object($objsoc)) $valueforccc = $objsoc;
+    elseif ($table == "commande_fournisseur" || $table == "facture_fourn") $valueforccc = dol_string_unaccent($objsoc->code_fournisseur);
+    else $valueforccc = dol_string_unaccent($objsoc->code_client);
 
     $sharetable = $table;
     if ($table == 'facture' || $table == 'invoice') $sharetable = 'invoicenumber'; // for getEntity function
 
     // Clean parameters
-    if ($date == '') $date=dol_now();	// We use local year and month of PHP server to search numbers
+    if ($date == '') $date = dol_now(); // We use local year and month of PHP server to search numbers
     // but we should use local year and month of user
 
     // For debugging
@@ -811,73 +811,73 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     	$lastname = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
     	if (is_object($objuser)) $lastname = $objuser->lastname;
 
-    	$maskuser=$regType[1];
-    	$maskuser_value=substr($lastname, 0, dol_strlen($regType[1]));// get n first characters of user firstname (where n is length in mask)
-    	$maskuser_value=str_pad($maskuser_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
+    	$maskuser = $regType[1];
+    	$maskuser_value = substr($lastname, 0, dol_strlen($regType[1])); // get n first characters of user firstname (where n is length in mask)
+    	$maskuser_value = str_pad($maskuser_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
     }
     else
     {
-    	$maskuser='';
-    	$maskuser_value='';
+    	$maskuser = '';
+    	$maskuser_value = '';
     }
 
     // Personalized field {XXX-1} à {XXX-9}
-    $maskperso=array();
-    $maskpersonew=array();
-    $tmpmask=$mask;
+    $maskperso = array();
+    $maskpersonew = array();
+    $tmpmask = $mask;
     while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey))
     {
-        $maskperso[$regKey[1]]='{'.$regKey[1].'-'.$regKey[2].'}';
-        $maskpersonew[$regKey[1]]=str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
-        $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
+        $maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
+        $maskpersonew[$regKey[1]] = str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
+        $tmpmask = preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
     }
 
     if (strstr($mask, 'user_extra_'))
     {
 		$start = "{user_extra_";
 		$end = "\}";
-		$extra= get_string_between($mask, "user_extra_", "}");
+		$extra = get_string_between($mask, "user_extra_", "}");
 		if (!empty($user->array_options['options_'.$extra])) {
-			$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
+			$mask = preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
 		}
     }
-    $maskwithonlyymcode=$mask;
-    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $maskcounter, $maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(t+)\}/i', $masktype_value, $maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(u+)\}/i', $maskuser_value, $maskwithonlyymcode);
-    foreach($maskperso as $key => $val)
+    $maskwithonlyymcode = $mask;
+    $maskwithonlyymcode = preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $maskcounter, $maskwithonlyymcode);
+    $maskwithonlyymcode = preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
+    $maskwithonlyymcode = preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
+    $maskwithonlyymcode = preg_replace('/\{(t+)\}/i', $masktype_value, $maskwithonlyymcode);
+    $maskwithonlyymcode = preg_replace('/\{(u+)\}/i', $maskuser_value, $maskwithonlyymcode);
+    foreach ($maskperso as $key => $val)
     {
-        $maskwithonlyymcode=preg_replace('/'.preg_quote($val, '/').'/i', $maskpersonew[$key], $maskwithonlyymcode);
+        $maskwithonlyymcode = preg_replace('/'.preg_quote($val, '/').'/i', $maskpersonew[$key], $maskwithonlyymcode);
     }
-    $maskwithnocode=$maskwithonlyymcode;
-    $maskwithnocode=preg_replace('/\{yyyy\}/i', 'yyyy', $maskwithnocode);
-    $maskwithnocode=preg_replace('/\{yy\}/i', 'yy', $maskwithnocode);
-    $maskwithnocode=preg_replace('/\{y\}/i', 'y', $maskwithnocode);
-    $maskwithnocode=preg_replace('/\{mm\}/i', 'mm', $maskwithnocode);
+    $maskwithnocode = $maskwithonlyymcode;
+    $maskwithnocode = preg_replace('/\{yyyy\}/i', 'yyyy', $maskwithnocode);
+    $maskwithnocode = preg_replace('/\{yy\}/i', 'yy', $maskwithnocode);
+    $maskwithnocode = preg_replace('/\{y\}/i', 'y', $maskwithnocode);
+    $maskwithnocode = preg_replace('/\{mm\}/i', 'mm', $maskwithnocode);
     // Now maskwithnocode = 0000ddmmyyyyccc for example
     // and maskcounter    = 0000 for example
     //print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
     //var_dump($reg);
 
     // If an offset is asked
-    if (! empty($reg[2]) && preg_match('/^\+/', $reg[2])) $maskoffset=preg_replace('/^\+/', '', $reg[2]);
-    if (! empty($reg[3]) && preg_match('/^\+/', $reg[3])) $maskoffset=preg_replace('/^\+/', '', $reg[3]);
+    if (!empty($reg[2]) && preg_match('/^\+/', $reg[2])) $maskoffset = preg_replace('/^\+/', '', $reg[2]);
+    if (!empty($reg[3]) && preg_match('/^\+/', $reg[3])) $maskoffset = preg_replace('/^\+/', '', $reg[3]);
 
     // Define $sqlwhere
-    $sqlwhere='';
-    $yearoffset=0;	// Use year of current $date by default
-    $yearoffsettype=false;		// false: no reset, 0,-,=,+: reset at offset SOCIETE_FISCAL_MONTH_START, x=reset at offset x
+    $sqlwhere = '';
+    $yearoffset = 0; // Use year of current $date by default
+    $yearoffsettype = false; // false: no reset, 0,-,=,+: reset at offset SOCIETE_FISCAL_MONTH_START, x=reset at offset x
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/', $reg[2]))	$yearoffsettype = preg_replace('/^@/', '', $reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))	$yearoffsettype = preg_replace('/^@/', '', $reg[3]);
+    if (!empty($reg[2]) && preg_match('/^@/', $reg[2]))	$yearoffsettype = preg_replace('/^@/', '', $reg[2]);
+    if (!empty($reg[3]) && preg_match('/^@/', $reg[3]))	$yearoffsettype = preg_replace('/^@/', '', $reg[3]);
 
     //print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
     if (is_numeric($yearoffsettype) && $yearoffsettype >= 1)
-        $maskraz=$yearoffsettype; // For backward compatibility
-    elseif ($yearoffsettype === '0' || (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
+        $maskraz = $yearoffsettype; // For backward compatibility
+    elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
         $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
     //print "maskraz=".$maskraz;	// -1=no reset
 
@@ -1161,24 +1161,24 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         if ($maskrefclient)
         {
             //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode."\n<br>";exit;
-            $maskrefclient_maskbefore='{'.$maskrefclient.'}';
-            $maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
+            $maskrefclient_maskbefore = '{'.$maskrefclient.'}';
+            $maskrefclient_maskafter = $maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
             $numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
         }
 
         // Now we replace the type
         if ($masktype)
         {
-            $masktype_maskbefore='{'.$masktype.'}';
-            $masktype_maskafter=$masktype_value;
+            $masktype_maskbefore = '{'.$masktype.'}';
+            $masktype_maskafter = $masktype_value;
             $numFinal = str_replace($masktype_maskbefore, $masktype_maskafter, $numFinal);
         }
 
         // Now we replace the user
         if ($maskuser)
         {
-        	$maskuser_maskbefore='{'.$maskuser.'}';
-        	$maskuser_maskafter=$maskuser_value;
+        	$maskuser_maskbefore = '{'.$maskuser.'}';
+        	$maskuser_maskafter = $maskuser_value;
         	$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
         }
     }
@@ -1214,69 +1214,69 @@ function get_string_between($string, $start, $end)
  */
 function check_value($mask, $value)
 {
-    $result=0;
+    $result = 0;
 
-    $hasglobalcounter=false;
+    $hasglobalcounter = false;
     // Extract value for mask counter, mask raz and mask offset
     if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
     {
-        $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
-        $maskcounter=$reg[1];
-        $hasglobalcounter=true;
+        $masktri = $reg[1].(isset($reg[2]) ? $reg[2] : '').(isset($reg[3]) ? $reg[3] : '');
+        $maskcounter = $reg[1];
+        $hasglobalcounter = true;
     }
     else
     {
         // setting some defaults so the rest of the code won't fail if there is a third party counter
-        $masktri='00000';
-        $maskcounter='00000';
+        $masktri = '00000';
+        $maskcounter = '00000';
     }
 
-    $maskraz=-1;
-    $maskoffset=0;
+    $maskraz = -1;
+    $maskoffset = 0;
     if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
 
     // Extract value for third party mask counter
     if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
     {
-        $maskrefclient=$regClientRef[1].$regClientRef[2];
-        $maskrefclient_maskclientcode=$regClientRef[1];
-        $maskrefclient_maskcounter=$regClientRef[2];
-        $maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-        $maskrefclient_clientcode=substr('', 0, dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
-        $maskrefclient_clientcode=str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
-        $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
+        $maskrefclient = $regClientRef[1].$regClientRef[2];
+        $maskrefclient_maskclientcode = $regClientRef[1];
+        $maskrefclient_maskcounter = $regClientRef[2];
+        $maskrefclient_maskoffset = 0; //default value of maskrefclient_counter offset
+        $maskrefclient_clientcode = substr('', 0, dol_strlen($maskrefclient_maskclientcode)); //get n first characters of client code to form maskrefclient_clientcode
+        $maskrefclient_clientcode = str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT); //padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
+        $maskrefclient_clientcode = dol_string_nospecial($maskrefclient_clientcode); //sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
-    else $maskrefclient='';
+    else $maskrefclient = '';
 
     // fail if there is neither a global nor a third party counter
-    if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
+    if (!$hasglobalcounter && ($maskrefclient_maskcounter == ''))
     {
         return 'ErrorBadMask';
     }
 
-    $maskwithonlyymcode=$mask;
-    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $maskcounter, $maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
-    $maskwithnocode=$maskwithonlyymcode;
-    $maskwithnocode=preg_replace('/\{yyyy\}/i', 'yyyy', $maskwithnocode);
-    $maskwithnocode=preg_replace('/\{yy\}/i', 'yy', $maskwithnocode);
-    $maskwithnocode=preg_replace('/\{y\}/i', 'y', $maskwithnocode);
-    $maskwithnocode=preg_replace('/\{mm\}/i', 'mm', $maskwithnocode);
+    $maskwithonlyymcode = $mask;
+    $maskwithonlyymcode = preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $maskcounter, $maskwithonlyymcode);
+    $maskwithonlyymcode = preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
+    $maskwithonlyymcode = preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
+    $maskwithnocode = $maskwithonlyymcode;
+    $maskwithnocode = preg_replace('/\{yyyy\}/i', 'yyyy', $maskwithnocode);
+    $maskwithnocode = preg_replace('/\{yy\}/i', 'yy', $maskwithnocode);
+    $maskwithnocode = preg_replace('/\{y\}/i', 'y', $maskwithnocode);
+    $maskwithnocode = preg_replace('/\{mm\}/i', 'mm', $maskwithnocode);
     // Now maskwithnocode = 0000ddmmyyyyccc for example
     // and maskcounter    = 0000 for example
     //print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
 
     // If an offset is asked
-    if (! empty($reg[2]) && preg_match('/^\+/', $reg[2])) $maskoffset=preg_replace('/^\+/', '', $reg[2]);
-    if (! empty($reg[3]) && preg_match('/^\+/', $reg[3])) $maskoffset=preg_replace('/^\+/', '', $reg[3]);
+    if (!empty($reg[2]) && preg_match('/^\+/', $reg[2])) $maskoffset = preg_replace('/^\+/', '', $reg[2]);
+    if (!empty($reg[3]) && preg_match('/^\+/', $reg[3])) $maskoffset = preg_replace('/^\+/', '', $reg[3]);
 
     // Define $sqlwhere
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/', $reg[2]))  $maskraz=preg_replace('/^@/', '', $reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))  $maskraz=preg_replace('/^@/', '', $reg[3]);
+    if (!empty($reg[2]) && preg_match('/^@/', $reg[2]))  $maskraz = preg_replace('/^@/', '', $reg[2]);
+    if (!empty($reg[3]) && preg_match('/^@/', $reg[3]))  $maskraz = preg_replace('/^@/', '', $reg[3]);
     if ($maskraz >= 0)
     {
         if ($maskraz == 99) {
@@ -1286,8 +1286,8 @@ function check_value($mask, $value)
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg
-        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazIfNoYearInMask';
+        if ($maskraz > 1 && !preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+        if ($maskraz <= 1 && !preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazIfNoYearInMask';
         //print "x".$maskwithonlyymcode." ".$maskraz;
     }
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
@@ -1616,16 +1616,16 @@ function version_webserver()
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
-    global $conf,$langs;
-    $liste=array();
-    $found=0;
-    $dirtoscan='';
+    global $conf, $langs;
+    $liste = array();
+    $found = 0;
+    $dirtoscan = '';
 
     $sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
-    $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE type = '".$type."'";
-    $sql.= " AND entity IN (0,".$conf->entity.")";
-    $sql.= " ORDER BY description DESC";
+    $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+    $sql .= " WHERE type = '".$type."'";
+    $sql .= " AND entity IN (0,".$conf->entity.")";
+    $sql .= " ORDER BY description DESC";
 
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
@@ -1635,48 +1635,48 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
         $i = 0;
         while ($i < $num)
         {
-            $found=1;
+            $found = 1;
 
             $obj = $db->fetch_object($resql);
 
             // If this generation module needs to scan a directory, then description field is filled
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
-            if (! empty($obj->description))	// A list of directories to scan is defined
+            if (!empty($obj->description))	// A list of directories to scan is defined
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-                $const=$obj->description;
+                $const = $obj->description;
                 //irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-                $dirtoscan= preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
+                $dirtoscan = preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
 
-                $listoffiles=array();
+                $listoffiles = array();
 
                 // Now we add models found in directories scanned
-                $listofdir=explode(',', $dirtoscan);
-                foreach($listofdir as $key=>$tmpdir)
+                $listofdir = explode(',', $dirtoscan);
+                foreach ($listofdir as $key=>$tmpdir)
                 {
-                    $tmpdir=trim($tmpdir);
-                    $tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
-                    if (! $tmpdir) { unset($listofdir[$key]); continue; }
+                    $tmpdir = trim($tmpdir);
+                    $tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+                    if (!$tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
                         // all type of template is allowed
-                        $tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
-                        if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
+                        $tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
+                        if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
                     }
                 }
 
                 if (count($listoffiles))
                 {
-                    foreach($listoffiles as $record)
+                    foreach ($listoffiles as $record)
                     {
-                        $max=($maxfilenamelength?$maxfilenamelength:28);
-                        $liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'], $max, 'middle');
+                        $max = ($maxfilenamelength ? $maxfilenamelength : 28);
+                        $liste[$obj->id.':'.$record['fullname']] = dol_trunc($record['name'], $max, 'middle');
                     }
                 }
                 else
                 {
-                    $liste[0]=$obj->label.': '.$langs->trans("None");
+                    $liste[0] = $obj->label.': '.$langs->trans("None");
                 }
             }
             else
@@ -1685,14 +1685,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                 {
                     global $_Avery_Labels;
                     include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
-                    foreach($_Avery_Labels as $key => $val)
+                    foreach ($_Avery_Labels as $key => $val)
                     {
-                    	$liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->doc_template_name).' '.$val['name'];
+                    	$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
                     }
                 }
                 else    // Common usage
                 {
-                	$liste[$obj->id]=$obj->label?$obj->label:$obj->doc_template_name;
+                	$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
                 }
             }
             $i++;
@@ -1762,7 +1762,7 @@ function getSoapParams()
     $proxyport = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PORT);
     $proxyuser = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_USER);
     $proxypass = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PASS);
-    $timeout  = (empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
+    $timeout = (empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
     $response_timeout = (empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
     //print extension_loaded('soap');
     if ($proxyuse)
@@ -1797,7 +1797,7 @@ function getSoapParams()
  * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
- * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', ...)
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'myobject@mymodule', ...)
  * @param 	int		$withpicto		Picto to show
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
@@ -1807,83 +1807,95 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	global $db, $conf, $langs;
 
 	$ret = '';
+	$regs = array();
 
-	// Parse element/subelement (ex: project_task)
-	$module = $element = $subelement = $objecttype;
+	// If we ask an resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $objecttype, $regs)) {
+		$myobject = $regs[1];
+		$module = $regs[2];
+	}
+
+	// Parse $objecttype (ex: project_task)
+	$module = $myobject = $objecttype;
 	if (preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 	{
-		$module = $element = $regs[1];
-		$subelement = $regs[2];
+		$module = $regs[1];
+		$myobject = $regs[2];
 	}
 
 	// Generic case for $classpath
-	$classpath = $element.'/class';
+	$classpath = $module.'/class';
 
 	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
 		$classpath = 'compta/facture/class';
-		$module='facture';
-		$subelement='facture';
+		$module = 'facture';
+		$myobject = 'facture';
 	}
 	elseif ($objecttype == 'commande' || $objecttype == 'order') {
 		$classpath = 'commande/class';
-		$module='commande';
-		$subelement='commande';
+		$module = 'commande';
+		$myobject = 'commande';
 	}
-	elseif ($objecttype == 'propal')  {
+	elseif ($objecttype == 'propal') {
 		$classpath = 'comm/propal/class';
 	}
-	elseif ($objecttype == 'supplier_proposal')  {
+	elseif ($objecttype == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 	}
 	elseif ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
-		$subelement = 'expedition';
+		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	}
 	elseif ($objecttype == 'delivery') {
 		$classpath = 'livraison/class';
-		$subelement = 'livraison';
+		$myobject = 'livraison';
 		$module = 'livraison_bon';
 	}
 	elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
-		$module='contrat';
-		$subelement='contrat';
+		$module = 'contrat';
+		$myobject = 'contrat';
 	}
 	elseif ($objecttype == 'member') {
 		$classpath = 'adherents/class';
-		$module='adherent';
-		$subelement='adherent';
+		$module = 'adherent';
+		$myobject = 'adherent';
 	}
 	elseif ($objecttype == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
-		$module='cabinetmed';
-		$subelement='cabinetmedcons';
+		$module = 'cabinetmed';
+		$myobject = 'cabinetmedcons';
 	}
 	elseif ($objecttype == 'fichinter') {
 		$classpath = 'fichinter/class';
-		$module='ficheinter';
-		$subelement='fichinter';
+		$module = 'ficheinter';
+		$myobject = 'fichinter';
 	}
 	elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
-		$module='projet';
-		$subelement='task';
+		$module = 'projet';
+		$myobject = 'task';
 	}
 	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
-		$module='stock';
-		$subelement='stock';
+		$module = 'stock';
+		$myobject = 'stock';
 	}
 	elseif ($objecttype == 'inventory') {
 		$classpath = 'product/inventory/class';
-		$module='stock';
-		$subelement='inventory';
+		$module = 'stock';
+		$myobject = 'inventory';
+	}
+	elseif ($objecttype == 'mo') {
+		$classpath = 'mrp/class';
+		$module = 'mrp';
+		$myobject = 'mo';
 	}
 
 	// Generic case for $classfile and $classname
-	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	$classfile = strtolower($myobject); $classname = ucfirst($myobject);
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname;
 
 	if ($objecttype == 'invoice_supplier') {
@@ -1903,6 +1915,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 	}
+
 	if (!empty($conf->$module->enabled))
 	{
 		$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
@@ -2048,12 +2061,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 /**
  *	Get an array with properties of an element
  *
- * @param   string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
+ * @param   string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@mymodule'...
  * @return  array					(module, classpath, element, subelement, classfile, classname)
  */
 function getElementProperties($element_type)
 {
-    // Parse element/subelement (ex: project_task)
+	$regs = array();
+
+	// Parse element/subelement (ex: project_task)
     $module = $element_type;
     $element = $element_type;
     $subelement = $element_type;
@@ -2242,9 +2257,9 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
  */
 function colorValidateHex($color, $allow_white = true)
 {
-    if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
+    if (!$allow_white && ($color === '#fff' || $color === '#ffffff')) return false;
 
-    if(preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
+    if (preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
     {
         return true;
     }
@@ -2262,7 +2277,7 @@ function colorValidateHex($color, $allow_white = true)
  */
 function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 {
-	if (empty($ratio)) $ratio = 0;	// To avoid null
+	if (empty($ratio)) $ratio = 0; // To avoid null
 
 	// Steps should be between -255 and 255. Negative = darker, positive = lighter
 	$ratio = max(-100, min(100, $ratio));
@@ -2278,7 +2293,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 	$return = '#';
 
 	foreach ($color_parts as $color) {
-		$color   = hexdec($color); // Convert to decimal
+		$color = hexdec($color); // Convert to decimal
 		if ($ratio > 0)	// We increase aggressivity
 		{
 			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
@@ -2592,9 +2607,38 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
 {
     global $dolibarr_main_url_root;
     // Define $urlwithroot
-    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+    $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+    $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
     //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-    $notetoshow=preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
+    $notetoshow = preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
     return $notetoshow;
+}
+
+/**
+ *		Function to format a value into a defined format for French administration (no thousand separator & decimal separator force to ',' with two decimals)
+ *		Function used into accountancy FEC export
+ *
+ *		@param	float		$amount			Amount to format
+ *		@return	string					Chain with formatted upright
+ *		@see	price2num()				Format a numeric into a price for FEC files
+ */
+function price2fec($amount)
+{
+	global $conf;
+
+	// Clean parameters
+	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
+	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+
+	// Output decimal number by default
+	$nbdecimal = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH) ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
+
+	// Output separators by default
+	$dec = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR) ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
+	$thousand = (empty($conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR) ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
+
+	// Format number
+	$output = number_format($amount, $nbdecimal, $dec, $thousand);
+
+	return $output;
 }

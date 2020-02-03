@@ -1102,6 +1102,7 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Ventende bankavstemming
 Delays_MAIN_DELAY_MEMBERS=Forsinket medlemsavgift
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Sjekkinnskudd ikke utført
 Delays_MAIN_DELAY_EXPENSEREPORTS=Utgiftsrapporter for godkjenning
+Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Før du begynner å bruke Dolibarr, må noen innledende parametere defineres og moduler aktiveres/konfigureres.
 SetupDescription2=Følgende to seksjoner er obligatoriske (de to første oppføringene i oppsettmenyen):
 SetupDescription3= <a href="%s"> %s -> %s </a> <br> Grunnparametere som brukes til å tilpasse standardoppførelsen til applikasjonen din (for eksempel landrelaterte funksjoner).

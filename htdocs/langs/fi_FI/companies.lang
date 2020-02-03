@@ -57,6 +57,7 @@ NatureOfThirdParty=Sidosryhmän luonne
 NatureOfContact=Nature of Contact
 Address=Osoite
 State=Valtio / Lääni
+StateCode=State/Province code
 StateShort=Valtio
 Region=Alue
 Region-State=Alue - Osavaltio

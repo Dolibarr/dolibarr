@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -675,18 +675,18 @@ class Contrat extends CommonObject
 				{
 					$this->id = $obj->rowid;
 					$this->ref = (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
-					$this->ref_customer				= $obj->ref_customer;
-					$this->ref_supplier				= $obj->ref_supplier;
+					$this->ref_customer = $obj->ref_customer;
+					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 	                $this->entity = $obj->entity;
 					$this->statut = $obj->statut;
 					$this->mise_en_service = $this->db->jdate($obj->datemise);
 
-					$this->date_contrat				= $this->db->jdate($obj->datecontrat);
-					$this->date_creation			= $this->db->jdate($obj->datecontrat);
+					$this->date_contrat = $this->db->jdate($obj->datecontrat);
+					$this->date_creation = $this->db->jdate($obj->datecontrat);
 
-					$this->fin_validite				= $this->db->jdate($obj->fin_validite);
-					$this->date_cloture				= $this->db->jdate($obj->date_cloture);
+					$this->fin_validite = $this->db->jdate($obj->fin_validite);
+					$this->date_cloture = $this->db->jdate($obj->date_cloture);
 
 
 					$this->user_author_id = $obj->fk_user_author;
@@ -696,9 +696,9 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
-					$this->modelpdf					= $obj->model_pdf;
+					$this->modelpdf = $obj->model_pdf;
 
-					$this->fk_projet				= $obj->fk_project; // deprecated
+					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
 
 					$this->socid = $obj->fk_soc;
@@ -708,7 +708,7 @@ class Contrat extends CommonObject
 
 					$this->db->free($resql);
 
-					// Retreive all extrafields
+					// Retrieve all extrafields
 					// fetch optionals attributes and labels
 					$this->fetch_optionals();
 
@@ -1381,10 +1381,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param	string		$desc            	Description de la ligne
-	 *  @param  float		$pu_ht              Prix unitaire HT
-	 *  @param  int			$qty             	Quantite
-	 *  @param  float		$txtva           	Taux tva
+	 *  @param	string		$desc            	Description of line
+	 *  @param  float		$pu_ht              Unit price net
+	 *  @param  int			$qty             	Quantity
+	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit
@@ -1421,9 +1421,18 @@ class Contrat extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
-				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
+
+			$txtva = price2num($txtva);
+
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 			$remise_percent = price2num($remise_percent);
@@ -1456,15 +1465,7 @@ class Contrat extends CommonObject
 
 			$this->db->begin();
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-
-			// Clean vat code
-			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg))
-			{
-				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
-			}
+			$localtaxes_type = getLocalTaxesFromRate($txtva.($vat_src_code ? ' ('.$vat_src_code.')' : ''), 0, $this->societe, $mysoc);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -3003,6 +3004,7 @@ class ContratLigne extends CommonObjectLine
 
 		$this->oldcopy = new ContratLigne($this->db);
 		$this->oldcopy->fetch($this->id);
+        $this->oldcopy->fetch_optionals();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

@@ -233,7 +233,7 @@ class Utils
 
 		$outputdir = $conf->admin->dir_output.'/backup';
 		$result = dol_mkdir($outputdir);
-
+		$errormsg = '';
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli')
@@ -296,7 +296,6 @@ class Utils
 				$paramclear .= ' -p"'.str_replace(array('"', '`'), array('\"', '\`'), $dolibarr_main_db_pass).'"';
 			}
 
-			$errormsg = '';
 			$handle = '';
 
 			// Start call method to execute dump
@@ -383,6 +382,8 @@ class Utils
 			{
 				// Get 2048 first chars of error message.
 				$errormsg = fgets($handle, 2048);
+				//$ok=0;$errormsg='';  To force error
+
 				// Close file
 				if ($compression == 'none') fclose($handle);
 				if ($compression == 'gz')   gzclose($handle);
@@ -492,7 +493,7 @@ class Utils
 		}
 
 		// Clean old files
-		if ($keeplastnfiles > 0)
+		if (!$errormsg && $keeplastnfiles > 0)
 		{
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
@@ -504,7 +505,7 @@ class Utils
 			}
 		}
 
-		return 0;
+		return ($errormsg ? -1 : 0);
 	}
 
 

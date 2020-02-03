@@ -108,6 +108,10 @@ class ChargeSociales extends CommonObject
 	public $fk_project;
 
 
+	const STATUS_UNPAID = 0;
+	const STATUS_PAID = 1;
+
+
     /**
      * Constructor
      *
@@ -495,43 +499,27 @@ class ChargeSociales extends CommonObject
         // Load translation files required by the page
         $langs->loadLangs(array("customers","bills"));
 
-        if ($mode == 0 || $mode == 1)
+        // We reinit status array to force to redefine them because label may change according to properties values.
+        $this->labelStatus = array();
+        $this->labelStatusShort = array();
+
+        if (empty($this->labelStatus) || empty($this->labelStatusShort))
         {
-            if ($status ==  0) return $langs->trans("Unpaid");
-            elseif ($status ==  1) return $langs->trans("Paid");
-        }
-        elseif ($mode == 2)
-        {
-            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
-        }
-        elseif ($mode == 3)
-        {
-            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6');
-        }
-        elseif ($mode == 4)
-        {
-            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
-        }
-        elseif ($mode == 5)
-        {
-            if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
-        }
-        elseif ($mode == 6)
-        {
-            if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+        	global $langs;
+        	//$langs->load("mymodule");
+        	$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
+        	$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
+        	if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+        	$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
+        	$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Paid');
+        	if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
         }
 
-        else return "Error, mode/status not found";
+        $statusType = 'status1';
+        if ($status == 0 && $alreadypaid > 0) $statusType = 'status3';
+        if ($status == 1) $statusType = 'status6';
+
+        return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
 

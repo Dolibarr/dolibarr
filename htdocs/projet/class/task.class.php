@@ -156,6 +156,7 @@ class Task extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
 		$sql .= "fk_projet";
 		$sql .= ", ref";
+		$sql.= ", entity";
 		$sql .= ", fk_task_parent";
 		$sql .= ", label";
 		$sql .= ", description";
@@ -168,6 +169,7 @@ class Task extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= $this->fk_project;
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
+		$sql.= ", ".$conf->entity;
 		$sql .= ", ".$this->fk_task_parent;
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";

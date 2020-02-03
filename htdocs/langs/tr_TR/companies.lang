@@ -57,6 +57,7 @@ NatureOfThirdParty=Üçüncü partinin yapısı
 NatureOfContact=Nature of Contact
 Address=Adresi
 State=Eyaleti/İli
+StateCode=State/Province code
 StateShort=Durum
 Region=Bölgesi
 Region-State=Bölge - Eyalet

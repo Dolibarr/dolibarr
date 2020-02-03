@@ -6,7 +6,7 @@ TMenuTools=ابزارها
 ToolsDesc=همۀ ابزارهائی که در سایر فهرست‌ها نیامده‌اند این‌جا گروه‌بندی شده‌اند. <br> همۀ ابزارها از فهرست سمت راست در دسترس هستند
 Birthday=تولد
 BirthdayDate=تاریخ تولد
-DateToBirth=تاریخ تولد
+DateToBirth=Birth date
 BirthdayAlertOn=اعلان تولد فعال است
 BirthdayAlertOff=اعلان تولد غیرفعال است
 TransKey=ترجمۀ کلیدواژۀ TransKey
@@ -56,7 +56,7 @@ Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
 Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
 Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
 Notify_CONTRACT_VALIDATE=قرارداد معتبر
-Notify_FICHEINTER_VALIDATE=مداخله اعتبار
+Notify_FICHINTER_VALIDATE=مداخله اعتبار
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_SENTBYMAIL=مداخله با پست
 Notify_SHIPPING_VALIDATE=حمل و نقل معتبر
@@ -252,6 +252,7 @@ ThirdPartyCreatedByEmailCollector=Third party created by email collector from em
 ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
 ExportsArea=منطقه صادرات

@@ -327,28 +327,6 @@ class Paiement extends CommonObject
 
 							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
 
-                            /* Why this ? We can remove i think.
-                            // If there is withdrawals request to do and not done yet on the invoice the payment is on, we wait before closing.
-                            $mustwait=0;
-                            $sqlrequest ="SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
-                            $sqlrequest.="WHERE fk_facture = ".$invoice->id." AND traite = 0";
-                            ...
-
-                            $listofpayments=$invoice->getListOfPayments();
-                            foreach($listofpayments as $paym)
-                            {
-                                // This payment on invoice $invoice might be the one we record or another one
-                                if ($paym['type']=='PRE')
-                                {
-                                    if (! empty($conf->prelevement->enabled))
-                                    {
-                                        // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
-
-                                    }
-                                }
-                            }
-                            */
-
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
 								Facture::TYPE_STANDARD,

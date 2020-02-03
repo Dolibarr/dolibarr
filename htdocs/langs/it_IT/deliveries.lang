@@ -2,7 +2,7 @@
 Delivery=Consegna
 DeliveryRef=Consegna di riferimento
 DeliveryCard=Carta di ricevuta
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Ricevuta di consegna
 DeliveryDate=Data di consegna
 CreateDeliveryOrder=Genera ricevuta di consegna
 DeliveryStateSaved=Stato di consegna salvato

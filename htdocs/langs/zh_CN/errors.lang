@@ -223,6 +223,7 @@ ErrorSearchCriteriaTooSmall=Search criteria too small.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=为此成员设置了密码。但是，未创建任何用户帐户。因此，此密码已存储，但无法用于登录Dolibarr。它可以由外部模块/接口使用，但如果您不需要为成员定义任何登录名或密码，则可以从成员模块设置中禁用“管理每个成员的登录名”选项。如果您需要管理登录但不需要任何密码，则可以将此字段保留为空以避免此警告。注意：如果成员链接到用户，则电子邮件也可用作登录。

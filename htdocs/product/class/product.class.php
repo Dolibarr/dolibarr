@@ -840,9 +840,11 @@ class Product extends CommonObject
         $this->height = price2num($this->height);
         $this->height_units = trim($this->height_units);
         // set unit not defined
-        if ($this->length_units) { $this->width_units = $this->length_units; // Not used yet
+        if (is_numeric($this->length_units)) {
+        	$this->width_units = $this->length_units;    // Not used yet
         }
-        if ($this->length_units) { $this->height_units = $this->length_units; // Not used yet
+        if (is_numeric($this->length_units)) {
+        	$this->height_units = $this->length_units;    // Not used yet
         }
         // Automated compute surface and volume if not filled
         if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
@@ -1597,26 +1599,25 @@ class Product extends CommonObject
      * @param	Societe		$thirdparty_seller		Seller
      * @param	Societe		$thirdparty_buyer		Buyer
      * @param	int			$pqp					Id of product per price if a selection was done of such a price
-     * @return	array								Array of price information
+     * @return	array								Array of price information array('pu_ht'=> , 'pu_ttc'=> , 'tva_tx'=>'X.Y (code)', ...), 'tva_npr'=>0, ...)
      * @see get_buyprice(), find_min_price_product_fournisseur()
      */
     public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
     {
     	global $conf, $db;
 
-    			// Update if prices fields are defined
-				$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
-				$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
-				if (empty($tva_tx)) $tva_npr = 0;
+    	// Update if prices fields are defined
+    	$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
+    	$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
+    	if (empty($tva_tx)) $tva_npr = 0;
 
-				$pu_ht = $this->price;
-				$pu_ttc = $this->price_ttc;
-				$price_min = $this->price_min;
-				$price_base_type = $this->price_base_type;
+    	$pu_ht = $this->price;
+    	$pu_ttc = $this->price_ttc;
+    	$price_min = $this->price_min;
+    	$price_base_type = $this->price_base_type;
 
-				// If price per segment
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($thirdparty_buyer->price_level))
-				{
+    	// If price per segment
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($thirdparty_buyer->price_level)) {
 			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
@@ -1628,9 +1629,8 @@ class Product extends CommonObject
 				if (empty($tva_tx)) $tva_npr = 0;
 			}
 		}
-				// If price per customer
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-				{
+		// If price per customer
+		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);
@@ -1650,9 +1650,8 @@ class Product extends CommonObject
 				}
 			}
 		}
-				// If price per quantity
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
-				{
+		// If price per quantity
+		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 			if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
 			{
 				// Search price into product_price_by_qty from $this->id
@@ -1672,9 +1671,8 @@ class Product extends CommonObject
 				}
 			}
 		}
-				// If price per quantity and customer
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-				{
+		// If price per quantity and customer
+		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
 			{
 				// Search price into product_price_by_qty from $this->id
@@ -1877,6 +1875,12 @@ class Product extends CommonObject
         if (empty($newnpr)) {
             $newnpr = 0;
         }
+        if (empty($newminprice)) {
+        	$newminprice = 0;
+        }
+        if (empty($newminprice)) {
+        	$newminprice=0;
+        }
 
         // Check parameters
         if ($newvat == '') {
@@ -2047,9 +2051,11 @@ class Product extends CommonObject
      * @param  string $ref_ext           Ref ext of product/service to load
      * @param  string $barcode           Barcode of product/service to load
      * @param  int    $ignore_expression Ignores the math expression for calculating price and uses the db value instead
-     * @return int                         <0 if KO, 0 if not found, >0 if OK
+     * @param  int    $ignore_price_load Load product without loading prices arrays (when we are sure we don't need them)
+     * @param  int    $ignore_lang_load  Load product without loading language arrays (when we are sure we don't need them)
+     * @return int                       <0 if KO, 0 if not found, >0 if OK
      */
-    public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0)
+    public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -2178,12 +2184,12 @@ class Product extends CommonObject
                 $this->fetch_optionals();
 
                 // multilangs
-                if (!empty($conf->global->MAIN_MULTILANGS)) {
+                if (!empty($conf->global->MAIN_MULTILANGS) && empty($ignore_lang_load)) {
                     $this->getMultiLangs();
                 }
 
                 // Load multiprices array
-                if (!empty($conf->global->PRODUIT_MULTIPRICES))                // prices per segment
+                if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($ignore_price_load))                // prices per segment
                 {
                     for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
                     {
@@ -2251,11 +2257,11 @@ class Product extends CommonObject
                         }
                     }
                 }
-                elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))            // prices per customers
+                elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && empty($ignore_price_load))            // prices per customers
                 {
                     // Nothing loaded by default. List may be very long.
                 }
-                elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))    // prices per quantity
+                elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && empty($ignore_price_load))    // prices per quantity
                 {
                     $sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
                     $sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
@@ -2306,7 +2312,7 @@ class Product extends CommonObject
                         return -1;
                     }
                 }
-                elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))    // prices per customer and quantity
+                elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) && empty($ignore_price_load))    // prices per customer and quantity
                 {
                     for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
                     {
@@ -2678,7 +2684,7 @@ class Product extends CommonObject
      *  Charge tableau des stats expedition client pour le produit/service
      *
      * @param   int         $socid                  Id societe pour filtrer sur une societe
-     * @param   string      $filtrestatut           Id statut pour filtrer sur un statut
+     * @param   string      $filtrestatut           [=''] Ids order status separated by comma
      * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
      * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
      * @return  int         <0 if KO, >0 if OK (Tableau des stats)
@@ -2766,7 +2772,7 @@ class Product extends CommonObject
         // phpcs:enable
         global $conf, $user;
 
-        $sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
+        $sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_suppliers, COUNT(DISTINCT cf.rowid) as nb,";
         $sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
         $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd";
         $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -2787,7 +2793,7 @@ class Product extends CommonObject
         $result = $this->db->query($sql);
         if ($result) {
             $obj = $this->db->fetch_object($result);
-            $this->stats_reception['suppliers'] = $obj->nb_customers;
+            $this->stats_reception['suppliers'] = $obj->nb_suppliers;
             $this->stats_reception['nb'] = $obj->nb;
             $this->stats_reception['rows'] = $obj->nb_rows;
             $this->stats_reception['qty'] = $obj->qty ? $obj->qty : 0;
@@ -4238,10 +4244,7 @@ class Product extends CommonObject
                 $label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
             }
         }
-        //if ($this->type == Product::TYPE_SERVICE)
-        //{
-            //
-        //}
+
         if (!empty($conf->accounting->enabled) && $this->status) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
@@ -4254,6 +4257,11 @@ class Product extends CommonObject
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
         }
+        if (isset($this->status) && isset($this->status_buy)) {
+        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
+        	$label.= ' '.$this->getLibStatut(5, 1);
+        }
+
         if (!empty($this->entity)) {
             $tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
             if ($this->nbphoto > 0) { $label .= '<br>'.$tmpphoto;
@@ -4668,6 +4676,7 @@ class Product extends CommonObject
 		$stock_commande_fournisseur = 0;
 		$stock_sending_client = 0;
 		$stock_reception_fournisseur = 0;
+		$stock_inproduction = 0;
 
 		if (!empty($conf->commande->enabled))
 		{
@@ -4693,34 +4702,49 @@ class Product extends CommonObject
 			$result = $this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
-
+		}
+		if (!empty($conf->fournisseur->enabled) && empty($conf->reception->enabled))
+		{
 			$result = $this->load_stats_reception(0, '4', 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
+		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
+		{
+			$result = $this->load_stats_reception(0, '4', 1);			// Use same tables than when module reception is not used.
+			if ($result < 0) dol_print_error($this->db, $this->error);
+			$stock_reception_fournisseur = $this->stats_reception['qty'];
+		}
+		if (!empty($conf->mrp->enabled))
+		{
+			// TODO
+			$stock_inproduction = 0;
+		}
+
+		$this->stock_theorique = $this->stock_reel + $stock_inproduction;
 
 		// Stock decrease mode
 		if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-			$this->stock_theorique = $this->stock_reel - $stock_commande_client + $stock_sending_client;
+			$this->stock_theorique -= ($stock_commande_client - $stock_sending_client);
 		}
-		if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-			$this->stock_theorique = $this->stock_reel;
+		elseif (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
+			$this->stock_theorique += 0;
 		}
-		if (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-			$this->stock_theorique = $this->stock_reel - $stock_commande_client;
+		elseif (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			$this->stock_theorique -= $stock_commande_client;
 		}
 		// Stock Increase mode
         if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-            $this->stock_theorique += $stock_commande_fournisseur - $stock_reception_fournisseur;
+            $this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
         }
-		if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-			$this->stock_theorique += $stock_commande_fournisseur - $stock_reception_fournisseur;
+		elseif (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
-		if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+		elseif (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
 			$this->stock_theorique -= $stock_reception_fournisseur;
 		}
-		if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
-			$this->stock_theorique += $stock_commande_fournisseur - $stock_reception_fournisseur;
+		elseif (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
 
 		if (!is_object($hookmanager)) {
