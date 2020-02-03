@@ -53,7 +53,7 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number {@min 0}
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
-     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
      *
      * @url     GET dictionary/ordering_methods
      *
