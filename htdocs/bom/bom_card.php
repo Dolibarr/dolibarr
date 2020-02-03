@@ -155,6 +155,8 @@ if (empty($reshook))
 
 		if (!$error)
 		{
+			$lastposition = 0;
+
     		$bomline = new BOMLine($db);
     		$bomline->fk_bom = $id;
     		$bomline->fk_product = $idprod;
@@ -162,6 +164,12 @@ if (empty($reshook))
     		$bomline->qty_frozen = (int) $qty_frozen;
     		$bomline->disable_stock_change = (int) $disable_stock_change;
     		$bomline->efficiency = $efficiency;
+
+    		// Rang to use
+   			$rangmax = $object->line_max(0);
+   			$ranktouse = $rangmax + 1;
+
+   			$bomline->position = ($ranktouse + 1);
 
     		$result = $bomline->create($user);
     		if ($result <= 0)

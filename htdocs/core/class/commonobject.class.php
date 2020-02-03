@@ -2744,10 +2744,13 @@ abstract class CommonObject
 	public function line_max($fk_parent_line = 0)
 	{
         // phpcs:enable
+        $positionfield = 'rang';
+		if ($this->table_element = 'bom') $positionfield = 'position';
+
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
 		{
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql .= ' AND fk_parent_line = '.$fk_parent_line;
 
@@ -2769,7 +2772,7 @@ abstract class CommonObject
 		// If not, search the last rang of element
 		else
 		{
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
