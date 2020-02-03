@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
@@ -35,9 +35,9 @@ if (!$user->admin) accessforbidden();
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'alpha');
 
-$langcode = GETPOST('langcode', 'alpha');
-$transkey = GETPOST('transkey', 'alpha');
-$transvalue = GETPOST('transvalue', 'alpha');
+$langcode = GETPOST('langcode', 'alphanohtml');
+$transkey = GETPOST('transkey', 'alphanohtml');
+$transvalue = GETPOST('transvalue', 'none');
 
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'overwrite';
@@ -190,7 +190,6 @@ if ($action == 'delete')
 
 
 
-
 /*
  * View
  */
@@ -231,9 +230,9 @@ print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("Current
 
 print '<br>';
 
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 if ($langcode)        $param.='&langcode='.urlencode($langcode);
 if ($transkey)        $param.='&transkey='.urlencode($transkey);
 if ($transvalue)      $param.='&transvalue='.urlencode($transvalue);
@@ -348,11 +347,11 @@ if ($mode == 'overwrite')
     		*/
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
-    			print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$obj->transvalue.'">';
+    			print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
     		}
     		else
     		{
-    			print $obj->transvalue;
+    			print dol_escape_htmltag($obj->transvalue);
     		}
     		print '</td>';
 
