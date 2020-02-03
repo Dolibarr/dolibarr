@@ -6846,7 +6846,7 @@ class TCPDF {
 			}
 			// check if file exist and it is valid
 			if (!@TCPDF_STATIC::file_exists($file)) {
-				return false;
+				//return false;
 			}
 			if (($imsize = @getimagesize($file)) === FALSE) {
 				if (in_array($file, $this->imagekeys)) {
