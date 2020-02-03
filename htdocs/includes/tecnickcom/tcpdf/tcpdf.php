@@ -6878,7 +6878,9 @@ class TCPDF {
 			}
 			// check if file exist and it is valid
 			if (!@TCPDF_STATIC::file_exists($file)) {
-				return false;
+				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
+				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+				//return false;	
 			}
 			if (($imsize = @getimagesize($file)) === FALSE) {
 				if (in_array($file, $this->imagekeys)) {
@@ -7810,6 +7812,8 @@ class TCPDF {
 			'bufferlen',
 			'buffer',
 			'cached_files',
+// @CHANGE DOL
+//			'imagekeys',
 			'sign',
 			'signature_data',
 			'signature_max_length',
