@@ -682,18 +682,18 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe card of a company payment mode (with option to create it on Stripe if not linked yet)
+	 * Get the Stripe card of a company payment mode (option to create it on Stripe if not linked yet is no more available on new Stripe API)
 	 *
 	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
-	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
+	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card. Deprecated with new Stripe API and SCA.
 	 * @return 	\Stripe\StripeCard|\Stripe\PaymentMethod|null 			Stripe Card or null if not found
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		$card = null;
 
@@ -756,27 +756,54 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
-					dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 							{
+								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard);
+								if (! $card)
+								{
+									$this->error = 'Creation of card on Stripe has failed';
+								}
 							}
 							else
 							{
-								// TODO
-								dol_syslog("Error: This case is not supported", LOG_ERR);
+								$connect = '';
+								if (!empty($stripeacc)) $connect = $stripeacc.'/';
+								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
+								if ($status)
+								{
+									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
+								}
+								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+
+								//dol_syslog("Error: This case is not supported", LOG_ERR);
+								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
 							}
 						} else {
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 							{
+								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
+								if (! $card)
+								{
+									$this->error = 'Creation of card on Stripe has failed';
+								}
 							}
 							else
 							{
-								// TODO
-								dol_syslog("Error: This case is not supported", LOG_ERR);
+								$connect = '';
+								if (!empty($stripeacc)) $connect = $stripeacc.'/';
+								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
+								if ($status)
+								{
+									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
+								}
+								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+
+								//dol_syslog("Error: This case is not supported", LOG_ERR);
+								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
 							}
 						}
 
@@ -793,10 +820,6 @@ class Stripe extends CommonObject
 							{
 								$this->error = $this->db->lasterror();
 							}
-						}
-						else
-						{
-							$this->error = 'Call to cu->source->create return empty card';
 						}
 					}
 					catch (Exception $e)
