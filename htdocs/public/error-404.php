@@ -21,7 +21,7 @@
     You requested a website or a page that does not exists.
 
     <br>
-    <?php print isset($_SERVER["HTTP_REFERER"])?'You come from '.$_SERVER["HTTP_REFERER"].'.':''; ?>
+    <?php print isset($_SERVER["HTTP_REFERER"])?'You come from '.htmlentities($_SERVER["HTTP_REFERER"]).'.':''; ?>
 
     <hr>
 
