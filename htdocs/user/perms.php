@@ -89,9 +89,13 @@ if (empty($reshook)) {
 	if ($action == 'addrights' && $caneditperms) {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
-		$edituser->addrights($rights, $module, '', $entity);
+		$result = $edituser->addrights($rights, $module, '', $entity);
+		if ($result < 0)
+		{
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
 
-		// Si on a touche a ses propres droits, on recharge
+		// If we are changing our own permissions, we reload
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -105,9 +109,13 @@ if (empty($reshook)) {
 	if ($action == 'delrights' && $caneditperms) {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
-		$edituser->delrights($rights, $module, '', $entity);
+		$result = $edituser->delrights($rights, $module, '', $entity);
+		if ($result < 0)
+		{
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
 
-		// Si on a touche a ses propres droits, on recharge
+		// If we are changing our own permissions, we reload
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
