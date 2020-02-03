@@ -964,10 +964,9 @@ class Adherent extends CommonObject
 	 *    @param    int		$isencrypted    0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
 	 *	  @param	int		$notrigger		1=Ne declenche pas les triggers
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
-	 * 	  @param  	int		$alreadyencrypted    	1 = password is already encrypted (0 by default)
 	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0, $alreadyencrypted = 0)
+	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
 	{
 		global $conf, $langs;
 
@@ -983,8 +982,7 @@ class Adherent extends CommonObject
 		}
 
 		// Crypt password
-		if ($alreadyencrypted != 1) $password_crypted = dol_hash($password);
-		else $password_crypted = $password;
+		$password_crypted = dol_hash($password);
 
 		$password_indatabase = '';
 		if (! $isencrypted)
@@ -1032,7 +1030,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0)
 					{
-						$result=$luser->setPassword($user, $this->pass, 0, 0, 1, 1);
+						$result=$luser->setPassword($user, $this->pass, 0, 0, 1);
 						if ($result < 0)
 						{
 							$this->error=$luser->error;

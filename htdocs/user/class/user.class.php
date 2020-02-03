@@ -1402,7 +1402,6 @@ class User extends CommonObject
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
 		$this->pass         = $member->pass;
-		$this->pass_indatabase_crypted = $member->pass_indatabase_crypted;
 		$this->address      = $member->address;
 		$this->zip          = $member->zip;
 		$this->town         = $member->town;
@@ -1418,9 +1417,7 @@ class User extends CommonObject
 		$result = $this->create($user);
 		if ($result > 0)
 		{
-			if(!$this->pass && $this->pass_indatabase_crypted) $newpass = $this->setPassword($user, $this->pass_indatabase_crypted, 0, 0, 0, 1);
-			else $newpass = $this->setPassword($user, $this->pass);
-
+			$newpass = $this->setPassword($user, $this->pass);
 			if (is_numeric($newpass) && $newpass < 0) $result = -2;
 
 			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
@@ -1855,10 +1852,9 @@ class User extends CommonObject
 	 *	@param	int		$changelater			1=Change password only after clicking on confirm email
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
-	 * 	@param  int		$alreadyencrypted    	1 = password is already encrypted (0 by default)
 	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $alreadyencrypted = 0)
+	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -1874,9 +1870,7 @@ class User extends CommonObject
 		}
 
 		// Crypt password
-		if ($alreadyencrypted != 1) $password_crypted = dol_hash($password);
-		else $password_crypted = $password;
-
+		$password_crypted = dol_hash($password);
 
 		// Mise a jour
 		if (!$changelater)
@@ -1919,10 +1913,7 @@ class User extends CommonObject
 
 						if ($result >= 0)
 						{
-							if ($alreadyencrypted != 1) $result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
-							else $result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1, 0, 1); // Dont encrypt the password cause is already encrypted
-
-
+							$result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
 							if ($result < 0)
 							{
 								$this->error = $adh->error;
