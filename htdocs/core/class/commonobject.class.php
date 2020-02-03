@@ -5334,13 +5334,13 @@ abstract class CommonObject
 			$form=new Form($this->db);
 		}
 
-		$val=$this->fields[$key];
+		if(empty($val)) $val=$this->fields[$key];
 
 		$out='';
         $type='';
         $param = array();
         $param['options']=array();
-        $size =$this->fields[$key]['size'];
+        $size = $val['size'];
         // Because we work on extrafields
         if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
             $param['options']=array($reg[1].':'.$reg[2]=>'N');
@@ -5358,24 +5358,24 @@ abstract class CommonObject
         } elseif(preg_match('/varchar/', $val['type'])) {
             $param['options']=array();
             $type ='varchar';
-        } elseif(is_array($this->fields[$key]['arrayofkeyval'])) {
-            $param['options']=$this->fields[$key]['arrayofkeyval'];
+        } elseif(is_array($val['arrayofkeyval'])) {
+            $param['options']=$val['arrayofkeyval'];
             $type ='select';
         } else {
             $param['options']=array();
-            $type =$this->fields[$key]['type'];
+            $type = $val['type'];
         }
 
-		$label=$this->fields[$key]['label'];
-		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
-		$default=$this->fields[$key]['default'];
-		$computed=$this->fields[$key]['computed'];
-		$unique=$this->fields[$key]['unique'];
-		$required=$this->fields[$key]['required'];
+		$label = $val['label'];
+		//$elementtype = $this->fields[$key]['elementtype'];	// Seems not used
+		$default = $val['default'];
+		$computed = $val['computed'];
+		$unique = $val['unique'];
+		$required = $val['required'];
 
-		$langfile=$this->fields[$key]['langfile'];
-		$list=$this->fields[$key]['list'];
-		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
+		$langfile = $val['langfile'];
+		$list = $val['list'];
+		$hidden = abs($val['visible']) != 1 ? 1 : 0;
 
 		$objectid = $this->id;
 
@@ -5517,7 +5517,7 @@ abstract class CommonObject
 			}
 
 			$out.='<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
-                if((! isset($this->fields[$key]['default'])) ||($this->fields[$key]['notnull']!=1))$out.='<option value="0">&nbsp;</option>';
+                if((! isset($val['default'])) ||($val['notnull']!=1))$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
 				if ((string) $key == '') continue;
