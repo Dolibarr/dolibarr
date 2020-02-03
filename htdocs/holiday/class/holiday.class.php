@@ -1665,7 +1665,7 @@ class Holiday extends CommonObject
 				{
 					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql.= " WHERE ((ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity IN (".getEntity('user')."))";
+					$sql.= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql.= " OR u.entity = 0)"; // Show always superadmin
 				}
 				else
@@ -1761,7 +1761,7 @@ class Holiday extends CommonObject
 				{
 					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql.= " WHERE ((ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity IN (".getEntity('user')."))";
+					$sql.= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql.= " OR u.entity = 0)"; // Show always superadmin
 				}
 				else
