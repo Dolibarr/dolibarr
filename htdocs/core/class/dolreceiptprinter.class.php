@@ -30,7 +30,8 @@
  * <dol_use_font_a>                                 Use font A of printer
  * <dol_use_font_b>                                 Use font B of printer
  * <dol_use_font_c>                                 Use font C of printer
- * <dol_bold> </dol_bold>                           Text Bold
+ * <dol_bold>                                       Text Bold
+ * <dol_bold_disabled>                              Disable Text Bold
  * <dol_double_height> </dol_double_height>         Text double height
  * <dol_double_width> </dol_double_width>           Text double width
  * <dol_underline> </dol_underline>                 Underline text
@@ -162,7 +163,7 @@ class dolReceiptPrinter extends Printer
             'dol_use_font_b',
             'dol_use_font_c',
             'dol_bold',
-            '/dol_bold',
+            'dol_bold_disabled',
             'dol_double_height',
             '/dol_double_height',
             'dol_double_width',
@@ -711,6 +712,12 @@ class dolReceiptPrinter extends Printer
                         break;
                     case 'DOL_USE_FONT_C':
                         $this->printer->setFont(Printer::FONT_C);
+                        break;
+					case 'DOL_BOLD':
+                        $this->printer->setEmphasis(true);
+                        break;
+					case 'DOL_BOLD_DISABLED':
+                        $this->printer->setEmphasis(false);
                         break;
                     default:
                         $this->printer->text($vals[$tplline]['tag']);
