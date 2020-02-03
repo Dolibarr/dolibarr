@@ -139,7 +139,8 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
+	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet).
+	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
 	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect

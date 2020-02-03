@@ -6497,7 +6497,7 @@ class Form
 	 *	@param  int		$translate		Translate and encode value
 	 *  @param	int		$width			Force width of select box. May be used only when using jquery couch. Example: 250, 95%
 	 *  @param	string	$moreattrib		Add more options on select component. Example: 'disabled'
-	 *  @param	string	$elemtype		Type of element we show ('category', ...)
+	 *  @param	string	$elemtype		Type of element we show ('category', ...). Will execute a formating function on it. To use in readonly mode if js component support HTML formatting.
 	 *  @param	string	$placeholder	String to use as placeholder
 	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
@@ -6552,7 +6552,7 @@ class Form
 							 	templateResult: formatResult,		/* For 4.0 */
 								// Specify format function for selected item
 								formatSelection: formatSelection,
-							 	templateResult: formatSelection		/* For 4.0 */
+							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
 			}
@@ -8034,17 +8034,47 @@ class Form
 	/**
 	 * Output the component to make advanced search criteries
 	 *
-	 * @param	array		$arrayofcriterias			Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
-	 * @param	array		$search_component_params	Array of selected search criterias
-	 * @return	string									HTML component for advanced search
+	 * @param	array		$arrayofcriterias			          Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
+	 * @param	array		$search_component_params	          Array of selected search criterias
+	 * @param   array       $arrayofinputfieldsalreadyoutput      Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @return	string									          HTML component for advanced search
 	 */
-	public function searchComponent($arrayofcriterias, $search_component_params)
+	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array())
 	{
+	    global $conf, $langs;
+
 		$ret = '';
 
-
-
-
+		$ret .= '<div class="nowrap centpercent">';
+		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor paddingright">';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter" title="Filter" id="idsubimgproductdistribution"></span>';
+		$ret .= $langs->trans("Filters");
+		$ret .= '</a>';
+		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$ret .= '<div name="search_component_params" class="search_component_params inline-block centpercent">';
+		$ret .= '<input type="text" name="search_component_params_input" class="search_component_params_input" placeholder="'.$langs->trans("Search").'" value="'.GETPOST("search_component_params_input").'">';
+		$ret .= '</div>';
+		foreach($arrayofcriterias as $criterias) {
+		    foreach($criterias as $criteriafamilykey => $criteriafamilyval) {
+		    	if (in_array('search_'.$criteriafamilykey, $arrayofinputfieldsalreadyoutput)) continue;
+		        if (in_array($criteriafamilykey, array('rowid', 'ref_ext', 'entity', 'extraparams'))) continue;
+		        if (in_array($criteriafamilyval['type'], array('date', 'datetime', 'timestamp'))) {
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_start">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_startyear">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_startmonth">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_startday">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_end">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_endyear">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_endmonth">';
+		            $ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'_endday">';
+		        }
+		        else {
+					$ret .= '<input type="hidden" name="search_'.$criteriafamilykey.'">';
+		        }
+		    }
+		}
+        $ret .= '</div>';
 
 
 		return $ret;

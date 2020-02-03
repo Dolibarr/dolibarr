@@ -1420,16 +1420,16 @@ class User extends CommonObject
 		$result = $this->create($user);
 		if ($result > 0)
 		{
-			if (! empty($this->pass)) {	// If a clear password was received (this situation should not happen anymore now), we use it to save it into database
+			if (!empty($this->pass)) {	// If a clear password was received (this situation should not happen anymore now), we use it to save it into database
 				$newpass = $this->setPassword($user, $this->pass);
 				if (is_numeric($newpass) && $newpass < 0) $result = -2;
-			} elseif (! empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
+			} elseif (!empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".$this->db->escape($this->pass_crypted)."'";
 				$sql .= " WHERE rowid=".$this->id;
 
 				$resql = $this->db->query($sql);
-				if (! $resql)
+				if (!$resql)
 				{
 					$result = -1;
 				}

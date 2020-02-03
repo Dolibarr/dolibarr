@@ -1061,7 +1061,6 @@ if ($resql)
                 {
                     print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
                 }
-				print empty($obj->increment) ? '' : ' ('.$obj->increment.')';
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);

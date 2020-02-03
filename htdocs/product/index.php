@@ -40,7 +40,7 @@ if ($type == '' && !$user->rights->service->lire) $type = '0'; // Force global p
 // Security check
 if ($type == '0') $result = restrictedArea($user, 'produit');
 elseif ($type == '1') $result = restrictedArea($user, 'service');
-else $result = restrictedArea($user, 'produit|service');
+else $result = restrictedArea($user, 'produit|service|expedition');
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
@@ -117,77 +117,80 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 /*
  * Number of products and/or services
  */
-$prodser = array();
-$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
-$prodser[1][0] = $prodser[1][1] = $prodser[1][2] = $prodser[1][3] = 0;
-
-$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql .= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
-$result = $db->query($sql);
-while ($objp = $db->fetch_object($result))
+if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
 {
-	$status = 3; // On sale + On purchase
-	if (!$objp->tosell && !$objp->tobuy) $status = 0; // Not on sale, not on purchase
-	if ($objp->tosell && !$objp->tobuy) $status = 1; // On sale only
-	if (!$objp->tosell && $objp->tobuy) $status = 2; // On purchase only
-	$prodser[$objp->fk_product_type][$status] = $objp->total;
-	if ($objp->tosell) $prodser[$objp->fk_product_type]['sell'] += $objp->total;
-	if ($objp->tobuy)  $prodser[$objp->fk_product_type]['buy'] += $objp->total;
-	if (!$objp->tosell && !$objp->tobuy)  $prodser[$objp->fk_product_type]['none'] += $objp->total;
-}
+	$prodser = array();
+	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
+	$prodser[1][0] = $prodser[1][1] = $prodser[1][2] = $prodser[1][3] = 0;
 
-if ($conf->use_javascript_ajax)
-{
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-	print '<tr><td class="center" colspan="2">';
-
-	$SommeA = $prodser[0]['sell'];
-	$SommeB = $prodser[0]['buy'];
-	$SommeC = $prodser[0]['none'];
-	$SommeD = $prodser[1]['sell'];
-	$SommeE = $prodser[1]['buy'];
-	$SommeF = $prodser[1]['none'];
-	$total = 0;
-	$dataval = array();
-	$datalabels = array();
-	$i = 0;
-
-	$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
-	$dataseries = array();
-	if (!empty($conf->product->enabled))
+	$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
+	// Add where from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+	$sql .= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
+	$result = $db->query($sql);
+	while ($objp = $db->fetch_object($result))
 	{
-		$dataseries[] = array($langs->trans("ProductsOnSale"), round($SommeA));
-		$dataseries[] = array($langs->trans("ProductsOnPurchase"), round($SommeB));
-		$dataseries[] = array($langs->trans("ProductsNotOnSell"), round($SommeC));
-	}
-	if (!empty($conf->service->enabled))
-	{
-		$dataseries[] = array($langs->trans("ServicesOnSale"), round($SommeD));
-		$dataseries[] = array($langs->trans("ServicesOnPurchase"), round($SommeE));
-		$dataseries[] = array($langs->trans("ServicesNotOnSell"), round($SommeF));
+		$status = 3; // On sale + On purchase
+		if (!$objp->tosell && !$objp->tobuy) $status = 0; // Not on sale, not on purchase
+		if ($objp->tosell && !$objp->tobuy) $status = 1; // On sale only
+		if (!$objp->tosell && $objp->tobuy) $status = 2; // On purchase only
+		$prodser[$objp->fk_product_type][$status] = $objp->total;
+		if ($objp->tosell) $prodser[$objp->fk_product_type]['sell'] += $objp->total;
+		if ($objp->tobuy)  $prodser[$objp->fk_product_type]['buy'] += $objp->total;
+		if (!$objp->tosell && !$objp->tobuy)  $prodser[$objp->fk_product_type]['none'] += $objp->total;
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-	$dolgraph = new DolGraph();
-	$dolgraph->SetData($dataseries);
-	$dolgraph->setShowLegend(1);
-	$dolgraph->setShowPercent(0);
-	$dolgraph->SetType(array('pie'));
-	$dolgraph->setWidth('100%');
-	$dolgraph->draw('idgraphstatus');
-	print $dolgraph->show($total ? 0 : 1);
+	if ($conf->use_javascript_ajax)
+	{
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+		print '<tr><td class="center" colspan="2">';
 
-	print '</td></tr>';
-	print '</table>';
-	print '</div>';
+		$SommeA = $prodser[0]['sell'];
+		$SommeB = $prodser[0]['buy'];
+		$SommeC = $prodser[0]['none'];
+		$SommeD = $prodser[1]['sell'];
+		$SommeE = $prodser[1]['buy'];
+		$SommeF = $prodser[1]['none'];
+		$total = 0;
+		$dataval = array();
+		$datalabels = array();
+		$i = 0;
+
+		$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
+		$dataseries = array();
+		if (!empty($conf->product->enabled))
+		{
+			$dataseries[] = array($langs->trans("ProductsOnSale"), round($SommeA));
+			$dataseries[] = array($langs->trans("ProductsOnPurchase"), round($SommeB));
+			$dataseries[] = array($langs->trans("ProductsNotOnSell"), round($SommeC));
+		}
+		if (!empty($conf->service->enabled))
+		{
+			$dataseries[] = array($langs->trans("ServicesOnSale"), round($SommeD));
+			$dataseries[] = array($langs->trans("ServicesOnPurchase"), round($SommeE));
+			$dataseries[] = array($langs->trans("ServicesNotOnSell"), round($SommeF));
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowPercent(0);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->setWidth('100%');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($total ? 0 : 1);
+
+		print '</td></tr>';
+		print '</table>';
+		print '</div>';
+	}
 }
 
 
@@ -270,120 +273,123 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Latest modified products
  */
-$max = 15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
-$sql .= " p.entity,";
-$sql .= " p.tms as datem";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
-if ($type != '') $sql .= " AND p.fk_product_type = ".$type;
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql .= $db->order("p.tms", "DESC");
-$sql .= $db->plimit($max, 0);
-
-//print $sql;
-$result = $db->query($sql);
-if ($result)
+if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
 {
-	$num = $db->num_rows($result);
+	$max = 15;
+	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
+	$sql .= " p.entity,";
+	$sql .= " p.tms as datem";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
+	if ($type != '') $sql .= " AND p.fk_product_type = ".$type;
+	// Add where from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+	$sql .= $db->order("p.tms", "DESC");
+	$sql .= $db->plimit($max, 0);
 
-	$i = 0;
-
-	if ($num > 0)
+	//print $sql;
+	$result = $db->query($sql);
+	if ($result)
 	{
-		$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
-		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts", $max);
-		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
+		$num = $db->num_rows($result);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		$i = 0;
 
-		$colnb = 2;
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
-
-		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-		print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-		print '</tr>';
-
-		while ($i < $num)
+		if ($num > 0)
 		{
-			$objp = $db->fetch_object($result);
+			$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
+			if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts", $max);
+			if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
 
-			$product_static->id = $objp->rowid;
-			$product_static->ref = $objp->ref;
-			$product_static->label = $objp->label;
-			$product_static->type = $objp->fk_product_type;
-			$product_static->entity = $objp->entity;
-			$product_static->status = $objp->tosell;
-			$product_static->status_buy = $objp->tobuy;
-			$product_static->status_batch = $objp->tobatch;
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
 
-			//Multilangs
-			if (!empty($conf->global->MAIN_MULTILANGS))
+			$colnb = 2;
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
+
+			print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+			print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+			print '</tr>';
+
+			while ($i < $num)
 			{
-				$sql = "SELECT label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-				$sql .= " WHERE fk_product=".$objp->rowid;
-				$sql .= " AND lang='".$langs->getDefaultLang()."'";
+				$objp = $db->fetch_object($result);
 
-				$resultd = $db->query($sql);
-				if ($resultd)
+				$product_static->id = $objp->rowid;
+				$product_static->ref = $objp->ref;
+				$product_static->label = $objp->label;
+				$product_static->type = $objp->fk_product_type;
+				$product_static->entity = $objp->entity;
+				$product_static->status = $objp->tosell;
+				$product_static->status_buy = $objp->tobuy;
+				$product_static->status_batch = $objp->tobatch;
+
+				//Multilangs
+				if (!empty($conf->global->MAIN_MULTILANGS))
 				{
-					$objtp = $db->fetch_object($resultd);
-					if ($objtp && $objtp->label != '') $objp->label = $objtp->label;
+					$sql = "SELECT label";
+					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+					$sql .= " WHERE fk_product=".$objp->rowid;
+					$sql .= " AND lang='".$langs->getDefaultLang()."'";
+
+					$resultd = $db->query($sql);
+					if ($resultd)
+					{
+						$objtp = $db->fetch_object($resultd);
+						if ($objtp && $objtp->label != '') $objp->label = $objtp->label;
+					}
 				}
-			}
 
 
-			print '<tr class="oddeven">';
-			print '<td class="nowrap">';
-			print $product_static->getNomUrl(1, '', 16);
-			print "</td>\n";
-			print '<td>'.dol_trunc($objp->label, 32).'</td>';
-			print "<td>";
-			print dol_print_date($db->jdate($objp->datem), 'day');
-			print "</td>";
-			// Sell price
-			if (empty($conf->global->PRODUIT_MULTIPRICES))
-			{
-                if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
-                {
-                	$product = new Product($db);
-                	$product->fetch($objp->rowid);
-                    $priceparser = new PriceParser($db);
-                    $price_result = $priceparser->parseProduct($product);
-                    if ($price_result >= 0) {
-                        $objp->price = $price_result;
-                    }
-                }
-				print '<td class="nowrap right">';
-    			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-    			else print price($objp->price).' '.$langs->trans("HT");
-    			print '</td>';
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
+				print $product_static->getNomUrl(1, '', 16);
+				print "</td>\n";
+				print '<td>'.dol_trunc($objp->label, 32).'</td>';
+				print "<td>";
+				print dol_print_date($db->jdate($objp->datem), 'day');
+				print "</td>";
+				// Sell price
+				if (empty($conf->global->PRODUIT_MULTIPRICES))
+				{
+	                if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
+	                {
+	                	$product = new Product($db);
+	                	$product->fetch($objp->rowid);
+	                    $priceparser = new PriceParser($db);
+	                    $price_result = $priceparser->parseProduct($product);
+	                    if ($price_result >= 0) {
+	                        $objp->price = $price_result;
+	                    }
+	                }
+					print '<td class="nowrap right">';
+	    			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+	    			else print price($objp->price).' '.$langs->trans("HT");
+	    			print '</td>';
+				}
+				print '<td class="right nowrap width25"><span class="statusrefsell">';
+				print $product_static->LibStatut($objp->tosell, 3, 0);
+				print "</span></td>";
+	            print '<td class="right nowrap width25"><span class="statusrefbuy">';
+	            print $product_static->LibStatut($objp->tobuy, 3, 1);
+	            print "</span></td>";
+				print "</tr>\n";
+				$i++;
 			}
-			print '<td class="right nowrap width25"><span class="statusrefsell">';
-			print $product_static->LibStatut($objp->tosell, 3, 0);
-			print "</span></td>";
-            print '<td class="right nowrap width25"><span class="statusrefbuy">';
-            print $product_static->LibStatut($objp->tobuy, 3, 1);
-            print "</span></td>";
-			print "</tr>\n";
-			$i++;
+
+			$db->free($result);
+
+			print "</table>";
+			print '</div>';
+			print '<br>';
 		}
-
-		$db->free($result);
-
-		print "</table>";
-		print '</div>';
-		print '<br>';
 	}
-}
-else
-{
-	dol_print_error($db);
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 

@@ -129,3 +129,4 @@ UPDATE llx_c_forme_juridique set libelle = 'SRL - Société à responsabilité l
 ALTER TABLE llx_c_country ADD COLUMN eec integer;
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI','UK');
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG18-ASSOC', 'French foundation chart of accounts 2018', 1);

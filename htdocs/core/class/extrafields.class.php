@@ -208,7 +208,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  int				$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price','phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price','phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -232,6 +232,7 @@ class ExtraFields
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
 
+		if ($type == 'separate') { $unique = 0; $required = 0; }	// Force unique and not required if this is a separator field to avoid troubles.
 		if ($elementtype == 'thirdparty') $elementtype = 'societe';
 		if ($elementtype == 'contact') $elementtype = 'socpeople';
 

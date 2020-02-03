@@ -128,7 +128,7 @@ class Societe extends CommonObject
 	public $fields = array(
 		'rowid'         =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'nom'           =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'AliasNames', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'note_public'   =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>60),
 		'note_private'  =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>61),
@@ -3779,6 +3779,7 @@ class Societe extends CommonObject
 
 	/**
 	 *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
+	 *  Table c_revenuestamp contains the country and value of stamp per invoice.
 	 *
 	 *  @return		boolean			true or false
 	 */

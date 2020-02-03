@@ -93,7 +93,7 @@ class box_factures_imp extends ModeleBoxes
             $sql .= " s.logo,";
 			$sql .= " f.ref, f.date_lim_reglement as datelimite,";
             $sql .= " f.type,";
-			$sql .= " f.amount, f.datef as df,";
+			$sql .= " f.datef as df,";
             $sql .= " f.total as total_ht,";
             $sql .= " f.tva as total_tva,";
             $sql .= " f.total_ttc,";
@@ -110,7 +110,7 @@ class box_factures_imp extends ModeleBoxes
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
 			$sql .= " GROUP BY s.nom, s.rowid, s.email, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
-			$sql .= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
+			$sql .= " f.type, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
 			$sql .= " ORDER BY datelimite ASC, f.ref ASC ";
 			$sql .= $this->db->plimit($max, 0);

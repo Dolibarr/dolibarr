@@ -1029,6 +1029,8 @@ class pdf_sponge extends ModelePDFFactures
 
 				$i++;
 			}
+
+			return $tab3_top + $y + 3;
 		}
 		else
 		{

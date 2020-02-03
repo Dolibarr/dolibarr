@@ -104,7 +104,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
     			}
     			else
     			{
-    				dol_syslog("Authentification ko - failed to load file '".$authfile."'", LOG_ERR);
+    				dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
     				sleep(1);
     				// Load translation files required by the page
                     $langs->loadLangs(array('other', 'main', 'errors'));

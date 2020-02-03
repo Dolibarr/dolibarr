@@ -370,7 +370,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice = ($datefacture == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
+    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -821,7 +821,7 @@ if (empty($action) || $action == 'list')
     $sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql .= ' ba.rowid as bid, ba.label,';
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
-    $sql .= ' SUM(f.amount)';
+    $sql .= ' SUM(pf.amount)';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
@@ -1013,9 +1013,9 @@ if (empty($action) || $action == 'list')
 
             // Amount
             print '<td class="right">'.price($objp->pamount).'</td>';
-            if (!$i) $totalarray['nbfield']++;
-            $totalarray['pos'][7] = 'amount';
+            $totalarray['pos'][$totalarray['nbfield']] = 'amount';
             $totalarray['val']['amount'] += $objp->pamount;
+            if (!$i) $totalarray['nbfield']++;
 
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;
