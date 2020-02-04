@@ -513,7 +513,6 @@ class Mo extends CommonObject
 			return $resarray;
 		} else {
 			$this->error = $this->db->lasterror();
-			var_dump($this->error);
 			return array();
 		}
 	}
