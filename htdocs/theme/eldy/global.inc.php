@@ -1422,7 +1422,7 @@ div.nopadding {
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
     color: rgb(<?php print $colortexttitlenotab; ?>);
-    opacity: 0.6;
+    opacity: 0.5;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -3642,7 +3642,7 @@ div.boximport {
 .fieldrequired { font-weight: bold; color: #000055; }
 
 .widthpictotitle { width: 44px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 2.5em; };
+span.widthpictotitle { font-size: 2.1em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
