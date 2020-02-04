@@ -257,14 +257,14 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 else
 {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
-	
+
 	$resql = $db->query($sql);
 	if (!$resql)
 	{
 		dol_print_error($db);
 		exit;
 	}
-	
+
 	$num = $db->num_rows($resql);
 }
 
@@ -465,12 +465,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		$cssforfield = (empty($val['css']) ? '' : $val['css']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
-		
+
 		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-		
+
 		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
-		
+
 		if (!empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
@@ -534,14 +534,14 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
-	
+
 	// Show list of available documents
 	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource .= str_replace('&amp;', '&', $param);
-	
+
 	$filedir = $diroutputmassaction;
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;

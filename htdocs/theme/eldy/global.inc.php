@@ -3641,7 +3641,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 44px; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 32px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 2.1em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
