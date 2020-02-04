@@ -47,7 +47,7 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 	}
 
 	if (! empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
-		if ($currency == true) {
+		if ($currency) {
 			$type = 1;
 		} else {
 			$type = 0;
