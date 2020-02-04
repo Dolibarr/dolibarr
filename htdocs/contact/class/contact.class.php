@@ -988,19 +988,25 @@ class Contact extends CommonObject
 	}
 
 
+
 	/**
-	 * Set property ->gender from property ->civility_id
+	 * Set the property "gender" of this class, based on the property "civility_id"
+	 * or use property "civility_code" as fallback, when "civility_id" is not available.
 	 *
 	 * @return void
 	 */
 	public function setGenderFromCivility()
 	{
-	    unset($this->gender);
-    	if (in_array($this->civility_id, array('MR'))) {
-    	    $this->gender = 'man';
-    	} elseif (in_array($this->civility_id, array('MME', 'MLE'))) {
-    	    $this->gender = 'woman';
-    	}
+		unset($this->gender);
+
+		if (in_array($this->civility_id, array('MR')) || in_array($this->civility_code, array('MR')))
+		{
+			$this->gender = 'man';
+		}
+		elseif(in_array($this->civility_id, array('MME','MLE')) || in_array($this->civility_code, array('MME','MLE')))
+		{
+			$this->gender = 'woman';
+		}
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
