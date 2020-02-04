@@ -221,7 +221,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/reception");
+	$dir = dol_buildpath($reldir."core/modules/reception/");
 
 	if (is_dir($dir))
 	{
