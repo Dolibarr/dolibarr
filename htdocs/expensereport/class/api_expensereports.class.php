@@ -159,7 +159,7 @@ class ExpenseReports extends DolibarrApi
      * Create Expense Report object
      *
      * @param   array   $request_data   Request data
-     * @return  int                     ID of Expense Report
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -183,7 +183,7 @@ class ExpenseReports extends DolibarrApi
             throw new RestException(500, "Error creating expensereport", array_merge(array($this->expensereport->error), $this->expensereport->errors));
         }
 
-        return $this->expensereport->id;
+        return $this->get($this->expensereport->id);
     }
 
     /**

@@ -163,8 +163,8 @@ class Users extends DolibarrApi
 	/**
 	 * Create user account
 	 *
-	 * @param array $request_data New user data
-	 * @return int
+	 * @param array $request_data  New user data
+	 * @return array               Array of created object
 	 */
     public function post($request_data = null)
     {
@@ -188,7 +188,7 @@ class Users extends DolibarrApi
 	    if ($this->useraccount->create(DolibarrApiAccess::$user) < 0) {
              throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
 	    }
-	    return $this->useraccount->id;
+	    return $this->get($this->useraccount->id);
     }
 
 

@@ -157,7 +157,7 @@ class Warehouses extends DolibarrApi
      * Create warehouse object
      *
      * @param array $request_data   Request data
-     * @return int  ID of warehouse
+     * @return array                Array of created object
      */
     public function post($request_data = null)
     {
@@ -174,7 +174,7 @@ class Warehouses extends DolibarrApi
         if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating warehouse", array_merge(array($this->warehouse->error), $this->warehouse->errors));
         }
-        return $this->warehouse->id;
+        return $this->get($this->warehouse->id);
     }
 
     /**

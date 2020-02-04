@@ -185,7 +185,7 @@ class SupplierOrders extends DolibarrApi
      * Create supplier order object
      *
      * @param array $request_data   Request datas
-     * @return int  ID of supplier order
+     * @return array                Array of created object
      */
     public function post($request_data = null)
     {
@@ -213,7 +213,7 @@ class SupplierOrders extends DolibarrApi
         if ($this->order->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating order", array_merge(array($this->order->error), $this->order->errors));
         }
-        return $this->order->id;
+        return $this->get($this->order->id);
     }
 
     /**

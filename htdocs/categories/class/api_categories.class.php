@@ -175,8 +175,8 @@ class Categories extends DolibarrApi
     /**
      * Create category object
      *
-     * @param array $request_data   Request data
-     * @return int  ID of category
+     * @param array     $request_data   Request data
+     * @return array                    Array of created object
      */
     public function post($request_data = null)
     {
@@ -193,7 +193,7 @@ class Categories extends DolibarrApi
         if ($this->category->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
         }
-        return $this->category->id;
+        return $this->get($this->category->id);
     }
 
     /**

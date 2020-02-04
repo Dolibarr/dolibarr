@@ -171,7 +171,7 @@ class StockMovements extends DolibarrApi
      * { "product_id": 1, "warehouse_id": 1, "qty": 1, "lot": "", "movementcode": "INV123", "movementlabel": "Inventory 123", "price": 0 }
      *
      * @param array $request_data   Request data
-     * @return  int                         ID of stock movement
+     * @return array                Array of created object
      */
     //function post($product_id, $warehouse_id, $qty, $lot='', $movementcode='', $movementlabel='', $price=0)
     public function post($request_data = null)
@@ -202,7 +202,7 @@ class StockMovements extends DolibarrApi
             throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->error);
         }
 
-        return $this->stockmovement->id;
+        return $this->get($this->stockmovement->id);
     }
 
     /**

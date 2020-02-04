@@ -151,8 +151,8 @@ class MembersTypes extends DolibarrApi
     /**
      * Create member type object
      *
-     * @param array $request_data   Request data
-     * @return int  ID of member type
+     * @param array     $request_data   Request data
+     * @return array                    Array of created object
      */
     public function post($request_data = null)
     {
@@ -169,7 +169,7 @@ class MembersTypes extends DolibarrApi
         if ($membertype->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, 'Error creating member type', array_merge(array($membertype->error), $membertype->errors));
         }
-        return $membertype->id;
+        return $this->get($membertype->id);
     }
 
     /**

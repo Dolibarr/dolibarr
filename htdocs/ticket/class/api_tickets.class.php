@@ -316,8 +316,8 @@ class Tickets extends DolibarrApi
     /**
      * Create ticket object
      *
-     * @param array $request_data   Request datas
-     * @return int  ID of ticket
+     * @param array  $request_data  Request datas
+     * @return array                Array of created object
      */
     public function post($request_data = null)
     {
@@ -342,7 +342,7 @@ class Tickets extends DolibarrApi
         	throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
         }
 
-        return $this->ticket->id;
+        return $this->get($this->ticket->id);
     }
 
     /**

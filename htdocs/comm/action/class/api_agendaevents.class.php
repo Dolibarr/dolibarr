@@ -186,7 +186,7 @@ class AgendaEvents extends DolibarrApi
      * Create Agenda Event object
      *
      * @param   array   $request_data   Request data
-     * @return  int                     ID of Agenda Event
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -214,7 +214,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(500, "Error creating event", array_merge(array($this->actioncomm->error), $this->actioncomm->errors));
         }
 
-        return $this->actioncomm->id;
+        return $this->get($this->actioncomm->id);
     }
 
 

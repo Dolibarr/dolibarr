@@ -186,7 +186,7 @@ class Tasks extends DolibarrApi
      * Create task object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of project
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -210,7 +210,7 @@ class Tasks extends DolibarrApi
             throw new RestException(500, "Error creating task", array_merge(array($this->task->error), $this->task->errors));
         }
 
-        return $this->task->id;
+        return $this->get($this->task->id);
     }
 
     /**

@@ -160,8 +160,8 @@ class Members extends DolibarrApi
     /**
      * Create member object
      *
-     * @param array $request_data   Request data
-     * @return int  ID of member
+     * @param array     $request_data   Request data
+     * @return array                    Array of created object
      */
     public function post($request_data = null)
     {
@@ -178,7 +178,7 @@ class Members extends DolibarrApi
         if ($member->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, 'Error creating member', array_merge(array($member->error), $member->errors));
         }
-        return $member->id;
+        return $this->get($member->id);
     }
 
     /**

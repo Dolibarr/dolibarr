@@ -208,8 +208,8 @@ class Contacts extends DolibarrApi
 	/**
 	 * Create contact object
 	 *
-	 * @param   array   $request_data   Request datas
-	 * @return  int     ID of contact
+	 * @param   array   $request_data  Request datas
+	 * @return  array                  Array of created object
 	 */
     public function post($request_data = null)
     {
@@ -227,7 +227,7 @@ class Contacts extends DolibarrApi
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
 		    throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
 		}
-		return $this->contact->id;
+		return $this->get($this->contact->id);
 	}
 
 	/**

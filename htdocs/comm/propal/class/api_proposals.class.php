@@ -179,7 +179,7 @@ class Proposals extends DolibarrApi
 	 * Create commercial proposal object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of proposal
+     * @return  array                   Array of created object
 	 */
     public function post($request_data = null)
     {
@@ -203,7 +203,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
-		return $this->propal->id;
+		return $this->get($this->propal->id);
     }
 
 	/**

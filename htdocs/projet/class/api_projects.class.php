@@ -178,7 +178,7 @@ class Projects extends DolibarrApi
      * Create project object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of project
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -202,7 +202,7 @@ class Projects extends DolibarrApi
             throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
         }
 
-        return $this->project->id;
+        return $this->get($this->project->id);
     }
 
     /**

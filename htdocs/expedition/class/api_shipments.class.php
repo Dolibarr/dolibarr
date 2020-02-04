@@ -180,7 +180,7 @@ class Shipments extends DolibarrApi
      * Create shipment object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of shipment
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -205,7 +205,7 @@ class Shipments extends DolibarrApi
             throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
         }
 
-        return $this->shipment->id;
+        return $this->get($this->shipment->id);
     }
 
     /**

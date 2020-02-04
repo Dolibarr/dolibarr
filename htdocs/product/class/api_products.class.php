@@ -182,8 +182,8 @@ class Products extends DolibarrApi
     /**
      * Create product object
      *
-     * @param  array $request_data Request data
-     * @return int     ID of product
+     * @param  array $request_data  Request data
+     * @return array                Array of created object
      */
     public function post($request_data = null)
     {
@@ -200,7 +200,7 @@ class Products extends DolibarrApi
             throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
         }
 
-        return $this->product->id;
+        return $this->get($this->product->id);
     }
 
     /**

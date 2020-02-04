@@ -182,7 +182,7 @@ class Contracts extends DolibarrApi
      * Create contract object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of contrat
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -206,7 +206,7 @@ class Contracts extends DolibarrApi
             throw new RestException(500, "Error creating contract", array_merge(array($this->contract->error), $this->contract->errors));
         }
 
-        return $this->contract->id;
+        return $this->get($this->contract->id);
     }
 
     /**

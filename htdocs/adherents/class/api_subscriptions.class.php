@@ -148,8 +148,8 @@ class Subscriptions extends DolibarrApi
     /**
      * Create subscription object
      *
-     * @param array $request_data   Request data
-     * @return int  ID of subscription
+     * @param array     $request_data   Request data
+     * @return array                    Array of created object
      */
     public function post($request_data = null)
     {
@@ -166,7 +166,7 @@ class Subscriptions extends DolibarrApi
         if ($subscription->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
         }
-        return $subscription->id;
+        return $this->get($subscription->id);
     }
 
     /**

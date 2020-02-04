@@ -177,8 +177,8 @@ class Boms extends DolibarrApi
     /**
      * Create bom object
      *
-     * @param array $request_data   Request datas
-     * @return int  ID of bom
+     * @param array     $request_data   Request datas
+     * @return array                    Array of created object
      */
     public function post($request_data = null)
     {
@@ -194,7 +194,7 @@ class Boms extends DolibarrApi
         if( ! $this->bom->create(DolibarrApiAccess::$user)) {
             throw new RestException(500, "Error creating BOM", array_merge(array($this->bom->error), $this->bom->errors));
         }
-        return $this->bom->id;
+        return $this->get($this->bom->id);
     }
 
     /**

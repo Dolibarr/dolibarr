@@ -186,7 +186,7 @@ class Interventions extends DolibarrApi
      * Create intervention object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of intervention
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -203,7 +203,7 @@ class Interventions extends DolibarrApi
             throw new RestException(500, "Error creating intervention", array_merge(array($this->fichinter->error), $this->fichinter->errors));
         }
 
-        return $this->fichinter->id;
+        return $this->get($this->fichinter->id);
     }
 
 

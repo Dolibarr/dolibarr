@@ -187,7 +187,7 @@ class SupplierInvoices extends DolibarrApi
      * Create supplier invoice object
      *
      * @param array $request_data   Request datas
-     * @return int  ID of supplier invoice
+     * @return array                Array of created object
      */
     public function post($request_data = null)
     {
@@ -215,7 +215,7 @@ class SupplierInvoices extends DolibarrApi
         if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
         }
-        return $this->invoice->id;
+        return $this->get($this->invoice->id);
     }
 
     /**

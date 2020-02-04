@@ -172,7 +172,7 @@ class Donations extends DolibarrApi
      * Create donation object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of order
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -197,7 +197,7 @@ class Donations extends DolibarrApi
             throw new RestException(500, "Error creating order", array_merge(array($this->don->error), $this->don->errors));
         }
 
-        return $this->don->id;
+        return $this->get($this->don->id);
     }
 
     /**

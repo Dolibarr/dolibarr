@@ -139,8 +139,8 @@ class BankAccounts extends DolibarrApi
     /**
      * Create account object
      *
-     * @param array $request_data    Request data
-     * @return int ID of account
+     * @param array $request_data   Request data
+     * @return array                Array of created object
      */
     public function post($request_data = null)
     {
@@ -163,7 +163,7 @@ class BankAccounts extends DolibarrApi
         if ($account->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
         }
-        return $account->id;
+        return $this->get($account->id);
     }
 
     /**

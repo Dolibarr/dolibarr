@@ -184,7 +184,7 @@ class MyModuleApi extends DolibarrApi
      * Create myobject object
      *
      * @param array $request_data   Request datas
-     * @return int  ID of myobject
+     * @return array                Array of created object
      *
      * @url	POST myobjects/
      */
@@ -202,7 +202,7 @@ class MyModuleApi extends DolibarrApi
         if( ! $this->myobject->create(DolibarrApiAccess::$user)) {
             throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
         }
-        return $this->myobject->id;
+        return $this->get($this->myobject->id);
     }
 
     /**

@@ -183,7 +183,7 @@ class Orders extends DolibarrApi
      * Create order object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of order
+     * @return  array                   Array of created object
      */
     public function post($request_data = null)
     {
@@ -208,7 +208,7 @@ class Orders extends DolibarrApi
             throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
         }
 
-        return $this->commande->id;
+        return $this->get($this->commande->id);
     }
 
     /**
