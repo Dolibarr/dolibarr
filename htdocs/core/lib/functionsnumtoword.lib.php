@@ -41,21 +41,21 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
     if (! $num) {
         return false;
     }
+
 	if ($centimes && strlen($num) == 1) {
 		$num = $num*10;
 	}
+
 	if (! empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
-	
 		if ($currency == true) {
 			$type = 1;
-		}else{
+		} else {
 			$type = 0;
 		}
 
 		$concatWords = $langs->getLabelFromNumber($num, $type);
 		return $concatWords;
-
-	}else{
+	} else {
 		$TNum = explode('.', $num);
 	    $num = (int) $TNum[0];
 	    $words = array();
