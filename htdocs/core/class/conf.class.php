@@ -413,8 +413,8 @@ class Conf
 					$this->supplier_order->dir_output			= $rootfordata."/fournisseur/commande";			// For backward compatibility
 					$this->supplier_order->dir_temp				= $rootfortemp."/fournisseur/commande/temp";	// For backward compatibility
 				}
-				
-				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists				
+
+				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
 				{
 					$this->supplier_invoice=new stdClass();
 					$this->supplier_invoice->enabled			= 1;
