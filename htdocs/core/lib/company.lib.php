@@ -213,7 +213,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".$servicestatus."))";
 		}
-		
+
         $resql = $db->query($sql);
         if ($resql)
         {
