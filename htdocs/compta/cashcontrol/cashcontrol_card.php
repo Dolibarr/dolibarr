@@ -323,7 +323,7 @@ if ($action == "create" || $action == "start" || $action == "close")
     {
 	    print '<input type="hidden" name="action" value="add">';
     }
-    else if ($action == 'close')
+    elseif ($action == 'close')
     {
     	print '<input type="hidden" name="action" value="valid">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
@@ -514,7 +514,7 @@ if ($action == "create" || $action == "start" || $action == "close")
 		print '<td class="center">';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		if ($action == 'start') print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
-		else if ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Validate").'">';
+		elseif ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Validate").'">';
 		print '</td>';
 		print '</tr>';
 
