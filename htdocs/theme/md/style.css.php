@@ -1006,7 +1006,8 @@ div.fiche>form>div.div-table-responsive {
     flex-grow: 1;
     flex-shrink: 1;
     /* flex-basis: 140px; */
-    min-width: 150px;
+    /* min-width: 150px; */
+    width: 158px;
     justify-content: flex-start;
     align-self: flex-start;
 }
