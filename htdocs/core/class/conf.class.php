@@ -449,6 +449,9 @@ class Conf
 		$this->contrat->dir_temp				= $rootfortemp."/contract/temp";
 
 		// Module bank
+		$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
+		$this->bank->multidir_temp = array($this->entity => $rootfortemp."/bank/temp");
+		// For backward compatibility
 		$this->bank->dir_output					= $rootfordata."/bank";
 		$this->bank->dir_temp					= $rootfortemp."/bank/temp";
 
