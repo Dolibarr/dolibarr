@@ -99,7 +99,7 @@ class box_project extends ModeleBoxes
 
             $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-            $sql.= " WHERE entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
+            $sql.= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
 			$sql.= " AND p.fk_statut = 1"; // Only open projects
             if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
 
