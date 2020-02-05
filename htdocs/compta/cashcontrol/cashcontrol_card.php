@@ -162,7 +162,7 @@ elseif ($action == "add")
 	}
 }
 
-if ($action == "close")
+if ($action == "valid")
 {
 	$object->fetch($id);
 
@@ -213,7 +213,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 
 $form = new Form($db);
 
-if ($action == "create" || $action == "start")
+if ($action == "create" || $action == "start" || $action == "close")
 {
 	llxHeader();
 
@@ -323,10 +323,16 @@ if ($action == "create" || $action == "start")
     {
 	    print '<input type="hidden" name="action" value="add">';
     }
-    else
+    else if ($action == 'close')
+    {
+    	print '<input type="hidden" name="action" value="valid">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+    }
+	else
     {
     	print '<input type="hidden" name="action" value="start">';
     }
+
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
@@ -405,7 +411,7 @@ if ($action == "create" || $action == "start")
 	print '</table>';
 
 	// Table to see/enter balance
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
+	if (($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') || $action == 'close')
 	{
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
@@ -482,21 +488,33 @@ if ($action == "create" || $action == "start")
 		print '<td>'.$langs->trans("RealAmount").'</td>';
 		// Initial amount
 		print '<td class="center">';
-		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash'])).'">';
+		print '<input ';
+		if ($action == 'close') print 'disabled '; // To close cash user can't set opening cash
+		print 'name="opening" type="text" class="maxwidth100 center" value="';
+		if ($action == 'close')
+		{
+			$object->fetch($id);
+			print $object->opening;
+		}
+		else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+		print '">';
 		print '</td>';
 		// Amount per payment type
 		$i = 0;
 		foreach ($arrayofpaymentmode as $key => $val)
 		{
 			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
-			print '<input name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+			print '<input ';
+			if ($action == 'start') print 'disabled '; // To start cash user only can set opening cash
+			print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
 			print '</td>';
 			$i++;
 		}
 		// Save
 		print '<td class="center">';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+		if ($action == 'start') print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+		else if ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Validate").'">';
 		print '</td>';
 		print '</tr>';
 
@@ -591,7 +609,7 @@ if (empty($action) || $action == "view")
 		print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
 		if ($object->status == CashControl::STATUS_DRAFT)
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close">'.$langs->trans('ValidateAndClose').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close">'.$langs->trans('Close').'</a></div>';
 
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
 		}
