@@ -289,158 +289,171 @@ class Conf
 		{
 			$rootfordata .= '/'.$this->entity;
 		}
+		// Set standard temporary folder name or global override
+		$rootfortemp = empty($this->global->MAIN_TEMP_DIR) ? $rootfordata : $this->global->MAIN_TEMP_DIR;
 
 		// Define default dir_output and dir_temp for directories of modules
-		foreach ($this->modules as $module)
+		foreach($this->modules as $module)
 		{
 		    //var_dump($module);
 			// For multicompany sharings
-			$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
-			$this->$module->multidir_temp = array($this->entity => $rootfordata."/".$module."/temp");
+			$this->$module->multidir_output	= array($this->entity => $rootfordata."/".$module);
+			$this->$module->multidir_temp	= array($this->entity => $rootfortemp."/".$module."/temp");
 			// For backward compatibility
-			$this->$module->dir_output = $rootfordata."/".$module;
-			$this->$module->dir_temp = $rootfordata."/".$module."/temp";
+			$this->$module->dir_output	= $rootfordata."/".$module;
+			$this->$module->dir_temp	= $rootfortemp."/".$module."/temp";
 		}
 
 		// External modules storage
-		if (!empty($this->modules_parts['dir']))
+		if (! empty($this->modules_parts['dir']))
 		{
-			foreach ($this->modules_parts['dir'] as $module => $dirs)
+			foreach($this->modules_parts['dir'] as $module => $dirs)
 			{
-				if (!empty($this->$module->enabled))
+				if (! empty($this->$module->enabled))
 				{
-					foreach ($dirs as $type => $name)  // $type is 'output' or 'temp'
+					foreach($dirs as $type => $name)  // $type is 'output' or 'temp'
 					{
-						$subdir = ($type == 'temp' ? '/temp' : '');
-						// For multicompany sharings
-						$varname = 'multidir_'.$type;
-						$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
-						// For backward compatibility
-						$varname = 'dir_'.$type;
-						$this->$module->$varname = $rootfordata."/".$name.$subdir;
+						$multidirname	= 'multidir_'.$type;
+						$dirname		= 'dir_'.$type;
+
+						if($type != 'temp')
+						{
+							// For multicompany sharings
+							$this->$module->$multidirname = array($this->entity => $rootfordata."/".$name);
+
+							// For backward compatibility
+							$this->$module->$dirname = $rootfordata."/".$name;
+						}
+						else
+						{
+							// For multicompany sharings
+							$this->$module->$multidirname = array($this->entity => $rootfortemp."/".$name."/temp");
+
+							// For backward compatibility
+							$this->$module->$dirname = $rootfortemp."/".$name."/temp";
+						}
 					}
 				}
 			}
 		}
 
 		// For mycompany storage
-		$this->mycompany->multidir_output = array($this->entity => $rootfordata."/mycompany");
-		$this->mycompany->multidir_temp = array($this->entity => $rootfordata."/mycompany/temp");
-		// For backward compatibility
-		$this->mycompany->dir_output = $rootfordata."/mycompany";
-		$this->mycompany->dir_temp = $rootfordata."/mycompany/temp";
+		$this->mycompany->dir_output	= $rootfordata."/mycompany";
+		$this->mycompany->dir_temp		= $rootfortemp."/mycompany/temp";
 
 		// For admin storage
-		$this->admin->dir_output = $rootfordata.'/admin';
-		$this->admin->dir_temp = $rootfordata.'/admin/temp';
+		$this->admin->dir_output		= $rootfordata.'/admin';
+		$this->admin->dir_temp			= $rootfortemp.'/admin/temp';
 
 		// For user storage
-		$this->user->multidir_output = array($this->entity => $rootfordata."/users");
-		$this->user->multidir_temp = array($this->entity => $rootfordata."/users/temp");
+		$this->user->multidir_output	= array($this->entity => $rootfordata."/users");
+		$this->user->multidir_temp		= array($this->entity => $rootfortemp."/users/temp");
 		// For backward compatibility
-		$this->user->dir_output = $rootforuser."/users";
-		$this->user->dir_temp = $rootforuser."/users/temp";
+		$this->user->dir_output			= $rootforuser."/users";
+		$this->user->dir_temp			= $rootfortemp."/users/temp";
 
 		// For usergroup storage
-		$this->usergroup->dir_output = $rootforuser."/usergroups";
-		$this->usergroup->dir_temp = $rootforuser."/usergroups/temp";
+		$this->usergroup->dir_output	= $rootforuser."/usergroups";
+		$this->usergroup->dir_temp		= $rootfortemp."/usergroups/temp";
 
 		// For proposal storage
-		$this->propal->multidir_output = array($this->entity => $rootfordata."/propale");
-		$this->propal->multidir_temp = array($this->entity => $rootfordata."/propale/temp");
+		$this->propal->multidir_output	= array($this->entity => $rootfordata."/propale");
+		$this->propal->multidir_temp	= array($this->entity => $rootfortemp."/propale/temp");
 		// For backward compatibility
-		$this->propal->dir_output = $rootfordata."/propale";
-		$this->propal->dir_temp = $rootfordata."/propale/temp";
-
-		// For bank storage
-		$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
-		$this->bank->multidir_temp = array($this->entity => $rootfordata."/bank/temp");
-		$this->bank->dir_output = $rootfordata."/bank";
-		$this->bank->dir_temp = $rootfordata."/bank/temp";
+		$this->propal->dir_output		= $rootfordata."/propale";
+		$this->propal->dir_temp			= $rootfortemp."/propale/temp";
 
 		// For medias storage
-		$this->medias->multidir_output = array($this->entity => $rootfordata."/medias");
-		$this->medias->multidir_temp = array($this->entity => $rootfordata."/medias/temp");
+		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
+		$this->medias->multidir_temp	= array($this->entity => $rootfortemp."/medias/temp");
 
 		// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 		// Sous module bons d'expedition
-		$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
+		$this->expedition_bon->enabled=(! empty($this->global->MAIN_SUBMODULE_EXPEDITION)?$this->global->MAIN_SUBMODULE_EXPEDITION:0);
 		// Sous module bons de livraison
-		$this->livraison_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_LIVRAISON) ? $this->global->MAIN_SUBMODULE_LIVRAISON : 0);
+		$this->livraison_bon->enabled=(! empty($this->global->MAIN_SUBMODULE_LIVRAISON)?$this->global->MAIN_SUBMODULE_LIVRAISON:0);
 
 		// Module fournisseur
-		// TODO To split into module supplier_invoice and supplier_order
-		if (!empty($this->fournisseur))
+		if (! empty($this->fournisseur))
 		{
-			$this->fournisseur->commande = new stdClass();
-			$this->fournisseur->commande->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
-			$this->fournisseur->commande->multidir_temp  = array($this->entity => $rootfordata."/fournisseur/commande/temp");
-			$this->fournisseur->commande->dir_output = $rootfordata."/fournisseur/commande"; // For backward compatibility
-			$this->fournisseur->commande->dir_temp  = $rootfordata."/fournisseur/commande/temp"; // For backward compatibility
-			$this->fournisseur->facture = new stdClass();
-			$this->fournisseur->facture->multidir_output = array($this->entity => $rootfordata."/fournisseur/facture");
-			$this->fournisseur->facture->multidir_temp  = array($this->entity => $rootfordata."/fournisseur/facture/temp");
-			$this->fournisseur->facture->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
-			$this->fournisseur->facture->dir_temp   = $rootfordata."/fournisseur/facture/temp"; // For backward compatibility
+			$this->fournisseur->commande=new stdClass();
+			$this->fournisseur->commande->multidir_output	= array($this->entity => $rootfordata."/fournisseur/commande");
+			$this->fournisseur->commande->multidir_temp		= array($this->entity => $rootfortemp."/fournisseur/commande/temp");
+			$this->fournisseur->commande->dir_output		= $rootfordata."/fournisseur/commande";		// For backward compatibility
+			$this->fournisseur->commande->dir_temp			= $rootfortemp."/fournisseur/commande/temp";	// For backward compatibility
 
-			$this->fournisseur->payment = new stdClass();
-			$this->fournisseur->payment->multidir_output = array($this->entity => $rootfordata."/fournisseur/payment");
-			$this->fournisseur->payment->multidir_temp  = array($this->entity => $rootfordata."/fournisseur/payment/temp");
-			$this->fournisseur->payment->dir_output = $rootfordata."/fournisseur/payment"; // For backward compatibility
-			$this->fournisseur->payment->dir_temp   = $rootfordata."/fournisseur/payment/temp"; // For backward compatibility
+			$this->fournisseur->facture=new stdClass();
+			$this->fournisseur->facture->multidir_output	= array($this->entity => $rootfordata."/fournisseur/facture");
+			$this->fournisseur->facture->multidir_temp		= array($this->entity => $rootfortemp."/fournisseur/facture/temp");
+			$this->fournisseur->facture->dir_output			= $rootfordata."/fournisseur/facture";			// For backward compatibility
+			$this->fournisseur->facture->dir_temp			= $rootfortemp."/fournisseur/facture/temp";		// For backward compatibility
 
-			// To prepare split of module vendor(fournisseur) into vendor + supplier_order + supplier_invoice + supplierproposal
-			if (!empty($this->fournisseur->enabled))  // By default, if module supplier is on, we set new properties
+			$this->supplierproposal=new stdClass();
+			$this->supplierproposal->multidir_output		= array($this->entity => $rootfordata."/supplier_proposal");
+			$this->supplierproposal->multidir_temp			= array($this->entity => $rootfortemp."/supplier_proposal/temp");
+			$this->supplierproposal->dir_output				= $rootfordata."/supplier_proposal";			// For backward compatibility
+			$this->supplierproposal->dir_temp				= $rootfortemp."/supplier_proposal/temp";		// For backward compatibility
+
+			$this->fournisseur->payment=new stdClass();
+			$this->fournisseur->payment->multidir_output	= array($this->entity => $rootfordata."/fournisseur/payment");
+			$this->fournisseur->payment->multidir_temp		= array($this->entity => $rootfortemp."/fournisseur/payment/temp");
+			$this->fournisseur->payment->dir_output			= $rootfordata."/fournisseur/payment";			// For backward compatibility
+			$this->fournisseur->payment->dir_temp			= $rootfortemp."/fournisseur/payment/temp";		// For backward compatibility
+
+			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
+			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
 			{
 				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
 				{
-	    			$this->supplier_order = new stdClass();
-	    			$this->supplier_order->enabled = 1;
-	    			$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
-	    			$this->supplier_order->multidir_temp  = array($this->entity => $rootfordata."/fournisseur/commande/temp");
-	    			$this->supplier_order->dir_output = $rootfordata."/fournisseur/commande"; // For backward compatibility
-	    			$this->supplier_order->dir_temp = $rootfordata."/fournisseur/commande/temp"; // For backward compatibility
+					$this->supplier_order=new stdClass();
+					$this->supplier_order->enabled				= 1;
+					$this->supplier_order->multidir_output		= array($this->entity => $rootfordata."/fournisseur/commande");
+					$this->supplier_order->multidir_temp		= array($this->entity => $rootfortemp."/fournisseur/commande/temp");
+					$this->supplier_order->dir_output			= $rootfordata."/fournisseur/commande";			// For backward compatibility
+					$this->supplier_order->dir_temp				= $rootfortemp."/fournisseur/commande/temp";	// For backward compatibility
 				}
 
 				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
 				{
-					$this->supplier_invoice = new stdClass();
-	    			$this->supplier_invoice->enabled = 1;
-	    			$this->supplier_invoice->multidir_output = array($this->entity => $rootfordata."/fournisseur/facture");
-	    			$this->supplier_invoice->multidir_temp  = array($this->entity => $rootfordata."/fournisseur/facture/temp");
-	    			$this->supplier_invoice->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
-	    			$this->supplier_invoice->dir_temp = $rootfordata."/fournisseur/facture/temp"; // For backward compatibility
+					$this->supplier_invoice=new stdClass();
+					$this->supplier_invoice->enabled			= 1;
+					$this->supplier_invoice->multidir_output	= array($this->entity => $rootfordata."/fournisseur/facture");
+					$this->supplier_invoice->multidir_temp		= array($this->entity => $rootfortemp."/fournisseur/facture/temp");
+					$this->supplier_invoice->dir_output			= $rootfordata."/fournisseur/facture";			// For backward compatibility
+					$this->supplier_invoice->dir_temp			= $rootfortemp."/fournisseur/facture/temp";		// For backward compatibility
 				}
 			}
 		}
 
 		// Module product/service
-		$this->product->multidir_output = array($this->entity => $rootfordata."/produit");
-		$this->product->multidir_temp  = array($this->entity => $rootfordata."/produit/temp");
-		$this->service->multidir_output = array($this->entity => $rootfordata."/produit");
-		$this->service->multidir_temp  = array($this->entity => $rootfordata."/produit/temp");
+		$this->product->multidir_output 		= array($this->entity => $rootfordata."/produit");
+		$this->product->multidir_temp			= array($this->entity => $rootfortemp."/produit/temp");
+		$this->service->multidir_output			= array($this->entity => $rootfordata."/produit");
+		$this->service->multidir_temp			= array($this->entity => $rootfortemp."/produit/temp");
 		// For backward compatibility
-		$this->product->dir_output = $rootfordata."/produit";
-		$this->product->dir_temp  = $rootfordata."/produit/temp";
-		$this->service->dir_output = $rootfordata."/produit";
-		$this->service->dir_temp  = $rootfordata."/produit/temp";
+		$this->product->dir_output				= $rootfordata."/produit";
+		$this->product->dir_temp				= $rootfortemp."/produit/temp";
+		$this->service->dir_output				= $rootfordata."/produit";
+		$this->service->dir_temp				= $rootfortemp."/produit/temp";
 
 		// Module productbatch
-		$this->productbatch->multidir_output = array($this->entity => $rootfordata."/produitlot");
-		$this->productbatch->multidir_temp  = array($this->entity => $rootfordata."/produitlot/temp");
+		$this->productbatch->multidir_output	= array($this->entity => $rootfordata."/produitlot");
+		$this->productbatch->multidir_temp		= array($this->entity => $rootfortemp."/produitlot/temp");
 
 		// Module contrat
-		$this->contrat->multidir_output = array($this->entity => $rootfordata."/contract");
-		$this->contrat->multidir_temp = array($this->entity => $rootfordata."/contract/temp");
+		$this->contrat->multidir_output			= array($this->entity => $rootfordata."/contract");
+		$this->contrat->multidir_temp			= array($this->entity => $rootfortemp."/contract/temp");
 		// For backward compatibility
-		$this->contrat->dir_output = $rootfordata."/contract";
-		$this->contrat->dir_temp  = $rootfordata."/contract/temp";
+		$this->contrat->dir_output				= $rootfordata."/contract";
+		$this->contrat->dir_temp				= $rootfortemp."/contract/temp";
 
 		// Module bank
-		$this->bank->dir_output = $rootfordata."/bank";
-		$this->bank->dir_temp  = $rootfordata."/bank/temp";
-
+		$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
+		$this->bank->multidir_temp = array($this->entity => $rootfortemp."/bank/temp");
+		// For backward compatibility
+		$this->bank->dir_output					= $rootfordata."/bank";
+		$this->bank->dir_temp					= $rootfortemp."/bank/temp";
 
 		// Set some default values
 		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
