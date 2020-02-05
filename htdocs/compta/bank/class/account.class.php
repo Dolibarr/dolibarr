@@ -1883,13 +1883,15 @@ class AccountLine extends CommonObject
 	}
 
 	/**
-	 *      Delete transaction bank line record
+	 *      Delete bank transaction record
 	 *
 	 *		@param	User	$user	User object that delete
 	 *      @return	int 			<0 if KO, >0 if OK
 	 */
     public function delete(User $user = null)
 	{
+    	global $conf;
+
 		$nbko = 0;
 
 		if ($this->rappro)
@@ -1900,6 +1902,26 @@ class AccountLine extends CommonObject
 		}
 
 		$this->db->begin();
+
+		// Protection to avoid any delete of accounted lines. Protection on by default
+		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING))
+		{
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".$this->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb) {
+					$this->error = 'ErrorRecordAlreadyInAccountingDeletionNotPossible';
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		// Delete urls
 		$result = $this->delete_urls($user);
