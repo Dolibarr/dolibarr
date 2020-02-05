@@ -1656,9 +1656,12 @@ class Holiday extends CommonObject
 		{
 			if ($type)
 			{
-				// Si utilisateur de Dolibarr
-
-				$sql = "SELECT DISTINCT u.rowid";
+				// If user of Dolibarr
+				$sql = "SELECT";
+				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
+				}
+				$sql.= " u.rowid";
 				$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
