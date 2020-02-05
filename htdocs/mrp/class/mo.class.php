@@ -513,7 +513,6 @@ class Mo extends CommonObject
 			return $resarray;
 		} else {
 			$this->error = $this->db->lasterror();
-			var_dump($this->error);
 			return array();
 		}
 	}
@@ -559,9 +558,10 @@ class Mo extends CommonObject
 	 * Erase and update the line to produce.
 	 *
 	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	public function updateProduction(User $user)
+	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
 
@@ -593,7 +593,7 @@ class Mo extends CommonObject
 				$moline->role = 'toproduce';
 				$moline->position = 1;
 
-				$resultline = $moline->create($user);
+				$resultline = $moline->create($user, false);	// Never use triggers here
 				if ($resultline <= 0) {
 					$error++;
 					$this->error = $moline->error;
@@ -625,7 +625,7 @@ class Mo extends CommonObject
 							$moline->qty_frozen = $line->qty_frozen;
 							$moline->disable_stock_change = $line->disable_stock_change;
 
-							$resultline = $moline->create($user);
+							$resultline = $moline->create($user, false);	// Never use triggers here
 							if ($resultline <= 0) {
 								$error++;
 								$this->error = $moline->error;

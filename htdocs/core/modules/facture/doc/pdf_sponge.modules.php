@@ -607,7 +607,12 @@ class pdf_sponge extends ModelePDFFactures
     	                    $pdf->setPage($pageposbefore + 1);
 
     	                    $curY = $tab_top_newpage;
-    	                    $showpricebeforepagebreak = 0;
+
+							// Allows data in the first page if description is long enough to break in multiples pages
+							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								$showpricebeforepagebreak = 1;
+							else
+								$showpricebeforepagebreak = 0;
     	                }
 
     	                if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
@@ -646,7 +651,16 @@ class pdf_sponge extends ModelePDFFactures
     	                    else
     	                    {
     	                        // We found a page break
+<<<<<<< HEAD
     	                        $showpricebeforepagebreak = 0;
+=======
+
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
+>>>>>>> branch '11.0' of git@github.com:Dolibarr/dolibarr.git
     	                    }
     	                }
     	                else	// No pagebreak

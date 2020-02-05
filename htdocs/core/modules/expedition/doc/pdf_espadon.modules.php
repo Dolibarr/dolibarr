@@ -440,7 +440,12 @@ class pdf_espadon extends ModelePdfExpedition
 					        $pdf->setPage($pageposbefore + 1);
 
 					        $curY = $tab_top_newpage;
-					        $showpricebeforepagebreak = 0;
+
+							// Allows data in the first page if description is long enough to break in multiples pages
+							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								$showpricebeforepagebreak = 1;
+							else
+								$showpricebeforepagebreak = 0;
 					    }
 
 
@@ -482,7 +487,11 @@ class pdf_espadon extends ModelePdfExpedition
 					        else
 					        {
 					            // We found a page break
-					            $showpricebeforepagebreak = 0;
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
 					        }
 					    }
 					    else	// No pagebreak

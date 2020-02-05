@@ -222,7 +222,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
         // Print logo
         if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO))
         {
-        	$urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
+        	$urllogo = DOL_URL_ROOT . '/theme/common/login_logo.png';
 
         	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
         		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/thumbs/'.$mysoc->logo_small);
