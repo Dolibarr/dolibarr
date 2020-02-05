@@ -516,7 +516,7 @@ class dolReceiptPrinter extends Printer
     {
         global $conf;
         $error = 0;
-        $img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/common/dolibarr_logo_bw.png');
+        $img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
         //$this->profile = CapabilityProfile::load("TM-T88IV");
         $ret = $this->initPrinter($printerid);
         if ($ret > 0) {
