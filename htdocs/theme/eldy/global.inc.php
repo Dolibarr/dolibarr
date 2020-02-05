@@ -2432,7 +2432,7 @@ div.tabBar {
 	width: auto;
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 }
-div.tabBar div.titre {
+div.tabBar tr.titre td {
 	padding-top: 20px;
 }
 

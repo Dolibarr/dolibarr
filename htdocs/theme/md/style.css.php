@@ -2572,7 +2572,8 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 	border-bottom: 1px solid #aaa;
 }
-div.tabBar div.titre {
+
+div.tabBar tr.titre td {
 	padding-top: 10px;
 }
 
