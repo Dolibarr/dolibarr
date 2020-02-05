@@ -125,7 +125,7 @@ class AccountancyExport
 	 * @param	int		$type		Format id
 	 * @return 	string				Format code
 	 */
-	private static function getFormatCode($type)
+	public static function getFormatCode($type)
 	{
 		$formatcode = array(
 			self::$EXPORT_TYPE_CONFIGURABLE => 'csv',
