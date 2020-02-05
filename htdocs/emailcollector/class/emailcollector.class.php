@@ -106,7 +106,7 @@ class EmailCollector extends CommonObject
         'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
         //'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
         //'actiontodo' => array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
-        'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'comment'=>"Where to store messages once processed"),
+        'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'help'=>"EmailCollectorTargetDir"),
         'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>100),
         'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1,),
         'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
@@ -1243,34 +1243,34 @@ class EmailCollector extends CommonObject
 
                     $objectid = 0;
                     $objectemail = null;
-                    if ($reg[0] == 'inv')
+                    if ($reg[1] == 'inv')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Facture($this->db);
                     }
-                    if ($reg[0] == 'proj')
+                    if ($reg[1] == 'proj')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Project($this->db);
                     }
-                    if ($reg[0] == 'con')
+                    if ($reg[1] == 'con')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Contact($this->db);
                     }
-                    if ($reg[0] == 'thi')
+                    if ($reg[1] == 'thi')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Societe($this->db);
                     }
-                    if ($reg[0] == 'use')
+                    if ($reg[1] == 'use')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new User($this->db);
                     }
-                    if ($reg[0] == 'tic')
+                    if ($reg[1] == 'tic')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Ticket($this->db);
                     }
 
@@ -2013,6 +2013,9 @@ class EmailCollector extends CommonObject
 
         // TEXT
         if ($p->type == 0 && $data) {
+			if(!empty($params['charset'])) {
+                $data = $this->convertStringEncoding($data, $params['charset']);
+            }
             // Messages may be split in different parts because of inline attachments,
             // so append parts together with blank row.
             if (strtolower($p->subtype) == 'plain')
@@ -2028,6 +2031,9 @@ class EmailCollector extends CommonObject
         // There are no PHP functions to parse embedded messages,
         // so this just appends the raw source to the main message.
         elseif ($p->type == 2 && $data) {
+			if(!empty($params['charset'])) {
+                $data = $this->convertStringEncoding($data, $params['charset']);
+            }
             $plainmsg .= $data."\n\n";
         }
 
@@ -2039,4 +2045,28 @@ class EmailCollector extends CommonObject
             }
         }
     }
+
+	/**
+	 * Converts a string from one encoding to another.
+	 *
+	 * @param string $string		String to convert
+	 * @param string $fromEncoding	String encoding
+	 * @param string $toEncoding	String return encoding
+	 * @return string 				Converted string if conversion was successful, or the original string if not
+	 * @throws Exception
+	 */
+	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')
+	{
+  		if(!$string || $fromEncoding == $toEncoding) {
+  			return $string;
+  		}
+  		$convertedString = function_exists('iconv') ? @iconv($fromEncoding, $toEncoding . '//IGNORE', $string) : null;
+  		if(!$convertedString && extension_loaded('mbstring')) {
+  			$convertedString = @mb_convert_encoding($string, $toEncoding, $fromEncoding);
+  		}
+  		if(!$convertedString) {
+  			throw new Exception('Mime string encoding conversion failed');
+  		}
+  		return $convertedString;
+  	}
 }

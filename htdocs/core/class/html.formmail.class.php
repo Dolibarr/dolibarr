@@ -569,7 +569,9 @@ class FormMail extends Form
 						}
 
 						// Add also email aliases from the c_email_senderprofile table
-						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
+						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+						$sql .= ' ORDER BY position';
 						$resql = $this->db->query($sql);
 						if ($resql)
 						{
@@ -973,7 +975,7 @@ class FormMail extends Form
 					$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 				}
 				$out .= '<tr>';
-				$out .= '<td valign="top">';
+				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
 				$out .= '</td>';
 				$out .= '<td>';

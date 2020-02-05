@@ -59,7 +59,7 @@ if (empty($conf) || !is_object($conf)) {
 
         dol_fiche_head();
 
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<table class="border centpercent">';

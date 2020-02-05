@@ -464,7 +464,7 @@ if ($rowid > 0)
     if (!empty($conf->societe->enabled)) $rowspan++;
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
@@ -531,7 +531,7 @@ if ($rowid > 0)
 	{
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
-		print $form->showCategories($object->id, 'member', 1);
+		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
 
@@ -579,7 +579,7 @@ if ($rowid > 0)
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc, 'socid', '', 1);
@@ -691,14 +691,14 @@ if ($rowid > 0)
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
             if (!empty($conf->banque->enabled))
             {
-                print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            	print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
             }
             print "</tr>\n";
 
@@ -898,14 +898,14 @@ if ($rowid > 0)
                     'moreattr' => 'maxlength="128"',
                 );
 			}
-			// @TODO Add other extrafields mandatory for thirdparty creation
+			// @todo Add other extrafields mandatory for thirdparty creation
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrThirdParty"), $langs->trans("ConfirmCreateThirdParty"), "confirm_create_thirdparty", $formquestion, 1);
 		}
 
 
         print '<form name="subscription" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="subscription">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';

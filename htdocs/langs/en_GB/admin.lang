@@ -46,5 +46,8 @@ DictionaryAccountancyJournal=Finance journals
 CompanyZip=Postcode
 LDAPFieldZip=Postcode
 GenbarcodeLocation=Barcode generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
+SuppliersCommandModel=Complete template of Purchase Order
+SuppliersInvoiceModel=Complete template of Vendor Invoice
 FormatZip=Postcode
 OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

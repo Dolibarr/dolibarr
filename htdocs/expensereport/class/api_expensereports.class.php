@@ -501,6 +501,9 @@ class ExpenseReports extends DolibarrApi
         // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
+        unset($object->cond_reglement);
+        unset($object->shipping_method_id);
+
         unset($object->barcode_type);
         unset($object->barcode_type_code);
         unset($object->barcode_type_label);

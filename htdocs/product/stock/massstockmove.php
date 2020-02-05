@@ -334,7 +334,7 @@ print '<br>'."\n";
 
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addline">';
 
 
@@ -432,7 +432,7 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire2">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement

@@ -486,6 +486,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
+$sql .= ' cf.note_public, cf.note_private,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email";
 // Add fields from extrafields
@@ -641,7 +642,7 @@ if ($resql)
 	// Fields title search
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
@@ -936,6 +937,8 @@ if ($resql)
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
 		$objectstatic->date_delivery = $db->jdate($obj->date_delivery);
+		$objectstatic->note_public = $obj->note_public;
+		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
 
 		print '<tr class="oddeven">';
@@ -946,7 +949,7 @@ if ($resql)
 			print '<td class="nowrap">';
 
 			// Picto + Ref
-			print $objectstatic->getNomUrl(1);
+			print $objectstatic->getNomUrl(1, '', 0, -1, 1);
 			// Other picto tool
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);

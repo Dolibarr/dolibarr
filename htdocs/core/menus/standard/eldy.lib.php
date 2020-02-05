@@ -52,6 +52,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$id = 'mainmenu';
 	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+
 	if (empty($noout)) print_start_menu_array();
 
     $usemenuhider = 1;
@@ -237,11 +239,20 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 				  !empty($user->rights->contrat->lire) ||
 				  !empty($user->rights->ficheinter->lire)
 			),
-	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
+	    'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
 	);
+
+	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
+		empty($user->rights->propal->lire) &&
+		empty($user->rights->commande->lire) &&
+		empty($user->rights->supplier_order->lire) &&
+		empty($user->rights->supplier_proposal->lire) &&
+		empty($user->rights->contrat->lire) &&
+		empty($user->rights->ficheinter->lire);
+
 	$menu_arr[] = array(
 		'name' => 'Commercial',
-		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
+		'link' => ($onlysupplierorder ? '/fourn/commande/index.php?mainmenu=commercial&amp;leftmenu=' : '/comm/index.php?mainmenu=commercial&amp;leftmenu='),
 		'title' => "Commercial",
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -448,8 +459,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id; // For backward compatibility
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
 		    // url = url from host, shorturl = relative path into dolibarr sources
@@ -678,6 +687,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	    print '</div>'."\n";
 	    print "<!-- End Bookmarks -->\n";
 	}
+
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
 	/**
 	 * We update newmenu with entries found into database
@@ -1200,7 +1211,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						$newmenu->add("/admin/dict.php?id=17&from=accountancy&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuExpenseReportAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 100);
 					}
 					$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_product', 110);
-					$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_closure', 120);
+					if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+						$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_closure', 120);
+					}
 					$newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_export', 130);
 				}
 
@@ -1314,7 +1327,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 }
 
 				// Files
-				if ((!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || !empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
+				if (empty($conf->global->ACCOUNTANCY_HIDE_EXPORT_FILES_MENU))
 				{
 					$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
 				}
@@ -1470,7 +1483,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Cash Control
 			if (!empty($conf->takepos->enabled) || !empty($conf->cashdesk->enabled))
 			{
-				$permtomakecashfence = ($user->rights->cashdesk->use || $user->rights->takepos->use);
+				$permtomakecashfence = ($user->rights->cashdesk->run || $user->rights->takepos->run);
 				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("POS"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol');
 				$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, $permtomakecashfence);
 				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("List"), 1, $permtomakecashfence);
@@ -1980,8 +1993,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			}
 
 			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
-			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id; // For backward compatibility
+
 			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
 			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];

@@ -47,7 +47,7 @@ class modLabel extends DolibarrModules
 		$this->module_position = '75';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des etiquettes";
+		$this->description = "Management of stickers";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -77,17 +77,17 @@ class modLabel extends DolibarrModules
 		$this->rights_class = 'label';
 
 		$this->rights[1][0] = 601; // id de la permission
-		$this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
+		$this->rights[1][1] = 'Read stickers';
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 602; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
+		$this->rights[2][1] = 'Create/modify stickers';
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[2][4] = 'creer';
 
 		$this->rights[4][0] = 609; // id de la permission
-		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
+		$this->rights[4][1] = 'Delete stickers';
 		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[4][4] = 'supprimer';
 	}

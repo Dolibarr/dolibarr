@@ -20,7 +20,7 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/export-thirdpartyaccount.php
+ * \file 		scripts/accountancy/export-thirdpartyaccount.php
  * \ingroup		Accounting Expert
  * \brief		Page to detect empty accounting account
  */

@@ -58,7 +58,7 @@ class pdf_azur extends ModelePDFPropales
     public $description;
 
     /**
-     * @var string Save the name of generated file as the main doc when generating a doc with this template
+     * @var string	Save the name of generated file as the main doc when generating a doc with this template
      */
 	public $update_main_doc_field;
 
@@ -116,7 +116,7 @@ class pdf_azur extends ModelePDFPropales
 
 	/**
 	 * Issuer
-	 * @var Societe object that emits
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 
@@ -159,8 +159,6 @@ class pdf_azur extends ModelePDFPropales
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
-
-		$this->franchise = !$mysoc->tva_assuj;
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -866,13 +864,13 @@ class pdf_azur extends ModelePDFPropales
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
-		global $conf;
+		global $conf, $mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// If France, show VAT mention if not applicable
-		if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
+		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj))
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -1467,12 +1465,14 @@ class pdf_azur extends ModelePDFPropales
 		{
 			if ($this->emetteur->logo)
 			{
+				$logodir = $conf->mycompany->dir_output;
+				if (! empty($conf->mycompany->multidir_output[$object->entity])) $logodir = $conf->mycompany->multidir_output[$object->entity];
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
-					$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/thumbs/'.$this->emetteur->logo_small;
+					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				}
 				else {
-					$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/'.$this->emetteur->logo;
+					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
 				{

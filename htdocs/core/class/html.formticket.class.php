@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       ticket/class/html.ticket.class.php
+ *       \file       htdocs/core/class/html.formticket.class.php
  *       \ingroup    ticket
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  */
@@ -912,7 +912,7 @@ class FormTicket
                 $checkbox_selected = (GETPOST('private_message', 'alpha') == "1" ? ' checked' : '');
                 print '<input type="checkbox" name="private_message" value="1" id="private_message" '.$checkbox_selected.'/> ';
                 print '<label for="private_message">'.$langs->trans('MarkMessageAsPrivate').'</label>';
-                print '</td><td align="center">';
+                print '</td><td class="center">';
                 print $form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
                 print '</td></tr>';
             }
@@ -980,7 +980,7 @@ class FormTicket
             $doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
             $doleditor->Create();
-            print '</td><td align="center">';
+            print '</td><td class="center">';
             print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
             print '</td></tr>';
         }
@@ -1013,7 +1013,7 @@ class FormTicket
         include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         $doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
         $doleditor->Create();
-        print '</td><td align="center">';
+        print '</td><td class="center">';
         if ($user->rights->ticket->write && !$user->socid) {
             print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
         }
@@ -1030,7 +1030,7 @@ class FormTicket
             include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
             $doleditor->Create();
-            print '</td><td align="center">';
+            print '</td><td class="center">';
             print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
             print '</td></tr>';
         }

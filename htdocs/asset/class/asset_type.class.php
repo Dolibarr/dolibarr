@@ -70,6 +70,17 @@ class AssetType extends CommonObject
 	/** @var array Array of asset */
 	public $asset=array();
 
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'label' =>array('type'=>'varchar(50)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
+		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code asset', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation asset', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation expense', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+	);
+
 
 	/**
 	 *	Constructor

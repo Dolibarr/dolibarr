@@ -114,7 +114,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i = 0;
@@ -397,7 +397,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowraponall">';
 				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
@@ -509,7 +509,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 				//$thirdpartystatic->code_compta = $obj->code_compta;
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td>';
+				print '<tr class="oddeven nowraponall"><td>';
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td>';
@@ -667,10 +667,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="nowrap right">'.price($obj->amount).'</td>';
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
-					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
+					print '<td class="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 
 					$tot_ttc += $obj->amount;

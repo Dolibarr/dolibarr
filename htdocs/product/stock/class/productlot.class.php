@@ -220,9 +220,9 @@ class Productlot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param int    $product_id  Id of product, batch number parameter required
-	 * @param string $batch batch number
+	 * @param int    $id  			Id of lot/batch
+	 * @param int    $product_id  	Id of product, batch number parameter required
+	 * @param string $batch 		batch number
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */

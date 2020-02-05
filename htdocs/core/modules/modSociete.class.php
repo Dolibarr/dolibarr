@@ -71,7 +71,7 @@ class modSociete extends DolibarrModules
 		$this->requiredby = array("modExpedition", "modFacture", "modFournisseur", "modFicheinter", "modPropale", "modContrat", "modCommande"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
-		$this->langfiles = array("companies", 'bills');
+		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
 		$this->const = array();
@@ -412,7 +412,7 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
+            's.fk_departement' => "StateCode",
             's.fk_pays' => "CountryCode",
             's.phone' => "Phone",
             's.fax' => "Fax",
@@ -449,7 +449,7 @@ class modSociete extends DolibarrModules
             's.multicurrency_code' => 'MulticurrencyCurrency'
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity = ".$conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
@@ -583,7 +583,7 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
+            's.fk_departement' => "StateCode",
             's.fk_pays' => "CountryCode",
             's.birthday' => "BirthdayDate",
             's.poste' => "Role",
@@ -597,7 +597,7 @@ class modSociete extends DolibarrModules
             's.note_public' => "NotePublic"
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity = ".$conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on an old database (during a migration for example)
         {

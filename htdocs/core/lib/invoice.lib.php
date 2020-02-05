@@ -137,13 +137,6 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'payment';
 	$h++;
 
-	if ($conf->global->INVOICE_USE_SITUATION) {
-	    $head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
-	    $head[$h][1] = $langs->trans("InvoiceSituation");
-	    $head[$h][2] = 'situation';
-	    $h++;
-	}
-
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
@@ -168,6 +161,11 @@ function invoice_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_rec_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
 	$head[$h][2] = 'attributeslinesrec';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
+	$head[$h][1] = $langs->trans("InvoiceSituation");
+	$head[$h][2] = 'situation';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'invoice_admin', 'remove');

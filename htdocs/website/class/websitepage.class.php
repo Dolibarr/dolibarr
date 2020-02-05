@@ -19,7 +19,7 @@
  */
 
 /**
- * \file    website/websitepage.class.php
+ * \file    htdocs/website/class/websitepage.class.php
  * \ingroup website
  * \brief   File for the CRUD class of websitepage (Create/Read/Update/Delete)
  */
@@ -113,7 +113,7 @@ class WebsitePage extends CommonObject
 		'pageurl'        =>array('type'=>'varchar(16)', 'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
 		'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
 		'type_container' =>array('type'=>'varchar(16)', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
-		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1),
+		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'help'=>'UseTextBetween5And70Chars'),
 	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1),
 		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image', 'enabled'=>1, 'visible'=>1, 'position'=>32, 'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
 		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
@@ -421,10 +421,10 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
 	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
-	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
+	 * @param	string	$newtitle			New title
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $keeptitleunchanged = 0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $newtitle = '')
 	{
 		global $hookmanager, $langs;
 
@@ -434,6 +434,18 @@ class WebsitePage extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$object = new self($this->db);
+
+		// Clean parameters
+		if (empty($newref) && !empty($newtitle)) {
+			$newref = strtolower(dol_sanitizeFileName(preg_replace('/\s+/', '-', $newtitle), '-', 1));
+		}
+
+		// Check parameters
+		if (empty($newref)) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE"));
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -448,7 +460,7 @@ class WebsitePage extends CommonObject
 		$object->aliasalt = '';
 		$object->fk_user_creat = $user->id;
 		$object->date_creation = $now;
-		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
+		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
 		if (!empty($newlang)) $object->lang = $newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;

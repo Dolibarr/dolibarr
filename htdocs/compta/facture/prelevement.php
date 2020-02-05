@@ -197,7 +197,7 @@ if ($object->id > 0)
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref.='</form>';
@@ -226,7 +226,7 @@ if ($object->id > 0)
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="3">';
@@ -282,7 +282,7 @@ if ($object->id > 0)
 
 	// Date invoice
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && !empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
@@ -309,7 +309,7 @@ if ($object->id > 0)
 
 	// Payment condition
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && !empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
@@ -334,7 +334,7 @@ if ($object->id > 0)
 
 	// Date payment term
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && !empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
@@ -362,7 +362,7 @@ if ($object->id > 0)
 
 	// Payment mode
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && !empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
@@ -409,7 +409,7 @@ if ($object->id > 0)
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
@@ -587,11 +587,11 @@ if ($object->id > 0)
 
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td align="center">'.$langs->trans("User").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
-	print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
+	print '<td class="center">'.$langs->trans("User").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	print '<td>&nbsp;</td>';
-	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
@@ -620,11 +620,11 @@ if ($object->id > 0)
 			print '<tr class="oddeven">';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
-			print '<td align="center">'.price($obj->amount).'</td>';
+			print '<td class="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
 			print '<td>&nbsp;</td>';
 
-			print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
+			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
 
 			print '<td class="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
@@ -672,9 +672,9 @@ if ($object->id > 0)
 
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 
-			print '<td align="center">'.price($obj->amount).'</td>';
+			print '<td class="center">'.price($obj->amount).'</td>';
 
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($obj->fk_prelevement_bons > 0)
 			{
 				$withdrawreceipt = new BonPrelevement($db);
@@ -686,7 +686,7 @@ if ($object->id > 0)
 
 			print '<td>&nbsp;</td>';
 
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
 
 			print '<td>&nbsp;</td>';
 

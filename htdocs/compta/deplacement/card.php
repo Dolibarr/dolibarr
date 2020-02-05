@@ -247,7 +247,7 @@ if ($action == 'create')
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border centpercent">';
@@ -335,7 +335,7 @@ elseif ($id)
             }
 
             print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
 

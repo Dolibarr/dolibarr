@@ -180,14 +180,14 @@ class Project extends CommonObject
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'fk_opp_status' =>array('type'=>'integer', 'label'=>'Fk opp status', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'Opp percent', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'note_private' =>array('type'=>'text', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>85),
-		'note_public' =>array('type'=>'text', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>90),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
 		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget amount', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'Opp amount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportKey', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'Usage bill time', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'Usage opportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
@@ -607,18 +607,29 @@ class Project extends CommonObject
 		{
 			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$ids.") AND ms.type_mouvement = 1";
 		}
+        elseif ($type == 'loan')
+        {
+            $sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').")";
+        }
         else
 		{
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
         }
 
-		if ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
+        if($dates > 0 && $type == 'loan'){
+            $sql .= " AND (dateend > '".$this->db->idate($dates)."' OR dateend IS NULL)";
+        }
+		elseif ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
 		{
 			if (empty($datefieldname) && !empty($this->table_element_date)) $datefieldname = $this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
 		}
-		if ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
+
+        if($datee > 0 && $type == 'loan'){
+            $sql .= " AND (datestart < '".$this->db->idate($datee)."' OR datestart IS NULL)";
+        }
+        elseif ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
 		{
 			if (empty($datefieldname) && !empty($this->table_element_date)) $datefieldname = $this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
@@ -1211,7 +1222,7 @@ class Project extends CommonObject
      * Return array of projects a user has permission on, is affected to, or all projects
      *
      * @param 	User	$user			User object
-     * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
+     * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
      * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
      * @param	string	$filter			additionnal filter on project (statut, ref, ...)
@@ -1224,9 +1235,17 @@ class Project extends CommonObject
 
         $sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
-        if ($mode == 0 || $mode == 1)
+        if ($mode == 0)
         {
-            $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
+            $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id = p.rowid";
+        }
+        elseif ($mode == 1)
+        {
+        	$sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
+        }
+        elseif ($mode == 2)
+        {
+        	// No filter. Use this if user has permission to see all project
         }
         $sql.= " WHERE p.entity IN (".getEntity('project').")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
@@ -1251,13 +1270,12 @@ class Project extends CommonObject
 
         if ($mode == 0)
         {
-            $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ( p.public = 1";
             $sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
             $sql.= " AND ec.fk_socpeople = ".$user->id.")";
             $sql.= " )";
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND (";
@@ -1265,7 +1283,7 @@ class Project extends CommonObject
             $sql.= " AND ec.fk_socpeople = ".$user->id.")";
             $sql.= " )";
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             // No filter. Use this if user has permission to see all project
         }
@@ -1797,6 +1815,72 @@ class Project extends CommonObject
                 return -1;
         }
     }
+	/**
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
+	 * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
+	 *
+	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Filter on a task id
+	 * @param 	int		$userid			Time spent by a particular user
+	 * @return 	int						<0 if OK, >0 if KO
+	 */
+	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
+	{
+		$error=0;
+
+		$this->monthWorkLoad=array();
+		$this->monthWorkLoadPerTask=array();
+
+		if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
+
+		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql.= " WHERE ptt.fk_task = pt.rowid";
+		$sql.= " AND pt.fk_projet = ".$this->id;
+		$sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+		$sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
+		if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
+		if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+
+		//print $sql;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$weekalreadyfound=array();
+
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			// Loop on each record found, so each couple (project id, task id)
+			while ($i < $num)
+			{
+				$obj=$this->db->fetch_object($resql);
+				if(!empty($obj->task_date)) {
+					$date = explode('-', $obj->task_date);
+					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+				}
+				if (empty($weekalreadyfound[$week_number]))
+				{
+					$this->monthWorkLoad[$week_number] = $obj->task_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] = $obj->task_duration;
+				}
+				else
+				{
+					$this->monthWorkLoad[$week_number] += $obj->task_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
+				}
+				$weekalreadyfound[$week_number]=1;
+				$i++;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1938,7 +2022,7 @@ class Project extends CommonObject
 	{
 	    global $conf;
 
-        if (!($this->statut == 1)) return false;
+        if (!($this->statut == self::STATUS_VALIDATED)) return false;
         if (!$this->datee && !$this->date_end) return false;
 
         $now = dol_now();

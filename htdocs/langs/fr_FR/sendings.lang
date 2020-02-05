@@ -21,6 +21,7 @@ QtyShipped=Qté. expédiée
 QtyShippedShort=Qté exp.
 QtyPreparedOrShipped=Quantité préparée ou envoyée
 QtyToShip=Qté. à expédier
+QtyToReceive=Qté à recevoir
 QtyReceived=Qté. reçue
 QtyInOtherShipments=Qté dans les autres expéditions
 KeepToShip=Reste à expédier
@@ -46,6 +47,7 @@ DateDeliveryPlanned=Date prévue de livraison
 RefDeliveryReceipt=Ref bon de réception
 StatusReceipt=Status du bon de réception
 DateReceived=Date de réception réelle
+ClassifyReception=Classer la réception
 SendShippingByEMail=Envoyer bon d'expédition par email
 SendShippingRef=Envoi du bordereau d'expédition %s
 ActionsOnShipping=Événements sur l'expédition
@@ -53,14 +55,12 @@ LinkToTrackYourPackage=Lien pour le suivi de votre colis
 ShipmentCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle expédition se fait depuis la fiche commande.
 ShipmentLine=Ligne d'expédition
 ProductQtyInCustomersOrdersRunning=Quantité de produit en commandes client ouvertes
-ProductQtyInSuppliersOrdersRunning=Quantité de produit en commandes fournisseur ouvertes
-ProductQtyInShipmentAlreadySent=Quantité de produit en commande client ouverte déjà expédiée
+ProductQtyInSuppliersOrdersRunning=Quantité de produit de commandes fournisseur ouvertes
+ProductQtyInShipmentAlreadySent=Quantité de produit en commande ouverte déjà expédiée
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantité de produit déjà reçu en commandes fournisseur ouvertes
-NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez l'inventaire ou retourner choisir un autre entrepôt.
+NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez le stock ou choisir un autre entrepôt.
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
-
-ShipmentIncrementStockOnDelete=Remettre en stock les éléments de cette expédition
 
 # Sending methods
 # ModelDocument

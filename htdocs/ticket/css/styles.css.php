@@ -144,11 +144,11 @@ div.ticketform .blue:hover {
     border:solid 1px rgba(168,168,168,.4);
     border-top:solid 1px f8f8f8;
     background-color: #f8f8f8;
-    background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 }
-#form_create_ticket input.text,
-#form_create_ticket textarea { width:450px;}
+
+#form_create_ticket input.text, #form_create_ticket textarea { width:450px;}
+
+@media only screen and (max-width: 767px)
+{
+	#form_create_ticket input.text,	#form_create_ticket textarea { width: unset;}
+}

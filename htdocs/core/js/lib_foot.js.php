@@ -158,7 +158,7 @@ print '
 						}
 						else
 						{
-							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field page_y with value "+page_y);
+							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field with name=page_y with value "+page_y);
 							jQuery("input[type=hidden][name=page_y]").val(page_y);
 						}
 					}

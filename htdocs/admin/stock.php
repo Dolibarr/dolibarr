@@ -461,6 +461,7 @@ print "</tr>\n";
 
 print '</table>';
 
+/*
 print '<br>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
@@ -471,9 +472,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '</tr>'."\n";
 
 	// Example with a yes / no select
-	/*print '<tr class="oddeven">';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
 	} else {
@@ -481,12 +482,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 		print $form->selectarray("INVENTORY_DISABLE_VIRTUAL", $arrval, $conf->global->INVENTORY_DISABLE_VIRTUAL);
 	}
 	print '</td></tr>';
-	*/
+
 
 	// Example with a yes / no select
-    /*print '<tr class="oddeven">';
+    print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
-	print '<td align="center">';
+	print '<td class="center">';
   	if ($conf->use_javascript_ajax) {
   		print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
   	} else {
@@ -494,7 +495,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
   		print $form->selectarray("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA", $arrval, $conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA);
   	}
   	print '</td></tr>';
-  	*/
+
 
   	// Example with a yes / no select
 	print '<tr class="oddeven">';
@@ -507,8 +508,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     	print $form->selectarray("INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT", $arrval, $conf->global->INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT);
 	}
 	print '</td></tr>';
+
 	print '</table>';
 }
+*/
 
 /* I keep the option/feature, but hidden to end users for the moment. If feature is used by module, no need to have users see it.
 If not used by a module, I still need to understand in which case user may need this now we can set rule on product page.
@@ -518,7 +521,7 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 	print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
 	print '<td class="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
 	print $form->selectyesno("INDEPENDANT_SUBPRODUCT_STOCK",$conf->global->INDEPENDANT_SUBPRODUCT_STOCK,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

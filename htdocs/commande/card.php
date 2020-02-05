@@ -1666,6 +1666,7 @@ if ($action == 'create' && $usercancreate)
 
 		print '</td></tr>';
 	}
+
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
@@ -2063,7 +2064,7 @@ if ($action == 'create' && $usercancreate)
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('lineid' => $lineid);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		// Note that $action and $object may be modified by hook
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
 		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
@@ -2098,7 +2099,7 @@ if ($action == 'create' && $usercancreate)
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
@@ -2183,7 +2184,7 @@ if ($action == 'create' && $usercancreate)
 			print '</form>';
 		} else {
 			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
-			if ($object->hasDelay() && !empty($object->date_livraison)) {
+			if ($object->hasDelay()) {
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
 		}
@@ -2541,6 +2542,11 @@ if ($action == 'create' && $usercancreate)
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
+				// Reopen a closed order
+				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
+				}
+
 				// Send
 				if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 					if ($usercansend) {
@@ -2616,11 +2622,6 @@ if ($action == 'create' && $usercancreate)
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Shipment"))).'">'.$langs->trans('CreateShipment').'</a>';
 						}
 					}
-				}
-
-				// Reopen a closed order
-				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
 				// Set to shipped

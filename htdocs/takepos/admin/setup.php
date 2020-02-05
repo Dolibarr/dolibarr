@@ -75,11 +75,15 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_PHONE_BASIC_LAYOUT", GETPOST('TAKEPOS_PHONE_BASIC_LAYOUT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS", GETPOST('TAKEPOS_SUPPLEMENTS', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
+	//$res = dolibarr_set_const($db, "TAKEPOS_HEAD_BAR", GETPOST('TAKEPOS_HEAD_BAR', 'int'), 'int', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -125,10 +129,10 @@ print '<br>';
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -222,6 +226,22 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
 	print '</td></tr>';
+
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("ProductSupplements");
+	print '<td colspan="2">';
+	print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
+	print '</td></tr>';
+
+	if ($conf->global->TAKEPOS_SUPPLEMENTS)
+	{
+		print '<tr class="oddeven"><td>';
+		print $langs->trans("SupplementCategory");
+		print '<td colspan="2">';
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
+		print "</td></tr>\n";
+	}
 }
 
 print '<tr class="oddeven"><td>';
@@ -238,6 +258,14 @@ $array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad")
 print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
+// Color theme
+print '<tr class="oddeven"><td>';
+print $langs->trans("ColorTheme");
+print '<td colspan="2">';
+$array = array(0=>"eldy", 1=>$langs->trans("Colorful"));
+print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
+print "</td></tr>\n";
+
 // Direct Payment
 print '<tr class="oddeven"><td>';
 print $langs->trans('DirectPaymentButton');
@@ -251,6 +279,14 @@ print $langs->trans('CustomReceipt');
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_CUSTOM RECEIPT", $conf->global->TAKEPOS_CUSTOM_RECEIPT, 1);
 print "</td></tr>\n";
+
+// Head Bar
+/*print '<tr class="oddeven"><td>';
+print $langs->trans('HeadBar');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_HEAD_BAR", $conf->global->TAKEPOS_HEAD_BAR, 1);
+print "</td></tr>\n";
+*/
 
 // Email template for send invoice
 print '<tr class="oddeven"><td>';
@@ -283,7 +319,7 @@ print '</div>';
 if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	print '<br>';
 
-	print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';

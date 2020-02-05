@@ -48,9 +48,9 @@ $langs->loadLangs(array("main","bills"));
 
 </script>
 
-<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture/card.php?action=builddoc&facid=<?php echo $_GET['facid']; ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
+<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture/card.php?action=builddoc&facid=<?php echo GETPOST('facid', 'int'); ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
 <br>
-<p><a class="lien1" href="#" onclick="Javascript: popupTicket(); return(false);"><?php echo $langs->trans("PrintTicket"); ?></a></p>
+<p><a class="lien1" href="#" onclick="Javascript: popupTicket(<?php echo GETPOST('facid', 'int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>'); return(false);"><?php echo $langs->trans("PrintTicket"); ?></a></p>
 
 </div>
 </div>

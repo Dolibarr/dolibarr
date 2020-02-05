@@ -216,8 +216,9 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
     print '<body id="mainbody" class="publicnewticketform">';
 
+    // Define urllogo
+    $width = 0;
     if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || ! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
-        print '<center>';
         // Print logo
         if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO))
         {
@@ -225,20 +226,40 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
         	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
         		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/thumbs/'.$mysoc->logo_small);
+        		$width = 150;
         	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
         		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/'.$mysoc->logo);
-        		$width = 128;
+        		$width = 150;
         	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
         		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
         	}
-    	    print '<a href="' . ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
         }
-        if (! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
-        {
-            print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
-        }
-    	print '</center><br>';
     }
+
+    print '<div class="center">';
+    // Output html code for logo
+    if ($urllogo || ! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
+    {
+    	print '<div class="backgreypublicpayment">';
+    	print '<div class="logopublicpayment">';
+    	if ($urllogo) {
+	    	print '<a href="' . ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '">';
+	    	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+	    	if ($width) print ' width="'.$width.'"';
+	    	print '>';
+	    	print '</a>';
+    	}
+    	if (! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
+    		print '<div class="clearboth"></div><strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+    	}
+    	print '</div>';
+    	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+    		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+    	}
+    	print '</div>';
+    }
+
+    print '</div>';
 
     print '<div class="ticketlargemargin">';
 }

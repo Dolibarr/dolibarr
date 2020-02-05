@@ -308,7 +308,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND (a.fk_soc IS
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-if ($type) $sql .= " AND c.id = ".$type;
+if ($type) $sql .= " AND c.id = ".(int) $type;
 if ($status == '0') { $sql .= " AND a.percent = 0"; }
 if ($status == '-1') { $sql .= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql .= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
@@ -377,7 +377,7 @@ if ($resql)
 	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -554,7 +554,10 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note = dol_htmlentitiesbr($obj->note); // deprecated
+		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+
+		$actionstatic->fetchResources();
 
 		print '<tr class="oddeven">';
 
@@ -618,7 +621,7 @@ if ($resql)
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late = 0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
@@ -631,7 +634,7 @@ if ($resql)
 
 		// End date
 		if (!empty($arrayfields['a.datep2']['checked'])) {
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
@@ -656,7 +659,6 @@ if ($resql)
 		if (!empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
 
-            $actionstatic->fetchResources();
             if (!empty($actionstatic->socpeopleassigned))
             {
                 $contactList = array();

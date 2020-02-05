@@ -99,8 +99,11 @@ if (!empty($user->socid)) $socid = $user->socid;
 $isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
+$usercancreate = $user->rights->fournisseur->facture->creer;
+
 $permissionnote = $user->rights->fournisseur->facture->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->fournisseur->facture->creer; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->rights->fournisseur->facture->creer; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd = $user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
@@ -402,7 +405,7 @@ if (empty($reshook))
 		$result = $object->update($user);
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
-	elseif ($action == "setabsolutediscount" && $user->rights->fournisseur->facture->creer)
+	elseif ($action == "setabsolutediscount" && $usercancreate)
 	{
 		// POST[remise_id] or POST[remise_id_for_payment]
 
@@ -460,7 +463,7 @@ if (empty($reshook))
 		}
 	}
 	// Convertir en reduc
-	elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -472,12 +475,13 @@ if (empty($reshook))
 
 		$canconvert = 0;
 		if ($object->type == FactureFournisseur::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
-		if (($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not refunded completely and not already converted and amount of payment is 0 (see also the real condition used as the condition to show button converttoreduc)
 		if ($canconvert)
 		{
 			$db->begin();
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
+			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 			// Loop on each vat rate
 			$i = 0;
@@ -491,6 +495,20 @@ if (empty($reshook))
 					$i++;
 				}
 			}
+
+			// If some payments were already done, we change the amount to pay using same prorate
+			if (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
+					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
+					foreach($amount_ht as $vatrate => $val) {
+						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
+						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
+						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
+					}
+				}
+			}
+			//var_dump($amount_ht);var_dump($amount_tva);var_dump($amount_ttc);exit;
 
 			// Insert one discount by VAT rate category
 			$discount = new DiscountAbsolute($db);
@@ -513,6 +531,7 @@ if (empty($reshook))
 			{
 				// If we're on a standard invoice, we have to get excess paid to create a discount in TTC without VAT
 
+				// Total payments
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'paiementfourn as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
@@ -526,7 +545,20 @@ if (empty($reshook))
 				$res = $db->fetch_object($resql);
 				$total_paiements = $res->total_paiements;
 
-				$discount->amount_ht = $discount->amount_ttc = $total_paiements - $object->total_ttc;
+				// Total credit note and deposit
+				$total_creditnote_and_deposit = 0;
+				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+				$sql .= " re.description, re.fk_invoice_supplier_source";
+				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+				$sql .= " WHERE fk_invoice_supplier = ".$object->id;
+				$resql = $db->query($sql);
+				if (!empty($resql)) {
+					while ($obj = $db->fetch_object($resql)) {
+						$total_creditnote_and_deposit += $obj->amount_ttc;
+					}
+				} else dol_print_error($db);
+
+				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
 
@@ -600,7 +632,7 @@ if (empty($reshook))
 	}
 
 	// Create
-	elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'add' && $usercancreate)
 	{
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
 
@@ -632,7 +664,7 @@ if (empty($reshook))
 
 			if (!$error) {
 				// This is a replacement invoice
-				$result = $object->fetch(GETPOST('fac_replacement'), 'int');
+				$result = $object->fetch(GETPOST('fac_replacement', 'int'));
 				$object->fetch_thirdparty();
 
 				$object->ref = GETPOST('ref', 'nohtml');
@@ -1143,7 +1175,7 @@ if (empty($reshook))
 		else
 		{
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = '';
+			$price_ht = GETPOST('price_ht');
 			$tva_tx = '';
 		}
 
@@ -1209,6 +1241,7 @@ if (empty($reshook))
 			$idprod = 0;
 			if (GETPOST('idprodfournprice', 'alpha') == -1 || GETPOST('idprodfournprice', 'alpha') == '') $idprod = -99; // Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
+			$reg = array();
 			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg))
 			{
 				$idprod = $reg[1];
@@ -1250,7 +1283,20 @@ if (empty($reshook))
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
-				$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+				if ($price_ht != '' || $price_ht_devise != '') {
+					$price_base_type = 'HT';
+					$pu = price2num($price_ht, 'MU');
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+				} else {
+					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
+						$pu = $productsupplier->fourn_pu;
+						$pu_ht_devise = 0;
+					} else {
+						$pu = $productsupplier->fourn_pu;
+						$pu_ht_devise = $productsupplier->fourn_multicurrency_unitprice;
+					}
+				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
 
@@ -1260,7 +1306,6 @@ if (empty($reshook))
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-				$pu = $productsupplier->fourn_pu;
 				if (empty($pu)) $pu = 0; // If pu is '' or null, we force to have a numeric value
 
 				$result = $object->addline(
@@ -1283,8 +1328,9 @@ if (empty($reshook))
 					$array_options,
 					$productsupplier->fk_unit,
 					0,
-                    $productsupplier->fourn_multicurrency_unitprice,
-                    $ref_supplier
+                    $pu_ht_devise,
+                    $ref_supplier,
+					''
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -1717,7 +1763,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($societe->id > 0) print '<input type="hidden" name="socid" value="'.$societe->id.'">'."\n";
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -1799,7 +1845,7 @@ if ($action == 'create')
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
-				$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
+				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
 				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . GETPOST('valuedeposit', 'int') . '"/>';
@@ -2360,7 +2406,7 @@ else
 
 		if (!$formconfirm)
 		{
-			$parameters = array('lineid'=>$lineid);
+			$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 			elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -2394,7 +2440,7 @@ else
                     //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                     $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                    $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                     $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                     $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                     $morehtmlref .= '</form>';
@@ -2987,7 +3033,7 @@ else
          * Lines
          */
 		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -3129,7 +3175,9 @@ else
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessPaidToReduc').'</a></div>';
 					}
 					// For credit note
-					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() == 0) {
+					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer
+						&& (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+						) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a></div>';
 					}
 					// For deposit invoice

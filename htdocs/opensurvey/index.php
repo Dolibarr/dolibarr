@@ -59,7 +59,7 @@ else dol_print_error($db, '');
 $title = $langs->trans("OpenSurveyArea");
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'wrench');
+print load_fiche_titre($title, '', 'generic');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

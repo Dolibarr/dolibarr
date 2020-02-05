@@ -97,11 +97,13 @@ if (empty($reshook))
     $backurlforlist = DOL_URL_ROOT.'/bom/bom_list.php';
 
     if (empty($backtopage) || ($cancel && empty($id))) {
-    	//var_dump($backurlforlist);exit;
-    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    	else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
+    	if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+    		if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    		else $backtopage = dol_buildpath('/bom/bom_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+    	}
     }
-	$triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
+
+    $triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -153,6 +155,8 @@ if (empty($reshook))
 
 		if (!$error)
 		{
+			$lastposition = 0;
+
     		$bomline = new BOMLine($db);
     		$bomline->fk_bom = $id;
     		$bomline->fk_product = $idprod;
@@ -160,6 +164,12 @@ if (empty($reshook))
     		$bomline->qty_frozen = (int) $qty_frozen;
     		$bomline->disable_stock_change = (int) $disable_stock_change;
     		$bomline->efficiency = $efficiency;
+
+    		// Rang to use
+   			$rangmax = $object->line_max(0);
+   			$ranktouse = $rangmax + 1;
+
+   			$bomline->position = ($ranktouse + 1);
 
     		$result = $bomline->create($user);
     		if ($result <= 0)
@@ -169,7 +179,9 @@ if (empty($reshook))
     		}
     		else
     		{
-    		    unset($_POST['qty_frozen']);
+    			unset($_POST['idprod']);
+    			unset($_POST['qty']);
+    			unset($_POST['qty_frozen']);
     		    unset($_POST['disable_stock_change']);
     		}
 		}
@@ -207,7 +219,9 @@ if (empty($reshook))
 		}
 		else
 		{
-		    unset($_POST['qty_frozen']);
+			unset($_POST['idprod']);
+			unset($_POST['qty']);
+			unset($_POST['qty_frozen']);
 		    unset($_POST['disable_stock_change']);
 		}
 	}
@@ -245,7 +259,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewBOM"), '', 'cubes');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -278,7 +292,7 @@ if (($id || $ref) && $action == 'edit')
 	print load_fiche_titre($langs->trans("BillOfMaterials"), '', 'cubes');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -443,7 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -476,7 +490,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref.='</form>';
@@ -506,7 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak = 'description';
+	$keyforbreak = 'efficiency';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -622,7 +636,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    			}
 	    			else
 	    			{
-	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    				$langs->load("errors");
+	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    			}
 	    		}
     		}
@@ -644,7 +659,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
 	    		if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write))
 	    		{
-	    			print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>';
+	    			print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>';
 	    		}
     		}
 

@@ -139,8 +139,14 @@ if (empty($reshook))
 	        {
 	            $cursorfacid = substr($key, 7);
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
-	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
-	            if (!empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
+	            if (!empty($amounts[$cursorfacid])) {
+	            	$atleastonepaymentnotnull++;
+	            	if (is_numeric($amounts[$cursorfacid])) {
+	            		$totalpayment = $totalpayment + $amounts[$cursorfacid];
+	            	} else {
+	            		setEventMessages($langs->transnoentities("InputValueIsNotAnNumber", GETPOST($key)), null, 'warnings');
+	            	}
+	            }
 	            $result = $tmpinvoice->fetch($cursorfacid);
 	            if ($result <= 0) dol_print_error($db);
 	            $amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
@@ -364,7 +370,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice = ($datefacture == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
+    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -457,7 +463,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add_paiement">';
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
@@ -600,7 +606,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        	$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 	                        }
 
-	                        print '<tr class="oddeven">';
+	                        print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
 	                        // Ref
 	                        print '<td class="nowraponall">';
@@ -613,7 +619,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        // Date
 	                        if ($objp->df > 0)
 	                        {
-	                            print '<td class="center">';
+	                            print '<td class="center nowraponall">';
 	                            print dol_print_date($db->jdate($objp->df), 'day').'</td>';
 	                        }
 	                        else
@@ -624,7 +630,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        // Date Max Payment
 	                        if ($objp->dlr > 0)
 	                        {
-	                            print '<td class="center">';
+	                            print '<td class="center nowraponall">';
 	                            print dol_print_date($db->jdate($objp->dlr), 'day');
 
 	                            if ($invoice->hasDelay())
@@ -815,7 +821,7 @@ if (empty($action) || $action == 'list')
     $sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql .= ' ba.rowid as bid, ba.label,';
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
-    $sql .= ' SUM(f.amount)';
+    $sql .= ' SUM(pf.amount)';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
@@ -881,7 +887,7 @@ if (empty($action) || $action == 'list')
 
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="list">';
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -1007,9 +1013,9 @@ if (empty($action) || $action == 'list')
 
             // Amount
             print '<td class="right">'.price($objp->pamount).'</td>';
-            if (!$i) $totalarray['nbfield']++;
-            $totalarray['pos'][7] = 'amount';
+            $totalarray['pos'][$totalarray['nbfield']] = 'amount';
             $totalarray['val']['amount'] += $objp->pamount;
+            if (!$i) $totalarray['nbfield']++;
 
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;

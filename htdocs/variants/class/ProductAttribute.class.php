@@ -36,7 +36,7 @@ class ProductAttribute
 
 	/**
 	 * Ref of the product attribute
-	 * @var
+	 * @var string
 	 */
 	public $ref;
 

@@ -69,7 +69,7 @@ print $langs->trans("WebServicesDesc")."<br>\n";
 print "<br>\n";
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';

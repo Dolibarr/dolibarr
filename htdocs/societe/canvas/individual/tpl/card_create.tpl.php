@@ -47,7 +47,7 @@ if (empty($conf) || ! is_object($conf))
 
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="private" value="<?php echo $this->control->tpl['particulier']; ?>">
 <?php if ($this->control->tpl['auto_customercode'] || $this->control->tpl['auto_suppliercode']) { ?>
 <input type="hidden" name="code_auto" value="1">

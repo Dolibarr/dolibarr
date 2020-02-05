@@ -123,7 +123,7 @@ print '<br>';
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 : $terminal).'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<div class="div-table-responsive">';
@@ -207,33 +207,34 @@ if (!empty($conf->stock->enabled))
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
-	if ($conf->receiptprinter->enabled) {
-		// Select printer to use with terminal
-		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-		$printer = new dolReceiptPrinter($db);
-		$printer->listprinters();
-		$printers = array();
-		foreach ($printer->listprinters as $key => $value) {
-			$printers[$value['rowid']] = $value['name'];
-		}
-		print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalPrinterToUse").'</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
-		print '</td></tr>';
-		$printer->listPrintersTemplates();
-		$templates = array();
-		foreach ($printer->listprinterstemplates as $key => $value) {
-			$templates[$value['rowid']] = $value['name'];
-		}
-		print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForInvoicesTicket").'</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
-		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForOrdersTicket").'</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
-		print '</td></tr>';
+}
+
+if ($conf->receiptprinter->enabled) {
+	// Select printer to use with terminal
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	$printer = new dolReceiptPrinter($db);
+	$printer->listprinters();
+	$printers = array();
+	foreach ($printer->listprinters as $key => $value) {
+		$printers[$value['rowid']] = $value['name'];
 	}
+	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalPrinterToUse").'</td>';
+	print '<td>';
+	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
+	print '</td></tr>';
+	$printer->listPrintersTemplates();
+	$templates = array();
+	foreach ($printer->listprinterstemplates as $key => $value) {
+		$templates[$value['rowid']] = $value['name'];
+	}
+	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForInvoicesTicket").'</td>';
+	print '<td>';
+	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
+	print '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForOrdersTicket").'</td>';
+	print '<td>';
+	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
+	print '</td></tr>';
 }
 
 print '</table>';

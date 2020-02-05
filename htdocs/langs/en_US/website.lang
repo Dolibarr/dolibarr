@@ -2,7 +2,7 @@
 Shortname=Code
 WebsiteSetupDesc=Create here the websites you wish to use. Then go into menu Websites to edit them.
 DeleteWebsite=Delete website
-ConfirmDeleteWebsite=Are you sure you want to delete this web site? All its pages and content will also be removed. The files uploaded (like into the medias directory, the ECM module, ...) will remain. 
+ConfirmDeleteWebsite=Are you sure you want to delete this web site? All its pages and content will also be removed. The files uploaded (like into the medias directory, the ECM module, ...) will remain.
 WEBSITE_TYPE_CONTAINER=Type of page/container
 WEBSITE_PAGE_EXAMPLE=Web page to use as example
 WEBSITE_PAGENAME=Page name/alias
@@ -113,10 +113,11 @@ ReplaceString=New string
 CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.
 LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load javascript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Sample of a page with dynamic content
-ImportSite=Import site
+ImportSite=Import website
 EditInLineOnOff=Mode 'Edit inline' is %s
 ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
 GlobalCSSorJS=Global CSS/JS/Header file of web site
 BackToHomePage=Back to home page...
 TranslationLinks=Translation links
 YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not a website page
+UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters

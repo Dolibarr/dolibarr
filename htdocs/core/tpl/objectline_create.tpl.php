@@ -356,35 +356,36 @@ if ($nolinesbefore) {
 		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"]) ?GETPOST("price_ht", 'alpha', 2) : ''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	<?php
+	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluht_currency right">
 			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"]) ?GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
-	<?php }
+		<?php
+	}
 	if (!empty($inputalsopricewithtax)) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluttc right">
 			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"]) ?GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
-	<?php }
+		<?php
+	}
 	$coldisplay++;
 	?>
 	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1); ?>">
 	</td>
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
-	{
+	if (! empty($conf->global->PRODUCT_USE_UNITS)) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
-	{
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	$coldisplay++;
@@ -397,8 +398,7 @@ if ($nolinesbefore) {
 		$coldisplay++;
 		print '<td></td>';
 	}
-	if (!empty($usemargins))
-	{
+	if (!empty($usemargins)) {
 		if (!empty($user->rights->margins->creer)) {
 			$coldisplay++;
 			?>
@@ -434,208 +434,209 @@ if ($nolinesbefore) {
 if (is_object($objectline)) {
 	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
+
 if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
-	?>
-
-<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
-	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
-	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1); ?>">
-		<?php
-		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-		$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		if (!empty($object->element) && $object->element == 'contrat')
-		{
-			print $langs->trans("DateStartPlanned").' ';
-			print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
-			print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-			print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
+	print '<tr id="trlinefordates" class="oddeven">'."\n";
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; }
+	print '<td colspan="'.($coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1)).'">';
+	$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	if (!empty($object->element) && $object->element == 'contrat')
+	{
+		print $langs->trans("DateStartPlanned").' ';
+		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
+		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
+	}
+	else
+	{
+		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
+		print ' '.$langs->trans('to').' ';
+		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
+	};
+	print '<script>';
+	if (!$date_start) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
 		}
-		else
-		{
-			echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-			print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
-			echo ' '.$langs->trans('to').' ';
-			print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
-		};
-		print '<script>';
-		if (!$date_start) {
-			if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
-				print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
-			}
-			if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
-				print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
-			}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
 		}
-		if (!$date_end) {
-			if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
-				print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
-			}
-			if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
-				print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
-			}
+	}
+	if (!$date_end) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
 		}
-		print '</script>';
-		print '</td>';
-		print "</tr>\n";
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+		}
+	}
+	print '</script>';
+	print '</td>';
+	print '</tr>'."\n";
 }
-		print "<script>\n";
+
+
+print "<script>\n";
 if (!empty($usemargins) && $user->rights->margins->creer)
 {
 	?>
-
-			/* Some js test when we click on button "Add" */
-			jQuery(document).ready(function() {
+	/* Some js test when we click on button "Add" */
+	jQuery(document).ready(function() {
 	<?php
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-				$("input[name='np_marginRate']:first").blur(function(e) {
-				return checkFreeLine(e, "np_marginRate");
-				});
-				<?php
+		$("input[name='np_marginRate']:first").blur(function(e) {
+		return checkFreeLine(e, "np_marginRate");
+		});
+		<?php
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-				$("input[name='np_markRate']:first").blur(function(e) {
-				return checkFreeLine(e, "np_markRate");
-				});
-				<?php
+		$("input[name='np_markRate']:first").blur(function(e) {
+		return checkFreeLine(e, "np_markRate");
+		});
+		<?php
 	}
 	?>
-			});
+	});
 
-			/* TODO This does not work for number with thousand separator that is , */
-			function checkFreeLine(e, npRate)
-			{
-			var buying_price = $("input[name='buying_price']:first");
-			var remise = $("input[name='remise_percent']:first");
+	/* TODO This does not work for number with thousand separator that is , */
+	function checkFreeLine(e, npRate)
+	{
+	var buying_price = $("input[name='buying_price']:first");
+	var remise = $("input[name='remise_percent']:first");
 
-			var rate = $("input[name='"+npRate+"']:first");
-			if (rate.val() == '')
-			return true;
+	var rate = $("input[name='"+npRate+"']:first");
+	if (rate.val() == '')
+	return true;
 
-			if (! $.isNumeric(rate.val().replace(',','.')))
-			{
-			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-			}
-			if (npRate == "np_markRate" && rate.val() >= 100)
-			{
-			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-			}
+	if (! $.isNumeric(rate.val().replace(',','.')))
+	{
+	alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
+	e.stopPropagation();
+	setTimeout(function () { rate.focus() }, 50);
+	return false;
+	}
+	if (npRate == "np_markRate" && rate.val() >= 100)
+	{
+	alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
+	e.stopPropagation();
+	setTimeout(function () { rate.focus() }, 50);
+	return false;
+	}
 
-			var price = 0;
-			remisejs=price2numjs(remise.val());
+	var price = 0;
+	remisejs=price2numjs(remise.val());
 
-			if (remisejs != 100)	// If a discount not 100 or no discount
-			{
-			if (remisejs == '') remisejs=0;
+	if (remisejs != 100)	// If a discount not 100 or no discount
+	{
+	if (remisejs == '') remisejs=0;
 
-			bpjs=price2numjs(buying_price.val());
-			ratejs=price2numjs(rate.val());
+	bpjs=price2numjs(buying_price.val());
+	ratejs=price2numjs(rate.val());
 
-			if (npRate == "np_marginRate")
-			price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "np_markRate")
-			price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
-			}
-			$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+	if (npRate == "np_marginRate")
+	price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
+	else if (npRate == "np_markRate")
+	price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+	}
+	$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
-			return true;
-			}
+	return true;
+	}
 
-			<?php
+	<?php
 }
 ?>
 
-		/* JQuery for product free or predefined select */
-		jQuery(document).ready(function() {
-		jQuery("#price_ht").keyup(function(event) {
-		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
-		jQuery("#price_ttc").val('');
-		jQuery("#multicurrency_subprice").val('');
-		}
-		});
-		jQuery("#price_ttc").keyup(function(event) {
-		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
-		jQuery("#price_ht").val('');
-		jQuery("#multicurrency_subprice").val('');
-		}
-		});
-		jQuery("#multicurrency_subprice").keyup(function(event) {
-		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
-		jQuery("#price_ht").val('');
-		jQuery("#price_ttc").val('');
-		}
-		});
+	/* JQuery for product free or predefined select */
+	jQuery(document).ready(function() {
+	jQuery("#price_ht").keyup(function(event) {
+	// console.log(event.which);		// discard event tag and arrows
+	if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
+	jQuery("#price_ttc").val('');
+	jQuery("#multicurrency_subprice").val('');
+	}
+	});
+	jQuery("#price_ttc").keyup(function(event) {
+	// console.log(event.which);		// discard event tag and arrows
+	if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+	jQuery("#price_ht").val('');
+	jQuery("#multicurrency_subprice").val('');
+	}
+	});
+	jQuery("#multicurrency_subprice").keyup(function(event) {
+	// console.log(event.which);		// discard event tag and arrows
+	if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+	jQuery("#price_ht").val('');
+	jQuery("#price_ttc").val('');
+	}
+	});
 
-		$("#prod_entry_mode_free").on( "click", function() {
-		setforfree();
-		});
-		$("#select_type").change(function()
-		{
-		setforfree();
-		if (jQuery('#select_type').val() >= 0)
-		{
-		/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-		jQuery('#dp_desc').focus();
-		/* focus if CKEDITOR */
-		if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-		{
-		var editor = CKEDITOR.instances['dp_desc'];
-		if (editor) { editor.focus(); }
-		}
-		}
-		console.log("Hide/show date according to product type");
-		if (jQuery('#select_type').val() == '0')
-		{
-		jQuery('#trlinefordates').hide();
-		jQuery('.divlinefordates').hide();
-		}
-		else
-		{
-		jQuery('#trlinefordates').show();
-		jQuery('.divlinefordates').show();
-		}
-		});
+	$("#prod_entry_mode_free").on( "click", function() {
+	setforfree();
+	});
+	$("#select_type").change(function()
+	{
+	setforfree();
+	if (jQuery('#select_type').val() >= 0)
+	{
+	/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+	jQuery('#dp_desc').focus();
+	/* focus if CKEDITOR */
+	if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+	{
+	var editor = CKEDITOR.instances['dp_desc'];
+	if (editor) { editor.focus(); }
+	}
+	}
+	console.log("Hide/show date according to product type");
+	if (jQuery('#select_type').val() == '0')
+	{
+	jQuery('#trlinefordates').hide();
+	jQuery('.divlinefordates').hide();
+	}
+	else
+	{
+	jQuery('#trlinefordates').show();
+	jQuery('.divlinefordates').show();
+	}
+	});
 
-		$("#prod_entry_mode_predef").on( "click", function() {
-		console.log("click prod_entry_mode_predef");
-		setforpredef();
-		jQuery('#trlinefordates').show();
-		});
+	$("#prod_entry_mode_predef").on( "click", function() {
+	console.log("click prod_entry_mode_predef");
+	setforpredef();
+	jQuery('#trlinefordates').show();
+	});
 
+	<?php
+	if (!$freelines) { ?>
+		$("#prod_entry_mode_predef").click();
 		<?php
-		if (!$freelines) { ?>
-			$("#prod_entry_mode_predef").click();
-			<?php
-		}
-		?>
+	}
+	?>
 
-		/* When changing predefined product, we reload list of supplier prices required for margin combo */
-		$("#idprod, #idprodfournprice").change(function()
-		{
-		console.log("#idprod, #idprodfournprice change triggered");
+	/* When changing predefined product, we reload list of supplier prices required for margin combo */
+	$("#idprod, #idprodfournprice").change(function()
+	{
+		console.log("Call method change() after change on #idprod or #idprodfournprice. this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
 		jQuery('#trlinefordates').show();
+
 		<?php
-		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT))
+		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT) && empty($senderissupplier))
 		{
 			?>
-			// get the HT price for the product and display it
-			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch', { 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> }, function(data) {
-			jQuery("#price_ht").val(data.price_ht);
-			},
-			'json');
-
+			// Get the HT price for the product and display it
+			console.log("Load price without tax and set it into #price_ht");
+			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
+				{ 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> },
+				function(data) { jQuery("#price_ht").val(data.price_ht); },
+				'json'
+			);
 			<?php
 		}
 		if (!empty($usemargins) && $user->rights->margins->creer)
@@ -669,46 +670,47 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 			var i = 0;
 			$(data).each(function() {
-			if (this.id != 'pmpprice' && this.id != 'costprice')
-			{
-			i++;
-			this.price = parseFloat(this.price); // to fix when this.price >0
-			// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
-			//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
-			if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
-			}
-			if (this.id == 'pmpprice')
-			{
-			// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
-			//console.log("id="+this.id+"-price="+this.price);
-			if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
-			{
-			if (this.price > 0) {
-			defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
-			//console.log("pmppricevalue="+pmppricevalue);
-			}
-			}
-			}
-			if (this.id == 'costprice')
-			{
-			// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
-			//console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
-			if ('costprice' == defaultbuyprice)
-			{
-			if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
-			else if (pmppricevalue > 0) { defaultkey = pmppriceid; defaultprice = pmppricevalue; }
-			}
-			}
-			options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
-																								  });
-																								  options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
+				/* Warning: Lines must be processed in order: best supplier price, then pmpprice line then costprice */
+				if (this.id != 'pmpprice' && this.id != 'costprice')
+				{
+					i++;
+					this.price = parseFloat(this.price); // to fix when this.price >0
+					// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
+					//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
+					if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
+				}
+				if (this.id == 'pmpprice')
+				{
+					// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
+					console.log("id="+this.id+"-price="+this.price);
+					if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
+					{
+						if (this.price > 0) {
+							defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
+							//console.log("pmppricevalue="+pmppricevalue);
+						}
+					}
+				}
+				if (this.id == 'costprice')
+				{
+					// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
+					console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
+					if ('costprice' == defaultbuyprice)
+					{
+						if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
+						else if (pmppricevalue > 0) { defaultkey = 'pmpprice'; defaultprice = pmppricevalue; }
+					}
+				}
+				options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
+			});
+			options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
 
 			console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
 
 			$("#fournprice_predef").html(options).show();
 			if (defaultkey != '')
 			{
-			$("#fournprice_predef").val(defaultkey);
+				$("#fournprice_predef").val(defaultkey);
 			}
 
 			/* At loading, no product are yet selected, so we hide field of buying_price */
@@ -749,43 +751,43 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 		if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
 		{
-		console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
-		jQuery("#pbq").val(pbq);
-		if (jQuery("#qty").val() < pbqqty)
-		{
-		jQuery("#qty").val(pbqqty);
-		}
-		if (jQuery("#remise_percent").val() < pbqpercent)
-		{
-		jQuery("#remise_percent").val(pbqpercent);
-		}
+			console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
+			jQuery("#pbq").val(pbq);
+			if (jQuery("#qty").val() < pbqqty)
+			{
+				jQuery("#qty").val(pbqqty);
+			}
+			if (jQuery("#remise_percent").val() < pbqpercent)
+			{
+				jQuery("#remise_percent").val(pbqpercent);
+			}
 		}
 		else
 		{
-		jQuery("#pbq").val('');
+			jQuery("#pbq").val('');
 		}
 
 		/* To set focus */
 		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
 		{
-		/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-		jQuery('#dp_desc').focus();
-		/* focus if CKEDITOR */
-		if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-		{
-		var editor = CKEDITOR.instances['dp_desc'];
-		if (editor) { editor.focus(); }
+			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+			jQuery('#dp_desc').focus();
+			/* focus if CKEDITOR */
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+				if (editor) { editor.focus(); }
+			}
 		}
-		}
-		});
+	});
 
 		<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
-			setforpredef();
+		setforpredef();
 		<?php } ?>
-		});
+	});
 
-		/* Function to set fields from choice */
-		function setforfree() {
+	/* Function to set fields from choice */
+	function setforfree() {
 		console.log("Call setforfree. We show most fields");
 		jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
 		jQuery("#prod_entry_mode_free").prop('checked',true).change();
@@ -794,8 +796,8 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
-		}
-		function setforpredef() {
+	}
+	function setforpredef() {
 		console.log("Call setforpredef. We hide some fields and show dates");
 		jQuery("#select_type").val(-1);
 		jQuery("#prod_entry_mode_free").prop('checked',false).change();
@@ -812,8 +814,10 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
-		}
+	}
 
-		</script>
+<?php
 
-		<!-- END PHP TEMPLATE objectline_create.tpl.php -->
+print '</script>';
+
+print "<!-- END PHP TEMPLATE objectline_create.tpl.php -->\n";

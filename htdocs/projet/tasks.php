@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php'; }
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
@@ -90,7 +91,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
 $label = GETPOST('label', 'alpha');
-$description = GETPOST('description');
+$description = GETPOST('description', 'none');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
 $planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ?GETPOST('planned_workloadmin', 'int') : 0);
 $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
@@ -445,9 +446,9 @@ if ($id > 0 || !empty($ref))
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-    $start = dol_print_date($object->date_start, 'dayhour');
+    $start = dol_print_date($object->date_start, 'day');
     print ($start ? $start : '?');
-    $end = dol_print_date($object->date_end, 'dayhour');
+    $end = dol_print_date($object->date_end, 'day');
     print ' - ';
     print ($end ? $end : '?');
     if ($object->hasDelay()) print img_warning("Late");
@@ -476,18 +477,10 @@ if ($id > 0 || !empty($ref))
     print nl2br($object->description);
     print '</td></tr>';
 
-    // Bill time
-    if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-    {
-    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-    	print yn($object->usage_bill_time);
-    	print '</td></tr>';
-    }
-
     // Categories
     if ($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
-        print $form->showCategories($object->id, 'project', 1);
+        print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
         print "</td></tr>";
     }
 

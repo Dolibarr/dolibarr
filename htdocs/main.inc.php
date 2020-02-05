@@ -957,7 +957,7 @@ if (!defined('NOLOGIN'))
 	{
 		// If not active, we refuse the user
 		$langs->load("other");
-		dol_syslog("Authentification ko as login is disabled");
+		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);
 		accessforbidden($langs->trans("ErrorLoginDisabled"));
 		exit;
 	}
@@ -1224,7 +1224,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Favicon
-		$favicon = DOL_URL_ROOT.'/theme/common/dolibarr_logo_256x256.png';
+		$favicon = DOL_URL_ROOT.'/theme/dolibarr_logo_256x256.png';
 		if (!empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (!empty($conf->global->MAIN_FAVICON_URL)) $favicon = $conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n"; // Not required into an Android webview
@@ -1345,7 +1345,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach ($arrayofcss as $cssfile)
 			{
-			    if (preg_match('/^http/i', $cssfile))
+			    if (preg_match('/^(http|\/\/)/i', $cssfile))
 			    {
 			        $urltofile = $cssfile;
 			    }
@@ -1432,7 +1432,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
         if (!$disablejs && !empty($conf->use_javascript_ajax))
         {
             // CKEditor
-            if (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR'))
+        	if ((!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
@@ -1497,7 +1497,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '<!-- Includes JS added by page -->'."\n";
                 foreach ($arrayofjs as $jsfile)
                 {
-                    if (preg_match('/^http/i', $jsfile))
+                    if (preg_match('/^(http|\/\/)/i', $jsfile))
                     {
                         print '<script src="'.$jsfile.'"></script>'."\n";
                     }
@@ -1656,7 +1656,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Link to module builder
 		if (!empty($conf->modulebuilder->enabled))
 		{
-			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_modulebuilder">';
+			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
@@ -2346,6 +2346,7 @@ function getHelpParamFor($helppagename, $langs)
 	else
 	{
 		// If WIKI URL
+		$reg = array();
 		if (preg_match('/^es/i', $langs->defaultlang))
 		{
 			$helpbaseurl = 'http://wiki.dolibarr.org/index.php/%s';
@@ -2551,70 +2552,86 @@ if (!function_exists("llxFooter"))
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
-		// You can use &forceping=1 in parameters to force the ping.
-		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
+		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
+		$forceping = GETPOST('forceping', 'alpha');
+		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping)
 		{
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
+			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
-			|| (!empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
-			|| GETPOST('forceping', 'alpha'))
+				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
+			|| $forceping)
 			{
-				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
+				// No ping done if we are into an alpha version
+				if (strpos('alpha', DOL_VERSION) > 0 && ! $forceping) {
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
+				}
+				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping)	// Cookie is set when we uncheck the checkbox in the installation wizard.
 				{
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+					// MAIN_LAST_PING_KO_DATE
+					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent
+					if (! empty($conf->global->MAIN_LAST_PING_KO_DATE) && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && ! $forceping) {
+						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occured this month, we will try later. -->\n";
+					} else {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
-					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
-					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
-					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
-					?>
-		    			<script>
-		    			jQuery(document).ready(function (tmp) {
-		    				$.ajax({
-		    					  method: "POST",
-		    					  url: "<?php echo $url_for_ping ?>",
-		    					  timeout: 500,     // timeout milliseconds
-		    					  cache: false,
-		    					  data: {
-			    					  hash_algo: "md5",
-			    					  hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>",
-			    					  action: "dolibarrping",
-			    					  version: "<?php echo (float) DOL_VERSION; ?>",
-			    					  entity: "<?php echo (int) $conf->entity; ?>",
-			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
-			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
-			    					  php_version: "<?php echo phpversion(); ?>",
-			    					  os_version: "<?php echo version_os('smr'); ?>"
-			    				  },
-		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
-		      					    	console.log("Ping ok");
-		        	    				$.ajax({
-		      	    					  method: "GET",
-		      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-		      	    					  timeout: 500,     // timeout milliseconds
-		      	    					  cache: false,
-		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingok" },	// to update
-		    					  		});
-		    					  },
-		    					  error: function (data,status,xhr) {   // error callback function
-		        					    console.log("Ping ko: " + data);
-		        	    				$.ajax({
-		        	    					  method: "GET",
-		        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-		        	    					  timeout: 500,     // timeout milliseconds
-		        	    					  cache: false,
-		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingko" },
-		      					  		});
-		    					  }
-		    				});
-		    			});
-		    			</script>
-					<?php
+						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' MAIN_LAST_PING_KO_DATE='.$conf->global->MAIN_LAST_PING_KO_DATE.' -->'."\n";
+						print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
+						$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
+						// Try to guess the distrib used
+						$distrib = 'standard';
+						if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') $distrib = 'doliwamp';
+						if (! empty($dolibarr_distrib)) $distrib = $dolibarr_distrib;
+						?>
+			    			<script>
+			    			jQuery(document).ready(function (tmp) {
+			    				$.ajax({
+			    					  method: "POST",
+			    					  url: "<?php echo $url_for_ping ?>",
+			    					  timeout: 500,     // timeout milliseconds
+			    					  cache: false,
+			    					  data: {
+				    					  hash_algo: "md5",
+				    					  hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>",
+				    					  action: "dolibarrping",
+				    					  version: "<?php echo (float) DOL_VERSION; ?>",
+				    					  entity: "<?php echo (int) $conf->entity; ?>",
+				    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
+				    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
+				    					  php_version: "<?php echo phpversion(); ?>",
+				    					  os_version: "<?php echo version_os('smr'); ?>",
+				    					  distrib: "<?php echo $distrib ? $distrib : 'unknown'; ?>"
+				    				  },
+			    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
+			      					    	console.log("Ping ok");
+			        	    				$.ajax({
+			      	    					  method: "GET",
+			      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+			      	    					  timeout: 500,     // timeout milliseconds
+			      	    					  cache: false,
+			      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingok" },	// to update
+			    					  		});
+			    					  },
+			    					  error: function (data,status,xhr) {   // error callback function
+			        					    console.log("Ping ko: " + data);
+			        	    				$.ajax({
+			        	    					  method: "GET",
+			        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+			        	    					  timeout: 500,     // timeout milliseconds
+			        	    					  cache: false,
+			        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingko" },
+			      					  		});
+			    					  }
+			    				});
+			    			});
+			    			</script>
+						<?php
+					}
 				}
 				else
 				{
 					$now = dol_now();
-					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It was disabled -->\n";
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');

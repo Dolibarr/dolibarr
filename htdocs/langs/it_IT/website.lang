@@ -114,3 +114,10 @@ CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS
 LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load javascript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Sample of a page with dynamic content
 ImportSite=Import website template
+EditInLineOnOff=La modalità &quot;Modifica in linea&quot; è %s
+ShowSubContainersOnOff=La modalità per eseguire il &quot;contenuto dinamico&quot; è %s
+GlobalCSSorJS=File CSS / JS / header globale del sito web
+BackToHomePage=Torna alla home page ...
+TranslationLinks=Link alla traduzione
+YouTryToAccessToAFileThatIsNotAWebsitePage=Stai tentando di accedere ad una pagina che non è pesente
+UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters

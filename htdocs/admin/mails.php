@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
@@ -246,7 +246,7 @@ if ($action == 'edit')
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	dol_fiche_head($head, 'common', '', -1);
@@ -467,24 +467,6 @@ if ($action == 'edit')
 	$liste = array();
 	$liste['user'] = $langs->trans('UserEmail');
 	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
-	/*
-	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i=0;
-		while($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
-			{
-				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
-			}
-			$i++;
-		}
-	}
-	else dol_print_error($db);*/
 
 	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
@@ -655,7 +637,8 @@ else
 	$liste = array();
 	$liste['user'] = $langs->trans('UserEmail');
 	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
-	$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+	$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -775,13 +758,31 @@ else
 		$text = '';
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= $langs->trans("WarningPHPMail");
+			$text .= $langs->trans("WarningPHPMail");	// To encourage to use SMTPS
 		}
-		//$conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS='1.2.3.4';
-		if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= ($text ? '<br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			// MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is list of IPs where email is sent from. Example: '1.2.3.4, [aaaa:bbbb:cccc:dddd]'.
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+			{
+				// List of IP show as record to add in SPF if we use the mail method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			}
+		} else {
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+			{
+				// List of IP show as record to add as allowed IP if we use the smtp method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			}
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD))
+			{
+				// List of string to add in SPF if we use the smtp method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD);
+			}
 		}
+
+
 		if ($text) print info_admin($text);
 	}
 
@@ -857,6 +858,11 @@ else
 		print $formmail->get_form('addfile', 'removefile');
 
 		dol_fiche_end();
+
+		// References
+		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
+		print '</span>';
 	}
 }
 

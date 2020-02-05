@@ -971,7 +971,7 @@ class FormFile
 		}
 
 		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
-		// @TODO Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
+		// @todo Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
 		if (!empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP))
 		{
 			$filterforfilesearch = preg_quote(basename($modulesubdir), '/');
@@ -1712,8 +1712,8 @@ class FormFile
 		if (count($filearray) == 0)
 		{
 			print '<tr class="oddeven"><td colspan="5">';
-			if (empty($textifempty)) print $langs->trans("NoFileFound");
-			else print $textifempty;
+			if (empty($textifempty)) print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
+			else print '<span class="opacitymedium">'.$textifempty.'</span>';
 			print '</td></tr>';
 		}
 		print "</table>";

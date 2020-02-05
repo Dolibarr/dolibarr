@@ -113,7 +113,7 @@ $head[$h][2] = 'payboxaccount';
 $h++;
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'payboxaccount', '', -1);

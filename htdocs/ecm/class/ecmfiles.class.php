@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 /**
- * \file    ecm/ecmfiles.class.php
+ * \file    htdocs/ecm/class/ecmfiles.class.php
  * \ingroup ecm
  * \brief   Class to manage ECM Files (Create/Read/Update/Delete)
  */

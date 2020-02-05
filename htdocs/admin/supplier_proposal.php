@@ -239,7 +239,7 @@ print '</tr>'."\n";
 clearstatcache();
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_proposal/");
+	$dir = dol_buildpath($reldir."core/modules/supplier_proposal");
 
 	if (is_dir($dir))
 	{
@@ -252,7 +252,7 @@ foreach ($dirmodels as $reldir)
 				{
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $dir.$file.'.php';
+					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file;
 
@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($conf->global->SUPPLIER_PROPOSAL_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
@@ -305,7 +305,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-						print '<td align="center">';
+						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
@@ -366,7 +366,8 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('', '/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/supplier_proposal".$valdir);
+    	$realpath = $reldir."core/modules/supplier_proposal".$valdir;
+    	$dir = dol_buildpath($realpath);
 
         if (is_dir($dir))
         {
@@ -408,7 +409,7 @@ foreach ($dirmodels as $reldir)
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
-	                            	print '<td align="center">'."\n";
+	                            	print '<td class="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
@@ -434,28 +435,30 @@ foreach ($dirmodels as $reldir)
 	                            print '</td>';
 
 	                            // Info
-	                            $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+	                            $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+	                            $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
 	                            {
-	                                $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+	                                $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 	                            }
-								$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-								$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-								$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+	                            $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+	                            $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 								//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
 								//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
@@ -500,7 +503,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_PROPOSAL_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnSupplierProposal"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
@@ -522,7 +525,7 @@ print '</form>';
 
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';

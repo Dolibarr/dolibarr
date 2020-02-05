@@ -258,7 +258,7 @@ if ($action == 'create')
 	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	print '<form name="loan" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -418,28 +418,16 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
 		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
-		print '<script type="text/javascript">'."\n";
-		print '  	function popEcheancier() {'."\n";
-		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="98%" frameborder="0" src="createschedule.php?loanid='.$object->id.'"></iframe></div>\');'."\n";
-		print '  		$div.dialog({'."\n";
-		print '  			modal:true'."\n";
-		print '  			,width:"90%"'."\n";
-		print '  			,height:$(window).height() - 160'."\n";
-		print '  		});'."\n";
-		print '  	}'."\n";
-		print '</script>';
-
-
 		// Loan card
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref loan
@@ -458,7 +446,7 @@ if ($id > 0)
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
@@ -624,7 +612,7 @@ if ($id > 0)
 		else
 		{
 			print '<td class="nowrap">';
-			print $langs->trans("LoanAccountancyCapitalCode");
+			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
 			if (!empty($conf->accounting->enabled))
@@ -728,9 +716,9 @@ if ($id > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td class="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
-				print '<td class="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
-				print '<td class="right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td class="nowrap right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td class="nowrap right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td class="nowrap right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
@@ -740,14 +728,14 @@ if ($id > 0)
 
 			if ($object->paid == 0)
 			{
-				print '<tr><td colspan="5" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid, 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>';
-				print '<tr><td colspan="5" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="nowrap right">'.price($totalpaid, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" class="right">'.$langs->trans("AmountExpected").' :</td><td class="nowrap right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="5" class="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td class="right'.($staytopay ? ' amountremaintopay' : ' amountpaymentcomplete').'">';
-				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
+				print '<td class="nowrap right'.($staytopay ? ' amountremaintopay' : ' amountpaymentcomplete').'">';
+				print price($staytopay, 0, $langs, 0, -1, -1, $conf->currency);
 				print '</td></tr>';
 			}
 			print "</table>";
@@ -792,8 +780,6 @@ if ($id > 0)
 				// Edit
 				if ($object->paid == 0 && $user->rights->loan->write)
 				{
-					// print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
-
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 				}
 

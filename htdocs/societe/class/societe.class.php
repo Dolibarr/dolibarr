@@ -128,7 +128,7 @@ class Societe extends CommonObject
 	public $fields = array(
 		'rowid'         =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'nom'           =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'AliasNames', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'note_public'   =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>60),
 		'note_private'  =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>61),
@@ -673,6 +673,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) $this->status = 0;
 		$this->name = $this->name ?trim($this->name) : trim($this->nom);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client))      $this->client = 0;
 		if (empty($this->fournisseur)) $this->fournisseur = 0;
@@ -919,7 +920,7 @@ class Societe extends CommonObject
 					}
 				}
 
-				// Check for unicity
+				// Check for unicity on profid
 				if (!$error && $vallabel && $this->id_prof_verifiable($i))
 				{
 					if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
@@ -988,6 +989,8 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
@@ -1428,7 +1431,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity = '.$conf->entity.')';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
@@ -1535,7 +1538,7 @@ class Societe extends CommonObject
 				$this->effectif       = $obj->effectif_id ? $obj->effectif : '';
 
 				$this->forme_juridique_code = $obj->forme_juridique_code;
-				$this->forme_juridique     = $obj->forme_juridique_code ? $obj->forme_juridique : '';
+				$this->forme_juridique = $obj->forme_juridique_code ? $obj->forme_juridique : '';
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -3634,6 +3637,15 @@ class Societe extends CommonObject
 		$this->phone = empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TEL;
 		$this->fax = empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? '' : $conf->global->MAIN_INFO_SOCIETE_FAX;
 		$this->url = empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? '' : $conf->global->MAIN_INFO_SOCIETE_WEB;
+
+		// Social networks
+		$this->facebook_url = empty($conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL;
+		$this->twitter_url = empty($conf->global->MAIN_INFO_SOCIETE_TWITTER_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TWITTER_URL;
+		$this->linkedin_url = empty($conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL;
+		$this->instagram_url = empty($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL;
+		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
+		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
+
 		// Id prof generiques
 		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;
 		$this->idprof2 = empty($conf->global->MAIN_INFO_SIRET) ? '' : $conf->global->MAIN_INFO_SIRET;
@@ -3767,6 +3779,7 @@ class Societe extends CommonObject
 
 	/**
 	 *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
+	 *  Table c_revenuestamp contains the country and value of stamp per invoice.
 	 *
 	 *  @return		boolean			true or false
 	 */

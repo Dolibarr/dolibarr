@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROPALE_ADDON_PDF_ODT_PATH">';
@@ -178,7 +178,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
    			{
                 $texte .= $file['name'].'<br>';
    			}
-   			$texte .= '<div id="div_'.get_class($this).'">';
+   			$texte .= '</div>';
 
 			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
@@ -205,10 +205,14 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$texte .= '</table>';
 			}
 		}
-
+        // Add input to upload a new template file.
+        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+        $texte .= '<input type="hidden" value="PROPALE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+        $texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte .= '</td>';
 		$texte .= '</tr>';

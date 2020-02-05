@@ -184,7 +184,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	else print '</td>';
 
 	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
-	else print '<td align="center" valign="middle" class="nowrap">';
+	else print '<td class="center nowrap" valign="middle">';
 
 	print '<table class="centpercent"><tr><td align="center">';
 	print '<div class="formleftzone">';

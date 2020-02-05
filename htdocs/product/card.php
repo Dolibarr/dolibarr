@@ -954,7 +954,7 @@ else
         dol_set_focus('input[name="ref"]');
 
         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 		if (!empty($modCodeProduct->code_auto))
@@ -1331,7 +1331,7 @@ else
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="canvas" value="'.$object->canvas.'">';
@@ -1723,7 +1723,7 @@ else
 					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
 					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
@@ -1992,7 +1992,7 @@ else
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
-				print $form->showCategories($object->id, 'product', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
 				print "</td></tr>";
 			}
 
@@ -2209,7 +2209,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
     if (!empty($html))
     {
 	    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
     	print '<input type="hidden" name="action" value="addin">';
 
 	    print load_fiche_titre($langs->trans("AddToDraft"), '', '');

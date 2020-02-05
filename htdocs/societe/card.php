@@ -5,7 +5,7 @@
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
@@ -965,6 +965,7 @@ else
         if (!empty($conf->fournisseur->enabled) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) { $object->fournisseur = 1; }
 
         $object->name = GETPOST('name', 'alpha');
+        $object->name_alias = GETPOST('name_alias', 'alpha');
         $object->firstname = GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');
@@ -1070,13 +1071,13 @@ else
         $linkback = "";
         print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
-        if (!empty($conf->use_javascript_ajax) && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
-        {
-            print "\n".'<script type="text/javascript">';
-            print '$(document).ready(function () {
+        if (!empty($conf->use_javascript_ajax)) {
+			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+				print "\n".'<script type="text/javascript">';
+				print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private='.$private.';
+                        is_private=' . $private.';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -1103,7 +1104,7 @@ else
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1134,28 +1135,38 @@ else
                         	document.formsoc.submit();
                         });
                      });';
-            print '</script>'."\n";
+				print '</script>'."\n";
 
-            print '<div id="selectthirdpartytype">';
-            print '<div class="hideonsmartphone float">';
-            print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
-            print '</div>';
-	        print '<label for="radiocompany" class="radiocompany">';
-            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private ? '' : ' checked').'>';
-	        print '&nbsp;';
-            print $langs->trans("CreateThirdPartyOnly");
-	        print '</label>';
-            print ' &nbsp; &nbsp; ';
-	        print '<label for="radioprivate" class="radioprivate">';
-            $text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private ? ' checked' : '').'>';
-	        $text .= '&nbsp;';
-	        $text .= $langs->trans("CreateThirdPartyAndContact");
-	        $htmltext = $langs->trans("ToCreateContactWithSameName");
-	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
-            print '</label>';
-            print '</div>';
-            print "<br>\n";
-        }
+				print '<div id="selectthirdpartytype">';
+				print '<div class="hideonsmartphone float">';
+				print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
+				print '</div>';
+				print '<label for="radiocompany" class="radiocompany">';
+				print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private ? '' : ' checked').'>';
+				print '&nbsp;';
+				print $langs->trans("CreateThirdPartyOnly");
+				print '</label>';
+				print ' &nbsp; &nbsp; ';
+				print '<label for="radioprivate" class="radioprivate">';
+				$text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private ? ' checked' : '').'>';
+				$text .= '&nbsp;';
+				$text .= $langs->trans("CreateThirdPartyAndContact");
+				$htmltext = $langs->trans("ToCreateContactWithSameName");
+				print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
+				print '</label>';
+				print '</div>';
+				print "<br>\n";
+			} else {
+				print '<script type="text/javascript">';
+				print '$(document).ready(function () {
+                        $("#selectcountry_id").change(function() {
+                        	document.formsoc.action.value="create";
+                        	document.formsoc.submit();
+                        });
+                     });';
+				print '</script>'."\n";
+			}
+		}
 
         dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
@@ -1163,7 +1174,7 @@ else
 
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
         print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1803,7 +1814,7 @@ else
 
             print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formsoc">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -2424,7 +2435,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editRE')
 			        {
@@ -2442,7 +2453,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editIRPF') {
 			            print '<td class="left">';
@@ -2463,7 +2474,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editRE') {
 			            print '<td class="left">';
@@ -2484,7 +2495,7 @@ else
 			    {
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
-			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			        print '<input type="hidden" name="token" value="'.newToken().'">';
 			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if ($action == 'editIRPF') {
 			            print '<td class="left">';
@@ -2561,7 +2572,7 @@ else
 			if ($object->prospect || $object->client || (!$object->fournisseur && !empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'customer', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 				print "</td></tr>";
 			}
 
@@ -2569,7 +2580,7 @@ else
 			if ($object->fournisseur) {
 				print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'supplier', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
 		}
