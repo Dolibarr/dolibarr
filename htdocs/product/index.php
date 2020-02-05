@@ -143,31 +143,31 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 if (! empty($conf->product->enabled))
 {
 	$statProducts = '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0&amp;search_tosell=0&amp;search_tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0&amp;search_tosell=1&amp;search_tobuy=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0&amp;search_tosell=0&amp;search_tobuy=1">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0&amp;search_tosell=1&amp;search_tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
 }
 if (! empty($conf->service->enabled))
 {
 	$statServices = '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1&amp;search_tosell=0&amp;search_tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1&amp;search_tosell=1&amp;search_tobuy=0">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1&amp;search_tosell=0&amp;search_tobuy=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1&amp;search_tosell=1&amp;search_tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
 	$statServices.= "</tr>";
 }
 $total=0;
