@@ -1712,7 +1712,7 @@ class Holiday extends CommonObject
 				// We want only list of vacation balance for user ids
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
-				$sql.= " WHERE cpu.fk_user = u.user";
+				$sql.= " WHERE cpu.fk_user = u.rowid";
 				if ($filters) $sql.=$filters;
 
 				$resql=$this->db->query($sql);
