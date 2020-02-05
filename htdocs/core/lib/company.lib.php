@@ -207,9 +207,13 @@ function societe_prepare_head(Societe $object)
 
         $sql = "SELECT COUNT(n.rowid) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
-        $sql .= " WHERE fk_soc = ".$object->id;
-        $sql .= " AND status = ".$servicestatus;
-
+        $sql .= " WHERE n.fk_soc = ".$object->id;
+        if (empty($conf->stripe->enabled)) {
+			$sql .= " AND n.stripe_card_ref IS NULL";
+		} else {
+			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".$servicestatus."))";
+		}
+		
         $resql = $db->query($sql);
         if ($resql)
         {
