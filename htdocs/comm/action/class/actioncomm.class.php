@@ -455,6 +455,7 @@ class ActionComm extends CommonObject
         $sql .= "durationp,"; // deprecated
         $sql .= "fk_action,";
         $sql .= "code,";
+	 	$sql .= "ref_ext,";
         $sql .= "fk_soc,";
         $sql .= "fk_project,";
         $sql .= "note,";
@@ -484,6 +485,7 @@ class ActionComm extends CommonObject
         $sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
         $sql .= (isset($this->type_id) ? $this->type_id : "null").",";
         $sql .= ($code ? ("'".$code."'") : "null").", ";
+		$sql .= ($this->ref_ext ? ("'".$this->ref_ext."'") : "null").", ";
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
         $sql .= " '".$this->db->escape($this->note_private ? $this->note_private : $this->note)."', ";
