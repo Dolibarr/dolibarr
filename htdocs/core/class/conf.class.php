@@ -311,7 +311,7 @@ class Conf
 			{
 				if (! empty($this->$module->enabled))
 				{
-					foreach($dirs as $type => $name)
+					foreach($dirs as $type => $name)  // $type is 'output' or 'temp'
 					{
 						$multidirname	= 'multidir_'.$type;
 						$dirname		= 'dir_'.$type;
