@@ -221,7 +221,7 @@ if (! function_exists('dol_loginfunction'))
 
 		// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 		$width=0;
-		$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
+		$urllogo=DOL_URL_ROOT.'/theme/common/login_logo.png';
 
 		if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 		{
