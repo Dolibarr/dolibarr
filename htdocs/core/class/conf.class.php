@@ -417,12 +417,6 @@ class Conf
 				$this->supplier_invoice->multidir_temp		= array($this->entity => $rootfortemp."/fournisseur/facture/temp");
 				$this->supplier_invoice->dir_output			= $rootfordata."/fournisseur/facture";			// For backward compatibility
 				$this->supplier_invoice->dir_temp			= $rootfortemp."/fournisseur/facture/temp";		// For backward compatibility
-
-				$this->supplierproposal=new stdClass();
-				$this->supplierproposal->multidir_output	= array($this->entity => $rootfordata."/supplier_proposal");
-				$this->supplierproposal->multidir_temp		= array($this->entity => $rootfortemp."/supplier_proposal/temp");
-				$this->supplierproposal->dir_output			= $rootfordata."/supplier_proposal";			// For backward compatibility
-				$this->supplierproposal->dir_temp			= $rootfortemp."/supplier_proposal/temp";		// For backward compatibility
 			}
 		}
 
