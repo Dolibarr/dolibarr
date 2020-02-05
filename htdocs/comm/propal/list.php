@@ -776,8 +776,8 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
+		$objectstatic->note_public = $obj->note_public;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
@@ -798,7 +798,7 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowrap">';
-			print $objectstatic->getNomUrl(1, '', '', 0, 1, 1);
+			print $objectstatic->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
