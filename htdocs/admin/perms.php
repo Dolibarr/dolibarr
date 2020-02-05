@@ -173,7 +173,7 @@ if ($result)
         		$db->query($sqlupdate);
         	}
         }
-        
+
         // Check if permission we found is inside a module definition. If not, we discard it.
         $found = false;
         foreach ($modules[$obj->module]->rights as $key => $val)
@@ -195,7 +195,7 @@ if ($result)
 		if (isset($obj->module) && ($oldmod <> $obj->module))
         {
         	$oldmod = $obj->module;
-        	
+
         	// Break detected, we get objMod
             $objMod = $modules[$obj->module];
             $picto = ($objMod->picto ? $objMod->picto : 'generic');
@@ -213,9 +213,9 @@ if ($result)
         }
 
         $perm_libelle = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->label));
-        
+
         print '<tr class="oddeven">';
-        
+
         // Picto and label of module
         print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
 		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
@@ -241,12 +241,12 @@ if ($result)
 			print '&nbsp;';
 			print '</td>';
 		}
-		
+
 		// Permission and tick
         print '<td>'.$perm_libelle.'</td>';
 
         print '</tr>'."\n";
-        
+
         $i++;
     }
 }
