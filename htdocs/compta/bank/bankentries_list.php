@@ -353,8 +353,13 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->modifier)
 {
     $accline = new AccountLine($db);
-    $result = $accline->fetch(GETPOST("rowid"));
+    $result = $accline->fetch(GETPOST("rowid", "int"));
     $result = $accline->delete($user);
+    if ($result <= 0) {
+    	setEventMessages($accline->error, $accline->errors, 'errors');
+    } else {
+    	setEventMessages('RecordDeleted', null, 'mesgs');
+    }
 }
 
 
