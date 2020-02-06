@@ -336,6 +336,8 @@ class DoliDBMssql extends DoliDB
 
 		$query=preg_replace("/([. ,\t(])(percent|file|public)([. ,=\t)])/", "$1[$2]$3", $query);
 
+		$original_query='';
+
 		if ($type=="auto" || $type='dml')
 		{
     		$query=preg_replace('/AUTO_INCREMENT/i', 'IDENTITY', $query);
@@ -345,7 +347,6 @@ class DoliDBMssql extends DoliDB
     		$query=preg_replace('/([ \t])(MEDIUM|TINY|LONG){0,1}TEXT([ \t,])/i', "$1VARCHAR(MAX)$3", $query);
 
     		$matches=array();
-    		$original_query='';
     		if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+(?:(UNIQUE)|INDEX)\h+(?:INDEX)?\h*(\w+?)\h*\((.+)\)/is', $query, $matches))
     		{
                 $original_query=$query;
@@ -356,10 +357,12 @@ class DoliDBMssql extends DoliDB
                     $fields_clear=array_map('trim', $fields);
                     $infos=$this->GetFieldInformation(trim($matches[1]), $fields_clear);
                     $query_comp=array();
-                    foreach($infos as $fld) {
-                        if ($fld->IS_NULLABLE == 'YES') {
-                            $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
-                        }
+                    if (is_array($infos)) {
+	                    foreach($infos as $fld) {
+	                        if ($fld->IS_NULLABLE == 'YES') {
+	                            $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
+	                        }
+	                    }
                     }
                     if (! empty($query_comp))
                         $query.=" WHERE ".implode(" AND ", $query_comp);
@@ -784,7 +787,8 @@ class DoliDBMssql extends DoliDB
     public function DDLListTables($database, $table = '')
 	{
         // phpcs:enable
-		$this->_results = mssql_list_tables($database, $this->db);
+		$v = mssql_query("Select name from sysobjects where type like 'u'", $this->db);
+		$this->_results = mssql_fetch_array($v);
 		return $this->_results;
 	}
 
@@ -824,6 +828,10 @@ class DoliDBMssql extends DoliDB
 	{
         // phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$sqlfields = array();
+		$sqluq = array();
+		$sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
