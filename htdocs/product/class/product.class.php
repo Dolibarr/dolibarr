@@ -1827,8 +1827,8 @@ class Product extends CommonObject
                         $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
                         $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
                         $this->fourn_multicurrency_code        = $obj->multicurrency_code;
-			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $this->packaging = $obj->packaging;
-			$result = $obj->fk_product;
+						if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $this->packaging = $obj->packaging;
+						$result = $obj->fk_product;
                         return $result;
                     }
                     else
