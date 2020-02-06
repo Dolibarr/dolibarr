@@ -110,9 +110,10 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$batch			batch number
 	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
+	 *	@param		int		$excludesubproduct		Id of subproduct to exclude and avoid loop
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-    public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0)
+    public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $excludesubproduct = '')
 	{
 	    // phpcs:disable
 	    global $conf, $langs;
@@ -678,6 +679,7 @@ class MouvementStock extends CommonObject
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql .= " WHERE fk_product_pere = ".$idProduct;
+		$sql .= " OR fk_product_fils = ".$idProduct;
 		$sql .= " AND incdec = 1";
 
 		dol_syslog(get_class($this)."::_createSubProduct for parent product ".$idProduct, LOG_DEBUG);
@@ -687,7 +689,8 @@ class MouvementStock extends CommonObject
 			$i = 0;
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$pids[$i] = $obj->fk_product_fils;
+				$pids[$i] = $obj->fk_product_pere;
+        $fids[$i] = $obj->fk_product_fils;
 				$pqtys[$i] = $obj->qty;
 				$i++;
 			}
@@ -697,14 +700,19 @@ class MouvementStock extends CommonObject
 		{
 			$error = -2;
 		}
-
+		if (!$error)
+		{
 		// Create movement for each subproduct
 		foreach ($pids as $key => $value)
 		{
 			if (!$error)
 			{
 				$tmpmove = clone $this;
-				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
+				if ($pids[$key] == $idProduct) {
+					$result = $tmpmove->_create($user, $fids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
+				} elseif ($fids[$key] == $idProduct) {
+					$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, floor($qty / $pqtys[$key]), $type, 0, $label, $inventorycode , '', '', '', '', false, 0, $idProduct); // This will also call _createSubProduct making this recursive
+				}
 				if ($result < 0)
 				{
 					$this->error = $tmpmove->error;
