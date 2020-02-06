@@ -600,7 +600,7 @@ class FormMail extends Form
 				{
 					if (! empty($this->withtofree))
 					{
-						$out.= '<input class="minwidth200" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+						$out.= '<input class="minwidth200" id="sendto" name="sendto" value="'.((! is_array($this->withto) && ! is_numeric($this->withto))? (isset($_POST["sendto"])?$_POST["sendto"]:$this->withto) : (isset($_POST["sendto"])?$_POST["sendto"]:"") ).'" />';
 					}
 					if (! empty($this->withto) && is_array($this->withto))
 					{

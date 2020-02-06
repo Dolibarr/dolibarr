@@ -148,7 +148,7 @@ if ($action == 'presend')
 		}
 	}
 
-	$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
+	$formmail->withto = $liste;
 	$formmail->withtocc = $liste;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	$formmail->withtopic = $topicmail;
