@@ -255,6 +255,7 @@ function user_admin_prepare_head()
 
 	$langs->load("users");
 	$h = 0;
+    $head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
 	$head[$h][1] = $langs->trans("Parameters");

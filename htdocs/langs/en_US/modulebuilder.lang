@@ -67,7 +67,7 @@ ChangeLog=ChangeLog file
 TestClassFile=File for PHP Unit Test class
 SqlFile=Sql file
 PageForLib=File for the common PHP library
-PageForObjLib=File for the PHP library dedicated to object 
+PageForObjLib=File for the PHP library dedicated to object
 SqlFileExtraFields=Sql file for complementary attributes
 SqlFileKey=Sql file for keys
 SqlFileKeyExtraFields=Sql file for keys of complementary attributes
@@ -83,7 +83,7 @@ ListOfDictionariesEntries=List of dictionaries entries
 ListOfPermissionsDefined=List of defined permissions
 SeeExamples=See examples here
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example: preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
 SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
 SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.
@@ -135,3 +135,5 @@ CSSClass=CSS Class
 NotEditable=Not editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
+AsciiToHtmlConverter=Ascii to HTML converter
+AsciiToPdfConverter=Ascii to PDF converter

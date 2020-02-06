@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015 Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2014-2019 Frederic France        <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -431,7 +431,7 @@ class box_activity extends ModeleBoxes
         			$line++;
         			$j++;
         		}
-        		if ($num==0) {
+        		if (count($data)==0) {
         			$this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedInvoices"),

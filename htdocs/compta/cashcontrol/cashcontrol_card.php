@@ -56,7 +56,7 @@ if (!$sortfield) $sortfield = 'rowid';
 if (!$sortorder) $sortorder = 'ASC';
 
 // Security check
-if (!$user->rights->cashdesk->use && !$user->rights->takepos->use)
+if (!$user->rights->cashdesk->run && !$user->rights->takepos->run)
 {
 	accessforbidden();
 }
@@ -82,8 +82,8 @@ $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
  * Actions
  */
 
-$permissiontoadd = ($user->rights->cashdesk->use || $user->rights->takepos->use);
-$permissiontodelete = ($user->rights->cashdesk->use || $user->rights->takepos->use) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = ($user->rights->cashdesk->run || $user->rights->takepos->run);
+$permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -248,7 +248,7 @@ if ($action == "create" || $action == "start")
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = $conf->global->$vartouse; // This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
 			// Hook to get the good bank id according to posmodule and posnumber.
-			// @TODO add hook here
+			// @todo add hook here
 
 			if ($bankid > 0)
 			{
@@ -256,7 +256,7 @@ if ($action == "create" || $action == "start")
     			$sql .= " WHERE fk_account = ".$bankid;
     			if ($syear && !$smonth)              $sql .= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
     			elseif ($syear && $smonth && !$sday) $sql .= " AND dateo < '".$db->idate(dol_get_first_day($syear, $smonth))."'";
-    			elseif ($syear && $smonth && $sday)   $sql .= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
+    			elseif ($syear && $smonth && $sday)  $sql .= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
     			else dol_print_error('', 'Year not defined');
 
     			$resql = $db->query($sql);
@@ -296,7 +296,7 @@ if ($action == "create" || $action == "start")
 			}
 			if ($syear && !$smonth)              $sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
 			elseif ($syear && $smonth && !$sday) $sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
-			elseif ($syear && $smonth && $sday)   $sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+			elseif ($syear && $smonth && $sday)  $sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 			else dol_print_error('', 'Year not defined');
 
 			$resql = $db->query($sql);
@@ -330,7 +330,7 @@ if ($action == "create" || $action == "start")
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    print '<td>'.$langs->trans("CashDesk").' ID</td>';
+    print '<td>'.$langs->trans("Terminal").'</td>';
     print '<td>'.$langs->trans("Year").'</td>';
     print '<td>'.$langs->trans("Month").'</td>';
     print '<td>'.$langs->trans("Day").'</td>';
@@ -343,7 +343,12 @@ if ($action == "create" || $action == "start")
     print '<tr class="oddeven">';
     print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable) > 1 ? 1 : 0)).'</td>';
     print '<td>';
-    $array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
+
+    $array = array();
+    $numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+    for($i = 1; $i <= $numterminals; $i++) {
+    	$array[$i] = $i;
+    }
     $selectedposnumber = 0; $showempty = 1;
     if ($conf->global->TAKEPOS_NUM_TERMINALS == '1')
     {
@@ -411,7 +416,7 @@ if ($action == "create" || $action == "start")
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans("InitialBankBalance");
+		print '<td class="center">'.$langs->trans("InitialBankBalance");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
 		print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
@@ -422,7 +427,7 @@ if ($action == "create" || $action == "start")
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans("Cash");
+		print '<td class="center">'.$langs->trans("Cash");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
 		$i = 0;
@@ -439,7 +444,7 @@ if ($action == "create" || $action == "start")
 		print '<tr>';
 		// Initial amount
 		print '<td>'.$langs->trans("NbOfInvoices").'</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print '</td>';
 		// Amount per payment type
 		$i = 0;
@@ -457,7 +462,7 @@ if ($action == "create" || $action == "start")
 		print '<tr>';
 		// Initial amount
 		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 		print '</td>';
 		// Amount per payment type
@@ -476,7 +481,7 @@ if ($action == "create" || $action == "start")
 		print '<tr>';
 		print '<td>'.$langs->trans("RealAmount").'</td>';
 		// Initial amount
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash'])).'">';
 		print '</td>';
 		// Amount per payment type
@@ -489,7 +494,7 @@ if ($action == "create" || $action == "start")
 			$i++;
 		}
 		// Save
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
 		print '</td>';
@@ -502,92 +507,98 @@ if ($action == "create" || $action == "start")
 
 if (empty($action) || $action == "view")
 {
-    $object->fetch($id);
+    $result = $object->fetch($id);
 
     llxHeader('', $langs->trans("CashControl"));
 
-    $head = array();
-    $head[0][0] = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$object->id;
-    $head[0][1] = $langs->trans("Card");
-    $head[0][2] = 'cashcontrol';
-
-    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'cashcontrol');
-
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-    $morehtmlref = '<div class="refidno">';
-    $morehtmlref .= '</div>';
-
-
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
-
-    print '<div class="fichecenter">';
-    print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
-    print '<table class="border tableforfield" width="100%">';
-
-	print '<tr><td class="titlefield nowrap">';
-	print $langs->trans("Ref");
-	print '</td><td>';
-	print $id;
-	print '</td></tr>';
-
-	print '<tr><td valign="middle">'.$langs->trans("Module").'</td><td>';
-	print $object->posmodule;
-	print "</td></tr>";
-
-	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
-	print $object->posnumber;
-	print "</td></tr>";
-
-	print '<tr><td class="nowrap">';
-	print $langs->trans("Period");
-	print '</td><td>';
-	print $object->year_close."-".$object->month_close."-".$object->day_close;
-	print '</td></tr>';
-
-	print '</table>';
-    print '</div>';
-
-    print '<div class="fichehalfright"><div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
-    print '<table class="border tableforfield" width="100%">';
-
-    print '<tr><td class="titlefield nowrap">';
-    print $langs->trans("DateCreationShort");
-    print '</td><td>';
-    print dol_print_date($object->date_creation, 'dayhour');
-    print '</td></tr>';
-
-    print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
-    print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
-    print "</td></tr>";
-
-    foreach ($arrayofpaymentmode as $key => $val)
-    {
-        print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';
-    	print price($object->$key, 0, $langs, 1, -1, -1, $conf->currency);
-    	print "</td></tr>";
+    if ($result <= 0) {
+    	print $langs->trans("ErrorRecordNotFound");
     }
+    else {
+    	$head = array();
+    	$head[0][0] = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$object->id;
+    	$head[0][1] = $langs->trans("Card");
+    	$head[0][2] = 'cashcontrol';
 
-	print "</table>\n";
-    print '</div>';
-    print '</div></div>';
-    print '<div style="clear:both"></div>';
+	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'cashcontrol');
 
-    dol_fiche_end();
+    	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	print '<div class="tabsAction">';
-	print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
-	if ($object->status == CashControl::STATUS_DRAFT)
-	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close">'.$langs->trans('ValidateAndClose').'</a></div>';
+	    $morehtmlref = '<div class="refidno">';
+	    $morehtmlref .= '</div>';
 
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
-	}
-	print '</div>';
 
-	print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
+	    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
+
+	    print '<div class="fichecenter">';
+	    print '<div class="fichehalfleft">';
+		print '<div class="underbanner clearboth"></div>';
+	    print '<table class="border tableforfield" width="100%">';
+
+		print '<tr><td class="titlefield nowrap">';
+		print $langs->trans("Ref");
+		print '</td><td>';
+		print $id;
+		print '</td></tr>';
+
+		print '<tr><td valign="middle">'.$langs->trans("Module").'</td><td>';
+		print $object->posmodule;
+		print "</td></tr>";
+
+		print '<tr><td valign="middle">'.$langs->trans("Terminal").'</td><td>';
+		print $object->posnumber;
+		print "</td></tr>";
+
+		print '<tr><td class="nowrap">';
+		print $langs->trans("Period");
+		print '</td><td>';
+		print $object->year_close;
+		print ($object->month_close ? "-" : "").$object->month_close;
+		print ($object->day_close ? "-" : "").$object->day_close;
+		print '</td></tr>';
+
+		print '</table>';
+	    print '</div>';
+
+	    print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+	    print '<table class="border tableforfield" width="100%">';
+
+	    print '<tr><td class="titlefield nowrap">';
+	    print $langs->trans("DateCreationShort");
+	    print '</td><td>';
+	    print dol_print_date($object->date_creation, 'dayhour');
+	    print '</td></tr>';
+
+	    print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
+	    print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
+	    print "</td></tr>";
+	    foreach ($arrayofpaymentmode as $key => $val)
+	    {
+	        print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';
+	    	print price($object->$key, 0, $langs, 1, -1, -1, $conf->currency);
+	    	print "</td></tr>";
+	    }
+
+		print "</table>\n";
+	    print '</div>';
+	    print '</div></div>';
+	    print '<div style="clear:both"></div>';
+
+	    dol_fiche_end();
+
+		print '<div class="tabsAction">';
+		print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
+		if ($object->status == CashControl::STATUS_DRAFT)
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close">'.$langs->trans('ValidateAndClose').'</a></div>';
+
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
+		}
+		print '</div>';
+
+		print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
+    }
 }
 
 // End of page

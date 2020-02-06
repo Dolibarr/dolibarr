@@ -135,9 +135,9 @@ class PaymentVarious extends CommonObject
 		if ($this->tms) $sql.= " tms='".$this->db->idate($this->tms)."',";
 		$sql.= " datep='".$this->db->idate($this->datep)."',";
 		$sql.= " datev='".$this->db->idate($this->datev)."',";
-		$sql.= " sens=".$this->sens.",";
+		$sql.= " sens=".(int) $this->sens.",";
 		$sql.= " amount=".price2num($this->amount).",";
-		$sql.= " fk_typepayment=".$this->fk_typepayment."',";
+		$sql.= " fk_typepayment=".(int) $this->fk_typepayment.",";
 		$sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
@@ -145,8 +145,8 @@ class PaymentVarious extends CommonObject
         $sql.= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql.= " fk_projet='".$this->db->escape($this->fk_project)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank:"null").",";
-		$sql.= " fk_user_author=".$this->fk_user_author.",";
-		$sql.= " fk_user_modif=".$this->fk_user_modif;
+		$sql.= " fk_user_author=".(int) $this->fk_user_author.",";
+		$sql.= " fk_user_modif=".(int) $this->fk_user_modif;
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -681,5 +681,41 @@ class PaymentVarious extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$banklineid = $this->fk_bank;
+
+		$alreadydispatched = 0;
+
+		$type = 'bank';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$banklineid;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
 	}
 }

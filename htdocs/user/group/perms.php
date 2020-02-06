@@ -71,24 +71,19 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
-	if ($action == 'addrights' && $caneditperms)
-	{
+if (empty($reshook)) {
+	if ($action == 'addrights' && $caneditperms) {
 		$editgroup = new Usergroup($db);
 		$result = $editgroup->fetch($id);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$editgroup->addrights($rights, $module, '', $entity);
 		}
 	}
 
-	if ($action == 'delrights' && $caneditperms)
-	{
+	if ($action == 'delrights' && $caneditperms) {
 		$editgroup = new Usergroup($db);
 		$result = $editgroup->fetch($id);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$editgroup->delrights($rights, $module, '', $entity);
 		}
 	}

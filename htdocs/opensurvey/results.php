@@ -993,7 +993,7 @@ for ($i = 0; $i < $nbcolonnes + 1; $i++)
 // Show line total
 print '<tr>'."\n";
 print '<td></td>'."\n";
-print '<td align="center">'.$langs->trans("Total").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Total").'</td>'."\n";
 for ($i = 0; $i < $nbcolonnes; $i++)
 {
 	$showsumfor = isset($sumfor[$i]) ? $sumfor[$i] : '';

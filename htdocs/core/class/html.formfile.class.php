@@ -118,7 +118,7 @@ class FormFile
 			if (empty($usewithoutform))		// Try to avoid this and set instead the form by the caller.
 			{
     			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-    			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
     			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
     			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
     			$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'alpha').'">';
@@ -232,7 +232,7 @@ class FormFile
 				if (empty($usewithoutform))
 				{
     				$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
-    				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+    				$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
     				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
     				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
 				}
@@ -707,7 +707,7 @@ class FormFile
 			if ($conf->browser->layout == 'phone') $urlsource .= '#'.$forname.'_form'; // So we switch to form after a generation
 			if (empty($noform)) $out .= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc').'" id="'.$forname.'_form" method="post">';
 			$out .= '<input type="hidden" name="action" value="builddoc">';
-			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 			$out .= load_fiche_titre($titletoshow, '', '');
 			$out .= '<div class="div-table-responsive-no-min">';
@@ -749,7 +749,7 @@ class FormFile
 				$defaultlang = $codelang ? $codelang : $langs->getDefaultLang();
 				$morecss = 'maxwidth150';
 				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
-				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
+				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, null, 0, 0, 0, $morecss);
 			}
 			else
 			{
@@ -971,7 +971,7 @@ class FormFile
 		}
 
 		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
-		// @TODO Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
+		// @todo Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
 		if (!empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP))
 		{
 			$filterforfilesearch = preg_quote(basename($modulesubdir), '/');
@@ -1099,7 +1099,7 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'project', 'product', 'produit', 'service', 'societe', 'tax', 'ticket', 'user'))) $disablecrop = 0;
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file
@@ -1178,7 +1178,7 @@ class FormFile
 			if (GETPOST('action', 'aZ09') == 'editfile' && $permtoeditline)
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="renamefile">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
@@ -1496,7 +1496,7 @@ class FormFile
 		if (!empty($addfilterfields))
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="module" value="'.$modulepart.'">';
 		}
 
@@ -1712,8 +1712,8 @@ class FormFile
 		if (count($filearray) == 0)
 		{
 			print '<tr class="oddeven"><td colspan="5">';
-			if (empty($textifempty)) print $langs->trans("NoFileFound");
-			else print $textifempty;
+			if (empty($textifempty)) print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
+			else print '<span class="opacitymedium">'.$textifempty.'</span>';
 			print '</td></tr>';
 		}
 		print "</table>";
@@ -1790,7 +1790,7 @@ class FormFile
 		print load_fiche_titre($langs->trans("LinkedFiles"));
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print '<table width="100%" class="liste noborder nobottom">';
 		print '<tr class="liste_titre">';

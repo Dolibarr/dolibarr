@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,11 @@ class Contrat extends CommonObject
      * @var int
      */
     public $ismultientitymanaged = 1;
+
+    /**
+     * @var int  Does object support extrafields ? 0=No, 1=Yes
+     */
+    public $isextrafieldmanaged = 1;
 
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -188,6 +193,65 @@ class Contrat extends CommonObject
 	 */
 	protected $lines_id_index_mapper = array();
 
+
+	/**
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>15),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>20),
+		'ref_supplier' =>array('type'=>'varchar(50)', 'label'=>'Ref supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+	    'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed')),
+		'mise_en_service' =>array('type'=>'datetime', 'label'=>'Mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'fin_validite' =>array('type'=>'datetime', 'label'=>'Fin validite', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'date_cloture' =>array('type'=>'datetime', 'label'=>'Date cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial suivi', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		'fk_user_mise_en_service' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'ref_customer' =>array('type'=>'varchar(50)', 'label'=>'Ref customer', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+	);
+	// END MODULEBUILDER PROPERTIES
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -643,7 +707,7 @@ class Contrat extends CommonObject
 		$sql .= " note_private, note_public, model_pdf, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) $sql .= " WHERE entity IN (".getEntity('contract').")";
-		else $sql .= " WHERE rowid=".$id;
+		else $sql .= " WHERE rowid=".(int) $id;
 		if ($ref_customer)
 		{
 			$sql .= " AND ref_customer = '".$this->db->escape($ref_customer)."'";
@@ -675,18 +739,18 @@ class Contrat extends CommonObject
 				{
 					$this->id = $obj->rowid;
 					$this->ref = (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
-					$this->ref_customer				= $obj->ref_customer;
-					$this->ref_supplier				= $obj->ref_supplier;
+					$this->ref_customer = $obj->ref_customer;
+					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 	                $this->entity = $obj->entity;
 					$this->statut = $obj->statut;
 					$this->mise_en_service = $this->db->jdate($obj->datemise);
 
-					$this->date_contrat				= $this->db->jdate($obj->datecontrat);
-					$this->date_creation			= $this->db->jdate($obj->datecontrat);
+					$this->date_contrat = $this->db->jdate($obj->datecontrat);
+					$this->date_creation = $this->db->jdate($obj->datecontrat);
 
-					$this->fin_validite				= $this->db->jdate($obj->fin_validite);
-					$this->date_cloture				= $this->db->jdate($obj->date_cloture);
+					$this->fin_validite = $this->db->jdate($obj->fin_validite);
+					$this->date_cloture = $this->db->jdate($obj->date_cloture);
 
 
 					$this->user_author_id = $obj->fk_user_author;
@@ -696,9 +760,9 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
-					$this->modelpdf					= $obj->model_pdf;
+					$this->modelpdf = $obj->model_pdf;
 
-					$this->fk_projet				= $obj->fk_project; // deprecated
+					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
 
 					$this->socid = $obj->fk_soc;
@@ -708,7 +772,7 @@ class Contrat extends CommonObject
 
 					$this->db->free($resql);
 
-					// Retreive all extrafields
+					// Retrieve all extrafields
 					// fetch optionals attributes and labels
 					$this->fetch_optionals();
 
@@ -837,7 +901,7 @@ class Contrat extends CommonObject
 
 				$line->fk_user_author = $objp->fk_user_author;
 				$line->fk_user_ouverture = $objp->fk_user_ouverture;
-				$line->fk_user_cloture  = $objp->fk_user_cloture;
+				$line->fk_user_cloture = $objp->fk_user_cloture;
 				$line->fk_unit = $objp->fk_unit;
 
 				$line->ref = $objp->product_ref; // deprecated
@@ -1054,7 +1118,7 @@ class Contrat extends CommonObject
     			    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
     			    {
     			        require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-    			        $exp = new Expedition($db);
+    			        $exp = new Expedition($this->db);
     			        $exp->fetch($this->origin_id);
     			        $exp->fetchObjectLinked();
     			        if (count($exp->linkedObjectsIds['commande']) > 0)
@@ -1291,20 +1355,20 @@ class Contrat extends CommonObject
 		// Clean parameters
 		if (empty($this->fk_commercial_signature) && $this->commercial_signature_id > 0) $this->fk_commercial_signature = $this->commercial_signature_id;
 		if (empty($this->fk_commercial_suivi) && $this->commercial_suivi_id > 0) $this->fk_commercial_suivi = $this->commercial_suivi_id;
-		if (empty($this->fk_soc) && $this->socid > 0) $this->fk_soc = $this->socid;
-		if (empty($this->fk_project) && $this->projet > 0) $this->fk_project = $this->projet;
+		if (empty($this->fk_soc) && $this->socid > 0) $this->fk_soc = (int) $this->socid;
+		if (empty($this->fk_project) && $this->projet > 0) $this->fk_project = (int) $this->projet;
 
 		if (isset($this->ref)) $this->ref = trim($this->ref);
 		if (isset($this->ref_customer)) $this->ref_customer = trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier = trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext = trim($this->ref_ext);
-		if (isset($this->entity)) $this->entity = trim($this->entity);
+		if (isset($this->entity)) $this->entity = (int) $this->entity;
 		if (isset($this->statut)) $this->statut = (int) $this->statut;
-		if (isset($this->fk_soc)) $this->fk_soc = trim($this->fk_soc);
+		if (isset($this->fk_soc)) $this->fk_soc = (int) $this->fk_soc;
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature = trim($this->fk_commercial_signature);
 		if (isset($this->fk_commercial_suivi)) $this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
-		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = trim($this->fk_user_mise_en_service);
-		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = trim($this->fk_user_cloture);
+		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = (int) $this->fk_user_mise_en_service;
+		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = (int) $this->fk_user_cloture;
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -1381,10 +1445,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param	string		$desc            	Description de la ligne
-	 *  @param  float		$pu_ht              Prix unitaire HT
-	 *  @param  int			$qty             	Quantite
-	 *  @param  float		$txtva           	Taux tva
+	 *  @param	string		$desc            	Description of line
+	 *  @param  float		$pu_ht              Unit price net
+	 *  @param  int			$qty             	Quantity
+	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit
@@ -1421,9 +1485,18 @@ class Contrat extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
-				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
+
+			$txtva = price2num($txtva);
+
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 			$remise_percent = price2num($remise_percent);
@@ -1456,15 +1529,7 @@ class Contrat extends CommonObject
 
 			$this->db->begin();
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-
-			// Clean vat code
-			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg))
-			{
-				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
-			}
+			$localtaxes_type = getLocalTaxesFromRate($txtva.($vat_src_code ? ' ('.$vat_src_code.')' : ''), 0, $this->societe, $mysoc);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -1738,8 +1803,14 @@ class Contrat extends CommonObject
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
-					$contractline->array_options = $array_options;
-					$contractline->id = $rowid;
+					$contractline->fetch($rowid);
+					$contractline->fetch_optionals();
+
+					// We replace values in $contractline->array_options only for entries defined into $array_options
+					foreach ($array_options as $key => $value) {
+						$contractline->array_options[$key] = $array_options[$key];
+					}
+
 					$result = $contractline->insertExtraFields();
 					if ($result < 0)
 					{
@@ -3003,6 +3074,7 @@ class ContratLigne extends CommonObjectLine
 
 		$this->oldcopy = new ContratLigne($this->db);
 		$this->oldcopy->fetch($this->id);
+        $this->oldcopy->fetch_optionals();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

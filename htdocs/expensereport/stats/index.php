@@ -232,7 +232,9 @@ $liststatus = $tmpexpensereport->statuts;
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
-print '<tr><td>'.$langs->trans("Year").'</td><td>';
+print '<tr><td>';
+print $form->textwithpicto($langs->trans("Year"), $langs->trans("DateValidation"));
+print '</td><td>';
 if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);

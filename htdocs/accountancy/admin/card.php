@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,6 +97,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
 		$object->label = GETPOST('label', 'alpha');
+		$object->labelshort = GETPOST('labelshort', 'alpha');
 		$object->active = 1;
 
 		$res = $object->create($user);
@@ -162,6 +163,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
 		$object->label = GETPOST('label', 'alpha');
+		$object->labelshort = GETPOST('labelshort', 'alpha');
 
 		$result = $object->update($user);
 
@@ -215,7 +217,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans('NewAccountingAccount'));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -236,6 +238,10 @@ if ($action == 'create') {
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
 	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
 
+	// Label short
+	print '<tr><td>' . $langs->trans("LabelToShow") . '</td>';
+	print '<td><input name="labelshort" size="70" value="' . $object->labelshort . '"></td></tr>';
+
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 	print '<td>';
@@ -254,7 +260,7 @@ if ($action == 'create') {
 	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
-	// Chart of acounts subtype
+	// Chart of accounts subtype
 	print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
 	print '<td>';
 	print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
@@ -286,7 +292,7 @@ elseif ($id > 0 || $ref) {
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="edit">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -300,6 +306,10 @@ elseif ($id > 0 || $ref) {
 			// Label
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
 			print '<td><input name="label" size="70" value="'.$object->label.'"</td></tr>';
+
+			// Label short
+			print '<tr><td>' . $langs->trans("LabelToShow") . '</td>';
+			print '<td><input name="labelshort" size="70" value="' . $object->labelshort . '"</td></tr>';
 
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -353,6 +363,10 @@ elseif ($id > 0 || $ref) {
 			// Label
 			print '<tr><td class="titlefield">'.$langs->trans("Label").'</td>';
 			print '<td colspan="2">'.$object->label.'</td></tr>';
+
+			// Label to show
+			print '<tr><td class="titlefield">' . $langs->trans("LabelToShow") . '</td>';
+			print '<td colspan="2">' . $object->labelshort . '</td></tr>';
 
 			// Account parent
 			$accp = new AccountingAccount($db);

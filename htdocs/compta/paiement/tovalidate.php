@@ -121,7 +121,7 @@ if ($resql)
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td class="right">'.price($objp->amount).'</td>';
-        print '<td align="center">';
+        print '<td class="center">';
 
         if ($objp->statut == 0)
         {

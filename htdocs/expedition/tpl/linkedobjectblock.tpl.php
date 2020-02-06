@@ -17,7 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -35,14 +35,14 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("sendings");
 
-$total=0;
-$ilink=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0;
+$ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass='oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
+    $trclass = 'oddeven';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
     ?>
     <tr class="<?php echo $trclass; ?>">
         <td><?php echo $langs->trans("Shipment"); ?></td>
@@ -58,7 +58,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     	<td class="right">
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
-    		if($object->element != 'commande') {
+    		if ($object->element != 'commande') {
     			?>
     			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     			<?php
@@ -69,7 +69,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 }
 if (count($linkedObjectBlock) > 1) {
     ?>
-    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
+    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
     	<td class="center"></td>

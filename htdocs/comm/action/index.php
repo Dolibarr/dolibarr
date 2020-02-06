@@ -36,88 +36,89 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
+if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
 
-if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
-$MAXAGENDA=$conf->global->AGENDA_EXT_NB;
+if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB = 5;
+$MAXAGENDA = $conf->global->AGENDA_EXT_NB;
 
-$filter = GETPOST("search_filter", 'alpha', 3)?GETPOST("search_filter", 'alpha', 3):GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3)?GETPOST("search_filtert", "int", 3):GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3)?GETPOST("search_usergroup", "int", 3):GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday", "int"):1;
+$filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
+$filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
+$usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
+$showbirthday = empty($conf->use_javascript_ajax) ?GETPOST("showbirthday", "int") : 1;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
-	$filtert=$user->id;
+	$filtert = $user->id;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", "int");
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="a.datec";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "a.datec";
 
 // Security check
-$socid = GETPOST("search_socid", "int")?GETPOST("search_socid", "int"):GETPOST("socid", "int");
-if ($user->socid) $socid=$user->socid;
+$socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOST("socid", "int");
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
-if ($socid < 0) $socid='';
+if ($socid < 0) $socid = '';
 
-$canedit=1;
-if (! $user->rights->agenda->myactions->read) accessforbidden();
-if (! $user->rights->agenda->allactions->read) $canedit=0;
-if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no permission to see all, we show only affected to me
+$canedit = 1;
+if (!$user->rights->agenda->myactions->read) accessforbidden();
+if (!$user->rights->agenda->allactions->read) $canedit = 0;
+if (!$user->rights->agenda->allactions->read || $filter == 'mine')  // If no permission to see all, we show only affected to me
 {
-    $filtert=$user->id;
+    $filtert = $user->id;
 }
 
-$action=GETPOST('action', 'alpha');
-$resourceid=GETPOST("search_resourceid", "int");
-$year=GETPOST("year", "int")?GETPOST("year", "int"):date("Y");
-$month=GETPOST("month", "int")?GETPOST("month", "int"):date("m");
-$week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
-$day=GETPOST("day", "int")?GETPOST("day", "int"):date("d");
-$pid=GETPOST("search_projectid", "int", 3)?GETPOST("search_projectid", "int", 3):GETPOST("projectid", "int", 3);
-$status=GETPOST("search_status", 'aZ09')?GETPOST("search_status", 'aZ09'):GETPOST("status", 'aZ09');		// status may be 0, 50, 100, 'todo'
-$type=GETPOST("search_type", 'aZ09')?GETPOST("search_type", 'aZ09'):GETPOST("type", 'aZ09');
-$maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$action = GETPOST('action', 'alpha');
+$resourceid = GETPOST("search_resourceid", "int");
+$year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
+$month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
+$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
+$day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
+$pid = GETPOST("search_projectid", "int", 3) ?GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$status = GETPOST("search_status", 'aZ09') ?GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
+$type = GETPOST("search_type", 'aZ09') ?GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
+$maxprint = (isset($_GET["maxprint"]) ?GETPOST("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
 {
-    $actioncode=GETPOST('search_actioncode', 'array', 3);
-    if (! count($actioncode)) $actioncode='0';
+    $actioncode = GETPOST('search_actioncode', 'array', 3);
+    if (!count($actioncode)) $actioncode = '0';
 }
 else
 {
-	$actioncode=GETPOST("search_actioncode", "alpha", 3)?GETPOST("search_actioncode", "alpha", 3):(GETPOST("search_actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
-if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
-if ($status == '' && ! GETPOSTISSET('search_status')) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if ($status == '' && !GETPOSTISSET('search_status')) $status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 
 $defaultview = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 $defaultview = (empty($user->conf->AGENDA_DEFAULT_VIEW) ? $defaultview : $user->conf->AGENDA_DEFAULT_VIEW);
-if (empty($action) && ! GETPOSTISSET('action')) $action=$defaultview;
+if (empty($action) && !GETPOSTISSET('action')) $action = $defaultview;
 if ($action == 'default')	// When action is default, we want a calendar view and not the list
 {
 	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOST('viewcal', 'none') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week')  {
-    $action='show_month'; $day='';
+if (GETPOST('viewcal', 'none') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week') {
+    $action = 'show_month'; $day = '';
 } // View by month
 if (GETPOST('viewweek', 'none') || GETPOST('action', 'alpha') == 'show_week') {
-    $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d"));
+    $action = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
 } // View by week
-if (GETPOST('viewday', 'none') || GETPOST('action', 'alpha') == 'show_day')  {
-    $action='show_day'; $day=($day?$day:date("d"));
+if (GETPOST('viewday', 'none') || GETPOST('action', 'alpha') == 'show_day') {
+    $action = 'show_day'; $day = ($day ? $day : date("d"));
 } // View by day
 
 // Load translation files required by the page
@@ -167,6 +168,10 @@ if ($action == 'delete_action')
 {
     $event = new ActionComm($db);
     $event->fetch($actionid);
+    $event->fetch_optionals();
+    $event->fetch_userassigned();
+    $event->oldcopy = clone $event;
+
     $result = $event->delete();
 }
 
@@ -387,7 +392,7 @@ $head = calendars_prepare_head($paramnoaction);
 
 print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
@@ -749,6 +754,95 @@ if ($showbirthday)
     else
     {
         dol_print_error($db);
+    }
+}
+
+if ($conf->global->AGENDA_SHOW_HOLIDAYS)
+{
+    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
+    $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+    $sql .= " WHERE u.rowid = x.fk_user";
+    $sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+    $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+
+    if ($action == 'show_day')
+    {
+        // Request only leaves for the current selected day
+        $sql .= " AND '".$year."-".$month."-".$day."' BETWEEN x.date_debut AND x.date_fin";
+    }
+    elseif ($action == 'show_week')
+    {
+        // TODO: Add filter to reduce database request
+    }
+    elseif ($action == 'show_month')
+    {
+        // TODO: Add filter to reduce database request
+    }
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i   = 0;
+
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+
+            $dateStartArray = dol_getdate(dol_stringtotime($obj->date_start, 1), true);
+            $dateEndArray   = dol_getdate(dol_stringtotime($obj->date_end, 1), true);
+
+            $event = new ActionComm($db);
+
+            // Need the id of the leave object for link to it
+            $event->id                      = $obj->rowid;
+
+            $event->type_code               = 'HOLIDAY';
+            $event->datep                   = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
+            $event->datef                   = dol_mktime(0, 0, 0, $dateEndArray['mon'], $dateEndArray['mday'], $dateEndArray['year'], true);
+            $event->date_start_in_calendar  = $event->datep;
+            $event->date_end_in_calendar    = $event->datef;
+
+            if ($obj->status == 3)
+            {
+                // Show no symbol for leave with state "leave approved"
+                $event->percentage = -1;
+            }
+            elseif ($obj->status == 2)
+            {
+                // Show TO-DO symbol for leave with state "leave wait for approval"
+                $event->percentage = 0;
+            }
+
+            if ($obj->halfday == 1)
+            {
+                $event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
+            }
+            elseif ($obj->halfday == -1)
+            {
+                $event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
+            }
+            else
+            {
+                $event->label = $obj->lastname;
+            }
+
+            $annee  = date('Y', $event->date_start_in_calendar);
+            $mois   = date('m', $event->date_start_in_calendar);
+            $jour   = date('d', $event->date_start_in_calendar);
+            $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+
+            do
+            {
+                $eventarray[$daykey][] = $event;
+
+                $daykey += 60 * 60 * 24;
+            }
+
+            while ($daykey <= $event->date_end_in_calendar);
+
+            $i++;
+        }
     }
 }
 
@@ -1477,7 +1571,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     //var_dump($event->userassigned);
                     //var_dump($event->transparency);
                     print '<table class="centpercent cal_event';
-                    print (empty($event->transparency)?' cal_event_notbusy':' cal_event_busy');
+                    print (empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
                     //if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
                     print '" style="'.$h;
                     $colortouse = $color;
@@ -1507,7 +1601,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     {
                         print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
                     }
-                    if ($event->type_code != 'BIRTHDAY')
+					elseif ($event->type_code == 'HOLIDAY')
+                    {
+                        print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'holiday', 'user');
+                    }
+                    elseif ($event->type_code != 'BIRTHDAY' && $event->type_code != 'HOLIDAY')
                     {
                         // Picto
                         if (empty($event->fulldayevent))
@@ -1563,13 +1661,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         $titletoshow = $daterange;
                         $titletoshow .= ($titletoshow ? ' ' : '').($event->label ? $event->label : $event->libelle);
 
-                        if ($event->type_code == 'ICALEVENT') print $titletoshow;
-                        else
-                        {
+                        if ($event->type_code != 'ICALEVENT') {
                         	$savlabel = $event->label ? $event->label : $event->libelle;
                         	$event->label = $titletoshow;
                         	$event->libelle = $titletoshow;
-                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
+                        	// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
+                        	$titletoshow = $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
                         	$event->label = $savlabel;
                         	$event->libelle = $savlabel;
                         }
@@ -1590,6 +1687,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                             $listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
                         }
+
+                        print $titletoshow;
                         print $listofusertoshow;
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
@@ -1659,12 +1758,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 else
                 {
                 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
-                    print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
-                    print ($filtert?'&search_filtert='.$filtert:'');
-                    print ($usergroup?'&search_usergroup='.$usergroup:'');
-                    print ($actioncode!=''?'&search_actioncode='.$actioncode:'');
+                    print ($status ? '&status='.$status : '').($filter ? '&filter='.$filter : '');
+                    print ($filtert ? '&search_filtert='.$filtert : '');
+                    print ($usergroup ? '&search_usergroup='.$usergroup : '');
+                    print ($actioncode != '' ? '&search_actioncode='.$actioncode : '');
                     print '">'.img_picto("all", "1downarrow_selected.png").' ...';
-                    print ' +'.(count($eventarray[$daykey])-$maxprint);
+                    print ' +'.(count($eventarray[$daykey]) - $maxprint);
                     print '</a>';
                     break;
                     //$ok=false;        // To avoid to show twice the link
@@ -1735,6 +1834,17 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  */
 function sort_events_by_date($a, $b)
 {
+	// Sort holidays at first
+    if ($a->type_code === 'HOLIDAY')
+    {
+        return -1;
+    }
+
+    if ($b->type_code === 'HOLIDAY')
+    {
+        return 1;
+    }
+
     // datep => Event start time
     // datef => Event end time
 

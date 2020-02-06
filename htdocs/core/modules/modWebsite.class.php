@@ -189,7 +189,7 @@ class modWebsite extends DolibarrModules
 	    	$src=$srcroot.'/'.$cursorfile['name'];
 	    	$dest=$destroot.'/'.$cursorfile['name'];
 
-	    	$result=dol_copy($src, $dest, 0, 0);
+	    	$result=dol_copy($src, $dest, 0, 1);	// For full zip templates, we overwrite old existing files
 	    	if ($result < 0) {
 	    		$langs->load("errors");
 	    		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);

@@ -267,6 +267,7 @@ class Holiday extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
+		$sql .= "ref,";
 		$sql .= "fk_user,";
 		$sql .= "date_create,";
 		$sql .= "description,";
@@ -279,6 +280,7 @@ class Holiday extends CommonObject
 		$sql .= "fk_user_create,";
 		$sql .= "entity";
 		$sql .= ") VALUES (";
+		$sql .= "'(PROV)',";
 		$sql .= "'".$this->db->escape($this->fk_user)."',";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";
@@ -304,12 +306,31 @@ class Holiday extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
 
-			if (!$notrigger)
+			if ($this->id)
 			{
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_CREATE', $user);
-				if ($result < 0) { $error++; }
-				// End call triggers
+				// update ref
+				$initialref = '(PROV'.$this->id.')';
+				if (!empty($this->ref)) $initialref = $this->ref;
+
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
+				if ($this->db->query($sql))
+				{
+					$this->ref = $initialref;
+
+					if (!$error)
+					{
+						$result = $this->insertExtraFields();
+						if ($result < 0) $error++;
+					}
+
+					if (!$error && !$notrigger)
+					{
+						// Call trigger
+						$result = $this->call_trigger('HOLIDAY_CREATE', $user);
+						if ($result < 0) { $error++; }
+						// End call triggers
+					}
+				}
 			}
 		}
 
@@ -337,7 +358,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref        Ref object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -402,12 +423,17 @@ class Holiday extends CommonObject
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_type = $obj->fk_type;
 				$this->entity = $obj->entity;
+
+				$this->fetch_optionals();
+
+				$result = 1;
+			}
+			else {
+				$result = 0;
 			}
 			$this->db->free($resql);
 
-			$this->fetch_optionals();
-
-			return 1;
+			return $result;
 		}
 		else
 		{
@@ -1628,21 +1654,24 @@ class Holiday extends CommonObject
 		{
 			if ($type)
 			{
-				// Si utilisateur de Dolibarr
-
-				$sql = "SELECT u.rowid";
-				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+				// If user of Dolibarr
+				$sql = "SELECT";
+				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
+				}
+				$sql.= " u.rowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				{
 					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql .= " WHERE (ug.fk_user = u.rowid";
-					$sql .= " AND ug.entity = ".$conf->entity.")";
-					$sql .= " OR u.admin = 1";
+					$sql .= " WHERE ((ug.fk_user = u.rowid";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " OR u.entity = 0)"; // Show always superadmin
 				}
 				else
 				{
-					$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
+					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
 				if ($filters) $sql .= $filters;
@@ -1683,7 +1712,7 @@ class Holiday extends CommonObject
 				// We want only list of vacation balance for user ids
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
-				$sql .= " WHERE cpu.fk_user = u.user";
+				$sql .= " WHERE cpu.fk_user = u.rowid";
 				if ($filters) $sql .= $filters;
 
 				$resql = $this->db->query($sql);
@@ -1724,17 +1753,24 @@ class Holiday extends CommonObject
 			// List for Dolibarr users
 			if ($type)
 			{
-				$sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+								// If user of Dolibarr
+				$sql = "SELECT";
+				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
+				}
+				$sql.= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
 				$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				{
-					$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql.= " WHERE (ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity = ".$conf->entity.")";
-					$sql.= " OR u.admin = 1";
-				} else {
-					$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+					$sql .= " WHERE ((ug.fk_user = u.rowid";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " OR u.entity = 0)"; // Show always superadmin
+				}
+				else
+				{
+					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 
 				$sql.= " AND u.statut > 0";

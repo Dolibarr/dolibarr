@@ -1368,6 +1368,8 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
+        $error = 0;
+
         if ($this->statut != self::STATUS_CANCELED) { // no closed
             $this->db->begin();
 
@@ -1420,6 +1422,7 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
+        $error = 0;
         $this->db->begin();
 
         $this->oldcopy = dol_clone($this);
@@ -2750,7 +2753,8 @@ class Ticket extends CommonObject
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                 }
                 include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+				$trackid = "tic".$this->id;
+                $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid);
                 if ($mailfile->error) {
                     setEventMessages($mailfile->error, null, 'errors');
                 } else {

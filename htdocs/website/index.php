@@ -24,8 +24,9 @@
 define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
+define('FORCE_CKEDITOR', 1);	// We need CKEditor, even if module is off.
 
-header('X-XSS-Protection:0');
+//header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -825,14 +826,26 @@ if ($action == 'addcontainer')
 
 	if (!$error)
 	{
-		$res = $objectpage->create($user);
-		if ($res <= 0)
-		{
+		$pageid = $objectpage->create($user);
+		if ($pageid <= 0) {
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 			$action = 'createcontainer';
 		}
+		else {
+			// If there is no home page yet, this new page will be set as the home page
+			if (empty($object->fk_default_home)) {
+				$object->fk_default_home = $pageid;
+				$res = $object->update($user);
+				if ($res <= 0)
+				{
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 	}
+
 	if (!$error)
 	{
 		if (!empty($objectpage->content))
@@ -1047,6 +1060,7 @@ if ($action == 'updatecss')
     		if (!$error)
     		{
     		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
+    		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
 
     		    $result = $object->update($user);
         		if ($result < 0)
@@ -1492,17 +1506,25 @@ if ($action == 'updatemeta')
 		if ($result)
 		{
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
-			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-			//exit;
+
+			if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
+			{
+				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
+				//exit;
+				$action = 'preview';
+			}
+			else
+			{
+				$action = 'editmeta';
+			}
 		}
 		else
 		{
 			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
    			//exit;
+			$action = 'preview';
 		}
-
-		$action = 'preview';
 	}
 }
 
@@ -1541,12 +1563,18 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 	if ($action == 'confirm_createpagefromclone')
 	{
 		$istranslation = (GETPOST('is_a_translation', 'aZ09') == 'on' ? 1 : 0);
+		// Protection if it is a translation page
 		if ($istranslation)
 		{
 			if (GETPOST('newlang', 'aZ09') == $objectpage->lang)
 			{
 				$error++;
 				setEventMessages($langs->trans("LanguageMustNotBeSameThanClonedPage"), null, 'errors');
+				$action = 'preview';
+			}
+			if (GETPOST('newwebsite', 'int') != $object->id) {
+				$error++;
+				setEventMessages($langs->trans("WebsiteMustBeSameThanClonedPageIfTranslation"), null, 'errors');
 				$action = 'preview';
 			}
 		}
@@ -1570,7 +1598,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			}
 
 			$objectpage = new WebsitePage($db);
-			$resultpage = $objectpage->createFromClone($user, $pageid, GETPOST('pageurl', 'aZ09'), (GETPOST('newlang', 'aZ09') ?GETPOST('newlang', 'aZ09') : ''), $istranslation, $newwebsiteid);
+			$resultpage = $objectpage->createFromClone($user, $pageid, GETPOST('newpageurl', 'aZ09'), (GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''), $istranslation, $newwebsiteid, GETPOST('newtitle', 'alphanohtml'));
 			if ($resultpage < 0)
 			{
 				$error++;
@@ -1729,8 +1757,22 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				if ($result)
 				{
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-	   				exit;
+
+					if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
+					{
+						if ($backtopage) {
+							header("Location: ".$backtopage);
+							exit;
+						} else {
+							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
+							exit;
+						}
+					}
+					else
+					{
+						if ($action == 'updatesource') $action = 'editsource';
+						if ($action == 'updatecontent') $action = 'editcontent';
+					}
 				}
 				else
 				{
@@ -1919,7 +1961,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, ''
 
 print "\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 if ($action == 'createsite')
@@ -2112,7 +2154,7 @@ if (!GETPOST('hide_websitemenu'))
 		}
 		elseif (empty($virtualurl))
 		{
-		    $htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
+		    //$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
 		}
 		else
 		{
@@ -2141,7 +2183,7 @@ if (!GETPOST('hide_websitemenu'))
 
 	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm')))
 	{
-		if ($action == 'editcss' && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+		if ($action == 'editcss') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
@@ -2247,10 +2289,7 @@ if (!GETPOST('hide_websitemenu'))
 			if ($action == 'createfromclone') {
 				// Create an array for form
 				$formquestion = array(
-				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite"), 'value'=> 'copy_of_'.$object->ref),
-				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
-				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
-				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+					array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite"), 'value'=> 'copy_of_'.$object->ref)
 				);
 
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
@@ -2269,7 +2308,8 @@ if (!GETPOST('hide_websitemenu'))
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
 						array('type' => 'other', 'name' => 'newlang', 'label' => $langs->trans("Language"), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, 1, 0, 0, 'minwidth200', 0, 1)),
 						array('type' => 'other', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
-						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> 'copy_of_'.$objectpage->pageurl),
+						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
+						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> ''),
 					);
 
 				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
@@ -2430,9 +2470,10 @@ if (!GETPOST('hide_websitemenu'))
 		}
 		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite')))
 		{
+			if ($action == 'editsource' || $action == 'editmeta') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 		}
 
 		print '</span>'; // end websitetools
@@ -2440,7 +2481,9 @@ if (!GETPOST('hide_websitemenu'))
 		print '<span class="websitehelp">';
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
-			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
+			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
+
+			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url).'<br>';
             if ($conf->browser->layout == 'phone')
             {
                 print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
@@ -2724,10 +2767,9 @@ if ($action == 'editcss')
 	$htmlhelp .= dol_htmlentitiesbr($manifestjsoncontentdefault);
 	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
-
+	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
 	$doleditor = new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
-
 	print '</td></tr>';
 
 	// README.md
@@ -2891,7 +2933,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
-		print '<label for="checkboxcreatefromfetching"><span class="opacitymedium">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
+		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<tr><td class="titlefield">';
@@ -2912,7 +2954,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatemanually" value="checkboxcreatemanually"'.(GETPOST('radiocreatefrom') == 'checkboxcreatemanually' ? ' checked' : '').'> ';
-		print '<label for="checkboxcreatemanually"><span class="opacitymedium">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
+		print '<label for="checkboxcreatemanually"><span class="opacitymediumxx">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 	}
 
@@ -3015,7 +3057,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td>';
 	print $langs->trans('Language');
 	print '</td><td>';
-	print $formadmin->select_language($pagelang ? $pagelang : $langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
+	print $formadmin->select_language($pagelang ? $pagelang : $langs->defaultlang, 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Translation of
@@ -3254,7 +3296,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	$searchkey = GETPOST('searchstring', 'none');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
 	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 
@@ -3329,6 +3371,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<th>'.$langs->trans("Type").'</th>';
 			print '<th>'.$langs->trans("Link").'</th>';
 			print '<th>'.$langs->trans("Description").'</th>';
+			print '<th></th>';
 			print '</tr>';
 
 			foreach ($listofpages['list'] as $answerrecord)
@@ -3343,7 +3386,20 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
 					print '</td>';
-					print '<td class="tdoverflow100">'.$answerrecord->description;
+					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
+					print '<td>';
+					$param = '?action=replacesiteconfirm';
+					$param .= '&optioncontent='.GETPOST('optioncontent');
+					$param .= '&optionmeta='.GETPOST('optionmeta');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
+					$param .= '&searchstring='.$searchkey;
+					$disabled = '';
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					if (empty($user->rights->website->write)) {
+						$disabled = ' disabled';
+						$urltoedithtmlsource = '';
+					}
+					print '<a class="'.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 					print '</td>';
 					print '</tr>';
 				}
@@ -3373,6 +3429,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '</td>';
 					print '<td class="tdoverflow100">';
 					print '</td>';
+					print '<td></td>';
 					print '</tr>';
 				}
 			}

@@ -186,7 +186,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     $head[$h][2] = 'journal';
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
     dol_fiche_head($head, 'journal');
 

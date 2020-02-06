@@ -389,6 +389,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="'.$link.'">'.$link.'</a>';
     			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
     			// Rebuild pdf
@@ -508,6 +509,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="'.$link.'">'.$link.'</a>';
 				$dateRefusEx = explode(" ", $object->date_refuse);
     			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
 
@@ -633,6 +635,7 @@ if (empty($reshook))
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="'.$link.'">'.$link.'</a>';
        			$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
        			// Rebuilt pdf
@@ -703,7 +706,8 @@ if (empty($reshook))
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
-    	$result = $object->setDeny($user, GETPOST('detail_refuse', 'alpha'));
+		$detailRefuse = GETPOST('detail_refuse', 'alpha');
+    	$result = $object->setDeny($user, $detailRefuse);
 
     	if ($result > 0)
     	{
@@ -751,7 +755,8 @@ if (empty($reshook))
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-    			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_refuse'], $link);
+				$link = '<a href="'.$link.'">'.$link.'</a>';
+    			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailRefuse, $link);
 
        			// Rebuilt pdf
     			/*
@@ -831,7 +836,8 @@ if (empty($reshook))
 
 	    	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
 	    	{
-	    		$result = $object->set_cancel($user, GETPOST('detail_cancel', 'alpha'));
+				$detailCancel = GETPOST('detail_cancel', 'alpha');
+	    		$result = $object->set_cancel($user, $detailCancel);
 
 	    		if ($result > 0)
 	    		{
@@ -879,7 +885,8 @@ if (empty($reshook))
 
 	    				// CONTENT
 	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), GETPOST('detail_cancel', 'alpha'), $link);
+						$link = '<a href="'.$link.'">'.$link.'</a>';
+	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailCancel, $link);
 
 	    				// Rebuilt pdf
 	    				/*
@@ -1104,6 +1111,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$link = '<a href="'.$link.'">'.$link.'</a>';
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
         		// Generate pdf before attachment
@@ -1411,7 +1419,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Actions to send emails
-    $trigger_name = 'EXPENSEREPORT_SENTBYMAIL';
+    $triggersendname = 'EXPENSEREPORT_SENTBYMAIL';
     $autocopy = 'MAIN_MAIL_AUTOCOPY_EXPENSEREPORT_TO';
     $trackid = 'exp'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -1445,7 +1453,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewTrip"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head('');
@@ -1585,7 +1593,7 @@ else
 			if ($action == 'edit' && ($object->fk_statut < 3 || $object->fk_statut == 99))
 			{
 				print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 
 				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
@@ -1735,7 +1743,7 @@ else
 				if ($action == 'cancel')
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text", 'label'=>'<strong>'.$langs->trans("Comment").'</strong>', 'name'=>"detail_cancel", 'value'=>""));
-					$formconfirm = $form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
+					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 				}
 
 				if ($action == 'setdraft')
@@ -1780,7 +1788,7 @@ else
 				                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-				                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
 				                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				                $morehtmlref.='</form>';
@@ -2102,7 +2110,7 @@ else
 				if (($object->fk_statut == 0 || $object->fk_statut == 99) && $action != 'editline') $actiontouse = 'addline';
 
 				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="post" >';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
@@ -2148,12 +2156,15 @@ else
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int'))
 						{
 							print '<tr class="oddeven">';
+
 							// Num
 							print '<td class="center">';
 							print $numline;
 							print '</td>';
+
 							// Date
 							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+
 							// Project
 							if (!empty($conf->projet->enabled))
 							{

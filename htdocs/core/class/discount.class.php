@@ -546,7 +546,7 @@ class DiscountAbsolute
      *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
      *
      *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
-     *  @param 		int 		    $multicurrency 	Return multicurrency_amount instead of amount
+     *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount
      *	@return		int				     			<0 if KO, Sum of credit notes and deposits amount otherwise
      */
     public function getSumDepositsUsed($invoice, $multicurrency = 0)
@@ -578,7 +578,7 @@ class DiscountAbsolute
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            if ($multicurrency) return $obj->multicurrency_amount;
+            if ($multicurrency == 1) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
         else
@@ -592,7 +592,7 @@ class DiscountAbsolute
      *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
      *
      *	@param      CommonInvoice	  $invoice	    	Object invoice
-     *	@param      int			      $multicurrency	Return multicurrency_amount instead of amount
+     *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount
      *	@return     int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
      */
     public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
@@ -624,7 +624,7 @@ class DiscountAbsolute
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            if ($multicurrency) return $obj->multicurrency_amount;
+            if ($multicurrency == 1) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
         else
@@ -689,6 +689,11 @@ class DiscountAbsolute
         global $langs;
 
         $result='';
+        $link = '';
+        $linkend = '';
+        $label = '';
+        $picto = '';
+        $ref = '';
 
         if ($option == 'invoice') {
             $facid=! empty($this->discount_type)?$this->fk_invoice_supplier_source:$this->fk_facture_source;

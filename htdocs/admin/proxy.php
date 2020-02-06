@@ -82,13 +82,13 @@ llxHeader('', $langs->trans("Proxy"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("ProxyDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ProxyDesc")."</span><br>\n";
 print "<br>\n";
 
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_proxy">';
 
 

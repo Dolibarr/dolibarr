@@ -294,7 +294,6 @@ class FormAdvTargetEmailing extends Form
 
 		$options_array = array();
 
-
 		$sql = "SELECT rowid, code, label as civilite, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql .= " WHERE active = 1";
 
@@ -311,7 +310,6 @@ class FormAdvTargetEmailing extends Form
 					$obj = $this->db->fetch_object($resql);
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label = ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite != '-' ? $obj->civilite : ''));
-
 
 					$options_array[$obj->code] = $label;
 

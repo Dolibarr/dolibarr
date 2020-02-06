@@ -172,7 +172,7 @@ function account_statement_prepare_head($object, $num)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$object->id.'&num='.$num;
-	$head[$h][1] = $langs->trans("AccountStatements");
+	$head[$h][1] = $langs->trans("AccountStatement");
 	$head[$h][2] = 'statement';
 	$h++;
 
@@ -185,7 +185,7 @@ function account_statement_prepare_head($object, $num)
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/account_statement_document.php?account=".$object->id."&num=".$num;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= ' <span class="badge">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 

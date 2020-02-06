@@ -357,25 +357,25 @@ class BookKeeping extends CommonObject
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($this->doc_date)."'";
 				$sql .= ", ".(!isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'");
-				$sql .= ",'".$this->db->escape($this->doc_type)."'";
-				$sql .= ",'".$this->db->escape($this->doc_ref)."'";
-				$sql .= ",".$this->fk_doc;
-				$sql .= ",".$this->fk_docdet;
-				$sql .= ",'".$this->db->escape($this->thirdparty_code)."'";
-				$sql .= ",'".$this->db->escape($this->subledger_account)."'";
-				$sql .= ",'".$this->db->escape($this->subledger_label)."'";
-				$sql .= ",'".$this->db->escape($this->numero_compte)."'";
-				$sql .= ",'".$this->db->escape($this->label_compte)."'";
-				$sql .= ",'".$this->db->escape($this->label_operation)."'";
-				$sql .= ",".$this->debit;
-				$sql .= ",".$this->credit;
-				$sql .= ",".$this->montant;
-				$sql .= ",'".$this->db->escape($this->sens)."'";
-				$sql .= ",'".$this->db->escape($this->fk_user_author)."'";
-				$sql .= ",'".$this->db->idate($now)."'";
-				$sql .= ",'".$this->db->escape($this->code_journal)."'";
-				$sql .= ",'".$this->db->escape($this->journal_label)."'";
-				$sql .= ",".$this->db->escape($this->piece_num);
+				$sql .= ", '".$this->db->escape($this->doc_type)."'";
+				$sql .= ", '".$this->db->escape($this->doc_ref)."'";
+				$sql .= ", ".$this->fk_doc;
+				$sql .= ", ".$this->fk_docdet;
+				$sql .= ", ".(!empty($this->thirdparty_code)?("'".$this->db->escape($this->thirdparty_code)."'"):"NULL");
+				$sql .= ", ".(!empty($this->subledger_account)?("'".$this->db->escape($this->subledger_account)."'"):"NULL");
+				$sql .= ", ".(!empty($this->subledger_label)?("'".$this->db->escape($this->subledger_label)."'"):"NULL");
+				$sql .= ", '".$this->db->escape($this->numero_compte)."'";
+				$sql .= ", ".(!empty($this->label_operation)?("'".$this->db->escape($this->label_operation)."'"):"NULL");
+				$sql .= ", '".$this->db->escape($this->label_operation)."'";
+				$sql .= ", ".$this->debit;
+				$sql .= ", ".$this->credit;
+				$sql .= ", ".$this->montant;
+				$sql .= ", ".(!empty($this->sens)?("'".$this->db->escape($this->sens)."'"):"NULL");
+				$sql .= ", '".$this->db->escape($this->fk_user_author)."'";
+				$sql .= ", '".$this->db->idate($now)."'";
+				$sql .= ", '".$this->db->escape($this->code_journal)."'";
+				$sql .= ", ".(!empty($this->journal_label)?("'".$this->db->escape($this->journal_label)."'"):"NULL");
+				$sql .= ", ".$this->db->escape($this->piece_num);
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
@@ -1366,29 +1366,39 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkeeping by year
 	 *
-	 * @param  string $delyear		Year to delete
+	 * @param  int	  $delyear		Year to delete
 	 * @param  string $journal		Journal to delete
 	 * @param  string $mode 		Mode
+	 * @param  int	  $delmonth     Month
 	 * @return int					<0 if KO, >0 if OK
 	 */
-    public function deleteByYearAndJournal($delyear = '', $journal = '', $mode = '')
+    public function deleteByYearAndJournal($delyear = 0, $journal = '', $mode = '', $delmonth = 0)
     {
-		global $conf;
+    	global $langs;
 
-		if (empty($delyear) && empty($journal))
+    	if (empty($delyear) && empty($journal))
 		{
+			$this->error = 'ErrorOneFieldRequired';
 			return -1;
+		}
+		if (!empty($delmonth) && empty($delyear))
+		{
+			$this->error = 'YearRequiredIfMonthDefined';
+			return -2;
 		}
 
 		$this->db->begin();
 
-		// first check if line not yet in bookkeeping
+		// Delete record in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE 1 = 1";
-		if (!empty($delyear)) $sql .= " AND YEAR(doc_date) = ".$delyear; // FIXME Must use between
+		$sql.= dolSqlDateFilter('doc_date', 0, $delmonth, $delyear);
 		if (!empty($journal)) $sql .= " AND code_journal = '".$this->db->escape($journal)."'";
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
+
+		// TODO: In a future we must forbid deletion if record is inside a closed fiscal period.
+
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {

@@ -11,17 +11,8 @@ YourEMail=E-mail de confirmació de pagament
 Creditor=Beneficiari
 PaymentCode=Codi de pagament
 PayBoxDoPayment=Pagueu amb Paybox
-ToPay=Emetre pagament
 YouWillBeRedirectedOnPayBox=Serà redirigit a la pàgina segura de PayBox per indicar la seva targeta de crèdit
 Continue=Continuar
-ToOfferALinkForOnlinePayment=URL de pagament %s
-ToOfferALinkForOnlinePaymentOnOrder=URL per oferir una interfície d'usuari de pagament en línia %s per a un ordre de venda
-ToOfferALinkForOnlinePaymentOnInvoice=URL que ofereix una interfície de cobrament en línia %s basada en l'import d'una factura a client
-ToOfferALinkForOnlinePaymentOnContractLine=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofereix una interfície de pagament en línia %s per una quota de soci
-ToOfferALinkForOnlinePaymentOnDonation=URL per oferir un pagament %s en línia, interfície d'usuari per al pagament de la donació
-YouCanAddTagOnUrl=També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configureu la vostra caixa de pagaments amb l'URL <b> %s </b> perquè el pagament es creï automàticament quan sigui validat per Paybox.
 YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
 YourPaymentHasNotBeenRecorded=El vostre pagament no s'ha registrat i la transacció s'ha cancel·lat. Gràcies.

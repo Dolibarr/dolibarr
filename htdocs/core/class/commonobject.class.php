@@ -73,7 +73,7 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
@@ -577,7 +577,7 @@ abstract class CommonObject
 			$this->country = $tmparray['label'];
 		}
 
-        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_cpde)))
+        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_code)))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
     		$tmparray = getState($this->state_id, 'all', 0, 1);
@@ -621,7 +621,7 @@ abstract class CommonObject
 			$thirdpartyid = $object->fk_soc;
 		}
 
-		$out = '<!-- BEGIN part to show address block -->';
+		$out = '';
 
 		$outdone = 0;
 		$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
@@ -682,7 +682,7 @@ abstract class CommonObject
 			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
 		}
 
-		$out .= '<div style="clear: both;"></div>';
+		if ($out) $out .= '<div style="clear: both;"></div>';
 		$outdone = 0;
 		if (!empty($this->email))
 		{
@@ -695,32 +695,36 @@ abstract class CommonObject
 		    $out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
-		$out .= '<div style="clear: both;">';
+
 		if (!empty($conf->socialnetworks->enabled))
 		{
+			$outsocialnetwork = '';
+
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				foreach ($this->socialnetworks as $key => $value) {
-					$out .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
 					$outdone++;
 				}
 			} else {
-				if ($this->skype) $out .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
+				if ($this->skype) $outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				$outdone++;
-				if ($this->jabberid) $out .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
+				if ($this->jabberid) $outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
 				$outdone++;
-				if ($this->twitter) $out .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
+				if ($this->twitter) $outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
 				$outdone++;
-				if ($this->facebook) $out .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
+				if ($this->facebook) $outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
 				$outdone++;
-				if ($this->linkedin) $out .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+				if ($this->linkedin) $outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
 				$outdone++;
 			}
+
+			if ($outsocialnetwork) {
+				$out .= '<div style="clear: both;">'.$outsocialnetwork.'</div>';
+			}
 		}
-		$out .= '</div>';
 
-		$out .= '<!-- END Part to show address block -->';
-
-		return $out;
+		if ($out) return '<!-- BEGIN part to show address block -->'."\n".$out.'<!-- END Part to show address block -->'."\n";
+		else return '';
 	}
 
 	/**
@@ -1982,7 +1986,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyCode($code)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyCode('.$code.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_code';
@@ -2024,7 +2028,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.','.$mode.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_tx';
@@ -2594,7 +2598,7 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang'; // @TODO Rename 'rang' into 'position'
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
@@ -2740,10 +2744,13 @@ abstract class CommonObject
 	public function line_max($fk_parent_line = 0)
 	{
         // phpcs:enable
+        $positionfield = 'rang';
+		if ($this->table_element == 'bom') $positionfield = 'position';
+
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
 		{
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql .= ' AND fk_parent_line = '.$fk_parent_line;
 
@@ -2765,7 +2772,7 @@ abstract class CommonObject
 		// If not, search the last rang of element
 		else
 		{
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
@@ -3518,6 +3525,7 @@ abstract class CommonObject
 		if ($elementTable == 'user') $fieldstatus = "statut";
 		if ($elementTable == 'expensereport') $fieldstatus = "fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus = "status";
+		if (is_array($this->fields) && array_key_exists('status', $this->fields)) $fieldstatus = 'status';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql .= " SET ".$fieldstatus." = ".$status;
@@ -3568,7 +3576,7 @@ abstract class CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::setStatus ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -4118,7 +4126,7 @@ abstract class CommonObject
 
 		$i = 0;
 
-		print "<tbody>\n";
+		print "<!-- begin printObjectLines() --><tbody>\n";
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
@@ -4194,6 +4202,7 @@ abstract class CommonObject
 
 				$product_static->ref = $line->ref; //can change ref in hook
 				$product_static->label = $line->label; //can change label in hook
+
 				$text = $product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -4879,7 +4888,7 @@ abstract class CommonObject
 
 	/**
 	 *  Build thumb
-	 *  @TODO Move this into files.lib.php
+	 *  @todo Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
@@ -4956,11 +4965,11 @@ abstract class CommonObject
 	 * NB:  Error from trigger are stacked in interface->errors
 	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
 	 *
-	 * @param   string    $trigger_name   trigger's name to execute
+	 * @param   string    $triggerName   trigger's name to execute
 	 * @param   User      $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
-	public function call_trigger($trigger_name, $user)
+	public function call_trigger($triggerName, $user)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -4972,7 +4981,7 @@ abstract class CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers($trigger_name, $this, $user, $langs, $conf);
+		$result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
 
 		if ($result < 0)
 		{
@@ -5181,7 +5190,6 @@ abstract class CommonObject
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 
-
 			   	if ($attributeRequired)
 			   	{
 			   		$mandatorypb = false;
@@ -5211,7 +5219,6 @@ abstract class CommonObject
 						$new_array_options[$key] = null;
 					}
 				}
-
 
 			   	switch ($attributeType)
 			   	{
@@ -5558,16 +5565,17 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   		$val	       Array of properties for field to show
+	 * @param  array   		$val	       Array of properties for field to show (used only if ->fields not defined)
 	 * @param  string  		$key           Key of attribute
 	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  int			$nonewbutton   Force to not show the new button on field that are links to object
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0)
+	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
 		global $conf, $langs, $form;
 
@@ -5577,7 +5585,9 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$val = $this->fields[$key];
+		if (! empty($this->fields)) {
+			$val = $this->fields[$key];
+		}
 
 		$out = '';
         $type = '';
@@ -6116,11 +6126,11 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
 
-			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, empty($val['disabled']) ? 0 : 1);
+			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 			if (!empty($param_list_array[2]))		// If we set to add a create button
 			{
-				if (!GETPOSTISSET('backtopage') && empty($val['disabled']))	// To avoid to open several infinitely the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
+				if (!GETPOSTISSET('backtopage') && empty($val['disabled']) && empty($nonewbutton))	// To avoid to open several times the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
 				{
 		   			list($class, $classfile) = explode(':', $param_list[0]);
 		   			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
@@ -6571,7 +6581,8 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to show lines of extrafields with output datas
+	 * Function to show lines of extrafields with output datas.
+	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan']
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output (view) or input (edit) for extrafield
@@ -6602,8 +6613,8 @@ abstract class CommonObject
 				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-				// @TODO Add test also on 'enabled' (different than 'list' that is 'visibility')
-				$enabled = 1;
+				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
+				//$enabled = 1;
 
 				$visibility = 1;
 				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
@@ -7028,7 +7039,7 @@ abstract class CommonObject
 
 						if ($nbbyrow > 0)
 						{
-							if ($nbphoto == 1) $return .= '<table class="valigntop center centpercent" style="border: 0; padding: 2; border-spacing: 2px; border-collapse: separate;">';
+							if ($nbphoto == 1) $return .= '<table class="valigntop center centpercent" style="border: 0; padding: 2px; border-spacing: 2px; border-collapse: separate;">';
 
 							if ($nbphoto % $nbbyrow == 1) $return .= '<tr class="center valignmiddle" style="border: 1px">';
 							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">';
@@ -7316,7 +7327,7 @@ abstract class CommonObject
 		global $conf;
 
 		$queryarray = array();
-		foreach ($this->fields as $field=>$info)	// Loop on definition of fields
+		foreach ($this->fields as $field => $info)	// Loop on definition of fields
 		{
 			// Depending on field type ('datetime', ...)
 			if ($this->isDate($info))
@@ -7378,7 +7389,7 @@ abstract class CommonObject
 	 * @param   stdClass    $obj    Contain data of object from database
      * @return void
 	 */
-	protected function setVarsFromFetchObj(&$obj)
+	public function setVarsFromFetchObj(&$obj)
 	{
 		foreach ($this->fields as $field => $info)
 		{
@@ -7489,7 +7500,7 @@ abstract class CommonObject
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
-		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref,we sanitize data
+		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
 		$values = array();
@@ -7514,7 +7525,10 @@ abstract class CommonObject
 			}
 
 			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key] = 'null';
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
+				if (isset($this->fields[$key]['default'])) $values[$key] = $this->fields[$key]['default'];
+				else $values[$key] = 'null';
+			}
 			if (!empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key] = 'null';
 		}
 
@@ -7545,13 +7559,15 @@ abstract class CommonObject
 		{
 		    if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)')
 		    {
-		        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE ref = '(PROV)' AND rowid = ".$this->id;
+		        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".$this->id;
 		        $resqlupdate = $this->db->query($sql);
 
 		        if ($resqlupdate === false)
 		        {
 		            $error++;
 		            $this->errors[] = $this->db->lasterror();
+		        } else {
+		        	$this->ref = '(PROV'.$this->id.')';
 		        }
 		    }
 		}
@@ -7722,6 +7738,7 @@ abstract class CommonObject
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) $fieldvalues['date_modification'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
+		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
 		$values = array();
@@ -7953,7 +7970,7 @@ abstract class CommonObject
 
 
 	/**
-	 *	Set draft status
+	 *	Set to a status
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
