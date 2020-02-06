@@ -1434,6 +1434,12 @@ td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
+@media only screen and (max-width: 767px)
+{
+	span.pictotitle {
+		margin-<?php echo $left; ?>: 0 !important;
+	}
+}
 .pictoobjectwidth {
 	width: 14px;
 }
@@ -2440,6 +2446,9 @@ div.tabBar {
 }
 div.tabBar tr.titre td {
 	padding-top: 20px;
+}
+div.fiche tr.titre td {
+	padding-top: 10px;
 }
 
 div.tabBar.tabBarNoTop {
