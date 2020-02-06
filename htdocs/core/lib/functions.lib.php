@@ -6911,6 +6911,24 @@ function utf8_check($str)
 	return true;
 }
 
+/**
+ *      Check if a string is in ASCII
+ *
+ *      @param	string	$str        String to check
+ * 		@return	boolean				True if string is ASCII, False if not (byte value > 0x7F)
+ */
+function ascii_check($str)
+{
+	if (function_exists('mb_check_encoding')) {
+		//if (mb_detect_encoding($str, 'ASCII', true) return false;
+		if (! mb_check_encoding($str, 'ASCII')) return false;
+	} else {
+		if (preg_match('/[^\x00-\x7f]/', $str)) return false;	// Contains a byte > 7f
+	}
+
+	return true;
+}
+
 
 /**
  *      Return a string encoded into OS filesystem encoding. This function is used to define
