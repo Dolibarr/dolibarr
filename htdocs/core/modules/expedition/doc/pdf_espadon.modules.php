@@ -519,12 +519,12 @@ class pdf_espadon extends ModelePdfExpedition
 					$weighttxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
 					{
-						$weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units);
+						$weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
 					}
 					$voltxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
 					{
-						$voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0);
+						$voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0, 1);
 					}
 
 
