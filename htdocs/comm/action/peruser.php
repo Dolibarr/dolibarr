@@ -49,10 +49,10 @@ $usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", 
 $showbirthday = 0;
 
 // If not choice done on calendar owner, we filter on user.
-if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
+/*if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
 	$filtert = $user->id;
-}
+}*/
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
