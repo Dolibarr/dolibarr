@@ -137,6 +137,13 @@ class CMailFile
 	{
 		global $conf, $dolibarr_main_data_root;
 
+		// Clean values of $mimefilename_list
+		if (is_array($mimefilename_list)) {
+			foreach($mimefilename_list as $key => $val) {
+				$mimefilename_list[$key] = dol_string_unaccent($mimefilename_list[$key]);
+			}
+		}
+
         $this->subject = $subject;
 		$this->addr_to = $to;
 		$this->addr_from = $from;
