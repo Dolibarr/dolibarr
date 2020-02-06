@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Within 14 days following the end of the month
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variable amount (%% tot.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=Bank transfer
 PaymentTypeShortVIR=Bank transfer
