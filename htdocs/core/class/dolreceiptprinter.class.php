@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +33,16 @@
  * <dol_use_font_c>                                 Use font C of printer
  * <dol_bold>                                       Text Bold
  * <dol_bold_disabled>                              Disable Text Bold
- * <dol_double_height> </dol_double_height>         Text double height
- * <dol_double_width> </dol_double_width>           Text double width
- * <dol_underline> </dol_underline>                 Underline text
- * <dol_underline_2dots> </dol_underline_2dots>     Underline with double line
- * <dol_emphasized> </dol_emphasized>               Emphasized text
- * <dol_switch_colors> </dol_switch_colors>         Print in white on black
- * <dol_set_print_width_57>                         Ticket print width of 57mm
+ * <dol_double_height>                              Text double height
+ * <dol_double_width>                               Text double width
+ * <dol_default_height_width>                       Text default height and width
+ * <dol_underline>                                  Underline text
+ * <dol_underline_disabled>                         Disable underline text
  * <dol_cut_paper_full>                             Cut ticket completely
  * <dol_cut_paper_partial>                          Cut ticket partially
  * <dol_open_drawer>                                Open cash drawer
- * <dol_activate_buzzer>                            Activate buzzer
+ * <dol_beep>                                       Activate buzzer
  * <dol_print_barcode>                              Print barcode
- * <dol_print_qrcode>                               Print QR Code
  * <dol_print_logo>                                 Print logo stored on printer. Example : <print_logo>32|32
  * <dol_print_logo_old>                             Print logo stored on printer. Must be followed by logo code. For old printers.
  * <dol_print_object_lines>                         Print object lines
@@ -165,24 +163,15 @@ class dolReceiptPrinter extends Printer
             'dol_bold',
             'dol_bold_disabled',
             'dol_double_height',
-            '/dol_double_height',
             'dol_double_width',
-            '/dol_double_width',
+            'dol_default_height_width',
             'dol_underline',
-            '/dol_underline',
-            'dol_underline_2dots',
-            '/dol_underline',
-            'dol_emphasized',
-            '/dol_emphasized',
-            'dol_switch_colors',
-            '/dol_switch_colors',
-            'dol_set_print_width_57',
+            'dol_underline_disabled',
             'dol_cut_paper_full',
             'dol_cut_paper_partial',
             'dol_open_drawer',
-            //'dol_activate_buzzer',
+            'dol_beep',
             'dol_print_text',
-            'dol_print_qrcode',
             'dol_print_barcode',
             'dol_value_date',
             'dol_value_date_time',
@@ -719,6 +708,24 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_BOLD_DISABLED':
                         $this->printer->setEmphasis(false);
                         break;
+					case 'DOL_DOUBLE_HEIGHT':
+                        $this->printer->setTextSize(1,2);
+                        break;
+					case 'DOL_DOUBLE_WIDTH':
+                        $this->printer->setTextSize(2,1);
+                        break;
+					case 'DOL_DEFAULT_HEIGHT_WIDTH':
+                        $this->printer->setTextSize(1,1);
+                        break;
+					case 'DOL_UNDERLINE':
+                        $this->printer->setUnderline(true);
+                        break;
+					case 'DOL_UNDERLINE_DISABLED':
+                        $this->printer->setUnderline(false);
+                        break;
+					case 'DOL_BEEP':
+                        $this->printer->getPrintConnector() -> write("\x1e");
+                        break;
                     default:
                         $this->printer->text($vals[$tplline]['tag']);
                         $this->printer->text($vals[$tplline]['value']);
@@ -826,3 +833,4 @@ class dolReceiptPrinter extends Printer
         return $error;
     }
 }
+
