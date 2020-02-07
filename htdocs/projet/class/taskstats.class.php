@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -34,7 +34,7 @@ class TaskStats extends Stats
      *
      * @param   DoliDb  $db     Database handler
      */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -50,7 +50,7 @@ class TaskStats extends Stats
 	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
-	function getAllTaskByStatus($limit = 5)
+	public function getAllTaskByStatus($limit = 5)
 	{
 		global $conf, $user, $langs;
 
@@ -107,7 +107,7 @@ class TaskStats extends Stats
 	 *
 	 * @return array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $conf, $user, $langs;
 
@@ -163,10 +163,10 @@ class TaskStats extends Stats
 	 * Return Task number by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return 	array 				Array of values
 	 */
-	function getNbByMonth($year, $format=0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 

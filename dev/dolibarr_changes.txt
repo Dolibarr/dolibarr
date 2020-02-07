@@ -8,6 +8,15 @@ ALL:
 Check "@CHANGE"
 
 
+PrestaShopWebservice:
+---------------------
+Replace
+	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+With
+	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
+
+
+
 CKEDITOR (4.6.2):
 -----------------
 * In ckeditor/ckeditor/contents.css
@@ -15,6 +24,15 @@ Replace:
 	body { ... margin: 20px;
 With
 	body { ... margin: 5px;
+
+
+
+ESCPOS:
+-------
+Replace
+	private $connector;
+With
+	protected $connector;
 
 
 
@@ -34,36 +52,81 @@ Replace call to serialize_val with no bugged value
 
 TCPDF:
 ------
+* Replace in tcpdf.php:
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+                    unlink($file);
+                }
+            }
+with
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+				// DOL CHANGE If we keep this, source image files are physically destroyed
+				// unlink($file);
+                }
+            }
+
+* Replace in tcpdf.php
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+
+with
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+			// @CHANGE DOL
+			'imagekeys',
+
+* Replace in tcpdf.php
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				return false;	
+			}
+
+with
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
+				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+				//return false;	
+			}
+			
+
+
+* In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
+
+		if (strpos($filename, '://') === false) {
+
+with
+
+        if (strpos($filename, '//') === 0)
+        {
+            // Share folder on a (windows) server
+            // e.g.: "//[MyServerName]/[MySharedFolder]/"
+            //
+            // nothing to change
+        }
+        elseif (strpos($filename, '://') === false)
+
 * To avoid to have QRcode changed because generated with a random mask, replace
 define('QR_FIND_FROM_RANDOM', 2);
 with
 define('QR_FIND_FROM_RANDOM', false);
 
 * Removed useless directories ("examples", "tools")
-
-* Fix
- 	// initialize subsetchars
-	$subsetchars = array();
-into
-	// initialize subsetchars
-	$subsetchars = array_fill(0, 256, true);
-
-* Replace the continue into switch with a break:
-
-case 're': {
-	// justify block
-	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
-		$this->lispacer = '';
-		continue;
-	}
-
-into 
-case 're': {
-	// justify block
-	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
-		$this->lispacer = '';
-		break;
-	}
 
 * Optionnaly, removed all fonts except 
     dejavusans* (used by greek, arab, persan, romanian, turkish), 
@@ -72,13 +135,13 @@ case 're': {
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
-* Optionnaly, made freemono the default monotype font because we removed courier
-In htdocs/includes/tcpdf/tcpdf.php
+* Optionnaly, made freemono the default monotype font if we removed courier
+In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
 
-		
+
 
 TCPDI:
 ------
@@ -133,23 +196,17 @@ JQUERYFILETREE:
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
 
+PHPEXCEL:
+---------
+* Replace in htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared/OLE.php
+    continue;
+with:
+    continue 2;
+
 
 RESTLER:
 --------
-
-* Add 2 lines into file AutoLoader.php to complete function     
-	private function alias($className, $currentClass)
-    {
-		...
-to get 
-
-	private function alias($className, $currentClass)
-    {
-        if ($className == 'Luracast\Restler\string') return;
-        if ($className == 'Luracast\Restler\mixed') return;
-		...
-
-Change also file Luracast/Restler/explorer/index.html
+Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
 
 +With swagger 2:
 

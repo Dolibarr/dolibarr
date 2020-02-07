@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,27 +34,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->loadLangs(array("companies", "other"));
 
-$action=GETPOST('action','aZ09');
-$confirm=GETPOST('confirm');
-$id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
+$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	unset($action);
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
+if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="position_name";
 
@@ -64,7 +68,7 @@ if ($id > 0 || ! empty($ref))
 	$result = $object->fetch($id, $ref);
 
 	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id,0,0,0,$object,'thirdparty');
+	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -76,7 +80,7 @@ $hookmanager->initHooks(array('thirdpartydocument','globalcard'));
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -85,10 +89,10 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title=$langs->trans("ThirdParty").' - '.$langs->trans("Files");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Files");
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+$title = $langs->trans("ThirdParty").' - '.$langs->trans("Files");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Files");
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $help_url);
 
 if ($object->id)
 {
@@ -104,7 +108,7 @@ if ($object->id)
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -113,15 +117,15 @@ if ($object->id)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Prefix
-	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	{
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
@@ -148,7 +152,7 @@ if ($object->id)
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 	print '</table>';
 
@@ -159,12 +163,12 @@ if ($object->id)
 	$modulepart = 'societe';
 	$permission = $user->rights->societe->creer;
 	$permtoedit = $user->rights->societe->creer;
-	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-	accessforbidden('',0,0);
+	accessforbidden('', 0, 0);
 }
 
 // End of page

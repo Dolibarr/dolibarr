@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -42,7 +42,7 @@ class modFicheinter extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $conf;
 
@@ -50,9 +50,9 @@ class modFicheinter extends DolibarrModules
         $this->numero = 70;
 
         $this->family = "crm";
-        $this->module_position = '45';
+        $this->module_position = '41';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Gestion des fiches d'intervention";
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -164,7 +164,12 @@ class modFicheinter extends DolibarrModules
 			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',
 			's.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InterId",'f.ref'=>"InterRef",'f.datec'=>"InterDateCreation",
-			'f.duree'=>"InterDuration",'f.fk_statut'=>'InterStatus','f.description'=>"InterNote", 'pj.ref'=>'ProjectRef', 'fd.rowid'=>'InterLineId',
+			'f.duree'=>"InterDuration",'f.fk_statut'=>'InterStatus','f.description'=>"InterNote");
+        $keyforselect='fichinter'; $keyforelement='intervention'; $keyforaliasextra='extra';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+        $this->export_fields_array[$r]+=array(
+        	'pj.ref'=>'ProjectRef','pj.title'=>'ProjectLabel',
+        	'fd.rowid'=>'InterLineId',
 			'fd.date'=>"InterLineDate",'fd.duree'=>"InterLineDuration",'fd.description'=>"InterLineDesc"
 		);
         //$this->export_TypeFields_array[$r]=array(
@@ -175,24 +180,30 @@ class modFicheinter extends DolibarrModules
 		//	'fd.total_ht'=>"Numeric"
 		//);
         $this->export_TypeFields_array[$r]=array(
-			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label','s.phone'=>'Text','s.siren'=>'Text',
-			's.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",
-			'f.duree'=>"Duree",'f.fk_statut'=>'Statut','f.description'=>"Text",'f.datee'=>"Date",'f.dateo'=>"Date",'f.fulldayevent'=>"Boolean", 'pj.ref'=>'Text',
-			 'fd.date'=>"Date",'fd.duree'=>"Duree",'fd.description'=>"Text",'fd.total_ht'=>"Numeric"
+        	's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label','s.phone'=>'Text','s.siren'=>'Text',
+			's.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
+        	'f.rowid'=>'Numeric','f.ref'=>"Text",'f.datec'=>"Date",
+			'f.duree'=>"Duree",'f.fk_statut'=>'Numeric','f.description'=>"Text",'f.datee'=>"Date",'f.dateo'=>"Date",'f.fulldayevent'=>"Boolean",
+        	'pj.ref'=>'Text','pj.title'=>'Text',
+        	'fd.rowid'=>"Numeric",'fd.date'=>"Date",'fd.duree'=>"Duree",'fd.description'=>"Text",'fd.total_ht'=>"Numeric"
 		);
         $this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company',
 			's.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company',
 			's.code_compta_fournisseur'=>'company','f.rowid'=>"intervention",'f.ref'=>"intervention",'f.datec'=>"intervention",'f.duree'=>"intervention",
-			'f.fk_statut'=>"intervention",'f.description'=>"intervention", 'pj.ref'=>'project', 'fd.rowid'=>"inter_line",'fd.date'=>"inter_line",
+        	'f.fk_statut'=>"intervention",'f.description'=>"intervention", 'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>"inter_line",'fd.date'=>"inter_line",
 			'fd.duree'=>'inter_line','fd.description'=>'inter_line'
 		);
         $this->export_dependencies_array[$r]=array('inter_line'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+        $keyforselect='fichinterdet'; $keyforelement='inter_line'; $keyforaliasextra='extradet';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'fichinter as f';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter_extrafields as extra ON f.rowid = extra.fk_object';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet as fd ON f.rowid = fd.fk_fichinter,';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet as fd ON f.rowid = fd.fk_fichinter';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet_extrafields as extradet ON fd.rowid = extradet.fk_object,';
         $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'societe as s';
         $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
         $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention').')';
@@ -201,14 +212,14 @@ class modFicheinter extends DolibarrModules
 
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
         global $conf;
 
@@ -220,6 +231,6 @@ class modFicheinter extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".$conf->entity.")",
         );
 
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
 }

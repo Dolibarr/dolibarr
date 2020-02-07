@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -32,7 +32,7 @@ $langs->loadLangs(array("main","cashdesk"));
 
 top_httphead('text/html');
 
-$facid=GETPOST('facid','int');
+$facid=GETPOST('facid', 'int');
 $object=new Facture($db);
 $object->fetch($facid);
 
@@ -57,7 +57,7 @@ $object->fetch($facid);
         <p class="date_heure"><?php
         // Recuperation et affichage de la date et de l'heure
         $now = dol_now();
-        print dol_print_date($now,'dayhourtext').'<br>';
+        print dol_print_date($now, 'dayhourtext').'<br>';
         print $object->ref;
         ?></p>
     </div>
@@ -85,15 +85,15 @@ $object->fetch($facid);
     for($i=0;$i < $tab_size;$i++)
     {
         $remise = $tab[$i]['remise'];
-    ?>
+        ?>
     <tr>
         <td><?php echo $tab[$i]['ref'];?></td>
         <td><?php echo $tab[$i]['label'];?></td>
         <td><?php echo $tab[$i]['qte'];?></td>
         <td><?php echo $tab[$i]['remise_percent'];?></td>
-        <td class="total"><?php echo price(price2num($tab[$i]['total_ht'],'MT'),0,$langs,0,0,-1,$conf->currency);?></td>
+        <td class="total"><?php echo price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency);?></td>
     </tr>
-    <?php
+        <?php
     }
     ?>
     </tbody>
@@ -102,13 +102,13 @@ $object->fetch($facid);
 <table class="totaux">
 <tr>
     <th class="nowrap"><?php echo $langs->trans("TotalHT");?></th>
-    <td class="nowrap"><?php echo price(price2num($obj_facturation->prixTotalHt(),'MT'),'',$langs,0,-1,-1,$conf->currency)."\n";?></td>
+    <td class="nowrap"><?php echo price(price2num($obj_facturation->prixTotalHt(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
 </tr>
 <tr>
-    <th class="nowrap"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->montantTva(),'MT'),'',$langs,0,-1,-1,$conf->currency)."\n";?></td>
+    <th class="nowrap"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->montantTva(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
 </tr>
 <tr>
-    <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(),'MT'),'',$langs,0,-1,-1,$conf->currency)."\n";?></td>
+    <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 

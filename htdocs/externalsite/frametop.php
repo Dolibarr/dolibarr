@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,10 +27,10 @@ require "../main.inc.php";
 // Load translation files required by the page
 $langs->load("externalsite");
 
-top_htmlhead("","");
+top_htmlhead("", "");
 
 print '<body id="mainbody">' . "\n";
 
-top_menu("","","_top");
+top_menu("", "", "_top");
 
 print '</body>';

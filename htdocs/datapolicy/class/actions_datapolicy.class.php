@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseom.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,7 +72,7 @@ class ActionsDatapolicy
      *                           				=0 if OK but we want to process standard actions too,
      *                            				>0 if OK and we want to replace standard actions.
      */
-    function getNomUrl($parameters, &$object, &$action)
+    public function getNomUrl($parameters, &$object, &$action)
     {
         global $db, $langs, $conf, $user;
         $this->resprints = '';
@@ -120,7 +120,6 @@ class ActionsDatapolicy
                 $object->note_private = $object->note_private . '<br/>' . $langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
                 if ($object->update($object->id, $user, 0)) {
-
                     // On supprime les contacts associé
                     $sql = "DELETE FROM " . MAIN_DB_PREFIX . "socpeople WHERE fk_soc = " . $object->id;
                     $this->db->query($sql);
@@ -206,8 +205,7 @@ class ActionsDatapolicy
             require_once  DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
             require_once  DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
             DataPolicy::sendMailDataPolicyContact($object);
-        }
-         elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
+        } elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
              $object->fetch(GETPOST('id'));
             require_once  DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
             require_once  DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
@@ -294,14 +292,14 @@ class ActionsDatapolicy
     /**
      * Execute action
      *
-     * @param   array	$parameters		Array of parameters
-     * @param   Object	$object		   	Object output on PDF
-     * @param   string	$action     	'add', 'update', 'view'
-     * @return  int 		        	<0 if KO,
-     *                          		=0 if OK but we want to process standard actions too,
-     *  	                            >0 if OK and we want to replace standard actions.
+     * @param   array   $parameters     Array of parameters
+     * @param   Object  $object         Object output on PDF
+     * @param   string  $action         'add', 'update', 'view'
+     * @return  int                     <0 if KO,
+     *                                  =0 if OK but we want to process standard actions too,
+     *                                  >0 if OK and we want to replace standard actions.
      */
-    function beforePDFCreation($parameters, &$object, &$action)
+    public function beforePDFCreation($parameters, &$object, &$action)
     {
         global $conf, $user, $langs;
         global $hookmanager;
@@ -314,40 +312,11 @@ class ActionsDatapolicy
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
         if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
-
         }
 
         return $ret;
     }
 
-    /**
-     * Execute action
-     *
-     * @param	array	$parameters		Array of parameters
-     * @param   Object	$pdfhandler   	PDF builder handler
-     * @param   string	$action     	'add', 'update', 'view'
-     * @return  int 		        	<0 if KO,
-     *                          		=0 if OK but we want to process standard actions too,
-     *  	                            >0 if OK and we want to replace standard actions.
-     */
-    function afterPDFCreation($parameters, &$pdfhandler, &$action)
-    {
-        global $conf, $user, $langs;
-        global $hookmanager;
-
-        $outputlangs = $langs;
-
-        $ret = 0;
-        $deltemp = array();
-        dol_syslog(get_class($this) . '::executeHooks action=' . $action);
-
-        /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
-
-        }
-
-        return $ret;
-    }
 
     /**
      * addMoreActionsButtons
@@ -358,53 +327,53 @@ class ActionsDatapolicy
      * @param HookManager	$hookmanager	Hook manager
      * @return void
      */
-    function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
+    public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
     {
         global $conf, $user, $langs;
         $langs->load('datapolicy@datapolicy');
 
         if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
         {
-	        $dialog = '<div id="dialogdatapolicy" style="display:none;" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">';
-	        $dialog .= '<div class="confirmmessage">' . img_help('', '') . ' ' . $langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION') . '</div>';
-	        $dialog .= "</div>";
-	        $dialog .= '<script>
-	                  $( function() {
-	                    $("#rpgpdbtn").on("click", function(){
-	                        var href = $(this).attr("href");
-	                        $( "#dialogdatapolicy" ).dialog({
-	                          modal: true,
-	                          buttons: {
-	                            "OK": function() {
-	                              window.open(href);
-	                              $( this ).dialog( "close" );
-	                            },
-	                            "' . $langs->trans('Cancel') . '": function() {
-	                              $( this ).dialog( "close" );
-	                            }
-	                          }
-	                        });
+            $dialog = '<div id="dialogdatapolicy" style="display:none;" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">';
+            $dialog .= '<div class="confirmmessage">' . img_help('', '') . ' ' . $langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION') . '</div>';
+            $dialog .= "</div>";
+            $dialog .= '<script>
+                      $( function() {
+                        $("#rpgpdbtn").on("click", function(){
+                            var href = $(this).attr("href");
+                            $( "#dialogdatapolicy" ).dialog({
+                              modal: true,
+                              buttons: {
+                                "OK": function() {
+                                  window.open(href);
+                                  $( this ).dialog( "close" );
+                                },
+                                "' . $langs->trans('Cancel') . '": function() {
+                                  $( this ).dialog( "close" );
+                                }
+                              }
+                            });
 
 
-	                    return false;
-	                    });
-	                  } );
-	                  </script>';
-	        echo $dialog;
-	        if ($parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
-	            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=datapolicy_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
-	        } elseif ($parameters['currentcontext'] == 'membercard') {
-	            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=datapolicy_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
-	        } elseif ($parameters['currentcontext'] == 'contactcard') {
-	            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=datapolicy_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
-	        }
-	        if (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
-	            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=send_datapolicy" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
-	        } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'membercard') {
-	            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=send_datapolicy" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
-	        } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'contactcard') {
-	            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=send_datapolicy" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
-	        }
+                        return false;
+                        });
+                      } );
+                      </script>';
+            echo $dialog;
+            if ($parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
+                echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=datapolicy_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
+            } elseif ($parameters['currentcontext'] == 'membercard') {
+                echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=datapolicy_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
+            } elseif ($parameters['currentcontext'] == 'contactcard') {
+                echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=datapolicy_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
+            }
+            if (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
+                echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=send_datapolicy" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+            } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'membercard') {
+                echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=send_datapolicy" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+            } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'contactcard') {
+                echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=send_datapolicy" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+            }
         }
     }
 
@@ -415,9 +384,9 @@ class ActionsDatapolicy
      * @param Object	 	$object			Object
      * @param string		$action			Actions
      * @param HookManager	$hookmanager	Hook manager
-     * @return void
+     * @return int
      */
-    function printCommonFooter($parameters, &$object, &$action, $hookmanager)
+    public function printCommonFooter($parameters, &$object, &$action, $hookmanager)
     {
         global $conf, $user, $langs;
 
@@ -437,14 +406,12 @@ class ActionsDatapolicy
                 $jsscript .= "$('#forme_juridique_code, #typent_id').change(function(){ hideRgPD(); });" . PHP_EOL;
                 $jsscript .= '</script>';
             } elseif (GETPOST('action') == 'confirm_delete' && GETPOST('confirm') == 'yes' && GETPOST('socid') > 0) {
-
                 // La suppression n'a pas été possible
                 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
                 $societe = new Societe($this->db);
                 $societe->fetch(GETPOST('socid'));
                 // On vérifie si il est utilisé
                 if ((in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $societe->typent_id == 8) && $societe->isObjectUsed(GETPOST('socid'))) {
-
                     require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
                     $form = new Form($this->db);
                     echo $form->formconfirm($_SERVER["PHP_SELF"] . "?socid=" . GETPOST('socid'), substr($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE"), 0, strlen($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE")) - 2), $langs->trans("DATAPOLICIES_POPUP_ANONYME_TEXTE"), 'anonymiser', '', '', 1);
@@ -457,7 +424,6 @@ class ActionsDatapolicy
                 $societe->fetch(GETPOST('socid'));
 
                 if (!in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) && $societe->typent_id != 8) {
-
                     require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
                     $jsscript .= '<script>';
                     $jsscript .= "var elementToHide = 'td.societe_extras_datapolicy_opposition_traitement, td.societe_extras_datapolicy_opposition_prospection, td.societe_extras_datapolicy_consentement';" . PHP_EOL;
@@ -477,6 +443,8 @@ class ActionsDatapolicy
             }
         }
 
-        echo $jsscript;
+        $this->resprint = $jsscript;
+
+        return 0;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,13 +70,24 @@ class AssetType extends CommonObject
 	/** @var array Array of asset */
 	public $asset=array();
 
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'label' =>array('type'=>'varchar(50)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
+		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code asset', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation asset', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation expense', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+	);
+
 
 	/**
 	 *	Constructor
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -89,8 +100,8 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-	function create($user,$notrigger=0)
-	{
+    public function create($user, $notrigger = 0)
+    {
 		global $conf;
 
 		$error=0;
@@ -124,7 +135,7 @@ class AssetType extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."asset_type");
 
-			$result = $this->update($user,1);
+			$result = $this->update($user, 1);
 			if ($result < 0)
 			{
 				$this->db->rollback();
@@ -134,7 +145,7 @@ class AssetType extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('ASSET_TYPE_CREATE',$user);
+				$result=$this->call_trigger('ASSET_TYPE_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -157,7 +168,7 @@ class AssetType extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *  Met a jour en base donnees du type
@@ -166,7 +177,7 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-	function update($user,$notrigger=0)
+    public function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -203,7 +214,7 @@ class AssetType extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('ASSET_TYPE_MODIFY',$user);
+				$result=$this->call_trigger('ASSET_TYPE_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -233,7 +244,7 @@ class AssetType extends CommonObject
 	 *
 	 *  @return		int					>0 if OK, 0 if not found, < 0 if KO
 	 */
-	function delete()
+	public function delete()
 	{
 		global $user;
 
@@ -246,7 +257,7 @@ class AssetType extends CommonObject
 		if ($resql)
 		{
 			// Call trigger
-			$result=$this->call_trigger('ASSET_TYPE_DELETE',$user);
+			$result=$this->call_trigger('ASSET_TYPE_DELETE', $user);
 			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
 			// End call triggers
 
@@ -267,7 +278,7 @@ class AssetType extends CommonObject
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense, d.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."asset_type as d";
@@ -282,13 +293,13 @@ class AssetType extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                                       = $obj->rowid;
-				$this->ref                                      = $obj->rowid;
-				$this->label                                    = $obj->label;
-				$this->accountancy_code_asset                   = $obj->accountancy_code_asset;
-				$this->accountancy_code_depreciation_asset      = $obj->accountancy_code_depreciation_asset;
-				$this->accountancy_code_depreciation_expense    = $obj->accountancy_code_depreciation_expense;
-				$this->note                                     = $obj->note;
+				$this->id = $obj->rowid;
+				$this->ref = $obj->rowid;
+				$this->label = $obj->label;
+				$this->accountancy_code_asset = $obj->accountancy_code_asset;
+				$this->accountancy_code_depreciation_asset = $obj->accountancy_code_depreciation_asset;
+				$this->accountancy_code_depreciation_expense = $obj->accountancy_code_depreciation_expense;
+				$this->note = $obj->note;
 			}
 
 			return 1;
@@ -300,13 +311,13 @@ class AssetType extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
 	 *  @return 	array	List of types of members
 	 */
-	function liste_array()
+	public function liste_array()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -350,7 +361,7 @@ class AssetType extends CommonObject
 	 *  									2=Return array of asset id only
 	 * 	@return	mixed						Array of asset or -1 on error
 	 */
-	function listAssetForAssetType($excludefilter='', $mode=0)
+	public function listAssetForAssetType($excludefilter = '', $mode = 0)
 	{
 		global $conf, $user;
 
@@ -374,7 +385,7 @@ class AssetType extends CommonObject
 					{
 						$assetstatic=new Asset($this->db);
 						if ($mode == 1) {
-							$assetstatic->fetch($obj->rowid,'','','',false, false);
+							$assetstatic->fetch($obj->rowid, '', '', '', false, false);
 						} else {
 							$assetstatic->fetch($obj->rowid);
 						}
@@ -405,19 +416,19 @@ class AssetType extends CommonObject
 	 *  	@param		int  	$notooltip		1=Disable tooltip
 	 *		@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
 	{
 		global $langs;
 
 		$result='';
-		$label=$langs->trans("ShowTypeCard",$this->label);
+		$label=$langs->trans("ShowTypeCard", $this->label);
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->label,$maxlen):$this->label);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->label, $maxlen):$this->label);
 		$result .= $linkend;
 
 		return $result;
@@ -430,8 +441,8 @@ class AssetType extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
-	{
+    public function initAsSpecimen()
+    {
 		global $conf, $user, $langs;
 
 		// Initialize parameters
@@ -446,15 +457,15 @@ class AssetType extends CommonObject
 		$this->asset=array(
 			$user->id => $user
 		);
-	}
+    }
 
-	/**
-	 *     getLibStatut
-	 *
-	 *     @return string     Return status of a type of asset
-	 */
-	function getLibStatut()
-	{
-		return '';
-	}
+    /**
+     *     getLibStatut
+     *
+     *     @return string     Return status of a type of asset
+     */
+    public function getLibStatut()
+    {
+        return '';
+    }
 }

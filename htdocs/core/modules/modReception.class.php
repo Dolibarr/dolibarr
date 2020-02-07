@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,17 +36,17 @@ class modReception extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
 		$this->db = $db;
-		$this->numero = 104160;
+		$this->numero = 94160;
 
 		$this->family = "srm";
-		$this->module_position = 40;
+		$this->module_position = '40';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des réceptions fournisseurs";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -58,7 +58,7 @@ class modReception extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/reception/receipt",
 		                    "/reception/receipt/temp",
-		                    "/doctemplates/reception"
+		                    "/doctemplates/receptions"
 		                    );
 
 		// Config pages
@@ -167,9 +167,9 @@ class modReception extends DolibarrModules
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$shipment=new CommandeFournisseur($this->db);
-		$contact_arrays=$shipment->liste_type_contact('external','',0,0,'');
+		$contact_arrays=$shipment->liste_type_contact('external', '', 0, 0, '');
 		if (is_array($contact_arrays) && count($contact_arrays)>0){
-			$idcontacts=join(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
+			$idcontacts=join(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
 		} else {
 			$idcontacts=0;
 		}
@@ -223,11 +223,10 @@ class modReception extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch_extrafields as extra2 ON ed.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
-		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT))
-		{
-		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
-		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
-		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
+		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) {
+		    $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
+		    $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
+		    $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_reception AND ed.fk_commandefourndet = cd.rowid';
 		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('reception').')';
@@ -243,7 +242,7 @@ class modReception extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf,$langs;
 
@@ -259,11 +258,11 @@ class modReception extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
@@ -275,6 +274,6 @@ class modReception extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','reception',".$conf->entity.")",
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

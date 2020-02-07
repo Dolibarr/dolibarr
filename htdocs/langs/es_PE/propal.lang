@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - propal
-AmountOfProposalsByMonthHT=Importe por mes (Sin IGV)
+ProposalShort=Cotización
 PropalsOpened=Abrir
+DocModelAzurDescription=A complete proposal model 
+DocModelCyanDescription=A complete proposal model

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - contracts
+ContractsArea=Vertragsübersicht
 ContractCard=Vertragskarte
 ShowContractOfService=Zeige Vertrag zu Leistung
 Closing=Schliessen
@@ -6,11 +7,9 @@ CloseAContract=Schliessen eines Vertrages
 RefContract=Vertragsnummer
 ListOfClosedServices=Liste der geschlossenen Services
 LastModifiedServices=%s zuletzt bearbeitete Leistungen
-DateStartPlanned=Geplanter Beginn
-DateEndPlanned=Geplantes Ende
+DateEndPlannedShort=Ende
 DateStartRealShort=Beginn eff.
 DateEndRealShort=Ende eff.
 CloseService=Leistung schliessen
-CloseRefusedBecauseOneServiceActive=Schliessen nicht möglich, es existieren noch aktive Leistungen
 CloseAllContracts=schliesse alle Vertragsleistungen
 NoteListOfYourExpiredServices=Diese Liste enthält nur Leistungen an Geschäftspartner, bei denen Sie als Vertreter angegeben sind.

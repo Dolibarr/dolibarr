@@ -290,6 +290,7 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=PCP Francos
 CurrencySingXPF=Franco CFP
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=Cêntimos 
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paisa

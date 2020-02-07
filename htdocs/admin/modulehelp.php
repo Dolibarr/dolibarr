@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,7 +21,9 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');	// Disabled because this page is into a popup on module search page and we want to avoid to have an Anti CSRF token error (done if MAIN_SECURITY_CSRF_WITH_TOKEN is on) when we make a second search after closing popup.
+
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -32,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('errors', 'admin'));
 
 $mode=GETPOST('mode', 'alpha');
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 if (empty($mode)) $mode='desc';
 
@@ -55,7 +57,7 @@ if (! $user->admin)
 $form = new Form($db);
 
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('',$langs->trans("Setup"),$help_url);
+llxHeader('', $langs->trans("Setup"), $help_url);
 
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {
@@ -121,13 +123,13 @@ foreach ($modulesdir as $dir)
     							$modulequalified=1;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
-		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
 		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
 
 		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=0;
+		    					//if (! empty($objMod->hidden)) $modulequalified=0;
 
 		    					if ($modulequalified > 0)
 		    					{
@@ -212,50 +214,34 @@ asort($orders);
 //var_dump($modules);
 
 
+unset($objMod);
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
-    $objMod  = $modules[$tmpkey];
-    if ($objMod->numero == $id)
+    $tmpMod  = $modules[$tmpkey];
+    if ($tmpMod->numero == $id)
     {
         $key = $i;
         $modName = $filename[$tmpkey];
         $dirofmodule = $dirmod[$tmpkey];
+        $objMod = $tmpMod;
         break;
     }
     $i++;
 }
 $value = $orders[$key];
-$tab=explode('_',$value);
+$tab=explode('_', $value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
 
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
-$head[$h][1] = $langs->trans("Description");
-$head[$h][2] = 'desc';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
-$head[$h][1] = $langs->trans("TechnicalServicesProvided");
-$head[$h][2] = 'feature';
-$h++;
-
-if ($objMod->isCoreOrExternalModule() == 'external')
-{
-    $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=changelog';
-    $head[$h][1] = $langs->trans("ChangeLog");
-    $head[$h][2] = 'changelog';
-    $h++;
-}
+$head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-$moduledir=strtolower(preg_replace('/^mod/i','',get_class($objMod)));
+$moduledir=strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 
 
 print '<div class="centpercent">';
@@ -270,7 +256,7 @@ if (! $modulename)
 	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
 }
 
-$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 // Load all lang files of module
 if (isset($objMod->langfiles) && is_array($objMod->langfiles))
@@ -311,11 +297,11 @@ if ($mode == 'desc')
     $textexternal='';
     if ($objMod->isCoreOrExternalModule() == 'external')
     {
-        $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
+        $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule", $dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
         $editor_url = $objMod->editor_url;
         if (! preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
-        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i', $objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text.=$textexternal;
         $text.='<br>';
     }
@@ -369,7 +355,7 @@ if ($mode == 'feature')
     	$i=0;
     	foreach($sqlfiles as $val)
     	{
-    		$text.=($i?', ':'').preg_replace('/\.sql$/','',preg_replace('/llx_/','',$val['name']));
+    		$text.=($i?', ':'').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
     		$i++;
     	}
     	$text.=')';
@@ -411,7 +397,7 @@ if ($mode == 'feature')
         	if (is_array($val)) $val=$val['data'];
         	if (is_string($val))
         	{
-            	$tmp=explode(':',$val,3);
+            	$tmp=explode(':', $val, 3);
             	$text.=($i?', ':'').$tmp[0].':'.$tmp[1];
            		$i++;
         	}

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Output code for the filemanager
  * $module must be defined ('ecm', 'medias', ...)
@@ -58,7 +58,7 @@ if ($module == 'medias')
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax))
 {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -81,7 +81,7 @@ if ($permtoadd)
 else
 {
     print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '<img class="toolbarbutton disabled" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
 if ($module == 'ecm')
@@ -111,7 +111,7 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 		<?php
 	}
 
-	$sectiondir=GETPOST('file','alpha')?GETPOST('file','alpha'):GETPOST('section_dir','alpha');
+	$sectiondir=GETPOST('file', 'alpha')?GETPOST('file', 'alpha'):GETPOST('section_dir', 'alpha');
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile=new FormFile($db);
@@ -136,12 +136,12 @@ print '</div>';
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_section')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }
 // End confirm
 
 
-if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
+if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete')
 {
 	$langs->load("ecm");
 
@@ -149,7 +149,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left">';
+    print '<th class="liste_titre left">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</th></tr>';
 
@@ -163,10 +163,11 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
     	// Show the link to "Root"
     	if ($showroot)
     	{
-    		print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">'.$langs->trans("Root").'</a></div></td></tr>';
+    		print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">';
+    		if ($module == 'medias') print $langs->trans("RootOfMedias");
+    		else print $langs->trans("Root");
+    		print '</a></div></td></tr>';
     	}
-
-
 
     	print '<tr><td>';
 
@@ -236,7 +237,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	// $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']
 	// $_POST['dir']
 	// $_POST['section_dir'], $_POST['section_id'], $_POST['token'], $_POST['max_file_size'], $_POST['sendit']
-	if (GETPOST('section_dir','alpha')) { $preopened=GETPOST('section_dir','alpha'); }
+	if (GETPOST('section_dir', 'alpha')) { $preopened=GETPOST('section_dir', 'alpha'); }
 
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }

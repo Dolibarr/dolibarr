@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -67,7 +67,7 @@ $v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 
 $v->setAddress("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country:''), "TYPE=WORK;POSTAL");
 $v->setLabel("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country:''), "TYPE=WORK");
-$v->setEmail($contact->email,'TYPE=PREF,INTERNET');
+$v->setEmail($contact->email, 'TYPE=PREF,INTERNET');
 $v->setNote($contact->note);
 
 $v->setTitle($contact->poste);
@@ -79,7 +79,7 @@ if ($company->id)
 	if (! $contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
 	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
 	if (! $contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "TYPE=WORK;POSTAL");
-	if ($company->email != $contact->email) $v->setEmail($company->email,'TYPE=PREF,INTERNET');
+	if ($company->email != $contact->email) $v->setEmail($company->email, 'TYPE=PREF,INTERNET');
 	// Si contact lie a un tiers non de type "particulier"
 	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);
 }

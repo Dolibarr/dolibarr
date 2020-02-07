@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,13 +34,13 @@ if (! empty($conf->projet->enabled))
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
+$socid = GETPOST('socid', 'int');
+if ($user->socid) $socid=$user->socid;
+$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
 
 $object = new ChargeSociales($db);
 
@@ -68,7 +68,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Info");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 $object->fetch($id);
 $object->info($id);
@@ -79,8 +79,8 @@ dol_fiche_head($head, 'info', $langs->trans("SocialContribution"), -1, 'bill');
 
 $morehtmlref='<div class="refidno">';
 // Label of social contribution
-$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 // Project
 if (! empty($conf->projet->enabled))
 {

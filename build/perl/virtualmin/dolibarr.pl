@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \author       (c)2009-2018 Regis Houssin  <regis.houssin@inodbox.com>
+# \author       (c)2009-2019 Regis Houssin  <regis.houssin@inodbox.com>
 #----------------------------------------------------------------------------
 
 
@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "9.0.0", "8.0.3", "7.0.4", "6.0.8", "5.0.7" );
+return ( "10.0.0", "9.0.3", "8.0.5", "7.0.5", "6.0.8" );
 }
 
 sub script_dolibarr_release
@@ -390,6 +390,7 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
+				$ver >= 10.0 ? "dolibarr\\-(10\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 9.0 ? "dolibarr\\-(9\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 8.0 ? "dolibarr\\-(8\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 7.0 ? "dolibarr\\-(7\\.0\\.[0-9\\.]+)\\.tgz" :

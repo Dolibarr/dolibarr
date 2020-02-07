@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,57 +37,67 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'widthdrawals', 'companies', 'bills'));
+$langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
-$format = GETPOST('format','aZ09');
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$page = GETPOST("page",'int');
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
+$format = GETPOST('format', 'aZ09');
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
+
+$hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
+
 
 /*
  * Actions
  */
 
-// Change customer bank information to withdraw
-if ($action == 'modify')
-{
-	for ($i = 1 ; $i < 9 ; $i++)
-	{
-		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
-	}
-}
-if ($action == 'create')
-{
-	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-	$bprev = new BonPrelevement($db);
-        $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday')+$conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
+$parameters = array('mode' => $mode, 'format' => $format, 'limit' => $limit, 'page' => $page, 'offset' => $offset);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
-	if ($result < 0)
+if (empty($reshook))
+{
+	// Change customer bank information to withdraw
+	if ($action == 'modify')
 	{
-		setEventMessages($bprev->error, $bprev->errors, 'errors');
-	}
-	elseif ($result == 0)
-	{
-		$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed", $format);
-		setEventMessages($mesg, null, 'errors');
-		$mesg.='<br>'."\n";
-		foreach($bprev->invoice_in_error as $key => $val)
+		for ($i = 1; $i < 9; $i++)
 		{
-			$mesg.='<span class="warning">'.$val."</span><br>\n";
+			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	else
+	if ($action == 'create')
 	{
-		setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+		// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
+		$bprev = new BonPrelevement($db);
+	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday') + $conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
+
+	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate);
+		if ($result < 0)
+		{
+			setEventMessages($bprev->error, $bprev->errors, 'errors');
+		}
+		elseif ($result == 0)
+		{
+			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+			setEventMessages($mesg, null, 'errors');
+			$mesg .= '<br>'."\n";
+			foreach ($bprev->invoice_in_error as $key => $val)
+			{
+				$mesg .= '<span class="warning">'.$val."</span><br>\n";
+			}
+		}
+		else
+		{
+			setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+		}
 	}
 }
 
@@ -95,10 +105,11 @@ if ($action == 'create')
 /*
  * View
  */
+
 $form = new Form($db);
 
-$thirdpartystatic=new Societe($db);
-$invoicestatic=new Facture($db);
+$thirdpartystatic = new Societe($db);
+$invoicestatic = new Facture($db);
 $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
@@ -106,7 +117,7 @@ llxHeader('', $langs->trans("NewStandingOrder"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
 
 /*$h=0;
@@ -123,15 +134,15 @@ print load_fiche_titre($langs->trans("NewStandingOrder"));
 
 dol_fiche_head();
 
-$nb=$bprev->NbFactureAPrelever();
-$nb1=$bprev->NbFactureAPrelever(1);
-$nb11=$bprev->NbFactureAPrelever(1,1);
-$pricetowithdraw=$bprev->SommeAPrelever();
+$nb = $bprev->NbFactureAPrelever();
+$nb1 = $bprev->NbFactureAPrelever(1);
+$nb11 = $bprev->NbFactureAPrelever(1, 1);
+$pricetowithdraw = $bprev->SommeAPrelever();
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
 	dol_print_error($bprev->error);
 }
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 print '<tr><td class="titlefield">'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td>';
@@ -150,21 +161,22 @@ print '</div>';
 if ($mesg) print $mesg;
 
 print "<div class=\"tabsAction\">\n";
-print '<form action="' . $_SERVER['PHP_SELF'] . '?action=create" method="POST">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+
+print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
         print $form->selectDate();
         if ($mysoc->isInEEC()) {
             print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
-            print '<input class="butAction" type="submit" value="' . $langs->trans("CreateForSepa") . '"/>';
+            print '<input class="butAction" type="submit" value="'.$langs->trans("CreateForSepa").'"/>';
         } else {
-            print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
+            print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
 		}
-		}
-		else
-		{
+	}
+	else
+	{
 		if ($mysoc->isInEEC())
 		{
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
@@ -178,10 +190,13 @@ if ($nb) {
 }
 else
 {
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
+print "</form>\n";
+
 print "</div>\n";
+print '</form>';
 print '<br>';
 
 
@@ -190,57 +205,68 @@ print '<br>';
  */
 
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
-$sql.= " pfd.date_demande, pfd.amount";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s,";
-$sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql.= " WHERE s.rowid = f.fk_soc";
-$sql.= " AND f.entity IN (".getEntity('invoice').")";
-$sql.= " AND pfd.traite = 0";
-$sql.= " AND pfd.fk_facture = f.rowid";
-if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+$sql .= " pfd.date_demande, pfd.amount";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+$sql .= " ".MAIN_DB_PREFIX."societe as s,";
+$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " WHERE s.rowid = f.fk_soc";
+$sql .= " AND f.entity IN (".getEntity('invoice').")";
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
+$sql .= " AND f.total_ttc > 0";
+$sql .= " AND pfd.traite = 0";
+$sql .= " AND pfd.fk_facture = f.rowid";
+if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
-$sql.= $db->plimit($limit+1,$offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-    $param='';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if($socid) $param .= '&socid='.urlencode($socid);
-    if($option) $param .= "&option=".urlencode($option);
-
-    if(! empty($page) && $num <= $nbtotalofrecords) $page = 0;
+    $param = '';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($socid) $param .= '&socid='.urlencode($socid);
+    if ($option) $param .= "&option=".urlencode($option);
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
+	if (!empty($limit)) {
+		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+	}
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"),$page,$_SERVER['PHP_SELF'],$param,'','','',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Invoice").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
-	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	print '</tr>';
 
 	if ($num)
 	{
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		$bac = new CompanyBankAccount($db);
 
 		while ($i < $num && $i < $limit)
@@ -249,14 +275,14 @@ if ($resql)
 
 			print '<tr class="oddeven">';
 			print '<td>';
-			$invoicestatic->id=$obj->rowid;
-			$invoicestatic->ref=$obj->ref;
-			print $invoicestatic->getNomUrl(1,'withdraw');
+			$invoicestatic->id = $obj->rowid;
+			$invoicestatic->ref = $obj->ref;
+			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 			// Thirdparty
 			print '<td>';
 			$thirdpartystatic->fetch($obj->socid);
-			print $thirdpartystatic->getNomUrl(1,'ban');
+			print $thirdpartystatic->getNomUrl(1, 'ban');
 			print '</td>';
 			// RIB
 			print '<td>';
@@ -271,18 +297,21 @@ if ($resql)
 			if ($format) print ' ('.$format.')';
 			print '</td>';
 			// Amount
-			print '<td align="right">';
-			print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
+			print '<td class="right">';
+			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
 			print '</td>';
 			// Date
-			print '<td align="right">';
-			print dol_print_date($db->jdate($obj->date_demande),'day');
+			print '<td class="right">';
+			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			print '</tr>';
 			$i++;
 		}
 	}
-	else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	else
+	{
+		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
 	print "</table>";
 	print "</form>";
 	print "<br>\n";
@@ -315,9 +344,9 @@ if ($result)
     $i = 0;
 
     print"\n<!-- debut table -->\n";
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
-    print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td class="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -333,9 +362,9 @@ if ($result)
         print $bprev->getNomUrl(1);
         print "</td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
-        print '<td align="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
+        print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
 
         print "</tr>\n";
         $i++;

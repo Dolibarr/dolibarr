@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Create the autoloader for Luracast
@@ -148,11 +148,13 @@ class DolibarrApiAccess implements iAuthenticate
 			$fuser->getrights();
 			static::$user = $fuser;
 
-			if($fuser->societe_id)
+			if ($fuser->socid) {
 				static::$role = 'external';
+            }
 
-			if($fuser->admin)
+			if ($fuser->admin) {
 				static::$role = 'admin';
+            }
         }
 		else
 		{
@@ -162,31 +164,28 @@ class DolibarrApiAccess implements iAuthenticate
 	    $userClass::setCacheIdentifier(static::$role);
 	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 	    $requirefortest = static::$requires;
-	    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
+	    if (! is_array($requirefortest)) $requirefortest=explode(',', $requirefortest);
 	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * @return string string to be used with WWW-Authenticate header
-	 * @example Basic
-	 * @example Digest
-	 * @example OAuth
 	 */
-	public function __getWWWAuthenticateString()
+    public function __getWWWAuthenticateString()
     {
         // phpcs:enable
         return '';
     }
 
-	/**
-	 * Verify access
-	 *
-	 * @param   array $m Properties of method
-	 *
-	 * @access private
-	 * @return bool
-	 */
+    /**
+     * Verify access
+     *
+     * @param   array $m Properties of method
+     *
+     * @access private
+     * @return bool
+     */
     public static function verifyAccess(array $m)
     {
         $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])

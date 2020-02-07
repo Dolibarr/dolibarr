@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,9 +26,9 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
 
 $res=require '../../master.inc.php';
 
@@ -51,7 +51,6 @@ if($auth->fetch(0, $signature)<=0) {
 
 
 if(!empty($hash)) {
-
 	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
 }
 elseif(!empty($newblock)){
@@ -62,12 +61,9 @@ elseif(!empty($newblock)){
 		echo 'blockadded';
 	}
 	else{
-
 		echo 'blockalreadyadded';
 	}
 }
 else{
 	echo 'idontunderstandwhatihavetodo';
 }
-
-

@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015	   Marcos García			   <marcosgdf@gmail.com
- * Copyright (C) 2016      Frédéric France              <frederic.france@free.fr>
+ * Copyright (C) 2016       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,8 +42,8 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
+if ($user->socid) $socid=$user->socid;
+$result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
@@ -58,7 +58,7 @@ $hookmanager->initHooks(array('banktreso','globalcard'));
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
 $helpurl = "";
-llxHeader('',$title,$helpurl);
+llxHeader('', $title, $helpurl);
 
 $societestatic = new Societe($db);
 $facturestatic=new Facture($db);
@@ -85,7 +85,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 	if ($_GET["ref"])
 	{
-		$result=$object->fetch(0,$_GET["ref"]);
+		$result=$object->fetch(0, $_GET["ref"]);
 		$_GET["account"]=$object->id;
 	}
 
@@ -116,21 +116,21 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td>'.$langs->trans("Description").'</td>';
 	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED )print '<td>'.$langs->trans("Entity").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td align="right">'.$langs->trans("Debit").'</td>';
-	print '<td align="right">'.$langs->trans("Credit").'</td>';
-	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
+	print '<td class="right">'.$langs->trans("Debit").'</td>';
+	print '<td class="right">'.$langs->trans("Credit").'</td>';
+	print '<td class="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
 	// Current balance
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
-	print '<td align="right" class="nowrap">'.price($solde).'</td>';
+	print '<td class="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
+	print '<td class="nowrap right">'.price($solde).'</td>';
 	print '</tr>';
 
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="right" class="nowrap">&nbsp;</td>';
+	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td class="nowrap right">&nbsp;</td>';
 	print '</tr>';
 
 
@@ -183,13 +183,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	foreach($sqls as $sql){
 		$resql = $db->query($sql);
-		if($resql){
-			while($sqlobj = $db->fetch_object($resql)){
+		if ($resql) {
+			while ($sqlobj = $db->fetch_object($resql)) {
 				$tab_sqlobj[] = $sqlobj;
 				$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
 			}
 			$db->free($resql);
-			}else{
+		} else {
 			$error++;
 		}
 	}
@@ -197,7 +197,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Sort array
 	if (! $error)
 	{
-		array_multisort($tab_sqlobjOrder,$tab_sqlobj);
+		array_multisort($tab_sqlobjOrder, $tab_sqlobj);
 
 		// Apply distinct filter
 		foreach ($tab_sqlobj as $key=>$value) {
@@ -213,9 +213,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$i = 0;
 		while ($i < $num)
 		{
-			$paiement = '';
 			$ref = '';
 			$refcomp = '';
+			$totalpayment = '';
 
 			$obj = array_shift($tab_sqlobj);
 
@@ -230,13 +230,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					$facturefournstatic->ref=$ref;
 					$facturefournstatic->id=$obj->objid;
 					$facturefournstatic->type=$obj->type;
-					$ref = $facturefournstatic->getNomUrl(1,'');
+					$ref = $facturefournstatic->getNomUrl(1, '');
 
 					$societestatic->id = $obj->socid;
 					$societestatic->name = $obj->name;
-					$refcomp=$societestatic->getNomUrl(1,'',24);
+					$refcomp=$societestatic->getNomUrl(1, '', 24);
 
-					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
+					$totalpayment = -1*$facturefournstatic->getSommePaiement();	// Payment already done
 				}
 			}
 			if ($obj->family == 'invoice')
@@ -244,36 +244,36 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->objid;
 				$facturestatic->type=$obj->type;
-				$ref = $facturestatic->getNomUrl(1,'');
+				$ref = $facturestatic->getNomUrl(1, '');
 
 				$societestatic->id = $obj->socid;
 				$societestatic->name = $obj->name;
-				$refcomp=$societestatic->getNomUrl(1,'',24);
+				$refcomp=$societestatic->getNomUrl(1, '', 24);
 
-				$paiement = $facturestatic->getSommePaiement();	// Payment already done
-				$paiement+= $facturestatic->getSumDepositsUsed();
-				$paiement+= $facturestatic->getSumCreditNotesUsed();
+				$totalpayment = $facturestatic->getSommePaiement();	// Payment already done
+				$totalpayment+= $facturestatic->getSumDepositsUsed();
+				$totalpayment+= $facturestatic->getSumCreditNotesUsed();
 			}
 			if ($obj->family == 'social_contribution')
 			{
 				$socialcontribstatic->ref=$obj->ref;
 				$socialcontribstatic->id=$obj->objid;
-				$socialcontribstatic->lib=$obj->type;
-				$ref = $socialcontribstatic->getNomUrl(1,24);
+				$socialcontribstatic->label=$obj->type;
+				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
-				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
+				$totalpayment = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
 
-			$parameters = array('obj' => $obj);
+			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
 			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if(empty($reshook)){
-				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : '';
-				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : '';
-				$paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : 0;
+				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;
+				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : $refcomp;
+				$totalpayment = isset($hookmanager->resArray['totalpayment']) ? $hookmanager->resArray['totalpayment'] : $totalpayment;
 			}
 
 			$total_ttc = $obj->total_ttc;
-			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
+			if ($totalpayment) $total_ttc = $obj->total_ttc - $totalpayment;
 			$solde += $total_ttc;
 
 			// We discard lines with a remainder to pay to 0
@@ -282,7 +282,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     			// Show line
     			print '<tr class="oddeven">';
     			print '<td>';
-    			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr),"day");
+    			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr), "day");
     			else print $langs->trans("NotDefined");
     			print "</td>";
     			print "<td>".$ref."</td>";
@@ -293,9 +293,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					}else print "<td></td>";
 				}
     			print "<td>".$refcomp."</td>";
-    			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
-    			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
-    			print '<td align="right">'.price($solde).'</td>';
+    			if ($obj->total_ttc < 0) { print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
+    			if ($obj->total_ttc >= 0) { print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>"; };
+    			print '<td class="nowrap right">'.price($solde).'</td>';
     			print "</tr>";
 			}
 
@@ -312,17 +312,17 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if(empty($reshook)){
 		print $hookmanager->resPrint;
-    $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
+        $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
 	}
 
 	// solde
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="'.$colspan.'">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
-	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
+	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
+	print '<td class="nowrap right">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";
-  print "</div>";
+    print "</div>";
 }
 else
 {

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -43,7 +43,7 @@ function emailing_prepare_head(Mailing $object)
 	{
     	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("MailRecipients");
-		if ($object->nbemail > 0) $head[$h][1].= ' <span class="badge">'.$object->nbemail.'</span>';
+		if ($object->nbemail > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$object->nbemail.'</span>';
     	$head[$h][2] = 'targets';
     	$h++;
 	}
@@ -61,10 +61,9 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'emailing');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'emailing','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing', 'remove');
 
 	return $head;
 }
-

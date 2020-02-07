@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
+ * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -44,7 +45,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct()
+    public function __construct()
 	{
 		global $db, $conf;
 		$this->db = $db;
@@ -56,7 +57,7 @@ class Thirdparties extends DolibarrApi
 
 		$this->company = new Societe($this->db);
 
-		if (! empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
+		if (!empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
 			static::$FIELDS[] = 'email';
 		}
 	}
@@ -71,35 +72,26 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id)
+    public function get($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->lire) {
-			throw new RestException(401);
-		}
+        return $this->_fetch($id);
+    }
 
-		$result = $this->company->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Thirdparty not found');
-		}
-
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-		} else {
-			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
-			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
-		}
-
-		$absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
-		$this->company->absolute_discount = price2num($absolute_discount, 'MT');
-		$this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
-
-		return $this->_cleanObjectDatas($this->company);
+	/**
+	 * Get properties of a thirdparty object by email.
+	 *
+	 * Return an array with thirdparty informations
+	 *
+	 * @param string    $email  Sort field
+	 * @return array|mixed data without useless information
+	 *
+	 * @url     GET byEmail/{email}
+	 *
+	 * @throws RestException
+	 */
+	public function getByEmail($email)
+	{
+	    return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
 	}
 
 	/**
@@ -114,37 +106,39 @@ class Thirdparties extends DolibarrApi
 	 * @param   int     $mode       Set to 1 to show only customers
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
+	 *								Set to 4 to show only suppliers
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $sqlfilters = '')
     {
-		global $db, $conf;
+		global $db;
 
 		$obj_ret = array();
 
 		// case of external user, we force socids
-		$socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-		$sql.= " WHERE t.fk_stcomm = st.id";
-		if ($mode == 1) $sql.= " AND t.client IN (1, 3)";
-		if ($mode == 2) $sql.= " AND t.client IN (2, 3)";
-		if ($mode == 3) $sql.= " AND t.client IN (0)";
-		$sql.= ' AND t.entity IN ('.getEntity('societe').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+		$sql .= " WHERE t.fk_stcomm = st.id";
+		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
+		if ($mode == 2) $sql .= " AND t.client IN (2, 3)";
+		if ($mode == 3) $sql .= " AND t.client IN (0)";
+		if ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
+		$sql .= ' AND t.entity IN ('.getEntity('societe').')';
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
-		if ($socid) $sql.= " AND t.rowid IN (".$socids.")";
-		if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+		if ($socids) $sql .= " AND t.rowid IN (".$socids.")";
+		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		// Insert sale filter
 		if ($search_sale > 0)
 		{
@@ -153,15 +147,15 @@ class Thirdparties extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters)
 		{
-			if (! DolibarrApi::_checkFilters($sqlfilters))
+			if (!DolibarrApi::_checkFilters($sqlfilters))
 			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql.= $db->order($sortfield, $sortorder);
+		$sql .= $db->order($sortfield, $sortorder);
 
 		if ($limit) {
 			if ($page < 0)
@@ -170,7 +164,7 @@ class Thirdparties extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql.= $db->plimit($limit + 1, $offset);
+			$sql .= $db->plimit($limit + 1, $offset);
 		}
 
 		$result = $db->query($sql);
@@ -178,11 +172,12 @@ class Thirdparties extends DolibarrApi
 		{
 			$num = $db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
+            $i = 0;
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
 				$soc_static = new Societe($db);
-				if($soc_static->fetch($obj->rowid)) {
+				if ($soc_static->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($soc_static);
 				}
 				$i++;
@@ -191,7 +186,7 @@ class Thirdparties extends DolibarrApi
 		else {
 			throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
 		}
-		if( ! count($obj_ret)) {
+		if (!count($obj_ret)) {
 			throw new RestException(404, 'Thirdparties not found');
 		}
 		return $obj_ret;
@@ -203,15 +198,15 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Request datas
 	 * @return int  ID of thirdparty
 	 */
-	function post($request_data = null)
+    public function post($request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			$this->company->$field = $value;
 		}
 		if ($this->company->create(DolibarrApiAccess::$user) < 0)
@@ -227,27 +222,27 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = null)
+    public function put($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			if ($field == 'id') continue;
 			$this->company->$field = $value;
 		}
 
-		if($this->company->update($id, DolibarrApiAccess::$user,1,'','','update'))
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
 			return $this->get($id);
 
 		return false;
@@ -267,7 +262,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PUT {id}/merge/{idtodelete}
 	 */
-	function merge($id, $idtodelete)
+    public function merge($id, $idtodelete)
 	{
 		global $db, $hookmanager;
 
@@ -278,27 +273,27 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(400, 'Try to merge a thirdparty into itself');
 		}
 
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
-		$result = $this->company->fetch($id);	// include the fetch of extra fields
-		if( ! $result ) {
+		$result = $this->company->fetch($id); // include the fetch of extra fields
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->companytoremove = new Societe($db);
 
-		$result = $this->companytoremove->fetch($idtodelete);	// include the fetch of extra fields
-		if( ! $result ) {
+		$result = $this->companytoremove->fetch($idtodelete); // include the fetch of extra fields
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->companytoremove->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->companytoremove->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -315,7 +310,7 @@ class Thirdparties extends DolibarrApi
 		// Recopy some data
 		$object->client = $object->client | $soc_origin->client;
 		$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
-		$listofproperties=array(
+		$listofproperties = array(
 			'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
 			'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 			'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
@@ -329,7 +324,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Concat some data
-		$listofproperties=array(
+		$listofproperties = array(
 			'note_public', 'note_private'
 		);
 		foreach ($listofproperties as $property)
@@ -373,7 +368,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Move links
-		if (! $error)
+		if (!$error)
 		{
 			$objects = array(
 				'Adherent' => '/adherents/class/adherent.class.php',
@@ -415,7 +410,7 @@ class Thirdparties extends DolibarrApi
 		// External modules should update their ones too
 		if (!$errors)
 		{
-			$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+            $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 				'soc_origin' => $soc_origin->id,
 				'soc_dest' => $object->id
 			), $soc_dest, $action);
@@ -428,12 +423,12 @@ class Thirdparties extends DolibarrApi
 		}
 
 
-		if (! $error)
+		if (!$error)
 		{
-			$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+			$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id);
 
 			// Call trigger
-			$result=$object->call_trigger('COMPANY_MODIFY',$user);
+			$result = $object->call_trigger('COMPANY_MODIFY', $user);
 			if ($result < 0)
 			{
 				//setEventMessages($object->error, $object->errors, 'errors');
@@ -442,7 +437,7 @@ class Thirdparties extends DolibarrApi
 			// End call triggers
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			//We finally remove the old thirdparty
 			if ($soc_origin->delete($soc_origin->id, $user) < 1)
@@ -473,18 +468,19 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id   Thirparty ID
 	 * @return integer
 	 */
-	function delete($id)
+    public function delete($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->supprimer) {
+		if (!DolibarrApiAccess::$user->rights->societe->supprimer) {
 			throw new RestException(401);
 		}
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+        $this->company->oldcopy = clone $this->company;
 		return $this->company->delete($id);
 	}
 
@@ -501,14 +497,14 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/categories
 	 */
-	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result )
+		if (!$result)
 		{
 			throw new RestException(404, 'Thirdparty not found');
 		}
@@ -540,30 +536,30 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/categories/{category_id}
 	 */
-	function addCategory($id, $category_id)
+    public function addCategory($id, $category_id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'category not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$category->add_type($this->company,'customer');
+		$category->add_type($this->company, 'customer');
 
 		return $this->_cleanObjectDatas($this->company);
 	}
@@ -578,30 +574,30 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 */
-	function deleteCategory($id, $category_id)
+    public function deleteCategory($id, $category_id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'category not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$category->del_type($this->company,'customer');
+		$category->del_type($this->company, 'customer');
 
 		return $this->_cleanObjectDatas($this->company);
 	}
@@ -619,14 +615,14 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/supplier_categories
 	 */
-	function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    public function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result )
+		if (!$result)
 		{
 			throw new RestException(404, 'Thirdparty not found');
 		}
@@ -658,30 +654,30 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/supplier_categories/{category_id}
 	 */
-	function addSupplierCategory($id, $category_id)
+    public function addSupplierCategory($id, $category_id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'category not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$category->add_type($this->company,'supplier');
+		$category->add_type($this->company, 'supplier');
 
 		return $this->_cleanObjectDatas($this->company);
 	}
@@ -696,30 +692,30 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/supplier_categories/{category_id}
 	 */
-	function deleteSupplierCategory($id, $category_id)
+    public function deleteSupplierCategory($id, $category_id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'category not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$category->del_type($this->company,'supplier');
+		$category->del_type($this->company, 'supplier');
 
 		return $this->_cleanObjectDatas($this->company);
 	}
@@ -739,24 +735,24 @@ class Thirdparties extends DolibarrApi
 	 * @throws 401
 	 * @throws 404
 	 */
-	function getOutStandingProposals($id, $mode='customer')
+    public function getOutStandingProposals($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
-		if(! DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -783,24 +779,24 @@ class Thirdparties extends DolibarrApi
 	 * @throws 401
 	 * @throws 404
 	 */
-	function getOutStandingOrder($id, $mode='customer')
+    public function getOutStandingOrder($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
-		if(! DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -826,24 +822,24 @@ class Thirdparties extends DolibarrApi
 	 * @throws 401
 	 * @throws 404
 	 */
-	function getOutStandingInvoices($id, $mode='customer')
+    public function getOutStandingInvoices($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
-		if(! DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -851,6 +847,46 @@ class Thirdparties extends DolibarrApi
 
 		unset($result['total_ht']);
 		unset($result['total_ttc']);
+
+		return $result;
+	}
+
+	/**
+	 * Get representatives of thirdparty
+	 *
+	 * @param 	int 	$id			ID of the thirdparty
+	 * @param 	string 	$mode		0=Array with properties, 1=Array of id.
+	 *
+	 * @url     GET {id}/representatives
+	 *
+	 * @return array  				List of representatives of thirdparty
+	 *
+	 * @throws 400
+	 * @throws 401
+	 * @throws 404
+	 */
+    public function getSalesRepresentatives($id, $mode = 0)
+	{
+		$obj_ret = array();
+
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+			throw new RestException(401);
+		}
+
+		if (empty($id)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+
+		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user, $mode);
 
 		return $result;
 	}
@@ -872,24 +908,24 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 503
 	 */
-	function getFixedAmountDiscounts($id, $filter="none", $sortfield = "f.type", $sortorder = 'ASC')
+    public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
 		$obj_ret = array();
 
-		if(! DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -900,14 +936,14 @@ class Thirdparties extends DolibarrApi
 		if ($filter == "available")  $sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
 		if ($filter == "used")  $sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
 
-		$sql.= $this->db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$result = $this->db->query($sql);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(503, $this->db->lasterror());
 		} else {
 			$num = $this->db->num_rows($result);
-			while ( $obj = $this->db->fetch_object($result) ) {
+			while ($obj = $this->db->fetch_object($result)) {
 				$obj_ret[] = $obj;
 			}
 		}
@@ -930,16 +966,16 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 405
 	 */
-	function getInvoicesQualifiedForReplacement($id)
+    public function getInvoicesQualifiedForReplacement($id)
     {
-		if(! DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -950,7 +986,7 @@ class Thirdparties extends DolibarrApi
 
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
-		if( $result < 0) {
+		if ($result < 0) {
 			throw new RestException(405, $this->thirdparty->error);
 		}
 
@@ -972,16 +1008,16 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 405
 	 */
-	function getInvoicesQualifiedForCreditNote($id)
+    public function getInvoicesQualifiedForCreditNote($id)
     {
-		if(! DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -992,7 +1028,7 @@ class Thirdparties extends DolibarrApi
 
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
-		if( $result < 0) {
+		if ($result < 0) {
 			throw new RestException(405, $this->thirdparty->error);
 		}
 
@@ -1008,18 +1044,18 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/bankaccounts
 	 */
-	function getCompanyBankAccount($id)
+    public function getCompanyBankAccount($id)
     {
 		global $db, $conf;
 
-		if(! DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
-		if(empty($id)) {
+		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -1028,20 +1064,20 @@ class Thirdparties extends DolibarrApi
 		 */
 
 		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
-		if ($id) $sql.= " WHERE fk_soc  = ".$id." ";
+		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($id) $sql .= " WHERE fk_soc  = ".$id." ";
 
 
 		$result = $db->query($sql);
 
-		if($result->num_rows == 0 ){
+		if ($result->num_rows == 0) {
 			throw new RestException(404, 'Account not found');
 		}
 
-		$i=0;
+		$i = 0;
 
-		$accounts =[];
+		$accounts = array();
 
 		if ($result)
 		{
@@ -1050,27 +1086,28 @@ class Thirdparties extends DolibarrApi
 			{
 				$obj = $db->fetch_object($result);
 				$account = new CompanyBankAccount($db);
-				if($account->fetch($obj->rowid)) {
+				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;
 				}
 				$i++;
 			}
 		}
-		else{
+		else {
 			throw new RestException(404, 'Account not found');
 		}
 
 
-		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum'];
+		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
 
-		$returnAccounts = [];
+		$returnAccounts = array();
 
-		foreach($accounts as $account){
-			$object= [];
-			foreach($account as $key => $value)
-				if(in_array($key, $fields)){
+		foreach ($accounts as $account) {
+			$object = array();
+			foreach ($account as $key => $value) {
+				if (in_array($key, $fields)) {
 					$object[$key] = $value;
 				}
+			}
 			$returnAccounts[] = $object;
 		}
 
@@ -1086,9 +1123,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/bankaccounts
 	 */
-	function createCompanyBankAccount($id, $request_data = null)
+    public function createCompanyBankAccount($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
@@ -1096,7 +1133,7 @@ class Thirdparties extends DolibarrApi
 
 		$account->socid = $id;
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			$account->$field = $value;
 		}
 
@@ -1121,9 +1158,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PUT {id}/bankaccounts/{bankaccount_id}
 	 */
-	function updateCompanyBankAccount($id, $bankaccount_id, $request_data = null)
+    public function updateCompanyBankAccount($id, $bankaccount_id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
@@ -1131,12 +1168,12 @@ class Thirdparties extends DolibarrApi
 
 		$account->fetch($bankaccount_id, $id, -1, '');
 
-		if($account->socid != $id){
+		if ($account->socid != $id) {
 			throw new RestException(401);
 		}
 
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			$account->$field = $value;
 		}
 
@@ -1156,9 +1193,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/bankaccounts/{bankaccount_id}
 	 */
-	function deleteCompanyBankAccount($id, $bankaccount_id)
+    public function deleteCompanyBankAccount($id, $bankaccount_id)
     {
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
@@ -1166,7 +1203,7 @@ class Thirdparties extends DolibarrApi
 
 		$account->fetch($bankaccount_id);
 
-		if(!$account->socid == $id)
+		if (!$account->socid == $id)
 			throw new RestException(401);
 
 		return $account->delete(DolibarrApiAccess::$user);
@@ -1186,12 +1223,12 @@ class Thirdparties extends DolibarrApi
 	{
 		global $conf;
 
-		$this->langs->loadLangs(array("main","dict","commercial","products","companies","banks","bills","withdrawals"));
+		$this->langs->loadLangs(array("main", "dict", "commercial", "products", "companies", "banks", "bills", "withdrawals"));
 
 		$this->company->fetch($id);
 
 		$action = 'builddoc';
-		if(! DolibarrApiAccess::$user->rights->societe->creer)
+		if (!DolibarrApiAccess::$user->rights->societe->creer)
 			throw new RestException(401);
 
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
@@ -1199,32 +1236,32 @@ class Thirdparties extends DolibarrApi
 		$this->company->fk_bank = $this->company->fk_account;
 
 		$outputlangs = $this->langs;
-		$newlang='';
+		$newlang = '';
 
-		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang=$this->company->thirdparty->default_lang;  // for proposal, order, invoice, ...
-		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang=$this->company->default_lang;                  // for thirdparty
-		if (! empty($newlang)) {
-			$outputlangs = new Translate("",$conf);
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang = $this->company->thirdparty->default_lang; // for proposal, order, invoice, ...
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang = $this->company->default_lang; // for thirdparty
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
 
 		// To be sure vars is defined
 		$hidedetails = $hidedesc = $hideref = 0;
-		$moreparams=null;
-		if (empty($hidedetails)) $hidedetails=0;
-		if (empty($hidedesc)) $hidedesc=0;
-		if (empty($hideref)) $hideref=0;
-		if (empty($moreparams)) $moreparams=null;
+		$moreparams = null;
+		if (empty($hidedetails)) $hidedetails = 0;
+		if (empty($hidedesc)) $hidedesc = 0;
+		if (empty($hideref)) $hideref = 0;
+		if (empty($moreparams)) $moreparams = null;
 
 
 		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
-		if ($id) $sql.= " WHERE fk_soc  = ".$id." ";
-		if ($companybankid) $sql.= " AND id = ".$companybankid."";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($id) $sql .= " WHERE fk_soc  = ".$id." ";
+		if ($companybankid) $sql .= " AND id = ".$companybankid."";
 
-		$i=0;
-		$accounts=array();
+		$i = 0;
+		$accounts = array();
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1269,7 +1306,7 @@ class Thirdparties extends DolibarrApi
 		}
     }
 
-  /**
+    /**
 	 * Get a specific gateway attached to a thirdparty (by specifying the site key)
 	 *
 	 * @param int $id ID of thirdparty
@@ -1281,15 +1318,15 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/gateways/
 	 */
-	function getSocieteAccounts($id, $site=null)
+    public function getSocieteAccounts($id, $site = null)
     {
 		global $db, $conf;
 
-		if(!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 
-		if(!DolibarrApi::_checkAccessToResource('societe',$id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -1297,18 +1334,18 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
-		$sql.= " WHERE fk_soc = $id";
-		if($site) $sql .= " AND site ='$site'";
+		$sql .= " WHERE fk_soc = $id";
+		if ($site) $sql .= " AND site ='$site'";
 
 		$result = $db->query($sql);
 
-		if($result->num_rows == 0){
+		if ($result->num_rows == 0) {
 			throw new RestException(404, 'This thirdparty does not have any gateway attached or does not exist.');
 		}
 
-		$i=0;
+		$i = 0;
 
-		$accounts =[];
+		$accounts = array();
 
 		$num = $db->num_rows($result);
 		while ($i < $num)
@@ -1316,22 +1353,23 @@ class Thirdparties extends DolibarrApi
 			$obj = $db->fetch_object($result);
 			$account = new SocieteAccount($db);
 
-			if($account->fetch($obj->rowid)) {
+			if ($account->fetch($obj->rowid)) {
 				$accounts[] = $account;
 			}
 			$i++;
 		}
 
-		$fields = ['id', 'fk_soc', 'key_account', 'site', 'date_creation', 'tms'];
+		$fields = array('id', 'fk_soc', 'key_account', 'site', 'date_creation', 'tms');
 
-		$returnAccounts = [];
+		$returnAccounts = array();
 
-		foreach($accounts as $account){
-			$object= [];
-			foreach($account as $key => $value)
-				if(in_array($key, $fields)){
+		foreach ($accounts as $account) {
+			$object = array();
+			foreach ($account as $key => $value) {
+				if (in_array($key, $fields)) {
 					$object[$key] = $value;
 				}
+			}
 			$returnAccounts[] = $object;
 		}
 
@@ -1357,29 +1395,29 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/gateways
 	 */
-	function createSocieteAccount($id, $request_data = null)
+    public function createSocieteAccount($id, $request_data = null)
 	{
 		global $db;
 
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
-		if(!isset($request_data['site'])) {
+		if (!isset($request_data['site'])) {
 			throw new RestException(422, 'Unprocessable Entity: You must pass the site attribute in your request data !');
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
 		$result = $db->query($sql);
 
-		if($result->num_rows == 0 ){
+		if ($result->num_rows == 0) {
 			$account = new SocieteAccount($this->db);
-			if(!isset($request_data['login'])) {
+			if (!isset($request_data['login'])) {
 				$account->login = "";
 			}
 			$account->fk_soc = $id;
 
-			foreach($request_data as $field => $value) {
+			foreach ($request_data as $field => $value) {
 				$account->$field = $value;
 			}
 
@@ -1416,11 +1454,11 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException
 	 * @url PUT {id}/gateways/{site}
 	 */
-	function putSocieteAccount($id, $site, $request_data = null)
+    public function putSocieteAccount($id, $site, $request_data = null)
 	{
 		global $db;
 
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
@@ -1428,33 +1466,34 @@ class Thirdparties extends DolibarrApi
 		$result = $db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
-		if($result->num_rows == 0 ){
-			if(!isset($request_data['key_account'])) {
+		if ($result->num_rows == 0) {
+			if (!isset($request_data['key_account'])) {
 				throw new RestException(422, 'Unprocessable Entity: You must pass the key_account attribute in your request data !');
 			}
 			$account = new SocieteAccount($this->db);
-			if(!isset($request_data['login'])) {
+			if (!isset($request_data['login'])) {
 				$account->login = "";
 			}
 
-			foreach($request_data as $field => $value) {
+			foreach ($request_data as $field => $value) {
 				$account->$field = $value;
 			}
 
 			$account->fk_soc = $id;
 			$account->site = $site;
 
-			if ($account->create(DolibarrApiAccess::$user) < 0)
+			if ($account->create(DolibarrApiAccess::$user) < 0) {
 				throw new RestException(500, 'Error creating SocieteAccount entity.');
-		// We found an existing SocieteAccount entity, we are replacing it
+			}
+			// We found an existing SocieteAccount entity, we are replacing it
 		} else {
-
-			if(isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";
+			if (isset($request_data['site']) && $request_data['site'] !== $site) {
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
 				$result = $db->query($sql);
 
-				if($result->num_rows !== 0)
-					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) from $site to ".$request_data['site'] . " but another SocieteAccount entity already exists with this site key.");
+				if ($result->num_rows !== 0) {
+					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) from $site to ".$request_data['site']." but another SocieteAccount entity already exists with this site key.");
+				}
 			}
 
 			$obj = $db->fetch_object($result);
@@ -1463,13 +1502,13 @@ class Thirdparties extends DolibarrApi
 			$account->id = $obj->rowid;
 			$account->fk_soc = $id;
 			$account->site = $site;
-			if(!isset($request_data['login'])) {
+			if (!isset($request_data['login'])) {
 				$account->login = "";
 			}
 			$account->fk_user_creat = $obj->fk_user_creat;
 			$account->date_creation = $obj->date_creation;
 
-			foreach($request_data as $field => $value) {
+			foreach ($request_data as $field => $value) {
 				$account->$field = $value;
 			}
 
@@ -1497,35 +1536,34 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PATCH {id}/gateways/{site}
 	 */
-	function patchSocieteAccount($id, $site, $request_data = null)
+    public function patchSocieteAccount($id, $site, $request_data = null)
 	{
 		global $db;
 
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '$site' ";
 		$result = $db->query($sql);
 
-		if($result->num_rows == 0 ){
+		if ($result->num_rows == 0) {
 			throw new RestException(404, "This thirdparty does not have $site gateway attached or does not exist.");
 		} else {
-
 			// If the user tries to edit the site member, we check first if
-			if(isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";
+			if (isset($request_data['site']) && $request_data['site'] !== $site) {
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
 				$result = $db->query($sql);
 
-				if($result->num_rows !== 0)
-					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from $site to ".$request_data['site'] . " but another SocieteAccount entity already exists for this thirdparty with this site key.");
+				if ($result->num_rows !== 0)
+					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from $site to ".$request_data['site']." but another SocieteAccount entity already exists for this thirdparty with this site key.");
 			}
 
 			$obj = $db->fetch_object($result);
 			$account = new SocieteAccount($this->db);
 			$account->fetch($obj->rowid);
 
-			foreach($request_data as $field => $value) {
+			foreach ($request_data as $field => $value) {
 				$account->$field = $value;
 			}
 
@@ -1551,26 +1589,26 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/gateways/{site}
 	 */
-	function deleteSocieteAccount($id, $site)
+    public function deleteSocieteAccount($id, $site)
     {
 		global /** @var Database $db */
 		$db;
 
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '$site' ";
 		$result = $db->query($sql);
 
-		if($result->num_rows == 0 ){
+		if ($result->num_rows == 0) {
 			throw new RestException(404);
 		} else {
 			$obj = $db->fetch_object($result);
 			$account = new SocieteAccount($this->db);
 			$account->fetch($obj->rowid);
 
-			if($account->delete(DolibarrApiAccess::$user) < 0) {
+			if ($account->delete(DolibarrApiAccess::$user) < 0) {
 				throw new RestException(500, "Error while deleting $site gateway attached to this third party");
 			}
 		}
@@ -1582,18 +1620,18 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 *
 	 * @return void
-	 * @throws 401 Unauthorized: User does not have permission to delete thirdparties gateways
-	 * @throws 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
-	 * @throws 500 Internal Server Error: Error deleting SocieteAccount entity
+	 * @throws RestException(401) Unauthorized: User does not have permission to delete thirdparties gateways
+	 * @throws RestException(404) Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 * @throws RestException(500) Internal Server Error: Error deleting SocieteAccount entity
 	 *
 	 * @url DELETE {id}/gateways
 	 */
-	function deleteSocieteAccounts($id)
+    public function deleteSocieteAccounts($id)
     {
 		global /** @var Database $db */
 		$db;
 
-		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
@@ -1602,14 +1640,14 @@ class Thirdparties extends DolibarrApi
 		 */
 
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id ";
 
 		$result = $db->query($sql);
 
-		if($result->num_rows == 0 ){
+		if ($result->num_rows == 0) {
 			throw new RestException(404, 'This third party does not have any gateway attached or does not exist.');
 		} else {
-			$i=0;
+			$i = 0;
 
 			$num = $db->num_rows($result);
 			while ($i < $num)
@@ -1618,7 +1656,7 @@ class Thirdparties extends DolibarrApi
 				$account = new SocieteAccount($db);
 				$account->fetch($obj->rowid);
 
-				if($account->delete(DolibarrApiAccess::$user) < 0) {
+				if ($account->delete(DolibarrApiAccess::$user) < 0) {
 					throw new RestException(500, 'Error while deleting gateways attached to this third party');
 				}
 				$i++;
@@ -1626,17 +1664,28 @@ class Thirdparties extends DolibarrApi
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
 	 *
 	 * @param   object  $object    Object to clean
 	 * @return    array    Array of cleaned object properties
 	 */
-	function _cleanObjectDatas($object)
+	protected function _cleanObjectDatas($object)
     {
+        // phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		unset($object->nom);	// ->name already defined and nom deprecated
+		unset($object->nom); // ->name already defined and nom deprecated
+		unset($object->name_bis); // ->name_alias already defined
+		unset($object->note); // ->note_private and note_public already defined
+		unset($object->departement);
+		unset($object->departement_code);
+		unset($object->pays);
+		unset($object->particulier);
+		unset($object->prefix_comm);
+
+		unset($object->commercial_id);	// This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
 
 		unset($object->total_ht);
 		unset($object->total_tva);
@@ -1646,6 +1695,8 @@ class Thirdparties extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->thirdparty);
+
+		unset($object->fk_delivery_address); // deprecated feature
 
 		return $object;
 	}
@@ -1658,14 +1709,67 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	function _validate($data)
-	{
-		$thirdparty = array();
-		foreach (Thirdparties::$FIELDS as $field) {
-			if (!isset($data[$field]))
-				throw new RestException(400, "$field field missing");
-			$thirdparty[$field] = $data[$field];
-		}
-		return $thirdparty;
-	}
+    private function _validate($data)
+    {
+        $thirdparty = array();
+        foreach (Thirdparties::$FIELDS as $field) {
+            if (!isset($data[$field]))
+                throw new RestException(400, "$field field missing");
+            $thirdparty[$field] = $data[$field];
+        }
+        return $thirdparty;
+    }
+
+    /**
+     * Fetch properties of a thirdparty object.
+     *
+     * Return an array with thirdparty informations
+     *
+     * @param    int	$rowid      Id of third party to load
+	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
+	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+	 * @param    string	$ref_int    Internal reference of third party (not used by dolibarr)
+	 * @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
+	 * @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
+	 * @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
+	 * @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+	 * @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
+	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
+	 * @param    string	$email   		Email of third party (Warning, this can return several records)
+	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
+     * @return array|mixed data without useless information
+     *
+     * @throws RestException
+    */
+    private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+    {
+        global $conf;
+        if (!DolibarrApiAccess::$user->rights->societe->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->company->fetch($rowid, $ref, $ref_ext, $ref_int, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+        if (!$result) {
+            throw new RestException(404, 'Thirdparty not found');
+        }
+
+        if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+            $filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+            $filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+        } else {
+            $filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+            $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+        }
+
+        $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+        $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+        $this->company->absolute_discount = price2num($absolute_discount, 'MT');
+        $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
+        return $this->_cleanObjectDatas($this->company);
+    }
 }

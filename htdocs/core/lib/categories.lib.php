@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,7 +29,7 @@
  * @param	string	$type		Type of category
  * @return  array				Array of tabs to show
  */
-function categories_prepare_head($object,$type)
+function categories_prepare_head($object, $type)
 {
 	global $langs, $conf, $user;
 
@@ -61,9 +61,9 @@ function categories_prepare_head($object,$type)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'categories_'.$type);
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type);
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'categories_'.$type,'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type, 'remove');
 
 	return $head;
 }
@@ -97,11 +97,9 @@ function categoriesadmin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,null,$head,$h,'categoriesadmin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'categoriesadmin');
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'categoriesadmin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'categoriesadmin', 'remove');
 
 	return $head;
 }
-
-

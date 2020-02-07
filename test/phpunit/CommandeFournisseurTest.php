@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
+class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -59,7 +59,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      *
      * @return CommandeFournisseurTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -137,7 +137,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $societe=new Societe($db);
         $societe->fetch($socid);
         $product=new ProductFournisseur($db);
-        $product->fetch(0,'PIDRESS');
+        $product->fetch(0, 'PIDRESS');
         if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
 
         $quantity=10;

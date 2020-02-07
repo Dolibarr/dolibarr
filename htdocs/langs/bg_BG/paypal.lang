@@ -1,23 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Настройки на модул PayPal
-PaypalDesc=В този модул се предлагат страници, които да дават възможност за заплащане от клиентите на <a href="http://www.paypal.com" target="_blank">PayPal</a> . Това може да се използва за плащане или за плащане на даден обект Dolibarr (фактура, поръчка, ...)
-PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
-PaypalDoPayment=Плащане с Paypal
+PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalDoPayment=Pay with PayPal
 PAYPAL_API_SANDBOX=Mode тест / пясък
 PAYPAL_API_USER=API потребителско име
 PAYPAL_API_PASSWORD=API парола
 PAYPAL_API_SIGNATURE=API подпис
 PAYPAL_SSLVERSION=Curl SSL Version
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Оферта плащане &quot;неразделна&quot; (кредитна карта + Paypal) или &quot;Paypal&quot;
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
 PaypalModeIntegral=Интеграл
 PaypalModeOnlyPaypal=Paypal само
-ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
 ThisIsTransactionId=Това е номер на сделката: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Добавяне на URL адреса на Paypal плащане, когато ви изпрати документа по пощата
-YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
-NewOnlinePaymentReceived=New online payment received
+PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
+NewOnlinePaymentReceived=Получено е ново онлайн плащане
 NewOnlinePaymentFailed=New online payment tried but failed
-ONLINE_PAYMENT_SENDEMAIL=Имейл за предупреждаване след заплащане (успешно или не)
+ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
 ReturnURLAfterPayment=Връщане на URL след заплащане
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
@@ -28,7 +27,10 @@ ShortErrorMessage=Short Error Message
 ErrorCode=Код грешка
 ErrorSeverityCode=Error Severity Code
 OnlinePaymentSystem=Online payment system
-PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import Paypal payments
+PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card holder
+PayPalBalance=Paypal credit

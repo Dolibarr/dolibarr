@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * 		\defgroup   fournisseur     suppliers Module
- *		\brief      Module to manage companies and contacts of supplier type
+ * 		\defgroup   fournisseur     Module suppliers
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
- *		\brief      Description and activation file for module Fournisseur
+ *		\brief      Description and activation file for module Supplier
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -40,7 +39,7 @@ class modFournisseur extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -50,9 +49,9 @@ class modFournisseur extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "srm";
-		$this->module_position = '10';
+		$this->module_position = '12';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des fournisseurs";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -62,12 +61,13 @@ class modFournisseur extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/fournisseur/temp",
-							"/fournisseur/commande",
-		                    "/fournisseur/commande/temp",
-		                    "/fournisseur/facture",
-		                    "/fournisseur/facture/temp"
-		                    );
+		$this->dirs = array(
+            "/fournisseur/temp",
+            "/fournisseur/commande",
+            "/fournisseur/commande/temp",
+            "/fournisseur/facture",
+            "/fournisseur/facture/temp"
+        );
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -111,6 +111,13 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_orders";
+		$this->const[$r][3] = '';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		// Boxes
 		$this->boxes = array(
 		0=>array('file'=>'box_graph_invoices_supplier_permonth.php','enabledbydefaulton'=>'Home'),
@@ -119,6 +126,7 @@ class modFournisseur extends DolibarrModules
 		3=>array('file'=>'box_factures_fourn_imp.php','enabledbydefaulton'=>'Home'),
 		4=>array('file'=>'box_factures_fourn.php','enabledbydefaulton'=>'Home'),
 		5=>array('file'=>'box_supplier_orders.php','enabledbydefaulton'=>'Home'),
+		6=>array('file'=>'box_supplier_orders_awaiting_reception.php','enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions
@@ -276,7 +284,7 @@ class modFournisseur extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Factures fournisseurs et lignes de facture';
+		$this->export_label[$r]='Vendor invoices and lines of invoices';
 		$this->export_icon[$r]='bill';
 		$this->export_permission[$r]=array(array("fournisseur","facture","export"));
 		$this->export_fields_array[$r]=array(
@@ -312,7 +320,7 @@ class modFournisseur extends DolibarrModules
 		);
 		$this->export_dependencies_array[$r]=array('invoice_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
-		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn'";
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -349,7 +357,7 @@ class modFournisseur extends DolibarrModules
 		}
 		// End add extra fields
 		// Add extra fields line
-		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det'";
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det' AND entity IN (0, ".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -432,7 +440,7 @@ class modFournisseur extends DolibarrModules
 		    'p.datep'=>'payment','p.num_paiement'=>'payment','project.rowid'=>'project','project.ref'=>'project','project.title'=>'project');
 		$this->export_dependencies_array[$r]=array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
-		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn'";
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -484,7 +492,7 @@ class modFournisseur extends DolibarrModules
 		// Order
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Commandes fournisseurs et lignes de commandes';
+		$this->export_label[$r]='Purchase Orders and lines of purchase orders';
 		$this->export_icon[$r]='order';
 		$this->export_permission[$r]=array(array("fournisseur","commande","export"));
 		$this->export_fields_array[$r]=array(
@@ -519,7 +527,7 @@ class modFournisseur extends DolibarrModules
 		);
 		$this->export_dependencies_array[$r]=array('order_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
-		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur'";
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -557,7 +565,7 @@ class modFournisseur extends DolibarrModules
 		}
 		// End add extra fields object
 		// Add extra fields line
-		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet'";
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -623,17 +631,35 @@ class modFournisseur extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->remove($options);
+
+		//ODT template
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_orders/template_supplier_order.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_orders';
+		$dest=$dirodt.'/template_supplier_order.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src, $dest, 0, 0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order_supplier',".$conf->entity.")",
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

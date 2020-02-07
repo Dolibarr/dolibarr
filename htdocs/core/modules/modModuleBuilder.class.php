@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ class modModuleBuilder extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -45,8 +45,9 @@ class modModuleBuilder extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "technic";
+        $this->module_position = '90';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
@@ -81,6 +82,21 @@ class modModuleBuilder extends DolibarrModules
         // Boxes
         //------
         $this->boxes = array();
+
+        // Permissions
+        //------------
+        $this->rights = array();		// Permission array used by this module
+        $this->rights_class = 'modulebuilder';
+
+        $r=0;
+
+        $r++;
+        $this->rights[$r][0] = 3301;
+        $this->rights[$r][1] = 'Generate new modules';
+        $this->rights[$r][2] = 'a';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'run';
+
 
         // Main menu entries
         //------------------

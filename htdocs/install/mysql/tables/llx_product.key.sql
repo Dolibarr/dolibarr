@@ -16,7 +16,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -30,6 +30,7 @@ ALTER TABLE llx_product ADD INDEX idx_product_seuil_stock_alerte (seuil_stock_al
 ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
 ALTER TABLE llx_product ADD INDEX idx_product_fk_user_author (fk_user_author);
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ class modSupplierProposal extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -50,17 +50,18 @@ class modSupplierProposal extends DolibarrModules
 		$this->numero = 1120;
 
 		$this->family = "srm";
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->module_position = '35';
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "supplier_proposalDESC";
 
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto='supplier_proposal';
-        
+
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
-		
+
 		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
         $this->config_page_url = array("supplier_proposal.php");
 
@@ -92,7 +93,7 @@ class modSupplierProposal extends DolibarrModules
 
 		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposal";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposals";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -206,7 +207,7 @@ class modSupplierProposal extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+    public function init($options = '')
 	{
 		global $conf,$langs;
 
@@ -214,19 +215,19 @@ class modSupplierProposal extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposal/template_supplier_proposal.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_proposal';
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposals/template_supplier_proposal.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_proposals';
 		$dest=$dirodt.'/template_supplier_proposal.odt';
 
 		if (file_exists($src) && ! file_exists($dest))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}

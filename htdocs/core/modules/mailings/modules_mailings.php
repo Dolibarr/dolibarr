@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -49,7 +49,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
         $this->db = $db;
 	}
@@ -59,7 +59,7 @@ class MailingTargets // This can't be abstract as it is used for some method
      *
      * @return     string      Return translation of module label. Try translation of $this->name then translation of 'MailingModuleDesc'.$this->name, or $this->desc if not found
      */
-    function getDesc()
+    public function getDesc()
     {
         global $langs, $form;
 
@@ -80,7 +80,7 @@ class MailingTargets // This can't be abstract as it is used for some method
      *
      *  @return     integer      Example
      */
-    function getNbOfRecords()
+    public function getNbOfRecords()
     {
         return 0;
     }
@@ -91,7 +91,7 @@ class MailingTargets // This can't be abstract as it is used for some method
      * @param      string	$sql        Sql request to count
      * @return     int       			Nb of recipient, or <0 if error
      */
-    function getNbOfRecipients($sql)
+    public function getNbOfRecipients($sql)
     {
         $result=$this->db->query($sql);
         if ($result)
@@ -112,19 +112,19 @@ class MailingTargets // This can't be abstract as it is used for some method
      *
      * @return     string      Retourne zone select
      */
-    function formFilter()
+    public function formFilter()
     {
         return '';
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Met a jour nombre de destinataires
      *
      * @param	int		$mailing_id          Id of emailing
      * @return  int			                 < 0 si erreur, nb destinataires si ok
      */
-    function update_nb($mailing_id)
+    public function update_nb($mailing_id)
     {
         // phpcs:enable
         // Mise a jour nombre de destinataire dans table des mailings
@@ -151,17 +151,15 @@ class MailingTargets // This can't be abstract as it is used for some method
         return $nb;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Ajoute destinataires dans table des cibles
+     * Add a list of targets int the database
      *
      * @param	int		$mailing_id    Id of emailing
      * @param   array	$cibles        Array with targets
      * @return  int      			   < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id, $cibles)
+    public function addTargetsToDatabase($mailing_id, $cibles)
     {
-        // phpcs:enable
     	global $conf;
 
     	$this->db->begin();
@@ -189,7 +187,7 @@ class MailingTargets // This can't be abstract as it is used for some method
         		$sql.= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
        			$sql .= "'".$this->db->escape(dol_hash($targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
-        		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+        		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
         		$result=$this->db->query($sql);
         		if ($result)
         		{
@@ -200,8 +198,8 @@ class MailingTargets // This can't be abstract as it is used for some method
         			if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
         			{
         				// Si erreur autre que doublon
-        				dol_syslog($this->db->error());
-        				$this->error=$this->db->error();
+        				dol_syslog($this->db->error().' : '.$targetarray['email']);
+        				$this->error=$this->db->error().' : '.$targetarray['email'];
         				$this->db->rollback();
         				return -1;
         			}
@@ -247,14 +245,14 @@ class MailingTargets // This can't be abstract as it is used for some method
         return $j;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Supprime tous les destinataires de la table des cibles
      *
-     *	@param  int		$mailing_id        Id of emailing
-     *	@return	void
+     *  @param  int		$mailing_id        Id of emailing
+     *  @return	void
      */
-    function clear_target($mailing_id)
+    public function clear_target($mailing_id)
     {
         // phpcs:enable
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";

@@ -1,13 +1,9 @@
 # Dolibarr language file - Source file is en_US - website
-WebsiteSetupDesc=Créer ici autant d'entrée que le nombre de différents sites Web dont vous avez besoin. Ensuite, allez dans le menu Sites Web pour les éditer.
 DeleteWebsite=Supprimer site internet
-ConfirmDeleteWebsite=Etes-vous sûr de vouloir supprimer ce site Web. Toutes ses pages et le contenu seront également supprimés.
 WEBSITE_PAGENAME=Nom / alias de la page
 WEBSITE_CSS_URL=URL du fichier CSS externe
 MediaFiles=Médiathèque
 EditMenu=Menu Edition
-EditPageMeta=Modifier Meta
-PreviewOfSiteNotYetAvailable=Aperçu de votre site web <strong>%s</strong> n'est pas encore disponible. Vous devez d'abord ajouter une page.
 ViewSiteInNewTab=Afficher le site dans un nouvel onglet
 ViewPageInNewTab=Afficher la page dans un nouvel onglet
 ViewWebsiteInProduction=Afficher le site Web à l'aide d'URL d'accueil

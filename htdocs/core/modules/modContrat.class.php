@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ class modContrat extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 
@@ -49,7 +49,7 @@ class modContrat extends DolibarrModules
 		$this->family = "crm";
 		$this->module_position = '35';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des contrats de services";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -165,7 +165,7 @@ class modContrat extends DolibarrModules
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',
 		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
 		's.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra',
-		'co.rowid'=>"Id",'co.ref'=>"Ref",'co.datec'=>"DateCreation",'co.date_contrat'=>"DateContract",'co.mise_en_service'=>"ContractStartDate",
+		'co.rowid'=>"Id",'co.ref'=>"Ref",'co.datec'=>"DateCreation",'co.date_contrat'=>"DateContract",
 		'co.fin_validite'=>"ContractEndDate",'co.date_cloture'=>"Closing",'co.note_private'=>"NotePrivate",'co.note_public'=>"NotePublic",
 		'cod.rowid'=>'LineId','cod.label'=>"LineLabel",'cod.description'=>"LineDescription",'cod.price_ht'=>"LineUnitPrice",'cod.tva_tx'=>"LineVATRate",
 		'cod.qty'=>"LineQty",'cod.total_ht'=>"LineTotalHT",'cod.total_tva'=>"LineTotalVAT",'cod.total_ttc'=>"LineTotalTTC",
@@ -175,7 +175,7 @@ class modContrat extends DolibarrModules
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company',
 		's.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company',
 		's.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',
-		'co.rowid'=>"contract",'co.ref'=>"contract",'co.datec'=>"contract",'co.date_contrat'=>"contract",'co.mise_en_service'=>"contract",
+		'co.rowid'=>"contract",'co.ref'=>"contract",'co.datec'=>"contract",'co.date_contrat'=>"contract",
 		'co.fin_validite'=>"contract",'co.date_cloture'=>"contract",'co.note_private'=>"contract",'co.note_public'=>"contract",
 		'cod.rowid'=>'contract_line','cod.label'=>"contract_line",'cod.description'=>"contract_line",'cod.price_ht'=>"contract_line",'cod.tva_tx'=>"contract_line",
 		'cod.qty'=>"contract_line",'cod.total_ht'=>"contract_line",'cod.total_tva'=>"contract_line",'cod.total_ttc'=>"contract_line",
@@ -185,7 +185,7 @@ class modContrat extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text',
 		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text',
 		's.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text',
-		'co.ref'=>"Text",'co.datec'=>"Date",'co.date_contrat'=>"Date",'co.mise_en_service'=>"Date",
+		'co.ref'=>"Text",'co.datec'=>"Date",'co.date_contrat'=>"Date",
 		'co.fin_validite'=>"Date",'co.date_cloture'=>"Date",'co.note_private'=>"Text",'co.note_public'=>"Text",
 		'cod.label'=>"Text",'cod.description'=>"Text",'cod.price_ht'=>"Numeric",'cod.tva_tx'=>"Numeric",
 		'cod.qty'=>"Numeric",'cod.total_ht'=>"Numeric",'cod.total_tva'=>"Numeric",'cod.total_ttc'=>"Numeric",
@@ -212,7 +212,7 @@ class modContrat extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf;
 
@@ -228,11 +228,11 @@ class modContrat extends DolibarrModules
 		{
 		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		    dol_mkdir($dirodt);
-		    $result=dol_copy($src,$dest,0,0);
+		    $result=dol_copy($src, $dest, 0, 0);
 		    if ($result < 0)
 		    {
 		        $langs->load("errors");
-		        $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+		        $this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 		        return 0;
 		    }
 		}
@@ -242,6 +242,6 @@ class modContrat extends DolibarrModules
 		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','contract',".$conf->entity.")"
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

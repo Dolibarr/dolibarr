@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,14 +34,14 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ReceptionStats extends Stats
 {
-	public $table_element;
+    public $table_element;
 
-	var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-	var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
     /**
@@ -52,7 +52,7 @@ class ReceptionStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
      */
-    function __construct($db, $socid, $mode, $userid=0)
+    public function __construct($db, $socid, $mode, $userid = 0)
     {
 		global $user, $conf;
 
@@ -84,17 +84,19 @@ class ReceptionStats extends Stats
 	 * @param	int		$year		Year to scan
 	 * @return	array				Array with number by month
      */
-    function getNbByMonth($year)
+    public function getNbByMonth($year)
     {
         global $user;
 
         $sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+            $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        }
 		$sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql);
 		return $res;
@@ -106,7 +108,7 @@ class ReceptionStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
-	function getNbByYear()
+    public function getNbByYear()
 	{
 		global $user;
 
@@ -115,17 +117,17 @@ class ReceptionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
 
 	/**
-	 *	Return nb, total and average
+	 *  Return nb, total and average
 	 *
-	 *	@return	array	Array of values
+	 *  @return	array	Array of values
 	 */
-	function getAllByYear()
+    public function getAllByYear()
 	{
 		global $user;
 
@@ -134,9 +136,8 @@ class ReceptionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-		$sql.= $this->db->order('year','DESC');
+		$sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
 }
-

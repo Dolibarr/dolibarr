@@ -1,14 +1,14 @@
 <?php
 // BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of wrapper.html sample.
-$websitekey=basename(dirname(__FILE__));
+$websitekey=basename(__DIR__);
 if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
-$hashp=GETPOST('hashp','aZ09');
-$modulepart=GETPOST('modulepart','aZ09');
-$entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
-$original_file=GETPOST("file","alpha");
+$hashp=GETPOST('hashp', 'aZ09');
+$modulepart=GETPOST('modulepart', 'aZ09');
+$entity=GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
+$original_file=GETPOST("file", "alpha");
 
 // If we have a hash public (hashp), we guess the original_file.
 if (! empty($hashp))
@@ -54,13 +54,13 @@ if (! empty($hashp))
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
-if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'none')?true:false;
+if (preg_match('/\.(html|htm)$/i', $original_file)) $attachment = false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment", 'none')?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) $attachment=false;
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOST('type','none')) $type=GETPOST('type','alpha');
+if (GETPOST('type','none')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file

@@ -290,6 +290,7 @@ CurrencyXOF=CFA franci BCEAO
 CurrencySingXOF=CFA Franak BCEAO
 CurrencyXPF=CFP franci
 CurrencySingXPF=CFP franak
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,9 +64,27 @@ class Fiscalyear extends CommonObject
 	 */
 	public $label;
 
+	/**
+     * Date start (date_start)
+     *
+     * @var integer
+     */
 	public $date_start;
+
+	/**
+     * Date end (date_end)
+     *
+     * @var integer
+     */
 	public $date_end;
-	public $datec;
+
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
 	public $statut;		// 0=open, 1=closed
 
 	/**
@@ -82,7 +100,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct(DoliDB $db)
+	public function __construct(DoliDB $db)
 	{
 		global $langs;
 
@@ -98,7 +116,7 @@ class Fiscalyear extends CommonObject
 	 *	@param		User	$user   User making creation
 	 *	@return 	int				<0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf;
 
@@ -159,7 +177,7 @@ class Fiscalyear extends CommonObject
 	 *	@param	User	$user		User making update
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function update($user)
+	public function update($user)
 	{
 		global $langs;
 
@@ -177,7 +195,6 @@ class Fiscalyear extends CommonObject
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", statut = '".$this->db->escape($this->statut?$this->statut:0)."'";
-		$sql .= ", datec = " . ($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null');
 		$sql .= ", fk_user_modif = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -203,7 +220,7 @@ class Fiscalyear extends CommonObject
 	* @param	int		$id		Id of record to load
 	* @return	int				<0 if KO, >0 if OK
 	*/
-	function fetch($id)
+	public function fetch($id)
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
@@ -231,13 +248,13 @@ class Fiscalyear extends CommonObject
 		}
 	}
 
-   /**
-	*	Delete record
-	*
-	*	@param	int		$id		Id of record to delete
-	*	@return	int				<0 if KO, >0 if OK
-	*/
-	function delete($id)
+    /**
+	 *	Delete record
+	 *
+	 *	@param	int		$id		Id of record to delete
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
+	public function delete($id)
 	{
 		$this->db->begin();
 
@@ -264,51 +281,51 @@ class Fiscalyear extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Give a label from a status
 	 *
-	 *  @param	int		$statut     Id status
+	 *  @param	int		$status     Id status
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatut($statut,$mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
-			return $langs->trans($this->statuts[$statut]);
+			return $langs->trans($this->statuts[$status]);
 		}
 		elseif ($mode == 1)
 		{
-			return $langs->trans($this->statuts_short[$statut]);
+			return $langs->trans($this->statuts_short[$status]);
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
+			elseif ($status==1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts_short[$status]);
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
 		}
 	}
 
@@ -318,7 +335,7 @@ class Fiscalyear extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,';
 		$sql.= ' fy.tms';
@@ -364,7 +381,7 @@ class Fiscalyear extends CommonObject
 	 *	@param	int		$dateend	Date end to scan
 	 *	@return	string				Number of entries
 	 */
-	function getAccountancyEntriesByFiscalYear($datestart, $dateend)
+	public function getAccountancyEntriesByFiscalYear($datestart, $dateend)
 	{
 		global $conf;
 
@@ -386,11 +403,11 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of movements by fiscal year
 	 *
-	 *	@param	int		$datestart	Date start to scan
-	 *	@param	int		$dateend	Date end to scan
-	 *	@return	string				Number of movements
+	 *  @param	int		$datestart	Date start to scan
+	 *  @param	int		$dateend	Date end to scan
+	 *  @return	string				Number of movements
 	 */
-	function getAccountancyMovementsByFiscalYear($datestart, $dateend)
+	public function getAccountancyMovementsByFiscalYear($datestart, $dateend)
 	{
 		global $conf;
 

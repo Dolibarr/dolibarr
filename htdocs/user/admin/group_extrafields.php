@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/adherents/admin/adherent_extrafields.php
- *		\ingroup    member
- *		\brief      Page to setup extra fields of members
+ *  \file       htdocs/user/admin/group_extrafields.php
+ *  \ingroup    user
+ *  \brief      Page to setup extra fields of users
  */
 
 require '../../main.inc.php';
@@ -62,11 +62,11 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 $textobject=$langs->transnoentitiesnoconv("Groups");
 
 $help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
-llxHeader('',$langs->trans("UsersSetup"),$help_url);
+llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 
 $head = user_admin_prepare_head();

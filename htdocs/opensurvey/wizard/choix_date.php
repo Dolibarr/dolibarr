@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,6 @@ $erreur = false;
 // Insert survey
 if (GETPOST('confirmation'))
 {
-
 	// We save hours entered
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true)
 	{
@@ -169,7 +168,7 @@ if (GETPOST('confirmation'))
 	// Add survey into database
 	if (!$erreur)
 	{
-		$_SESSION["toutchoix"]=substr("$choixdate",1);
+		$_SESSION["toutchoix"]=substr("$choixdate", 1);
 
 		ajouter_sondage();
 	}
@@ -329,6 +328,7 @@ else
 
 //Debut du formulaire et bandeaux de tete
 print '<form name="formulaire" action="" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
@@ -343,7 +343,7 @@ print '<div class="center">'."\n";
 print '<table align="center">'."\n";	// The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr><td><input type="image" name="anneeavant" value="<<" src="../img/rewind.png"></td><td><input type="image" name="moisavant" value="<" src="../img/previous.png"></td>';
 print '<td width="150px" align="center"> '.$motmois.' '.$_SESSION["annee"].'<br>';
-print '<input type="image" name="retourmois" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh','',0,1).'">';
+print '<input type="image" name="retourmois" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh', '', 0, 1).'">';
 print '</td><td><input type="image" name="moisapres" value=">" src="../img/next.png"></td>';
 print '<td><input type="image" name="anneeapres" value=">>" src="../img/fforward.png"></td><td></td><td></td><td></td><td></td><td></td><td>';
 print '</td></tr>'."\n";
@@ -357,7 +357,7 @@ print '<tr>'."\n";
 //affichage des jours de la semaine en haut du tableau
 for($i = 0; $i < 7; $i++)
 {
-	print '<td align="center" class="joursemaine">'. dol_print_date(mktime(0,0,0,0, $i,10),'%A') .'</td>';
+	print '<td align="center" class="joursemaine">'. dol_print_date(mktime(0, 0, 0, 0, $i, 10), '%A') .'</td>';
 }
 
 print '</tr>'."\n";
@@ -429,7 +429,7 @@ if (issetAndNoEmpty('choixjourretrait')) {
 				$_SESSION["horaires$j"] = $_SESSION["horaires$k"];
 			}
 
-			array_splice($_SESSION["totalchoixjour"], $i,1);
+			array_splice($_SESSION["totalchoixjour"], $i, 1);
 		}
 	}
 }
@@ -448,7 +448,7 @@ if (issetAndNoEmpty('reporterhoraires')) {
 if (issetAndNoEmpty('resethoraires')) {
 	$nbofchoice=count($_SESSION["totalchoixjour"]);
 	for ($i = 0; $i < $nbofchoice; $i++) {
-		unset ($_SESSION["horaires$i"]);
+		unset($_SESSION["horaires$i"]);
 	}
 }
 
@@ -471,7 +471,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 		{
 			$nbofchoice=count($_SESSION["totalchoixjour"]);
 			for ($j = 0; $j < $nbofchoice; $j++) {
-				//affichage des boutons ROUGES
+				// show red buttons
 				if (date("j", $_SESSION["totalchoixjour"][$j]) == $numerojour && date("n", $_SESSION["totalchoixjour"][$j]) == $_SESSION["mois"] && date("Y", $_SESSION["totalchoixjour"][$j]) == $_SESSION["annee"]) {
 					print '<td align="center" class="choisi"><input type="submit" class="bouton OFF" name="choixjourretrait[]" value="'.$numerojour.'"></td>'."\n";
 					$dejafait = $numerojour;
@@ -479,12 +479,13 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			}
 		}
 
-		//Si pas de bouton ROUGE alors on affiche un bouton VERT ou GRIS avec le numéro du jour dessus
+		// If no red button, we show green or grey button with number of day
 		if (isset($dejafait) === false || $dejafait != $numerojour){
-			//bouton vert
+			// green button
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
-			} else { //bouton gris
+			} else {
+                // grey button
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}
@@ -536,8 +537,8 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
-			} else { //sinon la case est vide normalement
-
+			} else {
+				//sinon la case est vide normalement
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}
@@ -546,7 +547,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 
 	print '</table>'."\n";
 
-	//affichage des boutons de formulaire pour annuler, effacer les jours ou créer le sondage
+	// show buttons to cancel, delete days or create survey
 	print '<table>'."\n";
 	print '<tr>'."\n";
 	print '<td><input type="submit" class="button" name="reset" value="'. dol_escape_htmltag($langs->trans("RemoveAllDays")) .'"></td><td><input type="submit" class="button" name="reporterhoraires" value="'. dol_escape_htmltag($langs->trans("CopyHoursOfFirstDay")) .'"></td><td><input type="submit" class="button" name="resethoraires" value="'. dol_escape_htmltag($langs->trans("RemoveAllHours")) .'"></td></tr>'."\n";

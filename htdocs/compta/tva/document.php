@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -43,46 +43,47 @@ if (! empty($conf->projet->enabled))
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'companies', 'compta', 'bills'));
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'vat','charges');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'tax', '', 'vat', 'charges');
 
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) {
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
     $page = 0;
 }
+
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 
 $object = new Tva($db);
 if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart='tax';
+$modulepart = 'tax';
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+    $result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
     if ($result < 0)
         setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -93,29 +94,29 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  */
 
 $form = new Form($db);
-if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-$title = $langs->trans("VATPayment") . ' - ' . $langs->trans("Documents");
-$help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$title,$help_url);
+$title = $langs->trans("VATPayment").' - '.$langs->trans("Documents");
+$help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
+llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
-	$alreadypayed=$object->getSommePaiement();
+	$alreadypayed = $object->getSommePaiement();
 
-    $head=vat_prepare_head($object);
+    $head = vat_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("VATPayment"), -1, 'bill');
+    dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'bill');
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
-	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
-	$morehtmlref.='</div>';
+	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= '</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -123,18 +124,18 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
     // Build file list
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-    $totalsize=0;
-    foreach($filearray as $key => $file)
+    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+    $totalsize = 0;
+    foreach ($filearray as $key => $file)
     {
-        $totalsize+=$file['size'];
+        $totalsize += $file['size'];
     }
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print '</table>';
 
     print '</div>';
@@ -146,8 +147,8 @@ if ($object->id)
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
     $permtoedit = $user->rights->fournisseur->facture->creer;
-    $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $param = '&id='.$object->id;
+    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -41,8 +41,10 @@ class modHoliday extends DolibarrModules
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
+		global $conf, $user;   // Required by some include code
+
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -54,9 +56,9 @@ class modHoliday extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "hr";
-		$this->module_position = '30';
+		$this->module_position = '42';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Leave requests";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -202,18 +204,29 @@ class modHoliday extends DolibarrModules
 		$this->export_permission[$r]=array(array("holiday","read_all"));
 		$this->export_fields_array[$r]=array(
 			'd.rowid'=>"LeaveId",'d.fk_type'=>'TypeOfLeaveId','t.code'=>'TypeOfLeaveCode','t.label'=>'TypeOfLeaveLabel','d.fk_user'=>'UserID',
-			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.halfday'=>'HalfDay',
+			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.halfday'=>'HalfDay','none.num_open_days'=>'NbUseDaysCP',
 			'd.date_valid'=>'DateApprove','d.fk_validator'=>"UserForApprovalID",'ua.lastname'=>"UserForApprovalLastname",'ua.firstname'=>"UserForApprovalFirstname",
 			'ua.login'=>"UserForApprovalLogin",'d.description'=>'Description','d.statut'=>'Status'
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'd.rowid'=>"Numeric",'t.code'=>'Text', 't.label'=>'Text','d.fk_user'=>'Numeric',
+			'u.lastname'=>'Text','u.firstname'=>'Text','u.login'=>"Text",'d.date_debut'=>'Date','d.date_fin'=>'Date','none.num_open_days'=>'NumericCompute',
+			'd.date_valid'=>'Date','d.fk_validator'=>"Numeric",'ua.lastname'=>"Text",'ua.firstname'=>"Text",
+			'ua.login'=>"Text",'d.description'=>'Text','d.statut'=>'Numeric'
 		);
 		$this->export_entities_array[$r]=array(
 			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ua.lastname'=>'user','ua.firstname'=>'user','ua.login'=>'user'
 		);
 		$this->export_alias_array[$r]=array('d.rowid'=>"idholiday");
+		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
 		$this->export_dependencies_array[$r]=array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+
+		$keyforselect='holiday'; $keyforelement='holiday'; $keyforaliasextra='extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'holiday as d';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'user as u';
@@ -256,5 +269,46 @@ class modHoliday extends DolibarrModules
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
 	}
-}
 
+	/**
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
+
+		// Permissions
+		$this->remove($options);
+
+		//ODT template
+		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/holiday';
+		$dest=$dirodt.'/template_order.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src, $dest, 0, 0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
+        */
+
+		$sql = array(
+		//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".$conf->entity,
+		//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".$conf->entity.")"
+		);
+
+		return $this->_init($sql, $options);
+	}
+}

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -47,7 +47,7 @@ class RejetPrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	function __construct($db, $user)
+	public function __construct($db, $user)
 	{
 		global $langs;
 
@@ -82,7 +82,7 @@ class RejetPrelevement
 	 * @param 	int			$facturation		Facturation
 	 * @return	void
 	 */
-	function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
+	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
 	{
 		global $langs,$conf;
 
@@ -162,7 +162,7 @@ class RejetPrelevement
 			}
 			else
 			{
-				$result=$pai->addPaymentToBank($user,'payment','(InvoiceRefused)',$bankaccount,'','');
+				$result=$pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
 				if ($result < 0)
 				{
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
@@ -198,14 +198,14 @@ class RejetPrelevement
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
 	 * 	@param	Facture		$fac			Invoice object
 	 * 	@return	void
 	 */
-	function _send_email($fac)
+	private function _send_email($fac)
 	{
         // phpcs:enable
 		global $langs;
@@ -255,9 +255,9 @@ class RejetPrelevement
 			$amount = price($fac->total_ttc);
 			$userinfo = $this->user->getFullName($langs);
 
-			$message = $langs->trans("InfoRejectMessage",$facref,$socname, $amount, $userinfo);
+			$message = $langs->trans("InfoRejectMessage", $facref, $socname, $amount, $userinfo);
 
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$this->user->email);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email);
 
 			$result=$mailfile->sendfile();
 			if ($result)
@@ -280,9 +280,9 @@ class RejetPrelevement
 	 *
 	 * @param 	int		$amounts 	If you want to get the amount of the order for each invoice
 	 * @return	array				Array List of invoices related to the withdrawal line
-	 * @TODO	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
+	 * @todo	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
 	 */
-	private function getListInvoices($amounts=0)
+	private function getListInvoices($amounts = 0)
 	{
 		global $conf;
 
@@ -334,7 +334,7 @@ class RejetPrelevement
 	 *    @param    int		$rowid       id of invoice to retrieve
 	 *    @return	int
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";

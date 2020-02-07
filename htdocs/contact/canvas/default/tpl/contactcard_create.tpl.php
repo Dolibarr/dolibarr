@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -29,11 +29,11 @@ if (empty($conf) || ! is_object($conf))
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors);
+dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors);
 
-dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']),$GLOBALS['errors']);
+dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']), $GLOBALS['errors']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry']; ?>
 
@@ -126,7 +126,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 </tr>
 
 <tr>
-	<td align="center" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
+	<td class="center" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
 </tr>
 
 </table><br>

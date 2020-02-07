@@ -15,7 +15,7 @@ class OdfException extends Exception
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
  * @copyright  2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.5.0
  */
 class Odf
@@ -525,7 +525,7 @@ IMG;
 	public function addImageToManifest($file)
 	{
 		// Get the file extension
-		$ext = substr(strrchr($val, '.'), 1);
+		$ext = substr(strrchr($file, '.'), 1);
 		// Create the correct image XML entry to add to the manifest (this is necessary because ODT format requires that we keep a list of the images in the manifest.xml)
 		$add = ' <manifest:file-entry manifest:media-type="image/'.$ext.'" manifest:full-path="Pictures/'.$file.'"/>'."\n";
 		// Append the image to the manifest
@@ -539,7 +539,7 @@ IMG;
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedFile($name="")
+	public function exportAsAttachedFile($name = "")
 	{
 		$this->_save();
 		if (headers_sent($filename, $linenum)) {
@@ -584,7 +584,7 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		}
 		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
@@ -635,6 +635,7 @@ IMG;
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
+		$retval=0; $output_arr=array();
 		if ($execmethod == 1)
 		{
 			exec($command, $output_arr, $retval);
@@ -665,6 +666,7 @@ IMG;
 		if ($retval == 0)
 		{
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
+			$filename=''; $linenum=0;
 			if (headers_sent($filename, $linenum)) {
 				throw new OdfException("headers already sent ($filename at $linenum)");
 			}
@@ -681,16 +683,17 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
 
 			if ($retval==126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
 			}
 			else {
+			    $errorstring='';
 				foreach($output_arr as $line) {
-					$errors.= $line."<br>";
+				    $errorstring.= $line."<br>";
 				}
-				throw new OdfException('ODT to PDF convert fail : ' . $errors);
+				throw new OdfException('ODT to PDF convert fail (option MAIN_ODT_AS_PDF is '.$conf->global->MAIN_ODT_AS_PDF.', command was '.$command.', retval='.$retval.') : ' . $errorstring);
 			}
 		}
 	}
@@ -742,7 +745,7 @@ IMG;
 	private function _rrmdir($dir)
 	{
 		if ($handle = opendir($dir)) {
-			while (false !== ($file = readdir($handle))) {
+			while (($file = readdir($handle)) !== false) {
 				if ($file != '.' && $file != '..') {
 					if (is_dir($dir . '/' . $file)) {
 						$this->_rrmdir($dir . '/' . $file);
@@ -769,6 +772,4 @@ IMG;
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
 		return  $matches[1];
 	}
-
 }
-

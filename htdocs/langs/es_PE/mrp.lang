@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - mrp
+MRPArea=Área PRM
+MenuBOM=Listas de material
+LatestBOMModified=Últimas%s Lista de materiales modificados
+BillOfMaterials=Lista de Material
+ListOfBOMs=Listado de Lista De Material - BOM
+NewBOM=Nueva lista de material
+BOMsNumberingModules=Plantillas de numeración BOM
+FreeLegalTextOnBOMs=Texto libre en documento BOM
+WatermarkOnDraftBOMs=Marca de agua en BOM borrador
+ValueOfMeansLoss=Valor de 0.95 significa un promedio de 5%% pérdidas durante la producción
+DeleteBillOfMaterials=Borrar Lista De Materiales
+ConfirmDeleteBillOfMaterials=Está seguro de borrar esta Lista de Materiales
+ConfirmDeleteMo=Está seguro de borrar esta Lista de Materiales

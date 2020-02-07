@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,14 +28,16 @@
  *              &id=..., &idfrom=..., &idto=...
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))        define("NOLOGIN",1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		 define('NOIPCHECK', '1');  // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
-// C'est un wrapper, donc header vierge
+
+// It's a wrapper, so empty header
 
 /**
  * Header function
@@ -60,7 +62,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 // Security check
-if (empty($conf->agenda->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->agenda->enabled)) accessforbidden('', 0, 0, 1);
 
 // Not older than
 if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;	// default limit
@@ -68,20 +70,20 @@ if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_A
 // Define format, type and filter
 $format='ical';
 $type='event';
-if (GETPOST("format",'alpha')) $format=GETPOST("format",'apha');
-if (GETPOST("type",'apha'))   $type=GETPOST("type",'alpha');
+if (GETPOST("format", 'alpha')) $format=GETPOST("format", 'apha');
+if (GETPOST("type", 'apha'))   $type=GETPOST("type", 'alpha');
 
 $filters=array();
-if (GETPOST("year",'int')) 	         $filters['year']=GETPOST("year",'int');
-if (GETPOST("id",'int'))             $filters['id']=GETPOST("id",'int');
-if (GETPOST("idfrom",'int'))         $filters['idfrom']=GETPOST("idfrom",'int');
-if (GETPOST("idto",'int'))           $filters['idto']=GETPOST("idto",'int');
-if (GETPOST("project",'apha'))       $filters['project']=GETPOST("project",'apha');
-if (GETPOST("logina",'apha'))        $filters['logina']=GETPOST("logina",'apha');
-if (GETPOST("logint",'apha'))        $filters['logint']=GETPOST("logint",'apha');
-if (GETPOST("notactiontype",'apha')) $filters['notactiontype']=GETPOST("notactiontype",'apha');
-if (GETPOST("actiontype",'apha'))    $filters['actiontype']=GETPOST("actiontype",'apha');
-if (GETPOST("notolderthan",'int'))   $filters['notolderthan']=GETPOST("notolderthan","int");
+if (GETPOST("year", 'int')) 	      $filters['year']=GETPOST("year", 'int');
+if (GETPOST("id", 'int'))             $filters['id']=GETPOST("id", 'int');
+if (GETPOST("idfrom", 'int'))         $filters['idfrom']=GETPOST("idfrom", 'int');
+if (GETPOST("idto", 'int'))           $filters['idto']=GETPOST("idto", 'int');
+if (GETPOST("project", 'apha'))       $filters['project']=GETPOST("project", 'apha');
+if (GETPOST("logina", 'apha'))        $filters['logina']=GETPOST("logina", 'apha');
+if (GETPOST("logint", 'apha'))        $filters['logint']=GETPOST("logint", 'apha');
+if (GETPOST("notactiontype", 'apha')) $filters['notactiontype']=GETPOST("notactiontype", 'apha');
+if (GETPOST("actiontype", 'apha'))    $filters['actiontype']=GETPOST("actiontype", 'apha');
+if (GETPOST("notolderthan", 'int'))   $filters['notolderthan']=GETPOST("notolderthan", "int");
 else $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
@@ -95,15 +97,29 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 	exit;
 }
 
-// Check exportkey
-if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"])
-{
-	$user->getrights();
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('agendaexport'));
 
+$reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
+if ($reshook < 0){
 	llxHeaderVierge();
-	print '<div class="error">Bad value for key.</div>';
+	if(!empty($hookmanager->errors) && is_array($hookmanager->errors)){
+		print '<div class="error">'.implode('<br/>', $hookmanager->errors).'</div>';
+	}else{
+		print '<div class="error">'.$hookmanager->error.'</div>';
+	}
 	llxFooterVierge();
-	exit;
+}
+elseif(empty($reshook)) {
+	// Check exportkey
+	if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
+		$user->getrights();
+
+		llxHeaderVierge();
+		print '<div class="error">Bad value for key.</div>';
+		llxFooterVierge();
+		exit;
+	}
 }
 
 
@@ -133,7 +149,7 @@ if ($shortfilename=='dolibarrcalendar')
 	$langs->load("main");
 	$langs->load("errors");
 	llxHeaderVierge();
-    print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
+    print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
 	exit;
 }
@@ -143,10 +159,12 @@ $agenda=new ActionComm($db);
 $cachedelay=0;
 if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) $cachedelay=$conf->global->MAIN_AGENDA_EXPORT_CACHE;
 
+$exportholidays = GETPOST('includeholidays', 'int');
+
 // Build file
 if ($format == 'ical' || $format == 'vcal')
 {
-	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0)
 	{
 		$attachment = true;
@@ -181,7 +199,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 if ($format == 'rss')
 {
-	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0)
 	{
 		$attachment = false;
@@ -206,7 +224,7 @@ if ($format == 'rss')
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
 
-	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
 	else

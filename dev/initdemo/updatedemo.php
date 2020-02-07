@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * Get a distant dump file and load it into a mysql database
  */
@@ -41,9 +41,9 @@ if (! $res && file_exists($path."../../htdocs/master.inc.php")) $res=@include $p
 if (! $res && file_exists("../master.inc.php")) $res=@include "../master.inc.php";
 if (! $res && file_exists("../../master.inc.php")) $res=@include "../../master.inc.php";
 if (! $res && file_exists("../../../master.inc.php")) $res=@include "../../../master.inc.php";
-if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include $path."../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
-if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include "../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
-if (! $res) die ("Failed to include master.inc.php file\n");
+if (! $res && preg_match('/\/nltechno([^\/]*)\//', $_SERVER["PHP_SELF"], $reg)) $res=@include $path."../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
+if (! $res && preg_match('/\/nltechno([^\/]*)\//', $_SERVER["PHP_SELF"], $reg)) $res=@include "../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
+if (! $res) die("Failed to include master.inc.php file\n");
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 

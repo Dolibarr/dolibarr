@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,7 +46,7 @@ function blockedlogadmin_prepare_head()
 	$b=new BlockedLog($db);
 	if ($b->alreadyUsed())
 	{
-		$head[$h][1].=' <span class="badge">...</span>';
+		$head[$h][1].='<span class="badge marginleftonlyshort">...</span>';
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
@@ -57,9 +57,9 @@ function blockedlogadmin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'blockedlog');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'blockedlog','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog', 'remove');
 
     return $head;
 }

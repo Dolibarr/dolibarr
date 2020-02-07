@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,13 +60,12 @@ if (! $mesg)
     $px->SetYLabel($langs->trans("NbOfOrders"));
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($filename,$fileurl);
+    $px->draw($filename, $fileurl);
 }
 
-print '<table class="border" width="100%">';
-print '<tr><td align="center">Nombre d reception par mois</td>';
-print '<td align="center">';
+print '<table class="border centpercent">';
+print '<tr><td class="center">Nombre d reception par mois</td>';
+print '<td class="center">';
 print $px->show();
 print '</td></tr>';
 print '</table>';

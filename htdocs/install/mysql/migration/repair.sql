@@ -71,6 +71,8 @@
 UPDATE llx_user set api_key = null where api_key = '';
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
+-- DELETE FROM llx_c_email_templates WHERE label = '(SendAnEMailToMember)';		-- Now it is '(SendingAnEMailToMemner)'
+
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -177,6 +179,8 @@ delete from llx_categorie_member where fk_categorie not in (select rowid from ll
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 6);
 
+-- Fix: delete orphelins in ecm_files
+delete from llx_ecm_files where src_object_type = 'expensereport' and src_object_id NOT IN (select rowid from llx_expensereport);
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
 delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
@@ -197,6 +201,20 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 
 -- Fix: delete orphelin actioncomm_resources
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
+
+
+-- Fix: delete orphelin links in llx_bank_url
+DELETE from llx_bank_url where type = 'payment' and url_id not in (select rowid from llx_paiement);
+DELETE from llx_bank_url where type = 'payment_supplier' and url_id not in (select rowid from llx_paiementfourn);
+DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid from llx_societe);
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
+
+-- Fix link on parent that were removed
+DROP table tmp_user;
+CREATE TABLE tmp_user as (select * from llx_user);
+UPDATE llx_user SET fk_user = NULL where fk_user NOT IN (select rowid from tmp_user);
+
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
@@ -376,6 +394,16 @@ update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_ur
 drop table tmp_bank_url_expense_user;
 
 
+-- Delete duplicate accounting account, but only if not used
+DROP TABLE tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
+--SELECT * from tmp_llx_accouting_account;
+DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
 -- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
 
 
@@ -390,6 +418,7 @@ drop table tmp_bank_url_expense_user;
 -- p.tva_tx = 0
 -- where price = 17.5
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
@@ -442,12 +471,24 @@ update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product
 update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
  
- 
+
+DELETE FROM llx_mrp_production where qty = 0;
+
+
 UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
 
  
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
+UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
+
+
+-- Note to make all deposit as payed when there is already a discount generated from it.
+--drop table tmp_invoice_deposit_mark_as_available;
+--create table tmp_invoice_deposit_mark_as_available as select * from llx_facture as f where f.type = 3 and f.paye = 0 and f.rowid in (select fk_facture_source from llx_societe_remise_except);
+--update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
 
 
 
