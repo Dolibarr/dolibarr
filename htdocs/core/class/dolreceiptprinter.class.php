@@ -709,13 +709,13 @@ class dolReceiptPrinter extends Printer
                         $this->printer->setEmphasis(false);
                         break;
 					case 'DOL_DOUBLE_HEIGHT':
-                        $this->printer->setTextSize(1,2);
+                        $this->printer->setTextSize(1, 2);
                         break;
 					case 'DOL_DOUBLE_WIDTH':
-                        $this->printer->setTextSize(2,1);
+                        $this->printer->setTextSize(2, 1);
                         break;
 					case 'DOL_DEFAULT_HEIGHT_WIDTH':
-                        $this->printer->setTextSize(1,1);
+                        $this->printer->setTextSize(1, 1);
                         break;
 					case 'DOL_UNDERLINE':
                         $this->printer->setUnderline(true);
@@ -833,4 +833,3 @@ class dolReceiptPrinter extends Printer
         return $error;
     }
 }
-
