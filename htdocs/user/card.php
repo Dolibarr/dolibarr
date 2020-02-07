@@ -2147,7 +2147,7 @@ else
 			print '<td>';
 			if ($user->admin && !$object->ldap_sid)
 			{
-				print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$object->login.'">';
+				print '<input size="24" maxlength="50" type="text" class="flat" name="login" value="'.$object->login.'">';
 			}
 			else
 			{
@@ -2173,7 +2173,7 @@ else
 			{
 				if ($caneditpassword)
 				{
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input size="24" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
 				}
 				else
 				{
