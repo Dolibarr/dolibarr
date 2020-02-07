@@ -36,12 +36,35 @@ if (! empty($extrafieldsobjectkey) && ! empty($search_array_options) && is_array
 		elseif ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
 		{
 			$mode_search=0;
-			if (in_array($typ, array('int','double','real'))) $mode_search=1;						// Search on a numeric
+			$appendit = true;
+			if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
 			if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
 			if (in_array($typ, array('chkbxlst','checkbox'))) $mode_search=4;	                            // Search on a multiselect field with sql type = text
+			if (in_array($typ, array ('select')))
+			{
+				// to get the name of the extrafield we have to remove "search_options_", therefore we start at pos 15
+				$text = $extrafields->attributes[$extrafieldsobjectkey]['param'][substr($key, 15)]['options'];
+				$resstr = "";
+				foreach ($text as $tkey => $tval)
+				{
+					if(stripos($tval, $crit) !== false)
+					{
+						$resstr = (!$resstr ? $tkey : $resstr . ',' . $tkey);
+						$mode_search = 2;
+					}
+				}
+				$crit = $resstr;
+				if (!$crit)
+				{
+					// to avoid SQL Error
+					$appendit = false;
+					$sql .= "AND 0 ";
+				}
+			}
+
 			if (is_array($crit)) $crit = implode(' ', $crit); // natural_search() expects a string
 
-			$sql .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
+			if ($appendit) $sql .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
 		}
 	}
 }
