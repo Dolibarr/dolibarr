@@ -134,3 +134,24 @@ ALTER TABLE llx_c_country ADD COLUMN eec integer;
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI','UK');
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG18-ASSOC', 'French foundation chart of accounts 2018', 1);
+
+
+
+create table llx_c_ticket_resolution
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
+  code			varchar(32)				NOT NULL,
+  pos			varchar(32)				NOT NULL,
+  label			varchar(128)			NOT NULL,
+  active		integer DEFAULT 1,
+  use_default	integer DEFAULT 1,
+  description	varchar(255)
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_ticket_resolution ADD UNIQUE INDEX uk_code (code, entity);
+
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('SOLVED',   '10', 'Solved',    1, 0, NULL);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('CANCELED', '50', 'Canceled',  1, 0, NULL);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('OTHER',    '90', 'Other',     1, 0, NULL);
+
