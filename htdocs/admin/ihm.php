@@ -83,7 +83,7 @@ if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", $_POST["MAIN_LANG_DEFAULT"], 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV+1, 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME", $_POST["main_theme"], 'chaine', 0, '', $conf->entity);
 
@@ -227,7 +227,7 @@ print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 clearstatcache();
@@ -241,13 +241,15 @@ print '</tr>';
 // Default language
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 2);
+print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Multilingual GUI
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-print $form->selectyesno('MAIN_MULTILANGS', $conf->global->MAIN_MULTILANGS, 1);
+//print $form->selectyesno('MAIN_MULTILANGS', $conf->global->MAIN_MULTILANGS, 1);
+print ajax_constantonoff('MAIN_MULTILANGS');
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -375,6 +377,7 @@ print '</table>'."\n";
 print '<br>';
 
 // Other
+print '<div class="div-table-responsive-no-min">';
 print '<table summary="edit" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LoginPage").'</td><td></td>';
 print '<td width="20">&nbsp;</td>';
@@ -425,7 +428,7 @@ print '</div>';
 print '</td></tr>';
 
 print '</table>'."\n";
-
+print '</div>';
 
 print '<br>';
 print '<div class="center">';

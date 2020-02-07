@@ -174,36 +174,36 @@ $checkedprofid6 = 0;
 $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields = array(
-	's.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0)),
-	's.nom'=>array('label'=>"ThirdPartyName", 'checked'=>1),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
-	's.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled))),
-	's.code_client'=>array('label'=>"CustomerCodeShort", 'checked'=>$checkedcustomercode),
-	's.code_fournisseur'=>array('label'=>"SupplierCodeShort", 'checked'=>$checkedsuppliercode, 'enabled'=>(!empty($conf->fournisseur->enabled))),
-	's.code_compta'=>array('label'=>"CustomerAccountancyCodeShort", 'checked'=>$checkedcustomeraccountcode),
-	's.code_compta_fournisseur'=>array('label'=>"SupplierAccountancyCodeShort", 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(!empty($conf->fournisseur->enabled))),
-	's.town'=>array('label'=>"Town", 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1),
-	'state.nom'=>array('label'=>"State", 'checked'=>0),
-	'region.nom'=>array('label'=>"Region", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
-	's.email'=>array('label'=>"Email", 'checked'=>0),
-	's.url'=>array('label'=>"Url", 'checked'=>0),
-	's.phone'=>array('label'=>"Phone", 'checked'=>1),
-	's.fax'=>array('label'=>"Fax", 'checked'=>0),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
-	'staff.code'=>array('label'=>"Staff", 'checked'=>0),
-	's.siren'=>array('label'=>"ProfId1Short", 'checked'=>$checkedprofid1),
-	's.siret'=>array('label'=>"ProfId2Short", 'checked'=>$checkedprofid2),
-	's.ape'=>array('label'=>"ProfId3Short", 'checked'=>$checkedprofid3),
-	's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
-	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
-	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
-	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'checked'=>1),
-	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
-	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
-    's2.nom'=>array('label'=>'ParentCompany', 'checked'=>0),
+	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0)),
+	's.nom'=>array('label'=>"ThirdPartyName", 'position'=>2, 'checked'=>1),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>3, 'checked'=>1),
+	's.barcode'=>array('label'=>"Gencod", 'position'=>5, 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled))),
+	's.code_client'=>array('label'=>"CustomerCodeShort", 'position'=>10, 'checked'=>$checkedcustomercode),
+	's.code_fournisseur'=>array('label'=>"SupplierCodeShort", 'position'=>11, 'checked'=>$checkedsuppliercode, 'enabled'=>(!empty($conf->fournisseur->enabled))),
+	's.code_compta'=>array('label'=>"CustomerAccountancyCodeShort", 'position'=>13, 'checked'=>$checkedcustomeraccountcode),
+	's.code_compta_fournisseur'=>array('label'=>"SupplierAccountancyCodeShort", 'position'=>14, 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(!empty($conf->fournisseur->enabled))),
+	's.town'=>array('label'=>"Town", 'position'=>20, 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'position'=>21, 'checked'=>1),
+	'state.nom'=>array('label'=>"State", 'position'=>22, 'checked'=>0),
+	'region.nom'=>array('label'=>"Region", 'position'=>23, 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'position'=>24, 'checked'=>0),
+	's.email'=>array('label'=>"Email", 'position'=>25, 'checked'=>0),
+	's.url'=>array('label'=>"Url", 'position'=>26, 'checked'=>0),
+	's.phone'=>array('label'=>"Phone", 'position'=>27, 'checked'=>1),
+	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
+	'staff.code'=>array('label'=>"Staff", 'position'=>30, 'checked'=>0),
+	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
+	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
+	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
+	's.idprof4'=>array('label'=>"ProfId4Short", 'position'=>43, 'checked'=>$checkedprofid4),
+	's.idprof5'=>array('label'=>"ProfId5Short", 'position'=>44, 'checked'=>$checkedprofid5),
+	's.idprof6'=>array('label'=>"ProfId6Short", 'position'=>45, 'checked'=>$checkedprofid6),
+	's.tva_intra'=>array('label'=>"VATIntraShort", 'position'=>50, 'checked'=>0),
+	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'position'=>61, 'checked'=>1),
+	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'position'=>62, 'checked'=>$checkprospectlevel),
+	's.fk_stcomm'=>array('label'=>"StatusProsp", 'position'=>63, 'checked'=>$checkstcomm),
+	's2.nom'=>array('label'=>'ParentCompany', 'position'=>64, 'checked'=>0),
 	's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -231,7 +231,24 @@ if ($action == "change")	// Change customer for TakePOS
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
 
-    // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
+    // Check if draft invoice already exists, if not create it
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
+	$result = $db->query($sql);
+	$num_lines = $db->num_rows($result);
+	if ($num_lines==0)
+	{
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		$invoice = new Facture($db);
+		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+		$invoice->socid = $conf->global->$constforthirdpartyid;
+		$invoice->date = dol_now();
+		$invoice->module_source = 'takepos';
+		$invoice->pos_source = $_SESSION["takeposterminal"];
+		$placeid =$invoice->create($user);
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$db->query($sql);
+	}
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     ?>
@@ -597,7 +614,7 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -932,7 +949,7 @@ if (!empty($arrayfields['s.import_key']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre center">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -1013,7 +1030,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';
@@ -1203,14 +1220,14 @@ while ($i < min($num, $limit))
 		}
 		if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			if ($s) $s .= " / ";
+			if ($s) $s .= ", ";
 			$companystatic->name = $langs->trans("Prospect");
 	  		$companystatic->name_alias = '';
 			$s .= $companystatic->getNomUrl(0, 'prospect', 0, 1);
 		}
 		if ((!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled)) && $obj->fournisseur)
 		{
-			if ($s) $s .= " / ";
+			if ($s) $s .= ", ";
 			$companystatic->name = $langs->trans("Supplier");
 	  		$companystatic->name_alias = '';
 			$s .= $companystatic->getNomUrl(0, 'supplier', 0, 1);

@@ -32,7 +32,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -41,11 +41,11 @@ if (empty($object) || ! is_object($object))
 
 global $forceall;
 
-if (empty($forceall)) $forceall=0;
+if (empty($forceall)) $forceall = 0;
 
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Columns: total ht + col edit + col delete
+$colspan = 3; // Columns: total ht + col edit + col delete
 
 // Lines for extrafield
 $objectline = new BOMLine($this->db);
@@ -67,7 +67,7 @@ $coldisplay++;
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
+	<input type="hidden" id="product_id" name="productid" value="<?php echo (!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
@@ -138,7 +138,7 @@ print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
 
 print "<!-- END PHP TEMPLATE objectline_edit.tpl.php -->\n";

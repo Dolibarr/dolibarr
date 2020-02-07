@@ -77,7 +77,7 @@ $entity=$conf->entity;
 $hookmanager->initHooks(array('usercard','userperms','globalcard'));
 
 
-/**
+/*
  * Actions
  */
 
@@ -89,9 +89,13 @@ if (empty($reshook)) {
 	if ($action == 'addrights' && $caneditperms) {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
-		$edituser->addrights($rights, $module, '', $entity);
+		$result = $edituser->addrights($rights, $module, '', $entity);
+		if ($result < 0)
+		{
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
 
-		// Si on a touche a ses propres droits, on recharge
+		// If we are changing our own permissions, we reload
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -105,9 +109,13 @@ if (empty($reshook)) {
 	if ($action == 'delrights' && $caneditperms) {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
-		$edituser->delrights($rights, $module, '', $entity);
+		$result = $edituser->delrights($rights, $module, '', $entity);
+		if ($result < 0)
+		{
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
 
-		// Si on a touche a ses propres droits, on recharge
+		// If we are changing our own permissions, we reload
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -120,7 +128,7 @@ if (empty($reshook)) {
 }
 
 
-/**
+/*
  *	View
  */
 
@@ -167,7 +175,7 @@ foreach($modulesdir as $dir)
     	            // Load all permissions
     	            if ($objMod->rights_class)
     	            {
-    	                $ret=$objMod->insert_permissions(0, $entity);
+    	                $ret = $objMod->insert_permissions(0, $entity);
     	                $modules[$objMod->rights_class]=$objMod;
     	                //print "modules[".$objMod->rights_class."]=$objMod;";
     	            }
@@ -263,8 +271,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 
 print "\n";
-print '<div class="div-table-responsive">';
-print '<table width="100%" class="noborder">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
@@ -287,7 +296,7 @@ $sql = "SELECT r.id, r.libelle as label, r.module, r.module_position";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
 $sql.= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result=$db->query($sql);
@@ -362,7 +371,9 @@ if ($result)
 		print '<tr class="oddeven">';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName().'</td>';
+		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+		print '</td>';
 
         // Permission and tick
         if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission granted because admin
@@ -385,7 +396,6 @@ if ($result)
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
-
         elseif (is_array($permsgroupbyentity[$entity]))
         {
         	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group

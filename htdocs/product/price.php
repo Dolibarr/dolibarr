@@ -838,7 +838,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			if (preg_match('/editlabelsellingprice/', $action))
 			{
 			    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="token" value="'.newToken().'">';
 			    print '<input type="hidden" name="action" value="setlabelsellingprice">';
 			    print '<input type="hidden" name="pricelevel" value="'.$i.'">';
 			    print $langs->trans("SellingPrice").' '.$i.' - ';
@@ -1274,7 +1274,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '</td>';
 		print '</tr>';
 
-		$parameters = array('colspan' => 2);
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 		print '</table>';
@@ -1317,7 +1317,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		<?php
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1350,7 +1350,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		{
 			print '<tr class="oddeven">';
 			print '<td>';
-			print $form->textwithpicto($langs->trans('SellingPrice').' '.$i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			$text = $langs->trans('SellingPrice').' '.$i;
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
 
 			// VAT
@@ -1580,7 +1581,13 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     			print '</td>';
 
     			// User
-    			print '<td class="right"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objp->login.'</a></td>';
+    			print '<td class="right">';
+    			if ($objp->user_id > 0) {
+	    			$userstatic = new User($db);
+	    			$userstatic->fetch($objp->user_id);
+	    			print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
+    			}
+    			print '</td>';
 
     			// Action
     			if ($user->rights->produit->supprimer)
@@ -1944,7 +1951,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				$userstatic = new User($db);
 				$userstatic->fetch($line->fk_user);
 				print '<td class="right">';
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
+				//print $userstatic->getLoginUrl(1);
 				print '</td>';
 				print '</tr>';
 			}
@@ -2153,7 +2161,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				$userstatic = new User($db);
 				$userstatic->fetch($line->fk_user);
 				print '<td class="right">';
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
 				print '</td>';
 
 				// Todo Edit or delete button

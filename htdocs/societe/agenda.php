@@ -58,8 +58,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep,a.id';
-if (! $sortorder) $sortorder='DESC,DESC';
+if (!$sortfield) $sortfield = 'a.datep,a.id';
+if (!$sortorder) $sortorder = 'DESC,DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
@@ -69,14 +69,14 @@ $hookmanager->initHooks(array('agendathirdparty'));
  *	Actions
  */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -85,8 +85,8 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
-        $actioncode='';
-        $search_agenda_label='';
+        $actioncode = '';
+        $search_agenda_label = '';
     }
 }
 
@@ -134,16 +134,16 @@ if ($socid > 0)
 
 	// Actions buttons
 
-    $objthirdparty=$object;
-    $objcon=new stdClass();
+    $objthirdparty = $object;
+    $objcon = new stdClass();
 
-    $out='';
-    $permok=$user->rights->agenda->myactions->create;
-    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
+    $out = '';
+    $permok = $user->rights->agenda->myactions->create;
+    if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok)
     {
         //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
-        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
+        if (get_class($objthirdparty) == 'Societe') $out .= '&amp;socid='.$objthirdparty->id;
+        $out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
     	//$out.=$langs->trans("AddAnAction").' ';
     	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
     	//$out.="</a>";

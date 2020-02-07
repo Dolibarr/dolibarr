@@ -71,7 +71,7 @@ $coldisplay++;
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
+	<input type="hidden" id="product_id" name="productid" value="<?php echo (!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
@@ -81,7 +81,7 @@ $coldisplay++;
 		?>
 		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 		<?php
-		if ($line->product_type==1) echo img_object($langs->trans('ShowService'), 'service');
+		if ($line->product_type == 1) echo img_object($langs->trans('ShowService'), 'service');
 		else print img_object($langs->trans('ShowProduct'), 'product');
 		echo ' '.$line->ref;
 		?>
@@ -98,28 +98,28 @@ $coldisplay++;
 	if (is_object($hookmanager))
 	{
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	    $parameters=array('line'=>$line,'fk_parent_line'=>$fk_parent_line,'var'=>$var,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer);
-	    $reshook=$hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
+	    $parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+	    $reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
 	// Do not allow editing during a situation cycle
-	if ($line->fk_prev_id == null )
+	if ($line->fk_prev_id == null)
 	{
-		// editeur wysiwyg
+		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$nbrows=ROWS_2;
-		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-		$enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
-		$toolbarname='dolibarr_details';
-		if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-		$doleditor=new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?164:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
+		$nbrows = ROWS_2;
+		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		$toolbarname = 'dolibarr_details';
+		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname = 'dolibarr_notes';
+		$doleditor = new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
-		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
+		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">'.$line->description.'</textarea>';
 	}
 
 	// Show autofill date for recuring invoices
-	if (! empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec')
+	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec')
 	{
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
@@ -143,13 +143,13 @@ $coldisplay++;
 
 	$coldisplay++;
 	if ($line->fk_prev_id == null) {
-		print '<td class="right">' . $form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
+		print '<td class="right">'.$form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : ''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1).'</td>';
 	} else {
-		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
+		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
 
 	$coldisplay++;
-	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht, 0, '', 0):price($line->subprice, 0, '', 0)) . '"';
+	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="'.(isset($line->pu_ht) ?price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0)).'"';
 	if ($line->fk_prev_id != null) print ' readonly';
 	print '></td>';
 
@@ -161,7 +161,7 @@ $coldisplay++;
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
-		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc, 0, '', 0):'').'"';
+		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc) ?price($line->pu_ttc, 0, '', 0) : '').'"';
 		if ($line->fk_prev_id != null) print ' readonly';
 		print '></td>';
 	}
@@ -173,8 +173,8 @@ $coldisplay++;
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="' . $line->qty . '"';
-		if ($line->fk_prev_id != null ) print ' readonly';
+		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'"';
+		if ($line->fk_prev_id != null) print ' readonly';
 		print '>';
 	} else { ?>
 		&nbsp;
@@ -182,7 +182,7 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if($conf->global->PRODUCT_USE_UNITS)
+	if ($conf->global->PRODUCT_USE_UNITS)
 	{
 	    $coldisplay++;
 		print '<td class="left">';
@@ -204,11 +204,11 @@ $coldisplay++;
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$line->situation_percent.'" name="progress">%</td>';
 		$coldisplay++;
 		print '<td></td>';
 	}
-	if (! empty($usemargins))
+	if (!empty($usemargins))
 	{
         if (!empty($user->rights->margins->creer))
         {
@@ -225,9 +225,9 @@ $coldisplay++;
 		<?php }
 
         if ($user->rights->margins->creer) {
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				$margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate", "alpha", 2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
+				$margin_rate = (isset($_POST["np_marginRate"]) ?GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -235,9 +235,9 @@ $coldisplay++;
 					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
-			elseif (! empty($conf->global->DISPLAY_MARK_RATES))
+			elseif (!empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				$mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):price($line->marque_tx));
+				$mark_rate = (isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -250,7 +250,7 @@ $coldisplay++;
 	?>
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
-	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay+=$colspan; ?>
+	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
@@ -327,7 +327,7 @@ jQuery(document).ready(function()
 	});
 
     <?php
-    if (! empty($conf->margin->enabled))
+    if (!empty($conf->margin->enabled))
     {
         ?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
@@ -357,7 +357,7 @@ jQuery(document).ready(function()
 		});
 
 		/* Init field buying_price and fournprice */
-		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>}, function(data) {
           if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;

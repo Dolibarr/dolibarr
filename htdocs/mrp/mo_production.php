@@ -47,11 +47,16 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 dol_include_once('/mrp/class/mo.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "other"));
+$langs->loadLangs(array("mrp", "stocks", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -62,6 +67,8 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 //$lineid   = GETPOST('lineid', 'int');
+
+$collapse = GETPOST('collapse', 'aZ09comma');
 
 // Initialize technical objects
 $object = new Mo($db);
@@ -88,7 +95,7 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mrp', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
@@ -97,13 +104,13 @@ $permissionnote = $user->rights->mrp->write; // Used by the include of actions_s
 $permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$upload_dir = $conf->mrp->multidir_output[isset($object->entity)?$object->entity:1];
+$upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
+
+$permissiontoproduce = $permissiontoadd;
 
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters = array();
@@ -119,7 +126,7 @@ if (empty($reshook))
     if (empty($backtopage) || ($cancel && empty($id))) {
     	//var_dump($backurlforlist);exit;
     	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    	else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
+    	else $backtopage = DOL_URL_ROOT.'/mrp/mo_production.php?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -133,7 +140,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Actions to send emails
-    $trigger_name = 'MO_SENTBYMAIL';
+    $triggersendname = 'MO_SENTBYMAIL';
     $autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
     $trackid = 'mo'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -149,8 +156,214 @@ if (empty($reshook))
     {
     	$object->setProject(GETPOST('projectid', 'int'));
     }
-}
 
+    if ($action == 'confirm_reopen') {
+    	$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
+    }
+
+    if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall'))) {
+    	$stockmove = new MouvementStock($db);
+
+    	$labelmovement = GETPOST('inventorylabel', 'alphanohtml');
+    	$codemovement  = GETPOST('inventorycode', 'alphanohtml');
+
+    	$db->begin();
+
+    	// Process line to consume
+    	foreach ($object->lines as $line) {
+    		if ($line->role == 'toconsume') {
+    			$tmpproduct = new Product($db);
+    			$tmpproduct->fetch($line->fk_product);
+
+    			$i = 1;
+    			while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
+    				$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
+
+    				if ($qtytoprocess != 0) {
+						// Check warehouse is set if we should have to
+	    				if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
+	    					if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
+		    					$langs->load("errors");
+	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+	    						$error++;
+	    					}
+	    					if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
+	    						$langs->load("errors");
+	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+	    						$error++;
+	    					}
+	    				}
+
+	    				$idstockmove = 0;
+	    				if (!$error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
+	    					// Record stock movement
+	    					$id_product_batch = 0;
+	    					$stockmove->origin = $object;
+	    					$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+	    					if ($idstockmove < 0) {
+	    						$error++;
+	    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+	    					}
+	    				}
+
+	    				if (!$error) {
+	    					$pos = 0;
+	    					// Record consumption
+	    					$moline = new MoLine($db);
+	    					$moline->fk_mo = $object->id;
+	    					$moline->position = $pos;
+	    					$moline->fk_product = $line->fk_product;
+	    					$moline->fk_warehouse = GETPOST('idwarehouse-'.$line->id.'-'.$i);
+	    					$moline->qty = $qtytoprocess;
+	    					$moline->batch = GETPOST('batch-'.$line->id.'-'.$i);
+	    					$moline->role = 'consumed';
+	    					$moline->fk_mrp_production = $line->id;
+	    					$moline->fk_stock_movement = $idstockmove;
+	    					$moline->fk_user_creat = $user->id;
+
+	    					$resultmoline = $moline->create($user);
+	    					if ($resultmoline <= 0) {
+	    						$error++;
+	    						setEventMessages($moline->error, $moline->errors, 'errors');
+	    					}
+
+	    					$pos++;
+	    				}
+	    			}
+
+    				$i++;
+    			}
+    		}
+    	}
+
+    	// Process line to produce
+    	foreach ($object->lines as $line) {
+    		if ($line->role == 'toproduce') {
+    			$tmpproduct = new Product($db);
+    			$tmpproduct->fetch($line->fk_product);
+
+    			$i = 1;
+    			while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
+    				$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
+
+    				if ($qtytoprocess != 0) {
+	    				// Check warehouse is set if we should have to
+	    				if (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
+	    					if (!(GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
+	    						$langs->load("errors");
+	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+	    						$error++;
+	    					}
+	    					if ($tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
+	    						$langs->load("errors");
+	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+	    						$error++;
+	    					}
+	    				}
+
+	    				$idstockmove = 0;
+	    				if (!$error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
+	    					// Record stock movement
+	    					$id_product_batch = 0;
+	    					$stockmove->origin = $object;
+	    					$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+	    					if ($idstockmove < 0) {
+	    						$error++;
+	    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+	    					}
+	    				}
+
+	    				if (!$error) {
+	    					$pos = 0;
+							// Record production
+	    					$moline = new MoLine($db);
+	    					$moline->fk_mo = $object->id;
+	    					$moline->position = $pos;
+	    					$moline->fk_product = $line->fk_product;
+	    					$moline->fk_warehouse = GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i);
+	    					$moline->qty = $qtytoprocess;
+	    					$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
+	    					$moline->role = 'produced';
+	    					$moline->fk_mrp_production = $line->id;
+	    					$moline->fk_stock_movement = $idstockmove;
+	    					$moline->fk_user_creat = $user->id;
+
+	    					$resultmoline = $moline->create($user);
+	    					if ($resultmoline <= 0) {
+	    						$error++;
+	    						setEventMessages($moline->error, $moline->errors, 'errors');
+	    					}
+
+	    					$pos++;
+	    				}
+    				}
+
+    				$i++;
+    			}
+    		}
+    	}
+
+    	if (!$error) {
+    		$consumptioncomplete = true;
+    		$productioncomplete = true;
+
+    		if (GETPOST('autoclose', 'int')) {
+	    		foreach ($object->lines as $line) {
+	    			if ($line->role == 'toconsume') {
+	    				$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
+	    				$alreadyconsumed = 0;
+	    				foreach ($arrayoflines as $line2) {
+	    					$alreadyconsumed += $line2['qty'];
+	    				}
+
+	    				if ($alreadyconsumed < $line->qty) {
+	    					$consumptioncomplete = false;
+	    				}
+	    			}
+	    			if ($line->role == 'toproduce') {
+	    				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
+	    				$alreadyproduced = 0;
+	    				foreach ($arrayoflines as $line2) {
+	    					$alreadyproduced += $line2['qty'];
+	    				}
+
+	    				if ($alreadyproduced < $line->qty) {
+	    					$productioncomplete = false;
+	    				}
+	    			}
+	    		}
+    		}
+    		else {
+    			$consumptioncomplete = false;
+    			$productioncomplete = false;
+    		}
+
+    		// Update status of MO
+    		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
+    		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
+    		if ($consumptioncomplete && $productioncomplete) {
+    			$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+    		} else {
+    			$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
+    		}
+    		if ($result <= 0) {
+    			$error++;
+    			setEventMessages($object->error, $object->errors, 'errors');
+    		}
+    	}
+
+    	if ($error) {
+    		$action = str_replace('confirm_', '', $action);
+    		$db->rollback();
+    	} else {
+    		$db->commit();
+
+    		// Redirect to avoid to action done a second time if we make a back from browser
+    		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+    		exit;
+    	}
+    }
+}
 
 
 
@@ -159,8 +372,10 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
-$formfile = new FormFile($db);
 $formproject = new FormProjets($db);
+$formproduct = new FormProduct($db);
+$tmpwarehouse = new Entrepot($db);
+$tmpbatch = new Productlot($db);
 
 llxHeader('', $langs->trans('Mo'), '');
 
@@ -227,7 +442,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -260,7 +475,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref .= $formproject->select_projects($object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
@@ -306,115 +521,374 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_fiche_end();
 
 
+	if (! in_array($action, array('consumeorproduce', 'consumeandproduceall')))
+	{
+		print '<div class="tabsAction">';
+
+		$parameters = array();
+		// Note that $action and $object may be modified by hook
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+		if (empty($reshook)) {
+			// Consume or produce
+			if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
+				if ($permissiontoproduce) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=consumeorproduce">'.$langs->trans('ConsumeOrProduce').'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ConsumeOrProduce').'</a>';
+				}
+			} elseif ($object->status == Mo::STATUS_DRAFT) {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateBefore").'">'.$langs->trans('ConsumeOrProduce').'</a>';
+			}
+
+			// ConsumeAndProduceAll
+			if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
+				if ($permissiontoproduce) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=consumeandproduceall">'.$langs->trans('ConsumeAndProduceAll').'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ConsumeAndProduceAll').'</a>';
+				}
+			} elseif ($object->status == Mo::STATUS_DRAFT) {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateBefore").'">'.$langs->trans('ConsumeAndProduceAll').'</a>';
+			}
+
+			// Reopen
+			if ($object->status == Mo::STATUS_PRODUCED) {
+				if ($permissiontoproduce) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen">'.$langs->trans('ReOpen').'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ReOpen').'</a>';
+				}
+			}
+		}
+
+		print '</div>';
+	}
+
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall')))
+	{
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="confirm_'.$action.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+
+		$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
+		//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+		$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
+
+		print '<div class="center">';
+		print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
+		print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
+		print $langs->trans("InventoryCode").': <input type="text" class="maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
+		print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
+		print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
+		print ' &nbsp; ';
+		print '<input class="button" type="submit" value="'.$langs->trans("Cancel").'" name="cancel">';
+		print '</div>';
+		print '<br>';
+	}
+
+
 	/*
 	 * Lines
 	 */
+	$collapse = 1;
 
 	if (!empty($object->table_element_line))
 	{
     	// Show object lines
-    	$result = $object->getLinesArray();
+    	//$result = $object->getLinesArray();
+    	$object->fetchLines();
 
-    	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-    	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
-    	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-    	<input type="hidden" name="mode" value="">
-    	<input type="hidden" name="id" value="' . $object->id.'">
-    	';
+    	print '<div class="fichecenter">';
+    	print '<div class="fichehalfleft">';
+    	print '<div class="clearboth"></div>';
 
-    	if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-    	    include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
-    	}
+    	print load_fiche_titre($langs->trans('Consumption'), '', '');
 
     	print '<div class="div-table-responsive-no-min">';
-    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-    	{
-    	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+    	print '<table id="tablelines" class="noborder noshadow centpercent'.' nobottom'.'">';
+
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("Product").'</td>';
+    	print '<td class="right">'.$langs->trans("Qty").'</td>';
+    	print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
+    	print '<td>';
+    	if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
+    	print '</td>';
+    	if ($conf->productbatch->enabled) {
+    		print '<td>';
+    		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Batch");
+    		print '</td>';
     	}
+    	print '</tr>';
 
     	if (!empty($object->lines))
     	{
-    		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/mrp/tpl');
-    	}
+    		$nblinetoconsume = 0;
+    		foreach($object->lines as $line) {
+    			if ($line->role == 'toconsume') {
+    				$nblinetoconsume++;
+    			}
+    		}
 
-    	// Form to add new line
-    	if ($object->status == 0 && $permissiontoadd && $action != 'selectlines')
-    	{
-    	    if ($action != 'editline')
-    	    {
-    	        // Add products/services form
-    	    	$object->formAddObjectLine(1, $mysoc, $soc, '/mrp/tpl');
+    		$nblinetoconsumecursor = 0;
+    		foreach($object->lines as $line) {
+    	    	if ($line->role == 'toconsume') {
+    	    		$nblinetoconsumecursor++;
 
-    	        $parameters = array();
-    	        $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    	    		$tmpproduct = new Product($db);
+    	    		$tmpproduct->fetch($line->fk_product);
+
+    	    		$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
+    	    		$alreadyconsumed = 0;
+    	    		foreach($arrayoflines as $line2) {
+    	    			$alreadyconsumed += $line2['qty'];
+    	    		}
+
+    	    		print '<tr>';
+    	    		print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
+    	    		print '<td class="right">';
+    	    		$help = '';
+    	    		if ($line->qty_frozen) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
+    	    		if ($line->disable_stock_change) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("DisableStockChange").'</strong>: '.yn(1).' ('.(($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")).')';
+    	    		if ($help) {
+    	    			print $form->textwithpicto($line->qty, $help, -1);
+    	    		} else {
+    	    			print $line->qty;
+    	    		}
+    	    		print '</td>';
+    	    		print '<td class="right">';
+    	    		if ($alreadyconsumed) {
+    	    			print '<script>';
+    	    			print 'jQuery(document).ready(function() {
+								jQuery("#expandtoproduce'.$line->id.'").click(function() {
+									console.log("Expand mrp_production line '.$line->id.'");
+									jQuery(".expanddetail'.$line->id.'").toggle();';
+    	    			if ($nblinetoconsume == $nblinetoconsumecursor) {	// If it is the last line
+    	    				print 'if (jQuery("#tablelines").hasClass("nobottom")) { jQuery("#tablelines").removeClass("nobottom"); } else { jQuery("#tablelines").addClass("nobottom"); }';
+    	    			}
+    	    			print '
+								});
+							});';
+    	    			print '</script>';
+    	    			if (empty($conf->use_javascript_ajax)) print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
+    	    			print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce'.$line->id.'"');
+    	    			if (empty($conf->use_javascript_ajax)) print '</a>';
+    	    		} else {
+    	    			if ($nblinetoconsume == $nblinetoconsumecursor) {	// If it is the last line
+    	    				print '<script>jQuery("#tablelines").removeClass("nobottom");</script>';
+    	    			}
+    	    		}
+    	    		print ' '.$alreadyconsumed;
+    	    		print '</td>';
+    	    		print '<td>';	// Warehouse
+    	    		print '</td>';
+    	    		if ($conf->productbatch->enabled) {
+    	    			print '<td></td>'; // Lot
+    	    		}
+    	    		print '</tr>';
+
+    	    		// Show detailed of already consumed with js code to collapse
+    	    		foreach($arrayoflines as $line2) {
+    	    			print '<tr class="expanddetail'.$line->id.' hideobject opacitylow">';
+    	    			print '<td>';
+    	    			print dol_print_date($line2['date'], 'dayhour');
+    	    			print '</td>';
+    	    			print '<td></td>';
+    	    			print '<td class="right">'.$line2['qty'].'</td>';
+    	    			print '<td>';
+    	    			if ($line2['fk_warehouse'] > 0) {
+    	    				$tmpwarehouse->fetch($line2['fk_warehouse']);
+    	    				print $tmpwarehouse->getNomUrl(1);
+    	    			}
+    	    			print '</td>';
+    	    			// Lot Batch
+    	    			print '<td>';
+    	    			if ($line2['batch'] != '') {
+    	    				$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+    	    				print $tmpbatch->getNomUrl(1);
+    	    			}
+    	    			print '</td>';
+    	    			print '</tr>';
+    	    		}
+
+    	    		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+    	    			$i = 1;
+    	    			print '<tr>';
+    	    			print '<td>'.$langs->trans("ToConsume").'</td>';
+    	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
+    	    			if ($action == 'consumeorproduce' && ! GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
+    	    			print '<td class="right"><input type="text" class="width50" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+    	    			print '<td></td>';
+    	    			print '<td>';
+    	    			if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+    	    				if (empty($line->disable_stock_change)) {
+    	    					$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : 'ifone');
+    	    					print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1);
+    	    				} else {
+    	    					print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
+    	    				}
+    	    			} else {
+    	    				print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+    	    			}
+    	    			// Lot / Batch
+    	    			print '</td>';
+    	    			if ($conf->productbatch->enabled) {
+	    	    			print '<td>';
+	    	    			if ($tmpproduct->status_batch) {
+	    	    				$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
+	    	    				print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+	    	    			}
+	    	    			print '</td>';
+    	    			}
+    	    			print '</tr>';
+    	    		}
+    	    	}
     	    }
     	}
 
-    	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-    	{
-    	    print '</table>';
-    	}
+   	    print '</table>';
     	print '</div>';
 
-    	print "</form>\n";
-	}
+		print '</div>';
+    	print '<div class="fichehalfright">';
+    	print '<div class="clearboth"></div>';
 
+    	print load_fiche_titre($langs->trans('Production'), '', '');
 
-	// Buttons for actions
-	/*
-	if ($action != 'presend' && $action != 'editline') {
-    	print '<div class="tabsAction">'."\n";
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    	print '<div class="div-table-responsive-no-min">';
+    	print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
 
-    	if (empty($reshook))
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("Product").'</td>';
+    	print '<td class="right">'.$langs->trans("Qty").'</td>';
+    	print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
+    	print '<td>';
+    	if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
+    	print '</td>';
+    	if ($conf->productbatch->enabled) {
+    		print '<td>';
+    		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Batch");
+    		print '</td>';
+    	}
+    	print '</tr>';
+
+    	if (!empty($object->lines))
     	{
-    	    // Send
-            print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
-
-            // Modify
-            if (! empty($user->rights->mrp->write))
-    		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+    		$nblinetoproduce = 0;
+    		foreach($object->lines as $line) {
+    			if ($line->role == 'toproduce') {
+    				$nblinetoproduce++;
+    			}
     		}
 
-    		// Clone
-    		if (! empty($user->rights->mrp->write))
-    		{
-    			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
-    		}
+    		$nblinetoproducecursor = 0;
+    		foreach($object->lines as $line) {
+    			if ($line->role == 'toproduce') {
+    				$nblinetoproducecursor++;
 
-    		// Delete (need delete permission, or if draft, just need create/modify permission)
-    		if (! empty($user->rights->mrp->delete) || (! empty($object->fields['status']) && $object->status == $object::STATUS_DRAFT && ! empty($user->rights->mrp->write)))
-    		{
-    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+    				$tmpproduct = new Product($db);
+    				$tmpproduct->fetch($line->fk_product);
+
+    				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
+    				$alreadyproduced = 0;
+    				foreach($arrayoflines as $line2) {
+    					$alreadyproduced += $line2['qty'];
+    				}
+
+    				print '<tr>';
+    				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
+    				print '<td class="right">'.$line->qty.'</td>';
+    				print '<td class="right">';
+    				if ($alreadyproduced) {
+    					print '<script>';
+    					print 'jQuery(document).ready(function() {
+							jQuery("#expandtoproduce'.$line->id.'").click(function() {
+								console.log("Expand mrp_production line '.$line->id.'");
+								jQuery(".expanddetailtoproduce'.$line->id.'").toggle();';
+    					if ($nblinetoproduce == $nblinetoproducecursor) {
+    						print 'if (jQuery("#tablelinestoproduce").hasClass("nobottom")) { jQuery("#tablelinestoproduce").removeClass("nobottom"); } else { jQuery("#tablelinestoproduce").addClass("nobottom"); }';
+    					}
+    					print '
+							});
+						});';
+    					print '</script>';
+    					if (empty($conf->use_javascript_ajax)) print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
+    					print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce'.$line->id.'"');
+    					if (empty($conf->use_javascript_ajax)) print '</a>';
+    				}
+    				print ' '.$alreadyproduced;
+    				print '</td>';
+    				print '<td>';	// Warehouse
+    				print '</td>';
+    				if ($conf->productbatch->enabled) {
+    					print '<td></td>'; // Lot
+    				}
+    				print '</tr>';
+
+    				// Show detailed of already consumed with js code to collapse
+    				foreach($arrayoflines as $line2) {
+    					print '<tr class="expanddetailtoproduce'.$line->id.' hideobject opacitylow">';
+    					print '<td>';
+    					print dol_print_date($line2['date'], 'dayhour');
+    					print '</td>';
+    					print '<td></td>';
+    					print '<td class="right">'.$line2['qty'].'</td>';
+    					print '<td>';
+    					if ($line2['fk_warehouse'] > 0) {
+    						$tmpwarehouse->fetch($line2['fk_warehouse']);
+    						print $tmpwarehouse->getNomUrl(1);
+    					}
+    					print '</td>';
+    					print '<td>';
+    					if ($line2['batch'] != '') {
+    						$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+    						print $tmpbatch->getNomUrl(1);
+    					}
+    					print '</td>';
+    					print '</tr>';
+    				}
+
+    				if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+    					print '<tr>';
+    					print '<td>'.$langs->trans("ToProduce").'</td>';
+    					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
+    					if ($action == 'consumeorproduce' && ! GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
+    					print '<td class="right"><input type="text" class="width50" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+    					print '<td></td>';
+    					print '<td>';
+    					if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+    						$preselected = (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i) ? GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) : ($object->fk_warehouse > 0 ? $object->fk_warehouse : 'ifone'));
+    						print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1);
+    					} else {
+    						print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+    					}
+    					print '</td>';
+    					if ($conf->productbatch->enabled) {
+    						print '<td>';
+    						if ($tmpproduct->status_batch) {
+    							$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
+    							print '<input type="text" class="width50" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+    						}
+    						print '</td>';
+    					}
+    					print '</tr>';
+    				}
+    			}
     		}
     	}
-    	print '</div>'."\n";
-	}*/
 
+    	print '</table>';
+    	print '</div>';
 
-	if ($action != 'presend')
+    	print '</div>';
+    	print '</div>';
+	}
+
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall')))
 	{
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
-
-
-
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-
-	    print '</div></div></div>';
+		print "</form>\n";
 	}
 }
 

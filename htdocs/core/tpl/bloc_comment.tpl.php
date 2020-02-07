@@ -1,7 +1,7 @@
 <?php
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -14,14 +14,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 // Vars
 $userstatic = new User($db);
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
 
 // Add comment
 print '<br>';
 print '<div id="comment">';
 print '<form method="POST" action="'.$varpage.'?id='.$object->id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addcomment">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="comment_element_type" value="'.$object->element.'">';
@@ -61,9 +61,9 @@ print '</table></form>';
 if (!empty($object->comments))
 {
 	// Default color for current user
-	$TColors = array($user->id => array('bgcolor'=>'efefef','color'=>'555'));
+	$TColors = array($user->id => array('bgcolor'=>'efefef', 'color'=>'555'));
 	$first = true;
-	foreach($object->comments as $comment)
+	foreach ($object->comments as $comment)
 	{
 		$fk_user = $comment->fk_user_author;
 		$userstatic->fetch($fk_user);
@@ -75,8 +75,8 @@ if (!empty($object->comments))
 			{
 				$bgcolor = $userstatic->color;
 			}
-			$color = (colorIsLight($bgcolor))?'555':'fff';
-			$TColors[$fk_user] = array('bgcolor'=>$bgcolor,'color'=>$color);
+			$color = (colorIsLight($bgcolor)) ? '555' : 'fff';
+			$TColors[$fk_user] = array('bgcolor'=>$bgcolor, 'color'=>$color);
 		}
 		print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
 		if ($fk_user != $user->id) {
@@ -85,7 +85,7 @@ if (!empty($object->comments))
 
 		print '<div class="width75p float comment comment-table" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
 		print '<div class="comment-info comment-cell">';
-		if (! empty($user->photo))
+		if (!empty($user->photo))
 		{
 			print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br/>';
 		}
@@ -99,7 +99,7 @@ if (!empty($object->comments))
         if ($action === 'editcomment' && $comment->id == $idcomment)
         {
             print '<form method="POST" action="'.$varpage.'?id='.$object->id.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="updatecomment">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="idcomment" value="'.$idcomment.'">';
@@ -144,7 +144,7 @@ if (!empty($object->comments))
 		print '</div>'; // End comment-right
 		print '</div>'; // End comment
 
-		if($fk_user == $user->id) {
+		if ($fk_user == $user->id) {
 			print '<div class="width25p float">&nbsp;</div>';
 		}
 		print '<div class="clearboth"></div>';

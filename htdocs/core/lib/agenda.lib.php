@@ -184,7 +184,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	else print '</td>';
 
 	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
-	else print '<td align="center" valign="middle" class="nowrap">';
+	else print '<td class="center nowrap" valign="middle">';
 
 	print '<table class="centpercent"><tr><td align="center">';
 	print '<div class="formleftzone">';
@@ -486,7 +486,7 @@ function actions_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'documents';
     $h++;
 

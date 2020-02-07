@@ -91,7 +91,7 @@ if ($id > 0)
 
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
@@ -116,7 +116,7 @@ if ($id > 0)
         {
             print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
             print '<td class="valeur">';
-            print '<input name="url" value="'.(! empty($object->clicktodial_url)?$object->clicktodial_url:'').'" size="92">';
+            print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
             if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
             {
                 $langs->load("errors");
@@ -132,17 +132,17 @@ if ($id > 0)
 
         print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
         print '<td class="valeur">';
-        print '<input name="poste" value="'.(! empty($object->clicktodial_poste)?$object->clicktodial_poste:'').'"></td>';
+        print '<input name="poste" value="'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'"></td>';
         print "</tr>\n";
 
         print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">';
-        print '<input name="login" value="'.(! empty($object->clicktodial_login)?$object->clicktodial_login:'').'"></td>';
+        print '<input name="login" value="'.(!empty($object->clicktodial_login) ? $object->clicktodial_login : '').'"></td>';
         print '</tr>';
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">';
-        print '<input type="password" name="password" value="'.(! empty($object->clicktodial_password)?$object->clicktodial_password:'').'"></td>';
+        print '<input type="password" name="password" value="'.(!empty($object->clicktodial_password) ? $object->clicktodial_password : '').'"></td>';
         print "</tr>\n";
 
         print '</table>';
@@ -151,12 +151,12 @@ if ($id > 0)
     {
         print '<table class="border centpercent tableforfield">';
 
-        if (! empty($user->admin))
+        if (!empty($user->admin))
         {
         	print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
         	print '<td class="valeur">';
-        	$url=$conf->global->CLICKTODIAL_URL;
-        	if (! empty($object->clicktodial_url)) $url=$object->clicktodial_url;
+        	$url = $conf->global->CLICKTODIAL_URL;
+        	if (!empty($object->clicktodial_url)) $url = $object->clicktodial_url;
         	if (empty($url))
         	{
         	    $langs->load("errors");
@@ -164,22 +164,22 @@ if ($id > 0)
         	}
         	else
         	{
-        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url, $langs->trans("ClickToDialUrlDesc"));
+        		print $form->textwithpicto((empty($object->clicktodial_url) ? $langs->trans("DefaultLink").': ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
         	}
         	print '</td>';
         	print '</tr>';
         }
 
         print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
-        print '<td class="valeur">'.(! empty($object->clicktodial_poste)?$object->clicktodial_poste:'').'</td>';
+        print '<td class="valeur">'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'</td>';
         print "</tr>";
 
         print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
-        print '<td class="valeur">'.(! empty($object->clicktodial_login)?$object->clicktodial_login:'').'</td>';
+        print '<td class="valeur">'.(!empty($object->clicktodial_login) ? $object->clicktodial_login : '').'</td>';
         print '</tr>';
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
-        print '<td class="valeur">'.preg_replace('/./', '*', (! empty($object->clicktodial_password)?$object->clicktodial_password:'')).'</a></td>';
+        print '<td class="valeur">'.preg_replace('/./', '*', (!empty($object->clicktodial_password) ? $object->clicktodial_password : '')).'</a></td>';
         print "</tr>\n";
 
         print "</table>\n";
@@ -203,7 +203,7 @@ if ($id > 0)
      */
     print '<div class="tabsAction">';
 
-    if (! empty($user->admin) && $action <> 'edit')
+    if (!empty($user->admin) && $action <> 'edit')
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }

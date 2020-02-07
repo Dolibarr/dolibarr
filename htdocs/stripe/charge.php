@@ -26,17 +26,17 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -56,11 +56,11 @@ $form = new Form($db);
 $societestatic = new Societe($db);
 $memberstatic = new Adherent($db);
 $acc = new Account($db);
-$stripe=new Stripe($db);
+$stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
 {
 	$service = 'StripeTest';
 	$servicestatus = '0';
@@ -82,20 +82,20 @@ if (!$rowid)
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 
-    $title=$langs->trans("StripeChargeList");
-    $title.=($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
+    $title = $langs->trans("StripeChargeList");
+    $title .= ($stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     print '<tr class="liste_titre">';
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -139,23 +139,31 @@ if (!$rowid)
 			$type = $langs->trans("card");
 	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
+	    } elseif ($charge->payment_method_details->type=='sepa_debit'){
+			$type = $langs->trans("sepadebit");
+	    } elseif ($charge->payment_method_details->type=='ideal'){
+			$type = $langs->trans("iDEAL");
 	    }
 
         if (! empty($charge->payment_intent)) {
-            $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+			if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+	    		$charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+			} else {
+				$charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent, array("stripe_account" => $stripeacc));
+			}
         }
 
 		// The metadata FULLTAG is defined by the online payment page
-		$FULLTAG=$charge->metadata->FULLTAG;
+		$FULLTAG = $charge->metadata->FULLTAG;
 
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
+		if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
 		{
 			$societestatic->fetch($tmparray['CUS']);
 		}
-		elseif (! empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
+		elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
 		{
 			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 		}
@@ -163,7 +171,7 @@ if (!$rowid)
 		{
 			$societestatic->id = 0;
 		}
-		if (! empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
+		if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
 		}
@@ -174,26 +182,26 @@ if (!$rowid)
 
 		print '<tr class="oddeven">';
 
-        if (!empty($stripeacc)) $connect=$stripeacc.'/';
+        if (!empty($stripeacc)) $connect = $stripeacc.'/';
 
 		// Ref
-		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
         if ($servicestatus)
         {
-        	$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
+        	$url = 'https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
         }
 		print "<td>";
         print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 		print "</td>\n";
 		// Stripe customer
 		print "<td>";
-        if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
-		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
+        if (!empty($conf->stripe->enabled) && !empty($stripeacc)) $connect = $stripeacc.'/';
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
 		if ($servicestatus)
 		{
-            $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+            $url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
 		}
-		if (! empty($charge->customer))
+		if (!empty($charge->customer))
 		{
     		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').' '.$charge->customer.'</a>';
 		}
@@ -211,7 +219,7 @@ if (!$rowid)
 		print "</td>\n";
 		// Origine
 		print "<td>";
-		if ($charge->metadata->dol_type=="order") {
+		if ($charge->metadata->dol_type=="order" || $charge->metadata->dol_type=="commande") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -219,7 +227,7 @@ if (!$rowid)
             } else {
                 print $FULLTAG;
             }
-		} elseif ($charge->metadata->dol_type=="invoice") {
+		} elseif ($charge->metadata->dol_type=="invoice" || $charge->metadata->dol_type=="facture") {
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -238,7 +246,7 @@ if (!$rowid)
 		print $type;
 	    print '</td>';
 	    // Amount
-	    print '<td class="right">'.price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
+	    print '<td class="right">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
 	    // Status
 	    print '<td class="right">';
 	    print $status;

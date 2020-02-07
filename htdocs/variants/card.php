@@ -41,7 +41,7 @@ if ($object->fetch($id) < 1) {
  * Actions
  */
 
-if ($cancel) $action='';
+if ($cancel) $action = '';
 
 if ($_POST) {
 	if ($action == 'edit') {
@@ -71,7 +71,7 @@ if ($_POST) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				if ($objectval->update($user) > 0) {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -131,7 +131,7 @@ llxHeader('', $title);
 
 //print load_fiche_titre($title);
 
-$h=0;
+$h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
 $head[$h][1] = $langs->trans("Card");
 $head[$h][2] = 'variant';
@@ -148,9 +148,9 @@ if ($action != 'edit') {
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 }
-print '<table class="border" style="width: 100%">';
+print '<table class="border centpercent tableforfield">';
 print '<tr>';
-print '<td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td>';
+print '<td class="titlefield'.($action == 'edit' ? ' fieldrequired' : '').'">'.$langs->trans('Ref').'</td>';
 print '<td>';
 if ($action == 'edit') {
 	print '<input type="text" name="ref" value="'.$object->ref.'">';
@@ -160,7 +160,7 @@ if ($action == 'edit') {
 print '</td>';
 print '</tr>';
 print '<tr>';
-print '<td class="fieldrequired">'.$langs->trans('Label').'</td>';
+print '<td'.($action == 'edit' ? ' class="fieldrequired"' : '').'>'.$langs->trans('Label').'</td>';
 print '<td>';
 if ($action == 'edit') {
 	print '<input type="text" name="label" value="'.$object->label.'">';
@@ -232,7 +232,7 @@ if ($action == 'edit') {
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';

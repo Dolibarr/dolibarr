@@ -17,7 +17,7 @@
  * or see https://www.gnu.org/
  */
 /**
- *	\file			htdocs/core/lib/functionsnumbertoword.lib.php
+ *  \file			htdocs/core/lib/functionsnumtoword.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */
@@ -41,97 +41,110 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
     if (! $num) {
         return false;
     }
+
 	if ($centimes && strlen($num) == 1) {
 		$num = $num*10;
 	}
-	$TNum = explode('.', $num);
-    $num = (int) $TNum[0];
-    $words = array();
-    $list1 = array(
-    	'',
-    	$langs->transnoentitiesnoconv('one'),
-    	$langs->transnoentitiesnoconv('two'),
-    	$langs->transnoentitiesnoconv('three'),
-    	$langs->transnoentitiesnoconv('four'),
-    	$langs->transnoentitiesnoconv('five'),
-    	$langs->transnoentitiesnoconv('six'),
-    	$langs->transnoentitiesnoconv('seven'),
-    	$langs->transnoentitiesnoconv('eight'),
-    	$langs->transnoentitiesnoconv('nine'),
-    	$langs->transnoentitiesnoconv('ten'),
-    	$langs->transnoentitiesnoconv('eleven'),
-        $langs->transnoentitiesnoconv('twelve'),
-        $langs->transnoentitiesnoconv('thirteen'),
-        $langs->transnoentitiesnoconv('fourteen'),
-        $langs->transnoentitiesnoconv('fifteen'),
-        $langs->transnoentitiesnoconv('sixteen'),
-        $langs->transnoentitiesnoconv('seventeen'),
-        $langs->transnoentitiesnoconv('eighteen'),
-        $langs->transnoentitiesnoconv('nineteen')
-    );
-    $list2 = array(
-    	'',
-	    $langs->transnoentitiesnoconv('ten'),
-	    $langs->transnoentitiesnoconv('twenty'),
-	    $langs->transnoentitiesnoconv('thirty'),
-	    $langs->transnoentitiesnoconv('forty'),
-	    $langs->transnoentitiesnoconv('fifty'),
-	    $langs->transnoentitiesnoconv('sixty'),
-	    $langs->transnoentitiesnoconv('seventy'),
-	    $langs->transnoentitiesnoconv('eighty'),
-	    $langs->transnoentitiesnoconv('ninety'),
-	    $langs->transnoentitiesnoconv('hundred')
-	);
-    $list3 = array(
-    	'',
-    	$langs->transnoentitiesnoconv('thousand'),
-    	$langs->transnoentitiesnoconv('million'),
-    	$langs->transnoentitiesnoconv('billion'),
-    	$langs->transnoentitiesnoconv('trillion'),
-    	$langs->transnoentitiesnoconv('quadrillion')
-    );
 
-    $num_length = strlen($num);
-    $levels = (int) (($num_length + 2) / 3);
-    $max_length = $levels * 3;
-    $num = substr('00' . $num, -$max_length);
-    $num_levels = str_split($num, 3);
-    $nboflevels = count($num_levels);
-    for ($i = 0; $i < $nboflevels; $i++) {
-        $levels--;
-        $hundreds = (int) ($num_levels[$i] / 100);
-        $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' '.$langs->transnoentities('hundred') . ( $hundreds == 1 ? '' : 's' ) . ' ': '');
-        $tens = (int) ($num_levels[$i] % 100);
-        $singles = '';
-        if ( $tens < 20 ) {
-            $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '' );
-        } else {
-            $tens = (int) ($tens / 10);
-            $tens = ' ' . $list2[$tens] . ' ';
-            $singles = (int) ($num_levels[$i] % 10);
-            $singles = ' ' . $list1[$singles] . ' ';
-        }
-        $words[] = $hundreds . $tens . $singles . ( ( $levels && ( int ) ( $num_levels[$i] ) ) ? ' ' . $list3[$levels] . ' ' : '' );
-    } //end for loop
-    $commas = count($words);
-    if ($commas > 1) {
-        $commas = $commas - 1;
-    }
-	$concatWords = implode(' ', $words);
-	// Delete multi whitespaces
-	$concatWords = trim(preg_replace('/[ ]+/', ' ', $concatWords));
+	if (! empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
+		if ($currency) {
+			$type = 1;
+		} else {
+			$type = 0;
+		}
 
-	if(!empty($currency)) {
-		$concatWords .= ' '.$currency;
+		$concatWords = $langs->getLabelFromNumber($num, $type);
+		return $concatWords;
+	} else {
+		$TNum = explode('.', $num);
+	    $num = (int) $TNum[0];
+	    $words = array();
+	    $list1 = array(
+	    	'',
+	    	$langs->transnoentitiesnoconv('one'),
+	    	$langs->transnoentitiesnoconv('two'),
+	    	$langs->transnoentitiesnoconv('three'),
+	    	$langs->transnoentitiesnoconv('four'),
+	    	$langs->transnoentitiesnoconv('five'),
+	    	$langs->transnoentitiesnoconv('six'),
+	    	$langs->transnoentitiesnoconv('seven'),
+	    	$langs->transnoentitiesnoconv('eight'),
+	    	$langs->transnoentitiesnoconv('nine'),
+	    	$langs->transnoentitiesnoconv('ten'),
+	    	$langs->transnoentitiesnoconv('eleven'),
+	        $langs->transnoentitiesnoconv('twelve'),
+	        $langs->transnoentitiesnoconv('thirteen'),
+	        $langs->transnoentitiesnoconv('fourteen'),
+	        $langs->transnoentitiesnoconv('fifteen'),
+	        $langs->transnoentitiesnoconv('sixteen'),
+	        $langs->transnoentitiesnoconv('seventeen'),
+	        $langs->transnoentitiesnoconv('eighteen'),
+	        $langs->transnoentitiesnoconv('nineteen')
+	    );
+	    $list2 = array(
+	    	'',
+		    $langs->transnoentitiesnoconv('ten'),
+		    $langs->transnoentitiesnoconv('twenty'),
+		    $langs->transnoentitiesnoconv('thirty'),
+		    $langs->transnoentitiesnoconv('forty'),
+		    $langs->transnoentitiesnoconv('fifty'),
+		    $langs->transnoentitiesnoconv('sixty'),
+		    $langs->transnoentitiesnoconv('seventy'),
+		    $langs->transnoentitiesnoconv('eighty'),
+		    $langs->transnoentitiesnoconv('ninety'),
+		    $langs->transnoentitiesnoconv('hundred')
+		);
+	    $list3 = array(
+	    	'',
+	    	$langs->transnoentitiesnoconv('thousand'),
+	    	$langs->transnoentitiesnoconv('million'),
+	    	$langs->transnoentitiesnoconv('billion'),
+	    	$langs->transnoentitiesnoconv('trillion'),
+	    	$langs->transnoentitiesnoconv('quadrillion')
+	    );
+
+	    $num_length = strlen($num);
+	    $levels = (int) (($num_length + 2) / 3);
+	    $max_length = $levels * 3;
+	    $num = substr('00' . $num, -$max_length);
+	    $num_levels = str_split($num, 3);
+	    $nboflevels = count($num_levels);
+	    for ($i = 0; $i < $nboflevels; $i++) {
+	        $levels--;
+	        $hundreds = (int) ($num_levels[$i] / 100);
+	        $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' '.$langs->transnoentities('hundred') . ( $hundreds == 1 ? '' : 's' ) . ' ': '');
+	        $tens = (int) ($num_levels[$i] % 100);
+	        $singles = '';
+	        if ( $tens < 20 ) {
+	            $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '' );
+	        } else {
+	            $tens = (int) ($tens / 10);
+	            $tens = ' ' . $list2[$tens] . ' ';
+	            $singles = (int) ($num_levels[$i] % 10);
+	            $singles = ' ' . $list1[$singles] . ' ';
+	        }
+	        $words[] = $hundreds . $tens . $singles . ( ( $levels && ( int ) ( $num_levels[$i] ) ) ? ' ' . $list3[$levels] . ' ' : '' );
+	    } //end for loop
+	    $commas = count($words);
+	    if ($commas > 1) {
+	        $commas = $commas - 1;
+	    }
+		$concatWords = implode(' ', $words);
+		// Delete multi whitespaces
+		$concatWords = trim(preg_replace('/[ ]+/', ' ', $concatWords));
+
+		if(!empty($currency)) {
+			$concatWords .= ' '.$currency;
+		}
+
+		// If we need to write cents call again this function for cents
+		if(!empty($TNum[1])) {
+			if(!empty($currency)) $concatWords .= ' '.$langs->transnoentities('and');
+			$concatWords .= ' '.dol_convertToWord($TNum[1], $langs, $currency, true);
+			if(!empty($currency)) $concatWords .= ' '.$langs->transnoentities('centimes');
+		}
+	    return $concatWords;
 	}
-
-	// If we need to write cents call again this function for cents
-	if(!empty($TNum[1])) {
-		if(!empty($currency)) $concatWords .= ' '.$langs->transnoentities('and');
-		$concatWords .= ' '.dol_convertToWord($TNum[1], $langs, $currency, true);
-		if(!empty($currency)) $concatWords .= ' '.$langs->transnoentities('centimes');
-	}
-    return $concatWords;
 }
 
 

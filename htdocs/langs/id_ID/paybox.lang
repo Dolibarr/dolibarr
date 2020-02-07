@@ -11,17 +11,8 @@ YourEMail=Email to receive payment confirmation
 Creditor=Creditor
 PaymentCode=Payment code
 PayBoxDoPayment=Pay with Paybox
-ToPay=Lakukan pembayaran
 YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
 Continue=Next
-ToOfferALinkForOnlinePayment=URL for %s payment
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user interface for a customer invoice
-ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

@@ -271,7 +271,7 @@ if ($action == 'create')
     print dol_set_focus('#nom');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     dol_fiche_head('', '', '', 0, '');
@@ -304,7 +304,7 @@ if ($action == 'create')
     print "</td></tr>\n";
 
 	// Other attributes
-    $parameters = array('object' => $object, 'colspan' => ' colspan="2"');
+    $parameters = array('object' => $object);
     $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     if (empty($reshook))
@@ -441,7 +441,7 @@ else
 				if ($caneditperms)
 				{
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
@@ -539,7 +539,7 @@ else
         if ($action == 'edit' && $caneditperms)
         {
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
 
             dol_fiche_head($head, 'group', $title, 0, 'group');

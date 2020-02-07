@@ -150,6 +150,12 @@ class DolibarrApi
         unset($object->context);
         unset($object->next_prev_filter);
 
+        unset($object->region);
+        unset($object->region_code);
+
+        unset($object->libelle_statut);
+        unset($object->libelle_paiement);
+
         if ($object->table_element != 'ticket') {
         	unset($object->comments);
         }

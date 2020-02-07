@@ -35,17 +35,17 @@ $price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
 
-$action=GETPOST('action', 'alpha');
-$massaction=GETPOST('massaction', 'alpha');
-$show_files=GETPOST('show_files', 'int');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
-$fieldvalue = (! empty($id) ? $id : $ref);
-$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+$fieldvalue = (!empty($id) ? $id : $ref);
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -65,12 +65,12 @@ $selectedvariant = $_SESSION['addvariant_'.$object->id];
  */
 
 if ($cancel) {
-    $action='';
-    $massactions='';
+    $action = '';
+    $massactions = '';
     unset($_SESSION['addvariant_'.$object->id]);
 }
 
-if (! $object->isProduct() && ! $object->isService()) {
+if (!$object->isProduct() && !$object->isService()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
 }
@@ -84,8 +84,8 @@ if ($action == 'create' && GETPOST('selectvariant', 'alpha'))	// We click on sel
     $action = 'add';
     if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
     {
-        $selectedvariant[GETPOST('attribute').':'.GETPOST('value')]=GETPOST('attribute').':'.GETPOST('value');
-        $_SESSION['addvariant_'.$object->id]=$selectedvariant;
+        $selectedvariant[GETPOST('attribute').':'.GETPOST('value')] = GETPOST('attribute').':'.GETPOST('value');
+        $_SESSION['addvariant_'.$object->id] = $selectedvariant;
     }
 }
 
@@ -96,7 +96,7 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 $productCombination2ValuePairs1 = array();
 
 if ($_POST) {
-	if (($action == 'add' || $action == 'create') && empty($massaction) && ! GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
+	if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
 	{
 		//$features = GETPOST('features', 'array');
         $features = $_SESSION['addvariant_'.$object->id];
@@ -139,9 +139,9 @@ if ($_POST) {
 			//var_dump($sanit_features);
 			//var_dump($productCombination2ValuePairs1); exit;
 
-			if (! $prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
+			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
-				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
+				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -161,16 +161,19 @@ if ($_POST) {
 			$db->rollback();
 		}
 	}
-	elseif (! empty($massaction))
+	elseif (!empty($massaction))
 	{
 		$bulkaction = $massaction;
 		$error = 0;
 
-		$prodstatic = new Product($db);
+
 
 		$db->begin();
 
 		foreach ($toselect as $prodid) {
+			// need create new of Product to prevent rename dir behavior
+			$prodstatic = new Product($db);
+
 			if ($prodstatic->fetch($prodid) < 0) {
 				continue;
 			}
@@ -268,7 +271,7 @@ if ($action === 'confirm_deletecombination') {
 	if ($prodstatic->fetch('', $dest_product) > 0) {
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
-			if ($prodcomb->copyAll($object->id, $prodstatic) > 0) {
+			if ($prodcomb->copyAll($user, $object->id, $prodstatic) > 0) {
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
 				exit();
 			} else {
@@ -288,23 +291,23 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-if (! empty($id) || ! empty($ref))
+if (!empty($id) || !empty($ref))
 {
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-    $showbarcode=empty($conf->barcode->enabled)?0:1;
-    if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+    $showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+    if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode = 0;
 
-    $head=product_prepare_head($object);
-    $titre=$langs->trans("CardProduct".$object->type);
-    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+    $head = product_prepare_head($object);
+    $titre = $langs->trans("CardProduct".$object->type);
+    $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
     dol_fiche_head($head, 'combinations', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-    $object->next_prev_filter=" fk_product_type = ".$object->type;
+    $object->next_prev_filter = " fk_product_type = ".$object->type;
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
+    dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
 	print '<div class="fichecenter">';
 
@@ -312,14 +315,14 @@ if (! empty($id) || ! empty($ref))
 	print '<table class="border tableforfield" width="100%">';
 
     // TVA
-    print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
+    print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
-    $positiverates='';
-    if (price2num($object->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
-    if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
-    if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
-    if (empty($positiverates)) $positiverates='0';
-    echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+    $positiverates = '';
+    if (price2num($object->tva_tx))       $positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
+    if (price2num($object->localtax1_type)) $positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
+    if (price2num($object->localtax2_type)) $positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
+    if (empty($positiverates)) $positiverates = '0';
+    echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
     /*
     if ($object->default_vat_code)
     {
@@ -329,20 +332,20 @@ if (! empty($id) || ! empty($ref))
     print '</td></tr>';
 
     // Price
-    print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
+    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
     if ($object->price_base_type == 'TTC') {
-        print price($object->price_ttc) . ' ' . $langs->trans($object->price_base_type);
+        print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
     } else {
-        print price($object->price) . ' ' . $langs->trans($object->price_base_type);
+        print price($object->price).' '.$langs->trans($object->price_base_type);
     }
     print '</td></tr>';
 
     // Price minimum
-    print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+    print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
     if ($object->price_base_type == 'TTC') {
-        print price($object->price_min_ttc) . ' ' . $langs->trans($object->price_base_type);
+        print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
     } else {
-        print price($object->price_min) . ' ' . $langs->trans($object->price_base_type);
+        print price($object->price_min).' '.$langs->trans($object->price_base_type);
     }
     print '</td></tr>';
 
@@ -374,11 +377,11 @@ if (! empty($id) || ! empty($ref))
 	if ($action == 'add' || ($action == 'edit')) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
-			//print dol_fiche_head();
+			// dol_fiche_head();
 			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
-			if (! empty($features)) {
+			if (!empty($features)) {
 				foreach ($features as $feature) {
 					$explode = explode(':', $feature);
 
@@ -390,11 +393,11 @@ if (! empty($id) || ! empty($ref))
 						continue;
 					}
 
-					$listofvariantselected .= '<i>' . $prodattr->label . '</i>:'. $prodattr_val->value . ' ';
+					$listofvariantselected .= '<i>'.$prodattr->label.'</i>:'.$prodattr_val->value.' ';
 				}
 			}
 			$listofvariantselected .= '</div>';
-			//print dol_fiche_end();
+			//dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
@@ -492,14 +495,14 @@ if (! empty($id) || ! empty($ref))
 		print load_fiche_titre($title);
 
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
-		print '<input type="hidden" name="action" value="' .  (($valueid > 0) ? "update" : "create") .'">'."\n";
+		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
         if ($valueid > 0) {
-            print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
+            print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
         }
 
-        print dol_fiche_head();
+        dol_fiche_head();
 
 
 		print '<table class="border" style="width: 100%">';
@@ -518,7 +521,7 @@ if (! empty($id) || ! empty($ref))
 				print '</select>';
 			}
 
-			$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+			$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 			print $form->textwithpicto('', $htmltext);
 			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
 			print $langs->trans("Create");
@@ -535,7 +538,7 @@ if (! empty($id) || ! empty($ref))
 						<option value="-1">&nbsp;</option>
 					</select>
 					<?php
-					$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 					print $form->textwithpicto('', $htmltext);
 					/*
 						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
@@ -573,7 +576,7 @@ if (! empty($id) || ! empty($ref))
                             $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
                             if ($result1 > 0 && $result2 > 0)
                             {
-                                print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
+                                print $prodattr->label.' - '.$prodattr_val->value.'<br>';
                                 // TODO Add delete link
                             }
                         }
@@ -602,11 +605,11 @@ if (! empty($id) || ! empty($ref))
 			print '</table>';
 		}
 
-		print dol_fiche_end();
+		dol_fiche_end();
         ?>
 
 		<div style="text-align: center">
-		<input type="submit" name="create" <?php if (! is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
 		</div>
@@ -687,12 +690,12 @@ if (! empty($id) || ! empty($ref))
 
 
 
-		$arrayofselected=is_array($toselect)?$toselect:array();
+		$arrayofselected = is_array($toselect) ? $toselect : array();
 
 
 		// List of variants
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="massaction">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -708,7 +711,7 @@ if (! empty($id) || ! empty($ref))
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/
 
-		$aaa='';
+		$aaa = '';
 		if (count($productCombinations))
 		{
     		$aaa = '<label for="massaction">'.$langs->trans('BulkActions').'</label>';
@@ -741,7 +744,7 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre"></td>
         		<?php
         		print '<td class="liste_titre center">';
-        		$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
+        		$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
         		print $searchpicto;
         		print '</td>';
                 ?>
@@ -780,9 +783,9 @@ if (! empty($id) || ! empty($ref))
     			print '<td class="nowrap center">';
     			if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     			{
-    			    $selected=0;
-    			    if (in_array($prodstatic->id, $arrayofselected)) $selected=1;
-    			    print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected?' checked="checked"':'').'>';
+    			    $selected = 0;
+    			    if (in_array($prodstatic->id, $arrayofselected)) $selected = 1;
+    			    print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
     			}
     			print '</td>';
     			print '</tr>';

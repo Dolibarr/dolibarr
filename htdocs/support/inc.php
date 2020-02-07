@@ -223,15 +223,12 @@ function pHeader($soutitre, $next, $action = 'none')
 	print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
 	print '</head>'."\n";
 
-	print '<body>'."\n";
+	print '<body class="center">'."\n";
 
-	print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
-	print '<td width="20">';
-	print '<img src="helpcenter.png" alt="logohelpcenter">';
-	print '</td>';
-	print '<td>';
-	print '<span class="titre">'.$soutitre.'</span>'."\n";
-	print '</td></tr></table>';
+	print '<div class="noborder centpercent center valignmiddle inline-block">';
+	print '<img src="helpcenter.png" alt="logohelpcenter" class="inline-block"><br><br>';
+	print '<span class="titre inline-block">'.$soutitre.'</span>'."\n";
+	print '</div><br>';
 }
 
 /**

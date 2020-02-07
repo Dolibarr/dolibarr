@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/printsend.php
+ *	\file       htdocs/takepos/send.php
  *	\ingroup	takepos
  *	\brief      Page with the content of the popup to enter payments
  */
@@ -68,7 +68,7 @@ else
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 </head>
 <body class="center">
 

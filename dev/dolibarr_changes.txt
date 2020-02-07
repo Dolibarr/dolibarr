@@ -52,6 +52,75 @@ Replace call to serialize_val with no bugged value
 
 TCPDF:
 ------
+* Replace in tcpdf.php:
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+                    unlink($file);
+                }
+            }
+with
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+				// DOL CHANGE If we keep this, source image files are physically destroyed
+				// unlink($file);
+                }
+            }
+
+* Replace in tcpdf.php
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+
+with
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+			// @CHANGE DOL
+			'imagekeys',
+
+* Replace in tcpdf.php
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				return false;	
+			}
+
+with
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
+				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+				//return false;	
+			}
+			
+
+
+* In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
+
+		if (strpos($filename, '://') === false) {
+
+with
+
+        if (strpos($filename, '//') === 0)
+        {
+            // Share folder on a (windows) server
+            // e.g.: "//[MyServerName]/[MySharedFolder]/"
+            //
+            // nothing to change
+        }
+        elseif (strpos($filename, '://') === false)
+
 * To avoid to have QRcode changed because generated with a random mask, replace
 define('QR_FIND_FROM_RANDOM', 2);
 with
@@ -72,7 +141,7 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 +       protected $default_monospaced_font = 'freemono';
 
 
-		
+
 
 TCPDI:
 ------
