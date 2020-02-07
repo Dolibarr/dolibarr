@@ -983,7 +983,7 @@ function migrate_contracts_det($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsUpdate')."</b><br>\n";
 
-    $sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.fin_validite, c.date_cloture, c.fk_product, c.fk_facture, c.fk_user_author,";
+    $sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.fk_product, c.fk_facture, c.fk_user_author,";
     $sql .= " p.ref, p.label, p.description, p.price, p.tva_tx, p.duration, cd.rowid";
     $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p";
@@ -1019,7 +1019,7 @@ function migrate_contracts_det($db, $langs, $conf)
                 $sql .= "'".$db->escape($obj->label)."', null, ";
                 $sql .= ($obj->date_contrat ? "'".$obj->date_contrat."'" : "null").", ";
                 $sql .= "null, ";
-                $sql .= ($obj->fin_validite ? "'".$obj->fin_validite."'" : "null").", ";
+                $sql .= "null, ";
                 $sql .= "'".$obj->tva_tx."' , 1, ";
                 $sql .= "'".$obj->price."', '".$obj->price."', ".$obj->fk_user_author.",";
                 $sql .= "null";
