@@ -309,7 +309,7 @@ if ($mode == 'grid') {
 
 if ($mode == 'graph') {
     print '<div class="divadvancedsearchfield">';
-    $arrayofgraphs = array('line', 'bars'); // also 'pies'
+    $arrayofgraphs = array('bars', 'line'); // also 'pies'
     print '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
     print $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 'minwidth100', 1);
     print '</div>';
