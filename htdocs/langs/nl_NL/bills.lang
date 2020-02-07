@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 dagen
 PaymentCondition14D=14 dagen
 PaymentConditionShort14DENDMONTH=Einde maand over 14 dagen
 PaymentCondition14DENDMONTH=Binnen 14 dagen na het einde van de maand
-FixAmount=Vast bedrag
+FixAmount=Vast bedrag - 1 regel met label '%s'
 VarAmount=Variabel bedrag  (%% tot.)
 VarAmountOneLine=Variabel aantal (%% tot.) - 1 regel met label '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Taxzegel
 YouMustCreateInvoiceFromThird=Deze optie is alleen beschikbaar wanneer u een factuur maakt op het tabblad "Klant" van een relatie
 YouMustCreateInvoiceFromSupplierThird=Deze optie is alleen beschikbaar bij het maken van een factuur op het tabblad "Leverancier" bij relatie
 YouMustCreateStandardInvoiceFirstDesc=Maak eerst een standaard factuur en converteer naar een sjabloon om deze als sjabloon te gebruiken
-PDFCrabeDescription=Model van complete factuur (Beheert de mogelijkheid van de BTW-heffingsbelasting, de keuze van de regels display, logo, etc)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Factuur PDF-sjabloon Sponge. Een complete sjabloon voor een factuur
 PDFCrevetteDescription=Factuur PDF-sjabloon 'Crevette'. Een compleet sjabloon voor facturen
 TerreNumRefModelDesc1=Geeft een getal in de vorm van %syymm-nnnn voor standaard facturen en %syymm-nnnn voor creditnota's, met yy voor jaar, mm voor maand en nnnn als opeenvolgende getallenreeks die niet terug op 0 komt

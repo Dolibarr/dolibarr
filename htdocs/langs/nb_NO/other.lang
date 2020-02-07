@@ -24,7 +24,7 @@ MessageOK=Melding på retursiden for en godkjent betaling
 MessageKO=Melding på retursiden for en kansellert betaling
 ContentOfDirectoryIsNotEmpty=Denne katalogen er ikke tom.
 DeleteAlsoContentRecursively=Sjekk om du vil slette alt innhold rekursivt
-
+PoweredBy=Drevet av
 YearOfInvoice=År av fakturadato
 PreviousYearOfInvoice=Forrige års fakturadato
 NextYearOfInvoice=Følgende år av fakturadato
@@ -104,7 +104,8 @@ DemoFundation=Håndtere medlemmer i en organisasjon
 DemoFundation2=Håndtere medlemmer og bankkonti i en organisasjon
 DemoCompanyServiceOnly=Firma som kun selger tjenester
 DemoCompanyShopWithCashDesk=Administrer en butikk med kontantomsetning/kasse
-DemoCompanyProductAndStocks=Firma som selger varer via butikk
+DemoCompanyProductAndStocks=Handle varer med Point Of Sales
+DemoCompanyManufacturing=Selskapets varer
 DemoCompanyAll=Firma med mange aktiviteter (alle hovedmoduler)
 CreatedBy=Laget av %s
 ModifiedBy=Endret av %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=Side-URL
 WEBSITE_TITLE=Tittel
 WEBSITE_DESCRIPTION=Beskrivelse
 WEBSITE_IMAGE=Bilde
-WEBSITE_IMAGEDesc=Relativ bane til bildemedia. Du kan holde dette tomt, da dette sjelden brukes (det kan brukes av dynamisk innhold for å vise en forhåndsvisning av en liste over blogginnlegg).
+WEBSITE_IMAGEDesc=Relativ bane for bildemediet. Du kan holde dette tomt da dette sjelden blir brukt (det kan brukes av dynamisk innhold for å vise et miniatyrbilde i en liste over blogginnlegg). Bruk __WEBSITEKEY__ i banen hvis banen avhenger av nettstedets navn.
 WEBSITE_KEYWORDS=Nøkkelord
 LinesToImport=Linjer å importere
 

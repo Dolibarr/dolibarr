@@ -83,7 +83,7 @@ ListOfDictionariesEntries=Listado de entradas de diccionarios
 ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=¿Es el campo visible? (Ejemplos: 0=Nunca visible, 1=Visible en listado y en formularios creación /actualización/visualización, 2=Visible en listado solamente, 3=Visible en formularios creación /actualización/visualización solamente (no en listados),4=Visible en listado y en formularios actualización/visualización solamente (no en creación) . Usar un valor negativo significa que no se muestra el campo predeterminado en el listado pero se puede seleccionar para verlo) Puede ser una expresión, por ejemplo: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=¿El campo es visible? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y en formularios de creación/actualización/visualización, 2=Visible únicamente en la lista, 3=Visible únicamente en formularios de creación/actualización/visualización (no en la lista),4=Visible en la lista y en formularios únicamente de actualización/visualización (no en creación),5=Visible en la lista y en formularios únicamente de visualización (ni en creación ni en actualización). Usar un valor negativo significa que por defecto no se muestra el campo en la lista pero puede ser seleccionado para su visualización) Puede ser una expresión, por ejemplo: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
 SearchAllDesc=¿El campo se usa para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desea proporcionar con su módulo que aún no está definido por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -135,3 +135,5 @@ CSSClass=Clase CSS
 NotEditable=No editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que agregamos un botón + después del combo para crear el registro, 'filtro' puede ser 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' por ejemplo)
+AsciiToHtmlConverter=Conversor de ASCII a HTML
+AsciiToPdfConverter=Conversor de ASCII a PDF

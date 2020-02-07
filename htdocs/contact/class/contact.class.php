@@ -72,8 +72,8 @@ class Contact extends CommonObject
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
 		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>-1, 'position'=>45, 'showoncombobox'=>1),
+		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'showoncombobox'=>1),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -988,19 +988,25 @@ class Contact extends CommonObject
 	}
 
 
+
 	/**
-	 * Set property ->gender from property ->civility_id
+	 * Set the property "gender" of this class, based on the property "civility_id"
+	 * or use property "civility_code" as fallback, when "civility_id" is not available.
 	 *
 	 * @return void
 	 */
 	public function setGenderFromCivility()
 	{
-	    unset($this->gender);
-    	if (in_array($this->civility_id, array('MR'))) {
-    	    $this->gender = 'man';
-    	} elseif (in_array($this->civility_id, array('MME', 'MLE'))) {
-    	    $this->gender = 'woman';
-    	}
+		unset($this->gender);
+
+		if (in_array($this->civility_id, array('MR')) || in_array($this->civility_code, array('MR')))
+		{
+			$this->gender = 'man';
+		}
+		elseif(in_array($this->civility_id, array('MME','MLE')) || in_array($this->civility_code, array('MME','MLE')))
+		{
+			$this->gender = 'woman';
+		}
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

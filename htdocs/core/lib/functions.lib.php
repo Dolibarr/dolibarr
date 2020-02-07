@@ -224,7 +224,54 @@ function dol_shutdown()
  */
 function GETPOSTISSET($paramname)
 {
-	return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+	$isset = 0;
+
+	$relativepathstring = $_SERVER["PHP_SELF"];
+	// Clean $relativepathstring
+	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
+	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+	//var_dump($relativepathstring);
+	//var_dump($user->default_values);
+
+	// Code for search criteria persistence.
+	// Retrieve values if restore_lastsearch_values
+	if (!empty($_GET['restore_lastsearch_values']))        // Use $_GET here and not GETPOST
+	{
+		if (!empty($_SESSION['lastsearch_values_'.$relativepathstring]))	// If there is saved values
+		{
+			$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+			if (is_array($tmp))
+			{
+				foreach ($tmp as $key => $val)
+				{
+					if ($key == $paramname)	// We are on the requested parameter
+					{
+						$isset = 1;
+						break;
+					}
+				}
+			}
+		}
+		// If there is saved contextpage, page or limit
+		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
+		{
+			$isset = 1;
+		}
+		elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring]))
+		{
+			$isset = 1;
+		}
+		elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
+		{
+			$isset = 1;
+		}
+	}
+	else {
+		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+	}
+
+	return $isset;
 }
 
 /**
@@ -1058,10 +1105,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'ip' => false
 		);
 
-		// This is when server run behind a reverse proxy
-		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].(empty($_SERVER["REMOTE_ADDR"]) ? '' : '->'.$_SERVER['REMOTE_ADDR']);
-		// This is when server run normally on a server
-		elseif (!empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+		$remoteip = getUserRemoteIP();	// Get ip when page run on a web server
+		if (! empty($remoteip)) {
+			$data['ip'] = $remoteip;
+			// This is when server run behind a reverse proxy
+			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != $remoteip) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].' -> '.$data['ip'];
+			elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) $data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
+		}
 		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
 		elseif (!empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
 		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
@@ -5294,10 +5344,10 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	integer	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
- *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
- *	@return	string					HTML string
+ *	@param	string|int	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	integer		$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
+ *	@param	int			$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string						HTML string
  */
 function yn($yesno, $case = 1, $color = 0)
 {
@@ -5946,7 +5996,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
-			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
+        	'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
+        	'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
 
@@ -7417,7 +7468,7 @@ function printCommonFooter($zone = 'private')
 				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-				$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+				//$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
 				if (!empty($user->default_values[$relativepathstring]['focus']))
 				{
 					foreach ($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
@@ -7429,7 +7480,9 @@ function printCommonFooter($zone = 'private')
 							$foundintru = 0;
 							foreach ($tmpqueryarraytohave as $tmpquerytohave)
 							{
-								if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru = 1;
+								$tmpquerytohaveparam = explode('=', $tmpquerytohave);
+								//print "console.log('".$tmpquerytohaveparam[0]." ".$tmpquerytohaveparam[1]." ".GETPOST($tmpquerytohaveparam[0])."');";
+								if (!GETPOSTISSET($tmpquerytohaveparam[0]) || ($tmpquerytohaveparam[1] != GETPOST($tmpquerytohaveparam[0]))) $foundintru = 1;
 							}
 							if (!$foundintru) $qualified = 1;
 							//var_dump($defkey.'-'.$qualified);
@@ -7459,7 +7512,9 @@ function printCommonFooter($zone = 'private')
 							$foundintru = 0;
 							foreach ($tmpqueryarraytohave as $tmpquerytohave)
 							{
-								if (!in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru = 1;
+								$tmpquerytohaveparam = explode('=', $tmpquerytohave);
+								//print "console.log('".$tmpquerytohaveparam[0]." ".$tmpquerytohaveparam[1]." ".GETPOST($tmpquerytohaveparam[0])."');";
+								if (!GETPOSTISSET($tmpquerytohaveparam[0]) || ($tmpquerytohaveparam[1] != GETPOST($tmpquerytohaveparam[0]))) $foundintru = 1;
 							}
 							if (!$foundintru) $qualified = 1;
 							//var_dump($defkey.'-'.$qualified);

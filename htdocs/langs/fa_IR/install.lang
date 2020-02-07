@@ -16,6 +16,7 @@ PHPSupportCurl=این PHP از Curl پشتیبان می‌کند.
 PHPSupportCalendar=This PHP supports calendars extensions.
 PHPSupportUTF8=این PHP از توابع UTF8 پشتیبانی می‌کند.
 PHPSupportIntl=این PHP از توابع Intl پشتیبانی می‌کند
+PHPSupport=This PHP supports %s functions.
 PHPMemoryOK=حداکثر حافظۀ اختصاص داده شده به نشست به <b>%s</b> تنظیم شده است. این باید کافی باشد.
 PHPMemoryTooLow=حداکثر حافظۀ مورد استفاده در یک نشست در PHP شما در حد <b>%s</b> بایت تنظیم شده است. این میزان بسیار کمی است. فایل <b>php.ini</b> را ویرایش نموده و مقدار <b>memory_limit</b> را حداقل برابر <b>%s</b> بایت تنظیم کنید
 Recheck=برای یک آزمایش دقیق‌تر این‌جا کلیک کنید
@@ -25,6 +26,7 @@ ErrorPHPDoesNotSupportCurl=نسخۀ PHP نصب شدۀ شما از Curl پشتی�
 ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
 ErrorPHPDoesNotSupportUTF8=نسخۀ PHP نصب شدۀ شما از توابع UTF8 پشتیبانی نمی‌کند. Dolibarr نمی‌تواند به درستی کار کند. قبل از نصب Dolibarr این مشکل را حل کنید.
 ErrorPHPDoesNotSupportIntl=نسخۀ نصب شدۀ PHP شما از توابع Intl پشتیبانی نمی‌کند.
+ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=پوشۀ %s وجود ندارد.
 ErrorGoBackAndCorrectParameters=به عقب برگردید و مقادیر را بررسی/اصلاح کنید.
 ErrorWrongValueForParameter=ممکن است شما یک مقدار اشتباه برای مؤلفۀ  '%s' وارد کرده باشید

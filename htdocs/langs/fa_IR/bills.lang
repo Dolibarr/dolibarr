@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 روزه
 PaymentCondition14D=14 روزه
 PaymentConditionShort14DENDMONTH=14 روز از آخر ماه
 PaymentCondition14DENDMONTH=ظرف  14 روز پس از آخرماه
-FixAmount=مبلغ ثابت
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=مبلغ متغیر ( %% کل )
 VarAmountOneLine=مبلغ متغیر ( %% کل ) - 1 سطر با برچسب "%s"
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=تمبر درآمد
 YouMustCreateInvoiceFromThird=این گزینه تنها وقتی فعال است که شما صورت‌حساب را از زبانۀ "مشتری" یک شخص سوم می‌سازید
 YouMustCreateInvoiceFromSupplierThird=این گزینه تنها وقتی فعال است که شما صورت‌حساب را از زبانۀ "فروشنده" یک شخص سوم می‌سازید
 YouMustCreateStandardInvoiceFirstDesc=شما باید ابتدا یک صورت‌حساب استاندارد ساخته و سپس آن را تبدیل به "قالب" کنید تا یک صورت‌حساب قالبی ساخته باشید
-PDFCrabeDescription=قالب PDF صورت‌حساب Crabe. یک قالب کامل صورت‌حساب (قالب پیشنهادی)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=قالب PDF صورت‌حساب Sponge. یک قالب کامل صورت‌حساب 
 PDFCrevetteDescription=قالب PDF صورت‌حساب Crevette. یک قالب کامل صورت‌حساب برای صورت‌حساب‌های وضعیت
 TerreNumRefModelDesc1=بازگرداندن عدد با شکل %syymm-nnnn برای صورت‌حساب‌های استاندارد و %syymm-nnnn برای یادداشت‌های اعتباری که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است

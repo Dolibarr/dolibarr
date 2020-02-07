@@ -556,7 +556,7 @@ class Loan extends CommonObject
 		$table = 'payment_loan';
 		$field = 'fk_loan';
 
-		$sql = 'SELECT sum(amount) as amount';
+		$sql = 'SELECT sum(amount_capital) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql .= ' WHERE '.$field.' = '.$this->id;
 

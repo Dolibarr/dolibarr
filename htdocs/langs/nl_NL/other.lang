@@ -24,7 +24,7 @@ MessageOK=Bericht op de retourpagina voor een gevalideerde betaling
 MessageKO=Bericht op de retourpagina voor een geannuleerde betaling
 ContentOfDirectoryIsNotEmpty=De inhoud van deze map is niet leeg.
 DeleteAlsoContentRecursively=Vink aan om alle inhoud recursief te verwijderen
-
+PoweredBy=Powered by
 YearOfInvoice=Jaar van factuurdatum
 PreviousYearOfInvoice=Voorgaand jaar van factuurdatum
 NextYearOfInvoice=Volgend jaar van factuurdatum
@@ -104,7 +104,8 @@ DemoFundation=Ledenbeheer van een stichting
 DemoFundation2=Beheer van de leden en de bankrekening van een stichting
 DemoCompanyServiceOnly=Bedrijf of freelance verkoopservice alleen
 DemoCompanyShopWithCashDesk=Beheren van een winkel met een kassa
-DemoCompanyProductAndStocks=Bedrijf dat producten verkoopt met een winkel
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Bedrijf met meerdere activiteiten (alle hoofdmodules)
 CreatedBy=Gecreëerd door %s
 ModifiedBy=Gewijzigd door %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL van pagina
 WEBSITE_TITLE=Titel
 WEBSITE_DESCRIPTION=Omschrijving
 WEBSITE_IMAGE=Beeld
-WEBSITE_IMAGEDesc=Relatief pad van de beeldmedia. Je kunt dit leeg laten, omdat dit zelden wordt gebruikt (het kan door dynamische inhoud worden gebruikt om een voorbeeld van een lijst met blogberichten weer te geven).
+WEBSITE_IMAGEDesc=Relatief pad van de beeldmedia. Je kunt dit leeg laten, omdat dit zelden wordt gebruikt (het kan door dynamische inhoud worden gebruikt om een miniatuur in een lijst met blogberichten weer te geven). Gebruik __WEBSITEKEY__ in het pad als pad afhankelijk is van de naam van de website.
 WEBSITE_KEYWORDS=Sleutelwoorden
 LinesToImport=Regels om te importeren
 

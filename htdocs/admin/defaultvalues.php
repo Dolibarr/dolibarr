@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,15 +52,15 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'page,param';
 if (!$sortorder) $sortorder = 'ASC';
 
-$defaulturl = GETPOST('defaulturl');
-$defaultkey = GETPOST('defaultkey', 'alpha');
-$defaultvalue = GETPOST('defaultvalue');
+$defaulturl = GETPOST('defaulturl', 'alphanohtml');
+$defaultkey = GETPOST('defaultkey', 'alphanohtml');
+$defaultvalue = GETPOST('defaultvalue', 'none');
 
 $defaulturl = preg_replace('/^\//', '', $defaulturl);
 
-$urlpage = GETPOST('urlpage');
-$key = GETPOST('key');
-$value = GETPOST('value');
+$urlpage = GETPOST('urlpage', 'alphanohtml');
+$key = GETPOST('key', 'alphanohtml');
+$value = GETPOST('value', 'none');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));
@@ -193,14 +193,14 @@ $enabledisablehtml .= $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
     // Button off, click to enable
-    $enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
 }
 else
 {
     // Button on, click to disable
-    $enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
     $enabledisablehtml .= '</a>';
 }
@@ -210,9 +210,9 @@ print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'titl
 print '<span class="opacitymedium">'.$langs->trans("DefaultValuesDesc")."</span><br>\n";
 print "<br>\n";
 
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($optioncss != '')  $param .= '&optioncss='.$optioncss;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($optioncss != '')  $param .= '&optioncss='.urlencode($optioncss);
 if ($defaulturl)        $param .= '&defaulturl='.urlencode($defaulturl);
 if ($defaultkey)        $param .= '&defaultkey='.urlencode($defaultkey);
 if ($defaultvalue)      $param .= '&defaultvalue='.urlencode($defaultvalue);
@@ -359,7 +359,7 @@ if ($result)
 
 		// Page
 		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->page;
+		if ($action != 'edit' || GETPOST('rowid', 'int') != $obj->rowid) print $obj->page;
 		else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($obj->page).'">';
 		print '</td>'."\n";
 
@@ -378,7 +378,7 @@ if ($result)
     		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
     		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
     		*/
-    		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->value;
+    		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print dol_escape_htmltag($obj->value);
     		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
     		print '</td>';
 		}

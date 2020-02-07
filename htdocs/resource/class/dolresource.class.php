@@ -615,7 +615,7 @@ class Dolresource extends CommonObject
    					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
-   					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
    		}
@@ -697,7 +697,7 @@ class Dolresource extends CommonObject
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
-    				$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -948,7 +948,7 @@ class Dolresource extends CommonObject
      */
     public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
-        global $langs;
+        global $conf, $langs;
 
         $result = '';
         $label = '<u>'.$langs->trans("ShowResource").'</u>';

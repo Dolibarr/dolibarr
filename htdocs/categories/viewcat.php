@@ -207,7 +207,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCateg
 elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
 else                                        $title = $langs->trans("Category");
 
 $head = categories_prepare_head($object, $type);

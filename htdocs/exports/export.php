@@ -1186,7 +1186,7 @@ if ($step == 5 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donnees a exporter
+    // Dataset to export
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
 	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);

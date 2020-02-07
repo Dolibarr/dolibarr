@@ -1145,7 +1145,21 @@ class Website extends CommonObject
 			}
 		}
 
-		// Regenerate index page to point to new index page
+		// Read record of website that has been updated by the run_sql function previously called so we can get the
+		// value of fk_default_home that is ID of home page
+		$sql = 'SELECT fk_default_home FROM '.MAIN_DB_PREFIX.'website WHERE rowid = '.$object->id;
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$object->fk_default_home = $obj->fk_default_home;
+			} else {
+				//$this->errors[] = 'Failed to get the Home page';
+				//$error++;
+			}
+		}
+
+		// Regenerate index page to point to the new index page
 		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
 		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php');
 

@@ -21,5 +21,6 @@ PrettyLittleSentence=Accept the amount of payments due by cheques issued in my n
 MenuCheques=Cheques
 Cheques=Cheques
 NbCheque=Number of cheques
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for deposit invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 CactusNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposit invoices where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

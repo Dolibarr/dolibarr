@@ -2154,7 +2154,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
 			}
 		}
-		else if ($objecttype == 'fichinter')
+		elseif ($objecttype == 'fichinter')
 		{
 			$outputlangs->load('interventions');
 			foreach($objects as $elementobject)

@@ -494,7 +494,12 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->setPage($pageposbefore + 1);
 
 						$curY = $tab_top_newpage;
-						$showpricebeforepagebreak = 0;
+
+						// Allows data in the first page if description is long enough to break in multiples pages
+						if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							$showpricebeforepagebreak = 1;
+						else
+							$showpricebeforepagebreak = 0;
 					}
 
 					if (isset($imglinesize['width']) && isset($imglinesize['height']))
@@ -534,7 +539,12 @@ class pdf_crabe extends ModelePDFFactures
 						else
 						{
 							// We found a page break
-							$showpricebeforepagebreak = 0;
+
+							// Allows data in the first page if description is long enough to break in multiples pages
+							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								$showpricebeforepagebreak = 1;
+							else
+								$showpricebeforepagebreak = 0;
 						}
 					}
 					else	// No pagebreak
@@ -903,6 +913,8 @@ class pdf_crabe extends ModelePDFFactures
 
 				$i++;
 			}
+
+			return $tab3_top + $y + 3;
 		}
 		else
 		{

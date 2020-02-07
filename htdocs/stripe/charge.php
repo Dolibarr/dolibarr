@@ -139,6 +139,10 @@ if (!$rowid)
 			$type = $langs->trans("card");
 	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
+	    } elseif ($charge->payment_method_details->type=='sepa_debit'){
+			$type = $langs->trans("sepadebit");
+	    } elseif ($charge->payment_method_details->type=='ideal'){
+			$type = $langs->trans("iDEAL");
 	    }
 
         if (! empty($charge->payment_intent)) {
@@ -215,7 +219,7 @@ if (!$rowid)
 		print "</td>\n";
 		// Origine
 		print "<td>";
-		if ($charge->metadata->dol_type=="order") {
+		if ($charge->metadata->dol_type=="order" || $charge->metadata->dol_type=="commande") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -223,7 +227,7 @@ if (!$rowid)
             } else {
                 print $FULLTAG;
             }
-		} elseif ($charge->metadata->dol_type=="invoice") {
+		} elseif ($charge->metadata->dol_type=="invoice" || $charge->metadata->dol_type=="facture") {
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {

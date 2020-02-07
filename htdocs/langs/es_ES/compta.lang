@@ -254,3 +254,4 @@ ByVatRate=Por tasa de impuesto
 TurnoverbyVatrate=Volumen de ventas emitidas por tipo de impuesto
 TurnoverCollectedbyVatrate=Volumen de ventas cobradas por tipo de impuesto
 PurchasebyVatrate=Compra por tasa de impuestos
+LabelToShow=Etiqueta corta

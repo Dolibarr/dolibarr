@@ -201,7 +201,7 @@ dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'sending');
 
 // Shipment numbering model
 
-print load_fiche_titre($langs->trans("SendingsNumberingModules"));
+print load_fiche_titre($langs->trans("SendingsNumberingModules"), '', '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -304,7 +304,7 @@ print '</table><br>';
 /*
  *  Documents models for Sendings Receipt
  */
-print load_fiche_titre($langs->trans("SendingsReceiptModel"));
+print load_fiche_titre($langs->trans("SendingsReceiptModel"), '', '');
 
 // Defini tableau def de modele invoice
 $type="shipping";
@@ -463,7 +463,7 @@ print '<br>';
  * Other options
  *
  */
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

@@ -546,15 +546,13 @@ if (empty($reshook))
 				if (!$error)
 				{
 					// Creation of Stripe card + update of societe_account
+					// Note that with the new Stripe API, option to create a card is no more available, instead an error message will be returned to
+					// ask to create the crdit card from Stripe backoffice.
 					$card = $stripe->cardStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
 					if (!$card)
 					{
 						$error++;
 						setEventMessages($stripe->error, $stripe->errors, 'errors');
-					}
-					else
-					{
-						$stripecard = $card->id;
 					}
 				}
 			}

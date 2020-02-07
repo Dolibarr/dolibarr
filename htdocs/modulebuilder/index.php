@@ -90,6 +90,9 @@ if (empty($newmask))	// This should no happen
 	$newmask = '0664';
 }
 
+$result = restrictedArea($user, 'modulebuilder', null);
+
+
 
 /*
  * Actions

@@ -416,7 +416,7 @@ PaymentConditionShort14D=14 dní
 PaymentCondition14D=14 dní
 PaymentConditionShort14DENDMONTH=14 dní konci měsíce
 PaymentCondition14DENDMONTH=Do 14 dnů po skončení měsíce,
-FixAmount=Pevná částka
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variabilní částka (%% celk.)
 VarAmountOneLine=Proměnná částka (%% tot.) - 1 řádek se štítkem '%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=Kolek
 YouMustCreateInvoiceFromThird=Tato možnost je k dispozici pouze při vytváření faktury z karty "Zákazník" subjektu
 YouMustCreateInvoiceFromSupplierThird=Tato možnost je k dispozici pouze při vytváření faktury z karty "Prodejce" subjektu
 YouMustCreateStandardInvoiceFirstDesc=Musíte nejprve vytvořit standardní fakturu a převést ji do „šablony“ pro vytvoření nové šablony faktury
-PDFCrabeDescription= PDF šablona faktur Crabe. Kompletní šablona faktury (doporučená šablona)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Faktura Šablona PDF Sponge. Kompletní šablona faktury
 PDFCrevetteDescription=Faktura PDF šablony Crevette. Kompletní fakturu šablona pro situace faktur
 TerreNumRefModelDesc1=Vrátí číslo ve formátu %s yymm-nnnn pro standardní faktury a %s yymm-nnnn pro dobropisy, kde yy je rok, mm je měsíc a nnnn je sekvence bez přerušení a bez návratu k 0

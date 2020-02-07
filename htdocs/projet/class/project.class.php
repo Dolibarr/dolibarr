@@ -607,18 +607,29 @@ class Project extends CommonObject
 		{
 			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$ids.") AND ms.type_mouvement = 1";
 		}
+        elseif ($type == 'loan')
+        {
+            $sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').")";
+        }
         else
 		{
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
         }
 
-		if ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
+        if($dates > 0 && $type == 'loan'){
+            $sql .= " AND (dateend > '".$this->db->idate($dates)."' OR dateend IS NULL)";
+        }
+		elseif ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
 		{
 			if (empty($datefieldname) && !empty($this->table_element_date)) $datefieldname = $this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
 		}
-		if ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
+
+        if($datee > 0 && $type == 'loan'){
+            $sql .= " AND (datestart < '".$this->db->idate($datee)."' OR datestart IS NULL)";
+        }
+        elseif ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
 		{
 			if (empty($datefieldname) && !empty($this->table_element_date)) $datefieldname = $this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
@@ -1211,7 +1222,7 @@ class Project extends CommonObject
      * Return array of projects a user has permission on, is affected to, or all projects
      *
      * @param 	User	$user			User object
-     * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
+     * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
      * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
      * @param	string	$filter			additionnal filter on project (statut, ref, ...)
@@ -1224,9 +1235,17 @@ class Project extends CommonObject
 
         $sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
-        if ($mode == 0 || $mode == 1)
+        if ($mode == 0)
         {
-            $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
+            $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id = p.rowid";
+        }
+        elseif ($mode == 1)
+        {
+        	$sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
+        }
+        elseif ($mode == 2)
+        {
+        	// No filter. Use this if user has permission to see all project
         }
         $sql.= " WHERE p.entity IN (".getEntity('project').")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
@@ -1251,13 +1270,12 @@ class Project extends CommonObject
 
         if ($mode == 0)
         {
-            $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ( p.public = 1";
             $sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
             $sql.= " AND ec.fk_socpeople = ".$user->id.")";
             $sql.= " )";
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND (";
@@ -1265,7 +1283,7 @@ class Project extends CommonObject
             $sql.= " AND ec.fk_socpeople = ".$user->id.")";
             $sql.= " )";
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             // No filter. Use this if user has permission to see all project
         }
