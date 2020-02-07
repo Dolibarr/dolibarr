@@ -22,10 +22,10 @@
  */
 
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("companies", "contracts", "bills", "other", "exports"));
@@ -34,7 +34,7 @@ $langs->loadLangs(array("companies", "contracts", "bills", "other", "exports"));
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
-$mode		= GETPOST('mode','alpha') ? GETPOST('mode','alpha') : 'graph';
+$mode		= GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
 $objecttype = GETPOST('objecttype', 'aZ09');
 $tabfamily  = GETPOST('tabfamily', 'aZ09');
 
@@ -82,22 +82,22 @@ $arrayoftype = array(
     'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket'),
 );
 if ($objecttype == 'thirdparty') {
-    require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+    require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 }
 elseif ($objecttype == 'contract') {
-    require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+    require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
 elseif ($objecttype == 'invoice') {
-    require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+    require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 }
 elseif ($objecttype == 'invoice_template') {
-    require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture-rec.class.php");
+    require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture-rec.class.php";
 }
 elseif ($objecttype == 'mo') {
-    require_once(DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php");
+    require_once DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php" ;
 }
 elseif ($objecttype) {
-    require_once(DOL_DOCUMENT_ROOT."/".$objecttype."/class/".$objecttype.".class.php");
+    require_once DOL_DOCUMENT_ROOT."/".$objecttype."/class/".$objecttype.".class.php";
 }
 
 // Complete $arrayoftype
@@ -129,9 +129,6 @@ if ($objecttype) {
     catch(Exception $e) {
         print 'Failed to load class for type '.$objecttype;
     }
-}
-else {
-
 }
 
 // Security check
@@ -364,7 +361,7 @@ if (! empty($search_measures) && ! empty($search_xaxis))
     $sql .= ' WHERE 1 = 1';
     $sql .= ' AND entity IN ('.getEntity($object->element).')';
     foreach($search_filters as $key => $val) {
-
+		// TODO
     }
     $sql .= ' GROUP BY ';
     foreach($search_xaxis as $key => $val) {
@@ -439,8 +436,7 @@ print '<div class="customreportsoutput'.($totalnbofrecord?'':' customreportsoutp
 
 
 if ($mode == 'grid') {
-
-
+	// TODO
 }
 
 if ($mode == 'graph') {
