@@ -1757,8 +1757,21 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
 {
 	global $langs, $conf, $user, $bc;
+	global $theme_datacolor;
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+	$listofstatus = array_keys($listofoppstatus);
+	$statusOppList = array();
+	$themeColorId = 0;
+	foreach ($listofstatus as $oppStatus) {
+		$oppStatusCode = dol_getIdFromCode($db, $oppStatus, 'c_lead_status', 'rowid', 'code');
+		if ($oppStatusCode) {
+			$statusOppList[$oppStatus]['code'] = $oppStatusCode;
+			$statusOppList[$oppStatus]['color'] = isset($theme_datacolor[$themeColorId]) ? implode(', ', $theme_datacolor[$themeColorId]) : '';
+		}
+		$themeColorId++;
+	}
 
 	$projectstatic = new Project($db);
 	$thirdpartystatic = new Societe($db);
@@ -1942,7 +1955,23 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 				}
 
-				print '<td class="right">'.$projectstatic->getLibStatut(3).'</td>';
+				print '<td class="right">';
+				//print $projectstatic->getLibStatut(3);
+				if (isset($statusOppList[$objp->opp_status])) {
+					$oppStatusCode = $statusOppList[$objp->opp_status]['code'];
+					$oppStatusColor = $statusOppList[$objp->opp_status]['color'];
+				} else {
+					$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
+					$oppStatusColor = '';
+				}
+				if ($oppStatusCode) {
+					if (!empty($oppStatusColor)) {
+						print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" style="display: inline-block; width: 4px; border: 5px solid rgb(' . $oppStatusColor . '); border-radius: 2px;" title="' . $langs->trans("OppStatus" . $oppStatusCode) . '"></a>';
+					} else {
+						print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" title="' . $langs->trans("OppStatus".$oppStatusCode) . '">' . $oppStatusCode . '</a>';
+					}
+				}
+				print '</td>';
 				print "</tr>\n";
 
 				$total_task = $total_task + $objp->nb;
