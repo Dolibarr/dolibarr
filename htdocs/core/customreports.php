@@ -244,6 +244,7 @@ foreach($object->fields as $key => $val) {
     if (! $val['measure']) {
         if (in_array($key, array('id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
         if (isset($val['enabled']) && ! dol_eval($val['enabled'], 1)) continue;
+        if (isset($val['visible']) && ! dol_eval($val['visible'], 1)) continue;
         if (preg_match('/^fk_/', $key) && ! preg_match('/^fk_statu/', $key)) continue;
         if (in_array($val['type'], array('html', 'text'))) continue;
         if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {

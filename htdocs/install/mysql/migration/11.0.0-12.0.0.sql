@@ -47,6 +47,8 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 
+--ALTER TABLE llx_facturerec DROP COLUMN vat_src_code;
+
 
 -- Migration to the new regions (France)
 UPDATE llx_c_regions set nom = 'Centre-Val de Loire' WHERE fk_pays = 1 AND code_region = 24;
