@@ -47,6 +47,8 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 
+ALTER TABLE llx_ticket ADD COLUMN import_key varchar(14);
+
 --ALTER TABLE llx_facturerec DROP COLUMN vat_src_code;
 
 
