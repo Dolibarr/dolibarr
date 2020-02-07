@@ -79,7 +79,7 @@ $arrayoftype = array(
     'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec'),
     'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom'),
     'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo'),
-    'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Societe'),
+    'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket'),
 );
 if ($objecttype == 'thirdparty') {
     require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
@@ -104,7 +104,7 @@ elseif ($objecttype) {
 $parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-else {
+elseif (is_array($hookmanager->resArray)) {
 	if (! empty($hookmanager->resArray['title'])) {		// Add entries for tabs
 		$title = $hookmanager->resArray['title'];
 	}
@@ -114,9 +114,9 @@ else {
 	if (! empty($hookmanager->resArray['head'])) {		// Add entries for tabs
 		$head = array_merge($head, $hookmanager->resArray['head']);
 	}
-	if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {	// Add entries from hook
-	    foreach($hookmanager->resArray as $key => $val) {
-	        $arrayoftype[$key] = $val['arrayoftype'];
+	if (! empty($hookmanager->resArray['arrayoftype'])) {	// Add entries from hook
+		foreach($hookmanager->resArray['arrayoftype'] as $key => $val) {
+	        $arrayoftype[$key] = $val;
 	    }
 	}
 }
@@ -133,6 +133,15 @@ if ($objecttype) {
 else {
 
 }
+
+// Security check
+$socid = 0;
+if ($user->socid > 0)	// Protection if external user
+{
+	//$socid = $user->socid;
+	accessforbidden();
+}
+$result = restrictedArea($user, $object->element, 0, '');
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -213,6 +222,8 @@ foreach($object->fields as $key => $val) {
     if ($val['isameasure']) {
         $arrayofmesures['t.'.$key.'-sum'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
         $arrayofmesures['t.'.$key.'-average'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
+        $arrayofmesures['t.'.$key.'-min'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
+        $arrayofmesures['t.'.$key.'-max'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>';
     }
 }
 // Add measure from extrafields
@@ -221,6 +232,8 @@ if ($object->isextrafieldmanaged) {
         if (! empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
             $arrayofmesures['te.'.$key.'-sum'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
             $arrayofmesures['te.'.$key.'-average'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
+            $arrayofmesures['te.'.$key.'-min'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
+            $arrayofmesures['te.'.$key.'-max'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>';
         }
     }
 }
@@ -234,7 +247,7 @@ foreach($object->fields as $key => $val) {
     if (! $val['measure']) {
         if (in_array($key, array('id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
         if (isset($val['enabled']) && ! dol_eval($val['enabled'], 1)) continue;
-        if (preg_match('/^fk_/', $key)) continue;
+        if (preg_match('/^fk_/', $key) && ! preg_match('/^fk_statu/', $key)) continue;
         if (in_array($val['type'], array('html', 'text'))) continue;
         if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
             $arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position']);

@@ -2912,6 +2912,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->admin) $accessallowed = 1; // If user is admin
 
 		// Define $accessallowed
+		$reg = array();
 		if (preg_match('/^([a-z]+)_user_temp$/i', $modulepart, $reg))
 		{
 			if (empty($conf->{$reg[1]}->dir_temp))	// modulepart not supported
