@@ -122,22 +122,24 @@ $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 
 $commonparams=array();
-$commonparams['modecompta']=$modecompta;
-$commonparams['sortorder'] = $sortorder;
-$commonparams['sortfield'] = $sortfield;
+if(!empty($modecompta)) $commonparams['modecompta']=$modecompta;
+if(!empty($sortorder)) $commonparams['sortorder'] = $sortorder;
+if(!empty($sortfield)) $commonparams['sortfield'] = $sortfield;
 
 $headerparams = array();
-$headerparams['date_startyear'] = $date_startyear;
-$headerparams['date_startmonth'] = $date_startmonth;
-$headerparams['date_startday'] = $date_startday;
-$headerparams['date_endyear'] = $date_endyear;
-$headerparams['date_endmonth'] = $date_endmonth;
-$headerparams['date_endday'] = $date_endday;
+if(!empty($date_startyear)) $headerparams['date_startyear'] = $date_startyear;
+if(!empty($date_startmonth)) $headerparams['date_startmonth'] = $date_startmonth;
+if(!empty($date_startday)) $headerparams['date_startday'] = $date_startday;
+if(!empty($date_endyear)) $headerparams['date_endyear'] = $date_endyear;
+if(!empty($date_endmonth)) $headerparams['date_endmonth'] = $date_endmonth;
+if(!empty($date_endday)) $headerparams['date_endday'] = $date_endday;
+if(!empty($year)) $headerparams['year'] = $year;
+if(!empty($month)) $headerparams['month'] = $month;
 $headerparams['q'] = $q;
 
 $tableparams = array();
-$tableparams['search_categ'] = $selected_cat;
-$tableparams['search_type'] = $selected_type;
+if(!empty($selected_cat)) $tableparams['search_categ'] = $selected_cat;
+if(!empty($selected_type)) $tableparams['search_type'] = $selected_type;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
 // Adding common parameters
