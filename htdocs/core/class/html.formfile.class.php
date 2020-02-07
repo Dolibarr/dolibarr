@@ -859,7 +859,7 @@ class FormFile
 						if ($delallowed)
 						{
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.(strpos($tmpurlsource, '?') ? '&amp;' : '?').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action=remove_file&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
