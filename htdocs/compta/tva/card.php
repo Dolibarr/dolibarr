@@ -38,8 +38,8 @@ $action=GETPOST("action", "alpha");
 $refund=GETPOST("refund", "int");
 if (empty($refund)) $refund=0;
 
-$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
-$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
+$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
 
 
 
