@@ -1388,7 +1388,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		if (!empty($libelleproduitservice) && !empty($ref_prodserv)) $ref_prodserv .= " - ";
 	}
 
-	if (!empty($ref_prodserv) && !empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)) { $ref_prodserv = '<b>'.$ref_prodserv.'</b>'; }
+	if (!empty($ref_prodserv) && !empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) { $ref_prodserv = '<b>'.$ref_prodserv.'</b>'; }
 	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
@@ -1425,7 +1425,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		if (!empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)) {
+		if (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) {
 		    $libelleproduitservice .= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';
 		} else {
 		    $libelleproduitservice .= "__N__".$period;
@@ -2157,7 +2157,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 		elseif ($objecttype == 'fichinter')
 		{
 			$outputlangs->load('interventions');
-			foreach($objects as $elementobject)
+			foreach ($objects as $elementobject)
 			{
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);

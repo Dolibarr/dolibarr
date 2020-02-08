@@ -144,7 +144,7 @@ dol_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
-$sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
+$sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code, bk.date_validated ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 $sql .= " WHERE (bk.subledger_account =  '" . $object->code_compta_fournisseur . "' AND bk.numero_compte = '" . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . "' )";
 if (dol_strlen($search_date_start) || dol_strlen($search_date_end)) {
@@ -257,9 +257,9 @@ if ($resql) {
 		print '<td class="center">' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 		print '<td>' . $obj->doc_ref . '</td>';
 		print '<td>' . $obj->label_compte . '</td>';
-		print '<td class="right">' . price($obj->debit) . '</td>';
-		print '<td class="right">' . price($obj->credit) . '</td>';
-		print '<td class="right">' . price(round($solde, 2)) . '</td>';
+		print '<td class="nowrap right">' . price($obj->debit) . '</td>';
+		print '<td class="nowrap right">' . price($obj->credit) . '</td>';
+		print '<td class="nowrap right">' . price(round($solde, 2)) . '</td>';
 
         // Journal
         $accountingjournal = new AccountingJournal($db);
@@ -267,7 +267,7 @@ if ($resql) {
         $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
         print '<td class="center">' . $journaltoshow . '</td>';
 
-		if (empty($obj->lettering_code)) {
+		if (empty($obj->lettering_code)  && empty($obj->date_validated) ) {
 			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
 		    print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $obj->piece_num . '">';
 		    print img_edit();
@@ -282,15 +282,15 @@ if ($resql) {
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Total").':</td>' . "\n";
-	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
-	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
+	print '<td class="nowrap right"><strong>' . price($debit) . '</strong></td>';
+	print '<td class="nowrap right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="6"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Balancing").':</td>' . "\n";
 	print '<td colspan="2">&nbsp;</td>';
-	print '<td class="right"><strong>' . price($credit - $debit) . '</strong></td>';
+	print '<td class="nowrap right"><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="4"></td>';
 	print "</tr>\n";
 

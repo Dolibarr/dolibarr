@@ -13,6 +13,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2019	   Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,12 +99,10 @@ $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_day = GETPOST('search_day', 'int');
-$search_month = GETPOST('search_month', 'int');
-$search_year	= GETPOST('search_year', 'int');
-$search_day_lim		= GETPOST('search_day_lim', 'int');
-$search_month_lim = GETPOST('search_month_lim', 'int');
-$search_year_lim	= GETPOST('search_year_lim', 'int');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
+$search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -248,14 +247,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
-	$search_day = '';
-	$search_year = '';
-	$search_month = '';
+	$search_date_start = '';
+	$search_date_end = '';
+	$search_datelimit_start = '';
+	$search_datelimit_end = '';
 	$option = '';
 	$filter = '';
-	$search_day_lim = '';
-	$search_year_lim = '';
-	$search_month_lim = '';
 	$toselect = '';
 	$search_array_options = array();
 	$search_categ_cus = 0;
@@ -478,12 +475,15 @@ if ($search_status != '-1' && $search_status != '')
 		$sql .= " AND f.fk_statut IN (".$db->escape($search_status).")"; // When search_status is '1,2' for example
 	}
 }
+
 if ($search_paymentmode > 0)  $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
 if ($search_paymentterms > 0) $sql .= " AND f.fk_cond_reglement = ".$db->escape($search_paymentterms);
 if ($search_module_source)    $sql .= natural_search("f.module_source", $search_module_source);
 if ($search_pos_source)       $sql .= natural_search("f.pos_source", $search_pos_source);
-$sql .= dolSqlDateFilter("f.datef", $search_day, $search_month, $search_year);
-$sql .= dolSqlDateFilter("f.date_lim_reglement", $search_day_lim, $search_month_lim, $search_year_lim);
+if ($search_date_start)       $sql .= " AND f.datef >= '".$db->idate($search_date_start)."'";
+if ($search_date_end)         $sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
+if ($search_datelimit_start)  $sql .= " AND f.date_lim_reglement >= '".$db->idate($search_datelimit_start)."'";
+if ($search_datelimit_end)    $sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if ($search_sale > 0)  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".(int) $search_sale;
 if ($search_user > 0)
@@ -571,12 +571,10 @@ if ($resql)
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sall)				 $param .= '&sall='.urlencode($sall);
-	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
-	if ($search_month)       $param .= '&search_month='.urlencode($search_month);
-	if ($search_year)        $param .= '&search_year='.urlencode($search_year);
-	if ($search_day_lim)     $param .= '&search_day_lim='.urlencode($search_day_lim);
-	if ($search_month_lim)   $param .= '&search_month_lim='.urlencode($search_month_lim);
-	if ($search_year_lim)    $param .= '&search_year_lim='.urlencode($search_year_lim);
+	if ($search_date_start)				$param .= '&search_date_start='.urlencode($search_date_start);
+	if ($search_date_end)				$param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_datelimit_start)		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
+	if ($search_datelimit_end)			$param .= '&search_datelimit_end='.urlencode($search_datelimit_end);
 	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param .= '&search_refcustomer='.urlencode($search_refcustomer);
 	if ($search_project_ref) $param .= '&search_project_ref='.urlencode($search_project_ref);
@@ -752,20 +750,29 @@ if ($resql)
 	// Date invoice
 	if (!empty($arrayfields['f.date']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
-		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
-		$formother->select_year($search_year ? $search_year : -1, 'search_year', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+		print '</div>';
 		print '</td>';
 	}
 	// Date due
 	if (!empty($arrayfields['f.date_lim_reglement']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
-		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
-		$formother->select_year($search_year_lim ? $search_year_lim : -1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
-		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1);
+		print '</div>';
 		print '</td>';
 	}
 	// Project ref
@@ -778,7 +785,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
 	}
-	// Thirpdarty
+	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe" value="'.$search_societe.'"></td>';
@@ -1054,7 +1061,6 @@ if ($resql)
                 {
                     print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
                 }
-				print empty($obj->increment) ? '' : ' ('.$obj->increment.')';
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);

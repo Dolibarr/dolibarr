@@ -43,7 +43,8 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -67,7 +68,7 @@ class MyObject extends CommonObject
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
-	 *  'enabled' is a condition when the field must be managed.
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -237,13 +238,13 @@ class MyObject extends CommonObject
 		// Translate some data of arrayofkeyval
 		if (is_object($langs))
 		{
-			foreach($this->fields as $key => $val)
+			foreach ($this->fields as $key => $val)
 			{
 				if (is_array($val['arrayofkeyval']))
 				{
-					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					foreach ($val['arrayofkeyval'] as $key2 => $val2)
 					{
-						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
 			}
@@ -733,7 +734,7 @@ class MyObject extends CommonObject
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {
-        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
         }
 
         $url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;

@@ -269,13 +269,6 @@ textarea:focus, button:focus {
 input:focus, textarea:focus, button:focus, select:focus {
 	border-bottom: 1px solid #666;
 }
-input.select2-input {
-	border-bottom: none ! important;
-}
-.select2-choice {
-	border: none;
-	border-bottom: 1px solid #ccc !important;
-}
 
 textarea.cke_source:focus
 {
@@ -452,9 +445,6 @@ select.flat, form.flat select {
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
-}
-.select2-results .select2-highlighted.optionblue {
-	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
@@ -763,6 +753,10 @@ body[class*="colorblind-"] .text-success{
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+.floatnone {
+	float: none !important;
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -857,6 +851,13 @@ select.flat.selectlimit {
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
+.nomargintop {
+    margin-top: 0 !important;
+}
+.nomarginbottom {
+    margin-bottom: 0 !important;
+}
+
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -2579,7 +2580,8 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 	border-bottom: 1px solid #aaa;
 }
-div.tabBar div.titre {
+
+div.tabBar tr.titre td {
 	padding-top: 10px;
 }
 
@@ -2750,6 +2752,15 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
+.unsetcolor {
+	color: unset !important;
+}
+.nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+.nopaddingright {
+	padding-<?php print $right; ?>: 0px;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -4520,6 +4531,18 @@ pre#editfilecontentaceeditorid {
 
 
 /* ============================================================================== */
+/*  Custom reports                                                                */
+/* ============================================================================== */
+
+.customreportsoutput, .customreportsoutputnotdata {
+	padding-top: 20px;
+}
+.customreportsoutputnotdata {
+	text-align: center;
+}
+
+
+/* ============================================================================== */
 /*  Holiday                                                                       */
 /* ============================================================================== */
 
@@ -4899,6 +4922,17 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom: 1px solid #ccc !important;
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
+
 .blockvmenusearch .select2-container--default .select2-selection--single,
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
@@ -4960,8 +4994,16 @@ div.dataTables_length select {
 	box-shadow: none !important;
 	border-radius: 0 !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
 .select2-container--default .select2-selection--multiple {
-	border: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	border-radius: 0 !important;
 }
 .select2-search__field

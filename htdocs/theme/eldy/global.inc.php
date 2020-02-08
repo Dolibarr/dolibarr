@@ -38,14 +38,6 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-input.select2-input {
-	border-bottom: none ! important;
-}
-.select2-choice {
-	border: none;
-	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
-}
-
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -234,9 +226,6 @@ select.flat, form.flat select {
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
-}
-.select2-results .select2-highlighted.optionblue {
-	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
 	opacity: 0.4;
@@ -481,6 +470,18 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.paddingtop {
+	padding-bottom: 4px;
+}
+.paddingtop2 {
+	padding-bottom: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
 .marginleft2 {
 	margin-<?php print $left; ?>: 2px;
 }
@@ -534,14 +535,20 @@ body[class*="colorblind-"] .text-success{
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
+.floatnone {
+	float: none !important;
+}
+
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+
 /* Themes for badges */
-<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+
+    <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -573,6 +580,31 @@ div.divsearchfield {
     overflow: auto;
     padding-bottom: 5px;
     opacity: 0.6;
+}
+.divadvancedsearchfield:first-child {
+    margin-top: 3px;
+}
+.divadvancedsearchfield {
+    float: left;
+    padding-left: 15px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.divadvancedsearchfield span.select2.select2-container.select2-container--default {
+	padding-bottom: 4px;
+}
+.search_component_params {
+	/*display: flex; */
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    background: #fff;
+    padding: 3px;
+}
+.search_component_params_input, .search_component_params_input:focus {
+	border-bottom: none;
+	width: auto;
+	margin: 0 !important;
+	padding: 3px;
 }
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
@@ -630,6 +662,12 @@ select.flat.selectlimit {
 }
 .marginbottomonly {
 	margin-bottom: 10px !important;
+}
+.nomargintop {
+    margin-top: 0 !important;
+}
+.nomarginbottom {
+    margin-bottom: 0 !important;
 }
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
@@ -1388,9 +1426,19 @@ div.nopadding {
 	margin : 0px auto;
 }
 
+td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
+    color: rgb(<?php print $colortexttitlenotab; ?>);
+    opacity: 0.5;
+}
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
+}
+@media only screen and (max-width: 767px)
+{
+	span.pictotitle {
+		margin-<?php echo $left; ?>: 0 !important;
+	}
 }
 .pictoobjectwidth {
 	width: 14px;
@@ -2396,8 +2444,11 @@ div.tabBar {
 	width: auto;
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 }
-div.tabBar div.titre {
+div.tabBar tr.titre td {
 	padding-top: 20px;
+}
+div.fiche tr.titre td {
+	padding-top: 10px;
 }
 
 div.tabBar.tabBarNoTop {
@@ -2573,6 +2624,15 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
+.unsetcolor {
+	color: unset !important;
+}
+.nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+.nopaddingright {
+	padding-<?php print $right; ?>: 0px;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3596,8 +3656,8 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 44px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 2.5em; };
+.widthpictotitle { width: 32px; text-align: <?php echo $left; ?>; }
+span.widthpictotitle { font-size: 2.1em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -4382,6 +4442,18 @@ pre#editfilecontentaceeditorid {
 
 
 /* ============================================================================== */
+/*  Custom reports                                                                */
+/* ============================================================================== */
+
+.customreportsoutput, .customreportsoutputnotdata {
+	padding-top: 20px;
+}
+.customreportsoutputnotdata {
+	text-align: center;
+}
+
+
+/* ============================================================================== */
 /*  Holiday                                                                       */
 /* ============================================================================== */
 
@@ -4760,6 +4832,28 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+span.select2.select2-container.select2-container--default {
+    border-left: none;
+    border-top: none;
+    border-right: none;
+}
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
+.select2-container .select2-selection--multiple {
+	min-height: 30px !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	margin-top: 5px !important;
+	border: none;
+}
 .select2-container--focus span.select2-selection.select2-selection--single {
     border-bottom: 1px solid #666 !important;
 }
@@ -4827,8 +4921,16 @@ div.dataTables_length select {
 	box-shadow: none !important;
 	border-radius: 0 !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
 .select2-container--default .select2-selection--multiple {
-	border: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	border-radius: 0 !important;
 }
 .select2-search__field
@@ -4921,7 +5023,7 @@ a span.select2-chosen
 	opacity: 0.4;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
-  margin-bottom: 3px;
+	margin-bottom: 3px;
 }
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
 .select2-container-multi.select2-container-active .select2-choices
@@ -5818,11 +5920,6 @@ div.tabsElem a.tab {
         border-right: none;
         border-left: none;
     }
-
-	.box-flex-container {
-	    margin: 0 0 0 -8px !important;
-	}
-
 }
 
 @media only screen and (max-width: 1024px)

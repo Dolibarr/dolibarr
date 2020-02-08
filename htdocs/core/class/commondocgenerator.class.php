@@ -1090,9 +1090,9 @@ abstract class CommonDocGenerator
         if (!$reshook)
         {
             if (empty($columnText)) return;
-            $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
+            $pdf->SetXY($this->getColumnContentXStart($colKey) - 1, $curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
+            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey) + 2, 2, $this->getColumnContentXStart($colKey) - 1, $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
     }
 
@@ -1123,7 +1123,7 @@ abstract class CommonDocGenerator
      */
     public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
     {
-        global $hookmanager;
+        global $hookmanager, $conf;
 
         foreach ($this->cols as $colKey => $colDef) {
             $parameters = array(
@@ -1153,6 +1153,14 @@ abstract class CommonDocGenerator
                     $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
                     $textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
                     $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+
+                    global $outputlangsbis;
+                    if (is_object($outputlangsbis)) {
+                    	$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] + 4);
+                    	$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
+                    	$pdf->MultiCell($textWidth, 2, $textbis, '', $colDef['title']['align']);
+                    }
+
                     $this->tabTitleHeight = max($pdf->GetY() - $tab_top + $colDef['title']['padding'][2], $this->tabTitleHeight);
                 }
             }

@@ -139,7 +139,8 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
+	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet).
+	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
 	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
@@ -246,8 +247,8 @@ class Stripe extends CommonObject
 					}
 
 					// Create customer in Dolibarr
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
+					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
 					if (!$resql)
 					{
@@ -416,7 +417,8 @@ class Stripe extends CommonObject
     			"currency" => $currency_code,
     		    "payment_method_types" => array("card"),
     		    "description" => $description,
-    		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+    		    "statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+    			//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
     			"metadata" => $metadata
     		);
@@ -559,7 +561,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getSetupIntent", LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.$confirmnow, LOG_INFO, 1);
 
 		$error = 0;
 
@@ -600,6 +602,8 @@ class Stripe extends CommonObject
 				// Force to use the correct API key
 				global $stripearrayofkeysbyenv;
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
+				dol_syslog("getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
 
 				// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -666,14 +670,14 @@ class Stripe extends CommonObject
 			}
 		}
 
-		dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
-
 		if (!$error)
 		{
+			dol_syslog("getSetupIntent ".(is_object($setupintent) ? $setupintent->id : ''), LOG_INFO, -1);
 			return $setupintent;
 		}
 		else
 		{
+			dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
 			return null;
 		}
 	}
@@ -956,7 +960,7 @@ class Stripe extends CommonObject
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+                        "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -966,7 +970,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-					    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+					    "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -993,10 +997,10 @@ class Stripe extends CommonObject
 				if (!in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
-        		$paymentarray = array(
+				$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-        		    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,

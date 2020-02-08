@@ -65,7 +65,7 @@ if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-	print '<link rel="stylesheet" href="css/pos.css">
+	print '<link rel="stylesheet" href="css/pos.css.php">
 	<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
 }
@@ -86,6 +86,7 @@ function fail($message)
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
+$selectedline = GETPOST('selectedline', 'int');
 $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay', 'alpha');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
@@ -281,7 +282,24 @@ if ($action == "addline")
 	$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 	$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-	$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+	if (! empty($conf->global->TAKEPOS_SUPPLEMENTS))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$cat = new Categorie($db);
+		$categories = $cat->containing($idproduct, 'product');
+		$found = (array_search($conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, array_column($categories, 'id')));
+		if ($found !== false) // If this product is a supplement
+		{
+			$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid=$selectedline";
+			$resql = $db->query($sql);
+			$row = $db->fetch_array($resql);
+			if ($row[0]==null) $parent_line=$selectedline;
+			else $parent_line=$row[0]; //If the parent line is already a supplement, add the supplement to the main  product
+		}
+	}
+
+    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, 0, '', 0, 100, '', null, 0);
+
     $invoice->fetch($placeid);
 }
 
@@ -374,10 +392,24 @@ if ($action == "updateprice")
 {
     foreach ($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+        if ($line->id == $idline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			$customer = new Societe($db);
+			$customer->fetch($invoice->socid);
+			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
+			$price_min = $datapriceofproduct['price_min'];
+			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
+			//Check min price
+			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min))))
+			{
+				echo $langs->trans("CantBeLessThanMinPrice");
+			}
+			else $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
         }
     }
-
     $invoice->fetch($placeid);
 }
 
@@ -385,11 +417,25 @@ if ($action == "updatereduction")
 {
     foreach ($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
-        }
+		if ($line->id == $idline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			$customer = new Societe($db);
+			$customer->fetch($invoice->socid);
+			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
+			$price_min = $datapriceofproduct['price_min'];
+			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$pu_ht = price2num($line->multicurrency_subprice / (1 + ($line->tva_tx / 100)), 'MU');
+			//Check min price
+			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->multicurrency_subprice) * (1 - price2num($number) / 100) < price2num($price_min))))
+			{
+				echo $langs->trans("CantBeLessThanMinPrice");
+			}
+			else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+		}
     }
-
-    $invoice->fetch($placeid);
+	$invoice->fetch($placeid);
 }
 
 if ($action == "order" and $placeid != 0)
@@ -704,6 +750,37 @@ if ($placeid > 0)
         $tmplines = array_reverse($invoice->lines);
         foreach ($tmplines as $line)
         {
+			if ($line->fk_parent_line!=false)
+			{
+				$htmlsupplements[$line->fk_parent_line].='<tr class="drag drop oddeven posinvoiceline';
+				if ($line->special_code == "4") $htmlsupplements[$line->fk_parent_line].=' order';
+				$htmlsupplements[$line->fk_parent_line].= '" id="'.$line->id.'">';
+				$htmlsupplements[$line->fk_parent_line].= '<td class="left">';
+				$htmlsupplements[$line->fk_parent_line].= img_picto('', 'rightarrow');
+				if ($line->product_label) $htmlsupplements[$line->fk_parent_line] .= $line->product_label;
+				if ($line->product_label && $line->desc) $htmlsupplements[$line->fk_parent_line] .= '<br>';
+				if ($line->product_label != $line->desc)
+				{
+					$firstline = dolGetFirstLineOfText($line->desc);
+					if ($firstline != $line->desc)
+					{
+						$htmlsupplements[$line->fk_parent_line] .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+					}
+					else
+					{
+						$htmlsupplements[$line->fk_parent_line] .= $line->desc;
+					}
+				}
+				$htmlsupplements[$line->fk_parent_line] .= '</td>';
+				if ($_SESSION["basiclayout"] != 1)
+				{
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.$line->qty.'</td>';
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.price($line->total_ttc).'</td>';
+				}
+				$htmlsupplements[$line->fk_parent_line] .= '</tr>'."\n";
+				continue;
+			}
             $htmlforlines = '';
 
             $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
@@ -751,6 +828,7 @@ if ($placeid > 0)
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">'.price($line->total_ttc).'</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
+			$htmlforlines .= $htmlsupplements[$line->id];
 
             print $htmlforlines;
         }

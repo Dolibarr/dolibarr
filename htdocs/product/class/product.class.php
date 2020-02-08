@@ -844,10 +844,10 @@ class Product extends CommonObject
         $this->height_units = trim($this->height_units);
         // set unit not defined
         if (is_numeric($this->length_units)) {
-        	$this->width_units = $this->length_units;    // Not used yet
+        	$this->width_units = $this->length_units; // Not used yet
         }
         if (is_numeric($this->length_units)) {
-        	$this->height_units = $this->length_units;    // Not used yet
+        	$this->height_units = $this->length_units; // Not used yet
         }
         // Automated compute surface and volume if not filled
         if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
@@ -1882,7 +1882,7 @@ class Product extends CommonObject
         	$newminprice = 0;
         }
         if (empty($newminprice)) {
-        	$newminprice=0;
+        	$newminprice = 0;
         }
 
         // Check parameters
@@ -4348,8 +4348,8 @@ class Product extends CommonObject
             $label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
         }
         if (isset($this->status) && isset($this->status_buy)) {
-        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
-        	$label.= ' '.$this->getLibStatut(5, 1);
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
+        	$label .= ' '.$this->getLibStatut(5, 1);
         }
 
         if (!empty($this->entity)) {
@@ -4801,7 +4801,7 @@ class Product extends CommonObject
 		}
 		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
 		{
-			$result = $this->load_stats_reception(0, '4', 1);			// Use same tables than when module reception is not used.
+			$result = $this->load_stats_reception(0, '4', 1); // Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}

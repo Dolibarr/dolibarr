@@ -757,6 +757,95 @@ if ($showbirthday)
     }
 }
 
+if ($conf->global->AGENDA_SHOW_HOLIDAYS)
+{
+    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
+    $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+    $sql .= " WHERE u.rowid = x.fk_user";
+    $sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+    $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+
+    if ($action == 'show_day')
+    {
+        // Request only leaves for the current selected day
+        $sql .= " AND '".$year."-".$month."-".$day."' BETWEEN x.date_debut AND x.date_fin";
+    }
+    elseif ($action == 'show_week')
+    {
+        // TODO: Add filter to reduce database request
+    }
+    elseif ($action == 'show_month')
+    {
+        // TODO: Add filter to reduce database request
+    }
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i   = 0;
+
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+
+            $dateStartArray = dol_getdate(dol_stringtotime($obj->date_start, 1), true);
+            $dateEndArray   = dol_getdate(dol_stringtotime($obj->date_end, 1), true);
+
+            $event = new ActionComm($db);
+
+            // Need the id of the leave object for link to it
+            $event->id                      = $obj->rowid;
+
+            $event->type_code               = 'HOLIDAY';
+            $event->datep                   = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
+            $event->datef                   = dol_mktime(0, 0, 0, $dateEndArray['mon'], $dateEndArray['mday'], $dateEndArray['year'], true);
+            $event->date_start_in_calendar  = $event->datep;
+            $event->date_end_in_calendar    = $event->datef;
+
+            if ($obj->status == 3)
+            {
+                // Show no symbol for leave with state "leave approved"
+                $event->percentage = -1;
+            }
+            elseif ($obj->status == 2)
+            {
+                // Show TO-DO symbol for leave with state "leave wait for approval"
+                $event->percentage = 0;
+            }
+
+            if ($obj->halfday == 1)
+            {
+                $event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
+            }
+            elseif ($obj->halfday == -1)
+            {
+                $event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
+            }
+            else
+            {
+                $event->label = $obj->lastname;
+            }
+
+            $annee  = date('Y', $event->date_start_in_calendar);
+            $mois   = date('m', $event->date_start_in_calendar);
+            $jour   = date('d', $event->date_start_in_calendar);
+            $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+
+            do
+            {
+                $eventarray[$daykey][] = $event;
+
+                $daykey += 60 * 60 * 24;
+            }
+
+            while ($daykey <= $event->date_end_in_calendar);
+
+            $i++;
+        }
+    }
+}
+
 // Complete $eventarray with external import Ical
 if (count($listofextcals))
 {
@@ -1512,7 +1601,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     {
                         print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
                     }
-                    if ($event->type_code != 'BIRTHDAY')
+					elseif ($event->type_code == 'HOLIDAY')
+                    {
+                        print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'holiday', 'user');
+                    }
+                    elseif ($event->type_code != 'BIRTHDAY' && $event->type_code != 'HOLIDAY')
                     {
                         // Picto
                         if (empty($event->fulldayevent))
@@ -1741,6 +1834,17 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  */
 function sort_events_by_date($a, $b)
 {
+	// Sort holidays at first
+    if ($a->type_code === 'HOLIDAY')
+    {
+        return -1;
+    }
+
+    if ($b->type_code === 'HOLIDAY')
+    {
+        return 1;
+    }
+
     // datep => Event start time
     // datef => Event end time
 

@@ -53,6 +53,7 @@ if ($action == 'setvalue' && $user->admin)
     if (!$error && is_array($_POST))
     {
     	//var_dump($_POST);
+    	$reg = array();
 	    foreach ($_POST as $key => $val)
 	    {
 	    	if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) continue;

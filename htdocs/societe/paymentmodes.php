@@ -194,13 +194,13 @@ if (empty($reshook))
 	if ($action == 'updatecard')
 	{
 		// Modification
-		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('cardnumber', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha') || !GETPOST('cvn', 'alpha'))
+		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha'))
 		{
 			if (!GETPOST('label', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			if (!GETPOST('proprio', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NameOnCard")), null, 'errors');
-			if (!GETPOST('cardnumber', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardNumber")), null, 'errors');
+			//if (!GETPOST('cardnumber', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardNumber")), null, 'errors');
 			if (!(GETPOST('exp_date_month', 'alpha') > 0) || !(GETPOST('exp_date_year', 'alpha') > 0)) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ExpiryDate")), null, 'errors');
-			if (!GETPOST('cvn', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CVN")), null, 'errors');
+			//if (!GETPOST('cvn', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CVN")), null, 'errors');
 			$action = 'createcard';
 			$error++;
 		}
@@ -220,6 +220,10 @@ if (empty($reshook))
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
 			$companypaymentmode->country_code    = $object->country_code;
 
+			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
+				// If we set a stripe value that is different than previous one, we also set the stripe account
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
+			}
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
 			$result = $companypaymentmode->update($user);
@@ -346,13 +350,13 @@ if (empty($reshook))
 	{
 		$error = 0;
 
-		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('cardnumber', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha') || !GETPOST('cvn', 'alpha'))
+		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha'))
 		{
 			if (!GETPOST('label', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			if (!GETPOST('proprio', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NameOnCard")), null, 'errors');
-			if (!GETPOST('cardnumber', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardNumber")), null, 'errors');
+			//if (!GETPOST('cardnumber', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardNumber")), null, 'errors');
 			if (!(GETPOST('exp_date_month', 'alpha') > 0) || !(GETPOST('exp_date_year', 'alpha') > 0)) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ExpiryDate")), null, 'errors');
-			if (!GETPOST('cvn', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CVN")), null, 'errors');
+			//if (!GETPOST('cvn', 'alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CVN")), null, 'errors');
 			$action = 'createcard';
 			$error++;
 		}
@@ -377,6 +381,10 @@ if (empty($reshook))
 			$companypaymentmode->country_code    = $object->country_code;
 			$companypaymentmode->status          = $servicestatus;
 
+			if (GETPOST('stripe_card_ref', 'alpha')) {
+				// If we set a stripe value, we also set the stripe account
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
+			}
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
 			$db->begin();
@@ -574,7 +582,7 @@ if (empty($reshook))
             }
 
 			$resql = $db->query($sql);
-			$num = $db->num_rows($resql);		// Note: $num is always 0 on an update and delete, it is defined for select only.
+			$num = $db->num_rows($resql); // Note: $num is always 0 on an update and delete, it is defined for select only.
 			if (!empty($newcu)) {
 				if (empty($num))
 				{
@@ -858,7 +866,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$permissiontowrite = $user->rights->societe->creer;
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid', 'Publishable key '.$site_account);
+			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 			print '</td><td>';
 			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 			if (!empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
@@ -870,7 +878,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 				}
-				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account, 'globe').'</a>';
 			}
 			print '</td><td class="right">';
 			if (empty($stripecu))
@@ -924,7 +932,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				$url = 'https://dashboard.stripe.com/connect/accounts/'.$stripesupplieracc;
 			}
-			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
 		}
 		print '</td><td class="right">';
 		if (empty($stripesupplieracc))
@@ -999,20 +1007,21 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					}
 				}
 			}
-			catch(Exception $e)
+			catch (Exception $e)
 			{
 				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
 			}
 		}
 
 		print '<!-- List of stripe payments -->'."\n";
-		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
-		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
 			print '<td>'.$langs->trans('LocalID').'</td>';
 		}
+		print '<td>'.$langs->trans('Label').'</td>';
 		print '<td>'.$langs->trans('StripeID').'</td>';
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
@@ -1066,6 +1075,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print $companypaymentmodetemp->id;
 							print '</td>';
 							print '<td>';
+							print $companypaymentmodetemp->label;
+							print '</td>';
+							print '<td>';
 							print $companypaymentmodetemp->stripe_card_ref;
 							if ($companypaymentmodetemp->stripe_card_ref)
 							{
@@ -1076,7 +1088,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								{
 									$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
-								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
 							}
 							print '</td>';
 							print '<td>';
@@ -1159,6 +1171,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '<td>';
 					print '</td>';
 				}
+				print '<td>';
+				print '</td>';
 				// Src ID
 				print '<td>';
 				$connect = '';
@@ -1330,7 +1344,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->available as $cpt)
 			{
-		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        $arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		        if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
     					$currencybalance[$cpt->currency]['available'] = $cpt->amount / 100;
 				} else {
@@ -1344,11 +1358,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->pending as $cpt)
 			{
-				$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
-					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available']+$cpt->amount / 100;
+					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available'] + $cpt->amount / 100;
 				} else {
-					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available']+$cpt->amount;
+					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available'] + $cpt->amount;
 				}
 			}
         }
@@ -1357,7 +1371,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($currencybalance as $cpt)
 			{
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available']+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + $cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
@@ -1367,14 +1381,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	// List of bank accounts
 
-    $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
+    $morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 
 	$rib_list = $object->get_all_rib();
 	if (is_array($rib_list))
 	{
-		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -1734,7 +1748,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 // Edit Card
 if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1751,7 +1765,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
 	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->proprio.'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("CardNumber").'</td>';
+	print '<tr><td>'.$langs->trans("CardNumber").'</td>';
 	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.$companypaymentmode->number.'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
@@ -1760,7 +1774,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 	print $formother->select_year($companypaymentmode->exp_date_year, 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("CVN").'</td>';
+	print '<tr><td>'.$langs->trans("CVN").'</td>';
 	print '<td><input size="8" type="text" name="cvn" value="'.$companypaymentmode->cvn.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("StripeID")." ('card_....')</td>";
@@ -1882,7 +1896,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // Create Card
 if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1899,7 +1913,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
 	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio', 'alpha').'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("CardNumber").'</td>';
+	print '<tr><td>'.$langs->trans("CardNumber").'</td>';
 	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.GETPOST('cardnumber', 'alpha').'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
@@ -1908,8 +1922,8 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 	print $formother->select_year(GETPOST('exp_date_year', 'int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("CVN").'</td>';
-	print '<td><input size="8" type="text" name="cvn" value="'.GETPOST('cvn', 'alpha').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("CVN").'</td>';
+	print '<td><input class="width50" type="text" name="cvn" value="'.GETPOST('cvn', 'alpha').'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("StripeID")." ('card_....')</td>";
 	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';

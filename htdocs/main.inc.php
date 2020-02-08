@@ -1345,7 +1345,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach ($arrayofcss as $cssfile)
 			{
-			    if (preg_match('/^http/i', $cssfile))
+			    if (preg_match('/^(http|\/\/)/i', $cssfile))
 			    {
 			        $urltofile = $cssfile;
 			    }
@@ -1497,7 +1497,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '<!-- Includes JS added by page -->'."\n";
                 foreach ($arrayofjs as $jsfile)
                 {
-                    if (preg_match('/^http/i', $jsfile))
+                    if (preg_match('/^(http|\/\/)/i', $jsfile))
                     {
                         print '<script src="'.$jsfile.'"></script>'."\n";
                     }

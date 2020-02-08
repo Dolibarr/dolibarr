@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006  Laurent Destailleur <eldy@users.sourceforge.net>
 -- Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
--- Copyright (C) 2016       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+-- Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ create table llx_accounting_account
   account_number            varchar(32)  NOT NULL,
   account_parent            integer DEFAULT 0,                -- Hierarchic parent.
   label                     varchar(255) NOT NULL,
+  labelshort				varchar(255) DEFAULT NULL,
   fk_accounting_category    integer      DEFAULT 0,			  -- ID of personalized group for report
   fk_user_author            integer      DEFAULT NULL,
   fk_user_modif             integer      DEFAULT NULL,

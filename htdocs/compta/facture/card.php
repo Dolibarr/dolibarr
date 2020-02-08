@@ -298,14 +298,14 @@ if (empty($reshook))
 			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
 			$array_of_pu_ht_per_vat_rate = array();
 			$array_of_pu_ht_devise_per_vat_rate = array();
-			foreach($object->lines as $line) {
+			foreach ($object->lines as $line) {
 				if (empty($array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				if (empty($array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				$array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->subprice;
 				$array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_subprice;
 			}
 			//var_dump($array_of_pu_ht_per_vat_rate);exit;
-			foreach($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
+			foreach ($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
 			{
 				$pu_ht = $array_of_pu_ht_per_vat_rate[$vatrate];
 				$pu_ht_devise = $array_of_pu_ht_devise_per_vat_rate[$vatrate];
@@ -818,11 +818,11 @@ if (empty($reshook))
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
-				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+			if (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
-					foreach($amount_ht as $vatrate => $val) {
+					foreach ($amount_ht as $vatrate => $val) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
@@ -1386,12 +1386,12 @@ if (empty($reshook))
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
 
-						// If deposit invoice
-						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
-						{
-							$typeamount = GETPOST('typedeposit', 'alpha');
-							$valuedeposit = GETPOST('valuedeposit', 'int');
+						$typeamount = GETPOST('typedeposit', 'aZ09');
+						$valuedeposit = GETPOST('valuedeposit', 'int');
 
+						// If deposit invoice
+						if ($_POST['type'] == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable')))
+						{
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
 							{
@@ -1419,7 +1419,7 @@ if (empty($reshook))
 								{
 									$amountdeposit[0] = $valuedeposit;
 								}
-								else
+								elseif ($typeamount == 'variable')
 								{
 									if ($result > 0)
 									{
@@ -1449,11 +1449,15 @@ if (empty($reshook))
 
 								$amount_ttc_diff = $amountdeposit[0];
 							}
+
 							foreach ($amountdeposit as $tva => $amount)
 							{
 								if (empty($amount)) continue;
 
-								$arraylist = array('amount' => 'FixAmount', 'variable' => 'VarAmount');
+								$arraylist = array(
+									'amount' => 'FixAmount',
+									'variable' => 'VarAmount'
+								);
 								$descline = '(DEPOSIT)';
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount == 'amount') {
@@ -1500,7 +1504,8 @@ if (empty($reshook))
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
 						}
-						else
+
+						if ($_POST['type'] != Facture::TYPE_DEPOSIT || ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines'))
 						{
 							if ($result > 0)
 							{
@@ -1509,6 +1514,16 @@ if (empty($reshook))
 								{
 									$srcobject->fetch_lines();
 									$lines = $srcobject->lines;
+								}
+
+								// If we create a deposit with all lines and a percent, we change amount
+								if ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
+									if (is_array($lines)) {
+										foreach($lines as $line) {
+											// We keep ->subprice and ->pa_ht, but we change the qty
+											$line->qty = price2num($line->qty * $valuedeposit / 100, 'MS');
+										}
+									}
 								}
 
 								$fk_parent_line = 0;
@@ -2994,8 +3009,12 @@ if ($action == 'create')
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
-				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
-				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
+				$arraylist = array(
+					'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
+					'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
+					'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
+				);
+				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit', 'aZ09'), 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">'.$langs->trans('Value').':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit', 'int').'"/>';
 			}
@@ -3903,7 +3922,7 @@ elseif ($id > 0 || !empty($ref))
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref invoice
-	if ($object->status == $object::STATUS_DRAFT && ! $mysoc->isInEEC() && ! empty($conf->global->INVOICE_ALLOW_FREE_REF)) {
+	if ($object->status == $object::STATUS_DRAFT && !$mysoc->isInEEC() && !empty($conf->global->INVOICE_ALLOW_FREE_REF)) {
 		$morehtmlref .= $form->editfieldkey("Ref", 'ref', $object->ref, $object, $usercancreate, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("Ref", 'ref', $object->ref, $object, $usercancreate, 'string', '', null, null, '', 1);
 		$morehtmlref .= '<br>';
@@ -5095,7 +5114,7 @@ elseif ($id > 0 || !empty($ref))
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
-					&& (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}

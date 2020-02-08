@@ -1,17 +1,76 @@
+<?php
+/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *		\file       htdocs/theme/eldy/style.css.php
+ *		\brief      File for CSS style sheet Eldy
+ */
+
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
+//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
+if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+
+
+define('ISLOADEDBYSTEELSHEET', '1');
+
+
+session_cache_limiter('public');
+
+require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+// Define css type
+top_httphead('text/css');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+else header('Cache-Control: no-cache');
+
+
+require DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+if (defined('THEME_ONLY_CONSTANT')) return;
+
+?>
+
 html,body {
     box-sizing: border-box;
-	padding:3px;
+	padding:0px;
     margin:0;
     height:100%;
 	width:100%;
 }
 
 .bodytakepos {
-    background-color: #EEE;	
+    background-color: #EEE;
 }
 
 .center {
-	text-align: center;	
+	text-align: center;
 }
 
 button.calcbutton.poscolorblue {
@@ -35,7 +94,7 @@ button.calcbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
-	height: 24%;
+	height: calc(25% - 2px);
 	font-weight: bold;
     background-color: #8c907e;
     color: #fff;
@@ -57,7 +116,7 @@ button.calcbutton2 {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
-	height: 24%;
+	height: calc(25% - 2px);
 	font-weight: bold;
 }
 
@@ -72,7 +131,7 @@ button.calcbutton3 {
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
-	height: 24%;
+	height: calc(25% - 2px);
 }
 
 button.actionbutton {
@@ -91,11 +150,11 @@ button.actionbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
-	height:24%;
+	height: calc(25% - 2px);
 }
 
 .takepospay {
-	font-size: 1.5em;	
+	font-size: 1.5em;
 }
 
 .fa.fa-trash:before {
@@ -107,7 +166,7 @@ div.wrapper{
 	float:left; /* important */
 	position:relative; /* important(so we can absolutely position the description div */
 	width:25%;
-	height:25%;
+	height:33%;
 	margin:0;
 	padding:1px;
 	border: 2px solid #EEE;
@@ -121,7 +180,7 @@ div.wrapper2{
 	float:left; /* important */
 	position:relative; /* important(so we can absolutely position the description div */
 	width:12.5%;
-	height:25%;
+	height:33%;
 	margin:0;
 	/* padding:1px; */
 	border: 2px solid #EEE;
@@ -151,7 +210,7 @@ div.description{
 	opacity:1; /* transparency */
 	/*filter:alpha(opacity=80); IE transparency */
 	text-align:center;
-	
+
 	padding-top: 30px;
     background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
 }
@@ -180,9 +239,9 @@ table.postablelines tr td {
 
 div.paymentbordline
 {
-	width:50%; 
-	background-color:#888; 
-	border-radius: 8px; 
+	width:50%;
+	background-color:#888;
+	border-radius: 8px;
 	margin-bottom: 4px;
 }
 
@@ -206,10 +265,23 @@ div.paymentbordline
 	height: 34%;
 }
 
+.row1withhead{
+	margin: 0 auto;
+	width: 100%;
+	height: calc(50% - 35px);
+	padding-top: 5px;
+}
+
 .row2{
 	margin: 0 auto;
 	width: 100%;
 	height: 66%;
+}
+
+.row2withhead{
+	margin: 0 auto;
+	width: 100%;
+	height: 50%;
 }
 
 .div1{
@@ -221,9 +293,10 @@ div.paymentbordline
 	overflow: auto;
 	/* background-color:white; */
 	padding-top: 0;
-	padding-bottom: 10px;
+	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
+	min-height: 180px;
 }
 
 .div2{
@@ -233,7 +306,7 @@ div.paymentbordline
 	float: left;
 	box-sizing: border-box;
 	padding-top: 0;
-	padding-bottom: 10px;
+	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
 	min-height: 180px;
@@ -245,7 +318,7 @@ div.paymentbordline
 	float: left;
 	box-sizing: border-box;
 	padding-top: 0;
-	padding-bottom: 10px;
+	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
 }
@@ -325,6 +398,46 @@ div.description_content {
     padding-right: 2px;
 }
 
+.header{
+	margin: 0 auto;
+	width: 100%;
+	height: 35px;
+	background: rgb(60,70,100);
+}
+
+.topnav{
+	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
+	overflow: hidden;
+	height: 100%;
+}
+
+.topnav a{
+	float: left;
+	color: #f2f2f2;
+	padding: 6px 16px;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.topnav a:hover{
+	background-color: #ddd;
+	color: black;
+}
+
+.topnav-right{
+	float: right;
+}
+
+.topnav input[type="text"] {
+	background-color: #fff;
+	color: #000;
+	float: left;
+	border-bottom: none !important;
+	margin-top: 4px;
+	margin-left: 6px;
+}
+
 @media screen and (min-width: 892px) {
 	.calcbutton{
 		font-size: 18px;
@@ -382,6 +495,12 @@ div.description_content {
 /* For small screens */
 
 @media screen and (max-width: 767px) {
+	.topnav-right {
+		float: unset;
+	}
+	.header {
+		height: unset;
+	}
 	div.container {
 		overflow-x: scroll;
 	}
@@ -391,25 +510,33 @@ div.description_content {
 	div.wrapper2 {
 		width: 25%;
 	}
-	
+
+	div.div1 {
+		padding-bottom: 0;
+		margin-bottom: 10px;
+	}
 	div.div1, div.div2, div.div3 {
 		width: 100%;
 	}
-	
+
 	div.row1 {
 		height: unset;
 	}
-	
+
 	div.div2 {
 		min-height: unset;
 	}
-	
+
+	div.div3 {
+		height: unset;
+	}
+
 	button.calcbutton, button.calcbutton2 {
 	    min-height: 30px;
 	}
-	
+
 	.takepospay {
-		font-size: 1.2em;	
+		font-size: 1.2em;
 	}
-	
+
 }

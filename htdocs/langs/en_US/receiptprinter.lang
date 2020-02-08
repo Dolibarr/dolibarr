@@ -45,3 +45,5 @@ DOL_ACTIVATE_BUZZER=Activate buzzer
 DOL_PRINT_QRCODE=Print QR Code
 DOL_PRINT_LOGO=Print logo of my company
 DOL_PRINT_LOGO_OLD=Print logo of my company (old printers)
+DOL_BOLD=Bold
+DOL_BOLD_DISABLED=Disable bold

@@ -86,9 +86,9 @@ class Contact extends CommonObject
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'Phone mobile', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'priv' =>array('type'=>'smallint(6)', 'label'=>'Priv', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
+		'priv' =>array('type'=>'smallint(6)', 'label'=>'Private', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
@@ -181,6 +181,10 @@ class Contact extends CommonObject
 	public $phone_mobile;
 	public $fax;
 
+	/**
+	 * Private or public
+	 * @var int
+	 */
 	public $priv;
 
 	public $birthday;

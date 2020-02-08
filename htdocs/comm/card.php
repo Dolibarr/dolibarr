@@ -491,7 +491,7 @@ if ($object->id > 0)
 		$langs->load("categories");
 		print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 		print '<td>';
-		print $form->showCategories($object->id, 'customer', 1);
+		print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 		print "</td></tr>";
 	}
 
@@ -1032,7 +1032,7 @@ if ($object->id > 0)
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		$sql = 'SELECT f.rowid as id, f.titre as ref, f.amount';
+		$sql = 'SELECT f.rowid as id, f.titre as ref';
 		$sql .= ', f.total as total_ht';
 		$sql .= ', f.tva as total_tva';
 		$sql .= ', f.total_ttc';
@@ -1045,7 +1045,7 @@ if ($object->id > 0)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql .= " AND f.entity = ".$conf->entity;
-		$sql .= ' GROUP BY f.rowid, f.titre, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.titre, f.total, f.tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
 		$sql .= ' f.suspended, f.date_when,';
 		$sql .= ' s.nom, s.rowid';
@@ -1140,7 +1140,7 @@ if ($object->id > 0)
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-        $sql = 'SELECT f.rowid as facid, f.ref, f.type, f.amount';
+        $sql = 'SELECT f.rowid as facid, f.ref, f.type';
         $sql .= ', f.total as total_ht';
         $sql .= ', f.tva as total_tva';
         $sql .= ', f.total_ttc';
@@ -1151,7 +1151,7 @@ if ($object->id > 0)
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total, f.tva, f.total_ttc,';
 		$sql .= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";

@@ -59,7 +59,13 @@ elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCate
 elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
 elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
 elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
-else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
+elseif ($type == Categorie::TYPE_ACTIONCOMM) {
+    $title = $langs->trans("ActionCommCategoriesArea");
+    $typetext = 'actioncomm';
+} else {
+    $title = $langs->trans("CategoriesArea");
+    $typetext = 'unknown';
+}
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
@@ -155,6 +161,15 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 // Define fulltree array
 $fulltree = $cate_arbo;
 
+// Load possible missing includes
+if($conf->global->CATEGORY_SHOW_COUNTS)
+{
+	if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	if ($type == Categorie::TYPE_PROJECT)	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	if ($type == Categorie::TYPE_USER)		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+}
+
 // Define data (format for treeview)
 $data = array();
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
@@ -167,10 +182,29 @@ foreach ($fulltree as $key => $val)
 	$li = $categstatic->getNomUrl(1, '', 60);
 	$desc = dol_htmlcleanlastbr($val['description']);
 
+	if($conf->global->CATEGORY_SHOW_COUNTS)
+	{
+		// we need only a count of the elements, so it is enough to consume only the id's from the database
+		if ($type == Categorie::TYPE_PRODUCT)	$elements = $categstatic->getObjectsInCateg("product", 1);
+		if ($type == Categorie::TYPE_SUPPLIER)	$elements = $categstatic->getObjectsInCateg("supplier", 1);
+		if ($type == Categorie::TYPE_CUSTOMER)	$elements = $categstatic->getObjectsInCateg("customer", 1);
+		if ($type == Categorie::TYPE_MEMBER)	$elements = $categstatic->getObjectsInCateg("member", 1);
+		if ($type == Categorie::TYPE_CONTACT)	$elements = $categstatic->getObjectsInCateg("contact", 1);
+		if ($type == Categorie::TYPE_ACCOUNT)	$elements = $categstatic->getObjectsInCateg("account", 1);
+		if ($type == Categorie::TYPE_PROJECT)	$elements = $categstatic->getObjectsInCateg("project", 1);
+		if ($type == Categorie::TYPE_USER)		$elements = $categstatic->getObjectsInCateg("user", 1);
+
+		$counter = "<td class='left' width='40px;'>".count($elements)."</td>";
+	}
+	else
+	{
+		$counter = "";
+	}
+
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.
+	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.$counter.
 	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'

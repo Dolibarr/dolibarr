@@ -136,7 +136,7 @@ if (!empty($force_install_noedit)) {
 			>
 		</td>
 		<td class="comment"><?php
-		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
+		print '<span class="opacitymedium">'.$langs->trans("WithNoSlashAtTheEnd")."</span><br>";
 		print $langs->trans("Examples").":<br>";
 		?>
 		<ul>
@@ -167,7 +167,7 @@ if (!empty($force_install_noedit)) {
 			>
 		</td>
 		<td class="comment"><?php
-		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
+		print '<span class="opacitymedium">'.$langs->trans("WithNoSlashAtTheEnd")."</span><br>";
 		print $langs->trans("DirectoryRecommendation")."<br>";
 		print $langs->trans("Examples").":<br>";
 		?>

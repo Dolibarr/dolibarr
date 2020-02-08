@@ -1308,7 +1308,7 @@ class Cronjob extends CommonObject
     public function LibStatut($status, $mode = 0, $processing = 0, $lastresult = 0)
 	{
 		// phpcs:enable
-		$this->labelStatus = array();		// Force reset o array because label depends on other fields
+		$this->labelStatus = array(); // Force reset o array because label depends on other fields
 		$this->labelStatusShort = array();
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))

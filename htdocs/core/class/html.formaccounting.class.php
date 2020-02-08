@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +292,7 @@ class FormAccounting extends Form
 		{
     		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
-    		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
+    		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
     		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
     		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
     		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
@@ -309,11 +309,20 @@ class FormAccounting extends Form
     			return -1;
     		}
 
-    		$selected = $selectid;	// selectid can be -1, 0, 123
+    		$selected = $selectid; // selectid can be -1, 0, 123
     		while ($obj = $this->db->fetch_object($resql))
     		{
-    			$label = length_accountg($obj->account_number).' - '.$obj->label;
-    			$label = dol_trunc($label, $trunclength);
+				if (empty($obj->labelshort))
+				{
+					$labeltoshow = $obj->label;
+				}
+				else
+				{
+					$labeltoshow = $obj->labelshort;
+				}
+
+				$label = length_accountg($obj->account_number).' - '.$labeltoshow;
+				$label = dol_trunc($label, $trunclength);
 
     			$select_value_in = $obj->rowid;
     			$select_value_out = $obj->rowid;
@@ -450,7 +459,7 @@ class FormAccounting extends Form
 
 		$sql = "SELECT DISTINCT date_format(doc_date, '%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+	    $sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY date_format(doc_date, '%Y')";
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
