@@ -241,6 +241,62 @@ class Adherent extends CommonObject
 	 */
 	public $entity;
 
+
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'ref_ext' =>array('type'=>'varchar(128)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>20),
+		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'login' =>array('type'=>'varchar(50)', 'label'=>'Login', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'gender' =>array('type'=>'varchar(10)', 'label'=>'Gender', 'enabled'=>1, 'visible'=>-1, 'position'=>250),
+		'pass' =>array('type'=>'varchar(50)', 'label'=>'Pass', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'pass_crypted' =>array('type'=>'varchar(128)', 'label'=>'Pass crypted', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'fk_adherent_type' =>array('type'=>'integer', 'label'=>'Fk adherent type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55),
+		'morphy' =>array('type'=>'varchar(3)', 'label'=>'MorPhy', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>60),
+		'societe' =>array('type'=>'varchar(128)', 'label'=>'Societe', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'address' =>array('type'=>'text', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'zip' =>array('type'=>'varchar(10)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'state_id' =>array('type'=>'integer', 'label'=>'State id', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'country' =>array('type'=>'integer', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+		//'skype' =>array('type'=>'varchar(255)', 'label'=>'Skype', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'Phone perso', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'Phone mobile', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'birth' =>array('type'=>'date', 'label'=>'DateToBirth', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+		'public' =>array('type'=>'smallint(6)', 'label'=>'Public', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>145),
+		'datefin' =>array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>160),
+		'datevalid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
+		'fk_user_mod' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user mod', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
+		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', -1=>'MemberStatusResiliatedShort')),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>800),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>805),
+		/*'twitter' =>array('type'=>'varchar(255)', 'label'=>'Twitter', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+		'facebook' =>array('type'=>'varchar(255)', 'label'=>'Facebook', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
+		'instagram' =>array('type'=>'varchar(255)', 'label'=>'Instagram', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
+		'snapchat' =>array('type'=>'varchar(255)', 'label'=>'Snapchat', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
+		'googleplus' =>array('type'=>'varchar(255)', 'label'=>'Googleplus', 'enabled'=>1, 'visible'=>-1, 'position'=>230),
+		'youtube' =>array('type'=>'varchar(255)', 'label'=>'Youtube', 'enabled'=>1, 'visible'=>-1, 'position'=>235),
+		'whatsapp' =>array('type'=>'varchar(255)', 'label'=>'Whatsapp', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
+		'linkedin' =>array('type'=>'varchar(255)', 'label'=>'Linkedin', 'enabled'=>1, 'visible'=>-1, 'position'=>245),*/
+	);
+
+
+
+
 	/**
 	 *	Constructor
 	 *

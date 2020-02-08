@@ -190,6 +190,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	if ($features == 'facturerec') $features = 'facture';
 	if ($features == 'mo') $features = 'mrp';
+	if ($features == 'member') $features = 'adherent';
+	if ($features == 'subscription') { $features = 'adherent'; $feature2 = 'cotisation'; };
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);

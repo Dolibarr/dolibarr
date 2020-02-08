@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("companies", "contracts", "bills", "other", "exports"));
+$langs->loadLangs(array("companies", "bills", "other", "exports"));
 
 // Get parameters
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -73,33 +73,17 @@ $head = array();
 $object = null;
 $ObjectClassName = '';
 $arrayoftype = array(
-    'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe'),
-	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact'),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat'),
-    'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture'),
-    'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec'),
-    'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom'),
-    'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo'),
-    'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket'),
+	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/societe/class/societe.class.php"),
+	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contact/class/contact.class.php"),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php", 'langs'=>'contract'),
+	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php"),
+	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/class/facturerec.class.php"),
+	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
+	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mo->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php"),
+	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
+	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php", 'langs'=>'members'),
+	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
-if ($objecttype == 'thirdparty') {
-    require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
-}
-elseif ($objecttype == 'contract') {
-    require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
-}
-elseif ($objecttype == 'invoice') {
-    require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
-}
-elseif ($objecttype == 'invoice_template') {
-    require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture-rec.class.php";
-}
-elseif ($objecttype == 'mo') {
-    require_once DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php" ;
-}
-elseif ($objecttype) {
-    require_once DOL_DOCUMENT_ROOT."/".$objecttype."/class/".$objecttype.".class.php";
-}
 
 // Complete $arrayoftype
 $parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
@@ -124,6 +108,14 @@ elseif (is_array($hookmanager->resArray)) {
 
 if ($objecttype) {
     try {
+    	if ($arrayoftype[$objecttype]['langs']) {
+    		$langs->load($arrayoftype[$objecttype]['langs']);
+    	}
+    	if ($arrayoftype[$objecttype]['ClassPath']) {
+    		include_once $arrayoftype[$objecttype]['ClassPath'];
+    	} else {
+    		include_once DOL_DOCUMENT_ROOT."/".$objecttype."/class/".$objecttype.".class.php";
+    	}
         $ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
         $object = new $ObjectClassName($db);
     }
@@ -249,6 +241,7 @@ foreach($object->fields as $key => $val) {
         if (isset($val['enabled']) && ! dol_eval($val['enabled'], 1)) continue;
         if (isset($val['visible']) && ! dol_eval($val['visible'], 1)) continue;
         if (preg_match('/^fk_/', $key) && ! preg_match('/^fk_statu/', $key)) continue;
+        if (preg_match('/^pass/', $key)) continue;
         if (in_array($val['type'], array('html', 'text'))) continue;
         if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
             $arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position']);
@@ -370,8 +363,22 @@ if (! empty($search_measures) && ! empty($search_xaxis))
     if ($object->isextrafieldmanaged) {
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$object->table_element.'_extrafields as te ON te.fk_object = t.'.$fieldid;
     }
+    if ($object->ismultientitymanaged) {
+    	if ($object->ismultientitymanaged == 1) {
+    		// Nothing here
+    	} else if ($object->ismultientitymanaged == 2) {
+    		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as parenttable ON t.fk_soc = parenttable.rowid';
+    		$sql .= ' AND parenttable.entity IN ('.getEntity('societe').')';
+    	} else {
+    		$tmparray = explode('@', $object->ismultientitymanaged);
+    		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON t.'.$tmparray[0].' = parenttable.rowid';
+    		$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
+    	}
+    }
     $sql .= ' WHERE 1 = 1';
-    $sql .= ' AND entity IN ('.getEntity($object->element).')';
+    if ($object->ismultientitymanaged == 1) {
+   		$sql .= ' AND entity IN ('.getEntity($object->element).')';
+    }
     foreach($search_filters as $key => $val) {
 		// TODO
     }
