@@ -17,7 +17,7 @@
 
 /**
  *   	\file       htdocs/core/customreports.php
- *		\ingroup    sellyoursaas
+ *		\ingroup    core
  *		\brief      Page to make custom reports
  */
 
@@ -72,6 +72,7 @@ $picto = '';
 $head = array();
 $object = null;
 $ObjectClassName = '';
+// Objects available by default
 $arrayoftype = array(
 	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/societe/class/societe.class.php"),
 	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contact/class/contact.class.php"),
@@ -158,8 +159,15 @@ $form=new Form($db);
 
 llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
-//print_fiche_titre($langs->trans("DoliCloudArea"));
-
+// Check parameters
+if ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > 3) {
+	setEventMessages($langs->trans("GraphInBarsAreLimitedTo3Measures"), null, 'warnings');
+	$search_graph = 'lines';
+}
+if ($mode == 'graph' && count($search_xaxis) > 1) {
+	setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
+	$search_xaxis = array(0 => $search_xaxis[0]);
+}
 
 
 //$head = commande_prepare_head(null);
@@ -307,9 +315,9 @@ if ($mode == 'grid') {
 
 if ($mode == 'graph') {
     print '<div class="divadvancedsearchfield">';
-    $arrayofgraphs = array('bars', 'line'); // also 'pies'
+    $arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
     print '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-    print $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 'minwidth100', 1);
+    print $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
     print '</div>';
 }
 print '<div class="divadvancedsearchfield">';
