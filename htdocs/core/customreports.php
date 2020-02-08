@@ -366,9 +366,6 @@ if (! empty($search_measures) && ! empty($search_xaxis))
     if ($object->ismultientitymanaged) {
     	if ($object->ismultientitymanaged == 1) {
     		// Nothing here
-    	} else if ($object->ismultientitymanaged == 2) {
-    		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as parenttable ON t.fk_soc = parenttable.rowid';
-    		$sql .= ' AND parenttable.entity IN ('.getEntity('societe').')';
     	} else {
     		$tmparray = explode('@', $object->ismultientitymanaged);
     		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON t.'.$tmparray[0].' = parenttable.rowid';

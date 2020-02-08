@@ -1766,19 +1766,22 @@ abstract class CommonObject
 		if ($user->socid > 0) $socid = $user->socid;
 
 		// this->ismultientitymanaged contains
-		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-		$alias = 's';
-		if ($this->element == 'societe') $alias = 'te';
+		// 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+		$aliastablesociete = 's';
+		if ($this->element == 'societe') $aliastablesociete = 'te';	// te as table_element
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && ! is_numeric($this->ismultientitymanaged)) {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ", ".MAIN_DB_PREFIX.$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
+		}
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
-		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
 		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
@@ -1787,7 +1790,10 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filter)) $sql .= " AND "; // For backward compatibility
 			$sql .= $filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && ! is_numeric($this->ismultientitymanaged)) {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ' AND te.'.$tmparray[0].' = '.($tmparray[1] == 'societe' ? 's' : 'parenttable').'.rowid'; // If we need to link to this table to limit select to entity
+		}
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
@@ -1800,6 +1806,10 @@ abstract class CommonObject
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
 			}
+		}
+		if (isset($this->ismultientitymanaged) && ! is_numeric($this->ismultientitymanaged) && $this->element != 'societe') {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
 		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql .= ' AND te.fk_soc = '.$socid;
 		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql .= ' AND (te.fk_soc = '.$socid.' OR te.fk_soc IS NULL)';
@@ -1821,10 +1831,10 @@ abstract class CommonObject
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 'fk_soc@societe') $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
-		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
 		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
@@ -1833,7 +1843,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filter)) $sql .= " AND "; // For backward compatibility
 			$sql .= $filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 'fk_soc@societe') $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {

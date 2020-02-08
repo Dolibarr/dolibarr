@@ -43,8 +43,8 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var int  Does myobject support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
 

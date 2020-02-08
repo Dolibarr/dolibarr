@@ -43,9 +43,10 @@ class CompanyPaymentMode extends CommonObject
 	public $table_element = 'societe_rib';
 
 	/**
-	 * @var int  Does companypaymentmode support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 2;
+	public $ismultientitymanaged = 'fk_soc@societe';
 
 	/**
 	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes

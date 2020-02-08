@@ -6037,16 +6037,23 @@ class Form
 
 		// Search data
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
-		if ($objecttmp->ismultientitymanaged == 2)
+		if (isset($objecttmp->ismultientitymanaged) && ! is_numeric($objecttmp->ismultientitymanaged)) {
+			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
+		}
+		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe')
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE 1=1";
-		if (!empty($objecttmp->ismultientitymanaged)) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+		if (isset($objecttmp->ismultientitymanaged) && ! is_numeric($objecttmp->ismultientitymanaged)) {
+			$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+		}
 		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
 			if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
 			else $sql .= " AND t.fk_soc = ".$user->socid;
 		}
 		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-		if ($objecttmp->ismultientitymanaged == 2) {
+		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
