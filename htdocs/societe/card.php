@@ -1903,30 +1903,27 @@ else
                 	print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
                 }
                 print '</td><td>';
-                if (!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire))
+                print '<table class="nobordernopadding"><tr><td>';
+                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
-	                print '<table class="nobordernopadding"><tr><td>';
-	                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
-	                {
-	                    $tmpcode = $object->code_fournisseur;
-	                    if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-	                    if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-	                }
-	                elseif ($object->codefournisseur_modifiable())
-	                {
-	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
-	                }
-	                else
-	                {
-	                    print $object->code_fournisseur;
-	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
-	                }
-	                print '</td><td>';
-	                $s = $modCodeFournisseur->getToolTip($langs, $object, 1);
-	                print $form->textwithpicto('', $s, 1);
-	                print '</td></tr></table>';
+                    $tmpcode = $object->code_fournisseur;
+                    if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+                    if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
+                elseif ($object->codefournisseur_modifiable())
+                {
+                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+                }
+                else
+                {
+                    print $object->code_fournisseur;
+                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
+                }
+                print '</td><td>';
+                $s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+                print $form->textwithpicto('', $s, 1);
+                print '</td></tr></table>';
                 print '</td></tr>';
             }
 
