@@ -25,7 +25,7 @@
 
 /**
  * Function to return number in text.
- *
+ * May use module NUMBERWORDS if found.
  *
  * @param	float       $num			Number to convert
  * @param	Translate   $langs			Language
