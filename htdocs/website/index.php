@@ -2822,7 +2822,7 @@ if ($action == 'createsite')
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('Ref');
 	print '</td><td>';
-	print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'">';
+	print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'" autofocus>';
 	print '</td></tr>';
 
 	print '<tr><td>';
