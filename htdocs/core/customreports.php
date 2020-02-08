@@ -180,6 +180,7 @@ $arrayofyaxis = array();
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 
@@ -193,7 +194,7 @@ else {
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());
-                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val();
+                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily?'&tabfamily='.$tabfamily:'').'";
         	});
         });
     </script>';
