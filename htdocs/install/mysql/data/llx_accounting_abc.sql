@@ -67,6 +67,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account TN PCT
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 10, 'PCT', 'The Tunisia plan', 1);
 
+-- Description of chart of account AT AT-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 41, 'AT-BASE', 'Plan Austria', 1);
+
 -- Description of chart of account CL CL-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 67, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
 
