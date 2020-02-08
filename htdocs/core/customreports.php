@@ -74,7 +74,8 @@ $object = null;
 $ObjectClassName = '';
 $arrayoftype = array(
     'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe'),
-    'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat'),
+	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact'),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat'),
     'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture'),
     'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec'),
     'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom'),
@@ -242,7 +243,9 @@ print '</div>';
 print '<div class="divadvancedsearchfield">';
 foreach($object->fields as $key => $val) {
     if (! $val['measure']) {
-        if (in_array($key, array('id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
+        if (in_array($key, array(
+        	'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+        	'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
         if (isset($val['enabled']) && ! dol_eval($val['enabled'], 1)) continue;
         if (isset($val['visible']) && ! dol_eval($val['visible'], 1)) continue;
         if (preg_match('/^fk_/', $key) && ! preg_match('/^fk_statu/', $key)) continue;
