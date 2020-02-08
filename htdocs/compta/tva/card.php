@@ -38,6 +38,9 @@ $action=GETPOST("action", "alpha");
 $refund=GETPOST("refund", "int");
 if (empty($refund)) $refund=0;
 
+$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid=$user->socid;
@@ -81,12 +84,9 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error=0;
 
-	$datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
-
-    $object->accountid=GETPOST("accountid");
-    $object->type_payment=GETPOST("type_payment");
-	$object->num_payment=GETPOST("num_payment");
+    $object->accountid=GETPOST("accountid", 'int');
+    $object->type_payment=GETPOST("type_payment", 'alphanohtml');
+	$object->num_payment=GETPOST("num_payment", 'alphanohtml');
     $object->datev=$datev;
     $object->datep=$datep;
 
