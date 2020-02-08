@@ -418,9 +418,10 @@ class FormAdvTargetEmailing extends Form
 	 * @param	integer 	$selected  		defaut selected
 	 * @param	integer 	$showempty 		empty lines
 	 * @param	string		$type_element	Type element. Example: 'mailing'
+	 * @param	string		$morecss		More CSS
 	 * @return	string 						HTML combo
 	 */
-    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing')
+    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
     {
 		global $conf, $user, $langs;
 
@@ -434,7 +435,7 @@ class FormAdvTargetEmailing extends Form
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$out .= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
 			if ($showempty)
 				$out .= '<option value=""></option>';
 			$num = $this->db->num_rows($resql);
