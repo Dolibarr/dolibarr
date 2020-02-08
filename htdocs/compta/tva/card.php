@@ -38,6 +38,11 @@ $action=GETPOST("action", "alpha");
 $refund=GETPOST("refund", "int");
 if (empty($refund)) $refund=0;
 
+$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+
+
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid=$user->socid;
@@ -70,7 +75,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $object->datev=dol_mktime(12, 0, 0, GETPOST('datevmonth', 'int'), GETPOST('datevday', 'int'), GETPOST('datevyear', 'int'));
+    $object->datev=$datev;
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db, $object->error);
 
@@ -81,8 +86,6 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error=0;
 
-	$datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
 
     $object->accountid=GETPOST("accountid");
     $object->type_payment=GETPOST("type_payment");
