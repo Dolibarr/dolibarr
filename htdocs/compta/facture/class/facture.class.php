@@ -1436,7 +1436,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *	Get object and lines from database
+	 *	Get object from database. Get also lines.
 	 *
 	 *	@param      int		$rowid       	Id of object to load
 	 * 	@param		string	$ref			Reference of invoice
@@ -1517,7 +1517,13 @@ class Facture extends CommonInvoice
 				$this->paye					= $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
-				$this->socid				= $obj->fk_soc;
+
+				$this->socid = $obj->fk_soc;
+				$this->thirdparty = null;				// Clear if another value was already set by fetch_thirdparty
+
+				$this->fk_project = $obj->fk_project;
+				$this->project = null;					// Clear if another value was already set by fetch_projet
+
 				$this->statut = $obj->fk_statut;
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
@@ -1528,7 +1534,6 @@ class Facture extends CommonInvoice
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
-				$this->fk_project = $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
 				$this->note = $obj->note_private; // deprecated
@@ -1574,10 +1579,7 @@ class Facture extends CommonInvoice
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				/*
-				 * Lines
-				 */
-
+				// Lines
 				$this->lines = array();
 
 				$result = $this->fetch_lines();

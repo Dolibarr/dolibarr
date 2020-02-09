@@ -1365,7 +1365,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Load a proposal from database and its ligne array
+	 *	Load a proposal from database. Get also lines.
 	 *
 	 *	@param      int			$rowid		id of object to load
 	 *	@param		string		$ref		Ref of proposal
@@ -1373,7 +1373,6 @@ class Propal extends CommonObject
 	 */
     public function fetch($rowid, $ref = '')
 	{
-
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
@@ -1437,8 +1436,13 @@ class Propal extends CommonObject
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
-				$this->socid                = $obj->fk_soc;
-				$this->fk_project           = $obj->fk_project;
+
+				$this->socid = $obj->fk_soc;
+				$this->thirdparty = null;				// Clear if another value was already set by fetch_thirdparty
+
+				$this->fk_project = $obj->fk_project;
+				$this->project = null;					// Clear if another value was already set by fetch_projet
+
 				$this->modelpdf             = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
@@ -1506,9 +1510,7 @@ class Propal extends CommonObject
 
 				$this->lines = array();
 
-				/*
-                 * Lines
-                 */
+				// Lines
 				$result = $this->fetch_lines();
 				if ($result < 0)
 				{

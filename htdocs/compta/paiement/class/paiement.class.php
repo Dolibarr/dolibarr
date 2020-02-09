@@ -272,7 +272,9 @@ class Paiement extends CommonObject
         	return -1;
         }
 
-		$this->db->begin();
+        dol_syslog(get_class($this)."::create insert paiement", LOG_DEBUG);
+
+        $this->db->begin();
 
 		$this->ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
 
@@ -293,7 +295,6 @@ class Paiement extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
 		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
 
-		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -309,7 +310,7 @@ class Paiement extends CommonObject
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
 
-					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
+					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -409,9 +410,14 @@ class Paiement extends CommonObject
 					    // Regenerate documents of invoices
                         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                         {
+                        	dol_syslog(get_class($this).'::create Regenerate the document after inserting payment for thirdparty default_lang='.(is_object($invoice->thirdparty) ? $invoice->thirdparty->default_lang : 'null'), LOG_DEBUG);
+
                             $newlang='';
                             $outputlangs = $langs;
-                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	{
+                            	$invoice->fetch_thirdparty();
+                            	$newlang = $invoice->thirdparty->default_lang;
+                            }
                             if (! empty($newlang)) {
                             	$outputlangs = new Translate("", $conf);
                             	$outputlangs->setDefaultLang($newlang);
