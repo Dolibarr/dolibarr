@@ -64,6 +64,7 @@ if ($action == 'setModuleOptions')
     {
         foreach($_POST as $key => $val)
         {
+        	$reg = array();
             if (preg_match('/^param(\d*)$/', $key, $reg))    // Works for POST['param'], POST['param1'], POST['param2'], ...
             {
                 $param=GETPOST("param".$reg[1], 'alpha');
