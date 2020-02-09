@@ -337,7 +337,7 @@ abstract class CommonObject
 
 	/**
 	 * @deprecated
-	 * @see $note_public
+	 * @see $note_private
 	 */
 	public $note;
 
