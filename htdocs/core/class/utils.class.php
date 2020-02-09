@@ -388,7 +388,9 @@ class Utils
 				if ($compression == 'none') fclose($handle);
 				if ($compression == 'gz')   gzclose($handle);
 				if ($compression == 'bz')   bzclose($handle);
-				if ($ok && preg_match('/^-- MySql/i', $errormsg)) $errormsg = ''; // Pas erreur
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg))	{	// No error
+					$errormsg = '';
+				}
 				else
 				{
 					// Renommer fichier sortie en fichier erreur
