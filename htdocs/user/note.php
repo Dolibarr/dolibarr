@@ -111,19 +111,19 @@ if ($id)
 
 	// Note
     print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td>';
+	print '<td class="sensiblehtmlcontent">';
 	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 	    // Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note_private', $object->note, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+		$doleditor=new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
 		$doleditor->Create();
 	}
 	else
 	{
-		print dol_htmlentitiesbr($object->note);
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 	}
 	print "</td></tr>";
 

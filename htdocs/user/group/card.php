@@ -386,7 +386,9 @@ else
 
 			// Note
 			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
-			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
+			print '<td class="valeur sensiblehtmlcontent"">';
+			print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
+			print '</td>';
 			print "</tr>\n";
 
 			// Other attributes
