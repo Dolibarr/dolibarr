@@ -8059,7 +8059,7 @@ class Form
 		$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$ret .= '<div name="search_component_params" class="search_component_params inline-block centpercent">';
+		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500">';
 		$ret .= '<input type="text" name="search_component_params_input" class="search_component_params_input" placeholder="'.$langs->trans("Search").'" value="'.GETPOST("search_component_params_input").'">';
 		$ret .= '</div>';
 		foreach($arrayofcriterias as $criterias) {
