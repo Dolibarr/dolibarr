@@ -1,4 +1,4 @@
-name: "Close stale issues"
+name: "Close stale issues (bugs and feature requests)"
 on:
   schedule:
   - cron: "0 0 * * *"
@@ -10,8 +10,8 @@ jobs:
     - uses: actions/stale@v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: 'This issue is stale because it has been open 1 year with no activity. Please remove the stale label or add a comment on issue if you don t have permissions on labels, or this issue will be closed in 10 days.'
-        stale-issue-label: 'Bug Stale (automatic label)'
+        stale-issue-message: 'This issue is stale because it has been open 1 year with no activity. If this is a bug, please comment to confirm it is still present on latest stable version. if this is a feature request, please comment to notify the request is still relevant and not yet covered by latest stable version. Without comment, this issue will be closed automatically by stale bot in 15 days.'
+        stale-issue-label: 'Issue Stale (automatic label)'
         exempt-issue-label: 'Bug Security (CVE)'
         days-before-stale: 365
         days-before-close: 10
