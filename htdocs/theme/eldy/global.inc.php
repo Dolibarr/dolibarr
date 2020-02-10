@@ -587,6 +587,7 @@ div.divsearchfield {
 .divadvancedsearchfield {
     float: left;
     padding-left: 15px;
+    padding-right: 15px;
     padding-bottom: 2px;
     padding-top: 2px;
 }
@@ -971,6 +972,10 @@ table[summary="list_of_modules"] .fa-cog {
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
 	}
+	.divadvancedsearchfield {
+    	padding-left: 5px;
+    	padding-right: 5px;
+    }
 }
 
 /* Force values for small screen 570 */
