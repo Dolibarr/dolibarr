@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       dev/initdata/import-thirdparties.php
+ *      \file       dev/initdata/import-users.php
  *		\brief      Script example to insert thirdparties from a csv file.
  *                  To purge data, you can have a look at purge-data.php
  */
