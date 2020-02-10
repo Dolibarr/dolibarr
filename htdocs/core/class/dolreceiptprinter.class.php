@@ -59,8 +59,6 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
- * <dol_value_table>                                Replaced by table number (for restaurant, bar...)
- * <dol_value_cutlery>                              Replaced by number of cutlery (for restaurant)
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -180,8 +178,6 @@ class dolReceiptPrinter extends Printer
             'dol_value_month',
             'dol_value_day',
             'dol_value_day_letters',
-            'dol_value_table',
-            'dol_value_cutlery',
             'dol_print_payment',
             'dol_print_logo',
             'dol_print_logo_old',
@@ -579,15 +575,13 @@ class dolReceiptPrinter extends Printer
         $this->template = str_replace('<dol_value_vendor_firstname>', $object->vendor_firstname, $this->template);
         $this->template = str_replace('<dol_value_vendor_lastname>', $object->vendor_lastname, $this->template);
         $this->template = str_replace('<dol_value_vendor_mail>', $object->vendor_mail, $this->template);
-        $this->template = str_replace('<dol_value_date>', $object->date, $this->template);
-        $this->template = str_replace('<dol_value_date_time>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_year>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_month_letters>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_month>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_day>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_day_letters>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_table>', $object->table, $this->template);
-        $this->template = str_replace('<dol_value_cutlery>', $object->cutlery, $this->template);
+        $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
+        $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
+        $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
+        $this->template = str_replace('<dol_value_month_letters>', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
+        $this->template = str_replace('<dol_value_month>', dol_print_date($object->date, '%m'), $this->template);
+        $this->template = str_replace('<dol_value_day>', dol_print_date($object->date, '%d'), $this->template);
+        $this->template = str_replace('<dol_value_day_letters>', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
 
         // parse template
         $p = xml_parser_create();
