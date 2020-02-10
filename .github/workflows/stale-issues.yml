@@ -1,0 +1,17 @@
+name: "Close stale issues"
+on:
+  schedule:
+  - cron: "0 0 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/stale@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        stale-issue-message: 'This issue is stale because it has been open 1 year with no activity. Please remove the stale label or add a comment on issue if you don t have permissions on labels, or this issue will be closed in 10 days.'
+        stale-issue-label: 'Bug Stale (automatic label)'
+        exempt-issue-label: 'Bug Security (CVE)'
+        days-before-stale: 365
+        days-before-close: 10
