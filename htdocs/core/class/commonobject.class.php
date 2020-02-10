@@ -4744,6 +4744,7 @@ abstract class CommonObject
 			    {
 				    if (!dol_is_file($srctemplatepath))
 				    {
+				    	dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
 					    $this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
 					    return -1;
 				    }
