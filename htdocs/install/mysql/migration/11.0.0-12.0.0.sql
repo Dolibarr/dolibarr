@@ -139,6 +139,8 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG18-ASSOC', 'French foundation chart of accounts 2018', 1);
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCGAFR14-DEV', 'The developed farm accountancy french plan 2014', 1);
+
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 41, 'AT-BASE', 'Plan Austria', 1);
 
 
