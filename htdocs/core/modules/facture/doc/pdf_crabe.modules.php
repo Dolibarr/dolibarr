@@ -1641,8 +1641,8 @@ class pdf_crabe extends ModelePDFFactures
 			if (! empty($object->project->ref))
 			{
 				$posy+=3;
-				$pdf->SetXY($posx,$posy);
-				$pdf->SetTextColor(0,0,60);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->title)?'':$object->projet->title), '', 'R');
 			}
 		}
