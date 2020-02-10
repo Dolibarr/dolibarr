@@ -336,6 +336,7 @@ class modSociete extends DolibarrModules
 			'd.nom'=>'State','co.label'=>"Country",'co.code'=>"CountryCode",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.phone_mobile'=>"Mobile",'c.email'=>"EMail",
 			'c.statut'=>"Status",
 			's.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.status'=>"Status",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",
+			's.code_compta'=>"AccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.client'=>'Customer','s.fournisseur'=>'Supplier',
             's.address'=>'Address','s.zip'=>"Zip",'s.town'=>"Town",'s.phone'=>'Phone','s.email'=>"Email",
             't.libelle'=>"ThirdPartyType"
@@ -347,13 +348,15 @@ class modSociete extends DolibarrModules
 			'c.fax'=>"Text",'c.email'=>"Text",
             'c.statut'=>"Status",
             's.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
+			's.code_compta'=>"Text",'s.code_compta_fournisseur'=>"Text",
 			's.client'=>"Text",'s.fournisseur'=>"Text",
             's.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'s.phone'=>"Text",'s.email'=>"Text",
             't.libelle'=>"Text"
 		);
 		$this->export_entities_array[$r]=array(
-			's.rowid'=>"company",'s.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company",'s.code_fournisseur'=>"company", 's.client'=>"company",
-			's.fournisseur'=>"company",
+			's.rowid'=>"company",'s.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company",'s.code_fournisseur'=>"company",
+			's.code_compta'=>"company",'s.code_compta_fournisseur'=>"company",
+			's.client'=>"company", 's.fournisseur'=>"company",
             's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
             't.libelle'=>"company"
 		);	// We define here only fields that use another picto
