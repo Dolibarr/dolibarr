@@ -939,7 +939,7 @@ if ($step == 4 && $datatoexport)
     // List of filtered fiels
     if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
     {
-    	print '<tr><td width="25%">'.$langs->trans("FilteredFields").'</td>';
+    	print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
     	$list = '';
     	if (!empty($array_filtervalue))
     	{
@@ -953,7 +953,7 @@ if ($step == 4 && $datatoexport)
     			}
     		}
     	}
-    	print '<td>'.(!empty($list) ? $list : $langs->trans("None")).'</td>';
+    	print '<td>'.(!empty($list) ? $list : '<span class="opacitymedium">'.$langs->trans("None").'</span>').'</td>';
     	print '</tr>';
     }
 
