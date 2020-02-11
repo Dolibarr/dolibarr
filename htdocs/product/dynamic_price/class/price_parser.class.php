@@ -289,6 +289,7 @@ public function parseProduct($product, $extra_values = array())
 		}
 				return $result;
 	}
+	}
 
 		/**
 		 *	Calculates supplier product price based on product supplier price and associated expression
