@@ -520,7 +520,14 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$measuringUnits= new CUnits($db);
 
-		if ($scale !== '')
+		if ($measuring_style == '' && $scale == '')
+		{
+			$arrayforfilter = array(
+				't.rowid' => $unit,
+				't.active' => 1
+			);
+		}
+		elseif ($scale !== '')
 		{
 			$arrayforfilter = array(
 				't.scale' => $scale,
