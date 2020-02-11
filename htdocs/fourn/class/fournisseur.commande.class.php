@@ -183,6 +183,60 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
 
+
+
+    public $fields=array(
+    	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+    	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+    	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+    	'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>25),
+    	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
+    	'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
+    	'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+    	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+    	'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+    	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+    	'date_approve' =>array('type'=>'datetime', 'label'=>'Date approve', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+    	'date_approve2' =>array('type'=>'datetime', 'label'=>'Date approve2', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+    	'date_commande' =>array('type'=>'date', 'label'=>'Date commande', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+    	'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+    	'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>80),
+    	'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+    	'fk_user_approve' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserApproval', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+    	'fk_user_approve2' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserSecondApproval', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+    	'source' =>array('type'=>'smallint(6)', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>100),
+    	'billed' =>array('type'=>'smallint(6)', 'label'=>'Billed', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+    	'amount_ht' =>array('type'=>'double(24,8)', 'label'=>'Amount ht', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+    	'remise_percent' =>array('type'=>'double', 'label'=>'Remise percent', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+    	'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+    	'tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
+    	'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
+    	'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
+    	'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
+    	'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>150, 'isameasure'=>1),
+    	'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+    	'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>160),
+    	'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>165),
+    	'fk_input_method' =>array('type'=>'integer', 'label'=>'InputMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
+    	'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+    	'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
+    	'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+    	'date_livraison' =>array('type'=>'datetime', 'label'=>'DeliveryDate', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
+    	'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
+    	'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+    	'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLocation', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+    	'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
+    	'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
+    	'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
+    	'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>230),
+    	'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>235),
+    	'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
+    	'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
+    	'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+    	'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
+    );
+
+
 	/**
 	 * Draft status
 	 */

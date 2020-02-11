@@ -217,6 +217,59 @@ class FactureFournisseur extends CommonInvoice
      */
     public $fk_facture_source;
 
+
+    public $fields=array(
+    	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+    	'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
+    	'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+    	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
+    	'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>30),
+    	'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+    	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>40),
+    	'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+    	'datef' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+    	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55),
+    	'libelle' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+    	'paye' =>array('type'=>'smallint(6)', 'label'=>'Paye', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>65),
+    	'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+    	'remise' =>array('type'=>'double(24,8)', 'label'=>'Discount', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+    	'close_code' =>array('type'=>'varchar(16)', 'label'=>'CloseCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+    	'close_note' =>array('type'=>'varchar(128)', 'label'=>'CloseNote', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+    	'tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+    	'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+    	'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+    	'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+    	'total_tva' =>array('type'=>'double(24,8)', 'label'=>'TotalVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+    	'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+    	'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+    	'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>130),
+    	'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+    	'fk_facture_source' =>array('type'=>'integer', 'label'=>'Fk facture source', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+    	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+    	'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+    	'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
+    	'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
+    	'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateLimReglement', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
+    	'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>170),
+    	'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>175),
+    	'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPdf', 'enabled'=>1, 'visible'=>0, 'position'=>180),
+    	'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+    	'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
+    	'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLocation', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
+    	'fk_multicurrency' =>array('type'=>'integer', 'label'=>'MulticurrencyId', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+    	'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+    	'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
+    	'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
+    	'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
+    	'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyTotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>230),
+    	'date_pointoftax' =>array('type'=>'date', 'label'=>'Date pointoftax', 'enabled'=>1, 'visible'=>-1, 'position'=>235),
+    	'date_valid' =>array('type'=>'date', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
+    	'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
+    	'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+    	'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
+    );
+
+
     /**
      * Standard invoice
      */
