@@ -523,7 +523,8 @@ class Mo extends CommonObject
 	 *
 	 * @return 	int			Number of movements
 	 */
-	public function countMovements() {
+	public function countMovements()
+	{
 		$result = 0;
 
 		$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'stock_mouvement as sm';

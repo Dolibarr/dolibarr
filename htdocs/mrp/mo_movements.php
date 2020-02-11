@@ -881,7 +881,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print "</table>";
 	print '</div>';
 	print "</form>";
-
 }
 
 // End of page
