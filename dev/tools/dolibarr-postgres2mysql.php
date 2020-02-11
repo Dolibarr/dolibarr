@@ -79,7 +79,7 @@ function getfieldname($l)
 		else
 			return null;
 	} // if its not in quotes, then it should (we hope!) be the first "word" on the line, up to the first space.
-	else if (preg_match("/([^\ ]*)/", trim($l), $regs)) {
+	elseif (preg_match("/([^\ ]*)/", trim($l), $regs)) {
 		if ($regs[1])
 			return $regs[1];
 		else
@@ -98,9 +98,9 @@ function formatsize($s)
 {
 	if ($s < pow(2, 14))
 		return "{$s}B";
-	else if ($s < pow(2, 20))
+	elseif ($s < pow(2, 20))
 		return sprintf("%.1f", round($s / 1024, 1)) . "K";
-	else if ($s < pow(2, 30))
+	elseif ($s < pow(2, 30))
 		return sprintf("%.1f", round($s / 1024 / 1024, 1)) . "M";
 	else
 		return sprintf("%.1f", round($s / 1024 / 1024 / 1024, 1)) . "G";
@@ -267,7 +267,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 		$outputatend = "";
 	}
 
-	$in_create_table = $in_insert = FALSE;
+	$in_create_table = $in_insert = false;
 
 	$linenumber = 0;
 	$tbl_extra = "";
@@ -551,10 +551,10 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			preg_match('/COPY (.*) FROM stdin/', $line, $matches);
 			$heads = str_replace('"', "`", $matches[1]);
 			$values = array();
-			$in_insert = TRUE;
+			$in_insert = true;
 		} elseif ($in_insert) {
 			if ($line == "\\.\n") {
-				$in_insert = FALSE;
+				$in_insert = false;
 				if ($values) {
 					$output .= "INSERT INTO $heads VALUES\n" . implode(",\n", $values) . ";\n\n";
 				}
