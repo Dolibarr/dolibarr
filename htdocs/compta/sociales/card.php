@@ -49,7 +49,7 @@ $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
-$label = GETPOST('label', 'alpha'); 
+$label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 
 // Security check
