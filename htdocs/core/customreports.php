@@ -13,6 +13,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * This tool can be included into a list page with
+ * define('USE_CUSTOME_REPORT_AS_INCLUDE', 1);
+ * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 /**
@@ -21,50 +25,48 @@
  *		\brief      Page to make custom reports
  */
 
-require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
+{
+	require '../main.inc.php';
+	require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
+	require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+
+	// Get parameters
+	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+
+	$mode		= GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
+	$objecttype = GETPOST('objecttype', 'aZ09');
+	$tabfamily  = GETPOST('tabfamily', 'aZ09');
+
+	if (empty($objecttype)) $objecttype = 'thirdparty';
+
+	$search_filters = GETPOST('search_filters', 'array');
+	$search_measures = GETPOST('search_measures', 'array');
+	$search_xaxis = GETPOST('search_xaxis', 'array');
+	$search_yaxis = GETPOST('search_yaxis', 'array');
+	$search_graph = GETPOST('search_graph', 'none');
+
+	// Load variable for pagination
+	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$sortfield = GETPOST('sortfield', 'alpha');
+	$sortorder = GETPOST('sortorder', 'alpha');
+	$page = GETPOST('page', 'int');
+	if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+	$offset = $limit * $page;
+	$pageprev = $page - 1;
+	$pagenext = $page + 1;
+
+	$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
+}
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("companies", "bills", "other", "exports"));
-
-// Get parameters
-$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
-
-$mode		= GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
-$objecttype = GETPOST('objecttype', 'aZ09');
-$tabfamily  = GETPOST('tabfamily', 'aZ09');
-
-if (empty($objecttype)) $objecttype = 'thirdparty';
-
-$search_filters = GETPOST('search_filters', 'array');
-$search_measures = GETPOST('search_measures', 'array');
-$search_xaxis = GETPOST('search_xaxis', 'array');
-$search_yaxis = GETPOST('search_yaxis', 'array');
-$search_graph = GETPOST('search_graph', 'none');
-
-// Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
-}
+$langs->loadLangs(array("companies", "other", "exports"));
 
 $extrafields = new ExtraFields($db);
 
-$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
 $hookmanager->initHooks(array('customreport')); // Note that conf->hooks_modules contains array
 
 $title = '';
@@ -104,6 +106,9 @@ elseif (is_array($hookmanager->resArray)) {
 		foreach($hookmanager->resArray['arrayoftype'] as $key => $val) {
 	        $arrayoftype[$key] = $val;
 	    }
+	}
+	if (! empty($hookmanager->resArray['modenotusedforlist'])) {		// Show objecttype selection even if objecttype is set
+		$modenotusedforlist = $hookmanager->resArray['modenotusedforlist'];
 	}
 }
 
@@ -157,22 +162,27 @@ $search_component_params=array('');
 
 $form=new Form($db);
 
-llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
+if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
+
+	dol_fiche_head($head, 'customreports', $title, -1, $picto);
+}
 
 // Check parameters
-if ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > 3) {
-	setEventMessages($langs->trans("GraphInBarsAreLimitedTo3Measures"), null, 'warnings');
-	$search_graph = 'lines';
+if ($action == 'viewgraph') {
+	if (! count($search_measures)) {
+		setEventMessages($langs->trans("AtLeastOneMeasureIsRequired"), null, 'warnings');
+	} elseif ($mode == 'graph' && count($search_xaxis) > 1) {
+		setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
+		$search_xaxis = array(0 => $search_xaxis[0]);
+	}
+	if (! count($search_xaxis)) {
+		setEventMessages($langs->trans("AtLeastOneXAxisIsRequired"), null, 'warnings');
+	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > 3) {
+		setEventMessages($langs->trans("GraphInBarsAreLimitedTo3Measures"), null, 'warnings');
+		$search_graph = 'lines';
+	}
 }
-if ($mode == 'graph' && count($search_xaxis) > 1) {
-	setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
-	$search_xaxis = array(0 => $search_xaxis[0]);
-}
-
-
-//$head = commande_prepare_head(null);
-dol_fiche_head($head, 'customreports', $title, -1, $picto);
-
 
 $tmparray=dol_getdate(dol_now());
 $endyear=$tmparray['year'];
@@ -188,6 +198,7 @@ $arrayofyaxis = array();
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="viewgraph">';
 print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -195,7 +206,13 @@ print '<div class="liste_titre liste_titre_bydiv centpercent">';
 // Select object
 print '<div class="divadvancedsearchfield center floatnone">';
 print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-print $form->selectarray('objecttype', $arrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', '', 1);
+$newarrayoftype = array();
+foreach($arrayoftype as $key => $val) {
+	if (dol_eval($val['enabled'], 1)) {
+		$newarrayoftype[$key] = $arrayoftype[$key];
+	}
+}
+print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', '', 1);
 if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 else {
     print '<script type="text/javascript" language="javascript">
@@ -208,7 +225,6 @@ else {
     </script>';
 }
 print '</div><div class="clearboth"></div>';
-
 
 // Add Filter
 print '<div class="divadvancedsearchfield quatrevingtpercent">';
@@ -507,13 +523,14 @@ if ($mode == 'graph') {
 
 if ($sql) {
     // Show admin info
-    print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql);
+    print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, 1, '', 'TechnicalInformation');
 }
 
 print '<div>';
 
-dol_fiche_end();
-
+if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+	dol_fiche_end();
+}
 
 // End of page
 llxFooter();

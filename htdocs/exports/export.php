@@ -147,6 +147,7 @@ $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $sqlusedforexport = '';
 
+$head = array();
 $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 
 //$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
@@ -1266,22 +1267,17 @@ if ($step == 5 && $datatoexport)
     print '</div>';
 
 
-    print '<table width="100%">';
-
     if ($sqlusedforexport && $user->admin)
     {
-    	print '<tr><td>';
-    	print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport);
-    	print '</td></tr>';
+    	print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, 1, '', 'TechnicalInformation');
     }
-	print '</table>';
 
 
     if (!is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
     // Show existing generated documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', '&nbsp;', '', '', '');
+    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 
 llxFooter();

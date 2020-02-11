@@ -3822,23 +3822,44 @@ function img_searchclear($titlealt = 'default', $other = '')
 /**
  *	Show information for admin users or standard users
  *
- *	@param	string	$text			Text info
- *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
- *	@param	int		$nodiv			No div
- *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
- *  @param	string	$morecss		More CSS ('', 'warning', 'error')
- *	@return	string					String with info text
+ *	@param	string	$text				Text info
+ *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param	int		$nodiv				No div
+ *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
+ *  @param	string	$morecss			More CSS ('', 'warning', 'error')
+ *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
+ *	@return	string						String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = '', $textfordropdown = '')
 {
 	global $conf, $langs;
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'info', 'class="hideonsmartphone'.($morecss ? ' '.$morecss : '').'"');
+		$result = img_picto($text, 'info', 'class="hideonsmartphone'.($morecss ? ' '.$morecss : '').'"');
+	}
+	else {
+		if (empty($conf->use_javascript_ajax)) $textfordropdown = '';
+
+		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
+		$result = ($nodiv ? '' : '<div class="'.$class.' hideonsmartphone'.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
+
+		if ($textfordropdown) {
+			$tmpresult .= '<span class="'.$class.'text opacitymedium">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
+			$tmpresult .= '<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery(".'.$class.'text").click(function() {
+						console.log("toggle text");
+						jQuery(".'.$class.'").toggle();
+					});
+				});
+				</script>';
+
+			$result = $tmpresult.$result;
+		}
 	}
 
-	return ($nodiv ? '' : '<div class="'.(empty($admin) ? '' : ($admin == '1' ? 'info' : $admin)).' hideonsmartphone'.($morecss ? ' '.$morecss : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
+	return $result;
 }
 
 

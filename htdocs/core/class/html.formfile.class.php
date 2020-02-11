@@ -325,7 +325,7 @@ class FormFile
 	 * 		@param		int					$notused	        Not used
 	 * 		@param		integer				$noform				Do not output html form tags
 	 * 		@param		string				$param				More param on http links
-	 * 		@param		string				$title				Title to show on top of form
+	 * 		@param		string				$title				Title to show on top of form. Example: '' (Default to "Documents") or 'none'
 	 * 		@param		string				$buttonlabel		Label on submit button
 	 * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
@@ -408,7 +408,7 @@ class FormFile
 		}
 
 		$titletoshow = $langs->trans("Documents");
-		if (!empty($title)) $titletoshow = $title;
+		if (!empty($title)) $titletoshow = ($title == 'none' ? '' : $title);
 
 		// Show table
 		if ($genallowed)
