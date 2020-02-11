@@ -35,7 +35,7 @@ $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 header('Content-Type: text/csv');
 
 include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
-$accountancyexport = new AccountancyExport($db);
+$accountancyexport = new AccountancyExport($this->db);
 
 if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_FEC && $type_export == "general_ledger") // Specific filename for FEC model export into the general ledger
 {
