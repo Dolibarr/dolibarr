@@ -517,6 +517,39 @@ class Mo extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Count number of movement with origin of MO
+	 *
+	 * @return 	int			Number of movements
+	 */
+	public function countMovements() {
+		$result = 0;
+
+		$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'stock_mouvement as sm';
+		$sql .= " WHERE sm.origintype = 'mo' and sm.fk_origin = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$result = $obj->nb;
+				}
+
+				$i++;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		return $result;
+	}
+
+
 	/**
 	 * Update object into database
 	 *
