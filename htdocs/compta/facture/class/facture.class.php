@@ -4559,7 +4559,7 @@ class Facture extends CommonInvoice
 	    }
 
 		if ($rounding < 0){
-			$rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+			$rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 			return round($retainedWarrantyAmount, 2);
 		}
 
