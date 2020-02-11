@@ -1955,7 +1955,7 @@ else
                 	print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
                 	if ($object->net_measure != '')
                 	{
-                		print $object->net_measure." ".measuringUnitString($object->net_measure_units, "", "");
+                		print $object->net_measure." ".measuringUnitString($object->net_measure_units);
                 	}
                 	else
                 	{
