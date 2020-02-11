@@ -971,16 +971,16 @@ class AccountancyExport
 			print $nature_piece.$separator;
 			// RACI
 			//			if (! empty($line->subledger_account)) {
-//				if ($line->doc_type == 'supplier_invoice') {
-//					$racine_subledger_account = '40';
-//				} elseif ($line->doc_type == 'customer_invoice') {
-//					$racine_subledger_account = '41';
-//				} else {
-//					$racine_subledger_account = '';
-//				}
-//			} else {
+			//              if ($line->doc_type == 'supplier_invoice') {
+			//                  $racine_subledger_account = '40';
+			//              } elseif ($line->doc_type == 'customer_invoice') {
+			//                  $racine_subledger_account = '41';
+			//              } else {
+			//                  $racine_subledger_account = '';
+			//              }
+			//          } else {
 			$racine_subledger_account = ''; // for records of type E leave this field blank
-//			}
+			//          }
 
 			print $racine_subledger_account . $separator; // deprecated CPTG & CPTA use instead
 			// MONT
