@@ -277,14 +277,18 @@ class PriceParser
 		));
 
 		//Parse the expression and return the price, if not error occurred check if price is higher than min
-		$result = $this->parseExpression($product, $price_expression->expression, $extra_values);
-		if (empty($this->error_parser)) {
-			if ($result < $product->price_min) {
-				$result = $product->price_min;
-			}
-		}
-		return $result;
-	}
+        global $user;
+        if ($result = $price_expression->call_trigger('PARSE_DYNAMIC_PRICE', $user)) {
+                    return $result;
+                } else {
+                    $result = $this->parseExpression($product, $price_expression->expression, $extra_values);
+                    if (empty($this->error_parser)) {
+                            if ($result < $product->price_min) {
+                                    $result = $product->price_min;
+                            }
+                    }
+                    return $result;
+                }
 
     /**
      *	Calculates supplier product price based on product supplier price and associated expression
