@@ -935,6 +935,7 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+			$date_lim_reglement = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 			// TYPE
 			$type_enregistrement = 'E'; // For write movement
@@ -950,7 +951,7 @@ class AccountancyExport
 			// LIBE
 			print $line->label_operation.$separator;
 			// DATH
-			print $line->date_lim_reglement.$separator;
+			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
 				if ($line->montant < 0) {
@@ -969,21 +970,19 @@ class AccountancyExport
 			}
 			print $nature_piece.$separator;
 			// RACI
-			/*
-			if (! empty($line->subledger_account)) {
-				if ($line->doc_type == 'supplier_invoice') {
-					$racine_subledger_account = '40';
-				} elseif ($line->doc_type == 'customer_invoice') {
-					$racine_subledger_account = '41';
-				} else {
-					$nature_piece = '';
-				}
-				print $racine_subledger_account . $separator;
-			} else {
-				print $separator;
-			}
-			*/
-			print $separator; // deprecated CPTG & CPTA use instead
+			//			if (! empty($line->subledger_account)) {
+//				if ($line->doc_type == 'supplier_invoice') {
+//					$racine_subledger_account = '40';
+//				} elseif ($line->doc_type == 'customer_invoice') {
+//					$racine_subledger_account = '41';
+//				} else {
+//					$racine_subledger_account = '';
+//				}
+//			} else {
+			$racine_subledger_account = ''; // for records of type E leave this field blank
+//			}
+
+			print $racine_subledger_account . $separator; // deprecated CPTG & CPTA use instead
 			// MONT
 			print price(abs($line->montant), 0, '', 1, 2).$separator;
 			// CODC
