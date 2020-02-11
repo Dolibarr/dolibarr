@@ -1976,3 +1976,4 @@ MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server 
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
 EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
+PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some text title in your PDF duplicated in 2 different languages in the same generate PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
