@@ -47,6 +47,11 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
+$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
+$label = GETPOST('label', 'alpha'); 
+$actioncode = GETPOST('actioncode');
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid = $user->socid;
@@ -134,10 +139,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-	$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 	$amount = price2num(GETPOST('amount'));
-	$actioncode = GETPOST('actioncode');
 
 	if (!$dateech)
 	{
@@ -187,8 +189,6 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-	$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 	$amount = price2num(GETPOST('amount'));
 
 	if (!$dateech)
