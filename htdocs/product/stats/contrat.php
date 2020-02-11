@@ -183,9 +183,9 @@ if ($id > 0 || !empty($ref))
 			print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
 			print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.date_contrat", "", "&amp;id=".$product->id, 'align="center"', $sortfield, $sortorder);
 			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($staticcontratligne->LibStatut(0, 3), $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="16"', $sortfield, $sortorder, 'maxwidthsearch ');
-			print_liste_field_titre($staticcontratligne->LibStatut(4, 3), $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="16"', $sortfield, $sortorder, 'maxwidthsearch ');
-			print_liste_field_titre($staticcontratligne->LibStatut(5, 3), $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="16"', $sortfield, $sortorder, 'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut($staticcontratligne::STATUS_INITIAL, 3, -1, 'class="nochangebackground"'), $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="16"', $sortfield, $sortorder, 'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut($staticcontratligne::STATUS_OPEN, 3, -1, 'class="nochangebackground"'), $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="16"', $sortfield, $sortorder, 'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut($staticcontratligne::STATUS_CLOSED, 3, -1, 'class="nochangebackground"'), $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="16"', $sortfield, $sortorder, 'maxwidthsearch ');
 			print "</tr>\n";
 
 			$contracttmp = new Contrat($db);

@@ -298,9 +298,13 @@ class Form
 						$firstline = preg_replace('/[\n\r].*/', '', $firstline);
 						$tmpcontent = $firstline.((strlen($firstline) != strlen($tmpcontent)) ? '...' : '');
 					}
-					$ret .= $tmpcontent;
+					// We dont use dol_escape_htmltag to get the html formating active, but this need we must also
+					// clean data from some dangerous html
+					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($tmpcontent));
 				}
-				else $ret .= dol_escape_htmltag($value);
+				else {
+					$ret .= dol_escape_htmltag($value);
+				}
 
 				if ($formatfunc && method_exists($object, $formatfunc))
 				{

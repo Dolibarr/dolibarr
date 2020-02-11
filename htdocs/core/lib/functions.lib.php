@@ -5581,22 +5581,27 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 /**
  *	Clean a string to keep only desirable HTML tags.
  *
- *	@param	string	$stringtoclean		String to clean
- *	@return string	    				String cleaned
+ *	@param	string	$stringtoclean			String to clean
+ *  @param	string	$cleanalsosomestyles	Clean also some tags
+ *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 {
 	$allowed_tags = array(
-		"html", "head", "meta", "body", "article", "a", "b", "br", "div", "em", "font", "img", "ins", "hr", "i", "li", "link",
+		"html", "head", "meta", "body", "article", "a", "b", "br", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "s", "section", "span", "strong", "title",
 		"table", "tr", "th", "td", "u", "ul"
 	);
-
 	$allowed_tags_string = join("><", $allowed_tags);
 	$allowed_tags_string = preg_replace('/^>/', '', $allowed_tags_string);
 	$allowed_tags_string = preg_replace('/<$/', '', $allowed_tags_string);
+	$allowed_tags_string = '<'.$allowed_tags_string.'>';
+
+	if ($cleanalsosomestyles) {
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
+	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
 
@@ -5605,14 +5610,16 @@ function dol_string_onlythesehtmltags($stringtoclean)
 
 /**
  *	Clean a string from some undesirable HTML tags.
+ *  Note. Not enough secured as dol_string_onlythesehtmltags().
  *
- *	@param	string	$stringtoclean		String to clean
- *  @param	array	$disallowed_tags	Array of tags not allowed
- *	@return string	    				String cleaned
+ *	@param	string	$stringtoclean			String to clean
+ *  @param	array	$disallowed_tags		Array of tags not allowed
+ *  @param	string	$cleanalsosomestyles	Clean also some tags
+ *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags()
  */
-function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array('textarea'))
+function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array('textarea'), $cleanalsosomestyles = 0)
 {
 	$temp = $stringtoclean;
 	foreach ($disallowed_tags as $tagtoremove)
@@ -5620,6 +5627,11 @@ function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array(
 		$temp = preg_replace('/<\/?'.$tagtoremove.'>/', '', $temp);
 		$temp = preg_replace('/<\/?'.$tagtoremove.'\s+[^>]*>/', '', $temp);
 	}
+
+	if ($cleanalsosomestyles) {
+		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $temp);	// Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
+	}
+
 	return $temp;
 }
 

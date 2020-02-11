@@ -2754,8 +2754,8 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Return label of this contract line status
 	 *
-	 *	@param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string      		Libelle
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string      		Label of status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -2767,10 +2767,10 @@ class ContratLigne extends CommonObjectLine
 	 *  Return label of a contract line status
 	 *
 	 *  @param	int		$status     Id status
-	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@param	int		$expired	0=Not expired, 1=Expired, -1=Both or unknown
 	 *  @param	string	$moreatt	More attribute
-	 *  @return string      		Libelle
+	 *  @return string      		Label of status
 	 */
 	public static function LibStatut($status, $mode, $expired = -1, $moreatt = '')
 	{

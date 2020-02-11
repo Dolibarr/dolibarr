@@ -1276,9 +1276,16 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		$result = '';
+		$result = ''; $label = '';
 
-        $label = '<u>'.$langs->trans("ShowContact").'</u>';
+		if (!empty($this->photo) && class_exists('Form'))
+		{
+			$label .= '<div class="photointooltip">';
+			$label .= Form::showphoto('contact', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= '</div><div style="clear: both;"></div>';
+		}
+
+        $label .= '<u>'.$langs->trans("ShowContact").'</u>';
         $label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
