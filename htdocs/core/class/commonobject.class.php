@@ -6625,7 +6625,12 @@ abstract class CommonObject
 				if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
 				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
-				//$enabled = 1;
+				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
+				{
+                    $enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
+                }
+				if (empty($enabled)) continue;
 
 				$visibility = 1;
 				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
