@@ -293,7 +293,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
         $this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete($id);
+		return $this->contact->delete();
 	}
 
 	/**
