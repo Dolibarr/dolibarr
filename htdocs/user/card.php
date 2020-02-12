@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -85,8 +86,7 @@ if ($id)
 $socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $feature2 = 'user';
-
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
 if ($user->id <> $id && !$canreaduser) accessforbidden();
 
@@ -567,12 +567,14 @@ if (empty($reshook)) {
 
 				$object->fetch($id);
 
-				$object->oldcopy = clone $object;
+				if (GETPOST("password", "none")) {	// If pass is empty, we do not change it.
+					$object->oldcopy = clone $object;
 
-				$ret = $object->setPassword($user, GETPOST("password"));
-				if ($ret < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
+					$ret = $object->setPassword($user, GETPOST("password", "none"));
+					if ($ret < 0)
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 			}
 		}
@@ -1551,7 +1553,7 @@ else
 				else
 				{
 					if ($user->admin) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-					else $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Hidden");
+					else $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}
 			}
 
@@ -2307,7 +2309,11 @@ else
 		   	print '<tr><td>'.$langs->trans("Gender").'</td>';
 		   	print '<td>';
 		   	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
-		   	print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
+		   	if ($caneditfield) {
+		   		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ?GETPOST('gender') : $object->gender, 1);
+		   	} else {
+		   		print $arraygender[$object->gender];
+		   	}
 		   	print '</td></tr>';
 
             // Employee
@@ -2387,31 +2393,50 @@ else
 
 			// Address
 			print '<tr><td class="tdtop titlefield">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-			print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+			print '<td>';
+			if ($caneditfield) print '<textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
-			print '</textarea></td></tr>';
+			if ($caneditfield) print '</textarea>';
+			print '</td></tr>';
 
 			// Zip
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			if ($caneditfield) {
+				print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			} else {
+				print $object->zip;
+			}
 			print '</td></tr>';
 
 			// Town
 			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			if ($caneditfield) {
+				print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			} else {
+				print $object->town;
+			}
 			print '</td></tr>';
 
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
-			print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id), 'country_id');
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if ($caneditfield) {
+				print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id), 'country_id');
+				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			} else {
+				$countrylabel = getCountry($object->country_id, '0');
+				print $countrylabel;
+			}
 			print '</td></tr>';
 
 			// State
 			if (empty($conf->global->USER_DISABLE_STATE))
 			{
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
-				print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
+				if ($caneditfield) {
+					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
+				} else {
+					print $object->state_label;
+				}
 				print '</td></tr>';
 			}
 
