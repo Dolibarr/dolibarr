@@ -47,8 +47,8 @@ $langs->loadLangs(array("mymodule@mymodule"));
 $action=GETPOST('action', 'alpha');
 
 
-// Securite acces client
-if (! $user->rights->mymodule->read) accessforbidden();
+// Security check
+//if (! $user->rights->mymodule->myobject->read) accessforbidden();
 $socid=GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0)
 {
