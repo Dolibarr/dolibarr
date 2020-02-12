@@ -4133,7 +4133,7 @@ else if ($id > 0 || ! empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye = $prev_invoice->getSommePaiement();
+	            $totalpaye_prev = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?-1:1) * $prev_invoice->situation_counter;
@@ -4144,7 +4144,7 @@ else if ($id > 0 || ! empty($ref))
 	            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
 	            print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
 	            print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
-	            print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
+	            print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye_prev) . '</td>';
 	            print '</tr>';
 	        }
 	    }
