@@ -643,7 +643,7 @@ class Stripe extends CommonObject
 					{
 						$now=dol_now();
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "', ".$amount.")";
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{
