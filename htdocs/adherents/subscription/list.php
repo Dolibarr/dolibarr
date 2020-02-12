@@ -388,46 +388,17 @@ print "</tr>\n";
 
 
 print '<tr class="liste_titre">';
-if (!empty($arrayfields['d.ref']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "c.rowid", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.fk_type']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.fk_type']['label'], $_SERVER["PHP_SELF"], "c.fk_type", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.lastname']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.firstname']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], "d.firstname", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.login']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.libelle']['checked']))
-{
-	print_liste_field_titre($arrayfields['t.libelle']['label'], $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.bank']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.bank']['label'], $_SERVER["PHP_SELF"], "b.fk_account", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['c.dateadh']['checked']))
-{
-	print_liste_field_titre($arrayfields['c.dateadh']['label'], $_SERVER["PHP_SELF"], "c.dateadh", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
-}
-if (!empty($arrayfields['c.datef']['checked']))
-{
-	print_liste_field_titre($arrayfields['c.datef']['label'], $_SERVER["PHP_SELF"], "c.datef", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
-}
-if (!empty($arrayfields['d.amount']['checked']))
-{
-	print_liste_field_titre($arrayfields['d.amount']['label'], $_SERVER["PHP_SELF"], "c.subscription", $param, "", '', $sortfield, $sortorder, 'right ');
-}
+if (! empty($arrayfields['d.ref']['checked']))          print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "c.rowid", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['d.fk_type']['checked']))      print_liste_field_titre($arrayfields['d.fk_type']['label'], $_SERVER["PHP_SELF"], "c.fk_type", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['d.lastname']['checked']))     print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['d.firstname']['checked']))    print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], "d.firstname", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['d.login']['checked']))        print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['t.libelle']['checked']))      print_liste_field_titre($arrayfields['t.libelle']['label'], $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
+if (! empty($arrayfields['d.bank']['checked']))         print_liste_field_titre($arrayfields['d.bank']['label'], $_SERVER["PHP_SELF"], "b.fk_account", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['c.dateadh']['checked']))      print_liste_field_titre($arrayfields['c.dateadh']['label'], $_SERVER["PHP_SELF"], "c.dateadh", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
+if (! empty($arrayfields['c.datef']['checked']))        print_liste_field_titre($arrayfields['c.datef']['label'], $_SERVER["PHP_SELF"], "c.datef", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
+if (! empty($arrayfields['d.amount']['checked']))       print_liste_field_titre($arrayfields['d.amount']['label'], $_SERVER["PHP_SELF"], "c.subscription", $param, "", '', $sortfield, $sortorder, 'right ');
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 

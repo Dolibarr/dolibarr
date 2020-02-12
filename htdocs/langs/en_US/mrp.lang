@@ -66,3 +66,6 @@ AutoCloseMO=Close automatically the Manufacturing Order if quantities to consume
 NoStockChangeOnServices=No stock change on services
 ProductQtyToConsumeByMO=Product quantity still to consume by open MO
 ProductQtyToProduceByMO=Product quentity still to produce by open MO
+AddNewConsumeLines=Add new line to consume
+ProductsToConsume=Products to consume
+ProductsToProduce=Products to produce
