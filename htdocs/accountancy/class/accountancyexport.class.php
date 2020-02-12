@@ -239,6 +239,7 @@ class AccountancyExport
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
+		global $db; 	// The tpl file use $db
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 
