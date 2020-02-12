@@ -362,44 +362,84 @@ $sql .= ', s.fk_product';
 
 if ($usevirtualstock)
 {
-	$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd1.qty) IS NULL", "0", "SUM(cd1.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-	$sqlCommandesCli .= " FROM ".MAIN_DB_PREFIX."commandedet as cd1, ".MAIN_DB_PREFIX."commande as c1";
-	$sqlCommandesCli .= " WHERE c1.rowid = cd1.fk_commande AND c1.entity IN (".getEntity('commande').")";
-	$sqlCommandesCli .= " AND cd1.fk_product = p.rowid";
-	$sqlCommandesCli .= " AND c1.fk_statut IN (1,2))";
+	if (! empty($conf->commande->enabled)) {
+		$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd1.qty) IS NULL", "0", "SUM(cd1.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlCommandesCli .= " FROM ".MAIN_DB_PREFIX."commandedet as cd1, ".MAIN_DB_PREFIX."commande as c1";
+		$sqlCommandesCli .= " WHERE c1.rowid = cd1.fk_commande AND c1.entity IN (".getEntity('commande').")";
+		$sqlCommandesCli .= " AND cd1.fk_product = p.rowid";
+		$sqlCommandesCli .= " AND c1.fk_statut IN (1,2))";
+	} else {
+		$sqlCommandesCli = '0';
+	}
 
-	$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-	$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
-	$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
-	$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
-	$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity('expedition').")";
-	$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";
-	$sqlExpeditionsCli .= " AND e2.fk_statut IN (1,2))";
+	if (! empty($conf->expedition->enabled)) {
+		$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
+		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
+		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
+		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity('expedition').")";
+		$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";
+		$sqlExpeditionsCli .= " AND e2.fk_statut IN (1,2))";
+	} else {
+		$sqlExpeditionsCli = '0';
+	}
 
-	$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-	$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
-	$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
-	$sqlCommandesFourn .= " WHERE c3.rowid = cd3.fk_commande";
-	$sqlCommandesFourn .= " AND c3.entity IN (".getEntity('supplier_order').")";
-	$sqlCommandesFourn .= " AND cd3.fk_product = p.rowid";
-	$sqlCommandesFourn .= " AND c3.fk_statut IN (3,4))";
+	if (! empty($conf->fournisseur->enabled)) {
+		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
+		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
+		$sqlCommandesFourn .= " WHERE c3.rowid = cd3.fk_commande";
+		$sqlCommandesFourn .= " AND c3.entity IN (".getEntity('supplier_order').")";
+		$sqlCommandesFourn .= " AND cd3.fk_product = p.rowid";
+		$sqlCommandesFourn .= " AND c3.fk_statut IN (3,4))";
 
-	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-	$sqlReceptionFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf4,";
-	$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd4";
-	$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity('supplier_order').")";
-	$sqlReceptionFourn .= " AND fd4.fk_product = p.rowid";
-	$sqlReceptionFourn .= " AND cf4.fk_statut IN (3,4))";
+		$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlReceptionFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf4,";
+		$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd4";
+		$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity('supplier_order').")";
+		$sqlReceptionFourn .= " AND fd4.fk_product = p.rowid";
+		$sqlReceptionFourn .= " AND cf4.fk_statut IN (3,4))";
+	} else {
+		$sqlCommandesFourn = '0';
+		$sqlReceptionFourn = '0';
+	}
 
-	$sql .= ' HAVING (('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
-	$sql .= ' OR ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.'))))';
+	if (! empty($conf->mrp->enabled)) {
+		$sqlProductionToConsume = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlProductionToConsume .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
+		$sqlProductionToConsume .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
+		$sqlProductionToConsume .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity('mo').")";
+		$sqlProductionToConsume .= " AND mp5.fk_product = p.rowid";
+		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
+		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
+
+		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty";	// We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlProductionToProduce .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
+		$sqlProductionToProduce .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
+		$sqlProductionToProduce .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity('mo').")";
+		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
+		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
+		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
+	} else
+	{
+		$sqlProductionToConsume = '0';
+		$sqlProductionToProduce = '0';
+	}
+
+	$sql .= ' HAVING (';
+	$sql .= ' ('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
+	$sql .= ' OR ';
+	$sql .= ' ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
+	$sql .= ')';
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql .= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-		$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
+		$sql .= ' AND (';
+		$sql .= $sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+		$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')  + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.'))';
+		$sql .= ')';
 		$alertchecked = 'checked';
 	}
 } else {
