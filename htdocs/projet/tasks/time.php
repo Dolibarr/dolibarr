@@ -483,7 +483,7 @@ if ($action == 'confirm_generateinvoice')
 					$fuser->fetch($object->timespent_fk_user);
 					//$pu_ht = $value['timespent'] * $fuser->thm;
 					$username = $fuser->getFullName($langs);
-					
+
 					// Define qty per hour
 					$qtyhour = round($object->timespent_duration / 3600, 2);
 					$qtyhourtext = convertSecondToTime($object->timespent_duration);
@@ -503,9 +503,9 @@ if ($action == 'confirm_generateinvoice')
 					$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
 					$sql.=' WHERE rowid = '.$object->timespent_id.' AND fk_user = '.$object->timespent_fk_user;
 					$result = $db->query($sql);
-					
+
 					setEventMessages($object->timespent_date, null, 'warnings');
-					
+
 
 					if (! $result)
 					{
