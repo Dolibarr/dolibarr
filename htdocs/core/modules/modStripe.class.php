@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,8 +82,8 @@ class modStripe extends DolibarrModules
         // New pages on tabs
         $this->tabs = array();
 
-        // Boxes
-        $this->boxes = array();			// List of boxes
+        // List of boxes
+        $this->boxes = array();
         $r=0;
 
         // Permissions
@@ -92,8 +92,8 @@ class modStripe extends DolibarrModules
 
         // Main menu entries
         $r=0;
-       /* $this->menu[$r]=array(
-        	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        /* $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
         	'leftmenu'=>'customers_bills_payment_stripe',
         	'type'=>'left',			                // This is a Left menu entry
@@ -150,7 +150,7 @@ class modStripe extends DolibarrModules
 			'target' => '',
 			'user' => 0
 		);
-		
+
         $r++;
 	    $this->menu[$r] = array(
 			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',

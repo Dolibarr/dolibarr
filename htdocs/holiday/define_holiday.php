@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,7 +53,7 @@ if (! $sortorder) $sortorder="ASC";
 
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // If the user does not have perm to read the page
 if (!$user->rights->holiday->read) accessforbidden();
@@ -95,8 +95,8 @@ if (empty($reshook))
     /*
     $objectclass='Skeleton';
     $objectlabel='Skeleton';
-    $permtoread = $user->rights->skeleton->read;
-    $permtodelete = $user->rights->skeleton->delete;
+    $permissiontoread = $user->rights->skeleton->read;
+    $permissiontodelete = $user->rights->skeleton->delete;
     $uploaddir = $conf->skeleton->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */
@@ -173,11 +173,15 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 
 
 $typeleaves=$holiday->getTypes(1, 1);
+$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
+if ($result < 0) {
+	setEventMessages($holiday->error, $holiday->errors, 'errors');
+}
 
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -189,21 +193,14 @@ print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
-if ($lastUpdate)
-{
-    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
-    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+if ($lastUpdate) {
+    print '<strong>'.dol_print_date($db->jdate($lastUpdate), 'dayhour').'</strong>';
+    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$langs->trans('Month'.substr($lastUpdate, 4, 2)).' '.substr($lastUpdate, 0, 4).'</strong>'."\n";
+} else {
+    print $langs->trans('None');
 }
-else print $langs->trans('None');
 print "</div><br>\n";
 
-$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
-if ($result < 0)
-{
-	setEventMessages($holiday->error, $holiday->errors, 'errors');
-}
 
 $filters = '';
 

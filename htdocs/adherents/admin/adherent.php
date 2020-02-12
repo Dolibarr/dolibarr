@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -79,7 +79,7 @@ if ($action == 'updateall')
     }
 }
 
-// Action mise a jour ou ajout d'une constante
+// Action to update or add a constant
 if ($action == 'update' || $action == 'add')
 {
 	$constname=GETPOST('constname', 'alpha');
@@ -108,7 +108,7 @@ if ($action == 'update' || $action == 'add')
 	}
 }
 
-// Action activation d'un sous module du module adherent
+// Action to enable of a submodule of the adherent module
 if ($action == 'set')
 {
     $result=dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
@@ -118,7 +118,7 @@ if ($action == 'set')
     }
 }
 
-// Action desactivation d'un sous module du module adherent
+// Action to disable a submodule of the adherent module
 if ($action == 'unset')
 {
     $result=dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
@@ -150,11 +150,11 @@ $head = member_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -220,9 +220,9 @@ if ($conf->facture->enabled)
 
 print '</table>';
 
-print '<center>';
+print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-print '</center>';
+print '</div>';
 
 print '</form>';
 
@@ -230,7 +230,7 @@ print '<br>';
 
 
 /*
- * Edition info modele document
+ * Edit info of model document
  */
 $constantes=array(
 		'ADHERENT_CARD_TYPE',
@@ -254,7 +254,7 @@ print '<br>';
 
 
 /*
- * Edition info modele document
+ * Edit info of model document
  */
 $constantes=array('ADHERENT_ETIQUETTE_TYPE','ADHERENT_ETIQUETTE_TEXT');
 

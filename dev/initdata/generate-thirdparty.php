@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -24,10 +24,14 @@
  *      \brief      Script example to inject random thirdparties (for load tests)
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -64,22 +68,34 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-  $num = $db->num_rows($resql); $i = 0;
-  while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
+    $num = $db->num_rows($resql); $i = 0;
+    while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		$productsid[$i] = $row[0];
+		$i++;
+	}
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) { $row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++; }
+    while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		$societesid[$i] = $row[0];
+		$i++;
+	}
 } else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) { $row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++; }
+    while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		$commandesid[$i] = $row[0];
+		$i++;
+	}
 } else { print "err"; }
 
 
@@ -116,7 +132,6 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
             if ( $contact->create($user) )
             {
-
             }
         }
 

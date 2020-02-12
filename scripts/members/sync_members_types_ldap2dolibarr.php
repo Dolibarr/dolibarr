@@ -17,11 +17,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file scripts/user/sync_members_types_ldap2dolibarr.php
+ * \file scripts/members/sync_members_types_ldap2dolibarr.php
  * \ingroup ldap member
  * \brief Script to update members types into Dolibarr from LDAP
  */

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,19 +99,19 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		}
 	}
 
-	if (! $testdate) {
+	if (!$testdate) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
 	if ($titre && $testdate)
 	{
-		if (! empty($creation_sondage_date))
+		if (!empty($creation_sondage_date))
 		{
 			header("Location: choix_date.php");
 			exit();
 		}
 
-		if (! empty($creation_sondage_autre))
+		if (!empty($creation_sondage_autre))
 		{
 			header("Location: choix_autre.php");
 			exit();
@@ -128,36 +128,37 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 
 $form = new Form($db);
 
-$arrayofjs=array();
-$arrayofcss=array('/opensurvey/css/style.css');
+$arrayofjs = array();
+$arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
 print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 // debut du formulaire
 print '<form name="formulaire" action="" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head();
 
 // Affichage des différents champs textes a remplir
-print '<table class="border" width="100%">'."\n";
+print '<table class="border centpercent">'."\n";
 
-print '<tr><td class="titlefieldcreate fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
-if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
+print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
+if (!$_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";
-print '<tr><td>'. $langs->trans("Description") .'</td><td>';
-$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+print '<tr><td>'.$langs->trans("Description").'</td><td>';
+$doleditor = new DolEditor('commentaires', $_SESSION["commentaires"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 $doleditor->Create(0, '');
 print '</td>'."\n";
 print '</tr>'."\n";
 
-print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
+print '<tr><td class="fieldrequired">'.$langs->trans("ExpireDate").'</td><td>';
 
-print $form->selectDate($champdatefin?$champdatefin:-1, 'champdatefin', '', '', '', "add", 1, 0);
+print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', '', '', '', "add", 1, 0);
 
 print '</tr>'."\n";
 print '</table>'."\n";
@@ -173,16 +174,16 @@ print '<br>'."\n";
 
 // Check or not
 
-if ($_SESSION["mailsonde"]) $cochemail="checked";
+if ($_SESSION["mailsonde"]) $cochemail = "checked";
 
-print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
+print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '.$langs->trans("ToReceiveEMailForEachVote").'<br>'."\n";
 
 if ($_SESSION['allow_comments']) $allow_comments = 'checked';
-if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked':'';
+if (isset($_POST['allow_comments'])) $allow_comments = GETPOST('allow_comments') ? 'checked' : '';
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br>'."\n";
 
 if ($_SESSION['allow_spy']) $allow_spy = 'checked';
-if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked':'';
+if (isset($_POST['allow_spy'])) $allow_spy = GETPOST('allow_spy') ? 'checked' : '';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br>'."\n";
 
 if (GETPOST('choix_sondage'))
@@ -190,15 +191,15 @@ if (GETPOST('choix_sondage'))
 	if (GETPOST('choix_sondage') == 'date') print '<input type="hidden" name="creation_sondage_date" value="date">';
 	else print '<input type="hidden" name="creation_sondage_autre" value="autre">';
 	print '<input type="hidden" name="choix_sondage" value="'.GETPOST('choix_sondage').'">';
-	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date'?$langs->trans("TypeDate"):$langs->trans("TypeClassic")).')">';
+	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date' ? $langs->trans("TypeDate") : $langs->trans("TypeClassic")).')">';
 }
 else
 {
 	// Show image to selecte between date survey or other survey
 	print '<br><table>'."\n";
-	print '<tr><td>'. $langs->trans("CreateSurveyDate") .'</td><td></td> '."\n";
+	print '<tr><td>'.$langs->trans("CreateSurveyDate").'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";
-	print '<tr><td>'. $langs->trans("CreateSurveyStandard") .'</td><td></td> '."\n";
+	print '<tr><td>'.$langs->trans("CreateSurveyStandard").'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_autre" value="'.$langs->trans('CreateSurveyStandard').'" src="../img/chart-32.png"></td></tr>'."\n";
 	print '</table>'."\n";
 }

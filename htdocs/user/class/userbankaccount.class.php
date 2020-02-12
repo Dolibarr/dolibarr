@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -206,7 +206,6 @@ class UserBankAccount extends Account
         $rib = '';
 
         if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
-
             if ($this->label && $displayriblabel) {
                 $rib = $this->label." : ";
             }

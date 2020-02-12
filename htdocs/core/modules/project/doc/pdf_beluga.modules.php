@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/project/doc/pdf_beluga.modules.php
  *	\ingroup    project
- *	\brief      Fichier de la classe permettant de generer les projets au modele beluga
- *	\author	    Charlie Benke
+ *	\brief      File of class to generate project document beluga
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -50,7 +49,7 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 
 /**
- *	Class to manage generation of project document Baleine
+ *	Class to manage generation of project document Beluga
  */
 
 class pdf_beluga extends ModelePDFProjects
@@ -83,7 +82,7 @@ class pdf_beluga extends ModelePDFProjects
 		$this->name = "beluga";
 		$this->description = $langs->trans("DocumentModelBeluga");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
         $this->orientation = 'L';
@@ -100,15 +99,15 @@ class pdf_beluga extends ModelePDFProjects
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
+		$this->option_logo = 1;                    // Display logo FAC_PDF_LOGO
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_codeproduitservice = 1;      // Display product-service code
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define position of columns
         if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
             $this->posxref=$this->marge_gauche+1;
             $this->posxdate=$this->marge_gauche+105;
@@ -155,12 +154,12 @@ class pdf_beluga extends ModelePDFProjects
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
 		{
-			//$nblignes = count($object->lines);  // This is set later with array of tasks
+			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
@@ -223,7 +222,7 @@ class pdf_beluga extends ModelePDFProjects
 				}
 
 				$object->lines=$tasksarray;
-				$nblignes=count($object->lines);
+				$nblines=count($object->lines);
 
 				$pdf->Open();
 				$pagenb=0;
@@ -268,7 +267,7 @@ class pdf_beluga extends ModelePDFProjects
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-2, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+2);
 
@@ -384,6 +383,11 @@ class pdf_beluga extends ModelePDFProjects
                         'lang'=>'agenda')
                 );
 
+                $hookmanager->initHooks(array('completeListOfReferent'));
+                $hookmanager->executeHooks('completeListOfReferent', ['listofreferent'=>$listofreferent], $object, $action);
+                if(!empty($hookmanager->resArray)) {
+                    $listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+                }
 
                 foreach ($listofreferent as $key => $value)
                 {
@@ -393,17 +397,13 @@ class pdf_beluga extends ModelePDFProjects
                 	$datefieldname=$value['datefieldname'];
                 	$qualified=$value['test'];
                 	$langstoload=$value['lang'];
+                    $projectField=isset($value['project_field']) ? $value['project_field'] : 'fk_projet';
                 	$langs->load($langstoload);
 
                     if (! $qualified) continue;
 
                     //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-                    $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-
-                    if ($key == 'agenda')
-                    {
-//                    	var_dump($elementarray);
-                    }
+                    $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, $projectField);
 
                     $num = count($elementarray);
                     if ($num >= 0)
@@ -417,7 +417,7 @@ class pdf_beluga extends ModelePDFProjects
                         $pdf->SetXY($this->posxref, $curY);
                         $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
 
-                        $selectList = $formproject->select_element($tablename, $project->thirdparty->id);
+                        $selectList = $formproject->select_element($tablename, $project->thirdparty->id, '', -2, $projectField);
                         $nexY = $pdf->GetY() + 1;
                         $curY = $nexY;
                         $pdf->SetXY($this->posxref, $curY);
@@ -512,7 +512,13 @@ class pdf_beluga extends ModelePDFProjects
 						            else
 						            {
 							            // We found a page break
-							            $showpricebeforepagebreak=0;
+
+										// Allows data in the first page if description is long enough to break in multiples pages
+										if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+											$showpricebeforepagebreak = 1;
+										else
+											$showpricebeforepagebreak = 0;
+
 							            $forcedesconsamepage=1;
 							            if ($forcedesconsamepage)
 							            {
@@ -592,9 +598,9 @@ class pdf_beluga extends ModelePDFProjects
                                 // Amount without tax
                                 if (empty($value['disableamount'])) {
                                     $pdf->SetXY($this->posxamountht, $curY);
-                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : '&nbsp;'), 1, 'R');
+                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : ''), 1, 'R');
                                     $pdf->SetXY($this->posxamountttc, $curY);
-                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : '&nbsp;'), 1, 'R');
+                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : ''), 1, 'R');
                                 } else {
                                 	$pdf->SetXY($this->posxamountht, $curY);
                                 	if ($key == 'agenda')
@@ -631,9 +637,9 @@ class pdf_beluga extends ModelePDFProjects
                                 $pdf->SetXY($this->posxref, $curY);
                                 $pdf->MultiCell($this->posxamountttc - $this->posxref, 3, "TOTAL", 1, 'L');
                                 $pdf->SetXY($this->posxamountht, $curY);
-                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : '&nbsp;'), 1, 'R');
+                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : ''), 1, 'R');
                                 $pdf->SetXY($this->posxamountttc, $curY);
-                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : '&nbsp;'), 1, 'R');
+                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : ''), 1, 'R');
                                 $pdf->SetXY($this->posxstatut, $curY);
                                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Nb") . " " . $num, 1, 'L');
                             }
@@ -642,7 +648,7 @@ class pdf_beluga extends ModelePDFProjects
                         }
                     }
 
-					$nexY+=2;    // Passe espace entre les lignes
+                    $nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -680,7 +686,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -718,7 +724,7 @@ class pdf_beluga extends ModelePDFProjects
 
 		$pdf->SetDrawColor(128, 128, 128);
 
-		// Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
+		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 
 		// line prend une position y en 3eme param

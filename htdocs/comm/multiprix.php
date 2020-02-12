@@ -14,13 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/multiprix.php
  *	\ingroup    societe
- *	\brief      Onglet choix du niveau de prix
+ *	\brief      Tab to set the price level of a thirdparty
  */
 
 require '../main.inc.php';
@@ -33,9 +33,9 @@ $langs->loadLangs(array('orders', 'companies'));
 $id = GETPOST('id', 'int');
 $_socid = GETPOST("id", 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$_socid = $user->societe_id;
+	$_socid = $user->socid;
 }
 
 
@@ -60,38 +60,29 @@ if ($_POST["action"] == 'setpricelevel')
 
 llxHeader();
 
-$userstatic=new User($db);
+$userstatic = new User($db);
 
 if ($_socid > 0)
 {
-	// On recupere les donnees societes par l'objet
+	// We load data of thirdparty
 	$objsoc = new Societe($db);
-	$objsoc->id=$_socid;
+	$objsoc->id = $_socid;
 	$objsoc->fetch($_socid, $to);
 
-	if ($errmesg)
-	{
-		print '<div class="error">'.$errmesg.'</div><br>';
-	}
-
-
-	/*
-	 * Affichage onglets
-	 */
 
 	$head = societe_prepare_head($objsoc);
 
-	$tabchoice='';
-	if ($objsoc->client == 1) $tabchoice='customer';
-	if ($objsoc->client == 2) $tabchoice='prospect';
+	$tabchoice = '';
+	if ($objsoc->client == 1) $tabchoice = 'customer';
+	if ($objsoc->client == 2) $tabchoice = 'prospect';
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
 
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefieldcreate">';
 	print $langs->trans("PriceLevel").'</td><td>'.$objsoc->price_level."</td></tr>";
@@ -99,14 +90,14 @@ if ($_socid > 0)
 	print '<tr><td>';
 	print $langs->trans("NewValue").'</td><td>';
 	print '<select name="price_level" class="flat">';
-	for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 	{
-		print '<option value="'.$i.'"' ;
-		if($i == $objsoc->price_level)
+		print '<option value="'.$i.'"';
+		if ($i == $objsoc->price_level)
 		print 'selected';
 		print '>'.$i;
-		$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (! empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
+		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+		if (!empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
 		print '</option>';
 	}
 	print '</select>';
@@ -129,32 +120,32 @@ if ($_socid > 0)
 	 */
 	$sql  = "SELECT rc.rowid,rc.price_level, rc.datec as dc, u.rowid as uid, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe_prices as rc, ".MAIN_DB_PREFIX."user as u";
-	$sql .= " WHERE rc.fk_soc =". $objsoc->id;
+	$sql .= " WHERE rc.fk_soc =".$objsoc->id;
 	$sql .= " AND u.rowid = rc.fk_user_author";
 	$sql .= " ORDER BY rc.datec DESC";
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		$tag = !$tag;
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("PriceLevel").'</td>';
 		print '<td class="right">'.$langs->trans("User").'</td>';
 		print '</tr>';
-		$i = 0 ;
+		$i = 0;
 		$num = $db->num_rows($resql);
 
-		while ($i < $num )
+		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
 			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
-			$userstatic->id=$obj->uid;
-			$userstatic->lastname=$obj->login;
+			$userstatic->id = $obj->uid;
+			$userstatic->lastname = $obj->login;
 			print '<td class="right">'.$userstatic->getNomUrl(1).'</td>';
 			print '</tr>';
 			$i++;

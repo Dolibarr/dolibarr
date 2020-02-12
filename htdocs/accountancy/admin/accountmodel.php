@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,7 +71,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 
@@ -453,10 +453,10 @@ if ($id)
 	$fieldlist=explode(',', $tabfield[$id]);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
 	if ($tabname[$id])
@@ -509,7 +509,7 @@ if ($id)
 		print '</tr>';
 
 		// Line to enter new values
-		print "<tr ".$bcnd[$var].">";
+		print '<tr class="oddeven">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -597,44 +597,9 @@ if ($id)
 
 		// Title of lines
 		print '<tr class="liste_titre">';
-		foreach ($fieldlist as $field => $value)
-		{
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
-			$showfield=1;							  	// By defaut
-			$class="left";
-			$sortable=1;
-			$valuetoshow='';
-			/*
-            $tmparray=getLabelOfField($fieldlist[$field]);
-            $showfield=$tmp['showfield'];
-            $valuetoshow=$tmp['valuetoshow'];
-            $align=$tmp['align'];
-            $sortable=$tmp['sortable'];
-			*/
-			$valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
-			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			if ($fieldlist[$field]=='code') {
-                $valuetoshow=$langs->trans("Code");
-            }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
-                $valuetoshow=$langs->trans("Label");
-            }
-            if ($fieldlist[$field]=='country') {
-                $valuetoshow=$langs->trans("Country");
-            }
-            if ($fieldlist[$field]=='country_id') {
-                $showfield=0;
-            }
-            if ($fieldlist[$field]=='fk_pcg_version') {
-                $valuetoshow=$langs->trans("Pcg_version");
-            }
-
-			// Affiche nom du champ
-			if ($showfield) {
-				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "", $sortfield, $sortorder, $class.' ');
-			}
-		}
+		print getTitleFieldOfList($langs->trans("Pcg_version"), 0, $_SERVER["PHP_SELF"], "pcg_version", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, '');
+		print getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], "label", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, '');
+		print getTitleFieldOfList($langs->trans("Country"), 0, $_SERVER["PHP_SELF"], "country_code", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, '');
 		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, 'center ');
 		print getTitleFieldOfList('');
 		print getTitleFieldOfList('');
@@ -651,7 +616,7 @@ if ($id)
 				if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
 				{
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
@@ -677,7 +642,6 @@ if ($id)
 					{
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

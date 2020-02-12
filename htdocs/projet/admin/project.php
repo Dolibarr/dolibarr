@@ -18,11 +18,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/admin/project.php
+ *  \file       htdocs/projet/admin/project.php
  *  \ingroup    project
  *  \brief      Page to setup project module
  */
@@ -303,10 +303,10 @@ dol_fiche_head($head, 'project', $langs->trans("Projects"), -1, 'project');
 $form=new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setmainoptions">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
@@ -349,7 +349,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("ProjectsNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -450,7 +450,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 	// Task numbering module
 	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="100">'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
@@ -864,10 +864,10 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 $form=new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";

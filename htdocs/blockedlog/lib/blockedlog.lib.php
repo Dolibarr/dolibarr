@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,7 +46,7 @@ function blockedlogadmin_prepare_head()
 	$b=new BlockedLog($db);
 	if ($b->alreadyUsed())
 	{
-		$head[$h][1].=' <span class="badge">...</span>';
+		$head[$h][1].='<span class="badge marginleftonlyshort">...</span>';
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;

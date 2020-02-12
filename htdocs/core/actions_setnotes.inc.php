@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -33,7 +33,7 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 	if (empty($action) || ! is_object($object) || empty($id)) dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	if (empty($object->id)) $object->fetch($id);	// Fetch may not be already done
 
-	$result_update=$object->update_note(dol_html_entity_decode(GETPOST('note_public', 'none'), ENT_QUOTES), '_public');
+	$result_update = $object->update_note(dol_html_entity_decode(GETPOST('note_public', 'none'), ENT_QUOTES, 'UTF-8', 1), '_public');
 
 	if ($result_update < 0) setEventMessages($object->error, $object->errors, 'errors');
 	elseif (in_array($object->table_element, array('supplier_proposal', 'propal', 'commande_fournisseur', 'commande', 'facture_fourn', 'facture')))

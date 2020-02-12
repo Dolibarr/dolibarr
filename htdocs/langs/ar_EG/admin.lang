@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=مؤسسة
 Version=إصدار
+Publisher=الناشر
 VersionExperimental=تجريبي
 VersionDevelopment=تطوير
 VersionRecommanded=موصى به
@@ -23,3 +24,5 @@ FeatureAvailableOnlyOnStable=الميزة متوفرة فقط في الإصدا�
 Module700Name=تبرعات
 Module1780Name=الأوسمة/التصنيفات
 Permission81=قراءة أوامر الشراء
+MailToSendInvoice=فواتير العميل
+MailToSendSupplierInvoice=فواتير المورد

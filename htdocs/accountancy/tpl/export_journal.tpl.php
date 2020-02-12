@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -34,8 +34,10 @@ $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
 header('Content-Type: text/csv');
 
+include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
+$accountancyexport = new AccountancyExport($db);
 
-if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == "1000" && $type_export == "general_ledger") // Specific filename for FEC model export into the general ledger
+if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_FEC && $type_export == "general_ledger") // Specific filename for FEC model export into the general ledger
 {
 	// FEC format is defined here: https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000027804775&cidTexte=LEGITEXT000006069583&dateTexte=20130802&oldAction=rechCodeArticle
 	if (empty($search_date_end))

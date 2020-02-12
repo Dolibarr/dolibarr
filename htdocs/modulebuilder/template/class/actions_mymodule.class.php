@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -117,7 +117,7 @@ class ActionsMyModule
 
 
     /**
-     * Overloading the doActions function : replacing the parent's function with the one below
+     * Overloading the doMassActions function : replacing the parent's function with the one below
      *
      * @param   array           $parameters     Hook metadatas (context, etc...)
      * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
@@ -205,7 +205,6 @@ class ActionsMyModule
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
         if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
         {
-
         }
 
         return $ret;
@@ -234,11 +233,51 @@ class ActionsMyModule
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
         if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
         {
-
         }
 
         return $ret;
     }
+
+
+
+    /**
+     * Overloading the loadDataForCustomReports function : returns data to complete the customreport tool
+     *
+     * @param   array           $parameters     Hook metadatas (context, etc...)
+     * @param   string          $action         Current action (if set). Generally create or edit or null
+     * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+     * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+     */
+    public function loadDataForCustomReports($parameters, &$action, $hookmanager)
+    {
+    	global $conf, $user, $langs;
+
+    	$langs->load("mymodule@mymodule");
+
+    	$this->results = array();
+
+    	$head = array();
+    	$h = 0;
+
+    	if ($parameters['tabfamily'] == 'mymodule') {
+    		$head[$h][0] = dol_buildpath('/module/index.php', 1);
+    		$head[$h][1] = $langs->trans("Home");
+    		$head[$h][2] = 'home';
+    		$h++;
+
+    		$this->results['title'] = $langs->trans("MyModule");
+    		$this->results['picto'] = 'mymodule@mymodule';
+    	}
+
+    	$head[$h][0] = 'customreports.php?objecttype='.$parameters['objecttype'].(empty($parameters['tabfamily'])?'':'&tabfamily='.$parameters['tabfamily']);
+    	$head[$h][1] = $langs->trans("CustomReports");
+    	$head[$h][2] = 'customreports';
+
+    	$this->results['head'] = $head;
+
+    	return 1;
+    }
+
 
     /* Add here any other hooked methods... */
 }

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $action=GETPOST('action', 'aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
@@ -172,16 +172,17 @@ if ($result > 0)
 	$info=$object->_load_ldap_info();
 	$dn=$object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
+
 	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
-	// Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	// Show tree
+    if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{
@@ -190,7 +191,7 @@ if ($result > 0)
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();

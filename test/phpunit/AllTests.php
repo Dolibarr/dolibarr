@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -87,6 +87,8 @@ class AllTests
         $suite->addTestSuite('DateLibTest');
         require_once dirname(__FILE__).'/UtilsTest.php';
         $suite->addTestSuite('UtilsTest');
+        require_once dirname(__FILE__).'/LesscTest.php';
+        $suite->addTestSuite('LesscTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
         //$suite->addTestSuite('DateLibTzFranceTest');
         require_once dirname(__FILE__).'/MarginsLibTest.php';
@@ -152,6 +154,9 @@ class AllTests
         $suite->addTestSuite('PricesTest');
         require_once dirname(__FILE__).'/DiscountTest.php';
         $suite->addTestSuite('DiscountTest');
+
+        require_once dirname(__FILE__).'/BOMTest.php';
+        $suite->addTestSuite('BOMTest');
 
         require_once dirname(__FILE__).'/ContratTest.php';
         $suite->addTestSuite('ContratTest');
@@ -239,6 +244,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/FormAdminTest.php';
         $suite->addTestSuite('FormAdminTest');
+        require_once dirname(__FILE__).'/FormTest.php';
+        $suite->addTestSuite('FormTest');
 
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
@@ -248,6 +255,9 @@ class AllTests
         require_once dirname(__FILE__).'/FormAdminTest.php';
         $suite->addTestSuite('FormAdminTest');
 
+
+        require_once dirname(__FILE__).'/PaypalTest.php';
+        $suite->addTestSuite('PaypalTest');
 
         return $suite;
     }

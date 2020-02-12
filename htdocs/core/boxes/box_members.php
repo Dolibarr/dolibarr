@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,9 +63,9 @@ class box_members extends ModeleBoxes
 
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->socid)) $this->enabled=0;	// disabled for external users
 
-		$this->hidden=! ($user->rights->adherent->lire);
+		$this->hidden = ! ($user->rights->adherent->lire);
 	}
 
 	/**
@@ -76,13 +76,13 @@ class box_members extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
 		$this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-        $memberstatic=new Adherent($db);
+        $memberstatic=new Adherent($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
@@ -95,19 +95,19 @@ class box_members extends ModeleBoxes
 			$sql.= " WHERE a.entity IN (".getEntity('member').")";
 			$sql.= " AND a.fk_adherent_type = t.rowid";
 			$sql.= " ORDER BY a.tms DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datec=$this->db->jdate($objp->datec);
+					$datem=$this->db->jdate($objp->tms);
 
 					$memberstatic->lastname=$objp->lastname;
 					$memberstatic->firstname=$objp->firstname;
@@ -124,13 +124,13 @@ class box_members extends ModeleBoxes
 					}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $memberstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $memberstatic->company,
                         'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
                     );
@@ -142,7 +142,7 @@ class box_members extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right" width="18"',
-                        'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $db->jdate($objp->date_end_subscription), 3),
+                        'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $this->db->jdate($objp->date_end_subscription), 3),
                     );
 
                     $line++;
@@ -154,12 +154,12 @@ class box_members extends ModeleBoxes
                         'text'=>$langs->trans("NoRecordedCustomers"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

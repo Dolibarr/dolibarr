@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -76,17 +76,18 @@ class SocieteAccount extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
-		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
+		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
 		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
 		'site' => array('type'=>'varchar(128)', 'label'=>'Site', 'visible'=>-1, 'enabled'=>1, 'position'=>41),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
+		'site_account' => array('type'=>'varchar(128)', 'label'=>'SiteAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'help'=>'A key to identify the account on external web site'),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>43, 'notnull'=>-1, 'index'=>1),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
@@ -96,7 +97,7 @@ class SocieteAccount extends CommonObject
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active', '0'=>'Disabled')),
 	);
 
 	/**
@@ -121,10 +122,23 @@ class SocieteAccount extends CommonObject
     public $fk_soc;
 
 	public $site;
+	public $site_account;
+
+	/**
+	 * @var integer|string date_last_login
+	 */
 	public $date_last_login;
+
+
 	public $date_previous_login;
 	public $note_private;
+
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+
+
 	public $tms;
 
 	/**
@@ -185,7 +199,7 @@ class SocieteAccount extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
 	}
 
 	/**
@@ -261,7 +275,7 @@ class SocieteAccount extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -272,33 +286,35 @@ class SocieteAccount extends CommonObject
 	 */
 	public function fetchLines()
 	{
-		$this->lines=array();
+		$this->lines = array();
 
 		// Load lines with object societeAccountLine
 
-		return count($this->lines)?1:0;
+		return count($this->lines) ? 1 : 0;
 	}
 
 	/**
 	 * Try to find the external customer id of a thirdparty for another site/system.
 	 *
-	 * @param	int		$id			Id of third party
-	 * @param	string	$site		Site (example: 'stripe', '...')
-	 * @param	int		$status		Status (0=test, 1=live)
-	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 * @param	int		$id				Id of third party
+	 * @param	string	$site			Site (example: 'stripe', '...')
+	 * @param	int		$status			Status (0=test, 1=live)
+	 * @param	string	$site_account 	Value to use to identify with account to use on site when site can offer several accounts. For example: 'pk_live_123456' when using Stripe service.
+	 * @return	string					Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 * @see getThirdPartyID()
 	 */
-	public function getCustomerAccount($id, $site, $status = 0)
+	public function getCustomerAccount($id, $site, $status = 0, $site_account = '')
 	{
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
-		$sql.= " WHERE sa.fk_soc = " . $id;
-		$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
-		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
-		//$sql.= " ORDER BY sa.key_account DESC";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
+		$sql .= " WHERE sa.fk_soc = ".$id;
+		$sql .= " AND sa.entity IN (".getEntity('societe').")";
+		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
+		$sql .= " AND (sa.site_account = '' OR sa.site_account IS NULL OR sa.site_account = '".$this->db->escape($site_account)."')";
+		$sql .= " ORDER BY sa.site_account DESC"; // To get the entry with a site_account defined in priority
 
-		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -315,7 +331,7 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
-	* Try to find the thirdparty id for an another site/system external id.
+	* Try to find the thirdparty id from an another site/system external id.
 	*
 	* @param	string	$id			Id of customer in external system (example: 'cu_xxxxxxxxxxxxx', ...)
 	* @param	string	$site		Site (example: 'stripe', '...')
@@ -328,13 +344,13 @@ class SocieteAccount extends CommonObject
 		$socid = 0;
 
 		$sql = "SELECT sa.fk_soc as fk_soc, sa.key_account, sa.entity";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
-		$sql.= " WHERE sa.key_account = '".$this->db->escape($id)."'";
-		$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
-		$sql.= " AND sa.fk_soc > 0";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
+		$sql .= " WHERE sa.key_account = '".$this->db->escape($id)."'";
+		$sql .= " AND sa.entity IN (".getEntity('societe').")";
+		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql .= " AND sa.fk_soc > 0";
 
-		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first thirdparty id for ".$site." for external id=".$id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getCustomerAccount Try to find the first thirdparty id for ".$site." for external id=".$id, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -386,16 +402,16 @@ class SocieteAccount extends CommonObject
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
         $companylink = '';
 
         $this->ref = $this->login;
 
-        $label = '<u>' . $langs->trans("SocieteAccount") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Login') . ':</b> ' . $this->ref;
+        $label = '<u>'.$langs->trans("SocieteAccount").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Login').':</b> '.$this->ref;
         //$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
 
         $url = dol_buildpath('/website/websiteaccount_card.php', 1).'?id='.$this->id;
@@ -403,31 +419,31 @@ class SocieteAccount extends CommonObject
         if ($option != 'nolink')
         {
 	        // Add param to save lastsearch_values or not
-	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+	        $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+	        if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
         }
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowsocieteAccount");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+                $label = $langs->trans("ShowsocieteAccount");
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
         }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart.=$linkclose.'>';
-		$linkend='</a>';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 
 		return $result;
@@ -459,7 +475,7 @@ class SocieteAccount extends CommonObject
 
 		if ($mode == 0)
 		{
-			$prefix='';
+			$prefix = '';
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
 		}
@@ -504,10 +520,10 @@ class SocieteAccount extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql.= ' fk_user_creat, fk_user_modif';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql.= ' WHERE t.rowid = '.$id;
-		$result=$this->db->query($sql);
+		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' WHERE t.rowid = '.$id;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
@@ -518,7 +534,7 @@ class SocieteAccount extends CommonObject
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation   = $cuser;
+					$this->user_creation = $cuser;
 				}
 
 				if ($obj->fk_user_valid)
@@ -532,7 +548,7 @@ class SocieteAccount extends CommonObject
 				{
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture   = $cluser;
+					$this->user_cloture = $cluser;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);

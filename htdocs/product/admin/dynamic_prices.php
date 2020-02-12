@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -161,7 +161,7 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 {
     print load_fiche_titre($langs->trans("GlobalVariables"), '', '');
 
-    print '<table summary="listofattributes" class="noborder" width="100%">';
+    print '<table summary="listofattributes" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Variable").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
@@ -206,7 +206,7 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 if ($action == 'create_variable' || $action == 'edit_variable') {
     //Form
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<input type="hidden" name="selection" value="'.$selection.'">';
 
@@ -242,7 +242,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 {
     print load_fiche_titre($langs->trans("GlobalVariableUpdaters"), '', '');
 
-    print '<table summary="listofattributes" class="noborder" width="100%">';
+    print '<table summary="listofattributes" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("VariableToUpdate").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
@@ -297,7 +297,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 if ($action == 'create_updater' || $action == 'edit_updater') {
     //Form
     print '<form id="updaterform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<input type="hidden" name="selection" value="'.$selection.'">';
 

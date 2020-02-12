@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,10 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 $action=GETPOST('action', 'aZ09');
 
 // Secrutiy check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 if (! $user->rights->facture->lire)
@@ -141,7 +141,7 @@ if ($resql)
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
@@ -151,7 +151,7 @@ if ($resql)
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre left">';

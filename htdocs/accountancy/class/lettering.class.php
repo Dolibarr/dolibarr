@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -76,6 +76,7 @@ class Lettering extends BookKeeping
 
 		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
 		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
+		$sql .= ' AND bk.date_validated IS NULL ';
 		$sql .= $this->db->order('bk.doc_date', 'DESC');
 
 		// echo $sql;
@@ -149,7 +150,6 @@ class Lettering extends BookKeeping
 						}
 					}
 				} elseif ($obj->type == 'payment') {
-
 					$sql = 'SELECT DISTINCT bk.rowid, fac.ref, fac.ref, pay.fk_bank, fac.rowid as fact_id';
 					$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
@@ -254,7 +254,7 @@ class Lettering extends BookKeeping
 		}
 
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-		$sql .= " rowid IN (" . implode(',', $ids) . ") ";
+		$sql .= " rowid IN (" . implode(',', $ids) . ") AND date_validated IS NULL ";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -276,7 +276,7 @@ class Lettering extends BookKeeping
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 			$sql .= " lettering_code='" . $lettre . "'";
 			$sql .= " , date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
-			$sql .= "  WHERE rowid IN (" . implode(',', $ids) . ") ";
+			$sql .= "  WHERE rowid IN (" . implode(',', $ids) . ") AND date_validated IS NULL ";
 			$this->db->begin();
 
 			dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);

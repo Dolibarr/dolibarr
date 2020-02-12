@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Comptabilité
 Accounting=Comptabilité
 ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonnes pour le fichier exporté
 ACCOUNTING_EXPORT_DATE=Format de date pour le fichier d'exportation
@@ -97,6 +98,8 @@ MenuExpenseReportAccounts=Comptes notes de frais
 MenuLoanAccounts=Comptes emprunts
 MenuProductsAccounts=Comptes produits
 MenuClosureAccounts=Comptes de fermeture
+MenuAccountancyClosure=Cloture
+MenuAccountancyValidationMovements=Valider les mouvements
 ProductsBinding=Comptes produits
 TransferInAccounting=Transfert en comptabilité
 RegistrationInAccounting=Enregistrement en comptabilité
@@ -167,9 +170,11 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les ad
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Code comptable par défaut pour les produits vendus dans la CEE (utilisé si non définie dans la fiche produit)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Code comptable par défaut pour les produits vendus exportés hors de la CEE (utilisé si non définie dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Code comptable par défaut pour les produits vendus et exportés hors de la CEE (utilisé si non définie dans la fiche produit)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche service)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (utilisé si non défini dans la fiche service)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Compte comptable par défaut pour les services vendus dans la CEE (utilisé si non défini dans la fiche service)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Code comptable par défaut pour les services vendus et exportés hors de la CEE (utilisé si non définie dans la fiche produit)
 
 Doctype=Type de documents
 Docdate=Date
@@ -192,9 +197,10 @@ ByPersonalizedAccountGroups=Par groupes personnalisés
 ByYear=Par année
 NotMatch=Non défini
 DeleteMvt=Supprimer les lignes du grand livre
+DelMonth=Mois à effacer
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
-ConfirmDeleteMvt=Cela supprimera toutes les lignes du grand livre pour l'année et/ou d'un journal spécifique. Un critère au moins est requis.
+ConfirmDeleteMvt=Cela supprimera toutes les lignes du grand livre de l'année/du mois et/ou d'un journal spécifique (au moins un critère est requis). Vous devrez réutiliser la fonction "Enregistrer en comptabilité" pour passer l'enregistrement supprimé à nouveau dans le grand livre.
 ConfirmDeleteMvtPartial=Cette action effacera les écritures de votre grand livre (toutes les lignes liées à une même transaction seront effacées)
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
@@ -235,12 +241,18 @@ DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et 
 DescVentilTodoCustomer=Lier les lignes de factures non déjà liées à un compte comptable produits
 ChangeAccount=Modifier le compte comptable produit/service pour les lignes sélectionnées avec le compte comptable suivant:
 Vide=-
-DescVentilSupplier=Consultez ici la liste des lignes de factures fournisseurs liées ou pas encore liées à un compte comptable produit
+DescVentilSupplier=Consultez ici la liste des lignes de factures fournisseur liées ou pas encore liées à un compte comptable produit (seuls les enregistrements pas encore transférés en comptabilités sont visibles)
 DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseurs et leur compte comptable
 DescVentilTodoExpenseReport=Lier les lignes de note de frais par encore liées à un compte comptable
 DescVentilExpenseReport=Consultez ici la liste des lignes de notes de frais liées (ou non) à un compte comptable
 DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au niveau des types de lignes notes de frais, l'application sera capable de faire l'association automatiquement entre les lignes de notes de frais et le compte comptable de votre plan comptable, en un simple clic sur le bouton <strong>"%s"</strong>. Si aucun compte n'a été défini au niveau du dictionnaire de types de lignes de notes de frais ou si vous avez toujours des lignes de notes de frais non liables automatiquement à un compte comptable, vous devez faire l'association manuellement depuis le menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
+
+DescClosure=Consultez ici le nombre de mouvements par mois non validés et les périodes fiscales déjà ouvertes
+OverviewOfMovementsNotValidated=Etape 1/ Aperçu des mouvements non validés. (Nécessaire pour clôturer un exercice comptable)
+ValidateMovements=Valider les mouvements
+DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
+SelectMonthAndValidate=Sélectionnez le mois et validez les mouvements
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaison automatique faite
@@ -256,6 +268,7 @@ ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte
 ChangeBinding=Changer les liens
 Accounted=Comptabilisé
 NotYetAccounted=Pas encore comptabilisé
+ShowTutorial=Afficher le tutoriel
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
@@ -264,7 +277,7 @@ CategoryDeleted=Le groupe de comptes comptables a été supprimé
 AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
 NewAccountingJournal=Nouveau journal comptable
-ShowAccoutingJournal=Afficher le journal
+ShowAccountingJournal=Afficher le journal
 NatureOfJournal=Nature du journal
 AccountingJournalType1=Opérations diverses
 AccountingJournalType2=Ventes

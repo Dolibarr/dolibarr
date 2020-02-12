@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -66,6 +66,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 /**
  * Header empty
  *
+ * @ignore
  * @return	void
  */
 function llxHeader()
@@ -74,6 +75,7 @@ function llxHeader()
 /**
  * Footer empty
  *
+ * @ignore
  * @return	void
  */
 function llxFooter()
@@ -92,7 +94,7 @@ $entity=GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
-if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 0, 0, 1);
+if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 0, 0, 1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 
@@ -196,7 +198,7 @@ if (! empty($hashp))
 else
 {
 	// Basic protection (against external users only)
-	if ($user->societe_id > 0)
+	if ($user->socid > 0)
 	{
 		if ($sqlprotectagainstexternals)
 		{
@@ -208,7 +210,7 @@ else
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					if ($user->societe_id != $obj->fk_soc)
+					if ($user->socid != $obj->fk_soc)
 					{
 						$accessallowed=0;
 						break;

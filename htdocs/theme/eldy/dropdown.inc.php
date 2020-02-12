@@ -1,19 +1,17 @@
 <?php
 if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
-
+/* <style type="text/css" > dont remove this line it's an ide hack */
 /*
- * Dropdown
+ * Dropdown of user popup
  */
 
-.open>.dropdown-menu{ /*, #topmenu-login-dropdown:hover .dropdown-menu*/
+.open>.dropdown-menu{
     display: block;
 }
 
 .dropdown-menu {
-    box-shadow: none;
     border-color: #eee;
-}
-.dropdown-menu {
+
     position: absolute;
     top: 100%;
     left: 0;
@@ -21,7 +19,6 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     display: none;
     float: left;
     min-width: 160px;
-    padding: 5px 0;
     margin: 2px 0 0;
     font-size: 14px;
     text-align: left;
@@ -38,6 +35,34 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 
 
+.dropdown-toggle{
+    text-decoration: none !important;
+}
+
+.dropdown-toggle::after {
+    /* font part */
+    font-family: "Font Awesome 5 Free";
+    font-size: 0.7em;
+    font-weight: 900;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    text-align:center;
+    text-decoration:none;
+    margin:  auto 3px;
+    display: inline-block;
+    content: "\f078";
+
+    -webkit-transition: -webkit-transform .2s ease-in-out;
+    -ms-transition: -ms-transform .2s ease-in-out;
+    transition: transform .2s ease-in-out;
+}
+
+.open>.dropdown-toggle::after {
+    transform: rotate(180deg);
+}
+
 /*
 * MENU Dropdown
 */
@@ -45,7 +70,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     display: none;
 }
 
-.tmenu .open.dropdown, .login_block .open.dropdown, .tmenu .open.dropdown, .login_block .dropdown:hover{
+.tmenu .open.dropdown, .tmenu .open.dropdown {
     background: rgba(0, 0, 0, 0.1);
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu {
@@ -75,10 +100,22 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 .side-nav-vert .user-menu .dropdown-menu > .user-header {
-    height: 175px;
+    min-height: 100px;
     padding: 10px;
     text-align: center;
     white-space: normal;
+}
+
+#topmenu-global-search-dropdown .dropdown-menu{
+    width: 300px;
+    max-width: 100%;
+}
+
+div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+    line-height: 46px;
+}
+a.top-menu-dropdown-link {
+    padding: 8px;
 }
 
 .dropdown-user-image {
@@ -98,6 +135,12 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
+
+.dropdown-menu .dropdown-header{
+    padding: 5px 10px 10px 10px;
+}
+
 .dropdown-menu > .user-footer {
     background-color: #f9f9f9;
     padding: 10px;
@@ -107,14 +150,43 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     clear: both;
 }
 
-.dropdown-menu > .user-body {
+
+.dropdown-menu > .bookmark-footer{
+    padding: 10px;
+}
+
+
+.dropdown-menu > .user-body, .dropdown-body{
     padding: 15px;
     border-bottom: 1px solid #f4f4f4;
     border-top: 1px solid #dddddd;
     white-space: normal;
 }
 
-#topmenu-login-dropdown{
+.dropdown-menu > .bookmark-body, .dropdown-body{
+    padding: 10px 0;
+    overflow-y: auto;
+    max-height: 60vh ; /* fallback for browsers without support for calc() */
+    max-height: calc(90vh - 110px) ;
+	white-space: normal;
+}
+
+.dropdown-body::-webkit-scrollbar {
+        width: 8px;
+    }
+.dropdown-body::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    background: rgb(<?php echo $colorbackhmenu1 ?>);
+}
+.dropdown-body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+
+#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
     padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -165,4 +237,90 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     border-width: 1px;
     background-color: #f4f4f4;
     border-color: #ddd;
+}
+
+.dropdown-menu a.top-menu-dropdown-link {
+    color: rgb(<?php print $colortextlink; ?>) !important;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    display: block;
+    margin: 5px 0px;
+}
+
+.dropdown-item {
+    display: block !important;
+    box-sizing: border-box;
+    width: 100%;
+    padding: .25rem 1.5rem .25rem 1rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529  !important;
+    text-align: inherit;
+    background-color: transparent;
+    border: 0;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.dropdown-item::before {
+    /* font part */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    text-align:center;
+    text-decoration:none;
+    margin-right: 5px;
+    display: inline-block;
+    content: "\f0da";
+    color: rgba(0,0,0,0.3);
+}
+
+
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
+    color: #<?php echo $colortextbackhmenu; ?> !important;
+    text-decoration: none;
+    background: rgb(<?php echo $colorbackhmenu1 ?>);
+}
+
+/*
+* SEARCH
+*/
+
+.dropdown-search-input {
+    width: 100%;
+    padding: 10px 35px 10px 20px;
+
+    background-color: transparent;
+    font-size: 14px;
+    line-height: 16px;
+    box-sizing: border-box;
+
+
+    color: #575756;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    background-position: 95% center;
+    border-radius: 50px;
+    border: 1px solid #c4c4c2 !important;
+    transition: all 250ms ease-in-out;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+
+}
+
+.dropdown-search-input::placeholder {
+    color: color(#575756 a(0.8));
+    letter-spacing: 1.5px;
+}
+
+.hidden-search-result{
+    display: none !important;
 }

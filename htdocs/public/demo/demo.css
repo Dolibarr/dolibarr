@@ -110,6 +110,9 @@ img.demothumb {
 
 @media only screen and (max-width: 767px)
 {
+	.CTable {
+		width: 300px;
+	}
     .demobody {
     	line-height: 150% !important;
         font-size: 100% !important;

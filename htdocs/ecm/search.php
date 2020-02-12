@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ecm', '');
 
 // Load permissions
@@ -125,7 +125,7 @@ $head = ecm_prepare_head_fm($ecmdir, $module, $section);
 //dol_fiche_head($head, 'search_form', '', 1);
 
 
-print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
+print '<table class="border centpercent"><tr><td width="40%" valign="top">';
 
 // Left area
 
@@ -133,7 +133,7 @@ print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 //print load_fiche_titre($langs->trans("ECMSectionsManual"));
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
@@ -147,7 +147,7 @@ print "</table></form>";
 //print load_fiche_titre($langs->trans("ECMSectionAuto"));
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';

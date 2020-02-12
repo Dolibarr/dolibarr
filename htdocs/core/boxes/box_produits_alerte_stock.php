@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,8 +65,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
-	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
-	    $this->hidden=($showmode != 1);
+	    $showmode=isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden = ($showmode != 1);
 	}
 
 	/**
@@ -77,19 +77,19 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf, $hookmanager;
+		global $user, $langs, $conf, $hookmanager;
 
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$productstatic=new Product($db);
+		$productstatic=new Product($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
-			$sql.= " SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
+			$sql.= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
@@ -104,19 +104,19 @@ class box_produits_alerte_stock extends ModeleBoxes
     		    $sql.=$hookmanager->resPrint;
     		}
 		    $sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
-			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
-			$sql.= $db->order('p.seuil_stock_alerte', 'DESC');
-			$sql.= $db->plimit($max, 0);
+			$sql.= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
+			$sql.= $this->db->order('p.seuil_stock_alerte', 'DESC');
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
 				$langs->load("stocks");
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$line = 0;
                 while ($line < $num) {
-					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datem=$this->db->jdate($objp->tms);
                     $price = '';
                     $price_base_type = '';
 
@@ -129,10 +129,10 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";
 
-						$resultd = $db->query($sqld);
+						$resultd = $this->db->query($sqld);
 						if ($resultd)
 						{
-							$objtp = $db->fetch_object($resultd);
+							$objtp = $this->db->fetch_object($resultd);
 							if (isset($objtp->label) && $objtp->label != '')
 								$objp->label = $objtp->label;
 						}
@@ -214,14 +214,14 @@ class box_produits_alerte_stock extends ModeleBoxes
                         'text'=>$langs->trans("NoTooLowStockProducts"),
                     );
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else
 			{
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
 		}

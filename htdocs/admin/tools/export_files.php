@@ -14,12 +14,12 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
- *		\file 		htdocs/admin/tools/export.php
- *		\brief      Page to export a database into a dump file
+ *		\file 		htdocs/admin/tools/export_files.php
+ *		\brief      Page to export documents into a compressed file
  */
 
 require '../../main.inc.php';
@@ -33,10 +33,11 @@ $langs->load("admin");
 $action=GETPOST('action', 'alpha');
 $what=GETPOST('what', 'alpha');
 $export_type=GETPOST('export_type', 'alpha');
-$file=GETPOST('zipfilename_template', 'alpha');
+$file=trim(GETPOST('zipfilename_template', 'alpha'));
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);
+$file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
@@ -73,7 +74,7 @@ if ($action == 'delete')
  */
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit=600;
+$ExecTimeLimit=1800;	// 30mn
 if (!empty($ExecTimeLimit))
 {
     $err=error_reporting();
@@ -88,7 +89,7 @@ if (!empty($MemoryLimit))
     @ini_set('memory_limit', $MemoryLimit);
 }
 
-$form=new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
 //$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
@@ -112,10 +113,18 @@ $utils = new Utils($db);
 
 if ($compression == 'zip')
 {
+	$file .= '.zip';
     $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.log|\/temp\/|documents\/admin\/documents\/)/');
     if ($ret < 0)
     {
-    	$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
+    	if ($ret == -2) {
+    		$langs->load("errors");
+    		$errormsg = $langs->trans("ErrNoZipEngine");
+    	}
+    	else {
+    		$langs->load("errors");
+    		$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
+    	}
     }
 }
 elseif (in_array($compression, array('gz', 'bz')))
@@ -124,7 +133,6 @@ elseif (in_array($compression, array('gz', 'bz')))
 
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out';	// File used with popen method
 
-	$file = substr($file, 0, strrpos($file, '.'));
     $file .= '.tar';
     // We also exclude '/temp/' dir and 'documents/admin/documents'
     $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude='documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);

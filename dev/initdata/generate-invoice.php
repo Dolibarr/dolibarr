@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -23,10 +23,14 @@
  *		\brief      Script example to inject random customer invoices (for load tests)
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit;
 }
 
@@ -152,7 +156,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
     $fuser = new User($db);
     $fuser->fetch(mt_rand(1, 2));
     $fuser->getRights();
-    
+
 	$result=$object->create($fuser);
 	if ($result >= 0)
 	{
