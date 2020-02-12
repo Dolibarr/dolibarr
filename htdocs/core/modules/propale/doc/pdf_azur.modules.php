@@ -1527,7 +1527,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
 		}
-		
+
 		if (! empty($conf->global->PDF_SHOW_PROJECT_TITLE))
 		{
 			$object->fetch_projet();
@@ -1539,7 +1539,7 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->title)?'':$object->projet->title), '', 'R');
 			}
 		}
-		
+
 		if (! empty($conf->global->PDF_SHOW_PROJECT))
 		{
 			$object->fetch_projet();
