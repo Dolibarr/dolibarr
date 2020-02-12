@@ -316,6 +316,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			{
 				foreach ($feature2 as $subfeature)
 				{
+					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) continue; // User can edit its own card
+					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) continue; // User can edit its own password
+
 					if (empty($user->rights->$feature->$subfeature->creer)
 					&& empty($user->rights->$feature->$subfeature->write)
 					&& empty($user->rights->$feature->$subfeature->create)) {

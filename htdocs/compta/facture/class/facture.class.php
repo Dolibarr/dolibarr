@@ -4580,15 +4580,40 @@ class Facture extends CommonInvoice
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 
-		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		if($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit))
+		{
+		    $totalpaye = $this->getSommePaiement();
+		    $totalpaye = floatval($totalpaye);
+		    $RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
+		    if($totalpaye >= 0 &&  $RetainedWarrantyAmount>= 0)
+		    {
+		        if( ($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay) )
+		        {
+		            $hasDelay = 1;
+		        }
+		        elseif($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay) )
+		        {
+		            $hasDelay = 1;
+		        }
+		        else
+		        {
+		            $hasDelay = 0;
+		        }
+		    }
+		}
+
+		return $hasDelay;
 	}
 
 
 	/**
+	 * @param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
 	 * @return number or -1 if not available
 	 */
-	public function getRetainedWarrantyAmount()
+	public function getRetainedWarrantyAmount($rounding = -1)
 	{
+		global $conf;
 	    if (empty($this->retained_warranty)) {
 	        return -1;
 	    }
@@ -4631,6 +4656,11 @@ class Facture extends CommonInvoice
 	        // Because one day retained warranty could be used on standard invoices
 	        $retainedWarrantyAmount = $this->total_ttc * $this->retained_warranty / 100;
 	    }
+
+		if ($rounding < 0){
+			$rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+			return round($retainedWarrantyAmount, 2);
+		}
 
 	    return $retainedWarrantyAmount;
 	}
