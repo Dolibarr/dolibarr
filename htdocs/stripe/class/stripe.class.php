@@ -326,7 +326,7 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		dol_syslog("getPaymentIntent", LOG_INFO, 1);
 
@@ -488,8 +488,8 @@ class Stripe extends CommonObject
     				if (!$paymentintentalreadyexists)
     				{
 	    				$now = dol_now();
-	    				$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-	    				$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$service."')";
+	    				$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
+	    				$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$service."', ".$amount.")";
 	    				$resql = $this->db->query($sql);
 	    				if (!$resql)
 	    				{
