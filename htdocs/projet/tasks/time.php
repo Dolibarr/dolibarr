@@ -42,8 +42,8 @@ $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
+$invoicemode = GETPOST('generateinvoicemode', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$invoicemode = GETPOST('generateinvoicemode', 'alpha'); //Get the type of addition to invoice
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'alpha');
@@ -332,59 +332,60 @@ if ($action == 'confirm_generateinvoice')
 	}
 	else
 	{
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		//One line per user
+		if ($invoicemode == 'onelineperuser') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$tmpinvoice = new Facture($db);
-		$tmptimespent = new Task($db);
-		$tmpproduct = new Product($db);
-		$fuser = new User($db);
+			$tmpinvoice = new Facture($db);
+			$tmptimespent = new Task($db);
+			$tmpproduct = new Product($db);
+			$fuser = new User($db);
 
-		$db->begin();
-		$idprod = GETPOST('productid', 'int');
-		if ($idprod > 0)
-		{
-			$tmpproduct->fetch($idprod);
+			$db->begin();
+			$idprod = GETPOST('productid', 'int');
+			if ($idprod > 0)
+			{
+				$tmpproduct->fetch($idprod);
 
-			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
-			$pu_ht = empty($dataforprice['pu_ht']) ? 0 : $dataforprice['pu_ht'];
-			$txtva = $dataforprice['tva_tx'];
-			$localtax1 = $dataforprice['localtax1'];
-			$localtax2 = $dataforprice['localtax2'];
-		}
-		else
-		{
-		    $pu_ht = 0;
-		    $txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
-		    $localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
-		    $localtax2 = get_default_localtax($mysoc, $projectstatic->thirdparty, 2);
-		}
+				$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+				$pu_ht = empty($dataforprice['pu_ht']) ? 0 : $dataforprice['pu_ht'];
+				$txtva = $dataforprice['tva_tx'];
+				$localtax1 = $dataforprice['localtax1'];
+				$localtax2 = $dataforprice['localtax2'];
+			}
+			else
+			{
+				$pu_ht = 0;
+				$txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
+				$localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
+				$localtax2 = get_default_localtax($mysoc, $projectstatic->thirdparty, 2);
+			}
 
-		$tmpinvoice->socid = $projectstatic->thirdparty->id;
-		$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$tmpinvoice->fk_project = $projectstatic->id;
+			$tmpinvoice->socid = $projectstatic->thirdparty->id;
+			$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$tmpinvoice->fk_project = $projectstatic->id;
 
-		$result = $tmpinvoice->create($user);
-		if ($result <= 0)
-		{
-		    $error++;
-		    setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
-		}
+			$result = $tmpinvoice->create($user);
+			if ($result <= 0)
+			{
+				$error++;
+				setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
+			}
 
-		if (!$error)
-		{
-			if ($invoicemode == 'onelineperuser') {
-				$arrayoftasks=array();
-				foreach($toselect as $key => $value)
+			if (!$error)
+			{
+				$arrayoftasks = array();
+				foreach ($toselect as $key => $value)
 				{
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
-					$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
-					$arrayoftasks[$object->timespent_fk_user]['totalvaluetodivideby3600']+=($object->timespent_duration * $object->timespent_thm);
+					$arrayoftasks[$object->timespent_fk_user]['timespent'] += $object->timespent_duration;
+					$arrayoftasks[$object->timespent_fk_user]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
 
-				foreach($arrayoftasks as $userid => $value)
+				foreach ($arrayoftasks as $userid => $value)
 				{
 					$fuser->fetch($userid);
 					//$pu_ht = $value['timespent'] * $fuser->thm;
@@ -392,7 +393,7 @@ if ($action == 'confirm_generateinvoice')
 
 					// Define qty per hour
 					$qtyhour = round($value['timespent'] / 3600, 2);
-					$qtyhourtext = convertSecondToTime($value['timespent']);
+					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 					// If no unit price known
 					if (empty($pu_ht))
@@ -404,10 +405,10 @@ if ($action == 'confirm_generateinvoice')
 					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
-					$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-					$sql.=' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
 					$result = $db->query($sql);
-					if (! $result)
+					if (!$result)
 					{
 						$error++;
 						setEventMessages($db->lasterror(), null, 'errors');
@@ -416,19 +417,73 @@ if ($action == 'confirm_generateinvoice')
 				}
 			}
 
-			if ($invoicemode == 'onelinepertask') {
+			if (!$error)
+			{
+				$urltoinvoice = $tmpinvoice->getNomUrl(0);
+				setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $urltoinvoice), null, 'mesgs');
+				//var_dump($tmpinvoice);
+
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+		//One line per task
+		if ($invoicemode == 'onelinepertask') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			$tmpinvoice = new Facture($db);
+			$tmptimespent = new Task($db);
+			$tmpproduct = new Product($db);
+			$fuser = new User($db);
+
+			$db->begin();
+			$idprod = GETPOST('productid', 'int');
+			if ($idprod > 0)
+			{
+				$tmpproduct->fetch($idprod);
+
+				$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+				$pu_ht = empty($dataforprice['pu_ht']) ? 0 : $dataforprice['pu_ht'];
+				$txtva = $dataforprice['tva_tx'];
+				$localtax1 = $dataforprice['localtax1'];
+				$localtax2 = $dataforprice['localtax2'];
+			}
+			else
+			{
+				$pu_ht = 0;
+				$txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
+				$localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
+				$localtax2 = get_default_localtax($mysoc, $projectstatic->thirdparty, 2);
+			}
+
+			$tmpinvoice->socid = $projectstatic->thirdparty->id;
+			$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$tmpinvoice->fk_project = $projectstatic->id;
+
+			$result = $tmpinvoice->create($user);
+			if ($result <= 0)
+			{
+				$error++;
+				setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
+			}
+
+			if (!$error)
+			{
+				$arrayoftasks = array();
 				foreach($toselect as $key => $value)
 				{
-					//Get Parent Task
-					$tmptimespent->fetch($object->id);
-
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
-
+					$tmptimespent->fetch($object->id);
 					$fuser->fetch($object->timespent_fk_user);
 					//$pu_ht = $value['timespent'] * $fuser->thm;
 					$username = $fuser->getFullName($langs);
-
+					
 					// Define qty per hour
 					$qtyhour = round($object->timespent_duration / 3600, 2);
 					$qtyhourtext = convertSecondToTime($object->timespent_duration);
@@ -437,18 +492,20 @@ if ($action == 'confirm_generateinvoice')
 					if (empty($pu_ht))
 					{
 						$ttt = ($object->timespent_duration * $object->timespent_thm);
-						$pu_ht = price2num($ttt / 3600, 'MU');
+						$pu_ht = price2num($ttt / 3600 / $qtyhour, 'MU');
 					}
 
 					// Add lines
 
-					$lineid = $tmpinvoice->addline(dol_print_date($object->timespent_date).' - '.$langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext.' <br />'.$object->timespent_note, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline('Date: '.date('d/m/Y', $object->timespent_date).' '.$langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext.' - '.$tmptimespent->label.' - '.$object->timespent_note, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0), $discount);
 
 					// Update lineid into line of timespent
 					$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
 					$sql.=' WHERE rowid = '.$object->timespent_id.' AND fk_user = '.$object->timespent_fk_user;
 					$result = $db->query($sql);
-
+					
+					setEventMessages($object->timespent_date, null, 'warnings');
+					
 
 					if (! $result)
 					{
@@ -458,19 +515,19 @@ if ($action == 'confirm_generateinvoice')
 					}
 				}
 			}
-		}
 
-		if (!$error)
-		{
-		    $urltoinvoice = $tmpinvoice->getNomUrl(0);
-		    setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $urltoinvoice), null, 'mesgs');
-		    //var_dump($tmpinvoice);
+			if (!$error)
+			{
+				$urltoinvoice = $tmpinvoice->getNomUrl(0);
+				setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $urltoinvoice), null, 'mesgs');
+				//var_dump($tmpinvoice);
 
-		    $db->commit();
-		}
-		else
-		{
-			$db->rollback();
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
 	}
 }
@@ -621,14 +678,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
             print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
             print nl2br($projectstatic->description);
             print '</td></tr>';
-
-            // Bill time
-            if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-            {
-	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	            print yn($projectstatic->usage_bill_time);
-	            print '</td></tr>';
-            }
 
             // Categories
             if ($conf->categorie->enabled) {
@@ -851,7 +900,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 	    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
 	    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	    if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
 	    elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
@@ -887,7 +936,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 	        print '<td>';
 	        $tmparray = array(
 	            'onelineperuser'=>'OneLinePerUser',
-	            //'onelinepertask'=>'OneLinePerTask',
+	            'onelinepertask'=>'OneLinePerTask',
 	        );
 	        print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
 	        print '</td>';
@@ -899,7 +948,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
     	        print $langs->trans('ServiceToUseOnLines');
     	        print '</td>';
     	        print '<td>';
-    	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
+    	        $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
     	        print '</td>';
     	        print '</tr>';
 	        }
