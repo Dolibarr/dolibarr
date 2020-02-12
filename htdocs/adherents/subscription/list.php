@@ -441,12 +441,10 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'alig
 print "</tr>\n";
 
 
-$total = 0;
 $totalarray = array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($result);
-	$total += $obj->subscription;
 
 	$subscription->ref = $obj->crowid;
 	$subscription->id = $obj->crowid;
