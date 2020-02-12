@@ -3528,7 +3528,7 @@ class Form
 		elseif ($filtertype != '' && $filtertype != '-1') $filterarray = explode(',', $filtertype);
 
 		$this->load_cache_types_paiements();
-		
+
 		// Set default value if not already set by caller
 		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) $selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 
