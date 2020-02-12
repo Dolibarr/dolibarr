@@ -518,7 +518,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '</tr>';
 
     		print '<tr class="oddeven">';
-    		print '<td>'.$langs->trans("ToConsume").'</td>';
+    		print '<td>'.$langs->trans("ProductsToConsume").'</td>';
     		print '<td>';
     		if (!empty($object->lines))
     		{
@@ -537,7 +537,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '</tr>';
 
     		print '<tr class="oddeven">';
-    		print '<td>'.$langs->trans("ToProduce").'</td>';
+    		print '<td>'.$langs->trans("ProductsToProduce").'</td>';
     		print '<td>';
     		if (!empty($object->lines))
     		{
