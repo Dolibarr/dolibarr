@@ -926,6 +926,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
 		$sql .= " t.lettering_code,";
+		$sql .= " t.date_lettering,";
 		$sql .= " t.montant,";
 		$sql .= " t.sens,";
 		$sql .= " t.fk_user_author,";
@@ -934,6 +935,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
+		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.tms as date_modification,";
         $sql .= " t.date_export";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
@@ -1006,12 +1008,14 @@ class BookKeeping extends CommonObject
 				$line->montant = $obj->montant;
 				$line->sens = $obj->sens;
 				$line->lettering_code = $obj->lettering_code;
+				$line->date_lettering = $obj->date_lettering;
 				$line->fk_user_author = $obj->fk_user_author;
 				$line->import_key = $obj->import_key;
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
+				$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
                 $line->date_export = $this->db->jdate($obj->date_export);
 
