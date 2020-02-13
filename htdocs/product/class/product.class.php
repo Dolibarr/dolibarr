@@ -4305,6 +4305,9 @@ class Product extends CommonObject
         if (!empty($this->label)) {
             $label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
         }
+        if (!empty($conf->barcode->enabled)) {
+        	$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
+        }
 
         if ($this->type == Product::TYPE_PRODUCT)
         {

@@ -2110,7 +2110,7 @@ class Form
 			}
 		}
 
-		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
+		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray))
 		{
 		    $selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
@@ -2737,13 +2737,15 @@ class Form
 		$out = '';
 		$outarray = array();
 
+		$maxlengtharticle = (empty($conf->global->PRODUCT_MAX_LENGTH_COMBO) ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+
 		$langs->load('stocks');
         // Units
         if ($conf->global->PRODUCT_USE_UNITS) {
             $langs->load('other');
         }
 
-		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, p.fk_product_type,";
+		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
@@ -2751,7 +2753,7 @@ class Form
         if ($conf->global->PRODUCT_USE_UNITS) {
             $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
         }
-        if (!empty($conf->barcode->enabled)) $sql .= " ,pfp.barcode";
+        if (!empty($conf->barcode->enabled)) $sql .= ", pfp.barcode";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		if ($socid) $sql .= " AND pfp.fk_soc = ".$socid;
@@ -2814,6 +2816,7 @@ class Form
 
 				$outref = $objp->ref;
 				$outval = '';
+				$outbarcode = $objp->barcode;
 				$outqty = 1;
 				$outdiscount = 0;
 				$outtype = $objp->fk_product_type;
@@ -2864,12 +2867,22 @@ class Form
 				if ($filterkey && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
 
 				$optlabel = $objp->ref;
-				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
+				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$optlabel .= ' <span class=\'opacitymedium\'>('.$objp->ref_fourn.')</span>';
+				}
+				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
+					$optlabel .= ' ('.$outbarcode.')';
+				}
+				$optlabel .= ' - '.dol_trunc($label, $maxlengtharticle);
 
 				$outvallabel = $objRef;
-				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
+				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$outvallabel .= ' ('.$objRefFourn.')';
+				}
+				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
+					$outvallabel .= ' ('.$outbarcode.')';
+				}
+				$outvallabel .= ' - '.dol_trunc($label, $maxlengtharticle);
 
                 // Units
 				$optlabel .= $outvalUnits;
@@ -2931,12 +2944,6 @@ class Form
 						$optlabel .= " - ".dol_trunc($objp->name, 8);
 						$outvallabel .= " - ".dol_trunc($objp->name, 8);
 					}
-                    if (!empty($conf->barcode->enabled) && !empty($objp->barcode))
-                    {
-                    	//$optlabel .= " - <span class='fa fa-barcode'></span>".$objp->barcode;
-                    	$optlabel .= " - ".$objp->barcode;
-                    	$outvallabel .= " - ".$objp->barcode;
-                    }
 					if ($objp->supplier_reputation)
 					{
 						//TODO dictionary
@@ -3024,7 +3031,7 @@ class Form
 
 		$langs->load('stocks');
 
-		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, pfp.fk_soc,";
+		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, pfp.fk_soc,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
