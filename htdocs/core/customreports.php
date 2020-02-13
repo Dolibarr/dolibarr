@@ -25,7 +25,7 @@
  *		\brief      Page to make custom reports
  */
 
-if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
+if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 {
 	require '../main.inc.php';
 	require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
@@ -37,7 +37,7 @@ if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
-	$mode		= GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
+	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
 	$objecttype = GETPOST('objecttype', 'aZ09');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
@@ -93,21 +93,21 @@ $parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 elseif (is_array($hookmanager->resArray)) {
-	if (! empty($hookmanager->resArray['title'])) {		// Add entries for tabs
+	if (!empty($hookmanager->resArray['title'])) {		// Add entries for tabs
 		$title = $hookmanager->resArray['title'];
 	}
-	if (! empty($hookmanager->resArray['picto'])) {		// Add entries for tabs
+	if (!empty($hookmanager->resArray['picto'])) {		// Add entries for tabs
 		$picto = $hookmanager->resArray['picto'];
 	}
-	if (! empty($hookmanager->resArray['head'])) {		// Add entries for tabs
+	if (!empty($hookmanager->resArray['head'])) {		// Add entries for tabs
 		$head = array_merge($head, $hookmanager->resArray['head']);
 	}
-	if (! empty($hookmanager->resArray['arrayoftype'])) {	// Add entries from hook
-		foreach($hookmanager->resArray['arrayoftype'] as $key => $val) {
+	if (!empty($hookmanager->resArray['arrayoftype'])) {	// Add entries from hook
+		foreach ($hookmanager->resArray['arrayoftype'] as $key => $val) {
 	        $arrayoftype[$key] = $val;
 	    }
 	}
-	if (! empty($hookmanager->resArray['modenotusedforlist'])) {		// Show objecttype selection even if objecttype is set
+	if (!empty($hookmanager->resArray['modenotusedforlist'])) {		// Show objecttype selection even if objecttype is set
 		$modenotusedforlist = $hookmanager->resArray['modenotusedforlist'];
 	}
 }
@@ -125,7 +125,7 @@ if ($objecttype) {
         $ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
         $object = new $ObjectClassName($db);
     }
-    catch(Exception $e) {
+    catch (Exception $e) {
         print 'Failed to load class for type '.$objecttype;
     }
 }
@@ -145,7 +145,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$search_component_params=array('');
+$search_component_params = array('');
 
 
 /*
@@ -160,9 +160,9 @@ $search_component_params=array('');
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
 	dol_fiche_head($head, 'customreports', $title, -1, $picto);
@@ -170,13 +170,13 @@ if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 
 // Check parameters
 if ($action == 'viewgraph') {
-	if (! count($search_measures)) {
+	if (!count($search_measures)) {
 		setEventMessages($langs->trans("AtLeastOneMeasureIsRequired"), null, 'warnings');
 	} elseif ($mode == 'graph' && count($search_xaxis) > 1) {
 		setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
 		$search_xaxis = array(0 => $search_xaxis[0]);
 	}
-	if (! count($search_xaxis)) {
+	if (!count($search_xaxis)) {
 		setEventMessages($langs->trans("AtLeastOneXAxisIsRequired"), null, 'warnings');
 	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > 3) {
 		setEventMessages($langs->trans("GraphInBarsAreLimitedTo3Measures"), null, 'warnings');
@@ -184,11 +184,11 @@ if ($action == 'viewgraph') {
 	}
 }
 
-$tmparray=dol_getdate(dol_now());
-$endyear=$tmparray['year'];
-$endmonth=$tmparray['mon'];
-$datelastday=dol_get_last_day($endyear, $endmonth, 1);
-$startyear=$endyear-2;
+$tmparray = dol_getdate(dol_now());
+$endyear = $tmparray['year'];
+$endmonth = $tmparray['mon'];
+$datelastday = dol_get_last_day($endyear, $endmonth, 1);
+$startyear = $endyear - 2;
 
 $param = '';
 
@@ -207,7 +207,7 @@ print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print '<div class="divadvancedsearchfield center floatnone">';
 print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
 $newarrayoftype = array();
-foreach($arrayoftype as $key => $val) {
+foreach ($arrayoftype as $key => $val) {
 	if (dol_eval($val['enabled'], 1)) {
 		$newarrayoftype[$key] = $arrayoftype[$key];
 	}
@@ -219,7 +219,7 @@ else {
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());
-                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily?'&tabfamily='.$tabfamily:'').'";
+                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.$tabfamily : '').'";
         	});
         });
     </script>';
@@ -233,7 +233,7 @@ print '</div>';
 
 // Measures
 print '<div class="divadvancedsearchfield clearboth">';
-foreach($object->fields as $key => $val) {
+foreach ($object->fields as $key => $val) {
     if ($val['isameasure']) {
         $arrayofmesures['t.'.$key.'-sum'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
         $arrayofmesures['t.'.$key.'-average'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
@@ -243,8 +243,8 @@ foreach($object->fields as $key => $val) {
 }
 // Add measure from extrafields
 if ($object->isextrafieldmanaged) {
-    foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-        if (! empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+    foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+        if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
             $arrayofmesures['te.'.$key.'-sum'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
             $arrayofmesures['te.'.$key.'-average'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
             $arrayofmesures['te.'.$key.'-min'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
@@ -258,14 +258,14 @@ print '</div>';
 
 // XAxis
 print '<div class="divadvancedsearchfield">';
-foreach($object->fields as $key => $val) {
-    if (! $val['measure']) {
+foreach ($object->fields as $key => $val) {
+    if (!$val['measure']) {
         if (in_array($key, array(
         	'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
         	'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
-        if (isset($val['enabled']) && ! dol_eval($val['enabled'], 1)) continue;
-        if (isset($val['visible']) && ! dol_eval($val['visible'], 1)) continue;
-        if (preg_match('/^fk_/', $key) && ! preg_match('/^fk_statu/', $key)) continue;
+        if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
+        if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
+        if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
         if (preg_match('/^pass/', $key)) continue;
         if (in_array($val['type'], array('html', 'text'))) continue;
         if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
@@ -278,8 +278,8 @@ foreach($object->fields as $key => $val) {
     }
     // Add measure from extrafields
     if ($object->isextrafieldmanaged) {
-        foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-            if (! empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+        foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+            if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
                 $arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
             }
         }
@@ -287,7 +287,7 @@ foreach($object->fields as $key => $val) {
 }
 $arrayofxaxis = dol_sort_array($arrayofxaxis, 'position');
 $arrayofxaxislabel = array();
-foreach($arrayofxaxis as $key => $val) {
+foreach ($arrayofxaxis as $key => $val) {
     $arrayofxaxislabel[$key] = $val['label'];
 }
 print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
@@ -297,8 +297,8 @@ print '</div>';
 // YAxis
 if ($mode == 'grid') {
     print '<div class="divadvancedsearchfield">';
-    foreach($object->fields as $key => $val) {
-        if (! $val['measure']) {
+    foreach ($object->fields as $key => $val) {
+        if (!$val['measure']) {
             if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
             if (preg_match('/^fk_/', $key)) continue;
             if (in_array($val['type'], array('html', 'text'))) continue;
@@ -312,8 +312,8 @@ if ($mode == 'grid') {
         }
         // Add measure from extrafields
         if ($object->isextrafieldmanaged) {
-            foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                if (! empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
                     $arrayofyaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
                 }
             }
@@ -321,7 +321,7 @@ if ($mode == 'grid') {
     }
     $arrayofyaxis = dol_sort_array($arrayofyaxis, 'position');
     $arrayofyaxislabel = array();
-    foreach($arrayofyaxis as $key => $val) {
+    foreach ($arrayofyaxis as $key => $val) {
         $arrayofyaxislabel[$key] = $val['label'];
     }
     print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-vertical paddingright" title="'.$langs->trans("YAxis").'"></span>'.$langs->trans("YAxis").'</div> ';
@@ -345,12 +345,12 @@ print '</form>';
 
 // Generate the SQL request
 $sql = '';
-if (! empty($search_measures) && ! empty($search_xaxis))
+if (!empty($search_measures) && !empty($search_xaxis))
 {
     $fieldid = 'rowid';
 
     $sql = 'SELECT ';
-    foreach($search_xaxis as $key => $val) {
+    foreach ($search_xaxis as $key => $val) {
         if (preg_match('/\-year$/', $val)) {
             $tmpval = preg_replace('/\-year$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y') as x_".$key.', ';
@@ -363,14 +363,14 @@ if (! empty($search_measures) && ! empty($search_xaxis))
         }
         else $sql .= $val.' as x_'.$key.', ';
     }
-    foreach($search_measures as $key => $val) {
+    foreach ($search_measures as $key => $val) {
         if ($val == 't.count') $sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
         elseif (preg_match('/\-sum$/', $val)) {
-            $tmpval  = preg_replace('/\-sum$/', '', $val);
+            $tmpval = preg_replace('/\-sum$/', '', $val);
             $sql .= 'SUM('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
         }
         elseif (preg_match('/\-average$/', $val)) {
-            $tmpval  = preg_replace('/\-average$/', '', $val);
+            $tmpval = preg_replace('/\-average$/', '', $val);
             $sql .= 'AVG('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
         }
         elseif (preg_match('/\-min$/', $val)) {
@@ -378,7 +378,7 @@ if (! empty($search_measures) && ! empty($search_xaxis))
         	$sql .= 'MIN('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
         }
         elseif (preg_match('/\-max$/', $val)) {
-        	$tmpval  = preg_replace('/\-max$/', '', $val);
+        	$tmpval = preg_replace('/\-max$/', '', $val);
         	$sql .= 'MAX('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
         }
     }
@@ -401,11 +401,11 @@ if (! empty($search_measures) && ! empty($search_xaxis))
     if ($object->ismultientitymanaged == 1) {
    		$sql .= ' AND entity IN ('.getEntity($object->element).')';
     }
-    foreach($search_filters as $key => $val) {
+    foreach ($search_filters as $key => $val) {
 		// TODO
     }
     $sql .= ' GROUP BY ';
-    foreach($search_xaxis as $key => $val) {
+    foreach ($search_xaxis as $key => $val) {
         if (preg_match('/\-year$/', $val)) {
             $tmpval = preg_replace('/\-year$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
@@ -420,7 +420,7 @@ if (! empty($search_measures) && ! empty($search_xaxis))
     }
     $sql = preg_replace('/,\s*$/', '', $sql);
     $sql .= ' ORDER BY ';
-    foreach($search_xaxis as $key => $val) {
+    foreach ($search_xaxis as $key => $val) {
         if (preg_match('/\-year$/', $val)) {
             $tmpval = preg_replace('/\-year$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
@@ -437,8 +437,8 @@ if (! empty($search_measures) && ! empty($search_xaxis))
 }
 
 
-$legend=array();
-foreach($search_measures as $key => $val) {
+$legend = array();
+foreach ($search_measures as $key => $val) {
     $legend[] = $langs->trans($arrayofmesures[$val]);
 }
 
@@ -447,21 +447,21 @@ $totalnbofrecord = 0;
 $data = array();
 if ($sql) {
     $resql = $db->query($sql);
-    if (! $resql) {
+    if (!$resql) {
         dol_print_error($db);
     }
 
-    while($obj = $db->fetch_object($resql)) {
+    while ($obj = $db->fetch_object($resql)) {
         // $this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
-        foreach($search_xaxis as $xkey => $xval) {
+        foreach ($search_xaxis as $xkey => $xval) {
             $fieldforxkey = 'x_'.$xkey;
             $xlabel = $obj->$fieldforxkey;
             $xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
-            if (! empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
+            if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
                 $xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
             }
             $xarray = array(0 => (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : $langs->trans("NotDefined")));
-            foreach($search_measures as $key => $val) {
+            foreach ($search_measures as $key => $val) {
                 $fieldfory = 'y_'.$key;
                 $xarray[] = $obj->$fieldfory;
             }
@@ -473,7 +473,7 @@ if ($sql) {
 }
 
 
-print '<div class="customreportsoutput'.($totalnbofrecord?'':' customreportsoutputnotdata').'">';
+print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 
 
 if ($mode == 'grid') {
@@ -487,13 +487,13 @@ if ($mode == 'graph') {
     // Show graph
     $px1 = new DolGraph();
     $mesg = $px1->isGraphKo();
-    if (! $mesg)
+    if (!$mesg)
     {
     	$px1->SetData($data);
     	unset($data);
 
     	$arrayoftypes = array();
-    	foreach($search_measures as $key => $val) {
+    	foreach ($search_measures as $key => $val) {
     	    $arrayoftypes[] = $search_graph;
     	}
 
@@ -507,10 +507,10 @@ if ($mode == 'graph') {
     	$px1->SetHorizTickIncrement(1);
     	$px1->SetCssPrefix("cssboxes");
     	$px1->SetType($arrayoftypes);
-    	$px1->mode='depth';
+    	$px1->mode = 'depth';
     	$px1->SetTitle('');
 
-    	$dir=$conf->user->dir_temp;
+    	$dir = $conf->user->dir_temp;
     	dol_mkdir($dir);
     	$filenamenb = $dir.'/customreport_'.$object->element.'.png';
     	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=user&file=customreport_'.$object->element.'.png';
@@ -528,7 +528,7 @@ if ($sql) {
 
 print '<div>';
 
-if (! defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 	dol_fiche_end();
 }
 
