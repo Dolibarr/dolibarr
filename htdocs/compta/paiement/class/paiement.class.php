@@ -588,11 +588,12 @@ class Paiement extends CommonObject
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
      *      @param	int		$notrigger			No trigger
+     *      @param	string	$num_chq			Numero of cheque
      *      @return int                 		<0 if KO, bank_line_id if OK
      */
     public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
     {
-        global $conf,$langs,$user;
+        global $conf, $langs, $user;
 
         $error=0;
         $bank_line_id=0;
@@ -612,7 +613,7 @@ class Paiement extends CommonObject
 
         	include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-            dol_syslog("$user->id,$mode,$label,$this->fk_account,$emetteur_nom,$emetteur_banque");
+            dol_syslog("$user->id, $mode, $label, $this->fk_account, $emetteur_nom, $emetteur_banque");
 
             $acc = new Account($this->db);
             $result=$acc->fetch($this->fk_account);
@@ -631,7 +632,7 @@ class Paiement extends CommonObject
                 $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $totalamount,		// Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
-                $this->num_paiement,
+                $this->num_payment,
                 '',
                 $user,
                 $emetteur_nom,
