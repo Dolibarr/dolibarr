@@ -793,7 +793,7 @@ if (empty($reshook))
 
 		$canconvert = 0;
 		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
-		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
 			$db->begin();
@@ -3621,7 +3621,7 @@ elseif ($id > 0 || !empty($ref))
 
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
-		if ($object->type == Facture::TYPE_STANDARD) $type_fac = 'ExcessReceived';
+		if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) $type_fac = 'ExcessReceived';
 		elseif ($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 		elseif ($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
@@ -4498,7 +4498,7 @@ elseif ($id > 0 || !empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye = $prev_invoice->getSommePaiement();
+	            $totalpaye_prev = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ?-1 : 1) * $prev_invoice->situation_counter;
@@ -4509,7 +4509,7 @@ elseif ($id > 0 || !empty($ref))
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
-	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye).'</td>';
+	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye_prev).'</td>';
 	            print '</tr>';
 	        }
 	    }
@@ -5074,7 +5074,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Reverse back money or convert to reduction
-			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD) {
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
 				// For credit note only
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment)
 				{
@@ -5089,7 +5089,7 @@ elseif ($id > 0 || !empty($ref))
 				}
 
 				// For standard invoice with excess received
-				if ($object->type == Facture::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $usercancreate && empty($discount->id))
+				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
 				{
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a>';
 				}
