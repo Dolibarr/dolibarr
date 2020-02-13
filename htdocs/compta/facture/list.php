@@ -982,6 +982,7 @@ if ($resql)
 
 			$facturestatic->id = $obj->id;
 			$facturestatic->ref = $obj->ref;
+			$facturestatic->ref_client = $obj->ref_client;
 			$facturestatic->type = $obj->type;
             $facturestatic->total_ht = $obj->total_ht;
             $facturestatic->total_tva = $obj->total_vat;
@@ -1071,7 +1072,7 @@ if ($resql)
 			// Customer ref
 			if (!empty($arrayfields['f.ref_client']['checked']))
 			{
-				print '<td class="nowrap">';
+				print '<td class="nowrap tdoverflowmax200">';
 				print $obj->ref_client;
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
