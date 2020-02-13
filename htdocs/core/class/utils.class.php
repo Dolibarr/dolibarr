@@ -305,12 +305,12 @@ class Utils
 			if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
 			if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
 
+			$ok = 0;
 			if ($handle)
 			{
 				if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 				if (empty($execmethod)) $execmethod = 1;
 
-				$ok = 0;
 				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_DEBUG);
 
 				// TODO Replace with executeCLI function
