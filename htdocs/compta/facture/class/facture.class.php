@@ -250,7 +250,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
@@ -1514,15 +1514,15 @@ class Facture extends CommonInvoice
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
 				$this->revenuestamp = $obj->revenuestamp;
-				$this->paye					= $obj->paye;
+				$this->paye = $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 
 				$this->socid = $obj->fk_soc;
-				$this->thirdparty = null;				// Clear if another value was already set by fetch_thirdparty
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 
 				$this->fk_project = $obj->fk_project;
-				$this->project = null;					// Clear if another value was already set by fetch_projet
+				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->statut = $obj->fk_statut;
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
@@ -4104,7 +4104,7 @@ class Facture extends CommonInvoice
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late=DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
+					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}
 

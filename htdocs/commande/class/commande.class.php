@@ -1741,10 +1741,10 @@ class Commande extends CommonOrder
 				$this->ref_int				= $obj->ref_int;
 
 				$this->socid = $obj->fk_soc;
-				$this->thirdparty = null;				// Clear if another value was already set by fetch_thirdparty
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 
 				$this->fk_project = $obj->fk_project;
-				$this->project = null;					// Clear if another value was already set by fetch_projet
+				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->statut = $obj->fk_statut;
 				$this->user_author_id = $obj->fk_user_author;
