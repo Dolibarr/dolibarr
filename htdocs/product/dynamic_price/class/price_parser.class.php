@@ -134,7 +134,6 @@ class PriceParser
     {
         global $user;
         global $hookmanager;
-        $hookmanager->initHooks(array('productcard','globalcard'));
         $action = 'PARSEEXPRESSION';
         if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
 								'expression' =>$expression,
