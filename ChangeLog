@@ -5,7 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For Users:
-
+NEW: Module MO (Manufacturing Order) is available as stable module.
 
 For Developers or integrators:
 
