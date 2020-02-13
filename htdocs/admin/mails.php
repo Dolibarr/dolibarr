@@ -134,9 +134,8 @@ $head = email_admin_prepare_head();
 // List of sending methods
 $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
-//$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+if (version_compare(phpversion(), '7.0', '>=')) $listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 
 if ($action == 'edit')
