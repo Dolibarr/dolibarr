@@ -588,7 +588,6 @@ class Paiement extends CommonObject
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
      *      @param	int		$notrigger			No trigger
-     *      @param	string	$num_chq			Numero of cheque
      *      @return int                 		<0 if KO, bank_line_id if OK
      */
     public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
