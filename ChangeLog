@@ -3,6 +3,78 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 11.0.1 compared to 11.0.0 *****
+FIX: advanced target emailing sql and ergonomy.
+FIX: After import of a website template, home page was not set.
+FIX: Avoid deletion of bank record if in accounting
+FIX: compatibility with multicompany (avoid duplicate data)
+FIX: Confusion between 'bank reconciled' and 'accounted'. Show both data.
+FIX: Count of Stripe payment mode must take test/live into account
+FIX: Creation of Stripe card from backoffice must return a clean message
+FIX: CVE-2019–17223
+FIX: CVE-2019–17223 
+FIX: CVE-2020-7994
+FIX: CVE Need permission to be able to develop modules
+FIX: #13053
+FIX: Disable ticket status change if ticket closed
+FIX: doc of dictionnary API
+FIX: expedition ceate line new parameter is not required.
+FIX: export ledger
+FIX: FEC export have specific name
+FIX: Filenames must not contains non ascii char or we will get non ascii
+FIX: Filter on list of events were lost after "Back to list"
+FIX: hasDelay for retained warranty
+FIX: If we can change vendor status, we must be able to chane vendor code
+FIX: links in products/services index
+FIX: Log of authentication ok or ko + CVE-2020-7996
+FIX: Look and feel v11
+FIX: Mail smtps truncated if content has a line with single .
+FIX: missing hook parameter
+FIX: Missing include
+FIX: need weight short label in shipping doc
+FIX: Picture of contact not visible in tooltip
+FIX: Problem with column label in subscription list
+FIX: ref_client not visible in tooltip.
+FIX: search filter on extrafields were not restored after "Back to list"
+FIX: situation invoice: allow excess paid to be converted to discount
+FIX: situation invoice: bad amount for previous payments because of local variable overwriting a more global one
+FIX: situation invoice: can't convert excess received to discount & bad previous payment amount
+FIX: SQL request and phpunit
+FIX: Update export_files.php
+FIX: Use ref into label of ticket message
+FIX: use "usergroup" instead of "user"
+FIX: Warning on admin/export_files
+FIX: #10203
+FIX: default filtering for 'select' extrafields should use "=", not "LIKE"
+FIX: #11975 When a product is split between multiple pages in a document, prices/quantity/etc appear on the last relevant page
+FIX: #12760 #12763 #12755 #12765 #12751
+FIX: #12874
+FIX: #12892
+FIX: #12908 User login with credentials from self-subscription form fails
+FIX: #12932
+FIX: #12966
+FIX: #12973
+FIX: #12974
+FIX: #12975
+FIX: #12978
+FIX: #12986
+FIX: #12991
+FIX: #12992
+FIX: #12995
+FIX: #13018 Extrafields Supplier invoice
+FIX: #13019
+FIX: #13022
+FIX: #13028
+FIX: #13038 ExpenseReport PDF - custom category description is not correct
+FIX: #13046 More complete
+FIX: #13048
+FIX: #13050
+FIX: #13077 Replace left join with inner join (left join was useless)
+FIX: #13085
+FIX: #13094
+FIX: #13096
+FIX: #13100
+
 ***** ChangeLog for 11.0.0 compared to 10.0.0 *****
 For Users:
 
