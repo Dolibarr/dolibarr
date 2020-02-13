@@ -609,7 +609,7 @@ class pdf_sponge extends ModelePDFFactures
     	                    $curY = $tab_top_newpage;
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
@@ -652,7 +652,7 @@ class pdf_sponge extends ModelePDFFactures
     	                    {
     	                        // We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
 								else
 									$showpricebeforepagebreak = 0;
@@ -1132,33 +1132,33 @@ class pdf_sponge extends ModelePDFFactures
 
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posxval, $posy);
-				$lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
 				// Show online payment link
-				$useonlinepayment = ((! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) && !empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT));
+				$useonlinepayment = ((!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled)) && !empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT));
 				if (($object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') && $object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
 					$langs->loadLangs(array('payment', 'paybox'));
-					$servicename=$langs->transnoentities('Online');
+					$servicename = $langs->transnoentities('Online');
 					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
-					$linktopay =  $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
+					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->writeHTMLCell(80, 10, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
 				}
 
-				$posy=$pdf->GetY()+2;
+				$posy = $pdf->GetY() + 2;
 			}
 
 			// Show payment mode CHQ
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 			{
 				// If payment mode unregulated or payment mode forced to CHQ
-				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
+				if (!empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
-					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
+					$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
 
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
@@ -1818,7 +1818,7 @@ class pdf_sponge extends ModelePDFFactures
 		if (empty($hidetop))
 		{
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
-			if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
 			}
 
@@ -1926,7 +1926,7 @@ class pdf_sponge extends ModelePDFFactures
 		if ($object->type == 3) $title = $outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title = $outputlangs->transnoentities("InvoiceProForma");
 		if ($this->situationinvoice) $title = $outputlangs->transnoentities("InvoiceSituation");
-		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - ';
 			if ($object->type == 0) {
 				if ($this->situationinvoice) $title .= $outputlangsbis->transnoentities("InvoiceSituation");

@@ -441,6 +441,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function fetch_lines($only_product = 0)
     {
+    	global $conf;
         // phpcs:enable
     	//$result=$this->fetch_lines();
     	$this->lines = array();
@@ -453,8 +454,12 @@ class CommandeFournisseur extends CommonOrder
     	$sql .= " l.fk_unit,";
     	$sql .= " l.date_start, l.date_end,";
     	$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+			$sql.= ", pfp.rowid as fk_pfp, pfp.packaging";
     	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn";
     	$sql .= " WHERE l.fk_commande = ".$this->id;
     	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
     	$sql .= " ORDER BY l.rang, l.rowid";
@@ -505,7 +510,13 @@ class CommandeFournisseur extends CommonOrder
     			$line->ref_fourn           = $objp->ref_supplier; // The supplier ref of price when product was added. May have change since
     			$line->ref_supplier        = $objp->ref_supplier; // The supplier ref of price when product was added. May have change since
 
-    			$line->date_start          = $this->db->jdate($objp->date_start);
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+				{
+					$line->fk_fournprice = $objp->fk_pfp;
+					$line->packaging     = $objp->packaging;
+				}
+
+				$line->date_start          = $this->db->jdate($objp->date_start);
     			$line->date_end            = $this->db->jdate($objp->date_end);
     			$line->fk_unit             = $objp->fk_unit;
 
@@ -1685,6 +1696,26 @@ class CommandeFournisseur extends CommonOrder
                         return -1;
                     }
                 }
+
+				// redefine quantity according to packaging
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+				{
+					$prod = new Product($this->db, $fk_product);
+					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));
+					if ($qty < $prod->packaging)
+					{
+						$qty = $prod->packaging;
+					}
+					else
+					{
+						if (($qty % $prod->packaging) > 0)
+						{
+							$coeff = intval($qty/$prod->packaging) + 1;
+							$qty = $prod->packaging * $coeff;
+							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						}
+					}
+				}
             }
             else
             {
@@ -2636,6 +2667,25 @@ class CommandeFournisseur extends CommonOrder
             $this->line->fk_commande = $this->id;
             //$this->line->label=$label;
             $this->line->desc = $desc;
+
+			// redefine quantity according to packaging
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+			{
+				if ($qty < $this->line->packaging)
+				{
+					$qty = $this->line->packaging;
+				}
+				else
+				{
+					if (($qty % $this->line->packaging) > 0)
+					{
+						$coeff = intval($qty/$this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					}
+				}
+			}
+
             $this->line->qty = $qty;
 			$this->line->ref_supplier = $ref_supplier;
 
@@ -3390,6 +3440,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
      */
     public function fetch($rowid)
     {
+    	global $conf;
+
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx, cd.special_code,';
         $sql .= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref,';
         $sql .= ' cd.remise, cd.remise_percent, cd.subprice,';
@@ -3398,8 +3450,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
         $sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+			$sql.= ", pfp.rowid as fk_pfp, pfp.packaging";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
         $sql .= ' WHERE cd.rowid = '.$rowid;
         $result = $this->db->query($sql);
         if ($result)
@@ -3437,6 +3493,11 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	            $this->product_ref      = $objp->product_ref;
 	            $this->product_libelle  = $objp->product_libelle;
 	            $this->product_desc     = $objp->product_desc;
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+				{
+					$this->packaging = $objp->packaging;
+					$this->fk_fournprice = $objp->fk_pfp;
+				}
 
 	            $this->date_start       		= $this->db->jdate($objp->date_start);
 	            $this->date_end         		= $this->db->jdate($objp->date_end);
