@@ -6052,7 +6052,7 @@ class Form
 
 		// Search data
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
-		if (isset($objecttmp->ismultientitymanaged) && ! is_numeric($objecttmp->ismultientitymanaged)) {
+		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
 			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
 		}
@@ -6060,7 +6060,7 @@ class Form
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE 1=1";
 		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-		if (isset($objecttmp->ismultientitymanaged) && ! is_numeric($objecttmp->ismultientitymanaged)) {
+		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
 			$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
 		}
 		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
@@ -7321,21 +7321,21 @@ class Form
 		}
 		elseif ($fieldref != 'none')
 		{
-			$ret.=dol_htmlentities($object->$fieldref);
+			$ret .= dol_htmlentities($object->$fieldref);
 		}
 
 		if ($morehtmlref)
 		{
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
-			if(substr($morehtmlref, 0, 4) != '<div')
+			if (substr($morehtmlref, 0, 4) != '<div')
 			{
-				$ret.=' ';
+				$ret .= ' ';
 			}
 
-			$ret.=$morehtmlref;
+			$ret .= $morehtmlref;
 		}
 
-		$ret.='</div>';
+		$ret .= '</div>';
 
 		$ret .= '</div><!-- End banner content -->';
 
@@ -8077,8 +8077,8 @@ class Form
 		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone">';
 		$ret .= '<input type="text" name="search_component_params_input" class="search_component_params_input" placeholder="'.$langs->trans("Search").'" value="'.GETPOST("search_component_params_input").'">';
 		$ret .= '</div>';
-		foreach($arrayofcriterias as $criterias) {
-		    foreach($criterias as $criteriafamilykey => $criteriafamilyval) {
+		foreach ($arrayofcriterias as $criterias) {
+		    foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
 		    	if (in_array('search_'.$criteriafamilykey, $arrayofinputfieldsalreadyoutput)) continue;
 		        if (in_array($criteriafamilykey, array('rowid', 'ref_ext', 'entity', 'extraparams'))) continue;
 		        if (in_array($criteriafamilyval['type'], array('date', 'datetime', 'timestamp'))) {
