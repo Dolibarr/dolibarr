@@ -156,6 +156,18 @@ if ($action == 'other')
 	        $resql_new = $db->query($sql_new);
 	    }
 	}
+
+	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	if ($value) {
+		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
+		$resql = $db->query($sql_test);
+		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') // if the field does not exist, we create it
+		{
+			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1";
+			$resql_new = $db->query($sql_new);
+		}
+	}
 }
 
 if ($action == 'specimen') // For products
@@ -676,6 +688,13 @@ if (! empty($conf->fournisseur->enabled))
     print $form->selectyesno("activate_useProdFournDesc", (! empty($conf->global->PRODUIT_FOURN_TEXTS)?$conf->global->PRODUIT_FOURN_TEXTS:0), 1);
     print '</td>';
     print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td width="60" align="right">';
+	print $form->selectyesno("activate_useProdSupplierPackaging", (! empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)?$conf->global->PRODUCT_USE_SUPPLIER_PACKAGING:0), 1);
+	print '</td>';
+	print '</tr>';
 }
 
 
