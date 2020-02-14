@@ -273,7 +273,7 @@ class PriceParser
 		//Get the supplier min price
 		$productFournisseur = new ProductFournisseur($this->db);
 		$res = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
-		if ($res < -1) {
+		if ($res < 0) {
 			$this->error_parser = array(25, null);
 			return -1;
 		}  elseif($res == 0){
