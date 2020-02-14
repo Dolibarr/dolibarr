@@ -776,8 +776,9 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-		$objectstatic->note_private = $obj->note_private;
+		$objectstatic->ref_client = $obj->ref_client;
 		$objectstatic->note_public = $obj->note_public;
+		$objectstatic->note_private = $obj->note_private;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
@@ -824,7 +825,7 @@ if ($resql)
 		if (!empty($arrayfields['p.ref_client']['checked']))
 		{
 			// Customer ref
-			print '<td class="nowrap">';
+			print '<td class="nowrap tdoverflowmax200">';
 			print $obj->ref_client;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
