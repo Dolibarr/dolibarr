@@ -42,7 +42,6 @@ $page = GETPOST("page", 'int');
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'aZ09');
-if (GETPOST("exportcsv", 'alpha')) $action = 'export_csv';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -198,12 +197,25 @@ if ($action != 'export_csv')
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="action" id="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$button = '<input type="submit" name="exportcsv" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+	print '<script type="text/javascript" language="javascript">
+	jQuery(document).ready(function() {
+		jQuery("#exportcsvbutton").click(function() {
+			event.preventDefault();
+			console.log("Set action to export_csv");
+			jQuery("#action").val("export_csv");
+			jQuery("#searchFormList").submit();
+			jQuery("#action").val("list");
+		});
+	});
+	</script>';
+
+
+	$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
