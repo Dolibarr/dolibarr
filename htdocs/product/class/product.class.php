@@ -382,6 +382,9 @@ class Product extends CommonObject
      * @var int
      */
     public $price_autogen = 0;
+	
+	public $date_start = 0; //for services, use fetchExtra
+	public $date_end = 0; //for services, use fetchExtra
 
 
     public $fields = array(
@@ -2049,6 +2052,31 @@ class Product extends CommonObject
 
         return $this->update($this->id, $user);
     }
+	
+    /**
+     *  Load a service in memory from database
+     *
+     * @param  int    $id                Id of product/service to load
+     * @param  extra  array, can containt ref, ref_ext, barcode, ignore_expression, ignore_price_load, ignore_lang_load, date_start, date_end
+     */
+	public function fetchExtra($id = '', $extra) {
+		
+		$ref = isset($extra['ref']) ? $extra['ref'] : '';
+		$ref_ext = isset($extra['ref_ext']) ? $extra['ref_ext'] : '';
+		$barcode = isset($extra['barcode']) ? $extra['barcode'] : '';
+		$ignore_expression = isset($extra['ignore_expression']) ? $extra['ignore_expression'] : '';
+		$ignore_price_load = isset($extra['ignore_price_load']) ? $extra['ignore_price_load'] : '';
+		$ignore_lang_load = isset($extra['ignore_lang_load']) ? $extra['ignore_lang_load'] : '';
+		
+		if (isset($extra['date_start'])) {
+			$this->date_start = $extra['date_start']; 
+		}
+		if (isset($extra['date_end'])) {
+			$this->date_end = $extra['date_end']; 
+		}
+		
+		return $this->fetch($id, $ref, $ref_ext, $barcode, $ignore_expression, $ignore_price_load, $ignore_lang_load);
+	}
 
     /**
      *  Load a product in memory from database
@@ -2098,6 +2126,23 @@ class Product extends CommonObject
                 $sql .= " AND barcode = '".$this->db->escape($barcode)."'";
             }
         }
+		
+		
+		global $hookmanager;
+		$action = 'fetchProduct';
+		$res = $hookmanager->executeHooks('Product', array(
+                    'id' =>$id = '',
+                    'ref' => $ref,
+                    'ref_ext' => $ref_ext,
+					'barcode' => $barcode,
+					'ignore_expression' => $ignore_expression,
+					'ignore_price_load' => $ignore_price_load,
+					'ignore_lang_load' => $ignore_lang_load,
+					'sql' => $sql
+         ), $this, $action);
+		if ($res) {
+			$sql = $res;
+		}
 
         $resql = $this->db->query($sql);
         if ($resql) {
