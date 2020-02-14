@@ -383,8 +383,8 @@ class Product extends CommonObject
      */
     public $price_autogen = 0;
 	
-	public $date_start = 0; //for services, use fetchExtra
-	public $date_end = 0; //for services, use fetchExtra
+	public $date_start = 0;//for services, use fetchExtra
+	public $date_end = 0;//for services, use fetchExtra
 
 
     public $fields = array(
@@ -2059,7 +2059,7 @@ class Product extends CommonObject
      * @param  int    $id                Id of product/service to load
      * @param  extra  array, can containt ref, ref_ext, barcode, ignore_expression, ignore_price_load, ignore_lang_load, date_start, date_end
      */
-	public function fetchExtra($id = '', $extra) {
+	public function fetchExtra($id = '', $extra = array()) {
 		
 		$ref = isset($extra['ref']) ? $extra['ref'] : '';
 		$ref_ext = isset($extra['ref_ext']) ? $extra['ref_ext'] : '';
