@@ -663,7 +663,7 @@ if (! $error && $action == 'writebookkeeping') {
 						} elseif ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = $k;
                             $bookkeeping->subledger_label = $tabcompany[$key]['name'];
-							$bookkeeping->numero_compte = $tabpay[$obj->rowid]["account_various"];
+							$bookkeeping->numero_compte = $tabpay[$key]["account_various"];
 
 							$accountingaccount->fetch(null, $bookkeeping->numero_compte, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
