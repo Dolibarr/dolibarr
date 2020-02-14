@@ -55,7 +55,7 @@ if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == "1000" && $type_export == "gene
 
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 
-	$completefilename = $siren . "FEC" . $endaccountingperiod . "." . $format;
+	$completefilename = $siren . "FEC" . $endaccountingperiod . ".txt";
 }
 else
 {
