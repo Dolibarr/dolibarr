@@ -236,7 +236,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
         print '<div id="form_view_ticket" class="margintoponly">';
 
-        print '<table class="border centpercent">';
+        print '<table class="ticketpublictable centpercent tableforfield">';
 
         // Ref
         print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
