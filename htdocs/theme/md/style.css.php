@@ -2247,7 +2247,6 @@ div.login_block {
 <?php } else { ?>
 	position: fixed;
 <?php } ?>
-	font-weight: bold;
 	z-index: 10;
 	text-align: center;
 	vertical-align: middle;
@@ -2278,12 +2277,20 @@ div.login_block_other { padding-top: 3px; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
+	padding: 0px 0px 0px 2px !important;
 	height: 16px;
 }
 .login_block_elem_name {
 	margin-top: 1px;
 }
+a.aversion {
+    white-space: nowrap;
+    width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackvmenu; ?> !important;
 }
@@ -2381,7 +2388,7 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
 
 div.blockvmenulogo
 {

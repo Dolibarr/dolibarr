@@ -1729,7 +1729,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$langs->load('admin');
 				$appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
 			}
-			$text = '<a href="#"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></a>';
+			$text = '<a href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></a>';
 			$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
