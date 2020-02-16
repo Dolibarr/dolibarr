@@ -678,9 +678,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $ok = 0;
         setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
-    if (isset($_POST["code"]))
+    if (GETPOSTISSET("code"))
     {
-    	if ($_POST["code"] == '0')
+    	if (GETPOST("code") == '0')
     	{
         	$ok = 0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
@@ -691,7 +691,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
-    if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+    if (GETPOSTISSET("country") && ($_POST["country"] == '0') && ($id != 2))
     {
     	if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
     	{

@@ -171,7 +171,7 @@ if ($action == 'setmod')
 if ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
-    $fourn->CreateCategory($user, $_POST["cat"]);
+    $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 }
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')

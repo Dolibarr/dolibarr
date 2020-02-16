@@ -59,9 +59,18 @@ if ($action == 'setconst' && $user->admin)
 {
     $error = 0;
     $db->begin();
-    foreach ($_POST['setupdriver'] as $setupconst) {
+
+    $setupconstarray = GETPOST('setupdriver', 'array');
+
+    foreach ($setupconstarray as $setupconst) {
         //print '<pre>'.print_r($setupconst, true).'</pre>';
-        $result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
+
+    	$constname = dol_escape_htmltag($setupconst['varname']);
+    	$constvalue = dol_escape_htmltag($setupconst['value']);
+    	$consttype = dol_escape_htmltag($setupconst['type']);
+    	$constnote = dol_escape_htmltag($setupconst['note']);
+
+    	$result = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
         if (!$result > 0) $error++;
     }
 

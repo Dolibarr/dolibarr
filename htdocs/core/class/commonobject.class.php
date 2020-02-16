@@ -4967,7 +4967,7 @@ abstract class CommonObject
 		global $conf, $_POST;
 
 		// If param here has been posted, we use this value first.
-		if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
+		if (GETPOSTISSET($fieldname)) return GETPOST($fieldname, 'alphanohtml', 3);
 
 		if (isset($alternatevalue)) return $alternatevalue;
 

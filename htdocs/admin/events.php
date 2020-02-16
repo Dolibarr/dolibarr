@@ -53,8 +53,7 @@ if ($action == "save")
 	foreach ($eventstolog as $key => $arr)
 	{
 		$param='MAIN_LOGEVENTS_'.$arr['id'];
-		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
+		if (GETPOST($param, 'alphanohtml')) dolibarr_set_const($db, $param, GETPOST($param, 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		else dolibarr_del_const($db, $param, $conf->entity);
 	}
 

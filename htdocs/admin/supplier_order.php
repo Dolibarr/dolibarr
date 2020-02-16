@@ -165,7 +165,7 @@ elseif ($action == 'setmod')
 elseif ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
-    $fourn->CreateCategory($user, $_POST["cat"]);
+    $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 }
 
 elseif ($action == 'set_SUPPLIER_ORDER_OTHER')

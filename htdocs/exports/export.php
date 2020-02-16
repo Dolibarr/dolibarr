@@ -411,12 +411,12 @@ if ($step == 4 && $action == 'submitFormField')
 			$newcode = (string) preg_replace('/\./', '_', $code);
 			//print 'xxx'.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
 			$filterqualified = 1;
-			if (!isset($_POST[$newcode]) || $_POST[$newcode] == '') $filterqualified = 0;
-			elseif (preg_match('/^List/', $type) && (is_numeric($_POST[$newcode]) && $_POST[$newcode] <= 0)) $filterqualified = 0;
+			if (! GETPOSTISSET($newcode) || GETPOST($newcode, 'restricthtml') == '') $filterqualified = 0;
+			elseif (preg_match('/^List/', $type) && (is_numeric(GETPOST($newcode, 'restricthtml')) && GETPOST($newcode, 'restricthtml') <= 0)) $filterqualified = 0;
 			if ($filterqualified)
 			{
 				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
-				$objexport->array_export_FilterValue[0][$code] = $_POST[$newcode];
+				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, 'restricthtml');
 			}
 		}
 		$array_filtervalue = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');

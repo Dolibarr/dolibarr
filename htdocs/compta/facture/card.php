@@ -3351,8 +3351,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	if (isset($_POST['fk_account'])) {
-		$fk_account = $_POST['fk_account'];
+	if (GETPOSTISSET('fk_account')) {
+		$fk_account = GETPOST('fk_account');
 	}
 
 	print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';

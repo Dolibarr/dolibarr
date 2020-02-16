@@ -111,7 +111,7 @@ class ExpenseReportRule extends CoreObject
 	 * Attribute object linked with database
 	 * @var array
 	 */
-	protected $fields=array(
+	public $fields=array(
 		'rowid'=>array('type'=>'integer','index'=>true)
 		,'dates'=>array('type'=>'date')
 		,'datee'=>array('type'=>'date')

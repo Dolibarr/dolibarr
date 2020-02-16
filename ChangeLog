@@ -15,7 +15,10 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * PHP 5.5 is no more supported. Minimum PHP is now 5.6+.
-
+* Default mode for GETPOST function is now 'alphanohtml' instead of 'none'. So check when you make POST or GET requests
+  with HTML content that you make a GETPOST('myparam', 'restricthtml') or GETPOST('myparam', 'none') if you really need posted content without sanitizing
+  the HTML into content (in such a case, sanitize data later)
+ 
   
   
 ***** ChangeLog for 11.0.1 compared to 11.0.0 *****

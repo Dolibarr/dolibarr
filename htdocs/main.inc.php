@@ -565,6 +565,7 @@ if (!defined('NOLOGIN'))
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
+				// Keep $_POST here. Do not use GETPOSTISSET
 				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

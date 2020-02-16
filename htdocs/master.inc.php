@@ -170,7 +170,7 @@ elseif (!empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
 }
-elseif (isset($_POST["loginfunction"]) && GETPOST("entity", 'int'))	// Just after a login page
+elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int'))	// Just after a login page
 {
 	$conf->entity = GETPOST("entity", 'int');
 }

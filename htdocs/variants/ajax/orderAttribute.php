@@ -33,13 +33,14 @@ require '../../main.inc.php';
 top_httphead();
 
 // Registering the location of boxes
-if (isset($_POST['roworder'])) {
+if (GETPOSTISSET('roworder')) {
 	$roworder=GETPOST('roworder', 'alpha', 2);
 
 	dol_syslog("AjaxOrderAttribute roworder=".$roworder, LOG_DEBUG);
 
 	$rowordertab = explode(',', $roworder);
 
+	$newrowordertab = array();
 	foreach ($rowordertab as $value) {
 		if (!empty($value)) {
 			$newrowordertab[] = $value;

@@ -132,7 +132,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-    	if ($value == 'ref' && (! isset($_POST[$value]) || $_POST[$value]==''))
+    	if ($value == 'ref' && (! GETPOSTISSET($value) || GETPOST($value) == ''))
 	    {
     	    $ok=0;
         	$fieldnamekey=$listfield[$f];

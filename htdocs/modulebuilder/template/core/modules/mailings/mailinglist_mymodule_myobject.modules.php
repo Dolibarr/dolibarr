@@ -112,7 +112,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
         $sql = " select rowid as id, email, firstname, lastname, plan, partner";
         $sql.= " from ".MAIN_DB_PREFIX."myobject";
         $sql.= " where email IS NOT NULL AND email != ''";
-        if (! empty($_POST['filter']) && $_POST['filter'] != 'none') $sql.= " AND status = '".$this->db->escape($_POST['filter'])."'";
+        if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') $sql.= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
         $sql.= " ORDER BY email";
 
         // Stocke destinataires dans target

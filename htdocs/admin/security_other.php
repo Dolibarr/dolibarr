@@ -70,8 +70,8 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 elseif ($action == 'updateform')
 {
-	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"], 'chaine', 0, '', $conf->entity);
-    $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"], 'chaine', 0, '', $conf->entity);
+	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	$res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	if ($res1 && $res2) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
