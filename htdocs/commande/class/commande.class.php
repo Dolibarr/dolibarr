@@ -3568,7 +3568,7 @@ class Commande extends CommonOrder
 	 *	@param      int			$short			          ???
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip
 	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param		int			$addlinktonotes			  Add linkt to notes
+	 *  @param		int			$addlinktonotes			  Add link to notes
 	 *	@return     string          			          String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)

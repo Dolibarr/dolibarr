@@ -491,6 +491,7 @@ abstract class CommonObject
 		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').join(', ', $this->errors)) : '');
 	}
 
+
 	/**
 	 * Return customer ref for screen output.
 	 *
@@ -557,6 +558,27 @@ abstract class CommonObject
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 */
+	public function getKanbanView($option = '')
+	{
+		$return = '<div class="box-flex-item">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infoxbox-action">';
+		$return .= '<i class="fa fa-dol-action"></i>';		// Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-title">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
 	}
 
 	/**
