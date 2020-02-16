@@ -58,6 +58,8 @@ $search_topic = GETPOST('search_topic', 'alpha');
 
 if (!empty($user->socid)) accessforbidden();
 
+$acts = array();
+$actl = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
@@ -261,28 +263,39 @@ if (empty($reshook))
             $i = 0;
             foreach ($listfieldinsert as $f => $value)
             {
-            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
             	$keycode = $listfieldvalue[$i];
-            	if ($value == 'label') $_POST[$keycode] = dol_escape_htmltag($_POST[$keycode]);
             	if ($value == 'lang') $keycode = 'langcode';
+            	if (empty($keycode)) $keycode = $value;
+
                 if ($value == 'entity') $_POST[$keycode] = $conf->entity;
-                if ($i) $sql .= ",";
                 if ($value == 'fk_user' && !($_POST[$keycode] > 0)) $_POST[$keycode] = '';
                 if ($value == 'private' && !is_numeric($_POST[$keycode])) $_POST[$keycode] = '0';
                 if ($value == 'position' && !is_numeric($_POST[$keycode])) $_POST[$keycode] = '1';
-                if ($_POST[$keycode] == '' && $keycode != 'langcode')      $sql .= "null"; // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql .= "''"; // lang must be '' if not defined so the unique key that include lang will work
-                else $sql .= "'".$db->escape($_POST[$keycode])."'";
+                //var_dump($keycode.' '.$value);
+
+                if ($i) $sql .= ", ";
+                if (GETPOST($keycode) == '' && $keycode != 'langcode')      $sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
+                elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
+                elseif ($keycode == 'content') {
+                	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+                }
+                elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+                	$sql .= (int) GETPOST($keycode, 'int');
+                }
+                else {
+                	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+                }
+
                 $i++;
             }
-            $sql .= ",1)";
+            $sql .= ", 1)";
 
             dol_syslog("actionadd", LOG_DEBUG);
             $result = $db->query($sql);
             if ($result)	// Add is ok
             {
                 setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-            	$_POST = array('id'=>$id); // Clean $_POST array, we keep only
+            	$_POST = array('id'=>$id); // Clean $_POST array, we keep only id
             }
             else
             {
@@ -308,6 +321,7 @@ if (empty($reshook))
             {
             	$keycode = $listfieldvalue[$i];
             	if ($field == 'lang') $keycode = 'langcode';
+            	if (empty($keycode)) $keycode = $field;
 
                 if ($field == 'fk_user' && !($_POST['fk_user'] > 0)) $_POST['fk_user'] = '';
             	if ($field == 'topic') $_POST['topic'] = $_POST['topic-'.$rowid];
@@ -315,15 +329,22 @@ if (empty($reshook))
             	if ($field == 'content') $_POST['content'] = $_POST['content-'.$rowid];
             	if ($field == 'content_lines') $_POST['content_lines'] = $_POST['content_lines-'.$rowid];
                 if ($field == 'entity') $_POST[$keycode] = $conf->entity;
-                if ($i) $sql .= ",";
+
+                if ($i) $sql .= ", ";
                 $sql .= $field."=";
 
-                //print $keycode.' - '.$_POST[$keycode].'<br>';
-                if ($_POST[$keycode] == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && empty($_POST[$keycode]))) $sql .= "null"; // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql .= "''"; // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($keycode == 'private') $sql .= ((int) $_POST[$keycode]); // private must be 0 or 1
-                elseif ($keycode == 'position')	$sql .= ((int) $_POST[$keycode]);
-                else $sql .= "'".$db->escape($_POST[$keycode])."'";
+                if (GETPOST($keycode) == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && ! GETPOST($keycode))) $sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
+                elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
+                elseif ($keycode == 'content') {
+                	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+                }
+                elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+                	$sql .= (int) GETPOST($keycode, 'int');
+                }
+                else {
+                	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+                }
+
                 $i++;
             }
             $sql .= " WHERE ".$rowidcol." = '".$rowid."'";
