@@ -24,7 +24,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';			// This define $list
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 use OAuth\Common\Storage\DoliStorage;
 
@@ -128,6 +128,9 @@ $head = oauthadmin_prepare_head();
 
 dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 
+if (GETPOST('error')) {
+	setEventMessages(GETPOST('error'), null, 'errors');
+}
 
 if ($mode == 'setup' && $user->admin)
 {
@@ -144,17 +147,21 @@ if ($mode == 'setup' && $user->admin)
         if ($key[0] == 'OAUTH_GITHUB_NAME')
         {
             $OAUTH_SERVICENAME = 'GitHub';
-            $state='user,public_repo'; 	// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service)
-            $urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?state='.$state.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            // List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
+            // We pass this param list in to 'state' because we need it before and after the redirect.
+            $shortscope='user,public_repo';
+            $urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://github.com/settings/applications/';
         }
         elseif ($key[0] == 'OAUTH_GOOGLE_NAME')
         {
             $OAUTH_SERVICENAME = 'Google';
-            $state='userinfo_email,userinfo_profile,cloud_print'; 	// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service)
-            //$state.=',gmail_full';
-            $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state='.$state.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            // List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
+            // We pass this param list in to 'state' because we need it before and after the redirect.
+            $shortscope='userinfo_email,userinfo_profile,cloud_print';
+            //$scope.=',gmail_full';
+            $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://security.google.com/settings/security/permissions';
         }

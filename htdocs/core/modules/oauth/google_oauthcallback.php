@@ -71,7 +71,7 @@ $credentials = new Credentials(
 );
 
 $requestedpermissionsarray=array();
-if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
+if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
 if ($action != 'delete' && empty($requestedpermissionsarray))
 {
     print 'Error, parameter state is not defined';
