@@ -120,7 +120,7 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -187,7 +187,7 @@ class Propalmergepdfproduct extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -252,7 +252,7 @@ class Propalmergepdfproduct extends CommonObject
     		$sql.= " AND t.lang = '".$lang."'";
     	}
 
-    	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -332,7 +332,7 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -406,7 +406,7 @@ class Propalmergepdfproduct extends CommonObject
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
     		$sql.= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+    		dol_syslog(__METHOD__, LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -472,7 +472,7 @@ class Propalmergepdfproduct extends CommonObject
 				$sql.= " AND lang='".$lang_id."'";
 			}
 
-			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -531,7 +531,7 @@ class Propalmergepdfproduct extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
 			$sql.= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
 
-			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}

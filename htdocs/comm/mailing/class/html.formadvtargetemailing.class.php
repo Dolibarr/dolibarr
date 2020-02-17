@@ -297,7 +297,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, code, label as civilite, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql .= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -385,7 +385,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type=".$type;
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -432,7 +432,7 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " WHERE type_element='$type_element'";
 		$sql .= " ORDER BY c.name";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';

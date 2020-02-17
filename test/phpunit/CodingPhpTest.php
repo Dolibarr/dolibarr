@@ -161,6 +161,19 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/'.preg_quote('get_class($this)."::".__METHOD__', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+           		$ok=false;
+           		break;
+            }
+            //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+            $this->assertTrue($ok, 'Found string get_class($this)."::".__METHOD__ that must be replaced with __METHOD__ only in '.$file['fullname']);
+            //exit;
+
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/(..)\s*\.\s*\$this->db->idate\(/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
