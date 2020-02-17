@@ -85,7 +85,7 @@ class box_propales extends ModeleBoxes
 
     	if ($user->rights->propale->lire)
     	{
-    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.entity,";
+    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.entity, s.email,";
     		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
@@ -123,6 +123,7 @@ class box_propales extends ModeleBoxes
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 					$societestatic->entity = $objp->entity;
+					$societestatic->email = $objp->email;
 
     				$late = '';
     				if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
