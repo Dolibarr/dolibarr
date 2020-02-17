@@ -162,7 +162,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND s.entity IN (".getEntity("supplier_order").")";
+$sql.= " AND s.entity IN (".getEntity("societe").")";
 $sql.= " AND cf.entity IN (".getEntity("supplier_order").")";
 if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
