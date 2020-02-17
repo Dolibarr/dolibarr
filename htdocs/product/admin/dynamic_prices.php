@@ -63,9 +63,9 @@ if ($action == 'edit_updater') {
 if (!empty($action) && empty($cancel)) {
     //Global variable actions
     if ($action == 'create_variable' || $action == 'edit_variable') {
-        $price_globals->code = isset($_POST['code'])?GETPOST('code', 'alpha'):$price_globals->code;
-        $price_globals->description = isset($_POST['description'])?GETPOST('description', 'alpha'):$price_globals->description;
-        $price_globals->value = isset($_POST['value'])?GETPOST('value', 'int'):$price_globals->value;
+        $price_globals->code = GETPOSTISSET('code')?GETPOST('code', 'alpha'):$price_globals->code;
+        $price_globals->description = GETPOSTISSET('description')?GETPOST('description', 'alpha'):$price_globals->description;
+        $price_globals->value = GETPOSTISSET('value')?GETPOST('value', 'int'):$price_globals->value;
         //Check if record already exists only when saving
         if (!empty($save)) {
             foreach ($price_globals->listGlobalVariables() as $entry) {
@@ -101,11 +101,11 @@ if (!empty($action) && empty($cancel)) {
 
     //Updaters actions
     if ($action == 'create_updater' || $action == 'edit_updater') {
-        $price_updaters->type = isset($_POST['type'])?GETPOST('type', 'int'):$price_updaters->type;
-        $price_updaters->description = isset($_POST['description'])?GETPOST('description', 'alpha'):$price_updaters->description;
-        $price_updaters->parameters = isset($_POST['parameters'])?GETPOST('parameters'):$price_updaters->parameters;
-        $price_updaters->fk_variable = isset($_POST['fk_variable'])?GETPOST('fk_variable', 'int'):$price_updaters->fk_variable;
-        $price_updaters->update_interval = isset($_POST['update_interval'])?GETPOST('update_interval', 'int'):$price_updaters->update_interval;
+        $price_updaters->type = GETPOSTISSET('type')?GETPOST('type', 'int'):$price_updaters->type;
+        $price_updaters->description = GETPOSTISSET('description')?GETPOST('description', 'alpha'):$price_updaters->description;
+        $price_updaters->parameters = GETPOSTISSET('parameters')?GETPOST('parameters'):$price_updaters->parameters;
+        $price_updaters->fk_variable = GETPOSTISSET('fk_variable')?GETPOST('fk_variable', 'int'):$price_updaters->fk_variable;
+        $price_updaters->update_interval = GETPOSTISSET('update_interval')?GETPOST('update_interval', 'int'):$price_updaters->update_interval;
     }
     if ($action == 'create_updater' && !empty($save)) {
         //Verify if process() works

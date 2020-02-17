@@ -228,6 +228,8 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account

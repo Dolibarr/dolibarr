@@ -50,18 +50,20 @@ $action = GETPOST('action', 'aZ09');
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$constname=GETPOST("constname");
-	$constvalue=GETPOST("constvalue");
+	$constnamearray = GETPOST("constname", 'array');
+	$constvaluearray = GETPOST("constvalue", 'array');
+	$consttypearray = GETPOST("consttype", 'array');
+	$constnotearray = GETPOST("constnote", 'array');
 
     // Action mise a jour ou ajout d'une constante
     if ($action == 'update' || $action == 'add')
     {
-    	foreach($_POST['constname'] as $key => $val)
+    	foreach($constnamearray as $key => $val)
     	{
-    		$constname=$_POST["constname"][$key];
-    		$constvalue=$_POST["constvalue"][$key];
-    		$consttype=$_POST["consttype"][$key];
-    		$constnote=$_POST["constnote"][$key];
+    		$constname = dol_escape_htmltag($constnamearray[$key]);
+    		$constvalue = dol_escape_htmltag($constvaluearray[$key]);
+    		$consttype = dol_escape_htmltag($consttypearray[$key]);
+    		$constnote = dol_escape_htmltag($constnotearray[$key]);
 
         	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 

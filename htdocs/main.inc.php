@@ -553,7 +553,7 @@ if (!defined('NOLOGIN'))
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		if ($test && $goontestloop && GETPOST('actionlogin', 'aZ09') == 'login')
+		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr'))
 		{
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login)
@@ -565,6 +565,7 @@ if (!defined('NOLOGIN'))
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
+				// Keep $_POST here. Do not use GETPOSTISSET
 				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -1391,9 +1392,20 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 				else
 				{
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					/* Test for jflot 4.2 -> not better than current
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
+					*/
 				}
 			}
 			// jQuery jeditable
@@ -1703,11 +1715,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($helpbaseurl && $helppage)
 			{
 				$text = '';
-	            if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
-                    $langs->load('admin');
-                    $appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
-                }
-				$title = $appli.'<br>';
 				$title .= $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage');
 				if ($mode == 'wiki') $title .= ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage, '_', ' ')).'&quot;';
 				$text .= '<a class="help" target="_blank" rel="noopener" href="';
@@ -1718,6 +1725,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text .= '</a>';
 				$toprightmenu .= @Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
+
+			if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
+				$langs->load('admin');
+				$appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
+			}
+			$text = '<a href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></a>';
+			$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
 

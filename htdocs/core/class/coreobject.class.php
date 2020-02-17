@@ -416,24 +416,20 @@ class CoreObject extends CommonObject
     {
         foreach ($Tab as $key => $value)
         {
-            if($this->checkFieldType($key, 'date'))
+            if ($this->checkFieldType($key, 'date'))
             {
                 $this->setDate($key, $value);
             }
-            elseif( $this->checkFieldType($key, 'array'))
-            {
-                $this->{$key} = $value;
-            }
-            elseif( $this->checkFieldType($key, 'float') )
+            elseif ($this->checkFieldType($key, 'float'))
             {
                 $this->{$key} = (double) price2num($value);
             }
-            elseif( $this->checkFieldType($key, 'int') ) {
+            elseif ($this->checkFieldType($key, 'int')) {
                 $this->{$key} = (int) price2num($value);
             }
             else
             {
-                $this->{$key} = $value;
+            	$this->{$key} = dol_string_nohtmltag($value);
             }
         }
 

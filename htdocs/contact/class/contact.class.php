@@ -86,9 +86,9 @@ class Contact extends CommonObject
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'Phone mobile', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'priv' =>array('type'=>'smallint(6)', 'label'=>'Priv', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
+		'priv' =>array('type'=>'smallint(6)', 'label'=>'Private', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
@@ -992,19 +992,25 @@ class Contact extends CommonObject
 	}
 
 
+
 	/**
-	 * Set property ->gender from property ->civility_id
+	 * Set the property "gender" of this class, based on the property "civility_id"
+	 * or use property "civility_code" as fallback, when "civility_id" is not available.
 	 *
 	 * @return void
 	 */
 	public function setGenderFromCivility()
 	{
-	    unset($this->gender);
-    	if (in_array($this->civility_id, array('MR'))) {
-    	    $this->gender = 'man';
-    	} elseif (in_array($this->civility_id, array('MME', 'MLE'))) {
-    	    $this->gender = 'woman';
-    	}
+		unset($this->gender);
+
+		if (in_array($this->civility_id, array('MR')) || in_array($this->civility_code, array('MR')))
+		{
+			$this->gender = 'man';
+		}
+		elseif(in_array($this->civility_id, array('MME','MLE')) || in_array($this->civility_code, array('MME','MLE')))
+		{
+			$this->gender = 'woman';
+		}
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1270,9 +1276,16 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		$result = '';
+		$result = ''; $label = '';
 
-        $label = '<u>'.$langs->trans("ShowContact").'</u>';
+		if (!empty($this->photo) && class_exists('Form'))
+		{
+			$label .= '<div class="photointooltip">';
+			$label .= Form::showphoto('contact', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= '</div><div style="clear: both;"></div>';
+		}
+
+        $label .= '<u>'.$langs->trans("ShowContact").'</u>';
         $label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;

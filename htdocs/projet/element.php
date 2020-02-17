@@ -34,26 +34,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-if (! empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (! empty($conf->expedition->enabled))	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (! empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
-if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+if (!empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+if (!empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (!empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+if (!empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if (!empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (!empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (!empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (!empty($conf->expedition->enabled))	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+if (!empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if (!empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+if (!empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if (!empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (!empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+if (!empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+if (!empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+if (!empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if (!empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+if (!empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+if (!empty($conf->categorie->enabled))		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -651,25 +652,25 @@ foreach ($listofreferent as $key => $value)
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
 				}
-                elseif ($key == 'loan'){
-                    if((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)){
+                elseif ($key == 'loan') {
+                    if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
                         // Get total loan
                         $total_ht_by_line = -$element->capital;
                     }
-				    else{
+				    else {
                         // Get loan schedule according to date filter
                         $total_ht_by_line = 0;
                         $loanScheduleStatic = new LoanSchedule($element->db);
                         $loanScheduleStatic->fetchAll($element->id);
-                        if(!empty($loanScheduleStatic->lines)){
-                            foreach($loanScheduleStatic->lines as $loanSchedule){
+                        if (!empty($loanScheduleStatic->lines)) {
+                            foreach ($loanScheduleStatic->lines as $loanSchedule) {
                                 /**
                                  * @var $loanSchedule LoanSchedule
                                  */
-                                if( ($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
+                                if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
                                     || !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
                                     || empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
-                                ){
+                                ) {
                                     $total_ht_by_line = -$loanSchedule->amount_capital;
                                 }
                             }
@@ -687,7 +688,7 @@ foreach ($listofreferent as $key => $value)
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				}
-                elseif ($key == 'loan'){
+                elseif ($key == 'loan') {
                         $total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
                 }
 				else $total_ttc_by_line = $element->total_ttc;
@@ -855,7 +856,7 @@ foreach ($listofreferent as $key => $value)
 		elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'payment_salary'))) print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
-                // Duration of intervention
+        // Duration of intervention
 		if ($tablename == 'fichinter')
                 {
 			print '<td>';
@@ -967,7 +968,7 @@ foreach ($listofreferent as $key => $value)
 						print $element->getNomUrl(1, 'withproject', 'time');
 						print ' - '.dol_trunc($element->label, 48);
 					}
-					elseif ($key == 'loan'){
+					elseif ($key == 'loan') {
                         print $element->getNomUrl(1);
                         print ' - '.dol_trunc($element->label, 48);
                     }
@@ -1020,7 +1021,7 @@ foreach ($listofreferent as $key => $value)
     					if (empty($date)) $date = $element->datev;
     				}
 				}
-                elseif ($key == 'loan'){
+                elseif ($key == 'loan') {
                     $date = $element->datestart;
                 }
 

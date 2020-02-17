@@ -776,6 +776,7 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
+		$objectstatic->ref_client = $obj->ref_client;
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 
@@ -798,7 +799,7 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowrap">';
-			print $objectstatic->getNomUrl(1, '', '', 0, 1, 1);
+			print $objectstatic->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
@@ -824,7 +825,7 @@ if ($resql)
 		if (!empty($arrayfields['p.ref_client']['checked']))
 		{
 			// Customer ref
-			print '<td class="nowrap">';
+			print '<td class="nowrap tdoverflowmax200">';
 			print $obj->ref_client;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

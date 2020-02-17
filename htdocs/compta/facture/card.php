@@ -793,7 +793,7 @@ if (empty($reshook))
 
 		$canconvert = 0;
 		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
-		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
 			$db->begin();
@@ -1386,12 +1386,12 @@ if (empty($reshook))
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
 
-						// If deposit invoice
-						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
-						{
-							$typeamount = GETPOST('typedeposit', 'alpha');
-							$valuedeposit = GETPOST('valuedeposit', 'int');
+						$typeamount = GETPOST('typedeposit', 'aZ09');
+						$valuedeposit = GETPOST('valuedeposit', 'int');
 
+						// If deposit invoice
+						if ($_POST['type'] == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable')))
+						{
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
 							{
@@ -1419,7 +1419,7 @@ if (empty($reshook))
 								{
 									$amountdeposit[0] = $valuedeposit;
 								}
-								else
+								elseif ($typeamount == 'variable')
 								{
 									if ($result > 0)
 									{
@@ -1449,11 +1449,15 @@ if (empty($reshook))
 
 								$amount_ttc_diff = $amountdeposit[0];
 							}
+
 							foreach ($amountdeposit as $tva => $amount)
 							{
 								if (empty($amount)) continue;
 
-								$arraylist = array('amount' => 'FixAmount', 'variable' => 'VarAmount');
+								$arraylist = array(
+									'amount' => 'FixAmount',
+									'variable' => 'VarAmount'
+								);
 								$descline = '(DEPOSIT)';
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount == 'amount') {
@@ -1500,7 +1504,8 @@ if (empty($reshook))
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
 						}
-						else
+
+						if ($_POST['type'] != Facture::TYPE_DEPOSIT || ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines'))
 						{
 							if ($result > 0)
 							{
@@ -1509,6 +1514,16 @@ if (empty($reshook))
 								{
 									$srcobject->fetch_lines();
 									$lines = $srcobject->lines;
+								}
+
+								// If we create a deposit with all lines and a percent, we change amount
+								if ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
+									if (is_array($lines)) {
+										foreach($lines as $line) {
+											// We keep ->subprice and ->pa_ht, but we change the qty
+											$line->qty = price2num($line->qty * $valuedeposit / 100, 'MS');
+										}
+									}
 								}
 
 								$fk_parent_line = 0;
@@ -2994,8 +3009,12 @@ if ($action == 'create')
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
-				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
-				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
+				$arraylist = array(
+					'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
+					'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
+					'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
+				);
+				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit', 'aZ09'), 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">'.$langs->trans('Value').':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit', 'int').'"/>';
 			}
@@ -3332,8 +3351,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	if (isset($_POST['fk_account'])) {
-		$fk_account = $_POST['fk_account'];
+	if (GETPOSTISSET('fk_account')) {
+		$fk_account = GETPOST('fk_account');
 	}
 
 	print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
@@ -3621,7 +3640,7 @@ elseif ($id > 0 || !empty($ref))
 
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
-		if ($object->type == Facture::TYPE_STANDARD) $type_fac = 'ExcessReceived';
+		if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) $type_fac = 'ExcessReceived';
 		elseif ($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 		elseif ($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
@@ -4498,7 +4517,7 @@ elseif ($id > 0 || !empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye = $prev_invoice->getSommePaiement();
+	            $totalpaye_prev = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ?-1 : 1) * $prev_invoice->situation_counter;
@@ -4509,7 +4528,7 @@ elseif ($id > 0 || !empty($ref))
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
-	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye).'</td>';
+	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye_prev).'</td>';
 	            print '</tr>';
 	        }
 	    }
@@ -5074,7 +5093,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Reverse back money or convert to reduction
-			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD) {
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
 				// For credit note only
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment)
 				{
@@ -5089,7 +5108,7 @@ elseif ($id > 0 || !empty($ref))
 				}
 
 				// For standard invoice with excess received
-				if ($object->type == Facture::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $usercancreate && empty($discount->id))
+				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
 				{
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a>';
 				}

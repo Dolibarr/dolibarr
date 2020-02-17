@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +31,18 @@
  * <dol_use_font_a>                                 Use font A of printer
  * <dol_use_font_b>                                 Use font B of printer
  * <dol_use_font_c>                                 Use font C of printer
- * <dol_bold> </dol_bold>                           Text Bold
- * <dol_double_height> </dol_double_height>         Text double height
- * <dol_double_width> </dol_double_width>           Text double width
- * <dol_underline> </dol_underline>                 Underline text
- * <dol_underline_2dots> </dol_underline_2dots>     Underline with double line
- * <dol_emphasized> </dol_emphasized>               Emphasized text
- * <dol_switch_colors> </dol_switch_colors>         Print in white on black
- * <dol_set_print_width_57>                         Ticket print width of 57mm
+ * <dol_bold>                                       Text Bold
+ * <dol_bold_disabled>                              Disable Text Bold
+ * <dol_double_height>                              Text double height
+ * <dol_double_width>                               Text double width
+ * <dol_default_height_width>                       Text default height and width
+ * <dol_underline>                                  Underline text
+ * <dol_underline_disabled>                         Disable underline text
  * <dol_cut_paper_full>                             Cut ticket completely
  * <dol_cut_paper_partial>                          Cut ticket partially
  * <dol_open_drawer>                                Open cash drawer
- * <dol_activate_buzzer>                            Activate buzzer
+ * <dol_beep>                                       Activate buzzer
  * <dol_print_barcode>                              Print barcode
- * <dol_print_qrcode>                               Print QR Code
  * <dol_print_logo>                                 Print logo stored on printer. Example : <print_logo>32|32
  * <dol_print_logo_old>                             Print logo stored on printer. Must be followed by logo code. For old printers.
  * <dol_print_object_lines>                         Print object lines
@@ -60,8 +59,6 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
- * <dol_value_table>                                Replaced by table number (for restaurant, bar...)
- * <dol_value_cutlery>                              Replaced by number of cutlery (for restaurant)
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -162,26 +159,17 @@ class dolReceiptPrinter extends Printer
             'dol_use_font_b',
             'dol_use_font_c',
             'dol_bold',
-            '/dol_bold',
+            'dol_bold_disabled',
             'dol_double_height',
-            '/dol_double_height',
             'dol_double_width',
-            '/dol_double_width',
+            'dol_default_height_width',
             'dol_underline',
-            '/dol_underline',
-            'dol_underline_2dots',
-            '/dol_underline',
-            'dol_emphasized',
-            '/dol_emphasized',
-            'dol_switch_colors',
-            '/dol_switch_colors',
-            'dol_set_print_width_57',
+            'dol_underline_disabled',
             'dol_cut_paper_full',
             'dol_cut_paper_partial',
             'dol_open_drawer',
-            //'dol_activate_buzzer',
+            'dol_beep',
             'dol_print_text',
-            'dol_print_qrcode',
             'dol_print_barcode',
             'dol_value_date',
             'dol_value_date_time',
@@ -190,8 +178,6 @@ class dolReceiptPrinter extends Printer
             'dol_value_month',
             'dol_value_day',
             'dol_value_day_letters',
-            'dol_value_table',
-            'dol_value_cutlery',
             'dol_print_payment',
             'dol_print_logo',
             'dol_print_logo_old',
@@ -515,7 +501,7 @@ class dolReceiptPrinter extends Printer
     {
         global $conf;
         $error = 0;
-        $img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/common/dolibarr_logo_bw.png');
+        $img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
         //$this->profile = CapabilityProfile::load("TM-T88IV");
         $ret = $this->initPrinter($printerid);
         if ($ret > 0) {
@@ -589,15 +575,13 @@ class dolReceiptPrinter extends Printer
         $this->template = str_replace('<dol_value_vendor_firstname>', $object->vendor_firstname, $this->template);
         $this->template = str_replace('<dol_value_vendor_lastname>', $object->vendor_lastname, $this->template);
         $this->template = str_replace('<dol_value_vendor_mail>', $object->vendor_mail, $this->template);
-        $this->template = str_replace('<dol_value_date>', $object->date, $this->template);
-        $this->template = str_replace('<dol_value_date_time>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_year>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_month_letters>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_month>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_day>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_day_letters>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_table>', $object->table, $this->template);
-        $this->template = str_replace('<dol_value_cutlery>', $object->cutlery, $this->template);
+        $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
+        $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
+        $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
+        $this->template = str_replace('<dol_value_month_letters>', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
+        $this->template = str_replace('<dol_value_month>', dol_print_date($object->date, '%m'), $this->template);
+        $this->template = str_replace('<dol_value_day>', dol_print_date($object->date, '%d'), $this->template);
+        $this->template = str_replace('<dol_value_day_letters>', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
 
         // parse template
         $p = xml_parser_create();
@@ -711,6 +695,30 @@ class dolReceiptPrinter extends Printer
                         break;
                     case 'DOL_USE_FONT_C':
                         $this->printer->setFont(Printer::FONT_C);
+                        break;
+					case 'DOL_BOLD':
+                        $this->printer->setEmphasis(true);
+                        break;
+					case 'DOL_BOLD_DISABLED':
+                        $this->printer->setEmphasis(false);
+                        break;
+					case 'DOL_DOUBLE_HEIGHT':
+                        $this->printer->setTextSize(1, 2);
+                        break;
+					case 'DOL_DOUBLE_WIDTH':
+                        $this->printer->setTextSize(2, 1);
+                        break;
+					case 'DOL_DEFAULT_HEIGHT_WIDTH':
+                        $this->printer->setTextSize(1, 1);
+                        break;
+					case 'DOL_UNDERLINE':
+                        $this->printer->setUnderline(true);
+                        break;
+					case 'DOL_UNDERLINE_DISABLED':
+                        $this->printer->setUnderline(false);
+                        break;
+					case 'DOL_BEEP':
+                        $this->printer->getPrintConnector() -> write("\x1e");
                         break;
                     default:
                         $this->printer->text($vals[$tplline]['tag']);

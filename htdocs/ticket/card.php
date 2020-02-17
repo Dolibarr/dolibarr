@@ -854,15 +854,15 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         // Creation date
         print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
         print dol_print_date($object->datec, 'dayhour');
-        print ' - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i>';
+        print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
         print '</td></tr>';
 
         // Read date
         print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
         if (!empty($object->date_read)) {
         	print dol_print_date($object->date_read, 'dayhour');
-        	print ' - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-        	print ' - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i>';
+        	print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
+        	print ' - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
         }
         print '</td></tr>';
 
@@ -1034,7 +1034,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         // Display navbar with links to change ticket status
         print '<!-- navbar with status -->';
-        if (!$user->socid && $user->rights->ticket->write && $object->fk_status < 8 && GETPOST('set') !== 'properties') {
+        if (!$user->socid && $user->rights->ticket->write && $object->fk_statut < 8 && GETPOST('set') !== 'properties') {
         	$actionobject->viewStatusActions($object);
         }
 
@@ -1289,6 +1289,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 			$formticket->action = $action;
 			$formticket->track_id = $object->track_id;
+			$formticket->ref = $object->ref;
 			$formticket->id = $object->id;
 
 			$formticket->withfile = 2;

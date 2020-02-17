@@ -438,7 +438,11 @@ class pdf_einstein extends ModelePDFCommandes
 						else
 						{
 							// We found a page break
-							$showpricebeforepagebreak = 0;
+							// Allows data in the first page if description is long enough to break in multiples pages
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								$showpricebeforepagebreak = 1;
+							else
+								$showpricebeforepagebreak = 0;
 						}
 					}
 					else	// No pagebreak
@@ -1309,6 +1313,30 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		}
+
+		if (! empty($conf->global->PDF_SHOW_PROJECT_TITLE))
+		{
+			$object->fetch_projet();
+			if (! empty($object->project->ref))
+			{
+				$posy+=3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->title)?'':$object->projet->title), '', 'R');
+			}
+		}
+
+		if (! empty($conf->global->PDF_SHOW_PROJECT))
+		{
+			$object->fetch_projet();
+			if (! empty($object->project->ref))
+			{
+				$posy+=3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
+			}
 		}
 
 		$posy += 4;

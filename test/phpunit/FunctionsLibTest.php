@@ -680,6 +680,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testDolAsciiCheck
+     *
+     * @return void
+     */
+    public function testDolAsciiCheck()
+    {
+    	// True
+    	$result=ascii_check('azerty');
+    	$this->assertTrue($result);
+
+    	$result=ascii_check('é');
+    	$this->assertFalse($result);
+
+    	$file=dirname(__FILE__).'/textutf8.txt';
+    	$filecontent=file_get_contents($file);
+    	$result=ascii_check($filecontent);
+    	$this->assertFalse($result);
+    }
+
+    /**
      * testDolTrunc
      *
      * @return boolean

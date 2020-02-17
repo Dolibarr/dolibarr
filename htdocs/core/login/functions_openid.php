@@ -43,7 +43,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
     $login='';
 
     // Get identity from user and redirect browser to OpenID Server
-    if (isset($_POST['username']))
+    if (GETPOSISSET('username'))
     {
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_POST['username']);

@@ -1680,7 +1680,7 @@ class Commande extends CommonOrder
 
 
 	/**
-	 *	Get object and lines from database
+	 *	Get object from database. Get also lines.
 	 *
 	 *	@param      int			$id       		Id of object to load
 	 * 	@param		string		$ref			Ref of object
@@ -1690,7 +1690,6 @@ class Commande extends CommonOrder
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
 	{
-
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
@@ -1740,7 +1739,13 @@ class Commande extends CommonOrder
 				$this->ref_customer = $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
 				$this->ref_int				= $obj->ref_int;
+
 				$this->socid = $obj->fk_soc;
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
+				$this->fk_project = $obj->fk_project;
+				$this->project = null; // Clear if another value was already set by fetch_projet
+
 				$this->statut = $obj->fk_statut;
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
@@ -1762,7 +1767,6 @@ class Commande extends CommonOrder
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
-				$this->fk_project = $obj->fk_project;
 				$this->modelpdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
@@ -1810,9 +1814,7 @@ class Commande extends CommonOrder
 
 				$this->db->free($result);
 
-				/*
-				 * Lines
-				 */
+				// Lines
 				$result = $this->fetch_lines();
 				if ($result < 0)
 				{
@@ -3566,7 +3568,7 @@ class Commande extends CommonOrder
 	 *	@param      int			$short			          ???
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip
 	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param		int			$addlinktonotes			  Add linkt to notes
+	 *  @param		int			$addlinktonotes			  Add link to notes
 	 *	@return     string          			          String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)

@@ -513,10 +513,43 @@ class Mo extends CommonObject
 			return $resarray;
 		} else {
 			$this->error = $this->db->lasterror();
-			var_dump($this->error);
 			return array();
 		}
 	}
+
+
+	/**
+	 * Count number of movement with origin of MO
+	 *
+	 * @return 	int			Number of movements
+	 */
+	public function countMovements()
+	{
+		$result = 0;
+
+		$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'stock_mouvement as sm';
+		$sql .= " WHERE sm.origintype = 'mo' and sm.fk_origin = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$result = $obj->nb;
+				}
+
+				$i++;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		return $result;
+	}
+
 
 	/**
 	 * Update object into database
@@ -559,9 +592,10 @@ class Mo extends CommonObject
 	 * Erase and update the line to produce.
 	 *
 	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	public function updateProduction(User $user)
+	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
 
@@ -573,65 +607,68 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		// Insert lines in mrp_production table from BOM data
-		if (!$error && $this->fk_bom > 0)
+		if (!$error)
 		{
 			// TODO Check that production has not started. If yes, we stop here.
+
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.$this->id;
 			$this->db->query($sql);
 
-			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-			$bom = new Bom($this->db);
-			$bom->fetch($this->fk_bom);
-			if ($bom->id > 0)
-			{
-				$moline = new MoLine($this->db);
+			$moline = new MoLine($this->db);
 
-				// Line to produce
-				$moline->fk_mo = $this->id;
-				$moline->qty = $this->qty;
-				$moline->fk_product = $this->fk_product;
-				$moline->role = 'toproduce';
-				$moline->position = 1;
+			// Line to produce
+			$moline->fk_mo = $this->id;
+			$moline->qty = $this->qty;
+			$moline->fk_product = $this->fk_product;
+			$moline->role = 'toproduce';
+			$moline->position = 1;
 
-				$resultline = $moline->create($user);
-				if ($resultline <= 0) {
-					$error++;
-					$this->error = $moline->error;
-					$this->errors = $moline->errors;
-					dol_print_error($this->db, $moline->error, $moline->errors);
-				}
+			$resultline = $moline->create($user, false);	// Never use triggers here
+			if ($resultline <= 0) {
+				$error++;
+				$this->error = $moline->error;
+				$this->errors = $moline->errors;
+				dol_print_error($this->db, $moline->error, $moline->errors);
+			}
 
-				// Lines to consume
-				if (!$error) {
-					foreach ($bom->lines as $line)
-					{
-						$moline = new MoLine($this->db);
+			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
+				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+				$bom = new Bom($this->db);
+				$bom->fetch($this->fk_bom);
+				if ($bom->id > 0)
+				{
+					// Lines to consume
+					if (! $error) {
+						foreach ($bom->lines as $line)
+						{
+							$moline = new MoLine($this->db);
 
-						$moline->fk_mo = $this->id;
-						if ($line->qty_frozen) {
-							$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
-						} else {
-							$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
-						}
-						if ($moline->qty <= 0) {
-							$error++;
-							$this->error = "BadValueForquantityToConsume";
-							break;
-						}
-						else {
-							$moline->fk_product = $line->fk_product;
-							$moline->role = 'toconsume';
-							$moline->position = $line->position;
-							$moline->qty_frozen = $line->qty_frozen;
-							$moline->disable_stock_change = $line->disable_stock_change;
-
-							$resultline = $moline->create($user);
-							if ($resultline <= 0) {
+							$moline->fk_mo = $this->id;
+							if ($line->qty_frozen) {
+								$moline->qty = $line->qty;		// Qty to consume does not depends on quantity to produce
+							} else {
+								$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+							}
+							if ($moline->qty <= 0) {
 								$error++;
-								$this->error = $moline->error;
-								$this->errors = $moline->errors;
-								dol_print_error($this->db, $moline->error, $moline->errors);
+								$this->error = "BadValueForquantityToConsume";
 								break;
+							}
+							else {
+								$moline->fk_product = $line->fk_product;
+								$moline->role = 'toconsume';
+								$moline->position = $line->position;
+								$moline->qty_frozen = $line->qty_frozen;
+								$moline->disable_stock_change = $line->disable_stock_change;
+
+								$resultline = $moline->create($user, false);	// Never use triggers here
+								if ($resultline <= 0) {
+									$error++;
+									$this->error = $moline->error;
+									$this->errors = $moline->errors;
+									dol_print_error($this->db, $moline->error, $moline->errors);
+									break;
+								}
 							}
 						}
 					}
@@ -1416,6 +1453,11 @@ class MoLine extends CommonObjectLine
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if (empty($this->qty)) {
+			$this->error = 'BadValueForQty';
+			return -1;
+		}
+
 		return $this->createCommon($user, $notrigger);
 	}
 

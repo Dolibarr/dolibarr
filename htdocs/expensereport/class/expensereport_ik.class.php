@@ -72,7 +72,7 @@ class ExpenseReportIk extends CoreObject
      * Attribute object linked with database
      * @var array
      */
-	protected $fields=array(
+	public $fields=array(
 		'rowid'=>array('type'=>'integer','index'=>true)
 		,'fk_c_exp_tax_cat'=>array('type'=>'integer','index'=>true)
 	    ,'fk_range'=>array('type'=>'integer','index'=>true)

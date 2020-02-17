@@ -165,12 +165,6 @@ class Contrat extends CommonObject
 	 */
 	public $date_contrat;
 
-	/**
-	 * @var integer|string		Date of contract closure
-	 * @deprecated we close contract lines, not a contract
-	 */
-	public $date_cloture;
-
 	public $commercial_signature_id;
 	public $commercial_suivi_id;
 
@@ -232,16 +226,11 @@ class Contrat extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 	    'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed')),
-		'mise_en_service' =>array('type'=>'datetime', 'label'=>'Mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'fin_validite' =>array('type'=>'datetime', 'label'=>'Fin validite', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'date_cloture' =>array('type'=>'datetime', 'label'=>'Date cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial suivi', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
-		'fk_user_mise_en_service' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
@@ -696,12 +685,12 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
-		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
+		$sql = "SELECT rowid, statut, ref, fk_soc,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
         $sql .= " entity,";
-		$sql .= " fk_user_mise_en_service, date_contrat as datecontrat,";
-		$sql .= " fk_user_author, fin_validite, date_cloture,";
+		$sql .= " date_contrat as datecontrat,";
+		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql .= " note_private, note_public, model_pdf, extraparams";
@@ -744,14 +733,9 @@ class Contrat extends CommonObject
 					$this->ref_ext = $obj->ref_ext;
 	                $this->entity = $obj->entity;
 					$this->statut = $obj->statut;
-					$this->mise_en_service = $this->db->jdate($obj->datemise);
 
 					$this->date_contrat = $this->db->jdate($obj->datecontrat);
 					$this->date_creation = $this->db->jdate($obj->datecontrat);
-
-					$this->fin_validite = $this->db->jdate($obj->fin_validite);
-					$this->date_cloture = $this->db->jdate($obj->date_cloture);
-
 
 					$this->user_author_id = $obj->fk_user_author;
 
@@ -1367,8 +1351,6 @@ class Contrat extends CommonObject
 		if (isset($this->fk_soc)) $this->fk_soc = (int) $this->fk_soc;
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature = trim($this->fk_commercial_signature);
 		if (isset($this->fk_commercial_suivi)) $this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
-		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = (int) $this->fk_user_mise_en_service;
-		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = (int) $this->fk_user_cloture;
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -1386,15 +1368,10 @@ class Contrat extends CommonObject
 		$sql .= " entity=".$conf->entity.",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
 		$sql .= " statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " mise_en_service=".(dol_strlen($this->mise_en_service) != 0 ? "'".$this->db->idate($this->mise_en_service)."'" : 'null').",";
-		$sql .= " fin_validite=".(dol_strlen($this->fin_validite) != 0 ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
-		$sql .= " date_cloture=".(dol_strlen($this->date_cloture) != 0 ? "'".$this->db->idate($this->date_cloture)."'" : 'null').",";
 		$sql .= " fk_soc=".($this->fk_soc > 0 ? $this->fk_soc : "null").",";
 		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
 		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
-		$sql .= " fk_user_mise_en_service=".(isset($this->fk_user_mise_en_service) ? $this->fk_user_mise_en_service : "null").",";
-		$sql .= " fk_user_cloture=".(isset($this->fk_user_cloture) ? $this->fk_user_cloture : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
@@ -2096,9 +2073,9 @@ class Contrat extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT c.rowid, c.ref, c.datec, c.date_cloture,";
+		$sql = "SELECT c.rowid, c.ref, c.datec,";
 		$sql .= " c.tms as date_modification,";
-		$sql .= " fk_user_author, fk_user_cloture";
+		$sql .= " fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.rowid = ".$id;
 
@@ -2117,15 +2094,9 @@ class Contrat extends CommonObject
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_cloture) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cuser;
-				}
 				$this->ref = (!$obj->ref) ? $obj->rowid : $obj->ref;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->date_cloture      = $this->db->jdate($obj->date_cloture);
 			}
 
 			$this->db->free($result);
@@ -2783,8 +2754,8 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Return label of this contract line status
 	 *
-	 *	@param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string      		Libelle
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string      		Label of status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -2796,10 +2767,10 @@ class ContratLigne extends CommonObjectLine
 	 *  Return label of a contract line status
 	 *
 	 *  @param	int		$status     Id status
-	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@param	int		$expired	0=Not expired, 1=Expired, -1=Both or unknown
 	 *  @param	string	$moreatt	More attribute
-	 *  @return string      		Libelle
+	 *  @return string      		Label of status
 	 */
 	public static function LibStatut($status, $mode, $expired = -1, $moreatt = '')
 	{

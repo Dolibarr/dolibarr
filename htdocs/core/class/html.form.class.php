@@ -298,9 +298,13 @@ class Form
 						$firstline = preg_replace('/[\n\r].*/', '', $firstline);
 						$tmpcontent = $firstline.((strlen($firstline) != strlen($tmpcontent)) ? '...' : '');
 					}
-					$ret .= $tmpcontent;
+					// We dont use dol_escape_htmltag to get the html formating active, but this need we must also
+					// clean data from some dangerous html
+					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($tmpcontent));
 				}
-				else $ret .= dol_escape_htmltag($value);
+				else {
+					$ret .= dol_escape_htmltag($value);
+				}
 
 				if ($formatfunc && method_exists($object, $formatfunc))
 				{
@@ -461,8 +465,6 @@ class Form
 	 */
     public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
-		global $conf;
-
 		if ($incbefore) $text = $incbefore.$text;
 		if (!$htmltext) return $text;
 
@@ -470,9 +472,7 @@ class Form
 		if ($notabs == 2) $tag = 'div';
 		if ($notabs == 3) $tag = 'span';
 		// Sanitize tooltip
-		//$htmltext=str_replace("\\","\\\\",$htmltext);
-		$htmltext = str_replace("\r", "", $htmltext);
-		$htmltext = str_replace("\n", "", $htmltext);
+		$htmltext = str_replace(array("\r", "\n"), '', $htmltext);
 
 		$extrastyle = '';
 		if ($direction < 0) { $extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : ''); $extrastyle = 'padding: 0px; padding-left: 3px !important;'; }
@@ -484,7 +484,7 @@ class Form
 
 		if ($tooltiptrigger == '')
 		{
-			$htmltext = str_replace('"', "&quot;", $htmltext);
+			$htmltext = str_replace('"', '&quot;', $htmltext);
 		}
 		else
 		{
@@ -2109,7 +2109,7 @@ class Form
 			}
 		}
 
-		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
+		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray))
 		{
 		    $selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
@@ -2736,13 +2736,15 @@ class Form
 		$out = '';
 		$outarray = array();
 
+		$maxlengtharticle = (empty($conf->global->PRODUCT_MAX_LENGTH_COMBO) ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+
 		$langs->load('stocks');
         // Units
         if ($conf->global->PRODUCT_USE_UNITS) {
             $langs->load('other');
         }
 
-		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, p.fk_product_type,";
+		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
@@ -2750,7 +2752,7 @@ class Form
         if ($conf->global->PRODUCT_USE_UNITS) {
             $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
         }
-        if (!empty($conf->barcode->enabled)) $sql .= " ,pfp.barcode";
+        if (!empty($conf->barcode->enabled)) $sql .= ", pfp.barcode";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		if ($socid) $sql .= " AND pfp.fk_soc = ".$socid;
@@ -2813,6 +2815,7 @@ class Form
 
 				$outref = $objp->ref;
 				$outval = '';
+				$outbarcode = $objp->barcode;
 				$outqty = 1;
 				$outdiscount = 0;
 				$outtype = $objp->fk_product_type;
@@ -2863,12 +2866,22 @@ class Form
 				if ($filterkey && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
 
 				$optlabel = $objp->ref;
-				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
+				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$optlabel .= ' <span class=\'opacitymedium\'>('.$objp->ref_fourn.')</span>';
+				}
+				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
+					$optlabel .= ' ('.$outbarcode.')';
+				}
+				$optlabel .= ' - '.dol_trunc($label, $maxlengtharticle);
 
 				$outvallabel = $objRef;
-				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
+				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$outvallabel .= ' ('.$objRefFourn.')';
+				}
+				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
+					$outvallabel .= ' ('.$outbarcode.')';
+				}
+				$outvallabel .= ' - '.dol_trunc($label, $maxlengtharticle);
 
                 // Units
 				$optlabel .= $outvalUnits;
@@ -2930,12 +2943,6 @@ class Form
 						$optlabel .= " - ".dol_trunc($objp->name, 8);
 						$outvallabel .= " - ".dol_trunc($objp->name, 8);
 					}
-                    if (!empty($conf->barcode->enabled) && !empty($objp->barcode))
-                    {
-                    	//$optlabel .= " - <span class='fa fa-barcode'></span>".$objp->barcode;
-                    	$optlabel .= " - ".$objp->barcode;
-                    	$outvallabel .= " - ".$objp->barcode;
-                    }
 					if ($objp->supplier_reputation)
 					{
 						//TODO dictionary
@@ -3023,7 +3030,7 @@ class Form
 
 		$langs->load('stocks');
 
-		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, pfp.fk_soc,";
+		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, pfp.fk_soc,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -3498,6 +3505,7 @@ class Form
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return list of payment methods
+	 *	Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
 	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
 	 *      @param  string	$htmlname       Nom de la zone select
@@ -3513,7 +3521,7 @@ class Form
     public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
 	{
         // phpcs:enable
-		global $langs, $user;
+		global $langs, $user, $conf;
 
 		dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
@@ -3523,6 +3531,9 @@ class Form
 		elseif ($filtertype != '' && $filtertype != '-1') $filterarray = explode(',', $filtertype);
 
 		$this->load_cache_types_paiements();
+
+		// Set default value if not already set by caller
+		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) $selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 
 		print '<select id="select'.$htmlname.'" class="flat selectpaymenttypes'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) print '<option value="">&nbsp;</option>';
@@ -6037,16 +6048,23 @@ class Form
 
 		// Search data
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
-		if ($objecttmp->ismultientitymanaged == 2)
+		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
+			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
+		}
+		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe')
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE 1=1";
-		if (!empty($objecttmp->ismultientitymanaged)) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
+			$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+		}
 		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
 			if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
 			else $sql .= " AND t.fk_soc = ".$user->socid;
 		}
 		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-		if ($objecttmp->ismultientitymanaged == 2) {
+		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
@@ -7299,21 +7317,21 @@ class Form
 		}
 		elseif ($fieldref != 'none')
 		{
-			$ret.=dol_htmlentities($object->$fieldref);
+			$ret .= dol_htmlentities($object->$fieldref);
 		}
 
 		if ($morehtmlref)
 		{
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
-			if(substr($morehtmlref, 0, 4) != '<div')
+			if (substr($morehtmlref, 0, 4) != '<div')
 			{
-				$ret.=' ';
+				$ret .= ' ';
 			}
 
-			$ret.=$morehtmlref;
+			$ret .= $morehtmlref;
 		}
 
-		$ret.='</div>';
+		$ret .= '</div>';
 
 		$ret .= '</div><!-- End banner content -->';
 
@@ -8052,11 +8070,11 @@ class Form
 		$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$ret .= '<div name="search_component_params" class="search_component_params inline-block centpercent">';
+		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone">';
 		$ret .= '<input type="text" name="search_component_params_input" class="search_component_params_input" placeholder="'.$langs->trans("Search").'" value="'.GETPOST("search_component_params_input").'">';
 		$ret .= '</div>';
-		foreach($arrayofcriterias as $criterias) {
-		    foreach($criterias as $criteriafamilykey => $criteriafamilyval) {
+		foreach ($arrayofcriterias as $criterias) {
+		    foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
 		    	if (in_array('search_'.$criteriafamilykey, $arrayofinputfieldsalreadyoutput)) continue;
 		        if (in_array($criteriafamilykey, array('rowid', 'ref_ext', 'entity', 'extraparams'))) continue;
 		        if (in_array($criteriafamilyval['type'], array('date', 'datetime', 'timestamp'))) {

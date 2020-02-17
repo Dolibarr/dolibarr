@@ -250,7 +250,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
@@ -278,7 +278,7 @@ class Facture extends CommonInvoice
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
 		'total' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>155),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
@@ -293,7 +293,6 @@ class Facture extends CommonInvoice
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>205),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>210),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>215),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>220),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 		'situation_cycle_ref' =>array('type'=>'smallint(6)', 'label'=>'Situation cycle ref', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>230),
 		'situation_counter' =>array('type'=>'smallint(6)', 'label'=>'Situation counter', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>235),
@@ -314,6 +313,7 @@ class Facture extends CommonInvoice
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>310),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>315),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>320),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>220),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -1436,7 +1436,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *	Get object and lines from database
+	 *	Get object from database. Get also lines.
 	 *
 	 *	@param      int		$rowid       	Id of object to load
 	 * 	@param		string	$ref			Reference of invoice
@@ -1514,10 +1514,16 @@ class Facture extends CommonInvoice
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
 				$this->revenuestamp = $obj->revenuestamp;
-				$this->paye					= $obj->paye;
+				$this->paye = $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
-				$this->socid				= $obj->fk_soc;
+
+				$this->socid = $obj->fk_soc;
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
+				$this->fk_project = $obj->fk_project;
+				$this->project = null; // Clear if another value was already set by fetch_projet
+
 				$this->statut = $obj->fk_statut;
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
@@ -1528,7 +1534,6 @@ class Facture extends CommonInvoice
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
-				$this->fk_project = $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
 				$this->note = $obj->note_private; // deprecated
@@ -1574,10 +1579,7 @@ class Facture extends CommonInvoice
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				/*
-				 * Lines
-				 */
-
+				// Lines
 				$this->lines = array();
 
 				$result = $this->fetch_lines();
@@ -4102,7 +4104,7 @@ class Facture extends CommonInvoice
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late=DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
+					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}
 
@@ -4578,15 +4580,40 @@ class Facture extends CommonInvoice
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 
-		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		if($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit))
+		{
+		    $totalpaye = $this->getSommePaiement();
+		    $totalpaye = floatval($totalpaye);
+		    $RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
+		    if($totalpaye >= 0 &&  $RetainedWarrantyAmount>= 0)
+		    {
+		        if( ($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay) )
+		        {
+		            $hasDelay = 1;
+		        }
+		        elseif($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay) )
+		        {
+		            $hasDelay = 1;
+		        }
+		        else
+		        {
+		            $hasDelay = 0;
+		        }
+		    }
+		}
+
+		return $hasDelay;
 	}
 
 
 	/**
+	 * @param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
 	 * @return number or -1 if not available
 	 */
-	public function getRetainedWarrantyAmount()
+	public function getRetainedWarrantyAmount($rounding = -1)
 	{
+		global $conf;
 	    if (empty($this->retained_warranty)) {
 	        return -1;
 	    }
@@ -4629,6 +4656,11 @@ class Facture extends CommonInvoice
 	        // Because one day retained warranty could be used on standard invoices
 	        $retainedWarrantyAmount = $this->total_ttc * $this->retained_warranty / 100;
 	    }
+
+		if ($rounding < 0){
+			$rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+			return round($retainedWarrantyAmount, 2);
+		}
 
 	    return $retainedWarrantyAmount;
 	}

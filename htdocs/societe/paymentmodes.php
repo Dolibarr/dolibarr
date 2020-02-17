@@ -1874,7 +1874,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
-		print $form->selectarray("frstrecur", $tblArraychoice, (isset($_POST['frstrecur']) ?GETPOST('frstrecur') : 'FRST'), 0);
+		print $form->selectarray("frstrecur", $tblArraychoice, (GETPOSTISSET('frstrecur') ? GETPOST('frstrecur') : 'FRST'), 0);
 		print '</td></tr>';
 
 		print '</table>';

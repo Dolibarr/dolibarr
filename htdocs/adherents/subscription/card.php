@@ -214,7 +214,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	// Type
 	print '<tr>';
 	print '<td>'.$langs->trans("Type").'</td><td class="valeur" colspan="3">';
-	print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"]) ? $_POST["typeid"] : $object->fk_type));
+	print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ? GETPOST("typeid") : $object->fk_type));
 	print'</td></tr>';
 
     // Date start subscription

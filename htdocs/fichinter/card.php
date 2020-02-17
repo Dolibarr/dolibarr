@@ -96,6 +96,8 @@ if ($id > 0 || !empty($ref))
 $permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->ficheinter->creer; // Used by the include of actions_dellink.inc.php
 
+$error = 0;
+
 
 /*
  * Actions
@@ -818,10 +820,7 @@ llxHeader('', $langs->trans("Intervention"));
 
 if ($action == 'create')
 {
-	/*
-	 * Mode creation
-	 * Creation d'une nouvelle fiche d'intervention
-	 */
+	// Create new intervention
 
 	$soc = new Societe($db);
 
@@ -831,11 +830,12 @@ if ($action == 'create')
 
 	if ($socid) $res = $soc->fetch($socid);
 
-	if (GETPOST('origin') && GETPOST('originid'))
+	if (GETPOST('origin', 'alphanohtml') && GETPOST('originid', 'int'))
 	{
 		// Parse element/subelement (ex: project_task)
-		$element = $subelement = GETPOST('origin');
-		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs))
+		$regs = array();
+		$element = $subelement = GETPOST('origin', 'alphanohtml');
+		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
 		{
 			$element = $regs[1];
 			$subelement = $regs[2];
@@ -843,7 +843,7 @@ if ($action == 'create')
 
         if ($element == 'project')
         {
-            $projectid = GETPOST('originid');
+            $projectid = GETPOST('originid', 'int');
         }
         else
 		{
@@ -941,7 +941,7 @@ if ($action == 'create')
             $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
             if ($numprojet == 0)
             {
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
             }
             print '</td></tr>';
         }
@@ -954,7 +954,7 @@ if ($action == 'create')
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1);
 			if ($numcontrat == 0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddContract").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1076,6 +1076,7 @@ if ($action == 'create')
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
 

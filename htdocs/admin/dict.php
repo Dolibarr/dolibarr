@@ -678,9 +678,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $ok = 0;
         setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
-    if (isset($_POST["code"]))
+    if (GETPOSTISSET("code"))
     {
-    	if ($_POST["code"] == '0')
+    	if (GETPOST("code") == '0')
     	{
         	$ok = 0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
@@ -691,7 +691,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
-    if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+    if (GETPOSTISSET("country") && ($_POST["country"] == '0') && ($id != 2))
     {
     	if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
     	{
@@ -753,20 +753,33 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldinsert as $f => $value)
         {
+        	$keycode = $listfieldvalue[$i];
+        	if (empty($keycode)) $keycode = $value;
+
             if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+            	$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
             }
             elseif ($value == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
+            	$_POST[$keycode] = getEntity($tabname[$id]);
             }
+
             if ($i) $sql .= ",";
 
-            if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
+            if ($keycode == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) $db->escape(GETPOST('position'))."'";
+            	$sql .= "'".(int) GETPOST('position', 'int');
             }
-            elseif ($_POST[$listfieldvalue[$i]] == '' && !($listfieldvalue[$i] == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
-            else $sql .= "'".$db->escape(GETPOST($listfieldvalue[$i], 'nohtml'))."'";
+            elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
+            elseif ($keycode == 'content') {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+            }
+            elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+            	$sql .= (int) GETPOST($keycode, 'int');
+            }
+            else {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+            }
+
             $i++;
         }
         $sql .= ",1)";
@@ -806,23 +819,36 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
+        	$keycode = $listfieldvalue[$i];
+        	if (empty($keycode)) $keycode = $field;
+
             if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+            	$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
             }
             elseif ($field == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
+            	$_POST[$keycode] = getEntity($tabname[$id]);
             }
+
             if ($i) $sql .= ",";
             $sql .= $field."=";
             if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) $db->escape($_POST['position'])."'";
+            	$sql .= (int) GETPOST('position', 'int');
             }
-            elseif ($_POST[$listfieldvalue[$i]] == '' && !($listfieldvalue[$i] == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
-            else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+            elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
+            elseif ($keycode == 'content') {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+            }
+            elseif (in_array($keycode, array('private', 'position', 'scale'))) {
+            	$sql .= (int) GETPOST($keycode, 'int');
+            }
+            else {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+            }
+
             $i++;
         }
-        $sql .= " WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
+        $sql .= " WHERE ".$rowidcol." = ".(int) $db->escape($rowid);
         if (in_array('entity', $listfieldmodify)) $sql .= " AND entity = '".getEntity($tabname[$id])."'";
 
         dol_syslog("actionmodify", LOG_DEBUG);

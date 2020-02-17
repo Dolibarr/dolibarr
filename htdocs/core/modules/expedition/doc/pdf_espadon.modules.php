@@ -440,7 +440,12 @@ class pdf_espadon extends ModelePdfExpedition
 					        $pdf->setPage($pageposbefore + 1);
 
 					        $curY = $tab_top_newpage;
-					        $showpricebeforepagebreak = 0;
+
+							// Allows data in the first page if description is long enough to break in multiples pages
+							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								$showpricebeforepagebreak = 1;
+							else
+								$showpricebeforepagebreak = 0;
 					    }
 
 
@@ -482,7 +487,11 @@ class pdf_espadon extends ModelePdfExpedition
 					        else
 					        {
 					            // We found a page break
-					            $showpricebeforepagebreak = 0;
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
 					        }
 					    }
 					    else	// No pagebreak
@@ -516,12 +525,12 @@ class pdf_espadon extends ModelePdfExpedition
 					$weighttxt = '';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
 					{
-						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units);
+						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
 					}
 					$voltxt = '';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
 					{
-						$voltxt = round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units ? $object->lines[$i]->volume_units : 0);
+						$voltxt = round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units ? $object->lines[$i]->volume_units : 0, 1);
 					}
 
 

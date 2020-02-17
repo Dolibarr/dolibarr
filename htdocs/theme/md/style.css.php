@@ -247,6 +247,10 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+.sensiblehtmlcontent * {
+	position: static !important;
+}
+
 .thumbstat { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
@@ -793,6 +797,19 @@ div.divsearchfield {
     padding-bottom: 5px;
     opacity: 0.6;
 }
+.divadvancedsearchfield:first-child {
+    margin-top: 3px;
+}
+.divadvancedsearchfield {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.divadvancedsearchfield span.select2.select2-container.select2-container--default {
+	padding-bottom: 4px;
+}
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
@@ -851,6 +868,13 @@ select.flat.selectlimit {
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
+.nomargintop {
+    margin-top: 0 !important;
+}
+.nomarginbottom {
+    margin-bottom: 0 !important;
+}
+
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -1006,7 +1030,8 @@ div.fiche>form>div.div-table-responsive {
     flex-grow: 1;
     flex-shrink: 1;
     /* flex-basis: 140px; */
-    min-width: 150px;
+    /* min-width: 150px; */
+    width: 158px;
     justify-content: flex-start;
     align-self: flex-start;
 }
@@ -2222,7 +2247,6 @@ div.login_block {
 <?php } else { ?>
 	position: fixed;
 <?php } ?>
-	font-weight: bold;
 	z-index: 10;
 	text-align: center;
 	vertical-align: middle;
@@ -2253,12 +2277,20 @@ div.login_block_other { padding-top: 3px; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
+	padding: 0px 0px 0px 2px !important;
 	height: 16px;
 }
 .login_block_elem_name {
 	margin-top: 1px;
 }
+a.aversion {
+    white-space: nowrap;
+    width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackvmenu; ?> !important;
 }
@@ -2356,7 +2388,7 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
 
 div.blockvmenulogo
 {
@@ -2572,7 +2604,8 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 	border-bottom: 1px solid #aaa;
 }
-div.tabBar div.titre {
+
+div.tabBar tr.titre td {
 	padding-top: 10px;
 }
 

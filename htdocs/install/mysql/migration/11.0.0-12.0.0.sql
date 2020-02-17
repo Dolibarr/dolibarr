@@ -44,6 +44,14 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 
 -- For v12
 
+ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
+ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
+
+ALTER TABLE llx_ticket ADD COLUMN import_key varchar(14);
+
+--ALTER TABLE llx_facturerec DROP COLUMN vat_src_code;
+
+
 -- Migration to the new regions (France)
 UPDATE llx_c_regions set nom = 'Centre-Val de Loire' WHERE fk_pays = 1 AND code_region = 24;
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (1, 27, '21231', 0, 'Bourgogne-Franche-Comté');
@@ -130,3 +138,28 @@ ALTER TABLE llx_c_country ADD COLUMN eec integer;
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI','UK');
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG18-ASSOC', 'French foundation chart of accounts 2018', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCGAFR14-DEV', 'The developed farm accountancy french plan 2014', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 41, 'AT-BASE', 'Plan Austria', 1);
+
+
+
+create table llx_c_ticket_resolution
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
+  code			varchar(32)				NOT NULL,
+  pos			varchar(32)				NOT NULL,
+  label			varchar(128)			NOT NULL,
+  active		integer DEFAULT 1,
+  use_default	integer DEFAULT 1,
+  description	varchar(255)
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_ticket_resolution ADD UNIQUE INDEX uk_code (code, entity);
+
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('SOLVED',   '10', 'Solved',    1, 0, NULL);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('CANCELED', '50', 'Canceled',  1, 0, NULL);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('OTHER',    '90', 'Other',     1, 0, NULL);
+

@@ -123,7 +123,7 @@ class ImportCsv extends ModeleImports
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_header_example($outputlangs)
 	{
@@ -137,7 +137,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string$limittoachartaccount
+	 * 	@return	string							String output
 	 */
     public function write_title_example($outputlangs, $headerlinefields)
 	{
@@ -152,7 +152,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 * 	@param	array		$contentlinevalues	Array of lines
-	 * 	@return	string
+	 * 	@return	string							String output
 	 */
     public function write_record_example($outputlangs, $contentlinevalues)
 	{
@@ -166,14 +166,13 @@ class ImportCsv extends ModeleImports
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_footer_example($outputlangs)
 	{
         // phpcs:enable
 		return '';
 	}
-
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

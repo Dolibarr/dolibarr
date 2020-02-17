@@ -157,7 +157,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	foreach ($listfield as $f => $value)
 	{
 		if ($value == 'country_id' && in_array($tablib[$id], array('Pcg_version'))) continue;		// For some pages, country is not mandatory
-		if ((! isset($_POST[$value]) || $_POST[$value]==''))
+		if ((! GETPOSTISSET($value)) || GETPOST($value) == '')
 		{
 			$ok=0;
 			$fieldnamekey=$listfield[$f];
@@ -170,13 +170,13 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		}
 	}
 	// Other checks
-	if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"], array('system','systemauto'))) {
+	if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && GETPOSTISSET("type") && in_array($_POST["type"], array('system','systemauto'))) {
 		$ok=0;
 		setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
 	}
-	if (isset($_POST["pcg_version"]))
+	if (GETPOSTISSET("pcg_version"))
 	{
-		if ($_POST["pcg_version"]=='0')
+		if (GETPOST("pcg_version") == '0')
 		{
 			$ok=0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
