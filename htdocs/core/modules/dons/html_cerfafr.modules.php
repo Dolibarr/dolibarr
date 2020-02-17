@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ class html_cerfafr extends ModeleDon
 
 		$this->db = $db;
 		$this->name = "cerfafr";
-		$this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*03';
+		$this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*04';
 
 		// Dimension page for size A4
 		$this->type = 'html';
@@ -150,11 +150,11 @@ class html_cerfafr extends ModeleDon
 				/*
 				if (empty($don->societe))
 				{
-					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" checked="checked" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
+					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" checked="checked" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 978 du CGI</td>';
 				}
 				else
 				{
-					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
+					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 978 du CGI</td>';
 				}
 				*/
 
@@ -204,7 +204,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__ModePaiement__', $ModePaiement, $form);
 
 				$frencharticle='';
-				if (preg_match('/fr/i', $outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
+				if (preg_match('/fr/i', $outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 978 du code général des impôts (CGI)</font>';
 				$form = str_replace('__FrenchArticle__', $frencharticle, $form);
 
 				$frencheligibility='';
@@ -237,18 +237,18 @@ class html_cerfafr extends ModeleDon
 				}
 				$form = str_replace('__ARTICLE238__', $art238, $form);
 
-				$art885='';
+				$art978='';
 				if (preg_match('/fr/i', $outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART885 >= 1)
+					if ($conf->global->DONATION_ART978 >= 1)
 					{
-						$art885='<input type="checkbox" disabled="true" checked="checked" >885-0 V bis du CGI';
+						$art978='<input type="checkbox" disabled="true" checked="checked" >978 du CGI';
 					}
 					else
 					{
-						$art885='<input type="checkbox" disabled="true">885-0 V bis du CGI';
+						$art978='<input type="checkbox" disabled="true">978 du CGI';
 					}
 				}
-				$form = str_replace('__ARTICLE885__', $art885, $form);
+				$form = str_replace('__ARTICLE978__', $art978, $form);
 
 				// Save file on disk
 				dol_syslog("html_cerfafr::write_file $file");
