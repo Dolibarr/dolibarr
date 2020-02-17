@@ -2834,7 +2834,7 @@ class SupplierProposalLine extends CommonObjectLine
     // From llx_product
     /**
      * @deprecated
-     * @see product_ref
+     * @see $product_ref
      */
     public $ref;
 

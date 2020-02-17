@@ -818,7 +818,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *
  * 	@param	object	$object		Object to clone
- *  @param	int		$native		Native method or full isolation method
+ *  @param	int		$native		0=Full isolation method, 1=Native PHP method
  *	@return object				Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  */

@@ -1554,7 +1554,7 @@ class BookKeeping extends CommonObject
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -1568,7 +1568,7 @@ class BookKeeping extends CommonObject
 			$this->date_creation = $obj->date_creation;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__.$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1622,7 +1622,7 @@ class BookKeeping extends CommonObject
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
@@ -1654,7 +1654,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__.$this->error, LOG_ERR);
 			return -1;
 		}
 

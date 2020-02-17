@@ -1606,7 +1606,7 @@ class Contact extends CommonObject
 		$sql .= " AND tc.source = 'external' AND tc.active=1";
 		$sql .= " AND sc.entity IN (".getEntity('societe').')';
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$this->roles = array();
 		$resql = $this->db->query($sql);
@@ -1655,7 +1655,7 @@ class Contact extends CommonObject
 		$sql .= " AND tc.element='".$element."'";
 		$sql .= " AND tc.active=1";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1695,7 +1695,7 @@ class Contact extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->errors[] = $this->db->lasterror().' sql='.$sql;
@@ -1715,7 +1715,7 @@ class Contact extends CommonObject
 					$sql .= $valRoles." , ";
 					$sql .= $this->id;
 					$sql .= ")";
-					dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+					dol_syslog(__METHOD__, LOG_DEBUG);
 
 					$result = $this->db->query($sql);
 					if (!$result)

@@ -1103,7 +1103,7 @@ abstract class CommonObject
 	 *    Get array of all contacts for an object
 	 *
 	 *    @param	int			$status		Status of links to get (-1=all)
-	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
@@ -1306,7 +1306,7 @@ abstract class CommonObject
 
 		$sql .= $this->db->order('tc.element, tc.position', 'ASC');
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1730,7 +1730,7 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".$id;
 
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -5587,7 +5587,7 @@ abstract class CommonObject
 
 			if ($error)
 			{
-				dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+				dol_syslog(__METHOD__.$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
