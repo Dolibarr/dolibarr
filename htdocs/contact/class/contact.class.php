@@ -358,7 +358,7 @@ class Contact extends CommonObject
 
 			if (!$error)
 			{
-                $result = $this->update($this->id, $user, 1, 'add');
+                $result = $this->update($this->id, $user, 1, 'add');	// This include updateRoles(), ...
                 if ($result < 0)
                 {
                     $error++;
@@ -1642,6 +1642,10 @@ class Contact extends CommonObject
 	public function getContactRoles($element = '')
 	{
 		$tab = array();
+
+		if ($element == 'action') {
+			$element = 'agenda';
+		}
 
 		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";

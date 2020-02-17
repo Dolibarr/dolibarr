@@ -767,7 +767,7 @@ class FormCompany extends Form
 
 		if ($rendermode === 'edit')
 		{
-			$contactType = $contact->listeTypeContacts('external', '', 1);
+			$contactType = $contact->listeTypeContacts('external', '', 1, '', '', 'agenda');	// We exclude agenda as there is no contact on such element
 			if (count($selected) > 0) {
 				$newselected = array();
 				foreach ($selected as $key=>$val) {
