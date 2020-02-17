@@ -66,48 +66,52 @@ class InterfaceContactRoles extends DolibarrTriggers
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 
-		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'	|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE'
-			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE' || $action === 'ACTION_CREATE') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'
+			|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE' || $action === 'PROPOSAL_SUPPLIER_CREATE'
+			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE') {
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$socid=(property_exists($object, 'socid')?$object->socid:$object->fk_soc);
+				$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
 
-			if (! empty($socid) && $socid > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-				$contactdefault = new Contact($this->db);
-				$contactdefault->socid=$socid;
-				$TContact = $contactdefault->getContactRoles($object->element);
+				if (! empty($socid) && $socid > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+					$contactdefault = new Contact($this->db);
+					$contactdefault->socid = $socid;
+					$TContact = $contactdefault->getContactRoles($object->element);
 
-				$TContactAlreadyLinked = array();
-				if ($object->id > 0)
-				{
-					$class = get_class($object);
-					$cloneFrom = new $class($this->db);
-					$r = $cloneFrom->fetch($object->id);
+					if (is_array($TContact) && ! empty($TContact))
+					{
+						$TContactAlreadyLinked = array();
+						if ($object->id > 0)
+						{
+							/* $class = get_class($object);
+							 $cloneFrom = new $class($this->db);
+							 $r = $cloneFrom->fetch($object->id); */
+							$cloneFrom = dol_clone($object, 1);
 
-					if (!empty($cloneFrom->id))	$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
-				}
-
-				if (is_array($TContact))
-				{
-					foreach($TContact as $i => $infos) {
-						foreach ($TContactAlreadyLinked as $contactData) {
-							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) unset($TContact[$i]);
+							if (!empty($cloneFrom->id))	{
+								$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
+							}
 						}
-					}
 
-					$nb = 0;
-					foreach($TContact as $infos) {
-						$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
-						if ($res > 0) $nb++;
-					}
+						foreach($TContact as $i => $infos) {
+							foreach ($TContactAlreadyLinked as $contactData) {
+								if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) unset($TContact[$i]);
+							}
+						}
 
-					if($nb > 0) {
-						setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
+						$nb = 0;
+						foreach($TContact as $infos) {
+							$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
+							if ($res > 0) $nb++;
+						}
+
+						if($nb > 0) {
+							setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
+						}
 					}
 				}
 			}
-		}
-		return 0;
+			return 0;
 	}
 }
