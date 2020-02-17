@@ -55,6 +55,7 @@ if (!empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/socia
 if (!empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 if (!empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 if (!empty($conf->categorie->enabled))		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (!empty($conf->mrp->enabled))		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -67,6 +68,7 @@ if (!empty($conf->expensereport->enabled)) $langs->load("trips");
 if (!empty($conf->don->enabled))			$langs->load("donations");
 if (!empty($conf->loan->enabled))			$langs->load("loan");
 if (!empty($conf->salaries->enabled))		$langs->load("salaries");
+if (!empty($conf->mrp->enabled))		$langs->load("mrp");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -384,6 +386,18 @@ $listofreferent = array(
 	'buttonnew'=>'CreateShipment',
 	'testnew'=>0,
 	'test'=>$conf->expedition->enabled && $user->rights->expedition->lire),
+'mrp'=>array(
+	'name'=>"MO",
+	'title'=>"ListMOAssociatedProject",
+	'class'=>'Mo',
+	'table'=>'mrp_mo',
+	'datefieldname'=>'date_valid',
+	'urlnew'=>DOL_URL_ROOT.'/mrp/mo_card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
+	'lang'=>'mrp',
+	'buttonnew'=>'CreateMO',
+	'testnew'=>'$user->rights->mrp->write',
+	'project_field'=>'fk_project',
+	'test'=>$conf->mrp->enabled && $user->rights->mrp->read),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
 	'title'=>"ListExpenseReportsAssociatedProject",
@@ -829,7 +843,7 @@ foreach ($listofreferent as $key => $value)
 			$addform .= '<div class="inline-block valignmiddle">';
 			if ($testnew) $addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
             $addform .= '<div>';
 		}
@@ -1015,10 +1029,13 @@ foreach ($listofreferent as $key => $value)
     				elseif ($tablename == 'fichinter') $date = $element->datev; // There is no other date for this
     				elseif ($tablename == 'projet_task') $date = ''; // We show no date. Showing date of beginning of task make user think it is date of time consumed
 					else
-    				{
+					{
     					$date = $element->date; // invoice, ...
     					if (empty($date)) $date = $element->date_contrat;
     					if (empty($date)) $date = $element->datev;
+    					if (empty($date) && !empty($datefieldname)) {
+    						$date = $element->$datefieldname;
+    					}
     				}
 				}
                 elseif ($key == 'loan') {

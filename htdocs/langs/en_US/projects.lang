@@ -104,6 +104,7 @@ ListDonationsAssociatedProject=List of donations related to the project
 ListVariousPaymentsAssociatedProject=List of miscellaneous payments related to the project
 ListSalariesAssociatedProject=List of payments of salaries related to the project
 ListActionsAssociatedProject=List of events related to the project
+ListMOAssociatedProject=List of manufacturing orders related to the project
 ListTaskTimeUserProject=List of time consumed on tasks of project
 ListTaskTimeForTask=List of time consumed on task
 ActivityOnProjectToday=Activity on project today
