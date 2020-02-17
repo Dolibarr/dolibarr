@@ -157,12 +157,12 @@ else
  *	  Reason: Show all Status and give the possibility to filter only one
  */
 
-$sql = "SELECT count(cf.rowid), fk_statut";
+$sql = "SELECT count(cf.rowid), cf.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND cf.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cf.fk_statut";
@@ -210,7 +210,7 @@ if (! empty($conf->fournisseur->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 	$sql.= " AND c.fk_statut = 0";
 	if (! empty($socid)) $sql.= " AND c.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -245,13 +245,27 @@ if (! empty($conf->fournisseur->enabled))
 /*
  * List of users allowed
  */
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-$sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
-$sql.= ", ".MAIN_DB_PREFIX."rights_def as rd";
-$sql.= " WHERE u.rowid = ur.fk_user";
-$sql.= " AND (u.entity IN (0,".$conf->entity.")";
-$sql.= " AND rd.entity = ".$conf->entity.")";
+$sql = "SELECT";
+if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	$sql .= " DISTINCT";
+}
+$sql.= " u.rowid, u.lastname, u.firstname, u.email";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql.= ",".MAIN_DB_PREFIX."user_rights as ur";
+$sql.= ",".MAIN_DB_PREFIX."rights_def as rd";
+if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+{
+	$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+	$sql.= " WHERE ((ug.fk_user = u.rowid";
+	$sql.= " AND ug.entity IN (".getEntity('usergroup')."))";
+	$sql.= " OR u.entity = 0)"; // Show always superadmin
+}
+else
+{
+	$sql.= " WHERE (u.entity IN (".getEntity('user').")";
+	$sql.= " AND ur.entity = ".$conf->entity.")";
+}
+$sql.= " AND u.rowid = ur.fk_user";
 $sql.= " AND ur.fk_id = rd.id";
 $sql.= " AND module = 'fournisseur'";
 $sql.= " AND perms = 'commande'";
