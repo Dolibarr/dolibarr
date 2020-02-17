@@ -65,7 +65,7 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
-		dol_syslog(get_class($this).'::multiselectProspectionStatus sql='.$sql, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -111,7 +111,6 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " WHERE active = 1 AND code<>''";
 		$sql .= " ORDER BY code ASC";
 
-		dol_syslog(get_class($this)."::select_country sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -260,7 +259,6 @@ class FormAdvTargetEmailing extends Form
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
