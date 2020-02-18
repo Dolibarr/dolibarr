@@ -289,7 +289,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	 * Last salaries
 	 */
 	if (!empty($conf->salaries->enabled) &&
-		( ($object->fk_user == $user->id) || ($user->rights->salaries->read && $object->id == $user->id) )
+		(($object->fk_user == $user->id) || ($user->rights->salaries->read && $object->id == $user->id))
 		)
 	{
 		$salary = new PaymentSalary($db);
