@@ -275,6 +275,22 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
 		}
+		elseif ($modulepart == 'user')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->societe->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new User($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'User not found');
+			}
+
+			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
+		}
 		elseif ($modulepart == 'adherent' || $modulepart == 'member')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
