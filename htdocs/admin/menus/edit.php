@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
-$cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 
 if (!$user->admin) accessforbidden();
 
@@ -66,7 +66,7 @@ if (GETPOST("menu_handler"))    $menu_handler = GETPOST("menu_handler");
 
 if ($action == 'update')
 {
-    if (! $cancel)
+    if (!$cancel)
     {
         $leftmenu = ''; $mainmenu = '';
         if (GETPOST('menuIdParent', 'alpha') && !is_numeric(GETPOST('menuIdParent', 'alpha')))

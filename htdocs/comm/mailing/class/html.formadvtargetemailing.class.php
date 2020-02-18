@@ -433,7 +433,7 @@ class FormAdvTargetEmailing extends Form
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
+			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($showempty)
 				$out .= '<option value=""></option>';
 			$num = $this->db->num_rows($resql);

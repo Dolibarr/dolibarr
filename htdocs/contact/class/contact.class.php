@@ -64,7 +64,7 @@ class Contact extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
@@ -358,7 +358,7 @@ class Contact extends CommonObject
 
 			if (!$error)
 			{
-                $result = $this->update($this->id, $user, 1, 'add');	// This include updateRoles(), ...
+                $result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
                 if ($result < 0)
                 {
                     $error++;
@@ -1007,7 +1007,7 @@ class Contact extends CommonObject
 		{
 			$this->gender = 'man';
 		}
-		elseif(in_array($this->civility_id, array('MME','MLE')) || in_array($this->civility_code, array('MME','MLE')))
+		elseif (in_array($this->civility_id, array('MME', 'MLE')) || in_array($this->civility_code, array('MME', 'MLE')))
 		{
 			$this->gender = 'woman';
 		}
