@@ -131,6 +131,24 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testSetLang
+     *
+     * @return string
+     */
+    public function testSetLang()
+    {
+    	global $conf;
+    	$conf=$this->savconf;
+
+    	$tmplangs = new Translate('', $conf);
+
+    	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = "' malicious text with quote";
+    	$tmplangs->setDefaultLang('auto');
+    	print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
+    	$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
+    }
+
+    /**
      * testGETPOST
      *
      * @return string

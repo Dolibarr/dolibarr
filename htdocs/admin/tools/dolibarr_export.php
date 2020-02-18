@@ -221,7 +221,6 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			<div class="formelementrow"><input type="checkbox"
 				name="use_transaction" value="yes" id="checkbox_use_transaction" /> <label
 				for="checkbox_use_transaction"> <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
-
 			</div>
 
 			<?php if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) { ?>
@@ -244,6 +243,14 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 				<option value="ORACLE">ORACLE</option>
 				<option value="POSTGRESQL">POSTGRESQL</option>
 			</select> <br>
+				<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />
+				<label for="checkbox_use_quick">
+					<?php echo $form->textwithpicto(
+						$langs->trans('ExportUseMySQLQuickParameter'),
+						$langs->trans('ExportUseMySQLQuickParameterHelp')
+					); ?>
+				</label>
+				<br/>
 			<!-- <input type="checkbox" name="drop_database" value="yes"
 				id="checkbox_drop_database" /> <label for="checkbox_drop_database"><?php echo $langs->trans("AddDropDatabase"); ?></label>
 			-->

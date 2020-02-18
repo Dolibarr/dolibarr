@@ -73,7 +73,10 @@ print '<script type="text/javascript" language="javascript">
 		print '<input type="button" name="loadfilter" id="loadfilter" value="' . $langs->trans('AdvTgtLoadFilter') . '" class="butAction"/>';
 		print '<input type="button" name="deletefilter" id="deletefilter" value="' . $langs->trans('AdvTgtDeleteFilter') . '" class="butAction"/>';
 		print '<input type="button" name="savefilter" id="savefilter" value="' . $langs->trans('AdvTgtSaveFilter') . '" class="butAction"/>';
-		print $langs->trans('AdvTgtOrCreateNewFilter');
+		print '</td><td>' . "\n";
+		print '</td></tr>' . "\n";
+		
+		print '<tr><td>' . $langs->trans('AdvTgtOrCreateNewFilter') . '</td><td>';
 		print '<input type="text" name="template_name" id="template_name" value=""/>';
 		print '<input type="button" name="createfilter" id="createfilter" value="' . $langs->trans('AdvTgtCreateFilter') . '" class="butAction"/>';
 		print '</td><td>' . "\n";

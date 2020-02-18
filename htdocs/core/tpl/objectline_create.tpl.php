@@ -38,7 +38,6 @@ if (empty($object) || ! is_object($object)) {
     exit;
 }
 
-
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
 {
@@ -139,22 +138,20 @@ if ($nolinesbefore) {
 		print '<td class="linecolcycleref2 right"></td>';
 	}
     if (! empty($usemargins))
-
 	{
-		if (!empty($user->rights->margins->creer)) {
-		?>
-		<td class="margininfos linecolmargin1 right">
-		<?php
+		if (empty($user->rights->margins->creer)) {
+			$colspan++;
 		}
-		else $colspan++;
-
-		if ($conf->global->MARGIN_TYPE == "1")
-			echo $langs->trans('BuyingPrice');
-		else
-			echo $langs->trans('CostPrice');
-		echo '</td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		else {
+			print '<td class="margininfos linecolmargin1 right">';
+			if ($conf->global->MARGIN_TYPE == "1")
+				echo $langs->trans('BuyingPrice');
+			else
+				echo $langs->trans('CostPrice');
+			echo '</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		}
 	}
 	?>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -248,14 +245,15 @@ if ($nolinesbefore) {
 
 		if (empty($senderissupplier))
 		{
+			$statustoshow = 1;
 			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 			}
 			else
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
 
 			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
@@ -439,20 +437,16 @@ if ($nolinesbefore) {
 	{
 		if (!empty($user->rights->margins->creer)) {
 		    $coldisplay++;
-		?>
-		<td class="nobottom margininfos linecolmargin right">
-			<!-- For predef product -->
-			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
-			<?php } ?>
-			<!-- For free product -->
-			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
-		</td>
-		<?php
-		}
-
-		if ($user->rights->margins->creer)
-		{
+			?>
+			<td class="nobottom margininfos linecolmargin right">
+				<!-- For predef product -->
+				<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
+				<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp" style="display: none;"></select>
+				<?php } ?>
+				<!-- For free product -->
+				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
+			</td>
+			<?php
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
 				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate", 'alpha', 2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';

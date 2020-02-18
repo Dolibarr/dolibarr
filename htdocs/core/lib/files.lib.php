@@ -959,18 +959,18 @@ function dol_unescapefile($filename)
  */
 function dolCheckVirus($src_file)
 {
-	global $conf;
+	global $conf, $db;
 
 	if (! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
 		if (! class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
-		$antivir=new AntiVir($db);
+		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
 		{
-			$reterrors=$antivir->errors;
+			$reterrors = $antivir->errors;
 			return $reterrors;
 		}
 	}
@@ -994,7 +994,7 @@ function dolCheckVirus($src_file)
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
- *	@return int       			  		>0 if OK, <0 or string if KO
+ *	@return int|string       			>0 if OK, <0 or string if KO
  *  @see    dol_move()
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile')
@@ -1853,10 +1853,15 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
-
 				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
 				{
-					$ret = $image->writeImages($fileoutput, true);
+				    try {
+					   $ret = $image->writeImages($fileoutput, true);
+				    }
+				    catch(Exception $e)
+				    {
+				        dol_syslog($e->getMessage(), LOG_WARNING);
+				    }
 				}
 				else
 				{
@@ -2066,9 +2071,10 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
+ * @param	string	$rootdirinzip	Add a root dir level in zip file
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '')
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '')
 {
 	$foundhandler=0;
 
@@ -2129,7 +2135,8 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					{
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
-						$relativePath = substr($filePath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+
 						if (empty($excludefiles) || ! preg_match($excludefiles, $filePath))
 						{
 							// Add current file to archive

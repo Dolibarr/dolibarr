@@ -37,6 +37,7 @@ if (!defined("NOLOGIN")) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -95,7 +96,8 @@ if ($action == "view_ticketlist") {
     	$ret = $object->fetch('', '', $track_id);
 
         if ($ret && $object->id > 0) {
-            // vérifie si l'adresse email est bien dans les contacts du ticket
+
+        	// vérifie si l'adresse email est bien dans les contacts du ticket
             $contacts = $object->liste_contact(-1, 'external');
             foreach ($contacts as $contact) {
                 if ($contact['email'] == $email) {
@@ -124,7 +126,9 @@ if ($action == "view_ticketlist") {
                     $_SESSION['track_id_customer'] = $track_id;
                 }
             }
-            if ($email == $object->origin_email) {
+
+            $emailorigin = CMailFile::getValidAddress($object->origin_email, 2);
+            if ($email == $emailorigin) {
                 $display_ticket_list = true;
                 $_SESSION['email_customer'] = $email;
                 $_SESSION['track_id_customer'] = $track_id;
@@ -638,7 +642,7 @@ if ($action == "view_ticketlist")
 
                     // Statut
                     if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                        print '<td>';
+                        print '<td class="nowraponall">';
                         $object->fk_statut = $obj->fk_statut;
                         print $object->getLibStatut(2);
                         print '</td>';

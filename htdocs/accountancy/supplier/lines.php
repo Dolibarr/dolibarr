@@ -380,6 +380,7 @@ if ($result) {
 		print $objp->invoice_label;
 		print '</td>';
 
+		// Date invoice
 		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
 		// Ref product
@@ -400,7 +401,12 @@ if ($result) {
 
 		print '<td class="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
-		print '<td>' . $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')</td>';
+		print '<td>';
+		if ($objp->country_code)
+		{
+			print $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')';
+		}
+		print '</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

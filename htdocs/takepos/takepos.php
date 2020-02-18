@@ -396,7 +396,7 @@ function Refresh() {
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
 	console.log("New with place = <?php echo $place; ?>, js place="+place);
-	var r = confirm('<?php echo ($place > 0 ? $langs->trans("ConfirmDeletionOfThisPOSSale") : $langs->trans("ConfirmDiscardOfThisPOSSale")); ?>');
+	var r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
 	if (r == true) {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
@@ -408,8 +408,9 @@ function New() {
 function Search2() {
 	console.log("Search2");
 	pageproducts=0;
+	jQuery(".wrapper2 .catwatermark").hide();
 	$.getJSON('./ajax.php?action=search&term='+$('#search').val(), function(data) {
-		for (i = 0; i < 30; i++) {
+		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 			if (typeof (data[i]) == "undefined"){
 				$("#prodesc"+i).text("");
 				$("#proimg"+i).attr("src","genimg/empty.png");
@@ -417,6 +418,7 @@ function Search2() {
 				continue;
 			}
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
+			$("#prodivdesc"+i).show();
 			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
 			$("#prodiv"+i).data("iscat",0);
@@ -717,7 +719,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 
         print '<!-- Show the search input text -->'."\n";
         print '<div class="margintoponly">';
-		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 41px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
 ?>

@@ -1321,6 +1321,7 @@ class ExtraFields
                         print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
                     }
                 } else {
+					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
                     $data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
                     $out .= '<option value="0">&nbsp;</option>';
                     foreach ($data as $data_key => $data_value) {
@@ -1548,6 +1549,7 @@ class ExtraFields
                         print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
                     }
                 } else {
+					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
                     $data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
                     $out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
                 }
@@ -1557,7 +1559,7 @@ class ExtraFields
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
 		}
 		elseif ($type == 'password')
 		{
@@ -1628,7 +1630,7 @@ class ExtraFields
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
 		//if ($computed) $value =		// $value is already calculated into $value before calling this method
-		
+
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -2008,7 +2010,7 @@ class ExtraFields
 					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
 				    if ((! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
 				        || (! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
-						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
+				        || (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 						$nofillrequired++;

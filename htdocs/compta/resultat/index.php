@@ -480,10 +480,10 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 					$obj = $db->fetch_object($result);
 
 					if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-					$encaiss[$obj->dm] += $obj->amount;
+					$encaiss[$obj->dm] += -$obj->amount;
 
 					if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
-					$encaiss_ttc[$obj->dm] += $obj->amount;
+					$encaiss_ttc[$obj->dm] += -$obj->amount;
 
 					$i++;
 				}
@@ -815,7 +815,9 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 
 	$sql = "SELECT b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, pcg_type, date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as debit, sum(b.credit) as credit, sum(b.montant) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql.= " WHERE b.numero_compte = aa.account_number AND b.entity = ".$conf->entity;
+	$sql.= " WHERE b.entity = ".$conf->entity;
+	$sql.= " AND aa.entity = ".$conf->entity;
+	$sql.= " AND b.numero_compte = aa.account_number";
 	$sql.= " AND ".$predefinedgroupwhere;
 	$sql.= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	if (! empty($date_start) && ! empty($date_end))

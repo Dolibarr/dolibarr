@@ -309,7 +309,7 @@ else
 			print $formconfirm;
 
 			// Warehouse card
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref='<div class="refidno">';
 			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;

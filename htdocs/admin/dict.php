@@ -563,7 +563,7 @@ if ($id == 11)
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
-			'resource'           => $langs->trans('Resource'),
+			'dolresource'       => $langs->trans('Resource'),
 			// old deprecated
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
@@ -1985,9 +1985,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class='quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
+            $transkey='';
 			if (in_array($fieldlist[$field], array('label','libelle')))
 			{
-			    $transkey='';
 			    // Special case for labels
 			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 			        $transkey="Civility".strtoupper($obj->code);

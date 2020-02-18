@@ -481,7 +481,7 @@ if (empty($reshook))
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
 		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
 	}
-	https://dashboard.stripe.com/search?query=risk_level%3Ahighest&account=acct_1CVGWQLYhjvFj9Sz
+	
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->societe->creer;
@@ -1451,7 +1451,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -1555,7 +1555,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -1603,7 +1603,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -1701,7 +1701,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 

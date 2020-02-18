@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
+$langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -373,7 +373,7 @@ if ($step == 2 && $action == 'select_model')
     $result = $objexport->fetch($exportmodelid);
     if ($result > 0)
     {
-		$fieldsarray=explode(',', $objexport->hexa);
+		$fieldsarray=preg_split("/,(?! [^(]*\))/", $objexport->hexa);
 		$i=1;
 		foreach($fieldsarray as $val)
 		{

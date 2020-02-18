@@ -38,6 +38,7 @@ if (!defined("NOLOGIN")) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -100,7 +101,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
         $ret = $object->fetch('', '', $track_id);
         if ($ret && $object->dao->id > 0) {
         	// Check if emails provided is the one of author
-        	if ($object->dao->origin_email == $email)
+        	$emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
+        	if ($emailofticket == $email)
         	{
         		$display_ticket = true;
         		$_SESSION['email_customer'] = $email;
@@ -174,7 +176,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 
 
-
     	if (! $error)
     	{
     		$action = 'view_ticket';
@@ -226,7 +227,8 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 print '<div style="margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
-    if ($display_ticket) {
+    if ($display_ticket)
+    {
         // Confirmation close
         if ($action == 'close') {
             print $form->formconfirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
@@ -284,7 +286,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
             $fuser->fetch($object->dao->fk_user_create);
             print $fuser->getFullName($langs);
         } else {
-            print $object->dao->origin_email;
+            print dol_escape_htmltag($object->dao->origin_email);
         }
 
         print '</td></tr>';
@@ -370,7 +372,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
         // Message list
         print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
         $object->viewTicketMessages(false, true, $object->dao);
-    } else {
+    }
+    else
+    {
         print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
 } else {

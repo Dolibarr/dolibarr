@@ -889,6 +889,7 @@ select.selectarrowonleft option {
     .maxwidth75onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 70px; }
     .maxwidth150onsmartphone { max-width: 120px; }
+    .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -1026,6 +1027,41 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
+.backgroundforcompanylogo {
+    margin: <?php echo $disableimages?'0':'6'; ?>px;
+    margin-left: 6px;
+    margin-right: 8px;
+    background-color: rgba(255,255,255,0.7);
+    padding: 0;
+    border-radius: 5px;
+    height: <?php echo $disableimages?'20':'32'; ?>px;
+    /* width: 100px; */
+    max-width: 100px;
+    vertical-align: middle;
+}
+.backgroundforcompanylogo img.mycompany {
+    object-fit: contain;
+    width: inherit;
+    height: inherit;
+}
+#mainmenutd_companylogo::after, #mainmenutd_menu::after {
+	content: unset !important;
+}
+li#mainmenutd_companylogo .tmenucenter {
+	width: unset;
+}
+li#mainmenutd_companylogo {
+	min-width: unset !important;
+}
+<?php if ($disableimages) { ?>
+	li#mainmenutd_home {
+		min-width: unset !important;
+	}
+	li#mainmenutd_home .tmenucenter {
+		width: unset;
+	}
+<?php } ?>
+
 div.blockvmenupair, div.blockvmenuimpair {
 	border-top: none !important;
 	border-left: none !important;
@@ -1257,6 +1293,9 @@ div.nopadding {
 .pictowarning {
     vertical-align: text-bottom;
 }
+.pictomodule {
+	width: 14px;
+}
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
 .tagtdnote span.pictoedit {
@@ -1469,9 +1508,6 @@ li.tmenu, li.tmenusel {
 li.menuhider:hover {
 	background-image: none !important;
 }
-li.tmenusel, li.tmenu:hover {
-    /* background: rgba(0, 0, 0, 0.1); */
-}
 
 li.tmenusel::after, li.tmenu:hover::after{
 	content: "";
@@ -1524,7 +1560,7 @@ div.tmenucenter
 	padding-top: 2px;
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-    width: 100%;
+    /* width: 100%; */
 }
 #menu_titre_logo {
 	padding-top: 0;
@@ -1930,8 +1966,8 @@ div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	line-height: 50px;
-	height: 50px;
+	line-height: <?php echo $disableimages?'25':'50'; ?>px;
+	height: <?php echo $disableimages?'25':'50'; ?>px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -1968,8 +2004,8 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: 32px;
-    height: 32px;
+	width: <?php echo $disableimages?'26':'32'; ?>px;
+    height: <?php echo $disableimages?'26':'32'; ?>px;
     border-radius: 50%;
     background-size: contain;
     background-size: contain;
@@ -5621,6 +5657,9 @@ div.tabsElem a.tab {
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
+	li.tmenucompanylogo {
+		display: none;
+	}
 	div.mainmenu {
 		height: 23px;
 	}
@@ -5734,10 +5773,13 @@ div.tabsElem a.tab {
     }
 
 	.titlefield {
-	    width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
+	    width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child {
-	    max-width: 100px;			/* but no more than 100px */
+	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	    /* max-width: 100px; */			/* but no more than 100px */
+	}
+	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
+	    word-break: break-word;
 	}
 	.badge {
 		line-height: 1.2em;

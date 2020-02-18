@@ -218,7 +218,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = $object->getSommePaiement();
+			$deja_regle = $object->getSommePaiement(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
             //$amount_credit_notes_included = $object->getSumCreditNotesUsed();
             //$amount_deposits_included = $object->getSumDepositsUsed();
 

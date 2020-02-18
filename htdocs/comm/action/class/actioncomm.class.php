@@ -676,7 +676,7 @@ class ActionComm extends CommonObject
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
-                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+                $this->fk_project			= $obj->fk_project;		// To have fetch_projet method working
 
                 $this->societe->id			= $obj->fk_soc;			// deprecated
                 //$this->contact->id			= $obj->fk_contact;		// deprecated

@@ -181,19 +181,19 @@ class ActionsCardProduct
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;
-			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units);
+			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units, 0, 2);
 
 			// Length
 			$this->tpl['length'] = $this->object->length;
-			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units);
+			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units, 0, 2);
 
 			// Surface
 			$this->tpl['surface'] = $this->object->surface;
-			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units);
+			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units, 0, 2);
 
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
-			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units);
+			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units, 0, 2);
 		}
 
 		if ($action == 'view')
@@ -211,25 +211,25 @@ class ActionsCardProduct
 			// Weight
 			if ($this->object->weight != '')
 			{
-				$this->tpl['weight'] = $this->object->weight." ".measuring_units_string($this->object->weight_units, "weight");
+				$this->tpl['weight'] = $this->object->weight." ".measuringUnitString(0, "weight", $this->object->weight_units);
 			}
 
 			// Length
 			if ($this->object->length != '')
 			{
-				$this->tpl['length'] = $this->object->length." ".measuring_units_string($this->object->length_units, "size");
+				$this->tpl['length'] = $this->object->length." ".measuringUnitString(0, "size", $this->object->length_units);
 			}
 
 			// Surface
 			if ($this->object->surface != '')
 			{
-				$this->tpl['surface'] = $this->object->surface." ".measuring_units_string($this->object->surface_units, "surface");
+				$this->tpl['surface'] = $this->object->surface." ".measuringUnitString(0, "surface", $this->object->surface_units);
 			}
 
 			// Volume
 			if ($this->object->volume != '')
 			{
-				$this->tpl['volume'] = $this->object->volume." ".measuring_units_string($this->object->volume_units, "volume");
+				$this->tpl['volume'] = $this->object->volume." ".measuringUnitString(0, "volume", $this->object->volume_units);
 			}
 
     		$this->tpl['fiche_end']=dol_get_fiche_end();

@@ -769,7 +769,7 @@ class Societe extends CommonObject
 						}
 					}
 
-					// Check for mandatory prof id (but only if country is other than ours)
+					// Check for mandatory prof id (but only if country is same than ours)
 					if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id)
 					{
 						$idprof_mandatory ='SOCIETE_'.$key.'_MANDATORY';
@@ -1287,7 +1287,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity = '.$conf->entity.')';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
@@ -3284,6 +3284,12 @@ class Societe extends CommonObject
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
 		if (! empty($this->tva_intra)) $isacompany=1;
+		elseif (! empty($this->idprof1)) $isacompany=1;
+		elseif (! empty($this->idprof2)) $isacompany=1;
+		elseif (! empty($this->idprof3)) $isacompany=1;
+		elseif (! empty($this->idprof4)) $isacompany=1;
+		elseif (! empty($this->idprof5)) $isacompany=1;
+		elseif (! empty($this->idprof6)) $isacompany=1;
 		elseif (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
 		{
 			// TODO Add a field is_a_company into dictionary

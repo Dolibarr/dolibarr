@@ -129,3 +129,4 @@ TemplatePDFHolidays=Template for leave requests PDF
 FreeLegalTextOnHolidays=Free text on PDF
 WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
 HolidaysToApprove=Holidays to approve
+NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays

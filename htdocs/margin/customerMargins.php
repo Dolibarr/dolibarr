@@ -205,8 +205,8 @@ $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 if ($client) $sql.= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not, your database may be corrupted, you can update this)
-$sql.= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1', 'd.qty * d.buy_price_ht').") as buying_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))', 'd.total_ht - (d.buy_price_ht * d.qty)').") as marge";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -220,6 +220,7 @@ if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql.= ' AND s.entity IN ('.getEntity('societe').')';
+$sql.= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if(! empty($TSelectedProducts)) {

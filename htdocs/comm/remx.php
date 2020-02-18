@@ -61,8 +61,10 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
-	$amount_ttc_1=GETPOST('amount_ttc_1');
-	$amount_ttc_2=GETPOST('amount_ttc_2');
+	$amount_ttc_1 = GETPOST('amount_ttc_1');
+	$amount_ttc_1 = price2num($amount_ttc_1);
+	$amount_ttc_2 = GETPOST('amount_ttc_2');
+	$amount_ttc_2 = price2num($amount_ttc_2);
 
 	$error=0;
 	$remid=GETPOST("remid")?GETPOST("remid"):0;
@@ -739,8 +741,8 @@ if ($socid > 0)
 		$sql.= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
 		$sql.= " rc.fk_facture_source,";
 		$sql.= " u.login, u.rowid as user_id,";
-		$sql.= " f.rowid, f.ref,";
-		$sql.= " fa.ref as ref, fa.type as type";
+		$sql.= " f.rowid as invoiceid, f.ref,";
+		$sql.= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " , ".MAIN_DB_PREFIX."user as u";
 		$sql.= " , ".MAIN_DB_PREFIX."facturedet as fc";
@@ -758,8 +760,8 @@ if ($socid > 0)
 		$sql2.= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
 		$sql2.= " rc.fk_facture_source,";
 		$sql2.= " u.login, u.rowid as user_id,";
-		$sql2.= " f.rowid, f.ref,";
-		$sql2.= " fa.ref as ref, fa.type as type";
+		$sql2.= " f.rowid as invoiceid, f.ref,";
+		$sql2.= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql2.= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
@@ -833,7 +835,7 @@ if ($socid > 0)
 	    			{
 	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
-	    				$facturestatic->ref=$obj->ref;
+	    				$facturestatic->ref=$obj->invoice_source_ref;
 	    				$facturestatic->type=$obj->type;
 	    				print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
@@ -842,7 +844,7 @@ if ($socid > 0)
 	    			{
 	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
-	    				$facturestatic->ref=$obj->ref;
+	    				$facturestatic->ref=$obj->invoice_source_ref;
 	    				$facturestatic->type=$obj->type;
 	    				print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
@@ -851,7 +853,7 @@ if ($socid > 0)
 	    			{
 	    				print '<td class="minwidth100">';
 	    				$facturestatic->id=$obj->fk_facture_source;
-	    				$facturestatic->ref=$obj->ref;
+	    				$facturestatic->ref=$obj->invoice_source_ref;
 	    				$facturestatic->type=$obj->type;
 	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
@@ -862,7 +864,12 @@ if ($socid > 0)
 	    				print $obj->description;
 	    				print '</td>';
 	    			}
-	    			print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a></td>';
+	    			print '<td class="left nowrap">';
+	    			if ($obj->invoiceid)
+	    			{
+	    				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
+	    			}
+	    			print '</td>';
 	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
 	    			if (! empty($conf->multicurrency->enabled))
 	    			{
@@ -909,8 +916,8 @@ if ($socid > 0)
 		$sql.= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql.= " rc.fk_invoice_supplier_source,";
 		$sql.= " u.login, u.rowid as user_id,";
-		$sql.= " f.rowid, f.ref as ref,";
-		$sql.= " fa.ref, fa.type as type";
+		$sql.= " f.rowid as invoiceid, f.ref as ref,";
+		$sql.= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql.= " , ".MAIN_DB_PREFIX."user as u";
 		$sql.= " , ".MAIN_DB_PREFIX."facture_fourn_det as fc";
@@ -928,8 +935,8 @@ if ($socid > 0)
 		$sql2.= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql2.= " rc.fk_invoice_supplier_source,";
 		$sql2.= " u.login, u.rowid as user_id,";
-		$sql2.= " f.rowid, f.ref as ref,";
-		$sql2.= " fa.ref, fa.type as type";
+		$sql2.= " f.rowid as invoiceid, f.ref as ref,";
+		$sql2.= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql2.= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
@@ -1003,7 +1010,7 @@ if ($socid > 0)
 					{
 						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
-						$facturefournstatic->ref=$obj->ref;
+						$facturefournstatic->ref=$obj->invoice_source_ref;
 						$facturefournstatic->type=$obj->type;
 						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
@@ -1012,7 +1019,7 @@ if ($socid > 0)
 					{
 						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
-						$facturefournstatic->ref=$obj->ref;
+						$facturefournstatic->ref=$obj->invoice_source_ref;
 						$facturefournstatic->type=$obj->type;
 						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
@@ -1021,7 +1028,7 @@ if ($socid > 0)
 					{
 						print '<td class="minwidth100">';
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
-						$facturefournstatic->ref=$obj->ref;
+						$facturefournstatic->ref=$obj->invoice_source_ref;
 						$facturefournstatic->type=$obj->type;
 						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
@@ -1032,7 +1039,11 @@ if ($socid > 0)
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a></td>';
+					print '<td class="left nowrap">';
+					if ($obj->invoiceid) {
+						print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
+					}
+					print '</td>';
 					print '<td class="right">'.price($obj->amount_ht).'</td>';
 					if (! empty($conf->multicurrency->enabled))
 					{

@@ -147,7 +147,7 @@ class FormTicket
         $extrafields = new ExtraFields($this->db);
         $extralabels = $extrafields->fetch_name_optionals_label($ticketstat->table_element);
 
-        print "\n<!-- Begin form TICKETSUP -->\n";
+        print "\n<!-- Begin form TICKET -->\n";
 
         if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
 
@@ -419,14 +419,14 @@ class FormTicket
 
         if ($withdolfichehead) dol_fiche_end();
 
-        print '<br><center>';
+		print '<div class="center">';
         print '<input class="button" type="submit" name="add" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
 
         if ($this->withcancel) {
-            print " &nbsp; &nbsp; ";
+            print " &nbsp; &nbsp; &nbsp;";
             print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"" . $langs->trans("Cancel") . "\">";
         }
-        print "</center>\n";
+		print '</div>';
 
         print "</form>\n";
         print "<!-- End form TICKET -->\n";
@@ -837,7 +837,7 @@ class FormTicket
             $outputlangs->load('other');
         }
 
-        print "\n<!-- Begin message_form TICKETSUP -->\n";
+        print "\n<!-- Begin message_form TICKET -->\n";
 
         $send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
@@ -939,13 +939,13 @@ class FormTicket
                 if (is_array($contacts) && count($contacts) > 0) {
                     foreach ($contacts as $key => $info_sendto) {
                         if ($info_sendto['email'] != '') {
-                            $sendto[] = dol_escape_htmltag(trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . "> (" . $info_sendto['libelle'] . ")");
+                        	$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">")." <small>(" . dol_escape_htmltag($info_sendto['libelle']) . ")</small>";
                         }
                     }
                 }
 
                 if ($ticketstat->origin_email && !in_array($this->dao->origin_email, $sendto)) {
-                    $sendto[] = $ticketstat->origin_email . "(origin)";
+                	$sendto[] = dol_escape_htmltag($ticketstat->origin_email) . " <small>(".$langs->trans("TicketEmailOriginIssuer").")</small>";
                 }
 
                 if ($ticketstat->fk_soc > 0) {
@@ -953,12 +953,12 @@ class FormTicket
                     $ticketstat->fetch_thirdparty();
 
                     if (is_array($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
-                        $sendto[] = $ticketstat->thirdparty->email . '(' . $langs->trans('Customer') . ')';
+                        $sendto[] = $ticketstat->thirdparty->email . ' <small>(' . $langs->trans('Customer') . ')</small>';
                     }
                 }
 
                 if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-                    $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO . '(generic email)';
+                    $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO . ' <small>(generic email)</small>';
                 }
 
                 // Print recipient list

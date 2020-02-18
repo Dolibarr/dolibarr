@@ -89,7 +89,7 @@ class box_commandes extends ModeleBoxes
             $sql = "SELECT s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
-            $sql.= ", s.logo";
+            $sql.= ", s.logo, s.email";
             $sql.= ", c.ref, c.tms";
             $sql.= ", c.rowid";
             $sql.= ", c.date_commande";
@@ -130,6 +130,7 @@ class box_commandes extends ModeleBoxes
                     $commandestatic->total_ttc = $objp->total_ttc;
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
+                    $societestatic->email = $objp->email;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 

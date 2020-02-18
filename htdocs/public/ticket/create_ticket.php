@@ -53,7 +53,6 @@ $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
-
 /*
  * Actions
  */
@@ -138,9 +137,9 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
         $object->message = GETPOST("message", "none");
         $object->origin_email = $origin_email;
 
-        $object->type_code = GETPOST("type_code", 'az09');
-        $object->category_code = GETPOST("category_code", 'az09');
-        $object->severity_code = GETPOST("severity_code", 'az09');
+        $object->type_code = GETPOST("type_code", 'aZ09');
+        $object->category_code = GETPOST("category_code", 'aZ09');
+        $object->severity_code = GETPOST("severity_code", 'aZ09');
         if (is_array($searched_companies)) {
             $object->fk_soc = $searched_companies[0]->id;
         }
@@ -359,7 +358,7 @@ if ($action != "infos_success") {
     $formticket->withfile = 2;
     $formticket->action = 'create_ticket';
 
-    $formticket->param = array('returnurl' => $_SERVER['PHP_SELF']);
+    $formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
     if (empty($defaultref)) {
         $defaultref = '';

@@ -489,7 +489,7 @@ class ImportCsv extends ModeleImports
                                 {
                                     if (empty($newval)) $newval='0';
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchscalefromcodeunits')
                                 {
                                 	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
                                 	$class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -509,16 +509,17 @@ class ImportCsv extends ModeleImports
                                 		}
                                 		$classinstance=new $class($this->db);
                                 		// Try the fetch from code or ref
-                                		call_user_func_array(array($classinstance, $method), array('', $units, $newval));
-                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->code;
-                                		//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
-                                		if ($classinstance->code != '')	// id may be 0, it is a found value
+                                		call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
+                                		$scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
+                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$scaleorid;
+                                		//print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
+                                		if ($classinstance->id > 0)	// we found record
                                 		{
-                                			$newval=$classinstance->code;
+                                			$newval = $scaleorid ? $scaleorid : 0;
                                 		}
                                 		else
                                 		{
-                                			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                 			else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
                                 			$this->errors[$error]['type']='FOREIGNKEY';
                                 			$errorforthistable++;
@@ -677,7 +678,7 @@ class ImportCsv extends ModeleImports
     				// Loop on each hidden fields to add them into listfields/listvalues
 				    foreach($objimport->array_import_fieldshidden[0] as $key => $val)
     				{
-    				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
+    					if (! preg_match('/^'.preg_quote($alias, '/').'\./', $key)) continue;    // Not a field of current table
     				    if ($val == 'user->id')
     				    {
     				        $listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);

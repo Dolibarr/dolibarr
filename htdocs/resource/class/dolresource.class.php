@@ -533,7 +533,7 @@ class Dolresource extends CommonObject
     				$sql.= $value;
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -617,7 +617,7 @@ class Dolresource extends CommonObject
    					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
-   					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   					$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
    		}
@@ -699,7 +699,7 @@ class Dolresource extends CommonObject
     				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -849,7 +849,7 @@ class Dolresource extends CommonObject
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
 	    if($resource_type)
-	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
+	    	$sql.=" AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
 	    $sql .= ' ORDER BY resource_type';
 
 	    dol_syslog(get_class($this)."::getElementResources", LOG_DEBUG);

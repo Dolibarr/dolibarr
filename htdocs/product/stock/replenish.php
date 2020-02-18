@@ -140,7 +140,6 @@ if ($action == 'order' && isset($_POST['valid']))
                 	if ($qty)
                 	{
 	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
 	                    $line->fk_product = $idprod;
@@ -151,7 +150,13 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    {
 	                        $productsupplier->getMultiLangs();
 	                    }
-	                    $line->desc = $productsupplier->description;
+
+						// if we use supplier description of the products
+						if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+							$desc = $productsupplier->desc_supplier;
+						} else $desc = $productsupplier->description;
+
+	                    $line->desc = $desc;
                         if (! empty($conf->global->MAIN_MULTILANGS))
                         {
                             // TODO Get desc in language of thirdparty
@@ -179,7 +184,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $error=$db->lasterror();
                     dol_print_error($db);
                 }
-                $db->free($resql);
+
                 unset($_POST['fourn' . $i]);
             }
             unset($_POST[$i]);

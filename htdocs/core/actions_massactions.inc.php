@@ -384,6 +384,10 @@ if (! $error && $massaction == 'confirm_presend')
                 foreach ($looparray as $objectid => $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 				{
 					// Make substitution in email content
+					if (! empty($conf->projet->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project))
+					{
+						$objecttmp->fetch_projet();
+					}
 					$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
 					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ', $listofqualifiedref) : $objecttmp->ref);
@@ -736,7 +740,10 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 							$lines[$i]->fk_fournprice,
 							$lines[$i]->pa_ht,
 							$lines[$i]->label,
-							$array_options
+							$array_options,
+							100,
+							0,
+							$lines[$i]->fk_unit
 							);
 						if ($result > 0)
 						{
@@ -1080,7 +1087,7 @@ if (! $error && $massaction == 'validate' && $permtocreate)
 {
 	$objecttmp=new $objectclass($db);
 
-	if ($objecttmp->element == 'invoice' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+	if (($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');

@@ -212,7 +212,7 @@ class FormMail extends Form
 	/**
 	 * Remove a file from the list of attached files (stored in SECTION array)
 	 *
-	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
+	 * @param  	string	$keytodelete     Key index in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
 	public function remove_attached_files($keytodelete)
@@ -627,7 +627,7 @@ class FormMail extends Form
 						$out.= ' &lt;'.$this->tomail.'&gt;';
 						if ($this->withtofree)
 						{
-							$out.= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+							$out.= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.((! is_array($this->withto) && ! is_numeric($this->withto)) ? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) : "").'" />';
 						}
 					}
 					else
@@ -640,7 +640,7 @@ class FormMail extends Form
 				{
 					if (! empty($this->withtofree))
 					{
-						$out.= '<input class="minwidth200" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+						$out.= '<input class="minwidth200" id="sendto" name="sendto" value="'.((! is_array($this->withto) && ! is_numeric($this->withto)) ? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) : "").'" />';
 					}
 					if (! empty($this->withto) && is_array($this->withto))
 					{

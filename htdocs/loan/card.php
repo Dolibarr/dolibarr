@@ -439,7 +439,7 @@ if ($id > 0)
 
 		// Loan card
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
 		// Ref loan
@@ -561,7 +561,7 @@ if ($id > 0)
 		}
 		else
 		{
-			print $object->rate . '%';
+			print price($object->rate) . '%';
 		}
 		print '</td></tr>';
 
@@ -624,7 +624,7 @@ if ($id > 0)
 		else
 		{
 			print '<td class="nowrap">';
-			print $langs->trans("LoanAccountancyCapitalCode");
+			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
 			if (! empty($conf->accounting->enabled))

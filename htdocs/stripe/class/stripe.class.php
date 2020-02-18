@@ -325,7 +325,7 @@ class Stripe extends CommonObject
 		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
 		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
 		}
-				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
+				if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
 		$paymentintent = null;

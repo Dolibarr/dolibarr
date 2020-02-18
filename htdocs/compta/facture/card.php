@@ -278,8 +278,11 @@ if (empty($reshook))
 				$action = '';
 			}
 		} else {
-			// Si non avoir, le signe doit etre positif
-			if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ht < 0) {
+			// If not a credit note, amount with tax must be positive or nul.
+			// Note that amount excluding tax can be negative because you can have a invoice of 100 with vat of 20 that
+			// consumes a credit note of 100 with vat 0 (total with tax is 0 but without tax is -20).
+			// For some cases, credit notes can have a vat of 0 (for example when selling goods in France).
+			if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ttc < 0) {
 				setEventMessages($langs->trans("ErrorInvoiceOfThisTypeMustBePositive"), null, 'errors');
 				$action = '';
 			}
@@ -1346,7 +1349,7 @@ if (empty($reshook))
 								if (empty($amount)) continue;
 
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
-								$descline = $langs->trans('Deposit');
+								$descline = '(DEPOSIT)';
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount=='amount') {
 									$descline.= ' ('. price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
@@ -1936,7 +1939,14 @@ if (empty($reshook))
 			if ($tva_npr)
 				$info_bits |= 0x01;
 
-			if ($usercanproductignorepricemin && (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+			$price2num_pu_ht = price2num($pu_ht);
+			$price2num_remise_percent = price2num($remise_percent);
+			$price2num_price_min = price2num($price_min);
+			if (empty($price2num_pu_ht)) $price2num_pu_ht = 0;
+			if (empty($price2num_remise_percent)) $price2num_remise_percent = 0;
+			if (empty($price2num_price_min)) $price2num_price_min = 0;
+
+			if ($usercanproductignorepricemin && (! empty($price_min) && ($price2num_pu_ht * (1 - $price2num_remise_percent / 100) < $price2num_price_min))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
@@ -3012,7 +3022,7 @@ if ($action == 'create')
 			{
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
-				if (! $optionsav) $tmp.=' disabled';
+				if (! $optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) $tmp.=' disabled';
 				$tmp.= '> ';
 				// Show credit note options only if we checked credit note
 				print '<script type="text/javascript" language="javascript">
@@ -4617,12 +4627,12 @@ elseif ($id > 0 || ! empty($ref))
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == Facture::STATUS_VALIDATED)
 			{
-				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+				// We check if lines of invoice are not already transfered into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
 				if ($ventilExportCompta == 0)
 				{
-					if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_EDITED) || ($resteapayer == $object->total_ttc && empty($object->paye)))
+					if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_EDITED) || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye)))
 					{
 						if (! $objectidnext && $object->is_last_in_cycle())
 						{
@@ -4652,7 +4662,7 @@ elseif ($id > 0 || ! empty($ref))
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
 				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id)))
-				&& ($object->statut == 2 || $object->statut == 3 || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
+				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen))				// A paid invoice (partially or completely)
 			{
 			    if ($object->close_code != 'replaced' || (! $objectidnext)) 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
@@ -4819,6 +4829,7 @@ elseif ($id > 0 || ! empty($ref))
 
 			// For situation invoice with excess received
 			if ($object->statut > Facture::STATUS_DRAFT
+				&& $object->type == Facture::TYPE_SITUATION
 			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
 			    && $usercancreate
 			    && !$objectidnext
@@ -4834,7 +4845,7 @@ elseif ($id > 0 || ! empty($ref))
 			    }
 			}
 
-			// remove situation from cycle
+			// Remove situation from cycle
 			if ($object->statut > Facture::STATUS_DRAFT
 			    && $object->type == Facture::TYPE_SITUATION
 			    && $usercancreate

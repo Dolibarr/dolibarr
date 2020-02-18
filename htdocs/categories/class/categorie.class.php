@@ -842,11 +842,14 @@ class Categorie extends CommonObject
 		if ($type=="contact") {
 			$subcol_name="fk_socpeople";
 		}
+
+		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+
 		$sql = "SELECT s.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.type='.$idoftype;
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
@@ -865,7 +868,15 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$sql.= $this->db->plimit($limit + 1, $offset);
+		if ($limit) {
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1069,7 +1080,7 @@ class Categorie extends CommonObject
         // Include or exclude leaf including $markafterid from tree
         if (count($markafterid) > 0)
         {
-            $keyfiltercatid = implode('|', $markafterid);
+            $keyfiltercatid = '(' . implode('|', $markafterid) . ')';
 
             //print "Look to discard category ".$markafterid."\n";
             $keyfilter1 = '^' . $keyfiltercatid . '$';

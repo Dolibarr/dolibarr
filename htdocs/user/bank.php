@@ -54,6 +54,7 @@ $ok=false;
 if ($user->id == $id) $ok=true; // A user can always read its own card
 if (! empty($user->rights->salaries->read)) $ok=true;
 if (! empty($user->rights->hrm->read)) $ok=true;
+if (! empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) $ok=true;
 if (! $ok)
 {
 	accessforbidden();
@@ -476,7 +477,7 @@ if ($id && ($action == 'edit' || $action == 'create' ) && $user->rights->user->u
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 

@@ -302,7 +302,7 @@ class Boms extends DolibarrApi
     private function _validate($data)
     {
         $myobject = array();
-        foreach ($this->myobject->fields as $field => $propfield) {
+        foreach ($this->bom->fields as $field => $propfield) {
             if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) continue;   // Not a mandatory field
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");

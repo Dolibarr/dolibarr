@@ -658,7 +658,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
         \Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
         try {
-            if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+        	if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id);
             } else {
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id, array("stripe_account" => $stripeacc));
@@ -2109,13 +2109,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                     	payment_method_data: {
         			        billing_details: {
         			        	name: cardholderName.value
-        			        	<?php if (GETPOST('email', 'alpha')) { ?>, email: '<?php echo GETPOST('email', 'alpha'); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty) && is_object($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+        			        	<?php if (GETPOST('email', 'alpha')) { ?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha')); ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty) && is_object($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
-        			        	    city: '<?php echo $object->thirdparty->town; ?>',
-        			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
-        			        	    line1: '<?php echo $object->thirdparty->address; ?>',
-        			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
+        			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+        			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
+        			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
+        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
         			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */

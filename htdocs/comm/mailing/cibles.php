@@ -176,7 +176,7 @@ if ($object->fetch($id) >= 0)
 
 	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, 'email');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlright='';
 	$nbtry = $nbok = 0;
@@ -338,7 +338,7 @@ if ($object->fetch($id) >= 0)
 
 					print '<div class="tagtd">';
 					if (empty($obj->picto)) $obj->picto='generic';
-					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto);
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto, 'class="valignmiddle pictomodule"');
 					print ' ';
 					print $obj->getDesc();
 					print '</div>';

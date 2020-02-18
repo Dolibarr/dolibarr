@@ -51,11 +51,11 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'none');
 		} elseif ($object->fields[$key]['type']=='date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
-			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
-			$value = price2num(GETPOST($key));
+			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
+			$value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
@@ -113,8 +113,8 @@ if ($action == 'update' && ! empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
-			$value = price2num(GETPOST($key));
+		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
+            $value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}

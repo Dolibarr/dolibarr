@@ -42,7 +42,7 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang", 'az09', 3)?GETPOST("selectlang", 'az09', 3):'auto';
+$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin","install","other"));

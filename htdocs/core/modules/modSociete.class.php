@@ -71,7 +71,7 @@ class modSociete extends DolibarrModules
 		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->langfiles = array("companies",'bills');
+		$this->langfiles = array("companies","bills","compta","admin","banks");
 
 		// Constants
 		$this->const = array();
@@ -270,6 +270,7 @@ class modSociete extends DolibarrModules
 			'st.code'=>'ProspectStatus','payterm.libelle'=>'PaymentConditions','paymode.libelle'=>'PaymentMode'
 		);
 		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
+		if (! empty($conf->global->PRODUIT_MULTIPRICES)) $this->export_fields_array[$r]['s.price_level']='PriceLevel';
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
@@ -295,7 +296,8 @@ class modSociete extends DolibarrModules
 			's.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.libelle'=>"Text",
 			'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
 			'st.code'=>'List:c_stcomm:libelle:code','d.nom'=>'Text','u.login'=>'Text','u.firstname'=>'Text','u.lastname'=>'Text','payterm.libelle'=>'Text',
-			'paymode.libelle'=>'Text','s.entity'=>'Numeric'
+			'paymode.libelle'=>'Text','s.entity'=>'Numeric',
+			's.price_level'=>'Numeric'
 		);
 
 		$this->export_entities_array[$r]=array('u.login'=>'user','u.firstname'=>'user','u.lastname'=>'user');	// We define here only fields that use another picto
@@ -410,7 +412,7 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
+            's.fk_departement' => "StateCode",
             's.fk_pays' => "CountryCode",
             's.phone' => "Phone",
             's.fax' => "Fax",
@@ -447,7 +449,7 @@ class modSociete extends DolibarrModules
             's.multicurrency_code' => 'MulticurrencyCurrency'
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'societe' AND entity = " . $conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'societe' AND entity IN (0," . $conf->entity .")";
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
@@ -581,7 +583,7 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
+            's.fk_departement' => "StateCode",
             's.fk_pays' => "CountryCode",
             's.birthday' => "BirthdayDate",
             's.poste' => "Role",

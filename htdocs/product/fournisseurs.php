@@ -154,7 +154,7 @@ if (empty($reshook))
 		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
 		$ref_fourn_old=GETPOST("ref_fourn_old");
 		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
-		$quantity=GETPOST("qty");
+		$quantity=price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent=price2num(GETPOST('remise_percent', 'alpha'));
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
@@ -254,8 +254,8 @@ if (empty($reshook))
 			{
 				$supplier=new Fournisseur($db);
 				$result=$supplier->fetch($id_fourn);
-				if (isset($_POST['ref_fourn_price_id']))
-					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+				if (GETPOSTISSET('ref_fourn_price_id'))
+					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
 
 				$newprice = price2num(GETPOST("price", "alpha"));
 
@@ -481,7 +481,7 @@ if ($id > 0 || $ref)
 				print '<tr>';
 				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
-				$quantity = GETPOST('qty') ? GETPOST('qty') : "1";
+				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'nohtml'), 'MS') : "1";
 				if ($rowid)
 				{
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';

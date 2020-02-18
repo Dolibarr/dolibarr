@@ -37,7 +37,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users","companies","agenda","commercial"));
+$langs->loadLangs(array("users","companies","agenda","commercial","other"));
 
 $action=GETPOST('action', 'alpha');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'actioncommlist';   // To manage different context of search
@@ -301,7 +301,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc I
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql.= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-if ($type) $sql.= " AND c.id = ".$type;
+if ($type) $sql.= " AND c.id = ".(int) $type;
 if ($status == '0') { $sql.= " AND a.percent = 0"; }
 if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started

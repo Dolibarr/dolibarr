@@ -325,8 +325,8 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
 		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
 		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
-		$sql.= ", ".$this->weight_units;
-		$sql.= ", ".$this->size_units;
+		$sql.= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
+		$sql.= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
@@ -602,7 +602,7 @@ class Expedition extends CommonObject
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
 				$this->libelle_incoterms    = $obj->libelle_incoterms;
-
+								
 				$this->db->free($result);
 
 				if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
@@ -1379,6 +1379,7 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
+		$this->lines=array();
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
@@ -1991,6 +1992,12 @@ class Expedition extends CommonObject
 		global $conf,$langs,$user;
 
 		$error=0;
+
+		// Protection. This avoid to move stock later when we should not
+                if ($this->statut == self::STATUS_CLOSED)
+                {
+                        return 0;
+                }
 
 		$this->db->begin();
 

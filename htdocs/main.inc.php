@@ -100,6 +100,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
+	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
@@ -251,7 +253,7 @@ require_once 'master.inc.php';
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (! empty($conf->debugbar->enabled))
+if (!empty($conf->debugbar->enabled) && ! GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile']))
 {
     global $debugbar;
     include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
@@ -772,7 +774,7 @@ if (! defined('NOLOGIN'))
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
-			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0)
 			    {
 			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
@@ -986,7 +988,7 @@ if (! defined('NOLOGIN'))
 }
 
 
-dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'az09').', massaction='.GETPOST('massaction', 'az09'));
+dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -2247,7 +2249,7 @@ if (! function_exists("llxFooter"))
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 
 			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
-			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
 			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);

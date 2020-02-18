@@ -154,7 +154,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	int 	       $rowid 				    Id
 	 * @param 	string 	       $account_number 	        Account number
 	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active char of account
-	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC'.
+	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
 	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
 	 */
     public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
@@ -171,6 +171,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " a.rowid = " . (int) $rowid;
 			} elseif ($account_number) {
 				$sql .= " a.account_number = '" . $this->db->escape($account_number) . "'";
+				$sql .= " AND a.entity = ".$conf->entity;
 			}
 			if (! empty($limittocurrentchart)) {
 				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';

@@ -221,9 +221,9 @@ $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
 $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number AND aa2.fk_pcg_version = '" . $chartaccountcode."' AND aa2.entity = " . $conf->entity;
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.fk_pcg_version = '" . $chartaccountcode."' AND aa3.entity = " . $conf->entity;
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa  ON p.accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '" . $chartaccountcode."' AND aa2.entity = " . $conf->entity;
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '" . $chartaccountcode."' AND aa3.entity = " . $conf->entity;
 $sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql.= " AND l.product_type <= 2";
 // Add search filter like
@@ -249,7 +249,7 @@ if (strlen(trim($search_account))) {
     $sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-    $sql .= natural_search("l.tva_tx", $search_vat, 1);
+    $sql .= natural_search("l.tva_tx", price2num($search_vat), 1);
 }
 if ($search_month > 0)
 {
@@ -311,6 +311,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
+// MAX_JOIN_SIZE can be very low (ex: 300000) on some limited configurations (ex: https://www.online.net/fr/hosting/online-perso)
+// This big SELECT command may exceed the MAX_JOIN_SIZE limit => Therefore we use SQL_BIG_SELECTS=1 to disable the MAX_JOIN_SIZE security
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=1");
+}
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
@@ -418,14 +423,15 @@ if ($result) {
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 
-    $isSellerInEEC = isInEEC($mysoc);
+	$isSellerInEEC = isInEEC($mysoc);
 
-	while ( $i < min($num_lines, $limit) ) {
+    $accountingaccount_codetotid_cache = array();
+
+	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
 		$objp->code_sell_l = '';
 		$objp->code_sell_p = '';
-		$objp->aarowid_suggest = '';
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -437,7 +443,7 @@ if ($result) {
 		$facture_static->type = $objp->ftype;
 
 		$code_sell_p_notset = '';
-		$objp->aarowid_suggest = $objp->aarowid;
+		$objp->aarowid_suggest = '';	// Will be set later
 
         $isBuyerInEEC = isInEEC($objp);
 
@@ -471,8 +477,9 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
+		// Search suggested account for product/service
 		$suggestedaccountingaccountfor = '';
-		if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+		if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
             $suggestedaccountingaccountfor = '';
@@ -488,8 +495,8 @@ if ($result) {
             }
         }
 
-		if (! empty($objp->code_sell)) {
-			//$objp->code_sell_p = $objp->code_sell;       // Code on product
+		if (! empty($objp->code_sell_p)) {
+			// Value was defined previously
 		} else {
 			$code_sell_p_notset = 'color:orange';
 		}
@@ -532,6 +539,7 @@ if ($result) {
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
+		// Country
         print '<td>';
         $labelcountry=($objp->country_code && ($langs->trans("Country".$objp->country_code)!="Country".$objp->country_code))?$langs->trans("Country".$objp->country_code):$objp->country_label;
         print $labelcountry;
@@ -560,13 +568,35 @@ if ($result) {
 		print '</td>';
 
 		// Suggested accounting account
+		// $objp->code_sell_l = default (it takes the country into consideration), $objp->code_sell_p is value for product (it takes the country into consideration too)
 		print '<td>';
-		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		$suggestedid = $objp->aarowid_suggest;
+		/*var_dump($suggestedid);
+		var_dump($objp->code_sell_p);
+		var_dump($objp->code_sell_l);*/
+		if (empty($suggestedid) && empty($objp->code_sell_p) && ! empty($objp->code_sell_l) && ! empty($conf->global->ACCOUNTANCY_AUTOFILL_ACCOUNT_WITH_GENERIC))
+		{
+			if (empty($accountingaccount_codetotid_cache[$objp->code_sell_l]))
+			{
+				$tmpaccount = new AccountingAccount($db);
+				$tmpaccount->fetch(0, $objp->code_sell_l, 1);
+				if ($tmpaccount->id > 0) {
+					$suggestedid = $tmpaccount->id;
+				}
+				$accountingaccount_codetotid_cache[$objp->code_sell_l] = $tmpaccount->id;
+			}
+			else {
+				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_sell_l];
+			}
+		}
+		print $formaccounting->select_account($suggestedid, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
 		print '<td class="center">';
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		//var_dump($objp->aarowid);var_dump($objp->aarowid_intra);var_dump($objp->aarowid_export);var_dump($objp->aarowid_suggest);
+		$ischecked = $objp->aarowid_suggest;
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($ischecked ? "checked" : "") . '/>';
 		print '</td>';
 
 		print '</tr>';
@@ -578,6 +608,9 @@ if ($result) {
 	print '</form>';
 } else {
 	print $db->error();
+}
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=0");  // Enable MAX_JOIN_SIZE limitation
 }
 
 // Add code to auto check the box when we select an account

@@ -207,7 +207,7 @@ class ProductFournisseur extends Product
     /**
      *    Modify the purchase price for a supplier
      *
-     *    @param  	int			$qty				            Min quantity for which price is valid
+     *    @param  	float		$qty				            Min quantity for which price is valid
      *    @param  	float		$buyprice			            Purchase price for the quantity min
      *    @param  	User		$user				            Object user user made changes
      *    @param  	string		$price_base_type	            HT or TTC
@@ -230,7 +230,7 @@ class ProductFournisseur extends Product
      *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
      *    @param  	string		$barcode     	                Barcode
      *    @param  	int		    $fk_barcode_type     	        Barcode type
-     *    @return	int								<0 if KO, >=0 if OK
+     *    @return	int											<0 if KO, >=0 if OK
      */
     public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '')
     {
@@ -272,11 +272,10 @@ class ProductFournisseur extends Product
 
         $buyprice=price2num($buyprice, 'MU');
 		$charges=price2num($charges, 'MU');
-        $qty=price2num($qty);
- 		$error=0;
-
+        $qty=price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice/$qty, 'MU');
 
+		$error=0;
 		$now=dol_now();
 
 		$newvat = $tva_tx;
@@ -331,7 +330,7 @@ class ProductFournisseur extends Product
 			$sql.= " SET fk_user = " . $user->id." ,";
             $sql.= " ref_fourn = '" . $this->db->escape($ref_fourn) . "',";
             $sql.= " desc_fourn = '" . $this->db->escape($desc_fourn) . "',";
-			$sql.= " price = ".price2num($buyprice).",";
+			$sql.= " price = ".$buyprice.",";
 			$sql.= " quantity = ".$qty.",";
 			$sql.= " remise_percent = ".$remise_percent.",";
 			$sql.= " remise = ".$remise.",";
@@ -392,7 +391,6 @@ class ProductFournisseur extends Product
 				return -2;
 			}
         }
-
         else
         {
             dol_syslog(get_class($this) . '::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
@@ -435,11 +433,11 @@ class ProductFournisseur extends Product
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'" . $this->db->escape($fk_barcode_type) . "'");
                 $sql .= ")";
 
-                $idinserted = 0;
+				$this->product_fourn_price_id = 0;
 
                 $resql = $this->db->query($sql);
                 if ($resql) {
-                    $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
+                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
                 }
                 else {
                     $error++;
@@ -447,6 +445,7 @@ class ProductFournisseur extends Product
 
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
+					// $this->product_fourn_price_id must be set
                     $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
@@ -462,7 +461,6 @@ class ProductFournisseur extends Product
 
                     if (empty($error)) {
                         $this->db->commit();
-						$this->product_fourn_price_id = $idinserted;
                         return $this->product_fourn_price_id;
                     } else {
                         $this->db->rollback();
@@ -500,7 +498,7 @@ class ProductFournisseur extends Product
         $sql.= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
         $sql.="  pfp.barcode, pfp.fk_barcode_type";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-        $sql.= " WHERE pfp.rowid = ".$rowid;
+        $sql.= " WHERE pfp.rowid = ".(int) $rowid;
 
         dol_syslog(get_class($this)."::fetch_product_fournisseur_price", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -941,8 +939,6 @@ class ProductFournisseur extends Product
      */
     public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
-        global $conf;
-
         $sql = "SELECT";
         $sql.= " pfpl.rowid, pfp.ref_fourn as supplier_ref, pfpl.datec, u.lastname,";
         $sql.= " pfpl.price, pfpl.quantity";
@@ -963,9 +959,17 @@ class ProductFournisseur extends Product
         {
             $retarray = array();
 
-            while ($record = $this->db->fetch_array($resql))
+            while ($obj = $this->db->fetch_object($resql))
             {
-                $retarray[]=$record;
+                $tmparray = array();
+                $tmparray['rowid'] = $obj->rowid;
+                $tmparray['supplier_ref'] = $obj->supplier_ref;
+                $tmparray['datec'] = $this->db->jdate($obj->datec);
+                $tmparray['lastname'] = $obj->lastname;
+                $tmparray['price'] = $obj->price;
+                $tmparray['quantity'] = $obj->quantity;
+
+            	$retarray[]=$tmparray;
             }
 
             $this->db->free($resql);
@@ -993,7 +997,7 @@ class ProductFournisseur extends Product
         $langs->load("suppliers");
         if (count($productFournLogList) > 0) {
             $out .= '<table class="nobordernopadding" width="100%">';
-            $out .= '<tr><td class="liste_titre">'.$langs->trans("Date").'</td>';
+            $out .= '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Date").'</td>';
             $out .= '<td class="liste_titre right">'.$langs->trans("Price").'</td>';
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
@@ -1034,7 +1038,7 @@ class ProductFournisseur extends Product
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
-            $label.= '<br>';
+            $label.= '<br><br>';
             $label.= '<u>' . $langs->trans("History") . '</u>';
             $label.= $this->displayPriceProductFournisseurLog($logPrices);
         }

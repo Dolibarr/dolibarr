@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1263,6 +1264,11 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified))  $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
+	elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
+		if ($object->type == $object::TYPE_DEPOSIT) {
+			$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
+		}
+	}
 
 	// Description short of product line
 	$libelleproduitservice=$label;
@@ -1289,9 +1295,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
-			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
+			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
 		}
-		if ($desc == '(EXCESS RECEIVED)' && $object->lines[$i]->fk_remise_except)
+		elseif ($desc == '(EXCESS RECEIVED)' && $object->lines[$i]->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
@@ -2127,6 +2133,17 @@ function pdf_getLinkedObjects($object, $outputlangs)
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
+			}
+		}
+		else if ($objecttype == 'fichinter')
+		{
+			$outputlangs->load('interventions');
+			foreach($objects as $elementobject)
+			{
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
 			}
 		}
 		elseif ($objecttype == 'shipping')

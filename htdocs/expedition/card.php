@@ -96,7 +96,6 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 // fetch optionals attributes lines and labels
 $extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 
-
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
@@ -307,7 +306,7 @@ if (empty($reshook))
 
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-            $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+            $array_options[$i] = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
 			if (is_array($extralabelsline)) {
 				// Get extra fields
@@ -384,7 +383,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
+	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
 	            if ($ret <= 0)
 	            {
 	                setEventMessages($object->error, $object->errors, 'errors');
@@ -551,6 +550,7 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	elseif ($action == 'classifyclosed')
@@ -561,6 +561,7 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	/*
@@ -631,7 +632,7 @@ if (empty($reshook))
 				// Extrafields Lines
 				$extrafieldsline = new ExtraFields($db);
 				$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-				$line->array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+				$line->array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 				// Unset extrafield POST Data
 				if (is_array($extralabelsline)) {
 					foreach ($extralabelsline as $key => $value) {
@@ -696,7 +697,7 @@ if (empty($reshook))
 							if ($lines[$i]->entrepot_id > 0)
 							{
 								// single warehouse shipment line
-								if ($lines[i]->entrepot_id == $lotStock->warehouseid)
+								if ($lines[$i]->entrepot_id == $lotStock->warehouseid)
 								{
 									$lineIdToAddLot = $line_id;
 								}
@@ -997,7 +998,7 @@ if ($action == 'create')
             print '<tr><td>';
             print $langs->trans("Weight");
             print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
-            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'));
+            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -1008,7 +1009,7 @@ if ($action == 'create')
             print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
             print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
             print ' ';
-            $text=$formproduct->selectMeasuringUnits("size_units", "size");
+            $text=$formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -1568,10 +1569,10 @@ if ($action == 'create')
 						}
 					}
 
-
 					//Display lines extrafields
 					if (is_array($extralabelslines) && count($extralabelslines)>0)
 					{
+						//var_dump($line);
 						$colspan=5;
 						$orderLineExtrafields = new Extrafields($db);
 						$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1581,7 +1582,7 @@ if ($action == 'create')
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 						print '<tr class="oddeven">';
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
+						print $line->showOptionals($extrafieldsline, 'edit', array('colspan'=>$colspan), $indiceAsked);
 						print '</tr>';
 					}
                 }
@@ -1704,7 +1705,6 @@ elseif ($id || $ref)
 
 		// Print form confirm
 		print $formconfirm;
-
 
 		// Calculate totalWeight and totalVolume for all products
 		// by adding weight and volume of each product line.
@@ -1839,8 +1839,8 @@ elseif ($id || $ref)
 			print '<input name="action" value="settrueWeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
+			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text" class="width50">';
+			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
@@ -1848,16 +1848,14 @@ elseif ($id || $ref)
 		else
 		{
 			print $object->trueWeight;
-			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units, "weight"):'';
+			print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
 		}
 
         // Calculated
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
-			//print $totalWeight.' '.measuring_units_string(0, "weight");
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
-			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')';
 			if (!empty($object->trueWeight)) print ')';
 		}
 		print '</td></tr>';
@@ -1865,7 +1863,7 @@ elseif ($id || $ref)
 		// Width
 		print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
 		print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->expedition->creer);
-		print ($object->trueWidth && $object->width_units!='')?' '.measuring_units_string($object->width_units, "size"):'';
+		print ($object->trueWidth && $object->width_units!='')?' '.measuringUnitString(0, "size", $object->width_units):'';
 		print '</td></tr>';
 
 		// Height
@@ -1876,8 +1874,8 @@ elseif ($id || $ref)
 			print '<input name="action" value="settrueHeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units);
+			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text" class="width50">';
+			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
@@ -1885,7 +1883,7 @@ elseif ($id || $ref)
 		else
 		{
 			print $object->trueHeight;
-			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units, "size"):'';
+			print ($object->trueHeight && $object->height_units!='')?' '.measuringUnitString(0, "size", $object->height_units):'';
 		}
 
 		print '</td></tr>';
@@ -1893,7 +1891,7 @@ elseif ($id || $ref)
 		// Depth
 		print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
 		print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->expedition->creer);
-		print ($object->trueDepth && $object->depth_units!='')?' '.measuring_units_string($object->depth_units, "size"):'';
+		print ($object->trueDepth && $object->depth_units!='')?' '.measuringUnitString(0, "size", $object->depth_units):'';
 		print '</td></tr>';
 
 		// Volume
@@ -1913,15 +1911,13 @@ elseif ($id || $ref)
 		{
 			if ($volumeUnit < 50)
 			{
-			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
 			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			}
-			else print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
+			else print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
 		}
 		if ($totalVolume > 0)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			//print $totalVolume.' '.measuring_units_string(0, "volume");
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
@@ -2099,8 +2095,6 @@ elseif ($id || $ref)
 		}
 		print "</tr>\n";
 
-		$var=false;
-
 		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 		{
 			$object->fetch_thirdparty();
@@ -2196,6 +2190,7 @@ elseif ($id || $ref)
 					$product_static->id=$lines[$i]->fk_product;
 					$product_static->ref=$lines[$i]->ref;
 					$product_static->status_batch=$lines[$i]->product_tobatch;
+
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
@@ -2405,19 +2400,19 @@ elseif ($id || $ref)
 				}
 
 				// Weight
-				print '<td class="center">';
-				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units, "weight");
+				print '<td class="center linecolweight">';
+				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "weight", $lines[$i]->weight_units);
 				else print '&nbsp;';
 				print '</td>';
 
 				// Volume
-				print '<td class="center">';
-				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume");
+				print '<td class="center linecolvolume">';
+				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units);
 				else print '&nbsp;';
 				print '</td>';
 
 				// Size
-				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume").'</td>';
+				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units).'</td>';
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2429,10 +2424,10 @@ elseif ($id || $ref)
 				{
 					// edit-delete buttons
 					print '<td class="linecoledit center">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">' . img_edit() . '</a>';
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">' . img_edit() . '</a>';
 					print '</td>';
 					print '<td class="linecoldelete" width="10">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=deleteline&amp;lineid=' . $lines[$i]->id . '">' . img_delete() . '</a>';
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=deleteline&amp;lineid=' . $lines[$i]->id . '">' . img_delete() . '</a>';
 					print '</td>';
 
 					// Display lines extrafields
@@ -2448,10 +2443,10 @@ elseif ($id || $ref)
 				// Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines)>0) {
 					$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
-					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($lines[$i]->id);
-					print '<tr class="oddeven">';
-					if ($action == 'editline' && $lines[$i]->id == $line_id)
+					$line = $lines[$i];
+					$line->fetch_optionals($line->id);
+
+					if ($action == 'editline' && $line->id == $line_id)
 					{
 						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 					}
@@ -2459,7 +2454,6 @@ elseif ($id || $ref)
 					{
 						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 					}
-					print '</tr>';
 				}
 			}
 		}

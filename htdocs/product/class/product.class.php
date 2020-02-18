@@ -256,11 +256,15 @@ class Product extends CommonObject
      */
     public $url;
 
-    //! Unites de mesure
+    //! Metric of products
     public $weight;
     public $weight_units;
     public $length;
     public $length_units;
+    public $width;
+    public $width_units;
+    public $height;
+    public $height_units;
     public $surface;
     public $surface_units;
     public $volume;
@@ -815,9 +819,9 @@ class Product extends CommonObject
         $this->height = price2num($this->height);
         $this->height_units = trim($this->height_units);
         // set unit not defined
-        if ($this->length_units) { $this->width_units = $this->length_units;    // Not used yet
+        if (is_numeric($this->length_units)) { $this->width_units = $this->length_units;    // Not used yet
         }
-        if ($this->length_units) { $this->height_units = $this->length_units;    // Not used yet
+        if (is_numeric($this->length_units)) { $this->height_units = $this->length_units;    // Not used yet
         }
         // Automated compute surface and volume if not filled
         if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
@@ -1855,6 +1859,9 @@ class Product extends CommonObject
         if (empty($newnpr)) {
             $newnpr=0;
         }
+        if (empty($newminprice)) {
+        	$newminprice=0;
+        }
 
         // Check parameters
         if ($newvat == '') {
@@ -2629,12 +2636,13 @@ class Product extends CommonObject
     /**
      *  Charge tableau des stats expedition client pour le produit/service
      *
-     * @param  int    $socid           Id societe pour filtrer sur une societe
-     * @param  string $filtrestatut    Id statut pour filtrer sur un statut
-     * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
-     * @return array                   Tableau des stats
+     * @param   int         $socid                  Id societe pour filtrer sur une societe
+     * @param   string      $filtrestatut           [=''] Ids order status separated by comma
+     * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
+     * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
+     * @return  int         <0 if KO, >0 if OK (Tableau des stats)
      */
-    public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
+    public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $filterShipmentStatus = '')
     {
         // phpcs:enable
         global $conf,$user;
@@ -2664,6 +2672,7 @@ class Product extends CommonObject
         if ($filtrestatut <> '') {
             $sql.= " AND c.fk_statut in (".$filtrestatut.")";
         }
+        if (!empty($filterShipmentStatus)) $sql.= " AND e.fk_statut IN (" . $filterShipmentStatus . ")";
 
         $result = $this->db->query($sql);
         if ($result ) {
@@ -3437,7 +3446,7 @@ class Product extends CommonObject
      * @param  int    $id_fourn  Supplier id
      * @param  string $ref_fourn Supplier ref
      * @param  float  $quantity  Quantity minimum for price
-     * @return int                 < 0 if KO, 0 if link already exists for this product, > 0 if OK
+     * @return int               < 0 if KO, 0 if link already exists for this product, > 0 if OK
      */
     public function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
     {
@@ -3447,6 +3456,9 @@ class Product extends CommonObject
         $now=dol_now();
 
         dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
+
+        // Clean parameters
+        $quantity = price2num($quantity, 'MS');
 
         if ($ref_fourn) {
             $sql = "SELECT rowid, fk_product";
@@ -3474,7 +3486,7 @@ class Product extends CommonObject
         if ($ref_fourn) { $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
         } else { $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
         }
-        $sql.= " AND quantity = '".$quantity."'";
+        $sql.= " AND quantity = ".$quantity;
         $sql.= " AND fk_product = ".$this->id;
         $sql.= " AND entity IN (".getEntity('productsupplierprice').")";
 
@@ -3982,28 +3994,28 @@ class Product extends CommonObject
         if ($this->type == Product::TYPE_PRODUCT)
         {
             if ($this->weight) {
-                $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units, "weight");
+            	$label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
             }
             if ($this->length) {
-                $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units, 'size');
+            	$label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
             }
             if ($this->width) {
-                $label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuring_units_string($this->width_units, 'size');
+            	$label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
             }
             if ($this->height) {
-                $label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuring_units_string($this->height_units, 'size');
+            	$label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
             }
             if ($this->surface) {
-                $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units, 'surface');
+            	$label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
             }
             if ($this->volume) {
-                $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units, 'volume');
+            	$label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
             }
         }
 
         if ($this->type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
             if (! empty($conf->productbatch->enabled)) {
-                   $langs->load("productbatch");
+                $langs->load("productbatch");
                 $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
             }
         }
@@ -4354,12 +4366,12 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *    Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
-     *    This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
-     *    If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
+     * Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
+     * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
+     * If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
      *
-     * @param  string $option '' = Load all stock info, also from closed and internal warehouses,
-     * @return int                   < 0 if KO, > 0 if OK
+     * @param  string $option 		'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+     * @return int                  < 0 if KO, > 0 if OK
      * @see    load_virtual_stock(), loadBatchInfo()
      */
     public function load_stock($option = '')
@@ -4389,7 +4401,8 @@ class Product extends CommonObject
         $sql.= " WHERE w.entity IN (".getEntity('stock').")";
         $sql.= " AND w.rowid = ps.fk_entrepot";
         $sql.= " AND ps.fk_product = ".$this->id;
-        if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) { $sql.= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+        if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
+        	$sql.= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
         }
 
         dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
@@ -4404,7 +4417,8 @@ class Product extends CommonObject
                     $this->stock_warehouse[$row->fk_entrepot] = new stdClass();
                     $this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
                     $this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
-                    if ((! preg_match('/nobatch/', $option)) && $this->hasbatch()) { $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
+                    if ((! preg_match('/nobatch/', $option)) && $this->hasbatch()) {
+                    	$this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
                     }
                     $this->stock_reel+=$row->reel;
                     $i++;
@@ -4452,7 +4466,14 @@ class Product extends CommonObject
 		}
 		if (! empty($conf->expedition->enabled))
 		{
-			$result=$this->load_stats_sending(0, '1,2', 1);
+            require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+            $filterShipmentStatus = '';
+            if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+                $filterShipmentStatus = Expedition::STATUS_VALIDATED  . ',' . Expedition::STATUS_CLOSED;
+            } elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+                $filterShipmentStatus = Expedition::STATUS_CLOSED;
+            }
+            $result = $this->load_stats_sending(0, '1,2', 1, $filterShipmentStatus);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_sending_client=$this->stats_expedition['qty'];
 		}

@@ -879,6 +879,7 @@ class User extends CommonObject
 		else
 		{
 			$sql.= " AND gr.entity = ".$conf->entity;
+			$sql.= " AND gu.entity = ".$conf->entity;
 			$sql.= " AND r.entity = ".$conf->entity;
 		}
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
@@ -1293,8 +1294,8 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Cree et positionne $this->id
-		$result=$this->create($user);
+		// Create user and set $this->id. Trigger is disabled because executed later.
+		$result=$this->create($user, 1);
 		if ($result > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
