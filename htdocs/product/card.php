@@ -1187,7 +1187,7 @@ else
 			{
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 				print '<td>';
-                if($type = 0) {
+                if($type == 0) {
                     $accountancy_code_sell_intra = (GETPOST('accountancy_code_sell_intra', 'alpha')?(GETPOST('accountancy_code_sell_intra', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
                 } else {
                     $accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -1199,7 +1199,7 @@ else
 			// Accountancy_code_sell_export
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 			print '<td>';
-            if($type = 0)
+            if($type == 0)
             {
                 $accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export', 'alpha')?(GETPOST('accountancy_code_sell_export', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT);
             } else {
