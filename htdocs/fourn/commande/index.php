@@ -249,7 +249,7 @@ $sql = "SELECT";
 if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= " DISTINCT";
 }
-$sql.= " u.rowid, u.lastname, u.firstname, u.email";
+$sql.= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 {
@@ -288,6 +288,7 @@ if ($resql)
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->email;
+			$userstatic->statut = $obj->statut;
 			print $userstatic->getNomUrl(1);
 			print '</td>';
 			print "</tr>\n";
