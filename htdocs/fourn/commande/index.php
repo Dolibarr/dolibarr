@@ -251,8 +251,6 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY
 }
 $sql.= " u.rowid, u.lastname, u.firstname, u.email";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= ",".MAIN_DB_PREFIX."user_rights as ur";
-$sql.= ",".MAIN_DB_PREFIX."rights_def as rd";
 if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 {
 	$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
@@ -263,13 +261,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY
 else
 {
 	$sql.= " WHERE (u.entity IN (".getEntity('user').")";
-	$sql.= " AND ur.entity = ".$conf->entity.")";
 }
-$sql.= " AND u.rowid = ur.fk_user";
-$sql.= " AND ur.fk_id = rd.id";
-$sql.= " AND module = 'fournisseur'";
-$sql.= " AND perms = 'commande'";
-$sql.= " AND subperms = 'approuver'";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -285,15 +277,22 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-		print '<td>';
-		$userstatic->id=$obj->rowid;
-		$userstatic->lastname=$obj->lastname;
-		$userstatic->firstname=$obj->firstname;
-		$userstatic->email=$obj->email;
-		print $userstatic->getNomUrl(1);
-		print '</td>';
-		print "</tr>\n";
+		$userstatic = new User($db);
+		$userstatic->id = $obj->rowid;
+		$userstatic->getrights('fournisseur');
+
+		if (! empty($userstatic->rights->fournisseur->commande->approuver))
+		{
+			print '<tr class="oddeven">';
+			print '<td>';
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->email = $obj->email;
+			print $userstatic->getNomUrl(1);
+			print '</td>';
+			print "</tr>\n";
+		}
+
 		$i++;
 	}
 	print "</table><br>";
