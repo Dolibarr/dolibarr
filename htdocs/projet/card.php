@@ -1048,6 +1048,11 @@ elseif ($object->id > 0)
 	        }*/
 			if (strcmp($object->opp_amount, '')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 			print '</td></tr>';
+
+            // Opportunity Weighted Amount
+            print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
+            if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+            print '</td></tr>';
 		}
 
 		// Date start - end
