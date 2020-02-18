@@ -254,8 +254,11 @@ class modProjet extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         // End add extra fields
 		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime','ptt.task_date'=>'TaskTimeDate','ptt.task_duration'=>"TimesSpent",'ptt.fk_user'=>"TaskTimeUser",'ptt.note'=>"TaskTimeNote"));
-        $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time','ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time"));
-
+		$this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time','ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time"));
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('f.ref'=>"Billed"));
+			$this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('f.ref'=>"task_time"));
+		}
         $this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'projet as p';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON p.rowid = extra.fk_object';
@@ -264,6 +267,9 @@ class modProjet extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON ptt.invoice_id = f.rowid';
+		}
 		$this->export_sql_end[$r] .=" WHERE p.entity IN (".getEntity('project').")";
 
 
