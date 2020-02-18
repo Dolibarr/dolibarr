@@ -262,6 +262,7 @@ else
 {
 	$sql.= " WHERE (u.entity IN (".getEntity('user').")";
 }
+$sql.= " AND u.fk_soc IS NULL"; // An external user can not approved
 
 $resql = $db->query($sql);
 if ($resql)
