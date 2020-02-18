@@ -147,7 +147,7 @@ if ($action == 'update' && !$cancel)
  *	View
  */
 
-$form = new Form($db);
+$childids = $user->getAllChildIds(1);
 
 llxHeader(null, $langs->trans("BankAccounts"));
 
@@ -286,10 +286,10 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	/*
-	 * Last salaries
+	 * Latest salary payments
 	 */
 	if (!empty($conf->salaries->enabled) &&
-		(($object->fk_user == $user->id) || ($user->rights->salaries->read && $object->id == $user->id))
+		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
 		)
 	{
 		$salary = new PaymentSalary($db);
