@@ -918,7 +918,6 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 		print $form->textwithpicto($langs->trans("Income")." ".$langs->trans('TTC'), $htmlhelp);
 		print '</td>';
 	}
-
 }
 print '</tr>';
 
@@ -950,19 +949,19 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 		}
 		else
 		{
-				if (isset($decaiss[$case]) && $decaiss[$case] != 0)
-				{
-					print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
-					if (!isset($totsorties[$annee])) $totsorties[$annee] = 0;
-					$totsorties[$annee] += $decaiss[$case];
-				}
-				print '</td><td class="right">';
-				if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
-				{
-					print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss_ttc[$case], 'MT')).'</a>';
-					if (!isset($totsorties_ttc[$annee])) $totsorties_ttc[$annee] = 0;
-					$totsorties_ttc[$annee] += $decaiss_ttc[$case];
-				}
+			if (isset($decaiss[$case]) && $decaiss[$case] != 0)
+			{
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
+				if (!isset($totsorties[$annee])) $totsorties[$annee] = 0;
+				$totsorties[$annee] += $decaiss[$case];
+			}
+			print '</td><td class="right">';
+			if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
+			{
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss_ttc[$case], 'MT')).'</a>';
+				if (!isset($totsorties_ttc[$annee])) $totsorties_ttc[$annee] = 0;
+				$totsorties_ttc[$annee] += $decaiss_ttc[$case];
+			}
 		}
 		print "</td>";
 
