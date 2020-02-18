@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -158,7 +158,7 @@ $head = mailmanspip_admin_prepare_head();
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
 
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
@@ -229,7 +229,7 @@ else
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="testsubscribe">';
 
     print $langs->trans("TestSubscribe").'<br>';
@@ -238,7 +238,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     print '</form>';
 
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="testunsubscribe">';
 
     print $langs->trans("TestUnSubscribe").'<br>';

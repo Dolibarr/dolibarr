@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -49,17 +49,13 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('L',  '98','VolumeUnitlitre','L', 'volume', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('GAL','99','VolumeUnitgallon','gal', 'volume', 1);
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('GAL','99','VolumeUnitgallon','gal', 'volume', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('GAL','99','VolumeUnitgallon','gal', 'volume', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('GAL','99','VolumeUnitgallon','gal', 'volume', 1);
-
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('P',   '0','Piece','p', 'qty', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('SET', '0','Set','set', 'qty', 1);
 
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('S',       '0','second','s', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MI',     '60','minute','i', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('H',    '3600','hour','h', 'time', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','12960000','day','d', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D',   '86400','day','d', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('W',  '604800','week','w', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MO','2629800','month','m', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','y', 'time', 1);

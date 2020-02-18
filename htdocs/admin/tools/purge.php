@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,10 +83,10 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
@@ -97,9 +97,9 @@ if (! empty($conf->syslog->enabled))
 	$filelogparam=$filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
 	{
-	   $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
-	   $filelogparam.=basename($filelog);
-	   $filelogparam.='">'.$filelog.'</a>';
+	    $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	    $filelogparam.=basename($filelog);
+	    $filelogparam.='">'.$filelog.'</a>';
 	}
 	print '> '.$langs->trans("PurgeDeleteLogFile", $filelogparam);
 	print '<br><br>';

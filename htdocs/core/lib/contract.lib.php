@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,8 +30,8 @@
  */
 function contract_prepare_head(Contrat $object)
 {
-	global $db, $langs, $conf;
-	
+	global $db, $langs, $conf, $user;
+
 	$h = 0;
 	$head = array();
 
@@ -45,7 +45,7 @@ function contract_prepare_head(Contrat $object)
 	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -63,7 +63,7 @@ function contract_prepare_head(Contrat $object)
 		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
     	$head[$h][2] = 'note';
     	$h++;
     }
@@ -75,13 +75,18 @@ function contract_prepare_head(Contrat $object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id;
+	$head[$h][1].= $langs->trans("Events");
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+		$head[$h][1].= '/';
+		$head[$h][1].= $langs->trans("Agenda");
+	}
+	$head[$h][2] = 'agenda';
 	$h++;
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'contract', 'remove');
@@ -96,7 +101,7 @@ function contract_prepare_head(Contrat $object)
  */
 function contract_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -122,9 +127,7 @@ function contract_admin_prepare_head()
     $head[$h][2] = 'attributeslines';
     $h++;
 
-
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'contract_admin', 'remove');
 
-		return $head;
+	return $head;
 }

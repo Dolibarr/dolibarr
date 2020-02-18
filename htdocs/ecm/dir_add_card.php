@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,10 +44,10 @@ $pageid  = GETPOST('pageid', 'int');
 if (empty($module)) $module='ecm';
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $section=$urlsection=GETPOST('section', 'alpha');
@@ -141,10 +141,10 @@ if ($action == 'add' && $permtoadd)
 	{
 		if ($module == 'ecm')
 		{
-			$ecmdir->ref                = $ref;
-			$ecmdir->label              = $label;
-			$ecmdir->description        = $desc;
-			$ecmdir->fk_parent          = (int) $catParent;
+			$ecmdir->ref            = $ref;
+			$ecmdir->label          = $label;
+			$ecmdir->description    = $desc;
+			$ecmdir->fk_parent      = (int) $catParent;
 
 			$id = $ecmdir->create($user);
 			if ($id <= 0)
@@ -225,7 +225,7 @@ if ($action == 'create')
 	// Create
 	//***********************
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
@@ -237,7 +237,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
@@ -277,14 +277,14 @@ if (empty($action) || $action == 'delete_section')
 	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
-/*
+    /*
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
 	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php">'.$langs->trans("ECMRoot").'</a>';
 	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
 	print "<br><br>";
-*/
+    */
 
 	// Confirmation de la suppression d'une ligne categorie
 	if ($action == 'delete_section')

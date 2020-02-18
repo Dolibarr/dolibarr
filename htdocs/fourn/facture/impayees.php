@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,10 +39,10 @@ $socid=GETPOST('socid', 'int');
 $option = GETPOST('option');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -185,7 +185,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$i = 0;
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
-		print '<table class="liste" width="100%">';
+		print '<table class="liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.rowid", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, "", $sortfield, $sortorder);

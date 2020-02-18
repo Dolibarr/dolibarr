@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,6 +39,7 @@ $action=GETPOST('action', 'aZ09');
  *	Actions
  */
 
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
@@ -87,7 +88,7 @@ $head=categoriesadmin_prepare_head();
 dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';

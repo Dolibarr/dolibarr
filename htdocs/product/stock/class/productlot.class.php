@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,7 +26,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -45,7 +45,10 @@ class Productlot extends CommonObject
 	 */
 	public $table_element = 'product_lot';
 
-	public $picto='barcode';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'barcode';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -56,14 +59,14 @@ class Productlot extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' 		=> array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'batch'         =>array('type'=>'varchar(30)', 'label'=>'Batch',           'enabled'=>1, 'visible'=>1,  'notnull'=>0,  'showoncombobox'=>1, 'index'=>1, 'position'=>10,  'comment'=>'Batch'),
-		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1,  'notnull'=>1,  'index'=>1, 'position'=>20),
-		'datec'         =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-		'fk_user_creat'=>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510, 'foreignkey'=>'llx_user.rowid'),
-		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511)
+		'batch'         =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch'),
+		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
+		'datec'         =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
+		'tms'           =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
+		'fk_user_creat'=>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511)
 	);
 
 	/**
@@ -147,56 +150,56 @@ class Productlot extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		$sql.= 'entity,';
-		$sql.= 'fk_product,';
-		$sql.= 'batch,';
-		$sql.= 'eatby,';
-		$sql.= 'sellby,';
-		$sql.= 'datec,';
-		$sql.= 'fk_user_creat,';
-		$sql.= 'fk_user_modif,';
-		$sql.= 'import_key';
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql .= 'entity,';
+		$sql .= 'fk_product,';
+		$sql .= 'batch,';
+		$sql .= 'eatby,';
+		$sql .= 'sellby,';
+		$sql .= 'datec,';
+		$sql .= 'fk_user_creat,';
+		$sql .= 'fk_user_modif,';
+		$sql .= 'import_key';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->entity)?$conf->entity:$this->entity).',';
-		$sql .= ' '.(! isset($this->fk_product)?'NULL':$this->fk_product).',';
-		$sql .= ' '.(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").',';
-		$sql .= ' '.(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").',';
-		$sql .= ' '.(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").',';
+		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity).',';
+		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
+		$sql .= ' '.(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").',';
+		$sql .= ' '.(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").',';
+		$sql .= ' '.(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").',';
 		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
-		$sql .= ' '.(! isset($this->fk_user_creat)?'NULL':$this->fk_user_creat).',';
-		$sql .= ' '.(! isset($this->fk_user_modif)?'NULL':$this->fk_user_modif).',';
-		$sql .= ' '.(! isset($this->import_key)?'NULL':$this->import_key);
+		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
+		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
+		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : $this->import_key);
 		$sql .= ')';
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			// Actions on extra fields
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$result=$this->insertExtraFields();
+				$result = $this->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
 				}
 			}
 
-			if (! $error && ! $notrigger) {
+			if (!$error && !$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
 				// Call triggers
-				$result=$this->call_trigger('PRODUCTLOT_CREATE', $user);
+				$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -206,7 +209,7 @@ class Productlot extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -217,9 +220,9 @@ class Productlot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param int    $product_id  Id of product, batch number parameter required
-	 * @param string $batch batch number
+	 * @param int    $id  			Id of lot/batch
+	 * @param int    $product_id  	Id of product, batch number parameter required
+	 * @param string $batch 		batch number
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -240,11 +243,11 @@ class Productlot extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key";
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($product_id > 0 && $batch != '') {
-			$sql .= " WHERE t.batch = '". $this->db->escape($batch) . "' AND t.fk_product = " . $product_id;
+			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".$product_id;
 		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
+			$sql .= ' WHERE t.rowid = '.$id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -258,7 +261,7 @@ class Productlot extends CommonObject
 				//$this->ref = $obj->fk_product.'_'.$obj->batch;
 
 				$this->batch = $obj->batch;
-				$this->entity = (!empty($obj->entity)?$obj->entity:$conf->entity); // Prevent "null" entity
+				$this->entity = (!empty($obj->entity) ? $obj->entity : $conf->entity); // Prevent "null" entity
 				$this->fk_product = $obj->fk_product;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
@@ -280,10 +283,10 @@ class Productlot extends CommonObject
 				return 0;
 			}
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -327,38 +330,38 @@ class Productlot extends CommonObject
 
 		if (empty($this->oldcopy))
 		{
-			$org=new self($this->db);
+			$org = new self($this->db);
 			$org->fetch($this->id);
-			$this->oldcopy=$org;
+			$this->oldcopy = $org;
 		}
 
 		// Update request
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		$sql .= ' entity = '.(isset($this->entity)?$this->entity:"null").',';
-		$sql .= ' fk_product = '.(isset($this->fk_product)?$this->fk_product:"null").',';
-		$sql .= ' batch = '.(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").',';
-		$sql .= ' eatby = '.(! isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').',';
-		$sql .= ' sellby = '.(! isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
-		$sql .= ' datec = '.(! isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
+		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' batch = '.(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").',';
+		$sql .= ' eatby = '.(!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').',';
+		$sql .= ' sellby = '.(!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
+		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
-		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat)?$this->fk_user_creat:"null").',';
-		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif)?$this->fk_user_modif:"null").',';
-		$sql .= ' import_key = '.(isset($this->import_key)?$this->import_key:"null");
-		$sql .= ' WHERE rowid=' . $this->id;
+		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
+		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif) ? $this->fk_user_modif : "null").',';
+		$sql .= ' import_key = '.(isset($this->import_key) ? $this->import_key : "null");
+		$sql .= ' WHERE rowid='.$this->id;
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		// Actions on extra fields
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		{
-			$result=$this->insertExtraFields();
+			$result = $this->insertExtraFields();
 			if ($result < 0)
 			{
 				$error++;
@@ -367,7 +370,7 @@ class Productlot extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result=$this->call_trigger('PRODUCTLOT_MODIFY', $user);
+			$result = $this->call_trigger('PRODUCTLOT_MODIFY', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -376,7 +379,7 @@ class Productlot extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -413,14 +416,14 @@ class Productlot extends CommonObject
 		//}
 
 		if (!$error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE rowid=' . $this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql .= ' WHERE rowid='.$this->id;
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -428,7 +431,7 @@ class Productlot extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -466,9 +469,9 @@ class Productlot extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$error ++;
+			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -481,7 +484,7 @@ class Productlot extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -501,11 +504,11 @@ class Productlot extends CommonObject
 	/**
 	 *	Return label of a given status
 	 *
-	 *	@param	int		$statut     Status
+	 *	@param	int		$status     Status
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 	    global $langs;
@@ -536,16 +539,16 @@ class Productlot extends CommonObject
 
         $result = '';
 
-        $label = '<u>' . $langs->trans("Batch") . '</u>';
-        $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Batch') . ':</b> ' . $this->batch;
+        $label = '<u>'.$langs->trans("Batch").'</u>';
+        $label .= '<div width="100%">';
+        $label .= '<b>'.$langs->trans('Batch').':</b> '.$this->batch;
         if ($this->eatby)
         {
-            $label.= '<br><b>' . $langs->trans('EatByDate') . ':</b> ' . dol_print_date($this->eatby, 'day');
+            $label .= '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
         }
         if ($this->sellby)
         {
-            $label.= '<br><b>' . $langs->trans('SellByDate') . ':</b> ' . dol_print_date($this->sellby, 'day');
+            $label .= '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
         }
 
         $url = DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id;
@@ -553,31 +556,31 @@ class Productlot extends CommonObject
         if ($option != 'nolink')
         {
         	// Add param to save lastsearch_values or not
-        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
         }
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip))
         {
-        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
-        		$label=$langs->trans("ShowMyObject");
-        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        		$label = $langs->trans("ShowMyObject");
+        		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
         	}
-        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
         }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-        $linkend='</a>';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= $this->batch;
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= $this->batch;
         $result .= $linkend;
 
         return $result;

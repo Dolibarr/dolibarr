@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -117,9 +117,6 @@ class InterfaceStripe
 		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
-
-		// Load translation files required by the page
-        $langs->loadLangs(array("members","other","users","mails"));
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
@@ -254,7 +251,6 @@ class InterfaceStripe
 
 		// If payment mode is linked to Stripee, we update/delete Stripe too
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
-
 			// For creation of credit card, we do not create in Stripe automatically
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {

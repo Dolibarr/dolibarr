@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,12 +26,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","admin","products","sms","other","errors"));
+$langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
 if (!$user->admin)
 accessforbidden();
 
-$substitutionarrayfortest=array(
+$substitutionarrayfortest = array(
 '__ID__' => 'TESTIdRecord',
 '__PHONEFROM__' => 'TESTPhoneFrom',
 '__PHONETO__' => 'TESTPhoneTo',
@@ -39,7 +39,7 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -63,16 +63,16 @@ if ($action == 'update' && empty($_POST["cancel"]))
 /*
  * Send sms
  */
-if ($action == 'send' && ! $_POST['cancel'])
+if ($action == 'send' && !$_POST['cancel'])
 {
-	$error=0;
+	$error = 0;
 
-	$smsfrom='';
-	if (! empty($_POST["fromsms"])) $smsfrom=GETPOST("fromsms");
-	if (empty($smsfrom)) $smsfrom=GETPOST("fromname");
+	$smsfrom = '';
+	if (!empty($_POST["fromsms"])) $smsfrom = GETPOST("fromsms");
+	if (empty($smsfrom)) $smsfrom = GETPOST("fromname");
 	$sendto     = GETPOST("sendto");
 	$body       = GETPOST('message');
-	$deliveryreceipt= GETPOST("deliveryreceipt");
+	$deliveryreceipt = GETPOST("deliveryreceipt");
     $deferred   = GETPOST('deferred');
     $priority   = GETPOST('priority');
     $class      = GETPOST('class');
@@ -82,40 +82,40 @@ if ($action == 'send' && ! $_POST['cancel'])
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 	$formsms = new FormSms($db);
 
-	if (! empty($formsms->error))
+	if (!empty($formsms->error))
 	{
 		setEventMessages($formsms->error, $formsms->errors, 'errors');
-	    $action='test';
+	    $action = 'test';
 	    $error++;
 	}
     if (empty($body))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
-        $action='test';
+        $action = 'test';
         $error++;
     }
-	if (empty($smsfrom) || ! str_replace('+', '', $smsfrom))
+	if (empty($smsfrom) || !str_replace('+', '', $smsfrom))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
-        $action='test';
+        $action = 'test';
 		$error++;
 	}
-	if (empty($sendto) || ! str_replace('+', '', $sendto))
+	if (empty($sendto) || !str_replace('+', '', $sendto))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
-        $action='test';
+        $action = 'test';
 		$error++;
 	}
-	if (! $error)
+	if (!$error)
 	{
 		// Make substitutions into message
         complete_substitutions_array($substitutionarrayfortest, $langs);
-	    $body=make_substitutions($body, $substitutionarrayfortest);
+	    $body = make_substitutions($body, $substitutionarrayfortest);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
-		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class);  // This define OvhSms->login, pass, session and account
-		$result=$smsfile->sendfile(); // This send SMS
+		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
+		$result = $smsfile->sendfile(); // This send SMS
 
 		if ($result)
 		{
@@ -128,7 +128,7 @@ if ($action == 'send' && ! $_POST['cancel'])
 			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
-		$action='';
+		$action = '';
 	}
 }
 
@@ -138,35 +138,35 @@ if ($action == 'send' && ! $_POST['cancel'])
  * View
  */
 
-$linuxlike=1;
-if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
-if (preg_match('/^mac/i', PHP_OS)) $linuxlike=0;
+$linuxlike = 1;
+if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
 
-$wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
+$wikihelp = 'EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 
-print $langs->trans("SmsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("SmsDesc")."</span><br>\n";
 print "<br>\n";
 
 // List of sending methods
-$listofmethods=(is_array($conf->modules_parts['sms'])?$conf->modules_parts['sms']:array());
+$listofmethods = (is_array($conf->modules_parts['sms']) ? $conf->modules_parts['sms'] : array());
 asort($listofmethods);
 
 if ($action == 'edit')
 {
-	$form=new Form($db);
+	$form = new Form($db);
 
-	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	clearstatcache();
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
@@ -185,7 +185,7 @@ if ($action == 'edit')
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
+	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.$conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
 
 	// Autocopy to
@@ -197,7 +197,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods)?' disabled':'').'>';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods) ? ' disabled' : '').'>';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
@@ -207,10 +207,9 @@ if ($action == 'edit')
 }
 else
 {
+	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
-	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
-
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
@@ -221,15 +220,15 @@ else
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	$text=$listofmethods[$conf->global->MAIN_SMS_SENDMODE];
-	if (empty($text)) $text=$langs->trans("Undefined").' '.img_warning();
+	$text = $listofmethods[$conf->global->MAIN_SMS_SENDMODE];
+	if (empty($text)) $text = $langs->trans("Undefined").' '.img_warning();
 	print $text;
 	print '</td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
-	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
+	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -261,13 +260,13 @@ else
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}*/
 
-	if (count($listofmethods) && ! empty($conf->global->MAIN_SMS_SENDMODE))
+	if (count($listofmethods) && !empty($conf->global->MAIN_SMS_SENDMODE))
 	{
-	   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	}
 	else
 	{
-       print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
 
@@ -310,13 +309,10 @@ else
 		$formsms->withfromreadonly=0;
 		$formsms->withsubstit=0;
 		$formsms->withfrom=1;
-		$formsms->witherrorsto=1;
 		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->user_mobile?$user->user_mobile:1);
-		$formsms->withfile=2;
 		$formsms->withbody=(isset($_POST['message'])?(empty($_POST['message'])?1:$_POST['message']):$langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly=0;
 		$formsms->withcancel=1;
-		$formsms->withfckeditor=0;
 		// Tableau des substitutions
 		$formsms->substit=$substitutionarrayfortest;
 		// Tableau des parametres complementaires du post

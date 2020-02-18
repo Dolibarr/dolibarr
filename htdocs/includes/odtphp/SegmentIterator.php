@@ -5,7 +5,7 @@
  * You need Zip Extension or PclZip library
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.3
  */
 class SegmentIterator implements RecursiveIterator

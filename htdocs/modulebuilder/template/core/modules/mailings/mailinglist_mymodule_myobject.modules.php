@@ -26,6 +26,10 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
     public $enabled=0;
     public $require_module=array();
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='mymodule@mymodule';
 
     /**

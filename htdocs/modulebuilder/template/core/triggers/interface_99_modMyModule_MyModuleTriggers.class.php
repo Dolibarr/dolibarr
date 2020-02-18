@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -103,7 +103,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
         // Data and type of action are stored into $object and $action
 
         switch ($action) {
-
             // Users
             //case 'USER_CREATE':
             //case 'USER_MODIFY':

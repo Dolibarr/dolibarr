@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,7 +28,7 @@
 /**
  *	Check if a value is empty with some options
  *
- * @author Michael - https://www.php.net/manual/fr/function.empty.php#90767
+ * @author	Michael - https://www.php.net/manual/fr/function.empty.php#90767
  * @param	mixed		$var			Value to test
  * @param	int|null	$allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
  * @param	int|null	$allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
@@ -157,7 +157,7 @@ function length_accounta($accounta)
 
 
 /**
- *	Show header of a VAT report
+ *	Show header of a page used to transfer/dispatch data in accounting
  *
  *	@param	string				$nom            Name of report
  *	@param 	string				$variante       Link for alternate report
@@ -186,7 +186,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     $head[$h][2] = 'journal';
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
     dol_fiche_head($head, 'journal');
 

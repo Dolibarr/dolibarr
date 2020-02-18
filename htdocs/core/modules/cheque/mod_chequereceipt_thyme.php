@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- * \file       htdocs/core/modules/cheque/mod_chequereceipts_thyme.php
+ * \file       htdocs/core/modules/cheque/mod_chequereceipt_thyme.php
  * \ingroup    cheque
  * \brief      File containing class for numbering module Thyme
  */
@@ -46,7 +46,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */
@@ -60,7 +60,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstchequereceipts" value="CHEQUERECEIPTS_THYME_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
@@ -86,7 +86,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

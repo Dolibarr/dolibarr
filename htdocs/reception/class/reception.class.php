@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,8 +34,8 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
-if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (!empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 
 /**
@@ -43,19 +43,23 @@ if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande
  */
 class Reception extends CommonObject
 {
-	public $element="reception";
-	public $fk_element="fk_reception";
-	public $table_element="reception";
-	public $table_element_line="commande_fournisseur_dispatch";
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto = 'reception';
+	public $element = "reception";
+	public $fk_element = "fk_reception";
+	public $table_element = "reception";
+	public $table_element_line = "commande_fournisseur_dispatch";
+	protected $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'reception';
 
     public $socid;
     public $ref_supplier;
     public $ref_int;
     public $brouillon;
     public $entrepot_id;
-    public $lines=array();
+    public $lines = array();
     public $tracking_number;
     public $tracking_url;
     public $billed;
@@ -72,19 +76,26 @@ class Reception extends CommonObject
 	// A denormalized value
     public $trueSize;
 
-    public $date_delivery;		// Date delivery planed
+    public $date_delivery; // Date delivery planed
 
 
 	/**
-	 * Effective delivery date
-	 * @var int
+	 * @var integer|string Effective delivery date
 	 */
 	public $date_reception;
-    public $date_creation;
-    public $date_valid;
+
+	/**
+	 * @var integer|string date_creation
+	 */
+	public $date_creation;
+
+	/**
+	 * @var integer|string date_validation
+	 */
+	public $date_valid;
 
     public $meths;
-    public $listmeths;			// List of carriers
+    public $listmeths; // List of carriers
 
 
 	const STATUS_DRAFT = 0;
@@ -110,6 +121,13 @@ class Reception extends CommonObject
 		$this->statuts[0]  = 'StatusReceptionDraft';
 		$this->statuts[1]  = 'StatusReceptionValidated';
 		$this->statuts[2]  = 'StatusReceptionProcessed';
+
+		// List of short language codes for status
+		$this->statutshorts = array();
+		$this->statutshorts[-1] = 'StatusReceptionCanceledShort';
+		$this->statutshorts[0]  = 'StatusReceptionDraftShort';
+		$this->statutshorts[1]  = 'StatusReceptionValidatedShort';
+		$this->statutshorts[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -134,14 +152,13 @@ class Reception extends CommonObject
 	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	        foreach ($dirmodels as $reldir) {
-
 		        $dir = dol_buildpath($reldir."core/modules/reception/");
 
 		        // Load file with numbering class (if found)
-		        $mybool|=@include_once $dir.$file;
+		        $mybool |= @include_once $dir.$file;
 	        }
 
-	        if (! $mybool)
+	        if (!$mybool)
 	        {
 		        dol_print_error('', "Failed to include file ".$file);
 		        return '';
@@ -152,7 +169,7 @@ class Reception extends CommonObject
 			$numref = "";
 			$numref = $obj->getNextValue($soc, $this);
 
-			if ( $numref != "")
+			if ($numref != "")
 			{
 				return $numref;
 			}
@@ -180,9 +197,9 @@ class Reception extends CommonObject
 	{
 		global $conf, $hookmanager;
 
-		$now=dol_now();
+		$now = dol_now();
 
-		require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
 
 		// Clean parameters
@@ -196,82 +213,82 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."reception (";
-		$sql.= "ref";
-		$sql.= ", entity";
-		$sql.= ", ref_supplier";
-		$sql.= ", ref_int";
-		$sql.= ", date_creation";
-		$sql.= ", fk_user_author";
-		$sql.= ", date_reception";
-		$sql.= ", date_delivery";
-		$sql.= ", fk_soc";
-		$sql.= ", fk_projet";
-		$sql.= ", fk_shipping_method";
-		$sql.= ", tracking_number";
-		$sql.= ", weight";
-		$sql.= ", size";
-		$sql.= ", width";
-		$sql.= ", height";
-		$sql.= ", weight_units";
-		$sql.= ", size_units";
-		$sql.= ", note_private";
-		$sql.= ", note_public";
-		$sql.= ", model_pdf";
-		$sql.= ", fk_incoterms, location_incoterms";
-		$sql.= ") VALUES (";
-		$sql.= "'(PROV)'";
-		$sql.= ", ".$conf->entity;
-		$sql.= ", ".($this->ref_supplier?"'".$this->db->escape($this->ref_supplier)."'":"null");
-		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
-		$sql.= ", '".$this->db->idate($now)."'";
-		$sql.= ", ".$user->id;
-		$sql.= ", ".($this->date_reception>0?"'".$this->db->idate($this->date_reception)."'":"null");
-		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
-		$sql.= ", ".$this->socid;
-		$sql.= ", ".$this->fk_project;
-		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
-		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql.= ", ".$this->weight;
-		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
-		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
-		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
-		$sql.= ", ".$this->weight_units;
-		$sql.= ", ".$this->size_units;
-		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
-		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
-        $sql.= ", ".(int) $this->fk_incoterms;
-        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ")";
+		$sql .= "ref";
+		$sql .= ", entity";
+		$sql .= ", ref_supplier";
+		$sql .= ", ref_int";
+		$sql .= ", date_creation";
+		$sql .= ", fk_user_author";
+		$sql .= ", date_reception";
+		$sql .= ", date_delivery";
+		$sql .= ", fk_soc";
+		$sql .= ", fk_projet";
+		$sql .= ", fk_shipping_method";
+		$sql .= ", tracking_number";
+		$sql .= ", weight";
+		$sql .= ", size";
+		$sql .= ", width";
+		$sql .= ", height";
+		$sql .= ", weight_units";
+		$sql .= ", size_units";
+		$sql .= ", note_private";
+		$sql .= ", note_public";
+		$sql .= ", model_pdf";
+		$sql .= ", fk_incoterms, location_incoterms";
+		$sql .= ") VALUES (";
+		$sql .= "'(PROV)'";
+		$sql .= ", ".$conf->entity;
+		$sql .= ", ".($this->ref_supplier ? "'".$this->db->escape($this->ref_supplier)."'" : "null");
+		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", ".$user->id;
+		$sql .= ", ".($this->date_reception > 0 ? "'".$this->db->idate($this->date_reception)."'" : "null");
+		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
+		$sql .= ", ".$this->socid;
+		$sql .= ", ".$this->fk_project;
+		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : "null");
+		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
+		$sql .= ", ".$this->weight;
+		$sql .= ", ".$this->sizeS; // TODO Should use this->trueDepth
+		$sql .= ", ".$this->sizeW; // TODO Should use this->trueWidth
+		$sql .= ", ".$this->sizeH; // TODO Should use this->trueHeight
+		$sql .= ", ".$this->weight_units;
+		$sql .= ", ".$this->size_units;
+		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
+		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+        $sql .= ", ".(int) $this->fk_incoterms;
+        $sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."reception");
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-			$sql.= " SET ref = '(PROV".$this->id.")'";
-			$sql.= " WHERE rowid = ".$this->id;
+			$sql .= " SET ref = '(PROV".$this->id.")'";
+			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
-				$num=count($this->lines);
+				// Insert of lines
+				$num = count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
 					$this->lines[$i]->fk_reception = $this->id;
 
-					if (! $this->lines[$i]->create($user) > 0)
+					if (!$this->lines[$i]->create($user) > 0)
 					{
 						$error++;
 					}
 				}
 
-				if (! $error && $this->id && $this->origin_id)
+				if (!$error && $this->id && $this->origin_id)
 				{
 					$ret = $this->add_object_linked();
 					if (!$ret)
@@ -282,15 +299,15 @@ class Reception extends CommonObject
 
 				// Actions on extra fields (by external module or standard code)
 				// TODO le hook fait double emploi avec le trigger !!
-				$action='add';
+				$action = 'add';
 				$hookmanager->initHooks(array('receptiondao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				$parameters = array('socid'=>$this->id);
+				$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if (empty($reshook))
 				{
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 					{
-						$result=$this->insertExtraFields();
+						$result = $this->insertExtraFields();
 						if ($result < 0)
 						{
 							$error++;
@@ -299,33 +316,33 @@ class Reception extends CommonObject
 				}
 				elseif ($reshook < 0) $error++;
 
-				if (! $error && ! $notrigger)
+				if (!$error && !$notrigger)
 				{
                     // Call trigger
-                    $result=$this->call_trigger('RECEPTION_CREATE', $user);
+                    $result = $this->call_trigger('RECEPTION_CREATE', $user);
                     if ($result < 0) { $error++; }
                     // End call triggers
 
-					if (! $error)
+					if (!$error)
 					{
 						$this->db->commit();
 						return $this->id;
 					}
 					else
 					{
-						foreach($this->errors as $errmsg)
+						foreach ($this->errors as $errmsg)
 						{
 							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-							$this->error.=($this->error?', '.$errmsg:$errmsg);
+							$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 						}
 						$this->db->rollback();
-						return -1*$error;
+						return -1 * $error;
 					}
 				}
 				else
 				{
 					$error++;
-					$this->error=$this->db->lasterror()." - sql=$sql";
+					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
@@ -333,7 +350,7 @@ class Reception extends CommonObject
 			else
 			{
 				$error++;
-				$this->error=$this->db->lasterror()." - sql=$sql";
+				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
@@ -341,7 +358,7 @@ class Reception extends CommonObject
 		else
 		{
 			$error++;
-			$this->error=$this->db->error()." - sql=$sql";
+			$this->error = $this->db->error()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
 		}
@@ -366,21 +383,21 @@ class Reception extends CommonObject
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
-		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
-		$sql.= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
-		$sql.= ", e.fk_shipping_method, e.tracking_number";
-		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
-		$sql.= ", e.note_private, e.note_public";
-        $sql.= ', e.fk_incoterms, e.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
-		$sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql.= " WHERE e.entity IN (".getEntity('reception').")";
-		if ($id)   	  $sql.= " AND e.rowid=".$id;
-        if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
-        if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-        if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
+		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
+		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
+		$sql .= ", e.fk_shipping_method, e.tracking_number";
+		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
+		$sql .= ", e.note_private, e.note_public";
+        $sql .= ', e.fk_incoterms, e.location_incoterms';
+        $sql .= ', i.libelle as label_incoterms';
+		$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
+		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+		if ($id)   	  $sql .= " AND e.rowid=".$id;
+        if ($ref)     $sql .= " AND e.ref='".$this->db->escape($ref)."'";
+        if ($ref_ext) $sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
+        if ($ref_int) $sql .= " AND e.ref_int='".$this->db->escape($ref_int)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -393,23 +410,23 @@ class Reception extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_supplier			= $obj->ref_supplier;
+				$this->ref_supplier = $obj->ref_supplier;
 				$this->ref_ext				= $obj->ref_ext;
 				$this->ref_int				= $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date                 = $this->db->jdate($obj->date_reception);	// TODO deprecated
-				$this->date_reception      = $this->db->jdate($obj->date_reception);	// TODO deprecated
-				$this->date_reception        = $this->db->jdate($obj->date_reception);	// Date real
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
+				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
+				$this->date_reception = $this->db->jdate($obj->date_reception); // TODO deprecated
+				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->shipping_method_id	= $obj->fk_shipping_method;
+				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
+				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
-				$this->billed				= ($obj->fk_statut==2?1:0);
+				$this->billed = ($obj->fk_statut == 2 ? 1 : 0);
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -425,19 +442,19 @@ class Reception extends CommonObject
 				$this->note_private         = $obj->note_private;
 
 				// A denormalized value
-				$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
-				$this->size_units           = $obj->size_units;
+				$this->trueSize = $obj->size."x".$obj->width."x".$obj->height;
+				$this->size_units = $obj->size_units;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				$file = $conf->reception->dir_output . "/" .get_exdir($this->id, 2, 0, 0, $this, 'reception') . "/" . $this->id.".pdf";
+				$file = $conf->reception->dir_output."/".get_exdir($this->id, 2, 0, 0, $this, 'reception')."/".$this->id.".pdf";
 				$this->pdf_filename = $file;
 
 				// Tracking url
@@ -446,20 +463,20 @@ class Reception extends CommonObject
 				/*
 				 * Thirdparty
 				 */
-				$result=$this->fetch_thirdparty();
+				$result = $this->fetch_thirdparty();
 
 
 				// Retrieve all extrafields for reception
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element, true);
-				$this->fetch_optionals($this->id, $extralabels);
+				$extrafields = new ExtraFields($this->db);
+				$extrafields->fetch_name_optionals_label($this->table_element, true);
+				$this->fetch_optionals($this->id);
 
 				/*
 				 * Lines
 				 */
-				$result=$this->fetch_lines();
+				$result = $this->fetch_lines();
 				if ($result < 0)
 				{
 					return -3;
@@ -470,13 +487,13 @@ class Reception extends CommonObject
 			else
 			{
 				dol_syslog(get_class($this).'::Fetch no reception found', LOG_ERR);
-				$this->error='Delivery with id '.$id.' not found';
+				$this->error = 'Delivery with id '.$id.' not found';
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return -1;
 		}
 	}
@@ -503,10 +520,10 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->reception_advance->validate))))
+        if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
+       	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate))))
 		{
-			$this->error='Permission denied';
+			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -521,7 +538,7 @@ class Reception extends CommonObject
 
 
 		// Define new ref
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$numref = $this->getNextNumRef($soc);
 		}
@@ -531,25 +548,25 @@ class Reception extends CommonObject
 
         $this->newref = $numref;
 
-		$now=dol_now();
+		$now = dol_now();
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception SET";
-		$sql.= " ref='".$this->db->escape($numref)."'";
-		$sql.= ", fk_statut = 1";
-		$sql.= ", date_valid = '".$this->db->idate($now)."'";
-		$sql.= ", fk_user_valid = ".$user->id;
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql .= " ref='".$this->db->escape($numref)."'";
+		$sql .= ", fk_statut = 1";
+		$sql .= ", date_valid = '".$this->db->idate($now)."'";
+		$sql .= ", fk_user_valid = ".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
 		dol_syslog(get_class($this)."::valid update reception", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if (! $resql)
+		$resql = $this->db->query($sql);
+		if (!$resql)
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$error++;
 		}
 
 		// If stock increment is done on reception (recommanded choice)
-		if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
+		if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
@@ -558,15 +575,15 @@ class Reception extends CommonObject
 			// Loop on each product line to add a stock movement
 			// TODO in future, reception lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
-			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-			$sql.= " ed.eatby, ed.sellby, ed.batch";
-			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-			$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-			$sql.= " WHERE ed.fk_reception = ".$this->id;
-			$sql.= " AND cd.rowid = ed.fk_commandefourndet";
+			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+			$sql .= " ed.eatby, ed.sellby, ed.batch";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " WHERE ed.fk_reception = ".$this->id;
+			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$cpt = $this->db->num_rows($resql);
@@ -588,10 +605,10 @@ class Reception extends CommonObject
 						// line without batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref));
+						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref));
 						if ($result < 0) {
 							$error++;
-							$this->errors[]=$mouvS->error;
+							$this->errors[] = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
@@ -602,10 +619,10 @@ class Reception extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 					    // Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
-						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 						if ($result < 0) {
 							$error++;
-							$this->errors[]=$mouvS->error;
+							$this->errors[] = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
@@ -615,7 +632,7 @@ class Reception extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				$this->error=$this->db->error();
+				$this->error = $this->db->error();
 				return -2;
 			}
 		}
@@ -623,20 +640,20 @@ class Reception extends CommonObject
 		// Change status of order to "reception in process"
 		$ret = $this->setStatut(4, $this->origin_id, 'commande_fournisseur');
 
-        if (! $ret)
+        if (!$ret)
 		{
 		    $error++;
 		}
 
-		if (! $error && ! $notrigger)
+		if (!$error && !$notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('RECEPTION_VALIDATE', $user);
+            $result = $this->call_trigger('RECEPTION_VALIDATE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
 
-		if (! $error)
+		if (!$error)
 		{
             $this->oldref = $this->ref;
 
@@ -644,17 +661,17 @@ class Reception extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'reception/".$this->db->escape($this->newref)."'";
-				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'reception/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
-				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->reception->dir_output.'/'.$oldref;
 				$dirdest = $conf->reception->dir_output.'/'.$newref;
-				if (! $error && file_exists($dirsource))
+				if (!$error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -662,13 +679,13 @@ class Reception extends CommonObject
 					{
 					    dol_syslog("Rename ok");
                         // Rename docs starting with $oldref with $newref
-                        $listoffiles=dol_dir_list($conf->reception->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-                        foreach($listoffiles as $fileentry)
+                        $listoffiles = dol_dir_list($conf->reception->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+                        foreach ($listoffiles as $fileentry)
                         {
-                        	$dirsource=$fileentry['name'];
-                        	$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-                        	$dirsource=$fileentry['path'].'/'.$dirsource;
-                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+                        	$dirsource = $fileentry['name'];
+                        	$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+                        	$dirsource = $fileentry['path'].'/'.$dirsource;
+                        	$dirdest = $fileentry['path'].'/'.$dirdest;
                         	@rename($dirsource, $dirdest);
                         }
 					}
@@ -677,26 +694,26 @@ class Reception extends CommonObject
 		}
 
 		// Set new ref and current status
-		if (! $error)
+		if (!$error)
 		{
 			$this->ref = $numref;
 			$this->statut = 1;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::valid ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 	}
 
@@ -731,31 +748,31 @@ class Reception extends CommonObject
 		$supplierorderline = new CommandeFournisseurLigne($this->db);
 		$supplierorderline->fetch($id);
 
-		if (! empty($conf->stock->enabled) && ! empty($supplierorderline->fk_product))
+		if (!empty($conf->stock->enabled) && !empty($supplierorderline->fk_product))
 		{
 			$fk_product = $supplierorderline->fk_product;
 
-			if (! ($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS))
+			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS))
 			{
 			    $langs->load("errors");
-				$this->error=$langs->trans("ErrorWarehouseRequiredIntoReceptionLine");
+				$this->error = $langs->trans("ErrorWarehouseRequiredIntoReceptionLine");
 				return -1;
 			}
 		}
 
 		// extrafields
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 			$line->array_options = $array_options;
 
 		$line->fk_product = $fk_product;
-		$line->fk_commande = $supplierorderline->fk_commande ;
-		$line->fk_user = $user->id ;
+		$line->fk_commande = $supplierorderline->fk_commande;
+		$line->fk_user = $user->id;
 		$line->comment = $comment;
 		$line->batch = $batch;
 		$line->eatby = $eatby;
 		$line->sellby = $sellby;
-		$line->status=1;
-		$line->fk_reception=$this->id;
+		$line->status = 1;
+		$line->fk_reception = $this->id;
 
 		$this->lines[$num] = $line;
 	}
@@ -771,29 +788,29 @@ class Reception extends CommonObject
     public function update($user = null, $notrigger = 0)
     {
     	global $conf;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->ref)) $this->ref=trim($this->ref);
-		if (isset($this->entity)) $this->entity=trim($this->entity);
-		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
-		if (isset($this->socid)) $this->socid=trim($this->socid);
-		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
-		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
-		if (isset($this->fk_delivery_address)) $this->fk_delivery_address=trim($this->fk_delivery_address);
-		if (isset($this->shipping_method_id)) $this->shipping_method_id=trim($this->shipping_method_id);
-		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
-		if (isset($this->statut)) $this->statut=(int) $this->statut;
-		if (isset($this->trueDepth)) $this->trueDepth=trim($this->trueDepth);
-		if (isset($this->trueWidth)) $this->trueWidth=trim($this->trueWidth);
-		if (isset($this->trueHeight)) $this->trueHeight=trim($this->trueHeight);
-		if (isset($this->size_units)) $this->size_units=trim($this->size_units);
-		if (isset($this->weight_units)) $this->weight_units=trim($this->weight_units);
-		if (isset($this->trueWeight)) $this->weight=trim($this->trueWeight);
-		if (isset($this->note_private)) $this->note=trim($this->note_private);
-		if (isset($this->note_public)) $this->note=trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
+		if (isset($this->ref)) $this->ref = trim($this->ref);
+		if (isset($this->entity)) $this->entity = trim($this->entity);
+		if (isset($this->ref_supplier)) $this->ref_supplier = trim($this->ref_supplier);
+		if (isset($this->socid)) $this->socid = trim($this->socid);
+		if (isset($this->fk_user_author)) $this->fk_user_author = trim($this->fk_user_author);
+		if (isset($this->fk_user_valid)) $this->fk_user_valid = trim($this->fk_user_valid);
+		if (isset($this->fk_delivery_address)) $this->fk_delivery_address = trim($this->fk_delivery_address);
+		if (isset($this->shipping_method_id)) $this->shipping_method_id = trim($this->shipping_method_id);
+		if (isset($this->tracking_number)) $this->tracking_number = trim($this->tracking_number);
+		if (isset($this->statut)) $this->statut = (int) $this->statut;
+		if (isset($this->trueDepth)) $this->trueDepth = trim($this->trueDepth);
+		if (isset($this->trueWidth)) $this->trueWidth = trim($this->trueWidth);
+		if (isset($this->trueHeight)) $this->trueHeight = trim($this->trueHeight);
+		if (isset($this->size_units)) $this->size_units = trim($this->size_units);
+		if (isset($this->weight_units)) $this->weight_units = trim($this->weight_units);
+		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
+		if (isset($this->note_private)) $this->note = trim($this->note_private);
+		if (isset($this->note_public)) $this->note = trim($this->note_public);
+		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
 
 
 		// Check parameters
@@ -802,44 +819,44 @@ class Reception extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."reception SET";
 
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
-		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
-		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
-		$sql.= " date_creation=".(dol_strlen($this->date_creation)!=0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
-		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
-		$sql.= " date_valid=".(dol_strlen($this->date_valid)!=0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
-		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
-		$sql.= " date_reception=".(dol_strlen($this->date_reception)!=0 ? "'".$this->db->idate($this->date_reception)."'" : 'null').",";
-		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
-		$sql.= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0)?$this->shipping_method_id:"null").",";
-		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
-		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
-		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
-		$sql.= " width=".(($this->trueWidth != '')?$this->trueWidth:"null").",";
-		$sql.= " size_units=".(isset($this->size_units)?$this->size_units:"null").",";
-		$sql.= " size=".(($this->trueDepth != '')?$this->trueDepth:"null").",";
-		$sql.= " weight_units=".(isset($this->weight_units)?$this->weight_units:"null").",";
-		$sql.= " weight=".(($this->trueWeight != '')?$this->trueWeight:"null").",";
-		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
-		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
-		$sql.= " entity=".$conf->entity;
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
+		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
+		$sql .= " date_creation=".(dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
+		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
+		$sql .= " date_valid=".(dol_strlen($this->date_valid) != 0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
+		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
+		$sql .= " date_reception=".(dol_strlen($this->date_reception) != 0 ? "'".$this->db->idate($this->date_reception)."'" : 'null').",";
+		$sql .= " date_delivery=".(dol_strlen($this->date_delivery) != 0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
+		$sql .= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
+		$sql .= " tracking_number=".(isset($this->tracking_number) ? "'".$this->db->escape($this->tracking_number)."'" : "null").",";
+		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
+		$sql .= " height=".(($this->trueHeight != '') ? $this->trueHeight : "null").",";
+		$sql .= " width=".(($this->trueWidth != '') ? $this->trueWidth : "null").",";
+		$sql .= " size_units=".(isset($this->size_units) ? $this->size_units : "null").",";
+		$sql .= " size=".(($this->trueDepth != '') ? $this->trueDepth : "null").",";
+		$sql .= " weight_units=".(isset($this->weight_units) ? $this->weight_units : "null").",";
+		$sql .= " weight=".(($this->trueWeight != '') ? $this->trueWeight : "null").",";
+		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
+		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " entity=".$conf->entity;
 
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('RECEPTION_MODIFY', $user);
+                $result = $this->call_trigger('RECEPTION_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 	    	}
@@ -848,13 +865,13 @@ class Reception extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -874,8 +891,8 @@ class Reception extends CommonObject
 		global $conf, $langs, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$error=0;
-		$this->error='';
+		$error = 0;
+		$this->error = '';
 
 
 		$this->db->begin();
@@ -889,13 +906,13 @@ class Reception extends CommonObject
 
 			// Loop on each product line to add a stock movement
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.eatby, ed.sellby, ed.batch, ed.rowid as commande_fournisseur_dispatch_id";
-			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-			$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-			$sql.= " WHERE ed.fk_reception = ".$this->id;
-			$sql.= " AND cd.rowid = ed.fk_commandefourndet";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " WHERE ed.fk_reception = ".$this->id;
+			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$cpt = $this->db->num_rows($resql);
@@ -908,42 +925,42 @@ class Reception extends CommonObject
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
 
-					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch);  // Price is set to 0, because we don't want to see WAP changed
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
 				}
 			}
 			else
 			{
-				$error++;$this->errors[]="Error ".$this->db->lasterror();
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
-			$sql.= " WHERE fk_reception = ".$this->id;
+			$sql .= " WHERE fk_reception = ".$this->id;
 
-			if ( $this->db->query($sql) )
+			if ($this->db->query($sql))
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error++;
 
-				if (! $error)
+				if (!$error)
 				{
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
-					$sql.= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".$this->id;
 
 					if ($this->db->query($sql))
 					{
 						// Call trigger
-						$result=$this->call_trigger('RECEPTION_DELETE', $user);
+						$result = $this->call_trigger('RECEPTION_DELETE', $user);
 						if ($result < 0) { $error++; }
 						// End call triggers
 
-						if (! empty($this->origin) && $this->origin_id > 0)
+						if (!empty($this->origin) && $this->origin_id > 0)
 						{
 						    $this->fetch_origin();
-						    $origin=$this->origin;
+						    $origin = $this->origin;
 						    if ($this->$origin->statut == 4)     // If order source of reception is "partially received"
 						    {
                                 // Check if there is no more reception. If not, we can move back status of order to "validated" instead of "reception in progress"
@@ -956,19 +973,19 @@ class Reception extends CommonObject
 						    }
 						}
 
-						if (! $error)
+						if (!$error)
 						{
 							$this->db->commit();
 
 							// We delete PDFs
 							$ref = dol_sanitizeFileName($this->ref);
-							if (! empty($conf->reception->dir_output))
+							if (!empty($conf->reception->dir_output))
 							{
-								$dir = $conf->reception->dir_output . '/' . $ref ;
-								$file = $dir . '/' . $ref . '.pdf';
+								$dir = $conf->reception->dir_output.'/'.$ref;
+								$file = $dir.'/'.$ref.'.pdf';
 								if (file_exists($file))
 								{
-									if (! dol_delete_file($file))
+									if (!dol_delete_file($file))
 									{
 										return 0;
 									}
@@ -977,7 +994,7 @@ class Reception extends CommonObject
 								{
 									if (!dol_delete_dir_recursive($dir))
 									{
-										$this->error=$langs->trans("ErrorCanNotDeleteDir", $dir);
+										$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
 										return 0;
 									}
 								}
@@ -993,21 +1010,21 @@ class Reception extends CommonObject
 					}
 					else
 					{
-						$this->error=$this->db->lasterror()." - sql=$sql";
+						$this->error = $this->db->lasterror()." - sql=$sql";
 						$this->db->rollback();
 						return -3;
 					}
 				}
 				else
 				{
-					$this->error=$this->db->lasterror()." - sql=$sql";
+					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -2;
 				}
 			}
 			else
 			{
-				$this->error=$this->db->lasterror()." - sql=$sql";
+				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -1;
 			}
@@ -1033,41 +1050,41 @@ class Reception extends CommonObject
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
 		$resql = $db->query($sql);
 
-		if(!empty($resql)){
+		if (!empty($resql)) {
 			$this->lines = array();
-			while ($obj = $resql->fetch_object()){
+			while ($obj = $resql->fetch_object()) {
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
 				$sql_commfourndet = 'SELECT qty, ref,  label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
 				$resql_commfourndet = $db->query($sql_commfourndet);
-				if(!empty($resql_commfourndet)){
+				if (!empty($resql_commfourndet)) {
 					$obj = $db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
 					$line->description = $line->comment;
-					$line->desc =  $line->comment;
+					$line->desc = $line->comment;
 					$line->tva_tx = $obj->tva_tx;
 					$line->vat_src_code = $obj->vat_src_code;
 					$line->subprice = $obj->subprice;
 					$line->multicurrency_subprice = $obj->multicurrency_subprice;
 					$line->remise_percent = $obj->remise_percent;
-					$line->label = !empty($obj->label)?$obj->label:$line->product->label;
+					$line->label = !empty($obj->label) ? $obj->label : $line->product->label;
 					$line->ref_supplier = $obj->ref;
-				}else {
+				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
 					$line->label = $obj->label;
 				}
 
-				$pu_ht=($line->subprice*$line->qty)*(100-$line->remise_percent)/100;
-				$tva = $pu_ht*$line->tva_tx/100;
+				$pu_ht = ($line->subprice * $line->qty) * (100 - $line->remise_percent) / 100;
+				$tva = $pu_ht * $line->tva_tx / 100;
 				$this->total_ht += $pu_ht;
-				$this->total_tva += $pu_ht*$line->tva_tx/100;
+				$this->total_tva += $pu_ht * $line->tva_tx / 100;
 
-				$this->total_ttc += $pu_ht+$tva;
+				$this->total_ttc += $pu_ht + $tva;
 
 
-				$this->lines[]=$line;
+				$this->lines[] = $line;
 			}
 
 			return 1;
@@ -1089,36 +1106,36 @@ class Reception extends CommonObject
      */
     public function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
 	{
-		global $langs;
-		$result='';
-        $label = '<u>' . $langs->trans("ShowReception") . '</u>';
-        $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
+		global $conf, $langs;
+		$result = '';
+        $label = '<u>'.$langs->trans("ShowReception").'</u>';
+        $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 
 		$url = DOL_URL_ROOT.'/reception/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
-		$linkclose='';
+		$linkclose = '';
 		if (empty($notooltip))
 		{
-		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label=$langs->trans("ShowReception");
-		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		        $label = $langs->trans("ShowReception");
+		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 		    }
-		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-		    $linkclose.=' class="classfortooltip"';
+		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose .= ' class="classfortooltip"';
 		}
 
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+		$linkend = '</a>';
 
-		$picto='sending';
+		$picto = 'sending';
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$linkstart.$this->ref.$linkend;
+		if ($withpicto) $result .= ($linkstart.img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+		if ($withpicto && $withpicto != 2) $result .= ' ';
+		$result .= $linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -1137,45 +1154,23 @@ class Reception extends CommonObject
 	/**
 	 * Return label of a status
 	 *
-	 * @param      int		$statut		Id statut
+	 * @param      int		$status		Id status
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-    public function LibStatut($statut, $mode)
+    public function LibStatut($status, $mode)
     {
-		// phpcs:enable
-		global $langs;
+    	// phpcs:enable
+    	global $langs;
 
-		if ($mode==0)
-		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==2)  return $langs->trans($this->statuts[$statut]);
-		}
-		elseif ($mode==1)
-		{
-			if ($statut==0) return $langs->trans('StatusReceptionDraftShort');
-			elseif ($statut==1) return $langs->trans('StatusReceptionValidatedShort');
-			elseif ($statut==2) return $langs->trans('StatusReceptionProcessedShort');
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6').' '.$langs->trans('StatusReceptionProcessed');
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut==0) return $langs->trans('StatusReceptionDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'), 'statut6');
-		}
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+
+    	$statusType = 'status'.$status;
+    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+    	if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**
@@ -1191,7 +1186,7 @@ class Reception extends CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
-		$now=dol_now();
+		$now = dol_now();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -1199,8 +1194,8 @@ class Reception extends CommonObject
 		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product').")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product";
+		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1214,20 +1209,20 @@ class Reception extends CommonObject
 			}
 		}
 
-		$order=new CommandeFournisseur($this->db);
+		$order = new CommandeFournisseur($this->db);
 		$order->initAsSpecimen();
 
 		// Initialise parametres
-		$this->id=0;
+		$this->id = 0;
 		$this->ref = 'SPECIMEN';
-		$this->specimen=1;
+		$this->specimen = 1;
 		$this->statut               = 1;
 		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
 		$this->date_delivery        = $now;
-		$this->date_reception      = $now + 24*3600;
+		$this->date_reception = $now + 24 * 3600;
 
 		$this->entrepot_id          = 0;
 		$this->fk_delivery_address  = 0;
@@ -1246,14 +1241,14 @@ class Reception extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$line=new CommandeFournisseurDispatch($this->db);
-			$line->desc=$langs->trans("Description")." ".$xnbp;
-			$line->libelle=$langs->trans("Description")." ".$xnbp;
-			$line->qty=10;
+			$line = new CommandeFournisseurDispatch($this->db);
+			$line->desc = $langs->trans("Description")." ".$xnbp;
+			$line->libelle = $langs->trans("Description")." ".$xnbp;
+			$line->qty = 10;
 
-			$line->fk_product=$this->commande->lines[$xnbp]->fk_product;
+			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
 
-			$this->lines[]=$line;
+			$this->lines[] = $line;
 			$xnbp++;
 		}
 	}
@@ -1272,11 +1267,11 @@ class Reception extends CommonObject
 		if ($user->rights->reception->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
-			$sql.= " WHERE rowid = ".$this->id;
+			$sql .= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$this->date_delivery = $date_livraison;
@@ -1284,7 +1279,7 @@ class Reception extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error();
+				$this->error = $this->db->error();
 				return -1;
 			}
 		}
@@ -1307,17 +1302,17 @@ class Reception extends CommonObject
 		$this->meths = array();
 
 		$sql = "SELECT em.rowid, em.code, em.libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		$sql.= " WHERE em.active = 1";
-		$sql.= " ORDER BY em.libelle ASC";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+		$sql .= " WHERE em.active = 1";
+		$sql .= " ORDER BY em.libelle ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$label=$langs->trans('ReceptionMethod'.$obj->code);
-				$this->meths[$obj->rowid] = ($label != 'ReceptionMethod'.$obj->code?$label:$obj->libelle);
+				$label = $langs->trans('ReceptionMethod'.$obj->code);
+				$this->meths[$obj->rowid] = ($label != 'ReceptionMethod'.$obj->code ? $label : $obj->libelle);
 			}
 		}
 	}
@@ -1335,19 +1330,19 @@ class Reception extends CommonObject
         global $langs;
 
         $this->listmeths = array();
-        $i=0;
+        $i = 0;
 
         $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-        if ($id!='') $sql.= " WHERE em.rowid=".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+        if ($id != '') $sql .= " WHERE em.rowid=".$id;
 
         $resql = $this->db->query($sql);
         if ($resql) {
             while ($obj = $this->db->fetch_object($resql)) {
                 $this->listmeths[$i]['rowid'] = $obj->rowid;
                 $this->listmeths[$i]['code'] = $obj->code;
-                $label=$langs->trans('ReceptionMethod'.$obj->code);
-                $this->listmeths[$i]['libelle'] = ($label != 'ReceptionMethod'.$obj->code?$label:$obj->libelle);
+                $label = $langs->trans('ReceptionMethod'.$obj->code);
+                $this->listmeths[$i]['libelle'] = ($label != 'ReceptionMethod'.$obj->code ? $label : $obj->libelle);
                 $this->listmeths[$i]['description'] = $obj->description;
                 $this->listmeths[$i]['tracking'] = $obj->tracking;
                 $this->listmeths[$i]['active'] = $obj->active;
@@ -1367,20 +1362,20 @@ class Reception extends CommonObject
     public function update_delivery_method($id = '')
     {
 		// phpcs:enable
-        if ($id=='')
+        if ($id == '')
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-            $sql.=" VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
+            $sql .= " VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
             $resql = $this->db->query($sql);
         }
         else
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-            $sql.= " code='".$this->db->escape($this->update['code'])."'";
-            $sql.= ",libelle='".$this->db->escape($this->update['libelle'])."'";
-            $sql.= ",description='".$this->db->escape($this->update['description'])."'";
-            $sql.= ",tracking='".$this->db->escape($this->update['tracking'])."'";
-            $sql.= " WHERE rowid=".$id;
+            $sql .= " code='".$this->db->escape($this->update['code'])."'";
+            $sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
+            $sql .= ",description='".$this->db->escape($this->update['description'])."'";
+            $sql .= ",tracking='".$this->db->escape($this->update['tracking'])."'";
+            $sql .= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }
         if ($resql < 0) dol_print_error($this->db, '');
@@ -1398,7 +1393,7 @@ class Reception extends CommonObject
     {
 		// phpcs:enable
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
-        $sql.= ' WHERE rowid='.$id;
+        $sql .= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
     }
@@ -1415,7 +1410,7 @@ class Reception extends CommonObject
     {
 		// phpcs:enable
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
-        $sql.= ' WHERE rowid='.$id;
+        $sql .= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
     }
@@ -1429,11 +1424,11 @@ class Reception extends CommonObject
 	 */
     public function getUrlTrackingStatus($value = '')
 	{
-		if (! empty($this->shipping_method_id))
+		if (!empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-			$sql.= " WHERE em.rowid = ".$this->shipping_method_id;
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+			$sql .= " WHERE em.rowid = ".$this->shipping_method_id;
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -1448,7 +1443,7 @@ class Reception extends CommonObject
 		if (!empty($tracking) && !empty($value))
 		{
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>', $url, $url);
+			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
 		}
 		else
 		{
@@ -1463,16 +1458,16 @@ class Reception extends CommonObject
 	 */
     public function setClosed()
 	{
-		global $conf,$langs,$user;
+		global $conf, $langs, $user;
 
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut='.self::STATUS_CLOSED;
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
@@ -1481,17 +1476,17 @@ class Reception extends CommonObject
 				$order = new CommandeFournisseur($this->db);
 				$order->fetch($this->origin_id);
 
-				$order->loadReceptions(self::STATUS_CLOSED);		// Fill $order->receptions = array(orderlineid => qty)
+				$order->loadReceptions(self::STATUS_CLOSED); // Fill $order->receptions = array(orderlineid => qty)
 
 				$receptions_match_order = 1;
-				foreach($order->lines as $line)
+				foreach ($order->lines as $line)
 				{
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->receptions[$lineid] < $qty)
+					if (($line->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->receptions[$lineid] < $qty)
 					{
 						$receptions_match_order = 0;
-						$text='Qty for order line id '.$lineid.' is '.$qty.'. However in the receptions with status Reception::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->receptions[$lineid].', so we can t close order';
+						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the receptions with status Reception::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->receptions[$lineid].', so we can t close order';
 						dol_syslog($text);
 						break;
 					}
@@ -1503,11 +1498,11 @@ class Reception extends CommonObject
 				}
 			}
 
-			$this->statut=self::STATUS_CLOSED;
+			$this->statut = self::STATUS_CLOSED;
 
 
 			// If stock increment is done on closing
-			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
+			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
@@ -1516,15 +1511,15 @@ class Reception extends CommonObject
 				// Loop on each product line to add a stock movement
 				// TODO possibilite de receptionner a partir d'une propale ou autre origine ?
 				$sql = "SELECT cd.fk_product, cd.subprice,";
-				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql.= " ed.eatby, ed.sellby, ed.batch";
-				$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql.= " WHERE ed.fk_reception = ".$this->id;
-				$sql.= " AND cd.rowid = ed.fk_commandefourndet";
+				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " ed.eatby, ed.sellby, ed.batch";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql .= " WHERE ed.fk_reception = ".$this->id;
+				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql=$this->db->query($sql);
+				$resql = $this->db->query($sql);
 
 				if ($resql)
 				{
@@ -1546,7 +1541,7 @@ class Reception extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref));
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1558,7 +1553,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
@@ -1570,15 +1565,15 @@ class Reception extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->lasterror();
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 			}
 
 			// Call trigger
-			if (! $error)
+			if (!$error)
 			{
-    			$result=$this->call_trigger('RECEPTION_CLOSED', $user);
+    			$result = $this->call_trigger('RECEPTION_CLOSED', $user);
     			if ($result < 0) {
     			    $error++;
     			}
@@ -1590,7 +1585,7 @@ class Reception extends CommonObject
             $error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 		    $this->db->commit();
 		    return 1;
@@ -1612,7 +1607,7 @@ class Reception extends CommonObject
 	{
 		// phpcs:enable
 	    global $user;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
@@ -1621,20 +1616,20 @@ class Reception extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET  billed=1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->statut=2;
-			$this->billed=1;
+			$this->statut = 2;
+			$this->billed = 1;
 
 			// Call trigger
-			$result=$this->call_trigger('RECEPTION_BILLED', $user);
+			$result = $this->call_trigger('RECEPTION_BILLED', $user);
 			if ($result < 0) {
 				$error++;
 			}
 		} else {
 			$error++;
-			$this->errors[]=$this->db->lasterror;
+			$this->errors[] = $this->db->lasterror;
 		}
 
 		if (empty($error)) {
@@ -1655,23 +1650,23 @@ class Reception extends CommonObject
 	 */
     public function reOpen()
 	{
-		global $conf,$langs,$user;
+		global $conf, $langs, $user;
 
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1, billed=0';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->statut=1;
-			$this->billed=0;
+			$this->statut = 1;
+			$this->billed = 0;
 
 			// If stock increment is done on closing
-			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
+			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$numref = $this->ref;
@@ -1680,15 +1675,15 @@ class Reception extends CommonObject
 				// Loop on each product line to add a stock movement
 				// TODO possibilite de receptionner a partir d'une propale ou autre origine
 				$sql = "SELECT ed.fk_product, cd.subprice,";
-				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql.= " ed.eatby, ed.sellby, ed.batch";
-				$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql.= " WHERE ed.fk_reception = ".$this->id;
-				$sql.= " AND cd.rowid = ed.fk_commandefourndet";
+				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " ed.eatby, ed.sellby, ed.batch";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql .= " WHERE ed.fk_reception = ".$this->id;
+				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql=$this->db->query($sql);
+				$resql = $this->db->query($sql);
 				if ($resql)
 				{
 					$cpt = $this->db->num_rows($resql);
@@ -1711,7 +1706,7 @@ class Reception extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref));
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1723,7 +1718,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1734,31 +1729,31 @@ class Reception extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->lasterror();
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 			}
 
-			if (! $error)
+			if (!$error)
 			{
     			// Call trigger
-    			$result=$this->call_trigger('RECEPTION_REOPEN', $user);
+    			$result = $this->call_trigger('RECEPTION_REOPEN', $user);
     			if ($result < 0) {
     				$error++;
     			}
    			}
 
-			if($this->origin == 'order_supplier'){
+			if ($this->origin == 'order_supplier') {
 				$commande = new CommandeFournisseur($this->db);
 				$commande->fetch($this->origin_id);
 				$commande->setStatus($user, 4);
 			}
 		} else {
 			$error++;
-			$this->errors[]=$this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return 1;
@@ -1779,9 +1774,9 @@ class Reception extends CommonObject
     public function setDraft($user)
     {
 		// phpcs:enable
-        global $conf,$langs;
+        global $conf, $langs;
 
-        $error=0;
+        $error = 0;
 
         // Protection
         if ($this->statut <= self::STATUS_DRAFT)
@@ -1789,24 +1784,24 @@ class Reception extends CommonObject
             return 0;
         }
 
-        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->reception_advance->validate))))
+        if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
+       	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate))))
         {
-            $this->error='Permission denied';
+            $this->error = 'Permission denied';
             return -1;
         }
 
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
-        $sql.= " WHERE rowid = ".$this->id;
+        $sql .= " SET fk_statut = ".self::STATUS_DRAFT;
+        $sql .= " WHERE rowid = ".$this->id;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock increment is done on closing
-			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
+			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
@@ -1815,15 +1810,15 @@ class Reception extends CommonObject
 				// Loop on each product line to add a stock movement
 				// TODO possibilite de receptionner a partir d'une propale ou autre origine
 				$sql = "SELECT cd.fk_product, cd.subprice,";
-				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql.= " ed.eatby, ed.sellby, ed.batch";
-				$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql.= " WHERE ed.fk_reception = ".$this->id;
-				$sql.= " AND cd.rowid = ed.fk_commandefourndet";
+				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " ed.eatby, ed.sellby, ed.batch";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql .= " WHERE ed.fk_reception = ".$this->id;
+				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql=$this->db->query($sql);
+				$resql = $this->db->query($sql);
 				if ($resql)
 				{
 					$cpt = $this->db->num_rows($resql);
@@ -1846,7 +1841,7 @@ class Reception extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref));
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1859,7 +1854,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1870,14 +1865,14 @@ class Reception extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->lasterror();
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 			}
 
             if (!$error) {
             	// Call trigger
-            	$result=$this->call_trigger('RECEPTION_UNVALIDATE', $user);
+            	$result = $this->call_trigger('RECEPTION_UNVALIDATE', $user);
             	if ($result < 0) $error++;
             }
 			if ($this->origin == 'order_supplier')
@@ -1912,7 +1907,7 @@ class Reception extends CommonObject
 			}
 
             if (!$error) {
-                $this->statut=self::STATUS_DRAFT;
+                $this->statut = self::STATUS_DRAFT;
                 $this->db->commit();
                 return 1;
             } else {
@@ -1922,7 +1917,7 @@ class Reception extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error = $this->db->error();
             $this->db->rollback();
             return -1;
         }
@@ -1940,17 +1935,17 @@ class Reception extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
 		$langs->load("receptions");
 
-		if (! dol_strlen($modele))
+		if (!dol_strlen($modele))
 		{
 			$modele = 'squille';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
-			} elseif (! empty($conf->global->RECEPTION_ADDON_PDF)) {
+			} elseif (!empty($conf->global->RECEPTION_ADDON_PDF)) {
 				$modele = $conf->global->RECEPTION_ADDON_PDF;
 			}
 		}

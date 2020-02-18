@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -109,7 +109,8 @@ dol_fiche_head($head, 'payment', $langs->trans("Invoices"), -1, 'invoice');
 
 print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -175,7 +176,7 @@ foreach ($dirmodels as $reldir)
                             else print $tmp;
                             print '</td>'."\n";
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             //print "> ".$conf->global->PAYMENT_ADDON." - ".$file;
                             if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
                             {
@@ -205,7 +206,7 @@ foreach ($dirmodels as $reldir)
                                 }
                             }
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             print $form->textwithpicto('', $htmltooltip, 1, 0);
 
                             if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
@@ -226,16 +227,18 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+print '</div>';
 
 print "<br>";
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="setparams" />';
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
@@ -251,14 +254,17 @@ print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';
-
-print '<center>';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
-print '</center>';
-
-print '</form>';
+print '</div>';
 
 dol_fiche_end();
+
+print '<br>';
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '</div>';
+print '<br>';
+
+print '</form>';
 
 // End of page
 llxFooter();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceActionsBlockedLog extends DolibarrTriggers
 {
 	public $family = 'system';
-	public $description = "Triggers of this module add action for BlockedLog module.";
+	public $description = "Triggers of this module add action for BlockedLog module (Module of unalterable logs).";
 
 	/**
 	 * Version of the trigger
@@ -45,7 +45,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	public $picto = 'technic';
 
 	/**
-	 * Function called on Dolibarrr payment or invoice event.
+	 * Function called on Dolibarr payment or invoice event.
 	 *
 	 * @param string		$action		Event action code
 	 * @param Object		$object     Object

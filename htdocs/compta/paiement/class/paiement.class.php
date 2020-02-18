@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,14 +72,13 @@ class Paiement extends CommonObject
 	public $amounts=array();   // Array of amounts
 	public $multicurrency_amounts=array();   // Array of amounts
 	public $author;
-	public $paiementid;	// Type de paiement. Stocke dans fk_paiement
-	// de llx_paiement qui est lie aux types de
-    //paiement de llx_c_paiement
+	public $paiementid;			// Type of payment. Id saved into fields fk_paiement on llx_paiement
+	public $paiementcode;		// Code of payment.
 
     /**
      * @var string type libelle
      */
-    public $type_libelle;
+    public $type_label;
 
     /**
      * @var string type code
@@ -89,14 +88,14 @@ class Paiement extends CommonObject
     /**
      * @var string Numero du CHQ, VIR, etc...
      * @deprecated
-     * @see num_payment
+     * @see $num_payment
      */
     public $numero;
 
     /**
      * @var string Numero du CHQ, VIR, etc...
      * @deprecated
-     * @see num_payment
+     * @see $num_payment
      */
     public $num_paiement;
 
@@ -118,6 +117,7 @@ class Paiement extends CommonObject
     /**
      * @var int bank account id of payment
      * @deprecated
+     * @see $fk_account
      */
     public $bank_account;
 
@@ -160,7 +160,7 @@ class Paiement extends CommonObject
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
-		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
+		$sql.= ' c.code as type_code, c.libelle as type_label,';
 		$sql.= ' p.num_paiement as num_payment, p.note,';
 		$sql.= ' b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
@@ -183,13 +183,12 @@ class Paiement extends CommonObject
 				$this->ref            = $obj->ref?$obj->ref:$obj->rowid;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->numero         = $obj->num_payment;	// deprecated
 				$this->num_paiement   = $obj->num_payment;	// deprecated
 				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount;   // deprecated
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
-				$this->type_libelle   = $obj->type_libelle;
+				$this->type_label   = $obj->type_label;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
                 $this->ext_payment_id = $obj->ext_payment_id;
@@ -273,7 +272,9 @@ class Paiement extends CommonObject
         	return -1;
         }
 
-		$this->db->begin();
+        dol_syslog(get_class($this)."::create insert paiement", LOG_DEBUG);
+
+        $this->db->begin();
 
 		$this->ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
 
@@ -287,12 +288,13 @@ class Paiement extends CommonObject
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
+
+		$num_payment = ($this->num_payment?$this->num_payment:$this->num_paiement);
 		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
 
-		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -308,7 +310,7 @@ class Paiement extends CommonObject
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
 
-					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
+					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -325,28 +327,6 @@ class Paiement extends CommonObject
                             $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
-
-                            /* Why this ? We can remove i think.
-                            // If there is withdrawals request to do and not done yet on the invoice the payment is on, we wait before closing.
-                            $mustwait=0;
-                            $sqlrequest ="SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
-                            $sqlrequest.="WHERE fk_facture = ".$invoice->id." AND traite = 0";
-                            ...
-
-                            $listofpayments=$invoice->getListOfPayments();
-                            foreach($listofpayments as $paym)
-                            {
-                                // This payment on invoice $invoice might be the one we record or another one
-                                if ($paym['type']=='PRE')
-                                {
-                                    if (! empty($conf->prelevement->enabled))
-                                    {
-                                        // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
-
-                                    }
-                                }
-                            }
-                            */
 
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
@@ -372,8 +352,6 @@ class Paiement extends CommonObject
 									$discount = new DiscountAbsolute($this->db);
 									$discount->fetch('', $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
-
-
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
 										$discount->fk_facture_source = $invoice->id;
@@ -432,9 +410,14 @@ class Paiement extends CommonObject
 					    // Regenerate documents of invoices
                         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                         {
+                        	dol_syslog(get_class($this).'::create Regenerate the document after inserting payment for thirdparty default_lang='.(is_object($invoice->thirdparty) ? $invoice->thirdparty->default_lang : 'null'), LOG_DEBUG);
+
                             $newlang='';
                             $outputlangs = $langs;
-                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	{
+                            	$invoice->fetch_thirdparty();
+                            	$newlang = $invoice->thirdparty->default_lang;
+                            }
                             if (! empty($newlang)) {
                             	$outputlangs = new Translate("", $conf);
                             	$outputlangs->setDefaultLang($newlang);
@@ -847,7 +830,6 @@ class Paiement extends CommonObject
 
             if (! $error)
             {
-
             }
 
             if (! $error)
@@ -886,7 +868,7 @@ class Paiement extends CommonObject
             $result = $this->db->query($sql);
             if ($result)
             {
-            	$this->numero = $this->db->escape($num);
+            	$this->num_payment = $this->db->escape($num);
                 return 0;
             }
             else
@@ -1089,7 +1071,6 @@ class Paiement extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/payment/");
 
 				// Load file with numbering class (if found)

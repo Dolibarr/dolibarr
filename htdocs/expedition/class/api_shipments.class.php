@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -93,7 +93,7 @@ class Shipments extends DolibarrApi
      * @param string	       $sortorder	        Sort order
      * @param int		       $limit		        Limit for list
      * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter shipments of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter shipments of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of shipment objects
      *
@@ -106,7 +106,7 @@ class Shipments extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+        $socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -208,15 +208,15 @@ class Shipments extends DolibarrApi
         return $this->shipment->id;
     }
 
-    /**
-     * Get lines of an shipment
-     *
-     * @param int   $id             Id of shipment
-     *
-     * @url	GET {id}/lines
-     *
-     * @return int
-     */
+    // /**
+    //  * Get lines of an shipment
+    //  *
+    //  * @param int   $id             Id of shipment
+    //  *
+    //  * @url	GET {id}/lines
+    //  *
+    //  * @return int
+    //  */
     /*
     public function getLines($id)
     {
@@ -241,16 +241,16 @@ class Shipments extends DolibarrApi
     }
     */
 
-    /**
-     * Add a line to given shipment
-     *
-     * @param int   $id             Id of shipment to update
-     * @param array $request_data   ShipmentLine data
-     *
-     * @url	POST {id}/lines
-     *
-     * @return int
-     */
+    // /**
+    //  * Add a line to given shipment
+    //  *
+    //  * @param int   $id             Id of shipment to update
+    //  * @param array $request_data   ShipmentLine data
+    //  *
+    //  * @url	POST {id}/lines
+    //  *
+    //  * @return int
+    //  */
     /*
     public function postLine($id, $request_data = null)
     {
@@ -303,17 +303,17 @@ class Shipments extends DolibarrApi
         return false;
     }*/
 
-    /**
-     * Update a line to given shipment
-     *
-     * @param int   $id             Id of shipment to update
-     * @param int   $lineid         Id of line to update
-     * @param array $request_data   ShipmentLine data
-     *
-     * @url	PUT {id}/lines/{lineid}
-     *
-     * @return object
-     */
+    // /**
+    //  * Update a line to given shipment
+    //  *
+    //  * @param int   $id             Id of shipment to update
+    //  * @param int   $lineid         Id of line to update
+    //  * @param array $request_data   ShipmentLine data
+    //  *
+    //  * @url	PUT {id}/lines/{lineid}
+    //  *
+    //  * @return object
+    //  */
     /*
     public function putLine($id, $lineid, $request_data = null)
     {
@@ -486,7 +486,7 @@ class Shipments extends DolibarrApi
      * @url POST    {id}/validate
      *
      * @return  array
-     * FIXME An error 403 is returned if the request has an empty body.
+     * \todo An error 403 is returned if the request has an empty body.
      * Error message: "Forbidden: Content type `text/plain` is not supported."
      * Workaround: send this in the body
      * {
@@ -528,20 +528,20 @@ class Shipments extends DolibarrApi
     }
 
 
-    /**
-     *  Classify the shipment as invoiced
-     *
-     * @param int   $id           Id of the shipment
-     *
-     * @url     POST {id}/setinvoiced
-     *
-     * @return int
-     *
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     */
+    // /**
+    //  *  Classify the shipment as invoiced
+    //  *
+    //  * @param int   $id           Id of the shipment
+    //  *
+    //  * @url     POST {id}/setinvoiced
+    //  *
+    //  * @return int
+    //  *
+    //  * @throws 400
+    //  * @throws 401
+    //  * @throws 404
+    //  * @throws 405
+    //  */
      /*
     public function setinvoiced($id)
     {
@@ -566,19 +566,19 @@ class Shipments extends DolibarrApi
     */
 
 
-     /**
-     * Create a shipment using an existing order.
-     *
-     * @param int   $orderid       Id of the order
-     *
-     * @url     POST /createfromorder/{orderid}
-     *
-     * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     */
+    //  /**
+    //  * Create a shipment using an existing order.
+    //  *
+    //  * @param int   $orderid       Id of the order
+    //  *
+    //  * @url     POST /createfromorder/{orderid}
+    //  *
+    //  * @return int
+    //  * @throws 400
+    //  * @throws 401
+    //  * @throws 404
+    //  * @throws 405
+    //  */
     /*
     public function createShipmentFromOrder($orderid)
     {

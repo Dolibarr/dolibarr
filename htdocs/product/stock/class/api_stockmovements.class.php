@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -99,47 +99,47 @@ class StockMovements extends DolibarrApi
 
         $obj_ret = array();
 
-        if(! DolibarrApiAccess::$user->rights->stock->lire) {
+        if (!DolibarrApiAccess::$user->rights->stock->lire) {
             throw new RestException(401);
         }
 
         $sql = "SELECT t.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
         //$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
-        $sql.= ' WHERE 1 = 1';
+        $sql .= ' WHERE 1 = 1';
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        $sql .= $db->order($sortfield, $sortorder);
+        if ($limit) {
             if ($page < 0)
             {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $db->plimit($limit + 1, $offset);
         }
 
         $result = $db->query($sql);
         if ($result)
         {
-            $i=0;
+            $i = 0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $stockmovement_static = new MouvementStock($db);
-                if($stockmovement_static->fetch($obj->rowid)) {
+                if ($stockmovement_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
                 }
                 $i++;
@@ -148,58 +148,57 @@ class StockMovements extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve stock movement list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No stock movement found');
         }
         return $obj_ret;
     }
 
-    /*
-     * @param   int     $product_id         Id product id {@min 1}
-     * @param   int     $warehouse_id       Id warehouse {@min 1}
-     * @param   float   $qty                Qty to add (Use negative value for a stock decrease) {@min 0} {@message qty must be higher than 0}
-     * @param   string  $lot                Lot
-     * @param   string  $movementcode       Movement code {@example INV123}
-     * @param   string  $movementlabel      Movement label {@example Inventory number 123}
-     * @param   string  $price              To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0).
-     */
-
-
     /**
      * Create stock movement object.
      * You can use the following message to test this RES API:
      * { "product_id": 1, "warehouse_id": 1, "qty": 1, "lot": "", "movementcode": "INV123", "movementlabel": "Inventory 123", "price": 0 }
+     * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
+     * $dlc Eat-by date. Will be used if lot does not exists yet and will be created.
+     * $dluo Sell-by date. Will be used if lot does not exists yet and will be created.
      *
-     * @param array $request_data   Request data
+     * @param int $product_id Id product id {@min 1} {@from body} {@required true}
+     * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
+     * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
+     * @param string $lot Lot {@from body}
+     * @param string $movementcode Movement code {@example INV123} {@from body}
+     * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
+     * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
+     * @param string $dlc Eat-by date. {@from body} {@type date}
+     * @param string $dluo Sell-by date. {@from body} {@type date}
+     *
      * @return  int                         ID of stock movement
+     * @throws RestException
      */
-    //function post($product_id, $warehouse_id, $qty, $lot='', $movementcode='', $movementlabel='', $price=0)
-    public function post($request_data = null)
+    public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $dlc = '', $dluo = '')
     {
-        if(! DolibarrApiAccess::$user->rights->stock->creer) {
+        if (!DolibarrApiAccess::$user->rights->stock->creer) {
             throw new RestException(401);
         }
 
-        // Check mandatory fields
-        //$result = $this->_validate($request_data);
-
-        foreach($request_data as $field => $value) {
-            //$this->stockmovement->$field = $value;
-            if ($field == 'product_id') $product_id = $value;
-            if ($field == 'warehouse_id') $warehouse_id = $value;
-            if ($field == 'qty') $qty = $value;
-            if ($field == 'lot') $lot = $value;
-            if ($field == 'movementcode') $movementcode = $value;
-            if ($field == 'movementlabel') $movementlabel = $value;
-            if ($field == 'price') $price = $value;
+        if ($qty == 0) {
+        	throw new RestException(503, "Making a stock movement with a quentity of 0 is not possible");
         }
 
         // Type increase or decrease
-        if ($qty >= 0) $type = 3;
-        else $type = 2;
+        $type = 2;
+        if ($qty >= 0) {
+            $type = 3;
+        }
 
-        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', '', '', $lot) <= 0) {
-            throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->error);
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        $eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
+        $sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
+
+        if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
+        	$errormessage = $this->stockmovement->error;
+        	if (empty($errormessage)) $errormessage = join(',', $this->stockmovement->errors);
+        	throw new RestException(503, 'Error when create stock movement : '.$errormessage);
         }
 
         return $this->stockmovement->id;
@@ -292,7 +291,7 @@ class StockMovements extends DolibarrApi
         unset($object->lastname);
         unset($object->name);
         unset($object->location_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->fk_incoterms);
         unset($object->lines);
         unset($object->total_ht);
@@ -342,7 +341,7 @@ class StockMovements extends DolibarrApi
     private function _validate($data)
     {
         $stockmovement = array();
-        foreach (Warehouses::$FIELDS as $field) {
+        foreach (self::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $stockmovement[$field] = $data[$field];

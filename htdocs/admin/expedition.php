@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -201,9 +201,9 @@ dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'sending');
 
 // Shipment numbering model
 
-print load_fiche_titre($langs->trans("SendingsNumberingModules"));
+print load_fiche_titre($langs->trans("SendingsNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -304,7 +304,7 @@ print '</table><br>';
 /*
  *  Documents models for Sendings Receipt
  */
-print load_fiche_titre($langs->trans("SendingsReceiptModel"));
+print load_fiche_titre($langs->trans("SendingsReceiptModel"), '', '');
 
 // Defini tableau def de modele invoice
 $type="shipping";
@@ -332,7 +332,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -366,7 +366,6 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
@@ -416,7 +415,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
@@ -464,10 +463,10 @@ print '<br>';
  * Other options
  *
  */
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_param">';
 
 print "<table class=\"noborder\" width=\"100%\">";

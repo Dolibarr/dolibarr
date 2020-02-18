@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ class DoliDBMssql extends DoliDB
     public $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	const VERSIONMIN='2000';
-	/** @var resource Resultset of last query */
+	/** @var boolean|resource Resultset of last query */
 	private $_results;
 
     /**
@@ -220,11 +220,10 @@ class DoliDBMssql extends DoliDB
      */
     public function close()
     {
-        if ($this->db)
-        {
-          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
-          $this->connected=false;
-          return mssql_close($this->db);
+        if ($this->db) {
+            if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
+            $this->connected=false;
+            return mssql_close($this->db);
         }
         return false;
     }
@@ -337,6 +336,8 @@ class DoliDBMssql extends DoliDB
 
 		$query=preg_replace("/([. ,\t(])(percent|file|public)([. ,=\t)])/", "$1[$2]$3", $query);
 
+		$original_query='';
+
 		if ($type=="auto" || $type='dml')
 		{
     		$query=preg_replace('/AUTO_INCREMENT/i', 'IDENTITY', $query);
@@ -346,7 +347,6 @@ class DoliDBMssql extends DoliDB
     		$query=preg_replace('/([ \t])(MEDIUM|TINY|LONG){0,1}TEXT([ \t,])/i', "$1VARCHAR(MAX)$3", $query);
 
     		$matches=array();
-    		$original_query='';
     		if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+(?:(UNIQUE)|INDEX)\h+(?:INDEX)?\h*(\w+?)\h*\((.+)\)/is', $query, $matches))
     		{
                 $original_query=$query;
@@ -357,10 +357,12 @@ class DoliDBMssql extends DoliDB
                     $fields_clear=array_map('trim', $fields);
                     $infos=$this->GetFieldInformation(trim($matches[1]), $fields_clear);
                     $query_comp=array();
-                    foreach($infos as $fld) {
-                        if ($fld->IS_NULLABLE == 'YES') {
-                            $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
-                        }
+                    if (is_array($infos)) {
+	                    foreach($infos as $fld) {
+	                        if ($fld->IS_NULLABLE == 'YES') {
+	                            $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
+	                        }
+	                    }
                     }
                     if (! empty($query_comp))
                         $query.=" WHERE ".implode(" AND ", $query_comp);
@@ -407,15 +409,15 @@ class DoliDBMssql extends DoliDB
     			// Inserer la date en parametre et le reste de la requete
     			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
     		}
-    	   if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i', $query, $matches))
-    	   {
-    	       //var_dump($query);
-    	       //var_dump($matches);
-    	       //if (stripos($query,'llx_c_departements') !== false) var_dump($query);
-    	       $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
-    	       @mssql_query($sql, $this->db);
-    	       $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
-    	   }
+    	    if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i', $query, $matches))
+    	    {
+    	        //var_dump($query);
+    	        //var_dump($matches);
+    	        //if (stripos($query,'llx_c_departements') !== false) var_dump($query);
+    	        $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
+    	        @mssql_query($sql, $this->db);
+    	        $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
+    	    }
 		}
 		//print "<!--".$query."-->";
 
@@ -527,10 +529,10 @@ class DoliDBMssql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 *	@param	resource	$resultset   Curseur de la requete voulue
-	 *	@return int		    Nombre de lignes
+	 *	@return int		    Number of lines
 	 *	@see    num_rows()
 	 */
     public function affected_rows($resultset)
@@ -785,7 +787,8 @@ class DoliDBMssql extends DoliDB
     public function DDLListTables($database, $table = '')
 	{
         // phpcs:enable
-		$this->_results = mssql_list_tables($database, $this->db);
+		$v = mssql_query("Select name from sysobjects where type like 'u'", $this->db);
+		$this->_results = mssql_fetch_array($v);
 		return $this->_results;
 	}
 
@@ -825,6 +828,10 @@ class DoliDBMssql extends DoliDB
 	{
         // phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$sqlfields = array();
+		$sqluq = array();
+		$sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

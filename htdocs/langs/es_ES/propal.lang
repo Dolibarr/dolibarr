@@ -76,10 +76,11 @@ TypeContact_propal_external_BILLING=Contacto cliente de facturación presupuesto
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento presupuesto
 TypeContact_propal_external_SHIPPING=Contacto cliente para envíos
 # Document models
-DocModelAzurDescription=Modelo de presupuesto completo (logo...)
-DocModelCyanDescription=Modelo de presupuesto completo (logo...)
+DocModelAzurDescription=Una plantilla de propuesta completa 
+DocModelCyanDescription=Una plantilla de propuesta completa
 DefaultModelPropalCreate=Modelo por defecto
 DefaultModelPropalToBill=Modelo por defecto al cerrar un presupuesto (a facturar)
 DefaultModelPropalClosed=Modelo por defecto al cerrar un presupuesto (no facturado)
 ProposalCustomerSignature=Aceptación por escrito, sello de la empresa, fecha y firma
 ProposalsStatisticsSuppliers=Estadísticas presupuestos de proveedores
+CaseFollowedBy=Caso seguido por

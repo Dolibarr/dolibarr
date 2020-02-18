@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,7 +82,7 @@ print $langs->trans("Module100Desc")."<br>\n";
 print '<br>';
 
 print '<form name="externalsiteconfig" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print "<table class=\"noborder\" width=\"100%\">";
 

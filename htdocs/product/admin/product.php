@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -146,6 +146,7 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+
 	if ($value) {
 	    $sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 	    $resql = $db->query($sql_test);
@@ -272,7 +273,7 @@ $formbarcode=new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
+if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
@@ -299,7 +300,7 @@ $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans("ProductCodeChecker"), '', '');
 
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
@@ -400,7 +401,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("ProductDocumentTemplates"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -433,7 +434,6 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
@@ -483,7 +483,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+								// Info
 		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
@@ -534,10 +534,10 @@ print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="other">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
@@ -677,6 +677,7 @@ if (! empty($conf->fournisseur->enabled))
     print '</td>';
     print '</tr>';
 }
+
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {

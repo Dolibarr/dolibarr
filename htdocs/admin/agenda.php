@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,10 +40,11 @@ $cancel = GETPOST('cancel', 'alpha');
 $search_event = GETPOST('search_event', 'alpha');
 
 // Get list of triggers available
+$triggers = array();
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype, a.rang as position";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
-$sql.= " ORDER BY a.rang ASC";
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
+$sql .= " ORDER BY a.rang ASC";
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -51,11 +52,11 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$triggers[$i]['rowid'] 		= $obj->rowid;
+		$triggers[$i]['rowid'] = $obj->rowid;
 		$triggers[$i]['code'] 		= $obj->code;
-		$triggers[$i]['element'] 	= $obj->elementtype;
-		$triggers[$i]['label']		= ($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-		$triggers[$i]['position'] 	= $obj->position;
+		$triggers[$i]['element'] = $obj->elementtype;
+		$triggers[$i]['label']		= ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
+		$triggers[$i]['position'] = $obj->position;
 
 		$i++;
 	}
@@ -74,35 +75,35 @@ else
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_event = '';
 	$action = '';
 }
 
-if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') ||GETPOST('button_search', 'alpha'))	// To avoid the save when we click on search
+if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))	// To avoid the save when we click on search
 {
 	$action = '';
 }
 
 if ($action == "save" && empty($cancel))
 {
-    $i=0;
+    $i = 0;
 
     $db->begin();
 
 	foreach ($triggers as $trigger)
 	{
-		$keyparam='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+		$keyparam = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
 		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam))
 		{
-			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha')?GETPOST($keyparam, 'alpha'):''), 'chaine', 0, '', $conf->entity);
-			if (! $res > 0) $error++;
+			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+			if (!$res > 0) $error++;
 		}
 	}
 
- 	if (! $error)
+ 	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         $db->commit();
@@ -120,34 +121,34 @@ if ($action == "save" && empty($cancel))
  * View
  */
 
-$wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 $param = '';
-$param.= '&search_event='.urlencode($search_event);
+$param .= '&search_event='.urlencode($search_event);
 
-$head=agenda_prepare_head();
+$head = agenda_prepare_head();
 
 dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
 
-print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
 print '<td class="liste_titre maxwidthsearch">';
-$searchpicto=$form->showFilterButtons();
+$searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
 print '</tr>';
@@ -155,10 +156,10 @@ print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
 print '<th class="liste_titre" colspan="2">'.$langs->trans("ActionsEvents").'</th>';
-print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall'.($param?$param:'').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param?$param:'').'">'.$langs->trans("None").'</a></th>';
+print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall'.($param ? $param : '').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param ? $param : '').'">'.$langs->trans("None").'</a></th>';
 print '</tr>'."\n";
 // Show each trigger (list is in c_action_trigger)
-if (! empty($triggers))
+if (!empty($triggers))
 {
 	foreach ($triggers as $trigger)
 	{
@@ -169,8 +170,14 @@ if (! empty($triggers))
 		if ($module == 'project') $module = 'projet';
 		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
 
+		// If 'element' value is myobject@mymodule instead of mymodule
+		$tmparray = explode('@', $module);
+		if (! empty($tmparray[1])) {
+			$module = $tmparray[1];
+		}
+
 		//print 'module='.$module.'<br>';
-		if (! empty($conf->$module->enabled))
+		if (!empty($conf->$module->enabled))
 		{
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
@@ -182,9 +189,9 @@ if (! empty($triggers))
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';
 				print '<td class="right" width="40">';
-				$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-				$value=$conf->global->$key;
-				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
+				$key = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+				$value = $conf->global->$key;
+				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action == 'selectall' || $value) && $action != "selectnone") ? ' checked' : '').'>';
 				print '</td></tr>'."\n";
 			}
 		}

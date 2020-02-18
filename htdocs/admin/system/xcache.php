@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,10 +39,9 @@ print load_fiche_titre("XCache", '', 'title_setup');
 
 print "<br>\n";
 
-//function_exists('apc_cache_info') || function_exists('eaccelerator_info') || function_exists('xcache_info'))
 if (!function_exists('xcache_info'))
 {
-    print 'XCache seems to be not installed. Function xcache_info not found.';
+	print 'XCache seems to be not installed. Function xcache_info not found.';
 	llxFooter();
 	exit;
 }

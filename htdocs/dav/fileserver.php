@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can test with the WebDav client cadaver:
  * cadaver http://myurl/dav/fileserver.php
@@ -55,6 +55,22 @@ if (empty($conf->dav->enabled))
 	accessforbidden();
 
 
+// Restrict API to some IPs
+if (! empty($conf->global->DAV_RESTRICT_ON_IP))
+{
+	$allowedip=explode(' ', $conf->global->DAV_RESTRICT_ON_IP);
+	$ipremote = getUserRemoteIP();
+	if (! in_array($ipremote, $allowedip))
+	{
+		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->DAV_RESTRICT_ON_IP);
+		print 'DAV not allowed from the IP '.$ipremote;
+		header('HTTP/1.1 503 DAV not allowed from your IP '.$ipremote);
+		//print $conf->global->DAV_RESTRICT_ON_IP;
+		exit(0);
+	}
+}
+
+
 $entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
 // settings
@@ -69,19 +85,26 @@ $tmpDir = $conf->dav->multidir_output[$entity];     // We need root dir, not a d
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
 	global $user;
 	global $conf;
-	global $dolibarr_main_authentication;
+	global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 	if (empty($user->login))
+	{
+		dol_syslog("Failed to authenticate to DAV, login is not provided", LOG_WARNING);
 		return false;
+	}
 	if ($user->socid > 0)
+	{
+		dol_syslog("Failed to authenticate to DAV, use is an external user", LOG_WARNING);
 		return false;
+	}
 	if ($user->login != $username)
+	{
+		dol_syslog("Failed to authenticate to DAV, login does not match the login of loaded user", LOG_WARNING);
 		return false;
+	}
 
 	// Authentication mode
-	if (empty($dolibarr_main_authentication))
-		$dolibarr_main_authentication='http,dolibarr';
-	$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='dolibarr';
 
 	// Authentication mode: forceuser
 	if ($dolibarr_main_authentication == 'forceuser')
@@ -97,7 +120,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	$authmode = explode(',', $dolibarr_main_authentication);
 	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-	if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
+	if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username)
 		return false;
 
 	return true;

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -175,7 +175,7 @@ class CdavLib
 		$caldata.="LAST-MODIFIED:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		$caldata.="DTSTAMP:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		if($obj->sourceuid=='')
-			$caldata.="UID:".$obj->id.'-ev-'.$calid.'-cal-'.CDAV_URI_KEY."\n";
+			$caldata.="UID:".$obj->id.'-ev-'.$calid.'-cal-'.constant('CDAV_URI_KEY')."\n";
 		else
 			$caldata.="UID:".$obj->sourceuid."\n";
 		$caldata.="SUMMARY:".$obj->label."\n";
@@ -277,7 +277,7 @@ class CdavLib
 				{
 					$calevents[] = array(
 						'calendardata' => $calendardata,
-						'uri' => $obj->id.'-ev-'.CDAV_URI_KEY,
+						'uri' => $obj->id.'-ev-'.constant('CDAV_URI_KEY'),
 						'lastmodified' => strtotime($obj->lastupd),
 						'etag' => '"'.md5($calendardata).'"',
 						'calendarid'   => $calendarId,
@@ -289,7 +289,7 @@ class CdavLib
 				{
 					$calevents[] = array(
 						// 'calendardata' => $calendardata,  not necessary because etag+size are present
-						'uri' => $obj->id.'-ev-'.CDAV_URI_KEY,
+						'uri' => $obj->id.'-ev-'.constant('CDAV_URI_KEY'),
 						'lastmodified' => strtotime($obj->lastupd),
 						'etag' => '"'.md5($calendardata).'"',
 						'calendarid'   => $calendarId,

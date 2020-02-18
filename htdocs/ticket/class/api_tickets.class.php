@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -148,9 +148,9 @@ class Tickets extends DolibarrApi
 
         // String for user assigned
         if ($this->ticket->fk_user_assign > 0) {
-          $userStatic = new User($this->db);
-          $userStatic->fetch($this->ticket->fk_user_assign);
-          $this->ticket->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
+            $userStatic = new User($this->db);
+            $userStatic->fetch($this->ticket->fk_user_assign);
+            $this->ticket->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
         }
 
         // Messages of ticket
@@ -234,8 +234,8 @@ class Tickets extends DolibarrApi
 
         $obj_ret = array();
 
-        if (!$socid && DolibarrApiAccess::$user->societe_id) {
-            $socid = DolibarrApiAccess::$user->societe_id;
+        if (!$socid && DolibarrApiAccess::$user->socid) {
+            $socid = DolibarrApiAccess::$user->socid;
         }
 
         // If the internal user must only see his customers, force searching by him
@@ -291,14 +291,15 @@ class Tickets extends DolibarrApi
         $result = $db->query($sql);
         if ($result) {
             $num = $db->num_rows($result);
+            $i = 0;
             while ($i < $num) {
                 $obj = $db->fetch_object($result);
                 $ticket_static = new Ticket($db);
                 if ($ticket_static->fetch($obj->rowid)) {
                     if ($ticket_static->fk_user_assign > 0) {
-                      $userStatic = new User($this->db);
-                      $userStatic->fetch($ticket_static->fk_user_assign);
-                      $ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
+                        $userStatic = new User($this->db);
+                        $userStatic->fetch($ticket_static->fk_user_assign);
+                        $ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
                     }
                     $obj_ret[] = $this->_cleanObjectDatas($ticket_static);
                 }
@@ -435,7 +436,7 @@ class Tickets extends DolibarrApi
             throw new RestException(500);
         }
 
-         return array(
+        return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Ticket deleted'
@@ -530,7 +531,7 @@ class Tickets extends DolibarrApi
             "total_localtax2",
             "total_ttc",
             "fk_incoterms",
-            "libelle_incoterms",
+            "label_incoterms",
             "location_incoterms",
             "name",
             "lastname",

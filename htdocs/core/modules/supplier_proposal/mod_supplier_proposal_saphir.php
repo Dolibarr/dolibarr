@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -64,15 +64,15 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      */
     public function info()
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstsupplier_proposal" value="SUPPLIER_PROPOSAL_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
@@ -98,7 +98,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

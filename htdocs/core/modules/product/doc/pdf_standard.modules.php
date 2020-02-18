@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -119,14 +119,14 @@ class pdf_standard extends ModelePDFProduct
 	{
 		global $conf,$langs,$mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -169,23 +169,23 @@ class pdf_standard extends ModelePDFProduct
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
-		if ($conf->produit->dir_output)
+		if ($conf->product->dir_output)
 		{
 		    // Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->produit->dir_output;
+				$dir = $conf->product->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->produit->dir_output . "/" . $objectref;
+				$dir = $conf->product->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -328,7 +328,7 @@ class pdf_standard extends ModelePDFProduct
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -346,7 +346,7 @@ class pdf_standard extends ModelePDFProduct
 
 				// Loop on each lines
 				/*
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
@@ -375,7 +375,7 @@ class pdf_standard extends ModelePDFProduct
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -484,7 +484,7 @@ class pdf_standard extends ModelePDFProduct
 					$this->tva[$vatrate] += $tvaligne;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -493,7 +493,7 @@ class pdf_standard extends ModelePDFProduct
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -572,7 +572,7 @@ class pdf_standard extends ModelePDFProduct
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -630,11 +630,11 @@ class pdf_standard extends ModelePDFProduct
 	    $pdf->SetFont('', '', $default_font_size - 1);
 
 	    // Output Rect
-	    $this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+	    $this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 	    if (empty($hidetop))
 	    {
-	        $pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+	        $pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 
 	        $pdf->SetXY($this->posxdesc-1, $tab_top+1);
 	        $pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
@@ -668,8 +668,7 @@ class pdf_standard extends ModelePDFProduct
 	        $pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 	        if (empty($hidetop)) {
 	            $pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-            $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
-	                'C');
+                $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '', 'C');
 	        }
 	    }
 
@@ -709,7 +708,7 @@ class pdf_standard extends ModelePDFProduct
 	{
 	    global $conf,$langs,$hookmanager;
 
-	    // Load traductions files requiredby by page
+	    // Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders"));
 
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
