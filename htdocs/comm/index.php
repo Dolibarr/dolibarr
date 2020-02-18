@@ -792,8 +792,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->entity = $objp->entity;
-                $companystatic->email = $objp->email;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
@@ -900,8 +900,8 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->entity = $objp->entity;
-                $companystatic->email = $objp->email;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
