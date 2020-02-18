@@ -280,7 +280,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->rights->user->user->lire && $user->id != $id) {
+			if (!DolibarrApiAccess::$user->rights->user->user->lire && DolibarrApiAccess::$user->id != $id) {
 				throw new RestException(401);
 			}
 
