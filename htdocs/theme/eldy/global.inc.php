@@ -2105,6 +2105,9 @@ div.login_block a {
 	color: #<?php echo $colortextbackhmenu; ?>;
 	display: inline-block;
 }
+div.login_block span.aversion {
+	color: #888;
+}
 div.login_block table {
 	display: inline;
 }

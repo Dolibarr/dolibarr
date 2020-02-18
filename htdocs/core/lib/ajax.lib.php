@@ -473,14 +473,15 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 /**
  * 	On/off button for constant
  *
- * 	@param	string	$code			Name of constant
- * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- * 	@param	int		$entity			Entity to set
- *  @param	int		$revertonoff	Revert on/off
- *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ * 	@param	string	$code					Name of constant
+ * 	@param	array	$input					Array of options. ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param	int		$entity					Entity to set
+ *  @param	int		$revertonoff			Revert on/off
+ *  @param	bool	$strict					Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0)
 {
 	global $conf, $langs;
 
@@ -511,7 +512,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict);
 					} else {
-						setConstant(url, code, input, entity);
+						setConstant(url, code, input, entity, 0, '.$forcereload.');
 					}
 				});
 
@@ -522,7 +523,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict);
 					} else {
-						delConstant(url, code, input, entity);
+						delConstant(url, code, input, entity, 0, '.$forcereload.');
 					}
 				});
 			});

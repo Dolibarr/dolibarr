@@ -248,7 +248,6 @@ print '</tr>';
 
 // Multilingual GUI
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-//print $form->selectyesno('MAIN_MULTILANGS', $conf->global->MAIN_MULTILANGS, 1);
 print ajax_constantonoff('MAIN_MULTILANGS');
 print '</td>';
 print '<td width="20">&nbsp;</td>';
