@@ -749,7 +749,7 @@ class ProductFournisseur extends Product
         $sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-        $sql .= " AND pfp.entity = ".$conf->entity; // only current entity
+        $sql .= " AND pfp.entity IN (".getEntity('societe').")"; // only current entity
         $sql .= " AND pfp.fk_product = ".$prodid;
         $sql .= " AND pfp.fk_soc = s.rowid";
         $sql .= " AND s.status = 1"; // only enabled society
