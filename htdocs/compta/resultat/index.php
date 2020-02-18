@@ -416,9 +416,6 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 
-					if (!isset($encaiss[$obj->dm])) $encaiss[$obj->dm] = 0;
-					$encaiss[$obj->dm] += $obj->amount;
-
 					if (!isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm] = 0;
 					$encaiss_ttc[$obj->dm] += $obj->amount;
 
@@ -478,9 +475,6 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 			if ($num) {
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
-
-					if (!isset($encaiss[$obj->dm])) $encaiss[$obj->dm] = 0;
-					$encaiss[$obj->dm] += -$obj->amount;
 
 					if (!isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm] = 0;
 					$encaiss_ttc[$obj->dm] += -$obj->amount;
@@ -875,7 +869,9 @@ $reshook = $hookmanager->executeHooks('addReportInfo', $parameters, $object, $ac
  */
 
 $totentrees = array();
+$totentrees_ttc = array();
 $totsorties = array();
+$totsorties_ttc = array();
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste">'."\n";
@@ -884,7 +880,8 @@ print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
 for ($annee = $year_start; $annee <= $year_end; $annee++)
 {
-	print '<td align="center" colspan="2" class="liste_titre borderrightlight">';
+    $colspan = $modecompta == 'BOOKKEEPING' ? 2 : 4;
+	print '<td align="center" colspan="'.$colspan.'" class="liste_titre borderrightlight">';
 	print '<a href="clientfourn.php?year='.$annee.'">';
 	print $annee;
 	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
@@ -898,13 +895,30 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
-	print $form->textwithpicto($langs->trans("Outcome"), $htmlhelp);
+	print $form->textwithpicto($langs->trans("Outcome")." ".$langs->trans('HT'), $htmlhelp);
 	print '</td>';
-	print '<td class="liste_titre" align="center" class="borderrightlight">';
+    print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';
+	if ($modecompta != 'BOOKKEEPING')
+	{
+		// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
+		print $form->textwithpicto($langs->trans("Outcome")." ".$langs->trans('TTC'), $htmlhelp);
+		print '</td>';
+		print '<td class="liste_titre" align="center">';
+		$htmlhelp = '';
+	}
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetreive");
-	print $form->textwithpicto($langs->trans("Income"), $htmlhelp);
+	print $form->textwithpicto($langs->trans("Income")." ".$langs->trans('HT'), $htmlhelp);
 	print '</td>';
+	if ($modecompta != 'BOOKKEEPING')
+	{
+		print '<td class="liste_titre" align="center" class="borderrightlight">';
+		$htmlhelp = '';
+		// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetreive");
+		print $form->textwithpicto($langs->trans("Income")." ".$langs->trans('TTC'), $htmlhelp);
+		print '</td>';
+	}
+
 }
 print '</tr>';
 
@@ -936,18 +950,25 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 		}
 		else
 		{
-			if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
-			{
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss_ttc[$case], 'MT')).'</a>';
-				if (!isset($totsorties[$annee])) $totsorties[$annee] = 0;
-				$totsorties[$annee] += $decaiss_ttc[$case];
-			}
+				if (isset($decaiss[$case]) && $decaiss[$case] != 0)
+				{
+					print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
+					if (!isset($totsorties[$annee])) $totsorties[$annee] = 0;
+					$totsorties[$annee] += $decaiss[$case];
+				}
+				print '</td><td class="right">';
+				if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
+				{
+					print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss_ttc[$case], 'MT')).'</a>';
+					if (!isset($totsorties_ttc[$annee])) $totsorties_ttc[$annee] = 0;
+					$totsorties_ttc[$annee] += $decaiss_ttc[$case];
+				}
 		}
 		print "</td>";
 
-		print '<td class="borderrightlight nowrap right">&nbsp;';
 		if ($modecompta == 'BOOKKEEPING')
 		{
+			print '<td class="borderrightlight nowrap right">&nbsp;';
 			if (isset($encaiss[$case]))
 			{
 				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
@@ -957,11 +978,19 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 		}
 		else
 		{
+			print '<td class="right">&nbsp;';
+			if (isset($encaiss_ttc[$case]))
+			{
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
+				if (!isset($totentrees[$annee])) $totentrees[$annee] = 0;
+				$totentrees[$annee] += $encaiss[$case];
+			}
+			print '</td><td class="borderrightlight nowrap right">';
 			if (isset($encaiss_ttc[$case]))
 			{
 				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($encaiss_ttc[$case], 'MT')).'</a>';
-				if (!isset($totentrees[$annee])) $totentrees[$annee] = 0;
-				$totentrees[$annee] += $encaiss_ttc[$case];
+				if (!isset($totentrees_ttc[$annee])) $totentrees_ttc[$annee] = 0;
+				$totentrees_ttc[$annee] += $encaiss_ttc[$case];
 			}
 		}
 		print "</td>";
@@ -974,14 +1003,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 
 $nbcols = 0;
 print '<tr class="liste_total impair"><td>';
-if ($modecompta == 'BOOKKEEPING') print $langs->trans("Total");
-else print $langs->trans("TotalTTC");
+print $langs->trans("Total");
 print '</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++)
 {
-	$nbcols += 2;
-	print '<td class="nowrap right">'.(isset($totsorties[$annee]) ?price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
-	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ?price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
+	if ($modecompta == 'BOOKKEEPING')
+	{
+		$nbcols += 2;
+		print '<td class="nowrap right">'.(isset($totsorties[$annee]) ?price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
+		print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ?price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
+	}else{
+		$nbcols += 4;
+		print '<td class="nowrap right">'.(isset($totsorties[$annee]) ?price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
+		print '<td class="nowrap right">'.(isset($totsorties_ttc[$annee]) ?price(price2num($totsorties_ttc[$annee], 'MT')) : '&nbsp;').'</td>';
+		print '<td class="nowrap right">'.(isset($totentrees[$annee]) ?price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
+		print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees_ttc[$annee]) ?price(price2num($totentrees_ttc[$annee], 'MT')) : '&nbsp;').'</td>';
+	}
 }
 print "</tr>\n";
 
@@ -995,13 +1032,23 @@ print "</tr>\n";
 print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++)
 {
-	print '<td colspan="2" class="borderrightlight right"> ';
+	$class = $modecompta != 'BOOKKEEPING' ? "right" : "borderrightlight right";
+	print '<td colspan="2" class="'.$class.'"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
 		$in = (isset($totentrees[$annee]) ?price2num($totentrees[$annee], 'MT') : 0);
 		$out = (isset($totsorties[$annee]) ?price2num($totsorties[$annee], 'MT') : 0);
-		print price(price2num($in - $out, 'MT')).'</td>';
+		print price(price2num($in - $out, 'MT'));
+		print "&nbsp;".$langs->trans('HT').'</td>';
 		//  print '<td>&nbsp;</td>';
+	}
+	if ($modecompta != 'BOOKKEEPING')
+	{
+		print '<td colspan="2" class="borderrightlight right"> ';
+		$in = (isset($totentrees_ttc[$annee]) ?price2num($totentrees_ttc[$annee], 'MT') : 0);
+		$out = (isset($totsorties_ttc[$annee]) ?price2num($totsorties_ttc[$annee], 'MT') : 0);
+		print price(price2num($in - $out, 'MT'));
+		print "&nbsp;".$langs->trans('TTC').'</td>';
 	}
 }
 print "</tr>\n";
