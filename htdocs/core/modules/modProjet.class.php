@@ -216,29 +216,6 @@ class modProjet extends DolibarrModules
 		$this->export_label[$r]='ProjectsAndTasksLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("projet","export"));
 		$this->export_dependencies_array[$r]=array('projecttask'=>'pt.rowid', 'task_time'=>'ptt.rowid');
-/*
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
-			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
-			$htmltext = $langs->trans("ProjectFollowOpportunity");
-			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-			print '<br>';
-		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS))
-		{
-			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
-			$htmltext = $langs->trans("ProjectFollowTasks");
-			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-			print '<br>';
-		}
-		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-		{
-			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '<br>';
-		}
-*/
 
 		$this->export_TypeFields_array[$r]=array(
 			's.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
