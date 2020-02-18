@@ -32,13 +32,13 @@ if (!$user->admin)
 accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("users","admin","other"));
+$langs->loadLangs(array("users", "admin", "other"));
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
-$securityevent=new Events($db);
-$eventstolog=$securityevent->eventstolog;
+$securityevent = new Events($db);
+$eventstolog = $securityevent->eventstolog;
 
 
 /*
@@ -46,13 +46,13 @@ $eventstolog=$securityevent->eventstolog;
  */
 if ($action == "save")
 {
-	$i=0;
+	$i = 0;
 
 	$db->begin();
 
 	foreach ($eventstolog as $key => $arr)
 	{
-		$param='MAIN_LOGEVENTS_'.$arr['id'];
+		$param = 'MAIN_LOGEVENTS_'.$arr['id'];
 		if (GETPOST($param, 'alphanohtml')) dolibarr_set_const($db, $param, GETPOST($param, 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		else dolibarr_del_const($db, $param, $conf->entity);
 	}
@@ -67,7 +67,7 @@ if ($action == "save")
  * View
  */
 
-$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+$wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Audit"), $wikihelp);
 
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -81,7 +81,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
-$head=security_prepare_head();
+$head = security_prepare_head();
 
 dol_fiche_head($head, 'audit', $langs->trans("Security"), -1);
 
@@ -97,9 +97,9 @@ foreach ($eventstolog as $key => $arr)
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
-		$key='MAIN_LOGEVENTS_'.$arr['id'];
-		$value=$conf->global->$key;
-		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
+		$value = $conf->global->$key;
+		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value ? ' checked' : '').'>';
 		print '</td></tr>'."\n";
 	}
 }

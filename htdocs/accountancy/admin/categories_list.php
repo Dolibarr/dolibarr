@@ -153,7 +153,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
 		if ($value == 'range_account' && empty($_POST['range_account'])) continue;
 		if ($value == 'country' || $value == 'country_id') continue;
-		if (! GETPOSTISSET($value) || GETPOST($value) == '')
+		if (!GETPOSTISSET($value) || GETPOST($value) == '')
         {
             $ok = 0;
             $fieldnamekey = $listfield[$f];
