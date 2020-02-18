@@ -1174,7 +1174,7 @@ else
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td>';
-            if($type = 0) {
+            if($type == 0) {
                 $accountancy_code_sell = (GETPOST('accountancy_code_sell', 'alpha')?(GETPOST('accountancy_code_sell', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
             } else {
                 $accountancy_code_sell = (GETPOST('accountancy_code_sell', 'alpha')?(GETPOST('accountancy_code_sell', 'alpha')):$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
