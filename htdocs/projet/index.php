@@ -165,8 +165,8 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
-// List of validated projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array('plannedworkload', 'declaredprogress'));
+// List of draft projects
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress'));
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
