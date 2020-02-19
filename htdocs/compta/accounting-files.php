@@ -77,7 +77,13 @@ if ($user->socid > 0) {
     accessforbidden();
 }
 
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
+if (empty($entity) && ! empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	$tmparray = $mc->getEntitiesList();
+	$entity = '0,'.join(',', array_keys($tmparray));
+}
+if (empty($entity)) $entity = $conf->entity;
+
 
 
 /*
@@ -400,13 +406,18 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
 print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
 
-// Export is for current company only !
+// Export is for current company only
 if (!empty($conf->multicompany->enabled) && is_object($mc))
 {
+	$mc->getInfo($conf->entity);
 	print '<span class="marginleftonly marginrightonly">('.$langs->trans("Entity").' : ';
-	$mc->dao->getEntities();
-	$mc->dao->fetch($conf->entity);
-	print $mc->dao->label;
+	print "<td>";
+	if (! empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
+	} else {
+		print $mc->label;
+	}
+	print "</td>";
 	print ")</span>\n";
 }
 

@@ -286,11 +286,14 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     			else print $langs->trans("NotDefined");
     			print "</td>";
     			print "<td>".$ref."</td>";
-				if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED ){
+				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
 					if($obj->family == 'invoice'){
 						$mc->getInfo($obj->entity);
 						print "<td>".$mc->label."</td>";
-					}else print "<td></td>";
+					}
+					else {
+						print "<td></td>";
+					}
 				}
     			print "<td>".$refcomp."</td>";
     			if ($obj->total_ttc < 0) { print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
