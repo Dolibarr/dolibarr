@@ -452,7 +452,7 @@ class modCategorie extends DolibarrModules
 
 		if (! empty($conf->societe->enabled))
 		{
-			//Customers
+			// Customers
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
 			$this->import_label[$r]="CatCusLinks";	// Translation key
@@ -470,6 +470,25 @@ class modCategorie extends DolibarrModules
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
 			);
 			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_soc'=>"MyBigCompany");
+
+			// Contacts/Addresses
+			$r++;
+			$this->import_code[$r]=$this->rights_class.'_'.$r;
+			$this->import_label[$r]="CatContactsLinks";	// Translation key
+			$this->import_icon[$r]=$this->picto;
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_socpeople'=>"Contact ID*");
+			$this->import_regex_array[$r]=array(
+				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=4'
+				//'cs.fk_socpeople'=>'rowid@'.MAIN_DB_PREFIX.'socpeople'
+			);
+
+			$this->import_convertvalue_array[$r]=array(
+				'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category')
+				//'cs.fk_socpeople'=>array('rule'=>'fetchidfromref','classfile'=>'/contact/class/contact.class.php','class'=>'Contact','method'=>'fetch','element'=>'Contact')
+			);
+			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_socpeople'=>"123");
 		}
 
 		if (! empty($conf->fournisseur->enabled))

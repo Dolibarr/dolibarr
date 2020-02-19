@@ -802,19 +802,18 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Load object contact
+	 *  Load object contact.
 	 *
-	 *  @param      int		$id         id du contact
-	 *  @param      User	$user       Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-     *  @param      string  $ref_ext    External reference, not given by Dolibarr
-     *  @param		string	$email		Email
-	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
+	 *  @param      int		$id         	Id of contact
+	 *  @param      User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
+     *  @param      string  $ref_ext    	External reference, not given by Dolibarr
+     *  @param		string	$email			Email
+     *  @param		int		$loadalsoroles	Load also roles
+	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($id, $user = null, $ref_ext = '', $email = '')
+	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0)
 	{
 		global $langs;
-
-        $langs->load("dict");
 
 		dol_syslog(get_class($this)."::fetch id=".$id." ref_ext=".$ref_ext." email=".$email, LOG_DEBUG);
 
@@ -824,7 +823,7 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->load("companies");
+		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut, c.zip, c.town,";
@@ -861,7 +860,15 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($this->db->num_rows($resql))
+			$num = $this->db->num_rows($resql);
+			if ($num > 1)
+			{
+				$this->error = 'Fetch found several records. Rename one of contact to avoid duplicate.';
+				dol_syslog($this->error, LOG_ERR);
+				
+				return 2;
+			}
+			elseif ($num)   // $num = 1
 			{
 				$obj = $this->db->fetch_object($resql);
 
@@ -942,7 +949,11 @@ class Contact extends CommonObject
 					return -1;
 				}
 
-				// Charge alertes du user
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+				
+				// Load also alerts of this user
 				if ($user)
 				{
 					$sql = "SELECT fk_user";
@@ -967,13 +978,12 @@ class Contact extends CommonObject
 					}
 				}
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-				$resultRole = $this->fetchRoles();
-				if ($resultRole < 0) {
-					return $resultRole;
+				// Load also roles of this address
+				if ($loadalsoroles) {
+					$resultRole = $this->fetchRoles();
+					if ($resultRole < 0) {
+						return $resultRole;
+					}
 				}
 
 				return 1;
@@ -1587,7 +1597,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Fetch Role for a contact
+	 * Fetch Roles for a contact
 	 *
 	 * @return float|int
 	 * @throws Exception
@@ -1599,7 +1609,7 @@ class Contact extends CommonObject
 		$num = 0;
 
 		$sql = "SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle, sc.rowid as contactroleid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql .= " ON tc.rowid = sc.fk_c_type_contact";
 		$sql .= " AND sc.fk_socpeople = ".$this->id;
