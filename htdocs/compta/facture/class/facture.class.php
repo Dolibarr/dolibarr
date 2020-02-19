@@ -4610,7 +4610,8 @@ class Facture extends CommonInvoice
 	 * Currently used for documents generation : to know if retained warranty need to be displayed
 	 * @return bool
 	 */
-	function displayRetainedWarranty(){
+	function displayRetainedWarranty()
+	{
 		global $conf;
 
 		// TODO : add a flag on invoices to store this conf : USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL
