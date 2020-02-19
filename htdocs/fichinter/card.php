@@ -353,7 +353,7 @@ if (empty($reshook))
 								$desc .= '<br>';
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-								$timearray = dol_getdate(mktime());
+								$timearray = dol_getdate(dol_now());
 								$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 								if ($product_type == Product::TYPE_PRODUCT) {
