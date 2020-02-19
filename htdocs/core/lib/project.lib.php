@@ -2147,16 +2147,17 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
+			if (!in_array('prospectionstatus', $hiddenfields)) print_liste_field_titre("OpportunityStatus", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("OpportunityAmount", "", "", "", "", 'align="right"', $sortfield, $sortorder);
 			print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
 		{
 			print_liste_field_titre("Tasks", "", "", "", "", 'align="right"', $sortfield, $sortorder);
-			if (!in_array('plannedworkload', $hiddenfields))  print_liste_field_titre("PlannedWorkload", "", "", "", "", 'align="right"', $sortfield, $sortorder);
-			if (!in_array('declaredprogress', $hiddenfields)) print_liste_field_titre("ProgressDeclared", "", "", "", "", 'align="right"', $sortfield, $sortorder);
+			if (!in_array('plannedworkload', $hiddenfields))  print_liste_field_titre("PlannedWorkload", "", "", "", "", '', $sortfield, $sortorder, 'right ');
+			if (!in_array('declaredprogress', $hiddenfields)) print_liste_field_titre("ProgressDeclared", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 		}
-		print_liste_field_titre("Status", "", "", "", "", 'align="right"', $sortfield, $sortorder);
+		if (!in_array('projectstatus', $hiddenfields)) print_liste_field_titre("Status", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 
 		$total_plannedworkload = 0;
@@ -2179,8 +2180,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$projectstatic->datee = $db->jdate($objp->datee);
 				$projectstatic->dateo = $db->jdate($objp->dateo);
 
-
 				print '<tr class="oddeven">';
+
 				print '<td>';
 				print $projectstatic->getNomUrl(1);
 				if (!in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title, 24);
@@ -2194,8 +2195,35 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					print $thirdpartystatic->getNomUrl(1);
 				}
 				print '</td>';
+
 				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
+					if (!in_array('prospectionstatus', $hiddenfields)) {
+						print '<td class="right">';
+						// Because color of prospection status has no meaning yet, it is used if hidden constant is set
+						if (empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
+							if ($langs->trans("OppStatus" . $oppStatusCode) != "OppStatus" . $oppStatusCode) {
+								print $langs->trans("OppStatus" . $oppStatusCode);
+							}
+						} else {
+							if (isset($statusOppList[$objp->opp_status])) {
+								$oppStatusCode = $statusOppList[$objp->opp_status]['code'];
+								$oppStatusColor = $statusOppList[$objp->opp_status]['color'];
+							} else {
+								$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
+								$oppStatusColor = '';
+							}
+							if ($oppStatusCode) {
+								if (!empty($oppStatusColor)) {
+									print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" style="display: inline-block; width: 4px; border: 5px solid rgb(' . $oppStatusColor . '); border-radius: 2px;" title="' . $langs->trans("OppStatus" . $oppStatusCode) . '"></a>';
+								} else {
+									print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" title="' . $langs->trans("OppStatus".$oppStatusCode) . '">' . $oppStatusCode . '</a>';
+								}
+							}
+						}
+						print '</td>';
+					}
+
 					print '<td class="right">';
 					if ($objp->opp_amount) print price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency);
 					print '</td>';
@@ -2207,6 +2235,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
                     }
 					print '</td>';
 				}
+
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
 					print '<td class="right">'.$objp->nb.'</td>';
@@ -2228,23 +2257,12 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 				}
 
-				print '<td class="right">';
-				//print $projectstatic->getLibStatut(3);
-				if (isset($statusOppList[$objp->opp_status])) {
-					$oppStatusCode = $statusOppList[$objp->opp_status]['code'];
-					$oppStatusColor = $statusOppList[$objp->opp_status]['color'];
-				} else {
-					$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
-					$oppStatusColor = '';
+				if (!in_array('projectstatus', $hiddenfields)) {
+					print '<td class="right">';
+					print $projectstatic->getLibStatut(3);
+					print '</td>';
 				}
-				if ($oppStatusCode) {
-					if (!empty($oppStatusColor)) {
-						print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" style="display: inline-block; width: 4px; border: 5px solid rgb(' . $oppStatusColor . '); border-radius: 2px;" title="' . $langs->trans("OppStatus" . $oppStatusCode) . '"></a>';
-					} else {
-						print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" title="' . $langs->trans("OppStatus".$oppStatusCode) . '">' . $oppStatusCode . '</a>';
-					}
-				}
-				print '</td>';
+
 				print "</tr>\n";
 
 				$total_task = $total_task + $objp->nb;
@@ -2258,6 +2276,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print '<td colspan="2">'.$langs->trans("Total")."</td>";
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
+			if (!in_array('prospectionstatus', $hiddenfields)) {
+				print '<td class="liste_total"></td>';
+			}
 			print '<td class="liste_total right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
 			print '<td class="liste_total right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
 		}
@@ -2267,7 +2288,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if (!in_array('plannedworkload', $hiddenfields))  print '<td class="liste_total right">'.($total_plannedworkload ?convertSecondToTime($total_plannedworkload) : '').'</td>';
 			if (!in_array('declaredprogress', $hiddenfields)) print '<td class="liste_total right">'.($total_plannedworkload ?round(100 * $total_declaredprogressworkload / $total_plannedworkload, 0).'%' : '').'</td>';
 		}
-		print '<td class="liste_total"></td>';
+		if (!in_array('projectstatus', $hiddenfields)) {
+			print '<td class="liste_total"></td>';
+		}
 		print '</tr>';
 
 		$db->free($resql);
