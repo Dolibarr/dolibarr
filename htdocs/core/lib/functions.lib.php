@@ -559,11 +559,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		case 'alpha':
 			if (!is_array($out))
 			{
-				$out = trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/', $out)) $out = '';
-				elseif (preg_match('/\.\.\//', $out)) $out = '';
+				$out = str_replace(array('"', '../'), '', trim($out));
 			}
 			break;
 		case 'san_alpha':
@@ -593,17 +591,15 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		case 'array':
 			if (!is_array($out) || empty($out)) $out = array();
 			break;
-		case 'nohtml':		// Recommended for most scalar parameters
+		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'alphanohtml':	// Recommended for search parameters
+		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out))
 			{
-				$out = trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/', $out)) $out = '';
-				elseif (preg_match('/\.\.\//', $out)) $out = '';
+				$out = str_replace(array('"', '../'), '', trim($out));
 				$out = dol_string_nohtmltag($out);
 			}
 			break;
