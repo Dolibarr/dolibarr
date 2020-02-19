@@ -541,6 +541,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	else if (npRate == "np_markRate")
 	price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 	}
+
 	$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
 	return true;
@@ -552,26 +553,26 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
-	jQuery("#price_ht").keyup(function(event) {
-	// console.log(event.which);		// discard event tag and arrows
-	if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
-	jQuery("#price_ttc").val('');
-	jQuery("#multicurrency_subprice").val('');
-	}
+		jQuery("#price_ht").keyup(function(event) {
+			// console.log(event.which);		// discard event tag and arrows
+			if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
+		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
-	// console.log(event.which);		// discard event tag and arrows
-	if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
-	jQuery("#price_ht").val('');
-	jQuery("#multicurrency_subprice").val('');
-	}
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#multicurrency_subprice").val('');
+		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
-	// console.log(event.which);		// discard event tag and arrows
-	if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
-	jQuery("#price_ht").val('');
-	jQuery("#price_ttc").val('');
-	}
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+		}
 	});
 
 	$("#prod_entry_mode_free").on( "click", function() {
@@ -630,15 +631,24 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT) && empty($senderissupplier))
 		{
 			?>
-			// Get the HT price for the product and display it
-			console.log("Load price without tax and set it into #price_ht");
-			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-				{ 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> },
-				function(data) { jQuery("#price_ht").val(data.price_ht); },
-				'json'
-			);
+			var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+			if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
+			{
+				console.log("We are in a price per qty context, we do not call ajax/product");
+			} else {
+				// Get the HT price for the product and display it
+				console.log("Load price without tax and set it into #price_ht for id="+$(this).val()+" socid=<?php print $object->socid; ?>");
+				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
+					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
+					function(data) {
+						jQuery("#price_ht").val(data.price_ht);
+					},
+					'json'
+				);
+			}
 			<?php
 		}
+
 		if (!empty($usemargins) && $user->rights->margins->creer)
 		{
 			$langs->load('stocks');
@@ -744,15 +754,20 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		}
 		?>
 
-		/* To process customer price per quantity */
+		/* To process customer price per quantity (CUSTOMER_PRICE_PER_QTY works only if combo product is not an ajax after x key pressed) */
 		var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+		var pbqup = parseInt($('option:selected', this).attr('data-pbqup'));
+		var pbqbase = $('option:selected', this).attr('data-pbqbase');
 		var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
 		var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
 
-		if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
+		if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
 		{
-			console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
+			var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
+
+			console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty upht = "+pbqupht+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
 			jQuery("#pbq").val(pbq);
+			jQuery("#price_ht").val(pbqupht);
 			if (jQuery("#qty").val() < pbqqty)
 			{
 				jQuery("#qty").val(pbqqty);
@@ -809,7 +824,6 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
 		<?php } ?>
-		jQuery("#price_ht").val('');
 		jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();
