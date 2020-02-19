@@ -44,6 +44,9 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 
 -- For v12
 
+ALTER TABLE llx_website ADD COLUMN lang varchar(8);
+ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
+
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 
