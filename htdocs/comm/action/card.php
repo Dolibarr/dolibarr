@@ -1053,7 +1053,7 @@ if ($action == 'create')
 		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
 
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
-		$urloption = '?action=create';
+		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
 		// update task list
@@ -1473,7 +1473,7 @@ if ($id > 0)
 			{
 			    print '<td id="project-task-input-container" >';
 
-			    $urloption = '?action=create'; // we use create not edit for more flexibility
+				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
 			    $url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
 			    // update task list
