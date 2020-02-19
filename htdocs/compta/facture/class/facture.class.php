@@ -297,9 +297,9 @@ class Facture extends CommonInvoice
 		'situation_cycle_ref' =>array('type'=>'smallint(6)', 'label'=>'Situation cycle ref', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>230),
 		'situation_counter' =>array('type'=>'smallint(6)', 'label'=>'Situation counter', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>235),
 		'situation_final' =>array('type'=>'smallint(6)', 'label'=>'Situation final', 'enabled'=>'empty($conf->global->INVOICE_USE_SITUATION) ? 0 : 1', 'visible'=>-1, 'position'=>240),
-		'retained_warranty' =>array('type'=>'double', 'label'=>'Retained warranty', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY', 'visible'=>-1, 'position'=>245),
-		'retained_warranty_date_limit' =>array('type'=>'date', 'label'=>'Retained warranty date limit', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY', 'visible'=>-1, 'position'=>250),
-		'retained_warranty_fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Retained warranty fk cond reglement', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY', 'visible'=>-1, 'position'=>255),
+		'retained_warranty' =>array('type'=>'double', 'label'=>'Retained warranty', 'enabled'=>'$conf->global->INVOICE_USE_RETAINED_WARRANTY', 'visible'=>-1, 'position'=>245),
+		'retained_warranty_date_limit' =>array('type'=>'date', 'label'=>'Retained warranty date limit', 'enabled'=>'$conf->global->INVOICE_USE_RETAINED_WARRANTY', 'visible'=>-1, 'position'=>250),
+		'retained_warranty_fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Retained warranty fk cond reglement', 'enabled'=>'$conf->global->INVOICE_USE_RETAINED_WARRANTY', 'visible'=>-1, 'position'=>255),
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermsCode', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>260),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermsLocation', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>265),
 		'date_pointoftax' =>array('type'=>'date', 'label'=>'DatePointOfTax', 'enabled'=>'$conf->global->INVOICE_POINTOFTAX_DATE', 'visible'=>-1, 'position'=>270),
@@ -4606,6 +4606,42 @@ class Facture extends CommonInvoice
 		return $hasDelay;
 	}
 
+	/**
+	 * Currently used for documents generation : to know if retained warranty need to be displayed
+	 * @return bool
+	 */
+	function displayRetainedWarranty(){
+		global $conf;
+
+		// TODO : add a flag on invoices to store this conf : USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL
+
+		// note : we dont need to test USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION because if $this->retained_warranty is not empty it's because it was set when this conf was active
+
+		$displayWarranty = false;
+		if(!empty($this->retained_warranty)) {
+			$displayWarranty = true;
+
+			if ($this->type == Facture::TYPE_SITUATION && !empty($conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL)) {
+				// Check if this situation invoice is 100% for real
+				$displayWarranty = false;
+				if (!empty($this->situation_final)) {
+					$displayWarranty = true;
+				} elseif (!empty($this->lines) && $this->status == Facture::STATUS_DRAFT) {
+					// $object->situation_final need validation to be done so this test is need for draft
+					$displayWarranty = true;
+
+					foreach ($this->lines as $i => $line) {
+						if ($line->product_type < 2 && $line->situation_percent < 100) {
+							$displayWarranty = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return $displayWarranty;
+	}
 
 	/**
 	 * @param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
@@ -4621,7 +4657,7 @@ class Facture extends CommonInvoice
 	    $retainedWarrantyAmount = 0;
 
 	    // Billed - retained warranty
-	    if ($this->type == Facture::TYPE_SITUATION)
+	    if($this->type == Facture::TYPE_SITUATION && !empty($conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL))
 	    {
 	        $displayWarranty = true;
 	        // Check if this situation invoice is 100% for real
@@ -4659,7 +4695,10 @@ class Facture extends CommonInvoice
 
 		if ($rounding < 0){
 			$rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-			return round($retainedWarrantyAmount, 2);
+		}
+
+		if($rounding>0){
+			return round($retainedWarrantyAmount, $rounding);
 		}
 
 	    return $retainedWarrantyAmount;

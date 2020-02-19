@@ -96,7 +96,9 @@ print "</tr>\n";
 
 _printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));
 _printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE', $langs->trans('UseSituationInvoicesCreditNote'));
-_printOnOff('INVOICE_USE_SITUATION_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
+_printOnOff('INVOICE_USE_RETAINED_WARRANTY',$langs->trans('Retainedwarranty'));
+_printOnOff('USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION',$langs->trans('RetainedwarrantyOnlyForSituation'));
+_printOnOff('USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL',$langs->trans('RetainedwarrantyOnlyForSituationFinal'));
 
 $metas = array(
     'type' => 'number',
