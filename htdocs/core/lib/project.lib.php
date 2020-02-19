@@ -2030,8 +2030,21 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
 {
 	global $langs, $conf, $user, $bc;
+	global $theme_datacolor;
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+	$listofstatus = array_keys($listofoppstatus);
+	$statusOppList = array();
+	$themeColorId = 0;
+	foreach ($listofstatus as $oppStatus) {
+		$oppStatusCode = dol_getIdFromCode($db, $oppStatus, 'c_lead_status', 'rowid', 'code');
+		if ($oppStatusCode) {
+			$statusOppList[$oppStatus]['code'] = $oppStatusCode;
+			$statusOppList[$oppStatus]['color'] = isset($theme_datacolor[$themeColorId]) ? implode(', ', $theme_datacolor[$themeColorId]) : '';
+		}
+		$themeColorId++;
+	}
 
 	$projectstatic = new Project($db);
 	$thirdpartystatic = new Societe($db);
@@ -2109,14 +2122,14 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (empty($arrayidofprojects)) $arrayidofprojects[0] = -1;
 
 	// Get list of project with calculation on tasks
-	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount,";
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
 	$sql2 .= " p.dateo, p.datee,";
 	$sql2 .= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql2 .= " WHERE p.rowid IN (".join(',', $arrayidofprojects).")";
-	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount, p.dateo, p.datee";
+	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
 	$sql2 .= " ORDER BY p.title, p.ref";
 
 	$resql = $db->query($sql2);
@@ -2135,7 +2148,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			print_liste_field_titre("OpportunityAmount", "", "", "", "", 'align="right"', $sortfield, $sortorder);
-			print_liste_field_titre("OpportunityStatus", "", "", "", "", 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
 		{
@@ -2187,8 +2200,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					if ($objp->opp_amount) print price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency);
 					print '</td>';
 					print '<td class="right">';
-					$code = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
-					if ($code) print $langs->trans("OppStatus".$code);
+                    if ($objp->opp_percent && $objp->opp_amount) {
+                        $opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
+                        print price($opp_weighted_amount, 0, '', 1, -1, -1, $conf->currency);
+                        $ponderated_opp_amount += price2num($opp_weighted_amount);
+                    }
 					print '</td>';
 				}
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -2212,12 +2228,27 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 				}
 
-				print '<td class="right">'.$projectstatic->getLibStatut(3).'</td>';
+				print '<td class="right">';
+				//print $projectstatic->getLibStatut(3);
+				if (isset($statusOppList[$objp->opp_status])) {
+					$oppStatusCode = $statusOppList[$objp->opp_status]['code'];
+					$oppStatusColor = $statusOppList[$objp->opp_status]['color'];
+				} else {
+					$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
+					$oppStatusColor = '';
+				}
+				if ($oppStatusCode) {
+					if (!empty($oppStatusColor)) {
+						print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" style="display: inline-block; width: 4px; border: 5px solid rgb(' . $oppStatusColor . '); border-radius: 2px;" title="' . $langs->trans("OppStatus" . $oppStatusCode) . '"></a>';
+					} else {
+						print '<a href="' . dol_buildpath('/projet/list.php?search_opp_status=' . $objp->opp_status, 1) . '" title="' . $langs->trans("OppStatus".$oppStatusCode) . '">' . $oppStatusCode . '</a>';
+					}
+				}
+				print '</td>';
 				print "</tr>\n";
 
 				$total_task = $total_task + $objp->nb;
 				$total_opp_amount = $total_opp_amount + $objp->opp_amount;
-				$ponderated_opp_amount = $ponderated_opp_amount + price2num($listofoppstatus[$objp->opp_status] * $objp->opp_amount / 100);
 			}
 
 			$i++;

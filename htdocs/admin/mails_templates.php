@@ -333,7 +333,7 @@ if (empty($reshook))
                 if ($i) $sql .= ", ";
                 $sql .= $field."=";
 
-                if (GETPOST($keycode) == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && ! GETPOST($keycode))) $sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
+                if (GETPOST($keycode) == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && !GETPOST($keycode))) $sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
                 elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
                 elseif ($keycode == 'content') {
                 	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
