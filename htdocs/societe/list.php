@@ -10,6 +10,7 @@
  * Copyright (C) 2017       Rui Strecht      	    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,6 +391,7 @@ if ($resql)
 else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
+$sql.= " s.entity,";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
@@ -1026,6 +1028,7 @@ while ($i < min($num, $limit))
 
    	$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
    	$companystatic->fk_parent = $obj->fk_parent;
+	$companystatic->entity = $obj->entity;
 
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')

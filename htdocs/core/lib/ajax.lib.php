@@ -107,6 +107,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	    						}
 						    }
                     });
+
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){

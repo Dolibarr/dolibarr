@@ -144,7 +144,10 @@ class CMailFile
 			}
 		}
 
-		$this->subject = $subject;
+		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+
+        $this->subject = $subject;
 		$this->addr_to = $to;
 		$this->addr_from = $from;
 		$this->msg = $msg;
@@ -266,9 +269,6 @@ class CMailFile
 				}
 			}
 		}
-
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
 		// We set all data according to choosed sending method.
 		// We also set a value for ->msgid
