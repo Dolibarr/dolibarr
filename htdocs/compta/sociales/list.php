@@ -173,7 +173,7 @@ if ($resql)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_ref)    $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_label)  $param .= '&search_label='.urlencode($search_label);
-  if ($search_project_ref >= 0) $param.="&search_project_ref=".urlencode($search_project_ref);
+	if ($search_project_ref >= 0) $param.="&search_project_ref=".urlencode($search_project_ref);
 	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 	if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
 	if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
@@ -282,7 +282,7 @@ if ($resql)
 				$projectstatic->title=$obj->project_label;
 			}
 
-      print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
 			// Ref
 			print "<td>".$chargesociale_static->getNomUrl(1, '20')."</td>\n";
@@ -304,9 +304,9 @@ if ($resql)
 				    print $projectstatic->getNomUrl(1);
 				}
 				print '</td>';
-			  if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['nbfield']++;
 			}
-			
+
 			// Date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 			if (!$i) $totalarray['nbfield']++;

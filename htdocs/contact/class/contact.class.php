@@ -865,7 +865,7 @@ class Contact extends CommonObject
 			{
 				$this->error = 'Fetch found several records. Rename one of contact to avoid duplicate.';
 				dol_syslog($this->error, LOG_ERR);
-				
+
 				return 2;
 			}
 			elseif ($num)   // $num = 1
@@ -952,7 +952,7 @@ class Contact extends CommonObject
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-				
+
 				// Load also alerts of this user
 				if ($user)
 				{
