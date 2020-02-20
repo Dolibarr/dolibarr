@@ -75,6 +75,7 @@ $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'int');
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -328,7 +329,8 @@ if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$s
 if ($search_user > 0)				$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '')			$sql .= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_ttc != '')		$sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
-if ($search_login)       $sql .= natural_search("u.login", $search_login);
+if ($search_warehouse != '')		$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
+if ($search_login)					$sql .= natural_search("u.login", $search_login);
 if ($search_project_ref != '')		$sql .= natural_search("p.ref", $search_project_ref);
 if ($search_project != '')			$sql .= natural_search("p.title", $search_project);
 if ($search_categ_cus > 0)			$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
@@ -424,7 +426,8 @@ if ($resql)
 	if ($search_total_ht != '') 	$param .= '&search_total_ht='.urlencode($search_total_ht);
 	if ($search_total_vat != '')  	$param .= '&search_total_vat='.urlencode($search_total_vat);
 	if ($search_total_ttc != '')  	$param .= '&search_total_ttc='.urlencode($search_total_ttc);
-	if ($search_login)  	 $param .= '&search_login='.urlencode($search_login);
+	if ($search_warehouse != '')	$param .= '&search_warehouse='.urlencode($search_warehouse);
+	if ($search_login)				$param .= '&search_login='.urlencode($search_login);
 	if ($search_project_ref >= 0) 	$param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_town != '')       	$param .= '&search_town='.urlencode($search_town);
 	if ($search_zip != '')        	$param .= '&search_zip='.urlencode($search_zip);
@@ -571,6 +574,14 @@ if ($resql)
 		$moreforfilter .= '<div class="divsearchfield">';
 	 	$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
+	 	$moreforfilter .= '</div>';
+	}
+	if (!empty($conf->expedition->enabled)){
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		$moreforfilter .= '<div class="divsearchfield">';
+	 	$moreforfilter .= $langs->trans('Warehouse').': ';
+		$moreforfilter .= $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1);
 	 	$moreforfilter .= '</div>';
 	}
 	$parameters = array();
