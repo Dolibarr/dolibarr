@@ -284,10 +284,10 @@ class Donations extends DolibarrApi
      *
      * @url POST    {id}/validate
      *
-	 * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      * @return  array
      */
