@@ -219,6 +219,11 @@ a.top-menu-dropdown-link {
     max-height: calc(90vh - 110px) ;
 	white-space: normal;
 }
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+    max-height: 60vh ; /* fallback for browsers without support for calc() */
+    max-height: calc(90vh - 200px) ;
+}
+
 
 .dropdown-body::-webkit-scrollbar {
         width: 8px;

@@ -1940,7 +1940,7 @@ function top_menu_bookmark()
         $langs->load("bookmarks");
 
         $html .= '<!-- div for bookmark link -->
-        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
+        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
             <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
                 <i class="fa fa-star" ></i>
             </a>
@@ -1949,21 +1949,21 @@ function top_menu_bookmark()
             </div>
         </div>';
 
-
-
         $html .= '
         <!-- Code to show/hide the user drop-down -->
         <script>
         $( document ).ready(function() {
             $(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+					console.log("close");
                     // Hide the menus.
                     $("#topmenu-bookmark-dropdown").removeClass("open");
                 }
             });
 
             $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-                openBookMarkDropDown();
+				console.log("toggle");
+				openBookMarkDropDown();
             });
 
             // Key map shortcut
@@ -2187,15 +2187,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
                 $searchform .= '</div>';
             }
         }
-
-		// Define $bookmarks
-		if (!empty($conf->bookmark->enabled) && $user->rights->bookmark->lire && empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
-			$langs->load("bookmarks");
-
-			$bookmarks = printBookmarksList();
-		}
 
 		// Left column
 		print '<!-- Begin left menu -->'."\n";
