@@ -19,7 +19,7 @@ MargeType2=Margem sobre o Preço Médio Ponderado (PMP)
 MargeType3=Margem sobre o preço de custo
 MarginTypeDesc=*Margem sobre o melhor preço de compra = Preço de venda - Melhor preço de fornecedor definido no cartão do produto <br> *Margem no Preço Médio Ponderado (WAP) = Preço de Venda - Preço Médio Ponderado pelo Produto (WAP) ou melhor preço de fornecedor se o WAP ainda não estiver definido <br> *Margem no preço de custo = preço de venda - preço de custo definido no cartão do produto ou WAP se o preço de custo não estiver definido ou o melhor preço do fornecedor se o WAP ainda não estiver definido
 AgentContactType=Tipo contato do agente comercial
-AgentContactTypeDetails=Defina o tipo de contato (conectado coma as faturas) sera usado para o relatorio de margem dos representantes
+AgentContactTypeDetails=Defina qual tipo de contato (vinculado nas faturas) será usado para o relatório de margem por contato / endereço. Observe que a leitura das estatísticas de um contato não é confiável, pois na maioria dos casos o contato pode não ser definido explicitamente nas faturas.
 rateMustBeNumeric=Rata deve ser um valor numerico
 markRateShouldBeLesserThan100=Rata marcada teria que ser menor do que 100
 ShowMarginInfos=Mostrar informações sobre margens

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,6 +30,16 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
  */
 class DataPolicy
 {
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
     /**
      * getAllContactNotInformed
      *
@@ -200,7 +210,6 @@ class DataPolicy
         } else {
             $result4 = $mailfile->sendfile();
             if (!$error) {
-
                 $resultmasssend .= $langs->trans("MailSent") . ': ' . $sendto . "<br>";
                 $contact->array_options['options_datapolicy_send'] = date('Y-m-d', time());
                 $contact->update($contact->id);
@@ -300,6 +309,10 @@ class DataPolicy
         $from = $user->getFullName($langs) . ' <' . $user->email . '>';
 
         $sendto = $adherent->email;
+
+        // TODO Use a dolibarr email template
+        $s = 'TXTLINKDATAPOLICIESSUBJECT_' . $l;
+        $ma = 'TXTLINKDATAPOLICIESMESSAGE_' . $l;
 
         $code= md5($adherent->email);
         if (!empty($adherent->default_lang)) {

@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *	\file       htdocs/core/modules/project/doc/pdf_baleine.modules.php
+ *	\file       htdocs/core/modules/project/doc/pdf_timespent.modules.php
  *	\ingroup    project
  *	\brief      File of class to generate project document Baleine
- *	\author	    Regis Houssin
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -33,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
- *	Class to manage generation of project document Baleine
+ *	Class to manage generation of project document Timespent
  */
 
 class pdf_timespent extends ModelePDFProjects
@@ -60,7 +59,7 @@ class pdf_timespent extends ModelePDFProjects
 		$this->name = "timespent";
 		$this->description = $langs->trans("DocumentModelTimeSpent");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -71,15 +70,15 @@ class pdf_timespent extends ModelePDFProjects
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
+		$this->option_logo = 1;                    // Display logo FAC_PDF_LOGO
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_codeproduitservice = 1;      // Display product-service code
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-		// Defini position des colonnes
+		// Define position of columns
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
 		$this->posxtimespent=$this->marge_gauche+120;
@@ -115,12 +114,12 @@ class pdf_timespent extends ModelePDFProjects
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
 		{
-			//$nblignes = count($object->lines);  // This is set later with array of tasks
+			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
@@ -181,7 +180,7 @@ class pdf_timespent extends ModelePDFProjects
                 }
 
 				$object->lines=$tasksarray;
-				$nblignes=count($object->lines);
+				$nblines=count($object->lines);
 
 				$pdf->Open();
 				$pagenb=0;
@@ -226,7 +225,7 @@ class pdf_timespent extends ModelePDFProjects
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -244,7 +243,7 @@ class pdf_timespent extends ModelePDFProjects
 				$nexY = $tab_top + $heightoftitleline + 1;
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -283,7 +282,7 @@ class pdf_timespent extends ModelePDFProjects
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -294,7 +293,13 @@ class pdf_timespent extends ModelePDFProjects
 						else
 						{
 							// We found a page break
-							$showpricebeforepagebreak=0;
+
+							// Allows data in the first page if description is long enough to break in multiples pages
+							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								$showpricebeforepagebreak = 1;
+							else
+								$showpricebeforepagebreak = 0;
+
 							$forcedesconsamepage=1;
 							if ($forcedesconsamepage)
 							{
@@ -359,7 +364,7 @@ class pdf_timespent extends ModelePDFProjects
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxdateend, 3, $dateend, 0, 'C');
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -368,7 +373,7 @@ class pdf_timespent extends ModelePDFProjects
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -438,7 +443,7 @@ class pdf_timespent extends ModelePDFProjects
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -476,7 +481,7 @@ class pdf_timespent extends ModelePDFProjects
 
 		$pdf->SetDrawColor(128, 128, 128);
 
-		// Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
+		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 
 		// line prend une position y en 3eme param

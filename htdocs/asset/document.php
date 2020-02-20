@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,17 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("assets","companies"));
+$langs->loadLangs(array("assets", "companies"));
 
 
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
-$id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
+$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'asset', $id);
 
 // Get parameters
@@ -52,22 +52,23 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 // Initialize technical objects
-$object=new Asset($db);
+$object = new Asset($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->assets->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('assetdocument'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction = $conf->assets->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('assetdocument')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('asset');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity]."/packages/".dol_sanitizeFileName($object->ref);
 
 
 
@@ -75,7 +76,7 @@ if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -84,8 +85,8 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title=$langs->trans("Assets").' - '.$langs->trans("Files");
-$help_url='';
+$title = $langs->trans("Assets").' - '.$langs->trans("Files");
+$help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
@@ -94,23 +95,23 @@ if ($object->id)
 	/*
 	 * Show tabs
 	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = asset_prepare_head($object);
 
 	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
 	{
-		$totalsize+=$file['size'];
+		$totalsize += $file['size'];
 	}
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/asset/list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.dol_buildpath('/asset/list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -136,12 +137,12 @@ if ($object->id)
 	$permission = 1;
 	//$permtoedit = $user->rights->asset->create;
 	$permtoedit = 1;
-	$param = '&id=' . $object->id;
+	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='asset/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile='asset/' . dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = 'asset/'.dol_sanitizeFileName($object->ref).'/';
 
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

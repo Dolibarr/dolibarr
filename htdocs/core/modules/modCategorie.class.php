@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -185,7 +185,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
 
         // Add extra fields
-        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe'";
+        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
@@ -230,7 +230,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatProdList';
 		$this->export_icon[$r]='category';
-        $this->export_enabled[$r]='$conf->produit->enabled';
+        $this->export_enabled[$r]='$conf->product->enabled || $conf->service->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("produit","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
 		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.ref'=>'Text');
@@ -350,7 +350,7 @@ class modCategorie extends DolibarrModules
 		); // We define here only fields that use another picto
 
         // Add extra fields
-        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople'";
+        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
@@ -406,15 +406,30 @@ class modCategorie extends DolibarrModules
 		$this->import_icon[$r]=$this->picto;
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('ca'=>MAIN_DB_PREFIX.'categorie');
-		$this->import_fields_array[$r]=array('ca.label'=>"Label*",'ca.type'=>"Type*",'ca.description'=>"Description");
-
+        $this->import_fields_array[$r]=array(
+            'ca.label'=>"Label*",'ca.type'=>"Type*",'ca.description'=>"Description",
+            'ca.fk_parent' => 'Parent'
+        );
 		$this->import_regex_array[$r]=array('ca.type'=>'^[0|1|2|3]');
+        $this->import_convertvalue_array[$r] = array(
+            'ca.fk_parent' => array(
+                'rule'          => 'fetchidfromcodeandlabel',
+                'classfile'     => '/categories/class/categorie.class.php',
+                'class'         => 'Categorie',
+                'method'        => 'fetch',
+                'element'       => 'category',
+                'codefromfield' => 'ca.type'
+            )
+        );
 		$typeexample="";
 		if ($conf->product->enabled)     { $typeexample.=($typeexample?"/":"")."0=Product"; }
 		if ($conf->fournisseur->enabled) { $typeexample.=($typeexample?"/":"")."1=Supplier"; }
 		if ($conf->societe->enabled)     { $typeexample.=($typeexample?"/":"")."2=Customer-Prospect"; }
 		if ($conf->adherent->enabled)    { $typeexample.=($typeexample?"/":"")."3=Member"; }
-		$this->import_examplevalues_array[$r]=array('ca.label'=>"Supplier Category",'ca.type'=>$typeexample,'ca.description'=>"Imported category");
+        $this->import_examplevalues_array[$r] = array(
+            'ca.label'=>"Supplier Category",'ca.type'=>$typeexample,'ca.description'=>"My Category description",
+            'ca.fk_parent' => '0'
+        );
 
 		if (! empty($conf->product->enabled))
 		{
@@ -437,7 +452,7 @@ class modCategorie extends DolibarrModules
 
 		if (! empty($conf->societe->enabled))
 		{
-			//Customers
+			// Customers
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
 			$this->import_label[$r]="CatCusLinks";	// Translation key
@@ -455,6 +470,25 @@ class modCategorie extends DolibarrModules
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
 			);
 			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_soc'=>"MyBigCompany");
+
+			// Contacts/Addresses
+			$r++;
+			$this->import_code[$r]=$this->rights_class.'_'.$r;
+			$this->import_label[$r]="CatContactsLinks";	// Translation key
+			$this->import_icon[$r]=$this->picto;
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_socpeople'=>"Contact ID*");
+			$this->import_regex_array[$r]=array(
+				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=4'
+				//'cs.fk_socpeople'=>'rowid@'.MAIN_DB_PREFIX.'socpeople'
+			);
+
+			$this->import_convertvalue_array[$r]=array(
+				'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category')
+				//'cs.fk_socpeople'=>array('rule'=>'fetchidfromref','classfile'=>'/contact/class/contact.class.php','class'=>'Contact','method'=>'fetch','element'=>'Contact')
+			);
+			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_socpeople'=>"123");
 		}
 
 		if (! empty($conf->fournisseur->enabled))

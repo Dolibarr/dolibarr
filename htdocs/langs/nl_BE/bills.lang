@@ -10,6 +10,7 @@ DoPaymentBack=Doe een terugbetaling
 StatusOfGeneratedInvoices=Lijst van genereerde facturen
 BillStatusDraft=Conceptfactuur (moet worden gevalideerd)
 BillShortStatusClosedUnpaid=Afgesloten
+ErrorVATIntraNotConfigured=Intracommunautair btw-nummer nog niet gedefinieerd
 LastCustomersBills=Laatste %s klantfacturen
 AmountOfBillsByMonthHT=Factuurbedrag per maand (ex BTW)
 ShowInvoiceSituation=Toon situatie factuur

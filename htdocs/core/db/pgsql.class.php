@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 class DoliDBPgsql extends DoliDB
 {
     //! Database type
-	public $type='pgsql';            // Name of manager
+    public $type='pgsql';            // Name of manager
     //! Database label
 	const LABEL='PostgreSQL';      // Label of manager
 	//! Charset
@@ -174,9 +174,9 @@ class DoliDBPgsql extends DoliDB
 
 		    if ($type == 'auto')
 		    {
-              if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
+                if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
 		    }
 
     		$line=preg_replace('/ as signed\)/i', ' as integer)', $line);
@@ -197,6 +197,12 @@ class DoliDBPgsql extends DoliDB
     				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 SERIAL PRIMARY KEY', $line);
                     //$line = "-- ".$line." replaced by --\n".$newline;
                     $line=$newline;
+    			}
+
+    			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+bigint.*auto_increment/i', $line, $reg)) {
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+bigint.*auto_increment[^,]*/i', '\\1 \\2 BIGSERIAL PRIMARY KEY', $line);
+    				//$line = "-- ".$line." replaced by --\n".$newline;
+    				$line=$newline;
     			}
 
     			// tinyint type conversion
@@ -395,7 +401,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
-	 *	@return		false|resource			Database access handler
+	 *	@return		bool|resource			Database access handler
 	 *	@see		close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
@@ -451,8 +457,8 @@ class DoliDBPgsql extends DoliDB
 		$resql=$this->query('SHOW server_version');
 		if ($resql)
 		{
-		  $liste=$this->fetch_array($resql);
-		  return $liste['server_version'];
+		    $liste=$this->fetch_array($resql);
+		    return $liste['server_version'];
 		}
 		return '';
 	}
@@ -477,9 +483,9 @@ class DoliDBPgsql extends DoliDB
     {
         if ($this->db)
         {
-          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
-          $this->connected=false;
-          return pg_close($this->db);
+            if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
+            $this->connected=false;
+            return pg_close($this->db);
         }
         return false;
     }
@@ -607,7 +613,7 @@ class DoliDBPgsql extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	resourse	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines, -1 on error
      *	@see    affected_rows()
      */
@@ -621,11 +627,11 @@ class DoliDBPgsql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param	resource	$resultset  Result set of request
 	 * @return  int		    			Nb of lines
-	 * @see 	num_rows
+	 * @see 	num_rows()
 	 */
     public function affected_rows($resultset)
 	{
@@ -949,10 +955,10 @@ class DoliDBPgsql extends DoliDB
 		$result = $this->query($sql);
 		if ($result)
 		{
-    		 while($row = $this->fetch_row($result))
-    		 {
+    		while($row = $this->fetch_row($result))
+    		{
     			$infotables[] = $row;
-    		 }
+    		}
 		}
         return $infotables;
 	}
@@ -1121,21 +1127,24 @@ class DoliDBPgsql extends DoliDB
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
 		if (preg_match("/^[^\s]/i", $field_desc['value']))
-		    if (! in_array($field_desc['type'], array('int','date','datetime')))
-		    {
-		        $sql.= "(".$field_desc['value'].")";
-		    }
+	    if (! in_array($field_desc['type'], array('int','date','datetime')))
+	    {
+	        $sql.= "(".$field_desc['value'].")";
+	    }
 		if (preg_match("/^[^\s]/i", $field_desc['attribute']))
             $sql .= " ".$field_desc['attribute'];
 		if (preg_match("/^[^\s]/i", $field_desc['null']))
             $sql .= " ".$field_desc['null'];
-		if (preg_match("/^[^\s]/i", $field_desc['default']))
-            if (preg_match("/null/i", $field_desc['default']))
+		if (preg_match("/^[^\s]/i", $field_desc['default'])) {
+            if (preg_match("/null/i", $field_desc['default'])) {
                 $sql .= " default ".$field_desc['default'];
-		    else
-                $sql .= " default '".$field_desc['default']."'";
-		if (preg_match("/^[^\s]/i", $field_desc['extra']))
-            $sql .= " ".$field_desc['extra'];
+			} else {
+				$sql .= " default '".$field_desc['default']."'";
+			}
+		}
+		if (preg_match("/^[^\s]/i", $field_desc['extra'])) {
+			$sql .= " ".$field_desc['extra'];
+		}
 		$sql .= " ".$field_position;
 
 		dol_syslog($sql, LOG_DEBUG);

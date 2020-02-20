@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array("products","categories","errors",'accountancy'));
 // Security pack (data & check)
 $socid = GETPOST('socid', 'int');
 
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -195,13 +195,9 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
-
 }
 elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
-
-
 }
 
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -246,7 +242,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql.= " AND f.type IN (0,1,2,5)";
 	} else {
-	$sql.= " AND f.type IN (0,1,2,3,5)";
+		$sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	if ($date_start && $date_end) {
 		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -332,7 +328,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
 		"ref",
@@ -342,7 +338,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans('Quantity'),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -352,7 +348,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -362,7 +358,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans('AmountHT'),
 		$_SERVER["PHP_SELF"],
 		"amount",
@@ -372,7 +368,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("AmountTTC"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -382,7 +378,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -396,7 +392,6 @@ print_liste_field_titre(
 
 	if (count($name)) {
 		foreach($name as $key=>$value) {
-
 			print '<tr class="oddeven">';
 
 			// Product

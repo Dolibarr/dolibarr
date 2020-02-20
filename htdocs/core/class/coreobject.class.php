@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ class CoreObject extends CommonObject
     /**
      *  @var Array $_fields Fields to synchronize with Database
      */
-    protected $fields=array();
+    protected $fields = array();
 
     /**
      *  Constructor
@@ -70,8 +70,8 @@ class CoreObject extends CommonObject
                 else $this->{$field} = '';
             }
 
-            $this->to_delete=false;
-            $this->is_clone=false;
+            $this->to_delete = false;
+            $this->is_clone = false;
 
             return true;
         }
@@ -110,7 +110,7 @@ class CoreObject extends CommonObject
     public function fetch($id, $loadChild = true)
     {
         $res = $this->fetchCommon($id);
-        if($res>0) {
+        if ($res > 0) {
             if ($loadChild) $this->fetchChild();
         }
 
@@ -129,11 +129,11 @@ class CoreObject extends CommonObject
      */
     public function addChild($tabName, $id = 0, $key = 'id', $try_to_load = false)
     {
-        if(!empty($id))
+        if (!empty($id))
         {
-            foreach($this->{$tabName} as $k=>&$object)
+            foreach ($this->{$tabName} as $k=>&$object)
             {
-                if($object->{$key} === $id) return $k;
+                if ($object->{$key} === $id) return $k;
             }
         }
 
@@ -141,7 +141,7 @@ class CoreObject extends CommonObject
 
         $className = ucfirst($tabName);
         $this->{$tabName}[$k] = new $className($this->db);
-        if($id>0 && $key==='id' && $try_to_load)
+        if ($id > 0 && $key === 'id' && $try_to_load)
         {
             $this->{$tabName}[$k]->fetch($id);
         }
@@ -181,20 +181,20 @@ class CoreObject extends CommonObject
     {
         if ($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
         {
-            foreach($this->childtables as &$childTable)
+            foreach ($this->childtables as &$childTable)
             {
                 $className = ucfirst($childTable);
 
-                $this->{$className}=array();
+                $this->{$className} = array();
 
                 $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$childTable.' WHERE '.$this->fk_element.' = '.$this->id;
                 $res = $this->db->query($sql);
 
-                if($res)
+                if ($res)
                 {
-                    while($obj = $this->db->fetch_object($res))
+                    while ($obj = $this->db->fetch_object($res))
                     {
-                        $o=new $className($this->db);
+                        $o = new $className($this->db);
                         $o->fetch($obj->rowid);
 
                         $this->{$className}[] = $o;
@@ -216,19 +216,19 @@ class CoreObject extends CommonObject
      */
     public function saveChild(User &$user)
     {
-        if($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
+        if ($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
         {
-            foreach($this->childtables as &$childTable)
+            foreach ($this->childtables as &$childTable)
             {
                 $className = ucfirst($childTable);
-                if(!empty($this->{$className}))
+                if (!empty($this->{$className}))
                 {
-                    foreach($this->{$className} as $i => &$object)
+                    foreach ($this->{$className} as $i => &$object)
                     {
                         $object->{$this->fk_element} = $this->id;
 
                         $object->update($user);
-                        if($this->unsetChildDeleted && isset($object->to_delete) && $object->to_delete==true) unset($this->{$className}[$i]);
+                        if ($this->unsetChildDeleted && isset($object->to_delete) && $object->to_delete == true) unset($this->{$className}[$i]);
                     }
                 }
             }
@@ -239,13 +239,13 @@ class CoreObject extends CommonObject
     /**
      * Function to update object or create or delete if needed
      *
-     * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @param   User    $user   User object
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function update(User &$user)
     {
         if (empty($this->id)) return $this->create($user); // To test, with that, no need to test on high level object, the core decide it, update just needed
-        elseif (isset($this->to_delete) && $this->to_delete==true) return $this->delete($user);
+        elseif (isset($this->to_delete) && $this->to_delete == true) return $this->delete($user);
 
         $error = 0;
         $this->db->begin();
@@ -253,7 +253,7 @@ class CoreObject extends CommonObject
         $res = $this->updateCommon($user);
         if ($res)
         {
-            $result = $this->call_trigger(strtoupper($this->element). '_UPDATE', $user);
+            $result = $this->call_trigger(strtoupper($this->element).'_UPDATE', $user);
             if ($result < 0) $error++;
             else $this->saveChild($user);
         }
@@ -280,21 +280,21 @@ class CoreObject extends CommonObject
      * Function to create object in database
      *
      * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function create(User &$user)
     {
-        if($this->id > 0) return $this->update($user);
+        if ($this->id > 0) return $this->update($user);
 
         $error = 0;
         $this->db->begin();
 
         $res = $this->createCommon($user);
-        if($res)
+        if ($res)
         {
             $this->id = $this->db->last_insert_id($this->table_element);
 
-            $result = $this->call_trigger(strtoupper($this->element). '_CREATE', $user);
+            $result = $this->call_trigger(strtoupper($this->element).'_CREATE', $user);
             if ($result < 0) $error++;
             else $this->saveChild($user);
         }
@@ -321,7 +321,7 @@ class CoreObject extends CommonObject
      * Function to delete object in database
      *
      * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
+     * @return  int             < 0 if KO, > 0 if OK
      */
     public function delete(User &$user)
     {
@@ -330,20 +330,20 @@ class CoreObject extends CommonObject
         $error = 0;
         $this->db->begin();
 
-        $result = $this->call_trigger(strtoupper($this->element). '_DELETE', $user);
+        $result = $this->call_trigger(strtoupper($this->element).'_DELETE', $user);
         if ($result < 0) $error++;
 
         if (!$error)
         {
             $this->deleteCommon($user);
-            if($this->withChild && !empty($this->childtables))
+            if ($this->withChild && !empty($this->childtables))
             {
-                foreach($this->childtables as &$childTable)
+                foreach ($this->childtables as &$childTable)
                 {
                     $className = ucfirst($childTable);
                     if (!empty($this->{$className}))
                     {
-                        foreach($this->{$className} as &$object)
+                        foreach ($this->{$className} as &$object)
                         {
                             $object->delete($user);
                         }
@@ -376,7 +376,7 @@ class CoreObject extends CommonObject
      */
     public function getDate($field, $format = '')
     {
-        if(empty($this->{$field})) return '';
+        if (empty($this->{$field})) return '';
         else
         {
             return dol_print_date($this->{$field}, $format);
@@ -392,10 +392,10 @@ class CoreObject extends CommonObject
      */
     public function setDate($field, $date)
     {
-          if (empty($date))
-          {
-              $this->{$field} = 0;
-          }
+        if (empty($date))
+        {
+            $this->{$field} = 0;
+        }
         else
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -416,24 +416,20 @@ class CoreObject extends CommonObject
     {
         foreach ($Tab as $key => $value)
         {
-            if($this->checkFieldType($key, 'date'))
+            if ($this->checkFieldType($key, 'date'))
             {
                 $this->setDate($key, $value);
             }
-            elseif( $this->checkFieldType($key, 'array'))
-            {
-                $this->{$key} = $value;
-            }
-            elseif( $this->checkFieldType($key, 'float') )
+            elseif ($this->checkFieldType($key, 'float'))
             {
                 $this->{$key} = (double) price2num($value);
             }
-            elseif( $this->checkFieldType($key, 'int') ) {
+            elseif ($this->checkFieldType($key, 'int')) {
                 $this->{$key} = (int) price2num($value);
             }
             else
             {
-                $this->{$key} = $value;
+            	$this->{$key} = dol_string_nohtmltag($value);
             }
         }
 

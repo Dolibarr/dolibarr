@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 CREATE TABLE llx_ticket
 (
@@ -38,5 +38,6 @@ CREATE TABLE llx_ticket
 	date_read datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
-	tms timestamp
+	tms timestamp,
+    import_key        varchar(14)
 )ENGINE=innodb;

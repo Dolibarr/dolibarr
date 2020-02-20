@@ -16,11 +16,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file scripts/user/sync_members_types_dolibarr2ldap.php
+ * \file scripts/members/sync_members_types_dolibarr2ldap.php
  * \ingroup ldap core
  * \brief Script de mise a jour des types de membres dans LDAP depuis base Dolibarr
  */

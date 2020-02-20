@@ -22,3 +22,4 @@ FormatDateHourText=%B %d, %Y, %I:%M %p
 CommercialProposalsShort=Quotations
 LinkToProposal=Link to quotation
 SearchIntoCustomerProposals=Customer quotations
+ContactDefault_propal=Quotation

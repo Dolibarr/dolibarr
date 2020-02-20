@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -66,8 +66,9 @@ $obj = new Facture($db);
 
 $obj->ref            = 'ABCDE';
 $obj->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$obj->date           = mktime();
-$obj->note           = 'A comment';
+$obj->date           = dol_now();
+$obj->note_public    = 'A public comment';
+$obj->note_private   = 'A private comment';
 $obj->cond_reglement_id = 1;
 
 $line1=new FactureLigne($db);

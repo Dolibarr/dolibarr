@@ -15,7 +15,7 @@ class OdfException extends Exception
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
  * @copyright  2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.5.0
  */
 class Odf
@@ -525,7 +525,7 @@ IMG;
 	public function addImageToManifest($file)
 	{
 		// Get the file extension
-		$ext = substr(strrchr($val, '.'), 1);
+		$ext = substr(strrchr($file, '.'), 1);
 		// Create the correct image XML entry to add to the manifest (this is necessary because ODT format requires that we keep a list of the images in the manifest.xml)
 		$add = ' <manifest:file-entry manifest:media-type="image/'.$ext.'" manifest:full-path="Pictures/'.$file.'"/>'."\n";
 		// Append the image to the manifest
@@ -539,7 +539,7 @@ IMG;
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedFile($name="")
+	public function exportAsAttachedFile($name = "")
 	{
 		$this->_save();
 		if (headers_sent($filename, $linenum)) {
@@ -772,6 +772,4 @@ IMG;
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
 		return  $matches[1];
 	}
-
 }
-

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,29 +29,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other","website"));
+$langs->loadLangs(array("admin", "other", "website"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
+$conf->dol_hide_leftmenu = 1; // Force hide of left menu.
 
-$error=0;
-$website=GETPOST('website', 'alpha');
-$page=GETPOST('page', 'alpha');
-$pageid=GETPOST('pageid', 'int');
-$action=GETPOST('action', 'alpha');
+$error = 0;
+$website = GETPOST('website', 'alpha');
+$page = GETPOST('page', 'alpha');
+$pageid = GETPOST('pageid', 'int');
+$action = GETPOST('action', 'alpha');
 
-if (GETPOST('delete')) { $action='delete'; }
-if (GETPOST('preview')) $action='preview';
-if (GETPOST('create')) { $action='create'; }
-if (GETPOST('editmedia')) { $action='editmedia'; }
-if (GETPOST('editcss')) { $action='editcss'; }
-if (GETPOST('editmenu')) { $action='editmenu'; }
-if (GETPOST('setashome')) { $action='setashome'; }
-if (GETPOST('editmeta')) { $action='editmeta'; }
-if (GETPOST('editcontent')) { $action='editcontent'; }
+if (GETPOST('delete')) { $action = 'delete'; }
+if (GETPOST('preview')) $action = 'preview';
+if (GETPOST('create')) { $action = 'create'; }
+if (GETPOST('editmedia')) { $action = 'editmedia'; }
+if (GETPOST('editcss')) { $action = 'editcss'; }
+if (GETPOST('editmenu')) { $action = 'editmenu'; }
+if (GETPOST('setashome')) { $action = 'setashome'; }
+if (GETPOST('editmeta')) { $action = 'editmeta'; }
+if (GETPOST('editcontent')) { $action = 'editcontent'; }
 
-if (empty($action)) $action='preview';
+if (empty($action)) $action = 'preview';
 
 
 
@@ -60,8 +60,8 @@ if (empty($action)) $action='preview';
  * Actions
  */
 
-if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
-if (GETPOST('refreshpage')) $action='preview';
+if (GETPOST('refreshsite')) $pageid = 0; // If we change the site, we reset the pageid.
+if (GETPOST('refreshpage')) $action = 'preview';
 
 
 // Add a collab page
@@ -80,7 +80,7 @@ if ($action == 'add')
 		$error++;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$res = $objectpage->create($user);
 		if ($res <= 0)
@@ -89,11 +89,11 @@ if ($action == 'add')
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 		}
 	}
-	if (! $error)
+	if (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
-		$action='';
+		$action = '';
 	}
 	else
 	{
@@ -116,13 +116,13 @@ if ($action == 'delete')
 	if ($res > 0)
 	{
 		$res = $objectpage->delete($user);
-		if (! $res > 0)
+		if (!$res > 0)
 		{
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$db->commit();
 			setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
@@ -149,12 +149,12 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-$help_url='';
+$help_url = '';
 
 llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($action == 'create')
 {
 	print '<input type="hidden" name="action" value="add">';
@@ -162,8 +162,8 @@ if ($action == 'create')
 
 
 // Add a margin under toolbar ?
-$style='';
-if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
+$style = '';
+if ($action != 'preview' && $action != 'editcontent') $style = ' margin-bottom: 5px;';
 
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';

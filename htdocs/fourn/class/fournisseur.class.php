@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -118,7 +118,7 @@ class Fournisseur extends Societe
 
 		$sql = "SELECT count(s.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -191,10 +191,10 @@ class Fournisseur extends Societe
 
 		$sql = "SELECT s.rowid, s.nom as name";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.fournisseur = 1";
 		$sql.= " AND s.entity IN (".getEntity('societe').")";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 		$resql=$this->db->query($sql);
 

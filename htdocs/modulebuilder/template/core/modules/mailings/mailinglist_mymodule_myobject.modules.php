@@ -18,15 +18,19 @@ dol_include_once("/mymodule/class/myobject.class.php");
 class mailing_mailinglist_mymodule_myobject extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used
-    public $name='mailinglist_mymodule_myobject';
+    public $name = 'mailinglist_mymodule_myobject';
     // CHANGE THIS: Put here a description of your selector module
-    public $desc='My object emailing target selector';
+    public $desc = 'My object emailing target selector';
     // CHANGE THIS: Set to 1 if selector is available for admin users only
-    public $require_admin=0;
+    public $require_admin = 0;
 
-    public $enabled=0;
-    public $require_module=array();
-    public $picto='mymodule@mymodule';
+    public $enabled = 0;
+    public $require_module = array();
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'mymodule@mymodule';
 
     /**
      * @var DoliDB Database handler.
@@ -43,10 +47,10 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
     {
         global $conf;
 
-        $this->db=$db;
+        $this->db = $db;
         if (is_array($conf->modules))
         {
-            $this->enabled=in_array('mymodule', $conf->modules)?1:0;
+            $this->enabled = in_array('mymodule', $conf->modules) ? 1 : 0;
         }
     }
 
@@ -61,20 +65,20 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
         global $langs;
         $langs->load("members");
 
-        $form=new Form($this->db);
+        $form = new Form($this->db);
 
-        $arraystatus=array(1=>'Option 1', 2=>'Option 2');
+        $arraystatus = array(1=>'Option 1', 2=>'Option 2');
 
-        $s='';
-        $s.=$langs->trans("Status").': ';
-        $s.='<select name="filter" class="flat">';
-        $s.='<option value="none">&nbsp;</option>';
-        foreach($arraystatus as $status)
+        $s = '';
+        $s .= $langs->trans("Status").': ';
+        $s .= '<select name="filter" class="flat">';
+        $s .= '<option value="none">&nbsp;</option>';
+        foreach ($arraystatus as $status)
         {
-            $s.='<option value="'.$status.'">'.$status.'</option>';
+            $s .= '<option value="'.$status.'">'.$status.'</option>';
         }
-        $s.='</select>';
-        $s.='<br>';
+        $s .= '</select>';
+        $s .= '<br>';
 
         return $s;
     }
@@ -106,13 +110,13 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
         $j = 0;
 
         $sql = " select rowid as id, email, firstname, lastname, plan, partner";
-        $sql.= " from ".MAIN_DB_PREFIX."myobject";
-        $sql.= " where email IS NOT NULL AND email != ''";
-        if (! empty($_POST['filter']) && $_POST['filter'] != 'none') $sql.= " AND status = '".$this->db->escape($_POST['filter'])."'";
-        $sql.= " ORDER BY email";
+        $sql .= " from ".MAIN_DB_PREFIX."myobject";
+        $sql .= " where email IS NOT NULL AND email != ''";
+        if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') $sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
+        $sql .= " ORDER BY email";
 
         // Stocke destinataires dans target
-        $result=$this->db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
@@ -146,7 +150,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
         else
         {
             dol_syslog($this->db->error());
-            $this->error=$this->db->error();
+            $this->error = $this->db->error();
             return -1;
         }
 
@@ -193,7 +197,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
      */
     public function getNbOfRecipients($filter = 1, $option = '')
     {
-        $a=parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
+        $a = parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
 
         if ($a < 0) return -1;
         return $a;

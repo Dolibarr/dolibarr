@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -74,8 +74,11 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'No permission to read contacts');
 		}
-
-		$result = $this->contact->fetch($id);
+		if ($id ==0) {
+			$result = $this->contact->initAsSpecimen();
+		} else {
+			$result = $this->contact->fetch($id);
+		}
 
 		if (!$result)
 		{
@@ -104,7 +107,7 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @return array                        Array of contact objects
@@ -289,8 +292,8 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
-
-		return $this->contact->delete($id);
+        $this->contact->oldcopy = clone $this->contact;
+		return $this->contact->delete();
 	}
 
 	/**
@@ -378,6 +381,90 @@ class Contacts extends DolibarrApi
 		return $result;
     }
 
+    /**
+     * Add a category to a contact
+     *
+     * @url POST {id}/categories/{category_id}
+     *
+     * @param   int		$id             Id of contact
+     * @param   int     $category_id    Id of category
+     *
+     * @return  mixed
+     *
+     * @throws  401     RestException   Insufficient rights
+     * @throws  401     RestException   Access not allowed for login
+     * @throws  404     RestException   Category not found
+     * @throws  404     RestException   Contact not found
+     */
+    public function addCategory($id, $category_id)
+    {
+        if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+            throw new RestException(401, 'Insufficient rights');
+        }
+
+        $result = $this->contact->fetch($id);
+        if (! $result) {
+            throw new RestException(404, 'Contact not found');
+        }
+        $category = new Categorie($this->db);
+        $result = $category->fetch($category_id);
+        if (! $result) {
+            throw new RestException(404, 'category not found');
+        }
+
+        if (! DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        if (! DolibarrApi::_checkAccessToResource('category', $category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $category->add_type($this->contact, 'contact');
+
+        return $this->_cleanObjectDatas($this->contact);
+    }
+
+    /**
+     * Remove the link between a category and a contact
+     *
+     * @url DELETE {id}/categories/{category_id}
+     *
+     * @param   int		$id				Id of contact
+     * @param   int		$category_id	Id of category
+     * @return  mixed
+     *
+     * @throws  401     RestException   Insufficient rights
+     * @throws  401     RestException   Access not allowed for login
+     * @throws  404     RestException   Category not found
+     * @throws  404     RestException   Contact not found
+     */
+    public function deleteCategory($id, $category_id)
+    {
+        if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+            throw new RestException(401, 'Insufficient rights');
+        }
+
+        $result = $this->contact->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Contact not found');
+        }
+        $category = new Categorie($this->db);
+        $result = $category->fetch($category_id);
+        if( ! $result ) {
+            throw new RestException(404, 'category not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        if( ! DolibarrApi::_checkAccessToResource('category', $category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $category->del_type($this->contact, 'contact');
+
+        return $this->_cleanObjectDatas($this->contact);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**

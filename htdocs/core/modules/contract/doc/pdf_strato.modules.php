@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013-2018  Philippe Grand	            <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2019  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
  *
@@ -19,8 +19,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -132,7 +132,7 @@ class pdf_strato extends ModelePDFContract
 		$this->name = 'strato';
 		$this->description = $langs->trans("StandardContractsTemplate");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 
@@ -144,13 +144,13 @@ class pdf_strato extends ModelePDFContract
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 0;                 // Affiche mode reglement
-		$this->option_condreg = 0;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 0;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 0;                 // Display payment mode
+		$this->option_condreg = 0;                 // Display payment terms
+		$this->option_codeproduitservice = 0;      // Display product-service code
+		$this->option_multilang = 0;               // Available in several languages
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		// Get source company
 		$this->emetteur=$mysoc;
@@ -181,7 +181,7 @@ class pdf_strato extends ModelePDFContract
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
 		if ($conf->contrat->dir_output)
@@ -269,7 +269,7 @@ class pdf_strato extends ModelePDFContract
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 
-				// Affiche notes
+				// Display notes
 				if (! empty($object->note_public))
 				{
 					$tab_top -= 2;
@@ -279,7 +279,7 @@ class pdf_strato extends ModelePDFContract
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -391,7 +391,12 @@ class pdf_strato extends ModelePDFContract
 							else
 							{
 								// We found a page break
-								$showpricebeforepagebreak=0;
+
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
 							}
 						}
 						else	// No pagebreak
@@ -411,7 +416,7 @@ class pdf_strato extends ModelePDFContract
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1);   // We reposition the default font
 
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)
@@ -556,7 +561,7 @@ class pdf_strato extends ModelePDFContract
         */
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3);	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3);	// Rect takes a length in 3rd parameter and 4th parameter
 	}
 
     /**
@@ -602,7 +607,7 @@ class pdf_strato extends ModelePDFContract
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
@@ -613,7 +618,7 @@ class pdf_strato extends ModelePDFContract
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->CONTRACT_DRAFT_WATERMARK);
 		}
 
-		//Prepare la suite
+		//Prepare next
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
@@ -727,7 +732,7 @@ class pdf_strato extends ModelePDFContract
 			$this->recipient = $object->thirdparty;
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// You can use the name of the contact company
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
@@ -213,9 +213,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$i = 0;
 		while ($i < $num)
 		{
-			$paiement = '';
 			$ref = '';
 			$refcomp = '';
+			$totalpayment = '';
 
 			$obj = array_shift($tab_sqlobj);
 
@@ -236,7 +236,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					$societestatic->name = $obj->name;
 					$refcomp=$societestatic->getNomUrl(1, '', 24);
 
-					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
+					$totalpayment = -1*$facturefournstatic->getSommePaiement();	// Payment already done
 				}
 			}
 			if ($obj->family == 'invoice')
@@ -250,30 +250,30 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$societestatic->name = $obj->name;
 				$refcomp=$societestatic->getNomUrl(1, '', 24);
 
-				$paiement = $facturestatic->getSommePaiement();	// Payment already done
-				$paiement+= $facturestatic->getSumDepositsUsed();
-				$paiement+= $facturestatic->getSumCreditNotesUsed();
+				$totalpayment = $facturestatic->getSommePaiement();	// Payment already done
+				$totalpayment+= $facturestatic->getSumDepositsUsed();
+				$totalpayment+= $facturestatic->getSumCreditNotesUsed();
 			}
 			if ($obj->family == 'social_contribution')
 			{
 				$socialcontribstatic->ref=$obj->ref;
 				$socialcontribstatic->id=$obj->objid;
-				$socialcontribstatic->lib=$obj->type;
+				$socialcontribstatic->label=$obj->type;
 				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
-				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
+				$totalpayment = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
 
-			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'payment' => $paiement);
+			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
 			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if(empty($reshook)){
 				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;
 				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : $refcomp;
-				$paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : $paiement;
+				$totalpayment = isset($hookmanager->resArray['totalpayment']) ? $hookmanager->resArray['totalpayment'] : $totalpayment;
 			}
 
 			$total_ttc = $obj->total_ttc;
-			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
+			if ($totalpayment) $total_ttc = $obj->total_ttc - $totalpayment;
 			$solde += $total_ttc;
 
 			// We discard lines with a remainder to pay to 0
@@ -286,11 +286,14 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     			else print $langs->trans("NotDefined");
     			print "</td>";
     			print "<td>".$ref."</td>";
-				if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED ){
+				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
 					if($obj->family == 'invoice'){
 						$mc->getInfo($obj->entity);
 						print "<td>".$mc->label."</td>";
-					}else print "<td></td>";
+					}
+					else {
+						print "<td></td>";
+					}
 				}
     			print "<td>".$refcomp."</td>";
     			if ($obj->total_ttc < 0) { print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
@@ -322,7 +325,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</tr>';
 
 	print "</table>";
-  print "</div>";
+    print "</div>";
 }
 else
 {

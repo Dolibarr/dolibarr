@@ -11,47 +11,47 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
 #
-Assets = Assets
+Assets = Tài sản
 NewAsset = Tài sản mới
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+AccountancyCodeAsset = Mã kế toán (tài sản)
+AccountancyCodeDepreciationAsset = Mã kế toán (tài khoản khấu hao tài sản)
+AccountancyCodeDepreciationExpense = Mã kế toán (tài khoản chi phí khấu hao)
+NewAssetType=Loại tài sản mới
+AssetsTypeSetup=Thiết lập loại tài sản
+AssetTypeModified=Loại tài sản sửa đổi
+AssetType=Loại tài sản
+AssetsLines=Tài sản
 DeleteType=Xóa
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+DeleteAnAssetType=Xóa một loại tài sản
+ConfirmDeleteAssetType=Bạn có chắc chắn muốn xóa loại tài sản này?
 ShowTypeCard=Hiển thị loại '% s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Tài sản
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Mô tả tài sản
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Thiết lập tài sản
+Settings = Cài đặt
+AssetsSetupPage = Trang thiết lập tài sản
+ExtraFieldsAssetsType = Thuộc tính bổ sung (loại tài sản)
+AssetsType=Loại tài sản
+AssetsTypeId=ID Loại tài sản
+AssetsTypeLabel=Nhãn loại tài sản
+AssetsTypes=Các loại tài sản
 
 #
 # Menu
 #
-MenuAssets = Assets
+MenuAssets = Tài sản
 MenuNewAsset = Tài sản mới
 MenuTypeAssets = Loại tài sản
 MenuListAssets = Danh sách
@@ -61,5 +61,5 @@ MenuListTypeAssets = Danh sách
 #
 # Module
 #
-NewAssetType=New asset type
+NewAssetType=Loại tài sản mới
 NewAsset=Tài sản mới

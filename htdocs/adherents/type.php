@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("members");
 
@@ -40,53 +41,55 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$search_lastname	= GETPOST('search_lastname', 'alpha');
+$search_lastname = GETPOST('search_lastname', 'alpha');
 $search_login		= GETPOST('search_login', 'alpha');
 $search_email		= GETPOST('search_email', 'alpha');
-$type				= GETPOST('type', 'intcomma');
+$type = GETPOST('type', 'intcomma');
 $status				= GETPOST('status', 'alpha');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) {  $sortorder="DESC"; }
-if (! $sortfield) {  $sortfield="d.lastname"; }
+if (!$sortorder) {  $sortorder = "DESC"; }
+if (!$sortfield) {  $sortfield = "d.lastname"; }
 
-$label=GETPOST("label", "alpha");
-$morphy=GETPOST("morphy", "alpha");
-$statut=GETPOST("statut", "int");
-$subscription=GETPOST("subscription", "int");
-$vote=GETPOST("vote", "int");
-$comment=GETPOST("comment", 'alphanohtml');
-$mail_valid=GETPOST("mail_valid", 'none');
+$label = GETPOST("label", "alpha");
+$morphy = GETPOST("morphy", "alpha");
+$statut = GETPOST("statut", "int");
+$subscription = GETPOST("subscription", "int");
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
+$vote = GETPOST("vote", "int");
+$comment = GETPOST("comment", 'none');
+$mail_valid = GETPOST("mail_valid", 'none');
 
 // Security check
-$result=restrictedArea($user, 'adherent', $rowid, 'adherent_type');
+$result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
 $object = new AdherentType($db);
 
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_lastname="";
-    $search_login="";
-    $search_email="";
-    $type="";
-    $sall="";
+    $search_lastname = "";
+    $search_login = "";
+    $search_email = "";
+    $type = "";
+    $sall = "";
 }
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membertypecard','globalcard'));
+$hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
 
 /*
@@ -94,26 +97,27 @@ $hookmanager->initHooks(array('membertypecard','globalcard'));
  */
 
 if ($cancel) {
+	$action = '';
 
-	$action='';
-
-	if (! empty($backtopage)) {
+	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
 	}
 }
 
 if ($action == 'add' && $user->rights->adherent->configurer) {
-	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
-	$object->statut = (int) $statut;
-	$object->subscription = (int) $subscription;
+	$object->label = trim($label);
+	$object->morphy         = trim($morphy);
+	$object->statut         = (int) $statut;
+	$object->subscription   = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
-	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->mail_valid = trim($mail_valid);
+	$object->vote			= (int) $vote;
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (empty($object->label)) {
@@ -133,9 +137,9 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$id=$object->create($user);
+		$id = $object->create($user);
 		if ($id > 0)
 		{
 			header("Location: ".$_SERVER["PHP_SELF"]);
@@ -160,20 +164,22 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy = trim($morphy);
 	$object->statut = (int) $statut;
 	$object->subscription = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
-	$object->mail_valid		= trim($mail_valid);
+	$object->mail_valid = trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
-	$ret=$object->update($user);
+	$ret = $object->update($user);
 
-	if ($ret >= 0 && ! count($object->errors))
+	if ($ret >= 0 && !count($object->errors))
 	{
 		setEventMessages($langs->trans("MemberTypeModified"), null, 'mesgs');
 	}
@@ -189,7 +195,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
 {
 	$object->fetch($rowid);
-	$res=$object->delete();
+	$res = $object->delete();
 
 	if ($res > 0)
 	{
@@ -200,7 +206,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
 	else
 	{
 		setEventMessages($langs->trans("MemberTypeCanNotBeDeleted"), null, 'errors');
-		$action='';
+		$action = '';
 	}
 }
 
@@ -209,19 +215,20 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 // List of members type
-if (! $rowid && $action != 'create' && $action != 'edit')
+if (!$rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut, d.morphy";
-	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut as status, d.morphy";
+	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -233,27 +240,27 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
-		$newcardbutton='';
+		$newcardbutton = '';
 		if ($user->rights->adherent->configurer)
 		{
-            $newcardbutton.= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
+            $newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
         }
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
 		print '<div class="div-table-responsive">';
-		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
@@ -273,6 +280,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			$membertype->id = $objp->rowid;
 			$membertype->ref = $objp->rowid;
 			$membertype->label = $objp->rowid;
+			$membertype->status = $objp->status;
 
 			print '<tr class="oddeven">';
 			print '<td>';
@@ -287,13 +295,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
-			print '<td class="center">';
-            if ( !empty($objp->statut) ) {
-                print img_picto($langs->trans("InActivity"), 'statut4');
-            } else {
-                print img_picto($langs->trans("ActivityCeased"), 'statut5');
-            }
-      		print '</td>';
+			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
@@ -322,29 +324,30 @@ if ($action == 'create')
 {
 	$object = new AdherentType($db);
 
-	print load_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
     dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), 1);
+  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
   	print '</td></tr>';
 
     // Morphy
+  	$morphys = array();
     $morphys[""] = $langs->trans("MorPhy");
     $morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-	print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
   	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -352,25 +355,32 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print $form->selectyesno("vote", 0, 1);
+	print $form->selectyesno("vote", GETPOSTISSET("vote") ? GETPOST('vote', 'aZ09') : 1, 1);
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+	print '<input name="duration_value" size="5" value="'.GETPOST('duraction_unit', 'aZ09').'"> ';
+	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : 'y', 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
 	// Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 	print '<tbody>';
 	print "</table>\n";
@@ -400,7 +410,7 @@ if ($rowid > 0)
 		$object->fetch_optionals();
 
 		/*
-		 * Confirmation suppression
+		 * Confirmation deletion
 		 */
 		if ($action == 'delete')
 		{
@@ -418,17 +428,9 @@ if ($rowid > 0)
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
-   		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
-        if ( !empty($object->statut) ) {
-            print img_picto($langs->trans('TypeStatusActive'), 'statut4').' '.$langs->trans("InActivity");
-        } else {
-            print img_picto($langs->trans('TypeStatusInactive'), 'statut5').' '.$langs->trans("ActivityCeased");
-        }
-		print '</tr>';
-
-        // Morphy
+		// Morphy
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
@@ -440,6 +442,18 @@ if ($rowid > 0)
 		print yn($object->vote);
 		print '</tr>';
 
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		if ($object->duration_value > 1)
+		{
+			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+		}
+		elseif ($object->duration_value > 0)
+		{
+			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+		}
+		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print '</td></tr>';
+
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
 
@@ -447,7 +461,7 @@ if ($rowid > 0)
 		print nl2br($object->mail_valid)."</td></tr>";
 
 		// Other attributes
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 		print '</div>';
@@ -467,7 +481,7 @@ if ($rowid > 0)
 		}
 
 		// Add
-        if ( $user->rights->adherent->configurer && !empty($object->statut) )
+        if ($user->rights->adherent->configurer && !empty($object->statut))
 		{
             print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
         } else {
@@ -485,55 +499,55 @@ if ($rowid > 0)
 
 		// Show list of members (nearly same code than in page list.php)
 
-		$membertypestatic=new AdherentType($db);
+		$membertypestatic = new AdherentType($db);
 
-		$now=dol_now();
+		$now = dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
-		$sql.= " d.datefin,";
-		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-		$sql.= " t.libelle as type, t.subscription";
-		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
-		$sql.= " AND d.entity IN (".getEntity('adherent').")";
-		$sql.= " AND t.rowid = ".$object->id;
+		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
+		$sql .= " d.datefin,";
+		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
+		$sql .= " t.libelle as type, t.subscription";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql .= " WHERE d.fk_adherent_type = t.rowid ";
+		$sql .= " AND d.entity IN (".getEntity('adherent').")";
+		$sql .= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
-			$sql.=natural_search(array("f.firstname","d.lastname","d.societe","d.email","d.login","d.address","d.town","d.note_public","d.note_private"), $sall);
+			$sql .= natural_search(array("f.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
 		}
 		if ($status != '')
 		{
-		    $sql.= natural_search('d.statut', $status, 2);
+		    $sql .= natural_search('d.statut', $status, 2);
 		}
 		if ($action == 'search')
 		{
 			if (GETPOST('search', 'alpha'))
 			{
-		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search', 'alpha'));
+		  		$sql .= natural_search(array("d.firstname", "d.lastname"), GETPOST('search', 'alpha'));
 		  	}
 		}
-		if (! empty($search_lastname))
+		if (!empty($search_lastname))
 		{
-			$sql.= natural_search(array("d.firstname","d.lastname"), $search_lastname);
+			$sql .= natural_search(array("d.firstname", "d.lastname"), $search_lastname);
 		}
-		if (! empty($search_login))
+		if (!empty($search_login))
 		{
-			$sql.= natural_search("d.login", $search_login);
+			$sql .= natural_search("d.login", $search_login);
 		}
-		if (! empty($search_email))
+		if (!empty($search_email))
 		{
-			$sql.= natural_search("d.email", $search_email);
+			$sql .= natural_search("d.email", $search_email);
 		}
-		if ($filter == 'uptodate')
-		{
-		    $sql.=" AND datefin >= '".$db->idate($now)."'";
-		}
-		if ($filter == 'outofdate')
-		{
-		    $sql.=" AND datefin < '".$db->idate($now)."'";
-		}
+        if ($filter == 'uptodate')
+        {
+            $sql .= " AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+        }
+        if ($filter == 'outofdate')
+        {
+            $sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+        }
 
-		$sql.= " ".$db->order($sortfield, $sortorder);
+		$sql .= " ".$db->order($sortfield, $sortorder);
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
@@ -549,7 +563,7 @@ if ($rowid > 0)
 		    }
 		}
 
-		$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+		$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -557,35 +571,35 @@ if ($rowid > 0)
 		    $num = $db->num_rows($resql);
 		    $i = 0;
 
-		    $titre=$langs->trans("MembersList");
+		    $titre = $langs->trans("MembersList");
 		    if ($status != '')
 		    {
-		        if ($status == '-1,1')								{ $titre=$langs->trans("MembersListQualified"); }
-		        elseif ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
-		        elseif ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
-		        elseif ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
-		        elseif ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
-		        elseif ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
+		        if ($status == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
+		        elseif ($status == '-1') { $titre = $langs->trans("MembersListToValid"); }
+		        elseif ($status == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); }
+		        elseif ($status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
+		        elseif ($status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
+		        elseif ($status == '0') { $titre = $langs->trans("MembersListResiliated"); }
 		    }
 		    elseif ($action == 'search')
 		    {
-		        $titre=$langs->trans("MembersListQualified");
+		        $titre = $langs->trans("MembersListQualified");
 		    }
 
 		    if ($type > 0)
 		    {
-				$membertype=new AdherentType($db);
-		        $result=$membertype->fetch($type);
-				$titre.=" (".$membertype->label.")";
+				$membertype = new AdherentType($db);
+		        $result = $membertype->fetch($type);
+				$titre .= " (".$membertype->label.")";
 		    }
 
-		    $param="&rowid=".$object->id;
-		    if (! empty($status))			$param.="&status=".$status;
-		    if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
-		    if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
-		    if (! empty($search_login))		$param.="&search_login=".$search_login;
-		    if (! empty($search_email))		$param.="&search_email=".$search_email;
-		    if (! empty($filter))			$param.="&filter=".$filter;
+		    $param = "&rowid=".$object->id;
+		    if (!empty($status))			$param .= "&status=".$status;
+		    if (!empty($search_lastname))	$param .= "&search_lastname=".$search_lastname;
+		    if (!empty($search_firstname))	$param .= "&search_firstname=".$search_firstname;
+		    if (!empty($search_login))		$param .= "&search_login=".$search_login;
+		    if (!empty($search_email))		$param .= "&search_email=".$search_email;
+		    if (!empty($filter))			$param .= "&filter=".$filter;
 
 		    if ($sall)
 		    {
@@ -593,6 +607,7 @@ if ($rowid > 0)
 		    }
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+            print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
@@ -601,9 +616,9 @@ if ($rowid > 0)
             $moreforfilter = '';
 
             print '<div class="div-table-responsive">';
-            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+            print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-			// Lignes des champs de filtre
+            // Fields title search
 			print '<tr class="liste_titre_filter">';
 
 			print '<td class="liste_titre left">';
@@ -641,15 +656,15 @@ if ($rowid > 0)
 		    {
 		        $objp = $db->fetch_object($resql);
 
-		        $datefin=$db->jdate($objp->datefin);
+		        $datefin = $db->jdate($objp->datefin);
 
-		        $adh=new Adherent($db);
-		        $adh->lastname=$objp->lastname;
-		        $adh->firstname=$objp->firstname;
+		        $adh = new Adherent($db);
+		        $adh->lastname = $objp->lastname;
+		        $adh->firstname = $objp->firstname;
 
 		        // Lastname
 		        print '<tr class="oddeven">';
-		        if ($objp->societe != '')
+		        if ($objp->company != '')
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
 		        }
@@ -713,7 +728,7 @@ if ($rowid > 0)
 		        print '<td class="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					print '<a class="editfielda" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
@@ -756,20 +771,20 @@ if ($rowid > 0)
 		$head = member_type_prepare_head($object);
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-    	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $object->statut);
+    	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->statut);
     	print '</td></tr>';
 
         // Morphy
@@ -777,7 +792,7 @@ if ($rowid > 0)
         $morphys["phy"] = $langs->trans("Physical");
         $morphys["mor"] = $langs->trans("Moral");
         print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-        print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+        print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy") : $object->morphy);
         print "</td></tr>";
 
     	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -788,48 +803,35 @@ if ($rowid > 0)
 		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
 
+		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+		print '</td></tr>';
+
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+		$doleditor->Create();
+		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 
 		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+		// Other attributes
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
         	print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
-		    print $object->showOptionals($extrafields, 'edit');
+		    print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
 		print '</table>';
-
-		// Extra field
-		if (empty($reshook))
-		{
-			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				if (isset($_POST["options_" . $key])) {
-					if (is_array($_POST["options_" . $key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_" . $key]);
-					} else {
-						$value = $_POST["options_" . $key];
-					}
-				} else {
-					$value = $object->array_options["options_" . $key];
-				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key, $value);
-				print "</td></tr>\n";
-			}
-			print '</table><br><br>';
-		}
 
 		dol_fiche_end();
 

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,14 +34,14 @@ $ref = GETPOST('ref', 'alpha');
 
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result=restrictedArea($user, 'stock');
+$result = restrictedArea($user, 'stock');
 
 
 /*
  * View
  */
 
-$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("Stocks"), $help_url);
 
 $object = new Entrepot($db);
@@ -55,12 +55,12 @@ dol_fiche_head($head, 'info', $langs->trans("Warehouse"), -1, 'stock');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
-$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
-$morehtmlref.='</div>';
+$morehtmlref = '<div class="refidno">';
+$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+$morehtmlref .= '</div>';
 
 $shownav = 1;
-if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 

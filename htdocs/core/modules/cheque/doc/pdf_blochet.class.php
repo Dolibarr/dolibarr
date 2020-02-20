@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -49,7 +49,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	{
 		global $conf,$langs,$mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -57,7 +57,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$this->tab_top = 60;
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -68,11 +68,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-        // Recupere emmetteur
+        // Retrieves transmitter
         $this->emetteur=$mysoc;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define column position
         $this->line_height = 5;
 		$this->line_per_page = 40;
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
@@ -98,7 +98,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         $sav_charset_output=$outputlangs->charset_output;
         if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-        // Load traductions files requiredby by page
+        // Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "products", "compta"));
 
 		$dir = $_dir . "/".get_exdir($number, 0, 1, 0, $object, 'cheque').$number;
@@ -205,7 +205,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->result = array('fullpath'=>$file);
 
         $outputlangs->charset_output=$sav_charset_output;
-	    return 1;   // Pas d'erreur
+	    return 1;   // No error
 	}
 
 
@@ -225,7 +225,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("compta", "banks"));
 
 		$title = $outputlangs->transnoentities("CheckReceipt");

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,13 +47,13 @@ $langs->loadLangs(array("mymodule@mymodule"));
 $action=GETPOST('action', 'alpha');
 
 
-// Securite acces client
-if (! $user->rights->mymodule->read) accessforbidden();
+// Security check
+//if (! $user->rights->mymodule->myobject->read) accessforbidden();
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=5;
@@ -104,9 +104,9 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th></tr>';
 
 		$var = true;
 		if ($num > 0)
@@ -188,7 +188,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);

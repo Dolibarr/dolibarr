@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +24,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 
 global $langs, $user;
 
@@ -32,13 +32,13 @@ global $langs, $user;
 $langs->loadLangs(array("admin", "assets"));
 
 // Access control
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$arrayofparameters=array('FIXEDASSETS_MYPARAM1'=>array('css'=>'minwidth200'), 'FIXEDASSETS_MYPARAM2'=>array('css'=>'minwidth500'));
+$arrayofparameters = array('FIXEDASSETS_MYPARAM1'=>array('css'=>'minwidth200'), 'FIXEDASSETS_MYPARAM2'=>array('css'=>'minwidth500'));
 
 
 /*
@@ -54,7 +54,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 llxHeader('', $langs->trans("AssetsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
 
 
@@ -66,17 +66,17 @@ dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
 	}
 
 	print '</table>';
@@ -90,14 +90,14 @@ if ($action == 'edit')
 }
 else
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>' . $conf->global->$key . '</td></tr>';
+		print '</td><td>'.$conf->global->$key.'</td></tr>';
 	}
 
 	print '</table>';

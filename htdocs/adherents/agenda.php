@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,11 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members"));
+$langs->loadLangs(array("companies", "members"));
 
-$id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('rowid', 'int');
+$id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('rowid', 'int');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
@@ -46,31 +46,31 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep,a.id';
-if (! $sortorder) $sortorder='DESC';
+if (!$sortfield) $sortfield = 'a.datep,a.id';
+if (!$sortorder) $sortorder = 'DESC';
 
 if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode', 'array', 3);
-	if (! count($actioncode)) $actioncode='0';
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
-$search_agenda_label=GETPOST('search_agenda_label');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 // Security check
-$result=restrictedArea($user, 'adherent', $id);
+$result = restrictedArea($user, 'adherent', $id);
 
 $object = new Adherent($db);
-$result=$object->fetch($id);
+$result = $object->fetch($id);
 if ($result > 0)
 {
 	$object->fetch_thirdparty();
 
     $adht = new AdherentType($db);
-    $result=$adht->fetch($object->typeid);
+    $result = $adht->fetch($object->typeid);
 }
 
 
@@ -78,14 +78,14 @@ if ($result > 0)
  *	Actions
  */
 
-$parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$id, 'objcanvas'=>$objcanvas);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -94,8 +94,8 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
     {
-        $actioncode='';
-        $search_agenda_label='';
+        $actioncode = '';
+        $search_agenda_label = '';
     }
 }
 
@@ -110,7 +110,7 @@ $contactstatic = new Contact($db);
 $form = new Form($db);
 
 /*
- * Fiche categorie de client et/ou fournisseur
+ * Customer and/or supplier category sheet
  */
 if ($object->id > 0)
 {
@@ -119,11 +119,11 @@ if ($object->id > 0)
 
 	$langs->load("companies");
 
-	$title=$langs->trans("Member") . " - " . $langs->trans("Agenda");
-	$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+	$title = $langs->trans("Member")." - ".$langs->trans("Agenda");
+	$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
 	llxHeader("", $title, $helpurl);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = member_prepare_head($object);
 
 	dol_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ $langs->loadLangs(array("companies", "projects"));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -82,7 +82,7 @@ if ($socid)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -118,14 +118,15 @@ if ($socid)
 
 	dol_fiche_end();
 
+	$params = '';
 
-   	$addbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'"><span class="text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+	$newcardbutton .= dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage), '', 1, $params);
 
     print '<br>';
 
 
 	// Projects list
-	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
+    $result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
 }
 
 // End of page

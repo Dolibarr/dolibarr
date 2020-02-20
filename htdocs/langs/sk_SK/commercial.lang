@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Obchodné
-CommercialArea=Komerčné priestory
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Zákazník
 Customers=Zákazníci
 Prospect=Vyhliadka
@@ -59,7 +59,7 @@ ActionAC_FAC=Poslať zákazníka faktúru poštou
 ActionAC_REL=Poslať zákazníka faktúru poštou (pripomienka)
 ActionAC_CLO=Zavrieť
 ActionAC_EMAILING=Poslať hromadný email
-ActionAC_COM=Poslať objednávky zákazníka e-mailom
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Poslať prepravu poštou
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

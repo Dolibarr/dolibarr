@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,10 +35,10 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $nowyear=strftime("%Y", dol_now());
@@ -72,7 +72,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -86,7 +86,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
-    $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
     while ($i <= $endyear)
     {
@@ -101,7 +100,6 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfSendings"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
 
@@ -114,7 +112,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -142,7 +140,6 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfShipments"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfShipmentsByMonthHT"));
 
@@ -153,7 +150,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
 }
@@ -181,7 +178,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
@@ -221,9 +217,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //{
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
@@ -247,7 +243,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //}
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="center">'.$langs->trans("NbOfSendings").'</td>';
@@ -288,7 +284,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -309,7 +305,7 @@ dol_fiche_end();
 
 // TODO USe code similar to commande/stats/index.php instead of this one.
 /*
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">'.$langs->trans("Year").'</td>';
 print '<td width="40%" class="center">'.$langs->trans("NbOfSendings").'</td></tr>';
 

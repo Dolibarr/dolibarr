@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,7 @@ if ($id)
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -89,49 +89,49 @@ if (empty($reshook)) {
 			$tabparam = array();
 
 			if (GETPOST("check_MAIN_LANDING_PAGE") == "on") {
-				$tabparam["MAIN_LANDING_PAGE"] = $_POST["MAIN_LANDING_PAGE"];
+				$tabparam["MAIN_LANDING_PAGE"] = GETPOST("MAIN_LANDING_PAGE", 'alphanohtml');
 			} else {
 				$tabparam["MAIN_LANDING_PAGE"] = '';
 			}
 
 			if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
-				$tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+				$tabparam["MAIN_LANG_DEFAULT"] = GETPOST("main_lang_default", 'aZ09');
 			} else {
 				$tabparam["MAIN_LANG_DEFAULT"] = '';
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("main_size_liste_limit", 'int');
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
 
 			if (GETPOST("check_AGENDA_DEFAULT_VIEW") == "on") {
-				$tabparam["AGENDA_DEFAULT_VIEW"] = $_POST["AGENDA_DEFAULT_VIEW"];
+				$tabparam["AGENDA_DEFAULT_VIEW"] = GETPOST("AGENDA_DEFAULT_VIEW", 'aZ09');
 			} else {
 				$tabparam["AGENDA_DEFAULT_VIEW"] = '';
 			}
 
 			if (GETPOST("check_MAIN_THEME") == "on") {
-				$tabparam["MAIN_THEME"] = $_POST["main_theme"];
+				$tabparam["MAIN_THEME"] = GETPOST('main_theme', 'aZ09');
 			} else {
 				$tabparam["MAIN_THEME"] = '';
 			}
 
-			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array()))));
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
 			} else {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
+					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array()));
 			}
 
-			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array()))));
 			if ($val == '') {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
 			} else {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
+					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array()));
 			}
 
 			if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
@@ -150,6 +150,12 @@ if (empty($reshook)) {
 			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 1;
 			} else {
 			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
+			}
+
+			if (GETPOST('MAIN_OPTIMIZEFORCOLORBLIND')) {
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = GETPOST('MAIN_OPTIMIZEFORCOLORBLIND', 'aZ09');
+			} else {
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = 0;
 			}
 
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
@@ -184,7 +190,7 @@ $title = $langs->trans("User");
 if ($action == 'edit')
 {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 }
@@ -255,7 +261,7 @@ if ($action == 'edit')
 
     clearstatcache();
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
@@ -308,7 +314,7 @@ if ($action == 'edit')
     print '</table><br>';
 
     // Theme
-    show_theme($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
+    showSkins($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
 
     dol_fiche_end();
 
@@ -327,7 +333,7 @@ else
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
@@ -381,7 +387,7 @@ else
 
 
     // Skin
-    show_theme($object, 0, true);
+    showSkins($object, 0, true);
 
     dol_fiche_end();
 

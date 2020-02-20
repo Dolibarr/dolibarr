@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,6 @@ $erreur = false;
 // Insert survey
 if (GETPOST('confirmation'))
 {
-
 	// We save hours entered
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true)
 	{
@@ -329,6 +328,7 @@ else
 
 //Debut du formulaire et bandeaux de tete
 print '<form name="formulaire" action="" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
@@ -537,8 +537,8 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
-			} else { //sinon la case est vide normalement
-
+			} else {
+				//sinon la case est vide normalement
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}

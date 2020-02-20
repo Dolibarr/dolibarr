@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -59,7 +59,7 @@ class CashControl extends CommonObject
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
 	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
 	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
-	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20),
+	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'Terminal', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20, 'css'=>'center'),
 	'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
 	'opening' =>array('type'=>'price', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
 	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
@@ -86,8 +86,20 @@ class CashControl extends CommonObject
 	public $cash;
 	public $cheque;
 	public $card;
+
+	/**
+	 * @var integer|string $date_valid
+	 */
 	public $date_valid;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+	/**
+	 * @var integer|string $date_modification
+	 */
 	public $date_modification;
 
 	const STATUS_DRAFT = 0;
@@ -311,47 +323,20 @@ class CashControl extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[0] = $langs->trans('Draft');
-			$this->labelstatus[1] = $langs->trans('Closed');
+			$this->labelStatus[0] = $langs->trans('Draft');
+			$this->labelStatus[1] = $langs->trans('Closed');
+			$this->labelStatusShort[0] = $langs->trans('Draft');
+			$this->labelStatusShort[1] = $langs->trans('Closed');
 		}
 
-		if ($mode == 0)
-		{
-			return $this->labelstatus[$status];
-		}
-		elseif ($mode == 1)
-		{
-			return $this->labelstatus[$status];
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
+		$statusType = 'status0';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**

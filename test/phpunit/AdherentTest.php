@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -143,6 +143,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $localobject->label='Adherent type test';
         $localobject->subscription=1;
         $localobject->vote=1;
+        $localobject->company='Old company label';
         $result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
         $this->assertLessThan($result, 0);
@@ -247,9 +248,9 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
         $localobject->civility_id = 0;
         $localobject->login='newlogin';
-        $localobject->societe='New company';
-        $localobject->note='New note after update';
-        //$localobject->note_public='New note public after update';
+        $localobject->company='New company label';
+        $localobject->note_public='New note public after update';
+        $localobject->note_private='New note private after update';
         $localobject->lastname='New name';
         $localobject->firstname='New firstname';
         $localobject->gender='man';
@@ -267,10 +268,10 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $result=$localobject->update($user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        $result=$localobject->update_note($localobject->note, '_private');
+        $result=$localobject->update_note($localobject->note_private, '_private');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note, '_public');
+		$result=$localobject->update_note($localobject->note_public, '_public');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
@@ -281,8 +282,9 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
         $this->assertEquals($localobject->civility_id, $newobject->civility_id);
         $this->assertEquals($localobject->login, $newobject->login);
-        $this->assertEquals($localobject->societe, $newobject->societe);
+        $this->assertEquals($localobject->company, $newobject->company);
         $this->assertEquals($localobject->note_public, $newobject->note_public);
+        $this->assertEquals($localobject->note_private, $newobject->note_private);
         $this->assertEquals($localobject->lastname, $newobject->lastname);
         $this->assertEquals($localobject->firstname, $newobject->firstname);
         $this->assertEquals($localobject->gender, $newobject->gender);
@@ -328,7 +330,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
         // If option to store clear password has been set, we get 'dolibspec' into PASSWORD field.
         $expected = ',New firstname,New name,New firstname New name,'.
-                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,'.
+                    'New company label,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,'.
                     'newlogin';
 
         $result = $localobject->makeSubstitution($template);

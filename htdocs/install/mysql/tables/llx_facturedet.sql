@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -63,8 +63,9 @@ create table llx_facturedet
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
   
-  situation_percent real,   										-- % progression of lines invoicing
+  situation_percent real DEFAULT 100, 								-- % progression of lines invoicing
   fk_prev_id        integer, 										-- id of the line in the previous situation
+
   fk_user_author	integer,                						-- user making creation
   fk_user_modif     integer,                						-- user making last change
 

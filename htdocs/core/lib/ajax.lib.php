@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -31,7 +31,7 @@
  *
  *  @param	string	$selected           Preselected value
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
+ *	@param	string	$url                Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
@@ -107,6 +107,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	    						}
 						    }
                     });
+
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
@@ -326,7 +327,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
  *	@param	string	$message	Message of dialog box
  *	@param	int		$w			Width of dialog box
  *	@param	int		$h			height of dialog box
- *	@return	void
+ *	@return	string
  */
 function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
@@ -473,14 +474,15 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 /**
  * 	On/off button for constant
  *
- * 	@param	string	$code			Name of constant
- * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- * 	@param	int		$entity			Entity to set
- *  @param	int		$revertonoff	Revert on/off
- *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ * 	@param	string	$code					Name of constant
+ * 	@param	array	$input					Array of options. ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param	int		$entity					Entity to set
+ *  @param	int		$revertonoff			Revert on/off
+ *  @param	bool	$strict					Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0)
 {
 	global $conf, $langs;
 
@@ -511,7 +513,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict);
 					} else {
-						setConstant(url, code, input, entity);
+						setConstant(url, code, input, entity, 0, '.$forcereload.');
 					}
 				});
 
@@ -522,7 +524,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict);
 					} else {
-						delConstant(url, code, input, entity);
+						delConstant(url, code, input, entity, 0, '.$forcereload.');
 					}
 				});
 			});

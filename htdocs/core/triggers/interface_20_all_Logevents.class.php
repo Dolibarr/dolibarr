@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -177,13 +177,13 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		// If not found
-/*
+        /*
         else
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
-*/
+        */
 
 		// Add more information into desc from the context property
 		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];

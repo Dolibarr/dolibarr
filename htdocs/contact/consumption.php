@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -121,12 +121,12 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', $morehtmlref);
+dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'rowid', 'nom', $morehtmlref);
 
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 // Civility
 print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
@@ -151,7 +151,7 @@ if ($object->thirdparty->fournisseur)
 	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order']=$langs->transnoentitiesnoconv('SuppliersOrders');
 
     // There no contact type for supplier proposals
-//	if ($conf->fournisseur->enabled && $user->rights->supplier_proposal->lire) $elementTypeArray['supplier_proposal']=$langs->transnoentitiesnoconv('SupplierProposals');
+    // if ($conf->fournisseur->enabled && $user->rights->supplier_proposal->lire) $elementTypeArray['supplier_proposal']=$langs->transnoentitiesnoconv('SupplierProposals');
 }
 
 print '</table>';
@@ -163,14 +163,14 @@ print '<br>';
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $sql_select='';
 if ($type_element == 'fichinter')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic=new Fichinter($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, tc.libelle, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'fichinterdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
@@ -183,7 +183,7 @@ elseif ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, tc.libelle, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'facturedet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON d.fk_facture=f.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
@@ -198,7 +198,7 @@ elseif ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic=new Propal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, tc.libelle, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'propaldet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propal as c ON d.fk_propal=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
@@ -213,7 +213,7 @@ elseif ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, tc.libelle, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'commandedet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON d.fk_commande=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
@@ -228,7 +228,7 @@ elseif ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, tc.libelle, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'facture_fourn_det d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON d.fk_facture_fourn=f.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
@@ -256,7 +256,7 @@ elseif ($type_element == 'supplier_order')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic=new CommandeFournisseur($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, tc.libelle, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'commande_fournisseurdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur as c ON d.fk_commande=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
@@ -272,7 +272,7 @@ elseif ($type_element == 'contract')
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
 	$documentstaticline=new ContratLigne($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, tc.libelle, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'contratdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'contrat as c ON d.fk_contrat=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
@@ -298,21 +298,9 @@ if (!empty($sql_select))
 	$sql.= " ";
 	if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
 	$sql.= " FROM "/*.MAIN_DB_PREFIX."societe as s, "*/.$tables_from;
-//	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
+    // if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql.= $where;
-	if ($month > 0) {
-		if ($year > 0) {
-			$start = dol_mktime(0, 0, 0, $month, 1, $year);
-			$end = dol_time_plus_duree($start, 1, 'm') - 1;
-			$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-		} else {
-			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d', $month)."'";
-		}
-	} elseif ($year > 0) {
-		$start = dol_mktime(0, 0, 0, 1, 1, $year);
-		$end = dol_time_plus_duree($start, 1, 'y') - 1;
-		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	}
+	$sql.= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	if ($sprod_fulldescr)
 	{
@@ -356,19 +344,19 @@ if ($sql_select)
 
 	$num = $db->num_rows($resql);
 
-	$param="&socid=".$socid."&type_element=".$type_element;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	$param="&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sprod_fulldescr) $param.= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 	if ($sref) $param.= "&sref=".urlencode($sref);
-	if ($month) $param.= "&month=".$month;
-	if ($year) $param.= "&year=".$year;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if ($month) $param.= "&month=".urlencode($month);
+	if ($year) $param.= "&year=".urlencode($year);
+	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
     // Filters
     print '<tr class="liste_titre">';
@@ -420,6 +408,7 @@ if ($sql_select)
 		$documentstatic->statut=$objp->status;
 		$documentstatic->status=$objp->status;
 		$documentstatic->paye=$objp->paid;
+		$documentstatic->paid=$objp->paid;
 
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
 
@@ -536,7 +525,6 @@ if ($sql_select)
 		else
 		{
 			if ($objp->fk_product > 0) {
-
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
 				// Show range
@@ -548,7 +536,6 @@ if ($sql_select)
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
 			} else {
-
 				if (! empty($objp->label) || ! empty($objp->description))
 				{
 					if ($type==1) $text = img_object($langs->trans('Service'), 'service');
@@ -587,8 +574,7 @@ if ($sql_select)
 		*/
 		print '</td>';
 
-		//print '<td class="left">'.$prodreftxt.'</td>';
-        print '<td>'.$objp->libelle.'</td>';
+		print '<td>'.$objp->type_contact_label.'</td>';	// Type of contact label
 
 		print '<td class="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;
@@ -619,7 +605,7 @@ if ($sql_select)
 } elseif (empty($type_element) || $type_element == -1) {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
@@ -635,7 +621,7 @@ if ($sql_select)
 } else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 

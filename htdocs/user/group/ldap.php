@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +49,7 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 $object = new Usergroup($db);
 $object->fetch($id);
@@ -126,7 +126,9 @@ if (! empty($conf->mutlicompany->enabled))
 
 // Note
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
-print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
+print '<td class="valeur sensiblehtmlcontent">';
+print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
+print '</td>';
 print "</tr>\n";
 
 // LDAP DN
@@ -182,16 +184,17 @@ if ($result > 0)
 	$info=$object->_load_ldap_info();
 	$dn=$object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
+
 	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
-	// Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	// Show tree
+    if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{
@@ -200,7 +203,7 @@ if ($result > 0)
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 	$ldap->unbind();
 	$ldap->close();

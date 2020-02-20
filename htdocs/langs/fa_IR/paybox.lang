@@ -11,17 +11,8 @@ YourEMail=ایمیل برای دریافت تاییدیه پرداخت
 Creditor=بستانکار
 PaymentCode=کد های پرداخت
 PayBoxDoPayment=Pay with Paybox
-ToPay=آیا پرداخت
 YouWillBeRedirectedOnPayBox=شما می توانید در صفحه خزانه امن برای ورودی هدایت می شوید اطلاعات کارت اعتباری شما
 Continue=بعد
-ToOfferALinkForOnlinePayment=URL برای٪ s پرداخت
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای صورتحساب مشتری
-ToOfferALinkForOnlinePaymentOnContractLine=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای قرارداد خط
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای مقدار رایگان
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای به اشتراک عضو
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=شما همچنین می توانید پارامتر URL <b>و برچسب = <i>مقدار</i></b> را به هر یک از این URL (فقط برای پرداخت رایگان مورد نیاز) برای اضافه کردن خود برچسب توضیحات پرداخت خود اضافه کنید.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=این صفحه تایید می کند که پرداخت شما ثبت شده است. متشکرم.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

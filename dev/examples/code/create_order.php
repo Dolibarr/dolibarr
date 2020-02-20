@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -66,8 +66,9 @@ $com = new Commande($db);
 
 $com->ref            = 'ABCDE';
 $com->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$com->date_commande  = mktime();
-$com->note           = 'A comment';
+$com->date           = dol_now();
+$com->note_public    = 'A public comment';
+$com->note_private   = 'A private comment';
 $com->source         = 1;
 $com->remise_percent = 0;
 
