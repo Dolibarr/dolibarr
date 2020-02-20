@@ -425,8 +425,9 @@ class Orders extends DolibarrApi
      * @url	DELETE {id}/lines/{lineid}
      *
      * @return int
-     * @throws 401
-     * @throws 404
+     *
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function deleteLine($id, $lineid)
     {
@@ -463,8 +464,9 @@ class Orders extends DolibarrApi
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function postContact($id, $contactid, $type)
     {
@@ -499,9 +501,10 @@ class Orders extends DolibarrApi
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
 	 */
     public function deleteContact($id, $rowid)
     {
@@ -617,10 +620,10 @@ class Orders extends DolibarrApi
      *
      * @url POST    {id}/validate
      *
-	 * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      * @return  array
      */
@@ -670,11 +673,11 @@ class Orders extends DolibarrApi
      *
      * @return int
      *
-     * @throws 304
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 304
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function reopen($id)
     {
@@ -709,10 +712,10 @@ class Orders extends DolibarrApi
      *
      * @return int
      *
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function setinvoiced($id)
     {
@@ -849,10 +852,10 @@ class Orders extends DolibarrApi
      * @url     POST /createfromproposal/{proposalid}
      *
      * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function createOrderFromProposal($proposalid)
     {

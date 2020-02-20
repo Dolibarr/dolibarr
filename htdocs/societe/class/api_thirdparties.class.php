@@ -731,9 +731,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @return array  				List of outstandings proposals of thirdparty
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 */
     public function getOutStandingProposals($id, $mode = 'customer')
 	{
@@ -775,9 +775,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @return array  				List of outstandings orders of thirdparty
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 */
     public function getOutStandingOrder($id, $mode = 'customer')
 	{
@@ -818,9 +818,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @return array  				List of outstandings invoices of thirdparty
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 */
     public function getOutStandingInvoices($id, $mode = 'customer')
 	{
@@ -861,9 +861,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @return array  				List of representatives of thirdparty
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 */
     public function getSalesRepresentatives($id, $mode = 0)
 	{
@@ -903,10 +903,10 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @return array  List of fixed discount of thirdparty
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 503
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
     public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
@@ -961,10 +961,10 @@ class Thirdparties extends DolibarrApi
 	 * @url     GET {id}/getinvoicesqualifiedforreplacement
 	 *
 	 * @return array
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 405
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 405
 	 */
     public function getInvoicesQualifiedForReplacement($id)
     {
@@ -1003,10 +1003,11 @@ class Thirdparties extends DolibarrApi
 	 * @url     GET {id}/getinvoicesqualifiedforcreditnote
 	 *
 	 * @return array
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 405
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 405
 	 */
     public function getInvoicesQualifiedForCreditNote($id)
     {
@@ -1313,8 +1314,8 @@ class Thirdparties extends DolibarrApi
 	 * @param string $site Site key
 	 *
 	 * @return SocieteAccount[]
-	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
-	 * @throws 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 *
 	 * @url GET {id}/gateways/
 	 */
@@ -1387,11 +1388,11 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
-	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
-	 * @throws 409 Conflict: A SocieteAccount entity (gateway) already exists for this company and site.
-	 * @throws 422 Unprocessable Entity: You must pass the site attribute in your request data !
-	 * @throws 500 Internal Server Error: Error creating SocieteAccount account
-	 * @status 201
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 409 Conflict: A SocieteAccount entity (gateway) already exists for this company and site.
+	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
+	 * @throws RestException 500 Internal Server Error: Error creating SocieteAccount account
+	 * @status RestException 201
 	 *
 	 * @url POST {id}/gateways
 	 */
@@ -1447,11 +1448,11 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
-	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
-	 * @throws 422 Unprocessable Entity: You must pass the site attribute in your request data !
-	 * @throws 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @throws RestException
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
+	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
+	 *
 	 * @url PUT {id}/gateways/{site}
 	 */
     public function putSocieteAccount($id, $site, $request_data = null)
@@ -1529,10 +1530,10 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
-	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
-	 * @throws 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
-	 * @throws 409 Conflict: Another SocieteAccount entity already exists for this thirdparty with this site key.
-	 * @throws 500 Internal Server Error: Error updating SocieteAccount entity
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 * @throws RestException 409 Conflict: Another SocieteAccount entity already exists for this thirdparty with this site key.
+	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
 	 * @url PATCH {id}/gateways/{site}
 	 */
@@ -1583,9 +1584,9 @@ class Thirdparties extends DolibarrApi
 	 * @param int $site Site key
 	 *
 	 * @return void
-	 * @throws 401 Unauthorized: User does not have permission to delete thirdparties gateways
-	 * @throws 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
-	 * @throws 500 Internal Server Error: Error deleting SocieteAccount entity
+	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties gateways
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 * @throws RestException 500 Internal Server Error: Error deleting SocieteAccount entity
 	 *
 	 * @url DELETE {id}/gateways/{site}
 	 */
