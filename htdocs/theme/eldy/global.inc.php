@@ -1592,6 +1592,7 @@ div#id-top {
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
+	/* box-shadow: 0px 0px 5px #eee; */
 <?php } ?>
 }
 
@@ -4852,6 +4853,11 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgb(<?php echo $colorbackhmenu1 ?>);
+    color: #<?php echo $colortextbackhmenu; ?>;
+}
 
 span.select2.select2-container.select2-container--default {
     border-left: none;
