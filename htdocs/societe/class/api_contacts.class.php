@@ -391,10 +391,8 @@ class Contacts extends DolibarrApi
      *
      * @return  mixed
      *
-     * @throws  401     RestException   Insufficient rights
-     * @throws  401     RestException   Access not allowed for login
-     * @throws  404     RestException   Category not found
-     * @throws  404     RestException   Contact not found
+     * @throws RestException 401 Insufficient rights
+     * @throws RestException 404 Category or contact not found
      */
     public function addCategory($id, $category_id)
     {
@@ -433,10 +431,8 @@ class Contacts extends DolibarrApi
      * @param   int		$category_id	Id of category
      * @return  mixed
      *
-     * @throws  401     RestException   Insufficient rights
-     * @throws  401     RestException   Access not allowed for login
-     * @throws  404     RestException   Category not found
-     * @throws  404     RestException   Contact not found
+     * @throws  RestException 401     Insufficient rights
+     * @throws  RestException 404     Category or contact not found
      */
     public function deleteCategory($id, $category_id)
     {

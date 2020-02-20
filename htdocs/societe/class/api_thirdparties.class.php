@@ -1388,11 +1388,11 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
+	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 409 Conflict: A SocieteAccount entity (gateway) already exists for this company and site.
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error creating SocieteAccount account
-	 * @status RestException 201
 	 *
 	 * @url POST {id}/gateways
 	 */
@@ -1530,6 +1530,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
+	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 * @throws RestException 409 Conflict: Another SocieteAccount entity already exists for this thirdparty with this site key.
