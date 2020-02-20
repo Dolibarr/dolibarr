@@ -49,7 +49,7 @@ if ($action == 'getProducts') {
     $result = $object->fetch($category);
     if ($result > 0)
     {
-	    $prods = $object->getObjectsInCateg("product");
+	    $prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
 	    // Removed properties we don't need
 	    if (is_array($prods) && count($prods) > 0)
 	    {
