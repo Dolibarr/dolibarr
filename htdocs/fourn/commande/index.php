@@ -159,17 +159,14 @@ else
 
 /*
  * Legends / Status
- *
- *	  Motivo: Mostrar todos os Status e dar a possibilidade de filtrar apenas um deles
- *	  Reason: Show all Status and give the possibility to filter only one
  */
 
-$sql = "SELECT count(cf.rowid), fk_statut";
+$sql = "SELECT count(cf.rowid) as nb, cf.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE cf.fk_soc = s.rowid";
-$sql .= " AND s.entity = ".$conf->entity;
+$sql.= " AND cf.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 if ($user->socid) $sql .= ' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql .= " GROUP BY cf.fk_statut";
@@ -189,11 +186,11 @@ if ($resql)
 
 	while ($i < $num)
 	{
-		$row = $db->fetch_row($resql);
+		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
-		print '<td class="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1], 3).'</a></td>';
+		print '<td>'.$commandestatic->LibStatut($obj->nb).'</td>';
+		print '<td class="right"><a href="list.php?statut='.$obj->fk_statut.'">'.$obj->nb.' '.$commandestatic->LibStatut($obj->fk_statut, 3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -218,7 +215,7 @@ if (!empty($conf->fournisseur->enabled))
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity = ".$conf->entity;
+	$sql .= " AND c.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 	$sql .= " AND c.fk_statut = 0";
 	if (!empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -254,17 +251,25 @@ if (!empty($conf->fournisseur->enabled))
 /*
  * List of users allowed
  */
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
-$sql .= " FROM ".MAIN_DB_PREFIX."user as u,";
-$sql .= " ".MAIN_DB_PREFIX."user_rights as ur";
-$sql .= ", ".MAIN_DB_PREFIX."rights_def as rd";
-$sql .= " WHERE u.rowid = ur.fk_user";
-$sql .= " AND (u.entity IN (0,".$conf->entity.")";
-$sql .= " AND rd.entity = ".$conf->entity.")";
-$sql .= " AND ur.fk_id = rd.id";
-$sql .= " AND module = 'fournisseur'";
-$sql .= " AND perms = 'commande'";
-$sql .= " AND subperms = 'approuver'";
+
+$sql = "SELECT";
+if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	$sql .= " DISTINCT";
+}
+$sql.= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+{
+	$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+	$sql.= " WHERE ((ug.fk_user = u.rowid";
+	$sql.= " AND ug.entity IN (".getEntity('usergroup')."))";
+	$sql.= " OR u.entity = 0)"; // Show always superadmin
+}
+else
+{
+	$sql.= " WHERE (u.entity IN (".getEntity('user').")";
+}
+$sql.= " AND u.fk_soc IS NULL"; // An external user can not approved
 
 $resql = $db->query($sql);
 if ($resql)
@@ -281,15 +286,23 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-		print '<td>';
+		$userstatic = new User($db);
 		$userstatic->id = $obj->rowid;
-		$userstatic->lastname = $obj->lastname;
-		$userstatic->firstname = $obj->firstname;
-		$userstatic->email = $obj->email;
-		print $userstatic->getNomUrl(1);
-		print '</td>';
-		print "</tr>\n";
+		$userstatic->getrights('fournisseur');
+
+		if (! empty($userstatic->rights->fournisseur->commande->approuver))
+		{
+			print '<tr class="oddeven">';
+			print '<td>';
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->email = $obj->email;
+			$userstatic->statut = $obj->statut;
+			print $userstatic->getNomUrl(1);
+			print '</td>';
+			print "</tr>\n";
+		}
+
 		$i++;
 	}
 	print "</table></div><br>";

@@ -1080,7 +1080,7 @@ abstract class CommonObject
 	 *    Get array of all contacts for an object
 	 *
 	 *    @param	int			$status		Status of links to get (-1=all)
-	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
@@ -1242,14 +1242,15 @@ abstract class CommonObject
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *
-	 *      @param	string	$source     'internal', 'external' or 'all'
-	 *      @param  int		$option     0=Return array id->label, 1=Return array code->label
-	 *      @param  int		$activeonly 0=all status of contact, 1=only the active
-	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *		@param	string	$element	Filter Element Type
-	 *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 *      @param	string	$source     		'internal', 'external' or 'all'
+	 *      @param  int		$option     		0=Return array id->label, 1=Return array code->label
+	 *      @param  int		$activeonly 		0=all status of contact, 1=only the active
+	 *		@param	string	$code				Type of contact (Example: 'CUSTOMER', 'SERVICE')
+	 *		@param	string	$element			Filter on 1 element type
+	 *      @param	string	$excludeelement		Exclude 1 element type. Example: 'agenda'
+	 *      @return array       				Array list of type of contacts (id->label if option=0, code->label if option=1)
 	 */
-	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '')
+	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -1260,8 +1261,12 @@ abstract class CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 
 		$sqlWhere = array();
-		if (!empty($element))
+		if (!empty($element)) {
 			$sqlWhere[] = " tc.element='".$this->db->escape($element)."'";
+		}
+		if (!empty($excludeelement)) {
+			$sqlWhere[] = " tc.element <> '".$this->db->escape($excludeelement)."'";
+		}
 
 		if ($activeonly == 1)
 			$sqlWhere[] = " tc.active=1"; // only the active types
@@ -1278,24 +1283,25 @@ abstract class CommonObject
 
 		$sql .= $this->db->order('tc.element, tc.position', 'ASC');
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
+					$modulename = $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
-						$element = 'projet';
+						$modulename = 'projet';
 					} elseif ($obj->element == 'contrat') {
 						$element = 'contract';
+					} elseif ($obj->element == 'action') {
+						$modulename = 'agenda';
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
-						$element = 'fournisseur';
+						$modulename = 'fournisseur';
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
-						$element = 'fournisseur';
-					} else {
-						$element = $obj->element;
+						$modulename = 'fournisseur';
 					}
-					if ($conf->{$element}->enabled) {
+					if ($conf->{$modulename}->enabled) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 						$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
@@ -1701,7 +1707,7 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".$id;
 
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -5547,7 +5553,7 @@ abstract class CommonObject
 
 			if ($error)
 			{
-				dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+				dol_syslog(__METHOD__.$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

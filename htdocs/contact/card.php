@@ -218,6 +218,8 @@ if (empty($reshook))
         $object->priv = GETPOST("priv", 'int');
         $object->note_public = GETPOST("note_public", 'none');
         $object->note_private = GETPOST("note_private", 'none');
+        $object->roles = GETPOST("roles", 'array');
+
         $object->statut			= 1; //Defult status to Actif
 
         // Note: Correct date should be completed with location to have exact GM time of birth.

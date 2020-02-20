@@ -3347,7 +3347,7 @@ class User extends CommonObject
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) $sql .= $this->db->plimit($limit + 1, $offset);
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql)

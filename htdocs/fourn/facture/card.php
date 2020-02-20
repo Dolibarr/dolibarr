@@ -917,6 +917,10 @@ if (empty($reshook))
 							}
 						}
 					}
+					elseif (!empty($object->origin) && !empty($object->origin_id))
+ 					{
+						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					}
 
 					$id = $object->create($user);
 

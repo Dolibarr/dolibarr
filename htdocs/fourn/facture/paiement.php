@@ -297,9 +297,13 @@ if (empty($reshook))
 	        $paiement->datepaye     = $datepaye;
 	        $paiement->amounts      = $amounts; // Array of amounts
 	        $paiement->multicurrency_amounts = $multicurrency_amounts;
-	        $paiement->paiementid   = $_POST['paiementid'];
-	        $paiement->num_paiement = $_POST['num_paiement'];
-	        $paiement->note         = $_POST['comment'];
+	        $paiement->paiementid   = GETPOST('paiementid', 'int');
+
+	        $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
+	        $paiement->note_private = GETPOST('comment', 'alpha');
+	        $paiement->num_paiement = $paiement->num_payment;		// For bacward compatibility
+	        $paiement->note         = $paiement->note_private;		// For bacward compatibility
+
 	        if (!$error)
 	        {
 	            $paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty);
