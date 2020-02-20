@@ -53,6 +53,11 @@ class FormSms
     public $withtopic;
     public $withbody;
 
+    /**
+     * @var int 	Id of company
+     */
+    public $withtosocid;
+
     public $withfromreadonly;
     public $withreplytoreadonly;
     public $withtoreadonly;
