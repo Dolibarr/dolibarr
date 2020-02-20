@@ -2031,7 +2031,7 @@ function top_menu_search()
         <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Search').' ('.$langs->trans('SearchMenuShortCut').')">
             <i class="fa fa-search" ></i>
         </a>
-        <div class="dropdown-menu">
+        <div class="dropdown-search">
             '.$dropDownHtml.'
         </div>
     </div>';
@@ -2062,7 +2062,8 @@ function top_menu_search()
 
         // close drop down
         $(document).on("click", function(event) {
-            if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
+			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
+				console.log("click close");
                 // Hide the menus.
                 $("#topmenu-global-search-dropdown").removeClass("open");
             }
@@ -2070,6 +2071,7 @@ function top_menu_search()
 
         // Open drop down
         $("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
+			console.log("click open");
             openGlobalSearchDropDown();
         });
 
