@@ -985,7 +985,7 @@ class Mo extends CommonObject
      *  Return a link to the object card (with optionaly the picto)
      *
      *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *  @param  string  $option                     On what the link point to ('nolink', ...)
+     *  @param  string  $option                     On what the link point to ('nolink', '', 'production', ...)
      *  @param  int     $notooltip                  1=Disable tooltip
      *  @param  string  $morecss                    Add more css on link
      *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -1007,6 +1007,7 @@ class Mo extends CommonObject
         }
 
         $url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
+        if ($option = 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -1370,21 +1371,21 @@ class MoLine extends CommonObjectLine
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'fk_mo' =>array('type'=>'integer', 'label'=>'Fk mo', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+		'fk_mo' =>array('type'=>'integer', 'label'=>'Mo', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		'position' =>array('type'=>'integer', 'label'=>'Position', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'fk_product' =>array('type'=>'integer', 'label'=>'Fk product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'fk_warehouse' =>array('type'=>'integer', 'label'=>'Fk warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'fk_product' =>array('type'=>'integer', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
+		'fk_warehouse' =>array('type'=>'integer', 'label'=>'Warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'qty' =>array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'role' =>array('type'=>'varchar(10)', 'label'=>'Role', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'fk_mrp_production' =>array('type'=>'integer', 'label'=>'Fk mrp production', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'fk_stock_movement' =>array('type'=>'integer', 'label'=>'Fk stock movement', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>160),
+		'fk_stock_movement' =>array('type'=>'integer', 'label'=>'StockMovement', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
+		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>160),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>165),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 	);
 

@@ -425,6 +425,24 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
+	// MO
+	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
+	{
+		$nblines++;
+		//$ret = $product->load_stats_mo($socid);
+		if ($ret < 0) dol_print_error($db);
+		$langs->load("orders");
+		print '<tr><td>';
+		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_mo['suppliers'];
+		print '</td><td class="right">';
+		print $product->stats_mo['nb'];
+		print '</td><td class="right">';
+		print $product->stats_mo['qty'];
+		print '</td>';
+		print '</tr>';
+	}
 	// Customer invoices
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{

@@ -684,9 +684,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if ($action == 'addconsumeline') {
     		print '<tr class="liste_titre">';
     		print '<td>';
-    		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2);
+    		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
     		print '</td>';
-    		print '<td class="right"><input type="text" name="qtytoadd" value="1"></td>';
+    		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50"></td>';
     		print '<td class="right"></td>';
     		print '<td>';
     		print '<input type="submit" class="button" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
