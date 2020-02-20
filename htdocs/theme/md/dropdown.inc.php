@@ -7,7 +7,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  */
 
 
-a.login-dropdown-a {
+#topmenu-bookmark-dropdown a.login-dropdown-a {
 	color: #fff;
 }
 div#topmenu-bookmark-dropdown {
