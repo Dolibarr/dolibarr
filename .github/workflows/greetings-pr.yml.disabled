@@ -1,6 +1,7 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
 name: Greetings PR
 
-#on: [pull_request]
+on: [pull_request]
 
 jobs:
   greeting:
