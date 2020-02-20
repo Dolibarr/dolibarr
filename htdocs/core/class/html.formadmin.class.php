@@ -50,7 +50,7 @@ class FormAdmin
      *  @param      string		$selected       Language pre-selected
      *  @param      string		$htmlname       Name of HTML select
      *  @param      int			$showauto       Show 'auto' choice
-	 *  @param      array		$filter         Array of keys to exclude in list
+	 *  @param      array		$filter         Array of keys to exclude in list (opposite of $onlykeys)
 	 *  @param		string		$showempty		'1'=Add empty value or string to show
 	 *  @param      int			$showwarning    Show a warning if language is not complete
 	 *  @param		int			$disabled		Disable edit of select
@@ -58,9 +58,10 @@ class FormAdmin
 	 *  @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
      *  @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
      *  @param		int			$multiselect	Make the combo a multiselect
+     *  @param		array		$onlykeys		Show only the following keys (opposite of $filter)
      *  @return		string						Return HTML select string with list of languages
      */
-    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0)
+    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array())
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -96,11 +97,13 @@ class FormAdmin
 			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
 			if ($showcode == 2) $valuetoshow=$value.' ('.$key.')';
 
-			if ($filter && is_array($filter) && array_key_exists($key, $filter))
-			{
+			if ($filter && is_array($filter) && array_key_exists($key, $filter)) {
 				continue;
 			}
-			elseif ($selected == $key)
+			if ($onlykeys && is_array($onlykeys) && ! array_key_exists($key, $onlykeys)) {
+				continue;
+			}
+			if ($selected == $key)
 			{
 				$out.= '<option value="'.$key.'" selected>'.$valuetoshow.'</option>';
 			}
