@@ -688,6 +688,8 @@ class Conf
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
 
+		if (! isset($this->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) $this->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN = 1;
+
 		// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
 		if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $this->global->MAIN_FEATURES_LEVEL >= 2) $this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 
