@@ -54,11 +54,8 @@ $search_status = GETPOST('search_status', 'int');
 $search_day_lim		= GETPOST('search_day_lim', 'int');
 $search_month_lim = GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
-
-if (! empty($conf->projet->enabled)) {
-	$search_project_ref=GETPOST('search_project_ref', 'alpha');
-	$search_project=GETPOST('search_project', 'alpha');
-}
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
